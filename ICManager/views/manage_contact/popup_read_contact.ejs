@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="Keywords" content="">
+    <meta name="Description" content="">
+    <meta http-equiv="Expires" content="Mon, 06 Jan 1990 00:00:01 GMT">
+    <meta http-equiv="Expires" content="-1">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Cache-Control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="requiresActiveX=true" >
+    <title>Setting</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script type="text/javascript" src="../js/jquery.bxslider.min.js"></script>
+    <script type="text/javascript" src="../js/placeholders.js"></script>
+    <script type="text/javascript" src="../js/layout.js"></script>
+    <script type="text/javascript" src="../js/common_js.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/general.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/button.css"/>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css" type="text/css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.8.18/jquery-ui.min.js"></script>
+    <link href='//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css' rel='stylesheet' type='text/css'>
+</head>
+
+<script type="text/javascript" src="js/enum.js"></script>
+<script type="text/javascript" src="js/manage_contact_menu.js"></script>
+<script type="text/javascript" src="js/manage_contact_ref.js"></script>
+<script>
+    let user = JSON.parse('<%-JSON.stringify(user)%>');
+    let letter = JSON.parse('<%-JSON.stringify(letter)%>');
+
+    console.log(letter);
+
+    const strType = '<%=__("Type")%>';
+    const strDateSend = '<%=__("DateSend")%>';
+    const strDateRead = '<%=__("DateRead")%>';
+    const strSender = '<%=__("Sender")%>';
+    const strReceiver = '<%=__("Receiver")%>';
+    const strContents = '<%=__("Contents")%>';
+    const strConfirm = '<%=__("Confirm")%>';
+    const strNormal = '<%=__("Normal")%>';
+    const strRead = '<%=__("Read")%>';
+    const strUnread = '<%=__("Unread")%>';
+
+    $(document).ready(() => {
+
+        $('#buttons').empty();
+        let isEdit = false;
+        if (letter.eState == 'WAIT' && letter.strTo == user.strNickname) {
+            isEdit = true;
+        }
+        $('#subject').val(letter.strSubject);
+        $('#contents').val(letter.strContents);
+        $('#answer').val(letter.strAnswers);
+
+        if (isEdit) {
+            $('#answer').prop('disabled', false);
+            $('#buttons').append(`
+                <a href="javascript:Reply();" class="custom-btn btn-3"><span>답변하기</span></a>
+                <a href="javascript:Close();" class="custom-btn btn-5"><%=__('Cancel')%></a>`
+            );
+        } else {
+            let strTo = letter.strTo;
+            if (user.strNickname == strTo) {
+                strTo = letter.strFrom;
+            }
+            $('#answer').prop('disabled', true);
+            $('#buttons').append(`<a href="javascript:OnClickWritingContact('${strTo}');" class="custom-btn btn-3">쪽지 쓰기</a>`);
+            $('#buttons').append(`<a href="javascript:Close();" class="custom-btn btn-5"><%=__('Close')%></a>`);
+        }
+    });
+
+
+    let Close = () => {
+        if (typeof(window.opener) != 'undefined') {
+            window.opener.parent.reload();
+        }
+        self.close();
+    }
+
+    let Reply = () => {
+        const answer = $('#answer').val();
+        console.log(answer);
+
+        if ( answer == '' )
+        {
+            alert('답변을 입력해주세요');
+        }
+        else
+        {
+            let strAnswer = answer.replace(/(\n|\r\n)/g, '<br>');
+
+            $.ajax({
+                url:"/manage_contact/request_replycontact",
+                type:"POST",
+                context: document.body,
+                data: {
+                    id:letter.id,
+                    strAnswers:strAnswer,
+                },
+                success: function (obj) {
+
+                    if ( obj.result == 'OK' )
+                    {
+                        alert('등록되었습니다');
+                        Close();
+                    }
+                }
+            });
+        }
+    }
+</script>
+<body style="font-family:'Spoqa Han Sans Neo';">
+    <div id="wrap" class="skin_type01">
+        <div class="list_tit">
+            <h3 style="font-size:20px;color:yellow;font-weight:bold;"><%=__('LetterSend')%></h3>
+        </div>
+        <div class="write">
+            <table width="100%">
+                <tr>
+                    <td width="100%" valign="top">
+                        <table class="t_view">
+                            <colgroup>
+                            <col width="25%" /><col  />
+                        </colgroup>
+                            <tr>
+                                <th>제목</th>
+                                <td>
+                                    <input type="text" id="subject" style="width:100%;height: 40px" name="content11" disabled="disabled">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th><%=__('Contents')%></th>
+                                <td>
+                                    <textarea name="content11" id="contents" style="width:100%;height:100px;" required="yes"  message="내용" disabled="disabled"></textarea>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>답변하기</th>
+                                <td>
+                                    <textarea name="content11" id="answer" style="width:100%;height:100px;" required="yes"  message="답변"></textarea>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+
+            <div class="align_c margin_t20" id="buttons">
+            </div>
+        </div>
+    </div>
+</body>
+</html>

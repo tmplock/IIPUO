@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="format-detection" content="telephone=no">
+<meta name="Keywords" content="">
+<meta name="Description" content="">
+<title>Inout</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script type="text/javascript" src="../../js/jquery.bxslider.min.js"></script>
+<script type="text/javascript" src="../../js/placeholders.js"></script>
+<script type="text/javascript" src="../../js/layout.js"></script>
+<script type="text/javascript" src="../../js/common_js.js"></script>
+<link rel="stylesheet" type="text/css" href="../../css/general.css"/>
+<link rel="stylesheet" type="text/css" href="../../css/button.css"/>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css" type="text/css" /> 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>  
+<script src="https://code.jquery.com/ui/1.8.18/jquery-ui.min.js"></script>
+<link href='//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css' rel='stylesheet' type='text/css'>
+</head>
+
+<body style="font-family:'Spoqa Han Sans Neo';">
+		<!-- content 시작 -->
+		<div class="content" style="position:relative; padding:0 10px 0 10px;">
+				<div class="list_tit">
+					<h3 style="font-size:25px;color:yellow;font-weight:bold;"><%=__('RequestOutput')%> ▶ <font style="color:white;"><%=user.strNickname%></font></h3>
+				</div>
+
+			<div class="write">
+					<table style="font-size:15px;background-color:#092E13;">
+						<caption>가맹점 수정</caption>
+						<colgroup>
+							<col style="width:30%">
+							<col style="width:70%">
+						</colgroup>
+						
+					<input type="hidden" name="s_shop" id="shop_1">
+					<input type="hidden" name="pay_sect" id="pay_sect_1" value="pay">
+					
+						<tr style="background-color:#a4aaa7;"><td colspan="4" style="height:15px;background-color:#d8c8b2;"></td></tr>
+						
+						<tr style="background-color:#a4aaa7;">
+							<th scope="row" style="font-size:15px;"><%=__('MyCash')%></th>
+							<td colspan="3">
+								<%=user.iCash.toLocaleString()%> <%=__('Currency')%>
+							</td>
+						</tr>
+						<tr style="background-color:#a4aaa7;"><td colspan="4" style="height:2px;background-color:#d8c8b2;"></td></tr>
+						<tr>
+							<td colspan="3">
+								<tr>
+									<th style="font-size:15px;"><%=__('BankName')%></th>
+									<td>
+										<% if ( user.strBankname != null ) { %>
+											<input type="text" id="strBankName" style="width:30%;" value="<%=user.strBankname%>" readonly>
+										<% } else { %>
+											<input type="text" id="strBankName" style="width:30%;" value="">
+										<% } %>
+									</td>
+								</tr>
+								<tr>
+									<th style="font-size:15px;"><%=__('BankAccount')%></th>
+									<td>
+										<% if ( user.strBankAccount != null ) { %>
+											<input type="text" id="strAccountNumber" style="width:30%;" value="<%=user.strBankAccount%>" readonly>
+										<% } else { %>
+											<input type="text" id="strAccountNumber" style="width:30%;" value="">
+										<% } %>
+									</td>
+								<tr>
+									<th style="font-size:15px;"><%=__('BankAccountHolderName')%></th>
+									<td>
+										<% if ( user.strBankOwner != null ) { %>
+											<input type="text" id="strAccountOwner" style="width:30%;" value="<%=user.strBankOwner%>" readonly>
+										<% } else { %>
+											<input type="text" id="strAccountOwner" style="width:30%;" value="">
+										<% } %>
+									</td>
+								</tr>
+							</td>
+						</tr>
+						<tr style="background-color:#a4aaa7;"><td colspan="4" style="height:2px;background-color:#d8c8b2;"></td></tr>
+						<tr style="background-color:#a4aaa7;">
+							<th scope="row" style="font-size:15px; font-weight:bold;font-family:'Spoqa Han Sans Neo';"><%=__('RequestMoney')%></th>
+							<td colspan="3">
+								<input type="number" id="iAmount" style="width:30%;height:30px;" value=""> <%=__('Currency')%>
+							</td>
+						</tr>
+
+						<% if ( user.pw_auth == 1 ) { %>
+							<tr id="trOutputPassword">
+								<th scope="row" style="font-size:15px;"><%=__('Password')%> <%=__('Modify')%></th>
+								<td colspan="3">
+									<input type="password" style="width:30%;" id="strOutputPassword"> 
+									<button class="custom-btn btn-11" onclick="javascript:ChangeOutputPassword()" style="font-family:'Spoqa Han Sans Neo';">수정<div class="dot"></div></button>
+								</td>
+							</tr>
+						<%}%>
+
+				</table>
+
+				<div class="align_c margin_t20">
+					<button id='request_adjustoutput' class="custom-btn btn-3" style="font-family:'Spoqa Han Sans Neo';"><span><%=__('RequestOutput')%></span></button>
+					<button onclick="javascript:self.close();" class="custom-btn btn-5" style="font-family:'Spoqa Han Sans Neo';"><%=__('Cancel')%></button>
+				</div>
+
+			</div>
+		</div>
+    </body>
+
+	<script>
+		var user = JSON.parse('<%-JSON.stringify(user)%>');
+		console.log(user);
+
+		let iForced = '<%=iForced%>';
+
+		const strAlertIncorrectInputMoney = '<%=__("AlertIncorrectInputMoney")%>';
+		const strAlertComplete = '<%=__("AlertComplete")%>';
+		const strAlertIncorrectPassword = '<%=__("AlertIncorrectPassword")%>';
+		const strConfirmRequest = '<%=__("ConfirmRequest")%>';
+		$('#current').val(user.iCash);
+
+		$(document).on('ready', ()=> {
+
+			$('#iAmount').val('');
+			checkBlockCharSpecial(`#strBankName`);
+			checkBlockNum(`#strAccountNumber`);
+			checkBlockCharSpecial(`#strAccountOwner`);
+			checkBlockNum(`#iAmount`);
+		})
+
+
+		$(document).on('click', '#request_adjustoutput', (event) => {
+
+			const iAmount = $('#iAmount').val();
+			const strBankName = $('#strBankName').val();
+			const strAccountNumber = $('#strAccountNumber').val();
+			const strAccountOwner = $('#strAccountOwner').val();
+
+			if ( iAmount == 0 || iAmount == '' )
+			{
+				alert(strAlertIncorrectInputMoney);
+				return;
+			}
+
+			if ( user.iCash < parseInt(iAmount) )
+			{
+				alert(strAlertIncorrectInputMoney);
+				return;
+			}
+
+			if ( confirm(strConfirmRequest))
+			{
+				$.ajax({
+					type:'post',
+					url: "/manage_inout_popup/request_adjustoutput",
+					context: document.body,
+					data:{
+						strNickname:user.strNickname, 
+						strGroupID:user.strGroupID, 
+						iClass:user.iClass, 
+						iAmount:iAmount, 
+						iPreviousCash:user.iCash, 
+						strBankName:strBankName, 
+						strAccountNumber:strAccountNumber, 
+						strAccountOwner:strAccountOwner, 
+						//strAdjustPassword:strAdjustPassword,
+						iForced:iForced
+					},
+			
+					success:function(data) {
+
+						if ( data.result == 'OK' )
+						{
+							alert(strAlertComplete);
+							self.close();
+						}
+						else if ( data.result == 'FAIL' )
+						{
+							if ( data.reason == 'INCORRECTPASSWORD' )
+							{
+								alert(strAlertIncorrectPassword);
+							}
+							else if ( data.reason == 'NOTENOUGH')
+							{
+								alert(strAlertIncorrectInputMoney);
+							}
+						}		
+					}
+				});
+			}
+		});
+
+		let ChangeOutputPassword = () => {
+
+			let objectData = user;
+			user.strOutputPassword = $('#strOutputPassword').val();
+
+			$.ajax({
+				type:'post',
+				url: "/manage_inout_popup/request_changeoutputpassword",
+				context: document.body,
+				data:objectData,
+		
+				success:function(data) {
+
+					if ( data.result == 'OK' )
+					{
+						$('#trOutputPassword').hide();
+
+						alert(strAlertComplete);
+					}
+					else if ( data.result == 'FAIL' )
+					{
+					}		
+				}
+			});
+		}
+
+	</script>
+
+</html>

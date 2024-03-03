@@ -1,0 +1,356 @@
+<div class="sub_wrap">
+    <div class="container clearfix">
+        <div class="content" style="position:relative; padding:0 10px 0 10px;">
+            <ul class="list_tab" style="margin-bottom:10px;height:50px;width:75%;z-index:10000;">
+                <li>
+                    <a href="#" id="user_userlist">회원 리스트</a>
+                </li>
+                <li class="on">
+                    <a href="#" id="user_realtimeuserlist"><%=__('RealtimeOnlineUserList')%></a>
+                </li>
+            </ul>
+
+            <ul class="list_tab" style="margin-left:80%;margin-top:-40px;margin-bottom:10px;height:30px;">
+			</ul>
+        </div>
+
+            <div class="list">
+
+                <div class="search_wrap" id="div_realtimebet_overview">
+                </div>
+
+                <div style="background-color:#ffffff;text-align:right;padding-right:5px;padding-top:10px;padding-bottom:10px;" colspan="19">
+
+                    <input style="margin-left:180px;width:100px;" type="text" id="datepicker1" class="datepicker"/>~
+                    <input style="width:100px;" type="text" id="datepicker2" class="datepicker" />
+
+                    <button class="btn_blue" id="button_search" style="border:1px solid rgb(95, 93, 93);width:70px;;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearch(4, '<%=user.strGroupID%>', '<%=user.iClass%>');"><%=__('Search')%></button>
+
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <%=__('Search')%>
+                    <select id="select_roomno" style="width:80px;">
+                        <option><%=__('ID')%></option>
+                        <option><%=__('Nickname')%></option>
+                        <option><%=__('Contact')%></option>
+                    </select>
+                    <input style="margin-left:0px;width:100px;" type="text"/>
+                    <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(1, 147, 214);color:white" onclick="testclick();"><%=__('Search')%></button>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+                    <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(53, 209, 39);color:white" onclick="OnClickMonthly1stRecord();"><%=__('Half1')%></button>
+                    &nbsp;
+                    <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(53, 209, 39);color:white" onclick="OnClickMonthly2ndRecord();"><%=__('Half2')%></button>
+                    &nbsp;
+                    <button class="btn_blue" id="button_toggle_record" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(136, 136, 248);color:white" onclick="OnClickMonthlyRecord();"><%=__('Open')%></button>
+				</div>
+
+                <div class="search_wrap" id="div_realtimebet_overview_record">
+                </div>
+
+
+                <div class="list_tit">
+                    <h3><%=__('RealtimeOnlineUserList')%>
+                        <% if ( user.iClass > 3 ) { %>
+                            <div style="text-align:right;padding-right:500px;margin-top:-55px;">
+                                <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);border-radius:3px;width:70px;height:25px;text-align:center;background-color: rgb(240, 90, 90);color:white" onclick="OnClickChangeMoney('<%=user.strNickname%>', '<%=user.strGroupID%>', '<%=user.iClass%>');"><%=__('ExchangeCash')%></button>
+                                <span id="top_total_point_area">
+                                    <font style="color:#00FFFF;font-size:15px;font-weight:bold;"><%=__('Cash')%> :</font><font style="color:yellow;font-size:15px;font-weight:bold;"><%=parseInt(agentinfo.iCash).toLocaleString()%></font>
+                                    &nbsp;&nbsp;
+                                    <font style="color:#00FFFF;font-size:15px;font-weight:bold;"><%=__('Rolling')%> :</font><font style="color:yellow;font-size:15px;font-weight:bold;"><%=parseInt(agentinfo.iRolling).toLocaleString()%></font>
+                                    &nbsp;&nbsp;
+                                    <font style="color:#00FFFF;font-size:15px;font-weight:bold;"><%=__('Settle')%> :</font><font style="color:yellow;font-size:15px;font-weight:bold;">0</font>
+                                    &nbsp;&nbsp;&nbsp;
+                                </span>
+                            </div>
+                        <%}%>
+                    </h3>
+                </div>
+
+            <div class="search_wrap">
+
+                    <!-- <p style="text-align:left;padding-left:10px;padding-top:5px;padding-bottom:5px;font-weight:bold;font-size:15px;"><%=__('Login')%> / <%=__('Full')%> : <span><font style="color:blue">0</font> / 25</span></p> -->
+
+                    <table class="search_list">
+                        <caption><%=__('SearchResult')%></caption>
+                        <colgroup>
+                            <col style="width:5%">
+                            <col style="width:5%">
+                            <col style="width:5%">
+                            <col style="width:5%">
+                            <col style="width:5%">
+
+                            <col style="width:10%">
+                            <col style="width:10%">
+                            <col style="width:10%">
+                            <col style="width:10%">
+                            <col style="width:10%">
+
+                            <col style="width:10%">
+                            <col style="width:10%">
+                            <col style="width:10%">
+
+                            <col style="width:5%">
+                            <col style="width:5%">
+                            <col style="width:5%">
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th scope="col"><%=__('ProAdmin')%></th>
+                                <th scope="col"><%=__('ViceAdmin')%></th>
+                                <th scope="col"><%=__('Agent')%></th>
+                                <th scope="col"><%=__('Shop')%></th>
+                                <th scope="col"><%=__('Nickname')%></th>
+
+                                <th scope="col"><%=__('Input')%></th>
+                                <th scope="col"><%=__('Output')%></th>
+                                <th scope="col"><%=__('MyCash')%></th>
+                                <th scope="col"><%=__('Rolling')%></th>
+                                <th scope="col"><%=__('Total')%></th>
+
+                                <th scope="col"><%=__('DateRegister')%></th>
+                                <th scope="col"><%=__('DateLogin')%></th>
+                                <th scope="col"><%=__('IP')%></th>
+
+                                <th scope="col"><%=__('Letter')%></th>
+                                <th scope="col"><%=__('State')%></th>
+                                <th scope="col"><%=__('Menu')%></th>
+                            </tr>
+                        </thead>
+                        <tbody id = "userlist">
+                        </tbody>
+                    </table>
+
+                    <!-- 페이징 시작 -->
+                    <div class="pagination mt0">
+                        <a href="/admanage/partner/member_list.php?pageNo=1&bmenu=1_3&smenu=1&field=user_nick&keyword=부본사닉&v_sect=PAT&s_gubun=IN&s_level=3&s_gender=&s_sect1=&s_sect2=&s_cnt=&s_order=1&s_sido=&s_gugun=&s_dong=&s_date=2022-01-11&e_date=2022-01-11&s_cate=" class="on">1</a>
+                    </div>
+                    <!-- 페이징 종료 -->
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="js/enum.js"></script>
+<script type="text/javascript" src="js/time.js"></script>
+<script type="text/javascript" src="js/manage_partner_ref.js"></script>
+<script type="text/javascript" src="js/manage_setting_ref.js"></script>
+<script type="text/javascript" src="js/manage_user_menu.js"></script>
+<script type="text/javascript" src="js/socket.js"></script>
+<script>
+
+    DatePicker();
+
+    $('#datepicker1').val(GetCurrentDate());
+	$('#datepicker2').val(GetCurrentDate());
+
+    var objectOverview = JSON.parse('<%-JSON.stringify(data.overview)%>');
+    SetOverview(objectOverview, "#div_realtimebet_overview", true);
+
+    var user = JSON.parse('<%-JSON.stringify(user)%>');
+    var iocount = JSON.parse('<%-JSON.stringify(iocount)%>');
+
+    Alert(iocount, "<%=__('RequestInput')%>", "<%=__('RequestOutput')%>","<%=__('LetterSend')%>");
+
+    let SetUserList = (userlist) => {
+
+        console.log(userlist);
+
+        $('#userlist').empty();
+
+        let total = {cash:0, input:0, output:0, rolling:0, loan:0, total:0};
+
+        for ( let i in userlist )
+        {
+            let strColor = 'rgb(0, 126, 199)';
+            let strState = strNormal;
+
+            console.log(userlist[i]);
+
+            if ( userlist[i].eState == 'BLOCK' )
+            {
+                strColor = 'rgb(207, 61, 4)';
+
+            }
+
+            let tagState = ``;
+
+            if (uesr.iClass <= 3) {
+                tagState = `<td class="parent_row_31">
+                    <select style="vertical-align:middle;width:100%; background-color:${strColor}; color:white;" id="partner_agentstatus_${userlist[i].strNickname}" onchange="OnChangeStatus('${userlist[i].strNickname}');">
+                    <option value="NORMAL" selected>${strNormal}</option>
+                    <option value="BLOCK">${strBlock}</option>
+                    </select>
+                    </td>`;
+
+                if ( userlist[i].eState == 'BLOCK') {
+
+                    console.log('BLOCK');
+                    tagState = `<td class="parent_row_31">
+                    <select style="vertical-align:middle;width:100%; background-color:${strColor}; color:white;" id="partner_agentstatus_${userlist[i].strNickname}" onchange="OnChangeStatus('${userlist[i].strNickname}');">
+                    <option value="NORMAL">${strNormal}</option>
+                    <option value="BLOCK" selected>${strBlock}</option>
+                    </select>
+                    </td>`
+                }
+            } else {
+                tagState = `<td class="parent_row_31">${strNormal}</td>`;
+                if ( userlist[i].eState == 'BLOCK') {
+                    tagState = `<td class="parent_row_31">${strBlock}</td>`;
+                }
+            }
+
+
+            let strLoginedAt = userlist[i].loginedAt.replace(/T/, ' ').replace(/\..+/, '');
+            let strCreatedAt = userlist[i].createdAt.replace(/T/, ' ').replace(/\..+/, '');
+
+            let letter = `<p>-</p>`;
+            if (user.iClass <= 3) {
+                letter = `<a href="javascript:OnClickWritingLetter('${userlist[i].strNickname}');" class="btn_green">${strLetter}</a>`;
+            }
+
+
+            let tag = `
+                <tr>
+                    ${tagAdmin}
+                    <td>${userlist[i].lev2}</td>
+                    <td>${userlist[i].lev3}</td>
+                    <td>${userlist[i].lev4}</td>
+                    <td>${userlist[i].lev5}</td>
+                    
+                    <td><a href="javascript:click_user('${userlist[i].strNickname}', '${userlist[i].strGroupID}', '${userlist[i].iClass}');" style="color:blue;">${userlist[i].strNickname}</a></td>
+                    <td>${GetNumber(userlist[i].iInput)}</td>
+                    <td>${GetNumber(userlist[i].iOutput)}</td>
+                    <td>${GetNumber(userlist[i].iCash)}</td>
+                    <td><font color="red">${GetNumber(userlist[i].iMyRollingMoney)}</font></td>
+                    <td><font color=${GetColor(userlist[i].iTotal)}>${GetNumber(userlist[i].iTotal)}</font></td>
+                    
+                    <td>${strCreatedAt}</td>
+                    <td>${strLoginedAt}</td>
+                    <td>${userlist[i].strIP}</td>
+
+                    <td>
+                        ${letter}
+                    </td>
+
+                    ${tagState}
+
+                    <td id="btn_84">
+                        <a href="javascript:OnClickRemove('${userlist[i].strNickname}', '${userlist[i].strGroupID}', '${userlist[i].iClass}');" class="btn_red">${strRemove}</a>
+                    </td>
+                    
+                </tr>`;
+
+            $('#userlist').append(tag);
+
+            total.cash += parseInt(userlist[i].iCash);
+            total.input += parseInt(userlist[i].iInput);
+            total.output += parseInt(userlist[i].iOutput);
+            total.rolling += parseInt(userlist[i].iMyRollingMoney);
+            total.loan += parseInt(userlist[i].iLoan);
+            total.total += parseInt(userlist[i].iTotal);
+
+        }
+
+        //<td></td>
+        //<td></td>
+
+        let endtag = `
+        <tr>
+            <td>${strTotal}</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+
+            <td>${GetNumber(total.input)}</td>
+            <td>${GetNumber(total.output)}</td>
+            <td>${GetNumber(total.cash)}</td>
+            <td><font color='red'>${GetNumber(total.rolling)}</font></td>
+            <td><font color=${GetColor(total.total)}>${GetNumber(total.total)}</font></td>
+            
+            <td></td>
+            <td></td>
+            <td></td>
+
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>`;
+
+        $('#userlist').append(endtag);
+    }
+
+    function click_user(strNickname, strGroupID, iClass)
+    {
+        var scLeft = window.screenLeft + 50;
+        var scTop = window.screenTop + 50;
+        window.open('', 'popupUser', `width=1280, height=720, top=${scTop}, left${scLeft}, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no`);
+
+        var $form = $('<form></form>');
+        $form.attr('action', '/manage_user_popup/bettingrecord');
+        $form.attr('method', 'post');
+        $form.attr('target', 'popupUser');
+        $form.appendTo('body');
+
+        var idx = $(`<input type="hidden" value="${strNickname}" name="strNickname">`);
+        var page = $(`<input type="hidden" value="${strGroupID}" name="strGroupID">`);
+        var category = $(`<input type="hidden" value=${parseInt(iClass)} name="iClass">`);
+
+        $form.append(idx).append(page).append(category);
+        $form.submit();
+    }
+
+    let OnClickMonthly1stRecord = () => {
+
+        $('#datepicker1').val(GetMonthly1stStartDate());
+        $('#datepicker2').val(GetMonthly1stEndDate());
+
+        RequestOverview(user.iClass, user.strGroupID, user.iClass, user.iPermission, agent.strID);
+        RequestUserList(user.iClass, user.strGroupID, user.iClass, user.iPermission);
+    }
+
+    let OnClickMonthly2ndRecord = () => {
+
+        $('#datepicker1').val(GetMonthly2ndStartDate());
+        $('#datepicker2').val(GetMonthly2ndEndDate());
+
+        RequestOverview(user.iClass, user.strGroupID, user.iClass, user.iPermission, agent.strID);
+        RequestUserList(user.iClass, user.strGroupID, user.iClass, user.iPermission);
+    }
+
+    let OnClickSearch = (iTargetClass, strGroupID, iClass, iPermission) => {
+
+        RequestBettingRecord(iTargetClass, strGroupID, iClass, agent.strID);
+        RequestOverview(iTargetClass, strGroupID, iClass, iPermission, agent.strID);
+        //RequestAgentList(iTargetClass, strGroupID, iClass);
+        RequestUserList(iTargetClass, strGroupID, iClass, iPermission);
+    }
+
+
+    let RequestUserList = (iTargetClass, strGroupID, iClass) => {
+
+        const dateStart = $('#datepicker1').val();
+        const dateEnd = $('#datepicker2').val();
+
+        $.ajax({
+            type:'post',
+            url: "/manage_user/request_realtimeuserlist",
+            context: document.body,
+            data:{iTargetClass:iTargetClass, strGroupID:strGroupID, iClass:iClass, dateStart:dateStart, dateEnd:dateEnd},
+
+            success: (obj) => {
+
+                console.log(obj.userlist);
+                
+                SetUserList(obj.userlist);
+
+            },
+            error:function(request,status,error){
+                alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+            }
+        });
+
+    }
+
+    RequestUserList(8, user.strGroupID, user.iClass);
+
+</script>

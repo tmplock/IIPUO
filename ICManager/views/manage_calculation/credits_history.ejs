@@ -1,0 +1,202 @@
+<div class="sub_wrap">
+    <div class="container clearfix">
+        <div class="content" style="position:relative; padding:0 10px 0 10px;">
+            <ul class="list_tab" style="margin-bottom:10px;width:75%;z-index:10000;" id="calculation_header">
+            </ul>
+        </div>
+
+        <div class="list">
+            <div class="list_tit" id = "list_tit">
+            </div>
+
+            <div class="search_wrap" id="div_realtimebet">
+                <div style="background-color:#ffffff;text-align:right;padding-right:5px;padding-top:10px;padding-bottom:10px;" colspan="19">
+                    <input style="margin-left:180px;width:100px;" type="text" id="datepicker1" class="datepicker"/>~
+                    <input style="width:100px;" type="text" id="datepicker2" class="datepicker" />
+                    <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearchInput(false);"><%=__('Search')%></button>
+                </div>
+
+                <table class="search_list">
+                    <caption><%=__('SearchResult')%></caption>
+                    <colgroup>
+                        <col style="width:14%">
+                        <col style="width:14%">
+                        <col style="width:14%">
+                        <col style="width:14%">
+                        <col style="width:15%">
+                        <col style="width:15%">
+                        <col style="width:14%">
+                    </colgroup>
+                    <thead>
+                    <tr>
+                        <td ><%=__('Index')%></td>
+                        <td>가불전 금액</td>
+                        <td>가불 금액</td>
+                        <td>가불후 금액</td>
+                        <td>처리자</td>
+                        <td>일시</td>
+                        <td>메모</td>
+                    </tr>
+                    </thead>
+                    <tbody id="credit_list">
+                    </tbody>
+                </table>
+
+                <div class="pagination mt0">
+                    <a href="javascript:get_data('inner_partner_list2.php', 'inner_content', 's_sido=13&s_gugun=parent_level=4&s_date=&e_date=&s_cate=&pageNo=1');" class="on" style="color:#ffffff;">1</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<script type="text/javascript" src="js/constants.js"></script>
+<script type="text/javascript" src="js/enum.js"></script>
+<script type="text/javascript" src="js/time.js"></script>
+<script type="text/javascript" src="js/util.js"></script>
+<script type="text/javascript" src="js/manage_calculation_menu.js"></script>
+<script type="text/javascript" src="js/manage_setting_ref.js"></script>
+<script type="text/javascript" src="js/manage_user_menu.js"></script>
+<script type="text/javascript" src="js/socket.js"></script>
+<script type="text/javascript">
+    var user = JSON.parse('<%-JSON.stringify(user)%>');
+    var agent = JSON.parse('<%-JSON.stringify(agent)%>');
+    var creadits = JSON.parse('<%-JSON.stringify(creadits)%>');
+
+    SetCalculationHeader(4, user.iClass);
+
+    DatePicker();
+    $("#datepicker1").val(GetCurrentDate());
+    $("#datepicker2").val(GetCurrentDate());
+
+    $(document).ready( ()=> {
+        OnClickSearchInput(false);
+    });
+
+    let OnClickSearchInput = (bSearch) => {
+
+        let date1 = $("#datepicker1").val();
+        let date2 = $("#datepicker2").val();
+
+        let strNickname = '';
+        if ( bSearch == true )
+            strNickname = $('#strSearchNickname').val();
+
+        $.ajax(
+            {
+                type:'post',
+                url: "/manage_partner/request_credits",
+                context: document.body,
+                data:{dateStart:date1, dateEnd:date2, strID:agent.strID, strNickname:strNickname},
+
+                success:function(obj) {
+                    console.log(obj);
+
+                    SetList(obj.data);
+                }
+            }
+        );
+    }
+
+    let OnClickMemo = (id) => {
+        console.log(`id : ${id}`);
+
+        let memo = $(`#memoinput_${id}`).val();
+
+        $.ajax({
+            type:'post',
+            url: "/manage_partner/request_credit_memo_apply",
+            context: document.body,
+            data:{id:id, strMemo:memo},
+
+            success: (obj) => {
+
+                if ( obj.result == 'OK' ) {
+                    window.opener.location.reload(true);
+                } else {
+                    if ( obj.reason == 'NOTENOUGH' ) {
+                        alert(strAlertErrorNotEnoughMoney);
+                    } else {
+                        alert(strAlertComplete);
+                        window.opener.location.reload(true);
+                    }
+                }
+                location.reload();
+            },
+            error:function(request,status,error){
+                alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+            }
+        });
+    }
+
+    let SetList = (list) => {
+        $("#credit_list").empty();
+        if (list.length > 0) {
+            let sumBefore = 0;
+            let sumIncrease = 0;
+            let sumTotal = 0;
+
+            for (let i = 0; i<list.length; i++) {
+                let iBeforeCredit = parseInt(list[i].iBeforeCredit);
+                if (isNaN(iBeforeCredit)) {
+                    iBeforeCredit = 0;
+                }
+                console.log(`누계1 : ${sumBefore} / ${iBeforeCredit}`);
+                sumBefore = sumBefore + iBeforeCredit;
+
+                let iIncrease = parseInt(list[i].iIncrease);
+                if (isNaN(iIncrease)) {
+                    iIncrease = 0;
+                }
+                console.log(`누계2 : ${sumIncrease} / ${iIncrease}`);
+                sumIncrease = sumIncrease + iIncrease;
+
+                sumTotal = sumTotal + (iBeforeCredit + iIncrease);
+
+                $('#credit_list').append(`
+                    <tr>
+                        <td>${i+1}</td>
+                        <td style="font-weight:100;">${GetNumberSign(iBeforeCredit)}</td>
+                        <td style="font-weight:100;">${GetNumberSign(iIncrease)}</td>
+                        <td style="font-weight:100;">${GetNumberSign(iBeforeCredit + iIncrease)}</td>
+                        <td>${list[i].writer}</td>
+                        <td>${list[i].createdAt}</td>
+                        <td>
+                            <input style="width:70%;" type="text" id="memoinput_${list[i].id}" value="${list[i].strMemo}" disabled="disabled">
+                        </td>
+                    </tr>
+                `);
+                checkBlockCharSpecial2(`#memoinput_${list[i].id}`);
+            }
+
+            console.log(`합계 : ${sumBefore} / ${sumIncrease}`);
+
+            $('#credit_list').append(`
+                    <tr>
+                        <td>합</td>
+                        <td></td>
+                        <td></td>
+                        <td style="font-weight:100;">${GetNumberSign(sumTotal)}</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                `);
+
+        } else {
+            $('#credit_list').append(`
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+            `);
+        }
+    }
+
+</script>

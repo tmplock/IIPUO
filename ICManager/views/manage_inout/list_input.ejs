@@ -1,0 +1,300 @@
+<div class="sub_wrap">
+    <div class="container clearfix">
+        <ul class="list_tab" id = "list_tab" style="top:-3px; left:300px; position:absolute; z-index:10;">
+        </ul>
+        <div class="content" style="position:relative; padding:0 10px 0 10px;">
+            <ul class="list_tab" style="margin-bottom:10px;width:75%;z-index:10000;">
+                <li class="on">
+                    <a href="#" id="inout_input"><%=__('InputRequestList')%></a>
+                </li>
+                <% if (parseInt(user.iClass) > 1) { %>
+                    <li>
+                        <a href="#" id="inout_output"><%=__('OutputRequestList')%></a>
+                    </li>
+                <% } %>
+            </ul>
+        </div>
+
+        <div class="list">
+
+        <div class="search_wrap">
+            <p style="background-repeat:no-repeat; background-position:left center; font-size:20px; color:#454545; padding-left:22px;margin-top:10px;height:30px;margin-bottom:5px;"><%=__('ShowTotal')%></p>
+
+                <div style="height:30px;text-align:right;padding-right:10px;margin-top:-40px;margin-bottom:10px;">
+                </div>
+
+            <table class="search_list">
+                <thead>
+                    <tr>
+                        <th width="14%"><%=__('Date')%></th>
+                        <th width="20%"><%=__('Input')%></th>
+                        <th width="20%"><%=__('Output')%></th>
+                        <th width="22%"><%=__('Total')%></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="sub3_area_ subv3" style="height:60px;" id="inout_overview">
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div style="background-color:#ffffff;text-align:right;padding-right:5px;padding-top:0px;padding-bottom:0px;" colspan="19">
+
+            <input style="margin-left:180px;width:100px;" type="text" id="datepicker1" class="datepicker"/>~
+            <input style="width:100px;" type="text" id="datepicker2" class="datepicker" />
+
+            <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearchByInput(1);"><%=__('Search')%></button>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <%=__('Search')%>
+            <select id="select_search" style="width:80px;">
+                <option value="Nickname"><%=__('Nickname')%></option>
+            </select>
+
+            <input type="text" value="" style="width:10%;" id="strSearchNickname">
+            <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearchByInput(1);"><%=__('Search')%></button>
+
+            <select id="select_limit" style="width:80px;">
+                <option value="20">20개씩</option>
+                <option value="50">50개씩</option>
+                <option value="100">100개씩</option>
+            </select>
+        </div>
+
+        <div class="search_wrap">
+            <table class="search_list" id="daily_array">
+                <thead>
+                    <tr>
+                        <th width="25%"><%=__('Date')%></th>
+                        <th width="25%"><%=__('Input')%></th>
+                        <th width="25%"><%=__('Output')%></th>
+                        <th width="25%"><%=__('Total')%></th>
+                    </tr>
+                </thead>
+                <tbody id="daily_list">
+                </tbody>
+            </table>
+        </div>
+
+        <br/>
+
+            <div class="list_tit">
+                <h3><%=__('InputRequestList')%>
+                </h3>
+            </div>
+
+            <div class="search_wrap">
+                <div id="member_temple_request_area">
+                    <table class="search_list">
+                        <caption><%=__('SearchResult')%></caption>
+                        <thead>
+                            <tr>
+                                <th width="5%"><%=__('Index')%></th>
+                                <% if ( user.iClass == 1 ) { %>
+                                    <th width="6%"><%=__('Admin')%></th>
+                                <% } else if ( user.iClass == 2 ) { %>
+                                    <th width="6%"><%=__('Admin')%></th>
+                                <% } else if ( user.iClass == 3 ) { %>
+                                    <th width="6%"><%=__('ProAdmin')%></th>
+                                <% } else if ( user.iClass == 4 ) { %>
+                                    <th width="6%"><%=__('ViceAdmin')%></th>
+                                <% } else if ( user.iClass == 5 ) { %>
+                                    <th width="6%"><%=__('Agent')%></th>
+                                <% } else if ( user.iClass == 6 ) { %>
+                                    <th width="6%"><%=__('Shop')%></th>
+                                <% } else if ( user.iClass == 7 ) { %>
+                                    <th width="6%"><%=__('Admin')%></th>
+                                <% }  %>
+                                <th width="6%"><%=__('Nickname')%></th>
+                                <% if ( parseInt(user.iRootClass) <= 3 ) { %>
+                                    <th width="7%"><%=__('BankAccountHolderName')%></th>
+                                <% } %>
+                                <th width="7%"><%=__('InputAmount')%></th>
+                                <th width="7%"><%=__('StateStandby')%></th>
+                                <th width="7%"><%=__('StateProcess')%></th>
+                                <th width="10%"><%=__('DateRequest')%></th>
+                                <th width="10%"><%=__('DateProcess')%></th>
+                                <th width="7%"><%=__('Cancel')%></th>
+                                <% if (parseInt(user.iRootClass) <= 4 ) {%>
+                                    <th width="23%"><%=__('Memo')%></th>
+                                <% } %>
+                                <% if (parseInt(user.iRootClass) <= 3 ) {%>
+                                    <th width="10%">계좌정보</th>
+                                <% } %>
+                            </tr>
+                        </thead>
+                        <tbody id="input_list">
+                        </tbody>
+                    </table>
+
+                    <div class="pagination mt0" id="pagination">
+                        
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="js/time.js"></script>
+<script type="text/javascript" src="js/enum.js"></script>
+<script type="text/javascript" src="js/manage_inout_menu.js"></script>
+<script type="text/javascript" src="js/manage_inout_ref.js"></script>
+<script type="text/javascript" src="js/manage_setting_ref.js"></script>
+<script type="text/javascript" src="js/socket.js"></script>
+<script type="text/javascript" src="js/pagination.js"></script>
+<script>
+    let user = JSON.parse('<%-JSON.stringify(user)%>');
+    let list = JSON.parse('<%-JSON.stringify(req_list)%>');
+    let iocount = JSON.parse('<%-JSON.stringify(iocount)%>');
+    let totalCount = JSON.parse('<%-JSON.stringify(totalCount)%>');
+
+    const type = 'INPUT';
+    let iCurrentPage = 1;
+    let iLimit = 20;
+    let bToggleRecord = false;
+
+    $('#select_limit').on("change", function () {
+        iLimit = this.value;
+    });
+
+    $(document).ready( ()=> {
+        DatePicker();
+        if (parseInt(user.iClass) == 1) {
+            $('#datepicker1').val(GetYearStartDate());
+        } else {
+            $("#datepicker1").val(GetCurrentDate(0));
+        }
+        $("#datepicker2").val(GetCurrentDate(0));
+
+        $("#pagination").append(getPagination(iLimit, totalCount, iCurrentPage));
+        $("#daily_array").hide();
+        $(`#list_tab`).empty();
+        if ( user.strOptionCode[0] == '1' && user.iClass > 2 &&  user.iPermission != 100 ) {
+            $(`#list_tab`).append(`
+                <button class="custom-btn btn-10" onclick="OnClickRequestInout(true);"><%=__('RequestInput')%></button>
+            `);
+        }
+        // 본사 이상만 충전 표시(총총 제외)
+        if ( user.strOptionCode[1] == '1' && user.iClass > 3 && user.iPermission != 100 ) {
+            $(`#list_tab`).append(`
+                <button class="custom-btn btn-7" onclick="OnClickRequestInout(false)"><span><%=__('RequestOutput')%></span></button>
+            `);
+        }
+
+        if ( user.iClass > 1 && user.iClass <= 3 && user.iPermission != 100) {
+            $('#list_tab').append(`
+                <button class="custom-btn btn-17" onclick="OnClickRequestBank()"><span>계좌보기</span></button>
+            `);
+        }
+
+        Alert(iocount, "<%=__('RequestInput')%>", "<%=__('RequestOutput')%>,","<%=__('LetterSend')%>");
+
+        OnClickSearchByInput(1);
+    });
+
+    $(document).on('click', '.cancel', (event)=> {
+        OnCancel(true, event);
+    });
+    $(document).on('click', '.request', (event)=> {
+        OnRequest(true, event);
+    });
+    $(document).on('click', '.standby', (event)=> {
+        OnStandby(true, event);
+    });
+    $(document).on('click', '.save', (event)=> {
+        OnSave(event);
+        event.target.reset();
+    });
+    $(document).on('click', '#input_memo',  (event) => {
+        const id = $(event.currentTarget).attr('listid');
+        OnClickMemo(id);
+    });
+    let OnClickMemo = (id) => {
+        for (let i=0; i < list.length; i++) {
+            let memo_id = `memo_${list[i].id}`;
+            let memo_tx_id = `memo_tx_${list[i].id}`;
+            let button_memo_save = `button_memo_save_${list[i].id}`;
+            if (list[i].id==id) {
+                document.getElementById(memo_id).style = "width:80%";
+                document.getElementById(memo_tx_id).style = 'display:none';
+                document.getElementById(button_memo_save).style = "height:80%;";
+            } else {
+                document.getElementById(memo_id).style = 'width:80%; display:none';
+                document.getElementById(memo_tx_id).style = '';
+                document.getElementById(button_memo_save).style = "display:none";
+            }
+        }
+    }
+
+    let OnClickRequestInout = (charge) => {
+        let input = prompt('암호입력');
+        if (input == null) {
+            return;
+        } else if (input.length == 0) {
+            alert(`암호 미입력`);
+            return;
+        }
+
+        $.ajax({
+            type:'post',
+            url: "/manage_inout/request_inout_pass",
+            data:{input:input, iClass: user.iClass, strNickname: user.strNickname, strGroupID: user.strGroupID},
+            success: (obj) => {
+                if (obj.result == 'OK') {
+                    if (charge) {
+                        OnClickRequestCharge(user.strNickname, user.strGroupID, user.iClass);
+                    } else {
+                        OnClickRequestExchange(user.strNickname, user.strGroupID, user.iClass, 0)
+                    }
+                } else if (obj.result == 'FAIL') {
+                    alert(obj.msg);
+                }
+            },
+            error:function(request,status,error){
+                alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+            }
+        });
+    }
+
+    let OnClickRequestBank = () => {
+        let input = prompt('암호입력');
+        if (input == null) {
+            return;
+        } else if (input.length == 0) {
+            alert(`암호 미입력`);
+            return;
+        }
+
+        $.ajax({
+            type:'post',
+            url: "/manage_inout/request_bank",
+            data:{input:input, iClass: user.iClass, strNickname: user.strNickname},
+            success: (obj) => {
+                if (obj.result == 'OK') {
+                    OpenBankPopup();
+                } else if (obj.result == 'FAIL') {
+                    alert(obj.msg);
+                }
+            },
+            error:function(request,status,error){
+                alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+            }
+        });
+    }
+
+    let OpenBankPopup = () => {
+        window.open('', 'popupChk22', 'width=1280, height=720, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
+        var $form = $('<form></form>');
+        $form.attr('action', '/manage_inout/popup_bank');
+        $form.attr('method', 'post');
+        $form.attr('target', 'popupChk22');
+        $form.appendTo('body');
+        var strNickname = $(`<input type="hidden" value="${user.strNickname}" name="strNickname">`);
+        var iClass = $(`<input type="hidden" value=${parseInt(user.iClass)} name="iClass">`);
+        $form.append(strNickname).append(iClass);
+        $form.submit();
+    }
+
+</script>

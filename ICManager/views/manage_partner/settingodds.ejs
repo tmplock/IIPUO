@@ -1,0 +1,228 @@
+<div id="wrap" class="skin_type01">
+	
+	<div class="sub_wrap">
+		<!-- content 시작 -->
+		<div class="container clearfix">
+			<div class="content" style="position:relative; padding:0 10px 0 10px;">
+			<ul class="list_tab" style="margin-bottom:10px;height:30px;width:75%;z-index:10000;" id="partner_header">
+			</ul>
+			<div class="list">
+				<div class="search_wrap">
+					
+						<div class="list_tit" style="margin-top:20px;">
+							<h3><%=__('SubMenuAdminList')%>
+					&nbsp;
+					<input type="text" id="s_date" name="s_date" class="datepicker" autocomplete="off" value="2022-03-11" style="width:6%;" readonly> ~ <input type="text" id="e_date" name="e_date" class="datepicker" autocomplete="off" value="2022-03-11" style="width:6%;" readonly>
+					&nbsp;<a href="javascript:s_mem.submit();" class="btn_green">확인</a>&nbsp;
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					<select name="field" size="1" style="vertical-align:middle;width:5%;">
+						<option value=""><%=__('Search')%></option>
+						<option value="user_id" ><%=__('ID')%></option>
+						<option value="user_nick" ><%=__('Nickname')%></option>
+						<option value="cell" ><%=__('Contact')%></option>
+					</select>
+					<input type="text" title="검색" name="keyword" id="keyword" style="width:6%;" value="">&nbsp;<a href="javascript:s_mem.submit();" class="btn_blue"><%=__('Search')%></a>
+					
+				</h3>
+						</div>
+						
+						<table class="search_list">
+							<caption><%=__('SearchResult')%></caption>
+							<colgroup>
+								<col style="width:9%">
+								<col style="width:5%">
+								<col style="width:9%;">
+								<col style="width:9%;">
+								<col style="width:6%;">
+								<col style="width:6%;">
+								<col style="width:5.5%;"> 
+
+								<col style="width:1%">
+
+								<col style="width:9%">
+								<col style="width:5%">
+								<col style="width:9%;">
+								<col style="width:9%;">
+								<col style="width:6%;">
+								<col style="width:6%;">
+								<col style="width:5.5%;"> 
+					
+							</colgroup>
+							<thead>
+								<tr>
+									<th scope="col">왕본사</th>
+									<th scope="col">왕본사 체크</th>
+									<th scope="col">주본사</th>
+									<th scope="col">왕본사선택</th>
+									<th scope="col">분배율</th>
+									<th scope="col">바란스 시간</th>
+									<th scope="col">연결</th>
+
+									<th scope="col"></th>
+									
+									<th scope="col">왕본사</th>
+									<th scope="col">왕본사 체크</th>
+									<th scope="col">주본사</th>
+									<th scope="col">왕본사선택</th>
+									<th scope="col">분배율</th>
+									<th scope="col">바란스 시간</th>
+									<th scope="col">연결</th>
+								</tr>
+							</thead>
+							<tbody>
+						
+													<tr>
+								<form name="frm_cate1_3_1" id="frm_cate1_3_1" method="post" action="partner_percent_set_action.php"  target="_fra_admin" enctype="multipart/form-data">
+								<input type="hidden" name="total_param" id="total_param" value="bmenu=1&smenu=3&field=&keyword=&v_sect=PAT&s_gubun=IN&s_level=2&s_gender=&s_sect1=&s_sect2=&s_cnt=&s_order=&s_sido=&s_gugun=&s_dong=&s_date=&e_date=&s_cate="/>
+								<input type="hidden" name="mode" id="mode_3_1"/>
+															
+								<input type="hidden" id="default_member_id_0" value="본사1">
+								
+								<td style="background-color:#ffd5dc;"  ><a href="javascript:go_modify('3');" style="color:blue;">본사1</a></td>
+								
+								<td style="background-color:#ffd5dc;"  >
+									<input type="checkbox" name="bonbon_check_1" id="bonbon_check_1_0" style="width:20px;height:20px;" value="Y" checked  onclick="set_bon_copy('bonbon_check_1_0','default_member_id_0','send_member_id_1_0','bon_member_id_1_0');"/>
+								</td>
+								<td style="background-color:#ffd5dc;" >
+									<input type="text" style="width:80%;" name="send_member_id" id="send_member_id_1_0" value="본사1">
+								</td>
+								<td style="background-color:#ffd5dc;" >
+									<input type="text" style="width:80%;" name="bon_member_id" id="bon_member_id_1_0" value="본사1" readonly>
+								</td>
+								<td style="background-color:#ffd5dc;" >
+									<input type="text" style="width:30%;" name="p_percent" id="p_percent_1" value="10">
+								</td>
+								<td style="background-color:#ffd5dc;" >
+									<input type="text" style="width:30%;" name="balance_sec" id="balance_sec_1" value="2">
+								</td>
+								<td style="background-color:#ffd5dc;"  >
+									<span style="display:inline-block; height:32px; padding:0 10px; font-weight:bold; color:#fff; line-height:32px; text-decoration:none; border:0; border-radius:4px; background-color:#2c558e;cursor:pointer;" class="list_menu" idx="3_1" cstat="Y" cfrm="frm_cate1_3_1" id="3_1">메뉴</span>
+								</td>
+								</form>
+
+								<td style="background-color:#ffd5dc;"  >
+									<!-- 중간 구분선 -->
+								</td>
+							
+								<form name="frm_cate1_3_2" id="frm_cate1_3_2" method="post" action="partner_percent_set_action.php"  target="_fra_admin" enctype="multipart/form-data">
+								<input type="hidden" name="total_param" id="total_param" value="bmenu=1&smenu=3&field=&keyword=&v_sect=PAT&s_gubun=IN&s_level=2&s_gender=&s_sect1=&s_sect2=&s_cnt=&s_order=&s_sido=&s_gugun=&s_dong=&s_date=&e_date=&s_cate="/>
+								<input type="hidden" name="mode" id="mode_3_2"/>
+
+								<td style="background-color:#ffd5dc;"  >
+									<input type="text" style="width:80%;" id="bonbon_member_id_0">
+								</td>
+
+								<td style="background-color:#ffd5dc;"  >
+									<input type="checkbox" name="bonbon_check_1" id="bonbon_check_2_0" style="width:20px;height:20px;" value="Y" onclick="set_bon_copy('bonbon_check_2_0','bonbon_member_id_0','send_member_id_2_0','bon_member_id_2_0');"/>
+								</td>
+								<td style="background-color:#ffd5dc;" >
+									<input type="text" style="width:80%;" name="send_member_id" id="send_member_id_2_0">
+								</td>
+								<td style="background-color:#ffd5dc;" >
+									<input type="text" style="width:80%;" name="bon_member_id" id="bon_member_id_2_0" readonly>
+								</td>
+								<td style="background-color:#ffd5dc;" >
+									<input type="text" style="width:30%;" name="p_percent" id="p_percent_2">
+								</td>
+								<td style="background-color:#ffd5dc;" >
+									<input type="text" style="width:30%;" name="balance_sec" id="balance_sec_2">
+								</td>
+								<td style="background-color:#ffd5dc;"  >
+									<span style="display:inline-block; height:32px; padding:0 10px; font-weight:bold; color:#fff; line-height:32px; text-decoration:none; border:0; border-radius:4px; background-color:#2c558e;cursor:pointer;" class="list_menu" idx="3_2" cstat="" cfrm="frm_cate1_3_2" id="3_2">메뉴</span>
+								</td>
+								</form>
+							</tr>
+																				<tr>
+								<form name="frm_cate1_16_1" id="frm_cate1_16_1" method="post" action="partner_percent_set_action.php"  target="_fra_admin" enctype="multipart/form-data">
+								<input type="hidden" name="total_param" id="total_param" value="bmenu=1&smenu=3&field=&keyword=&v_sect=PAT&s_gubun=IN&s_level=2&s_gender=&s_sect1=&s_sect2=&s_cnt=&s_order=&s_sido=&s_gugun=&s_dong=&s_date=&e_date=&s_cate="/>
+								<input type="hidden" name="mode" id="mode_16_1"/>
+															
+								<input type="hidden" id="default_member_id_1" value="본사2">
+								
+								<td style="background-color:#ffffff;"  ><a href="javascript:go_modify('16');" style="color:blue;">본사2</a></td>
+								
+								<td style="background-color:#ffffff;"  >
+									<input type="checkbox" name="bonbon_check_1" id="bonbon_check_1_1" style="width:20px;height:20px;" value="Y"   onclick="set_bon_copy('bonbon_check_1_1','default_member_id_1','send_member_id_1_1','bon_member_id_1_1');"/>
+								</td>
+								<td style="background-color:#ffffff;" >
+									<input type="text" style="width:80%;" name="send_member_id" id="send_member_id_1_1" value="">
+								</td>
+								<td style="background-color:#ffffff;" >
+									<input type="text" style="width:80%;" name="bon_member_id" id="bon_member_id_1_1" value="" readonly>
+								</td>
+								<td style="background-color:#ffffff;" >
+									<input type="text" style="width:30%;" name="p_percent" id="p_percent_1" value="">
+								</td>
+								<td style="background-color:#ffffff;" >
+									<input type="text" style="width:30%;" name="balance_sec" id="balance_sec_1" value="">
+								</td>
+								<td style="background-color:#ffffff;"  >
+									<span style="display:inline-block; height:32px; padding:0 10px; font-weight:bold; color:#fff; line-height:32px; text-decoration:none; border:0; border-radius:4px; background-color:#2c558e;cursor:pointer;" class="list_menu" idx="16_1" cstat="" cfrm="frm_cate1_16_1" id="16_1">메뉴</span>
+								</td>
+								</form>
+
+								<td style="background-color:#ffffff;"  >
+									<!-- 중간 구분선 -->
+								</td>
+							
+								<form name="frm_cate1_16_2" id="frm_cate1_16_2" method="post" action="partner_percent_set_action.php"  target="_fra_admin" enctype="multipart/form-data">
+								<input type="hidden" name="total_param" id="total_param" value="bmenu=1&smenu=3&field=&keyword=&v_sect=PAT&s_gubun=IN&s_level=2&s_gender=&s_sect1=&s_sect2=&s_cnt=&s_order=&s_sido=&s_gugun=&s_dong=&s_date=&e_date=&s_cate="/>
+								<input type="hidden" name="mode" id="mode_16_2"/>
+
+								<td style="background-color:#ffffff;"  >
+									<input type="text" style="width:80%;" id="bonbon_member_id_1">
+								</td>
+
+								<td style="background-color:#ffffff;"  >
+									<input type="checkbox" name="bonbon_check_1" id="bonbon_check_2_1" style="width:20px;height:20px;" value="Y" onclick="set_bon_copy('bonbon_check_2_1','bonbon_member_id_1','send_member_id_2_1','bon_member_id_2_1');"/>
+								</td>
+								<td style="background-color:#ffffff;" >
+									<input type="text" style="width:80%;" name="send_member_id" id="send_member_id_2_1">
+								</td>
+								<td style="background-color:#ffffff;" >
+									<input type="text" style="width:80%;" name="bon_member_id" id="bon_member_id_2_1" readonly>
+								</td>
+								<td style="background-color:#ffffff;" >
+									<input type="text" style="width:30%;" name="p_percent" id="p_percent_2">
+								</td>
+								<td style="background-color:#ffffff;" >
+									<input type="text" style="width:30%;" name="balance_sec" id="balance_sec_2">
+								</td>
+								<td style="background-color:#ffffff;"  >
+									<span style="display:inline-block; height:32px; padding:0 10px; font-weight:bold; color:#fff; line-height:32px; text-decoration:none; border:0; border-radius:4px; background-color:#2c558e;cursor:pointer;" class="list_menu" idx="16_2" cstat="" cfrm="frm_cate1_16_2" id="16_2">메뉴</span>
+								</td>
+								</form>
+							</tr>
+																				
+						</tbody>
+						</table>
+						<!-- 페이징 시작 -->
+
+						<!-- 페이징 시작 -->
+						<div class="pagination mt0">
+							<a href="/admanage/partner/member_list.php?pageNo=1&bmenu=1_3&smenu=1&field=user_nick&keyword=부본사닉&v_sect=PAT&s_gubun=IN&s_level=3&s_gender=&s_sect1=&s_sect2=&s_cnt=&s_order=1&s_sido=&s_gugun=&s_dong=&s_date=2022-01-11&e_date=2022-01-11&s_cate=" class="on">1</a>
+						</div>
+						<!-- 페이징 종료 -->
+				</div>	
+			</div>
+			<!-- 리스트 종료 -->
+			
+
+			</div>
+		</div>
+		<!-- content 종료 -->
+	</div>
+</div>
+
+<script type="text/javascript" src="js/enum.js"></script>
+<script type="text/javascript" src="js/time.js"></script>
+<script type="text/javascript" src="js/manage_partner_menu.js"></script>
+<script type="text/javascript" src="js/manage_partner_ref.js"></script>
+<script type="text/javascript" src="js/manage_partner_register.js"></script>
+<!-- <script type="text/javascript" src="js/common_menu.js"></script> -->
+<script type="text/javascript" src="js/socket.js"></script>
+<script>
+	var user = JSON.parse('<%-JSON.stringify(user)%>');
+
+	SetPartnerHeader(11, user.iClass);
+</script>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="Keywords" content="">
+    <meta name="Description" content="">
+    <meta http-equiv="Expires" content="Mon, 06 Jan 1990 00:00:01 GMT">
+    <meta http-equiv="Expires" content="-1">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Cache-Control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="requiresActiveX=true" >
+    <title>Setting</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script type="text/javascript" src="../js/jquery.bxslider.min.js"></script>
+    <script type="text/javascript" src="../js/placeholders.js"></script>
+    <script type="text/javascript" src="../js/layout.js"></script>
+    <script type="text/javascript" src="../js/common_js.js"></script>
+
+    <script src='/socket.io/socket.io.js'></script>
+    <script type="text/javascript" src="../js/manage_setting_ref.js"></script>
+    <script type="text/javascript" src="../js/socket.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="../css/general.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/button.css"/>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css" type="text/css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.8.18/jquery-ui.min.js"></script>
+    <link href='//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css' rel='stylesheet' type='text/css'>
+</head>
+
+<body style="font-family:'Spoqa Han Sans Neo';">
+    <div id="wrap" class="skin_type01">
+        <div class="list_tit">
+            <h3 style="font-size:20px;color:yellow;font-weight:bold;"><%=__('LetterRead')%></h3>
+        </div>
+
+        <div class="write">
+            <table id="read_letter">
+
+            </table>
+            
+            <div class="align_c margin_t20" id = "read_letter_buttons">
+            </div>
+        </div>
+    </div>
+    <script>
+        let user = JSON.parse('<%-JSON.stringify(agent)%>');
+        let contents = JSON.parse('<%-JSON.stringify(contents)%>');
+        let iocount = JSON.parse('<%-JSON.stringify(iocount)%>');
+        let letterType = JSON.parse('<%-JSON.stringify(letterType)%>');
+        Alert(iocount, "<%=__('RequestInput')%>", "<%=__('RequestOutput')%>,","<%=__('LetterSend')%>");
+
+        console.log(contents);
+
+        const strType = '<%=__("Type")%>';
+        const strDateSend = '<%=__("DateSend")%>';
+        const strDateRead = '<%=__("DateRead")%>';
+        const strSender = '<%=__("Sender")%>';
+        const strReceiver = '<%=__("Receiver")%>';
+        const strContents = '<%=__("Contents")%>';
+        const strConfirm = '<%=__("Confirm")%>';
+        const strNormal = '<%=__("Normal")%>';
+        const strRead = '<%=__("Read")%>';
+        const strUnread = '<%=__("Unread")%>';
+
+
+        $('#read_letter').empty();
+
+        let eType = strNormal;
+        if ( contents.eType == 'ANNOUNCE' )
+        {
+            eType = strAnnouncement;
+        }
+        let dateRead = contents.updatedAt;
+        let eRead = strRead;
+        if ( contents.eRead == 'UNREAD' )
+        {
+            dateRead = '';
+            eRead = strUnread;
+        }
+
+        let strModified = contents.strContents.replace(/(<br>)/g,'\r\n');
+        let strModifiedAnswer = (contents.strAnswers ?? '').replace(/(<br>)/g,'\r\n');
+
+        let buttonTag = `<a href="javascript:Close();" class="custom-btn btn-5"><%=__('Close')%></a>`;
+        if (user.iRootClass <= 3 || user.iPermission != 100) {
+            let strNickname = '';
+            if (letterType == 0) {
+                strNickname = contents.strFrom;
+            } else {
+                strNickname = contents.strTo;
+            }
+            buttonTag = `
+            <a href="javascript:OnClickWritingLetter('${strNickname}');" class="custom-btn btn-3">쪽지 쓰기</a>
+            <a href="javascript:Close();" class="custom-btn btn-5"><%=__('Close')%></a>
+        `;
+        }
+        $('#read_letter_buttons').append(buttonTag);
+
+        let strFrom1 = contents.strFrom;
+        if ( user.strNickname != strFrom1 ) {
+            strFrom1 = '관리자';
+        }
+        let strTo1 = contents.strTo;
+        if ( user.strNickname != strTo1 ) {
+            strTo1 = '관리자';
+        }
+        let subTag  = `
+                <th width="15%">${strSender}</th>
+                <td width="35%">${strFrom1}</td>
+                <th width="15%">${strReceiver}</th>
+                <td width="35%">${strTo1}</td>
+                `;
+
+        if ( user.iRootClass <= 3 ) {
+            subTag = `
+                <th width="15%">${strSender}</th>
+                <td width="35%"><a href="#" onclick="OnClickNickname('${contents.strFrom}')">${contents.strFrom}</a></td>
+                <th width="15%">${strReceiver}</th>
+                <td width="35%"><a href="#" onclick="OnClickNickname('${contents.strTo}')">${contents.strTo}</a></td>
+                `;
+        }
+
+        let tag =
+        `
+            <colgroup>
+                <col width="20%" />
+                <col width="30%" />
+                <col width="20%" />
+                <col width="30%" />
+            </colgroup>
+            <tr height="30">
+                ${subTag}
+            </tr>
+            <tr height="30">
+                <th width="15%">${strDateSend}</th>
+                <td width="35%">${contents.createdAt}</td>
+                <th width="15%">${strType}</th>
+                <td width="35%">${eType}</td>
+            </tr>
+            <tr>
+                <th>제목</th>
+                <td class="text-left" colspan="3">
+                    <input type="text" id="subject" style="width:100%;height: 40px;" name="content11" value="${contents.strSubject}" disabled>
+                </td>
+            </tr>
+            <tr>
+                <th>${strContents}</th>
+                <td class="text-left" colspan="3"><textarea style="width:100%;height:100px;white-space: pre-wrap;" readonly disabled>${strModified}</textarea></td>
+            </tr>
+            <tr>
+                <th>답변</th>
+                <td class="text-left" colspan="3"><textarea style="width:100%;height:100px;white-space: pre-wrap;" readonly disabled>${strModifiedAnswer}</textarea></td>
+            </tr>
+            <tr height="30">
+                <th width="15%">${strConfirm}</th>
+                <td width="35%">${eRead}</td>
+                <th width="15%">${strDateRead}</th>
+                <td width="35%">${dateRead}</td>
+            </tr>
+        `;
+        $('#read_letter').append(tag);
+
+        let Close = () => {
+            if (typeof(opener) != 'undefined') {
+                window.opener.parent.reload();
+            }
+            self.close();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+{
+  "name": "imanager",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.27.2",
+    "connect-flash": "^0.1.1",
+    "cookie-parser": "^1.4.6",
+    "dotenv": "^16.0.0",
+    "ejs": "^3.1.6",
+    "env": "^0.0.2",
+    "express": "^4.17.1",
+    "express-ejs-layouts": "^2.5.1",
+    "express-mysql-session": "^2.1.7",
+    "express-session": "^1.17.2",
+    "g": "^2.0.1",
+    "i18n": "^0.15.0",
+    "moment": "^2.29.1",
+    "moment-timezone": "^0.5.37",
+    "mysql": "^2.18.1",
+    "mysql2": "^2.3.3",
+    "node-cron": "^3.0.3",
+    "npm": "^10.2.1",
+    "passport": "^0.6.0",
+    "passport-local": "^1.0.0",
+    "sequelize": "^6.9.0",
+    "sequelize-cli": "^6.4.1",
+    "socket.io": "^4.3.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}

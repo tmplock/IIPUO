@@ -1,0 +1,83 @@
+<br><br><br>
+
+<div class="container">
+    <div class="sub-wrap">
+        <div class="subscr">
+            <div class="subtitle">
+                <h1>쪽지 보내기</h1>
+            </div>
+            <table>
+                <colgroup>
+                    <col style="width:24%;">
+                    <col style="width:70%;">
+                </colgroup>
+                
+                
+                <tr>
+                    <td>제목</td>
+                    <td style="padding: 15px 0">
+                        <input name="strSubject" type="text" id="strSubject">
+                    </td>
+                </tr>
+                <tr>
+                    <td>내용</td>
+                    <td>
+                        <textarea name="strContents" id="strContents" style="height:100px;"></textarea>
+                    </td>
+                </tr>
+            </table>
+            <div class="text-info-01">
+                쪽지를 전송 하는 페이지 입니다.<br />*** 아래의 보내기 버튼을 누르면 전송 됩니다.
+            </div>
+            <div class="btn_area_one">
+                <button type="button" onclick="WriteLetter();">보내기</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    checkBlockCharSpecial2(`#strSubject`);
+    checkBlockCharSpecial2(`#strContents`);
+
+    let WriteLetter = () => {
+        
+        let strSubject = $('#strSubject').val();
+        let strContents = $('#strContents').val();
+
+        console.log(`WriteLetter : strSubject(${strSubject}), strContents(${strContents})`);
+        
+        if (strSubject == "") {
+            alert("제목을 입력해주세요");
+            return;
+        }
+
+        if (strContents == "") {
+            alert("글 내용을 입력해주세요");
+            return;
+        }
+        
+        $.ajax({
+            
+            type:'post',
+            url: "/letter/request_writeletter",
+            context: document.body,
+            data:{strID:user.strID, strSubject:strSubject,strContents:strContents},
+
+            success:function(data) {
+
+
+                if ( data.result == 'OK' ) {
+                    alert('쪽지를 전송하였습니다.');
+                    console.log(data);
+                    window.location.href='/letter/listcs';
+                }
+                else
+                    alert('작성에 실패 하였습니다.');
+
+            }
+        });
+    }
+
+</script>

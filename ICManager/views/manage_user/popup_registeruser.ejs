@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="format-detection" content="telephone=no">
+<meta name="Keywords" content="">
+<meta name="Description" content="">
+<title><%=__('ViceAdmin')%> <%=__('Register')%></title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script type="text/javascript" src="/js/jquery.bxslider.min.js"></script>
+<script type="text/javascript" src="/js/placeholders.js"></script>
+<script type="text/javascript" src="/js/layout.js"></script>
+<script type="text/javascript" src="/js/common_js.js"></script>
+<link rel="stylesheet" type="text/css" href="/css/general.css"/>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css" type="text/css" /> 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>  
+<script src="https://code.jquery.com/ui/1.8.18/jquery-ui.min.js"></script>  
+</head>
+<body>
+	
+		<!-- content 시작 -->
+		<div class="content" style="position:relative; padding:0 10px 0 10px;">
+				
+				<div class="list_tit">
+					<h3 style="font-size:35px;color:yellow;font-weight:bold;padding-top:10px; font-family: 'Hahmlet', serif;"><%=__('User')%> <%=__('Register')%></h3>
+				</div>
+				<!-- 네비게이션 종료 -->
+				<div class="write">
+				
+				<form name="frm" action="member_write_action.php" target="_fra_admin" method="post"  enctype="multipart/form-data">
+					<input type="hidden" name="bmenu" value="1_3"/>
+					<input type="hidden" name="smenu" value=""/>
+					<input type="hidden" name="user_level" value="7"/>
+
+					<input type="hidden" name="id_ok" id="id_ok" value=""/>
+					<input type="hidden" name="nick_ok" id="nick_ok" value=""/>
+					<input type="hidden" name="member_type" id="member_type" value="PAT"/>
+					<input type="hidden" name="member_gubun" id="member_gubun" value="IN"/>
+					<input type="hidden" name="vmode" value="popup"/>
+
+					<input type="hidden" name="up_slot_slot" id="up_slot_slot"/>
+					<input type="hidden" name="up_bakara_bakara" id="up_bakara_bakara"/>
+					<input type="hidden" name="up_bakara_over" id="up_bakara_over"/>
+					<input type="hidden" name="up_blackj_blackj" id="up_blackj_blackj"/>
+
+					<p style="background-repeat:no-repeat; background-position:left center; font-size:16px; color:#454545; padding-left:22px;"><%=__('Partner')%> <%=__('Information')%></p>
+
+					<table>
+						<caption><%=__('BoardWrite')%> <%=__('Register')%></caption>
+						<colgroup>
+							<col style="width:15%;">
+							<col style="width:35%;">
+							<col style="width:15%;">
+							<col style="width:35%;">
+						</colgroup>
+							<tr>
+							<th scope="row"><%=__('Belong')%><%=__('Shop')%></th>
+							<td colspan="3">
+								<select name="chuchun_idx" id="chuchun_idx" size="1" style="vertical-align:middle;width:20%;" >
+									<option value=""><%=__('Shop')%></option>
+										<option value="8" >매장 1</option>
+										<option value="25" >문집</option>
+									</select>	
+							</td>
+						</tr>
+						<tr>
+							<th scope="row"> <%=__('ID')%></th>
+							<td colspan="3">
+								<input type="text" style="width:20%;" name="member_id" id="member_id" required="yes"  message="아이디"/>&nbsp;<a href="javascript:ch_id();" class="btn_red"><%=__('Duplication')%><%=__('OK')%></a>
+								<div id="check_id" style="paddig-top:10px;"></div>
+							</td>
+						</tr>
+						<tr>
+							<th scope="row"> <%=__('Password')%></th>
+							<td>
+								<input type="password" maxlength="16" name="member_password" required="yes"  message="비밀번호" style="width:80%; ime-mode:disabled"> <span style="display:inline-block; padding-top:4px;">(영문과 숫자조합으로 6-12자 사이) </span>
+							</td>
+							<th scope="row"> <%=__('PasswordConfirm')%></th>
+							<td>
+								<input type="password" maxlength="16" name="member_password2" required="yes"  message="비밀번호 확인" style="width:80%; ime-mode:disabled">
+							</td>
+						</tr>
+						
+						<tr>
+							<th scope="row"> <%=__('Nickname')%></th>
+							<td>
+								<input type="text" style="width:70%;" name="member_nick" required="no"  message="닉네임">
+							</td>
+							<th scope="row"> <%=__('Contact')%></th>
+							<td>
+								<input type="text" style="width:70%;" name="cell" required="no"  message="연락처">
+							</td>
+						</tr>
+
+						<tr>
+							<th scope="row"> <%=__('Output')%> <%=__('BankName')%></th>
+							<td>
+								<input type="text" style="width:80%;" name="bank_name" required="no"  message="환전 은행명">
+							</td>
+							<th scope="row"> <%=__('BankAccount')%></th>
+							<td>
+								<input type="text" style="width:80%;" name="bank_num" required="no"  message="계좌번호">
+							</td>
+						</tr>
+						<tr>
+							<th scope="row"> <%=__('BankAccountHolderName')%></th>
+							<td colspan="3">
+								<input type="text" style="width:30%;" name="bank_owner" required="no"  message="예금주">
+							</td>
+						</tr>
+					</table>
+								
+				</form>
+
+					<div class="write_btn align_r mt35">
+						<button class="btn_modify" onclick="go_submit();"><%=__('Save')%></button>
+						<a href="javascript:self.close();" class="btn_list"><%=__('Close')%></a>
+					
+					</div>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript", src="js/manage_user_popup_menu.js"></script>
+<script type="text/javascript">
+	var agent = JSON.parse('<%-JSON.stringify(agent)%>');
+</script>
+
+<div id="top_payment_alarm_area" style="text-align:right;top:15px;left:85%;width:10%;z-index:1000;position:absolute;">
+
+</div>
+
+</body>
+</html>

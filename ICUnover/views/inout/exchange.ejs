@@ -1,0 +1,80 @@
+<br><br><br>
+
+<div class="container">
+    <div class="subscr">
+        <div class="subtitle">
+            <h1>머니전환</h1>
+        </div>
+        <table>
+            <colgroup>
+                <col style="width:24%;">
+                <col style="width:50%;">
+            </colgroup>
+
+            <tr>
+                <td>로링비</td>
+                <td><input type="number" id="iRolling" name="iRolling" value="<%=user.iRolling%>"></td>
+            </tr>
+        </table>
+        <div class="text-info-01">아래의 머니 전환을 클릭하시면 로링비가 보유머니로 전환됩니다.</div>
+        <div class="btn_area_one">
+            <button type="button" onclick="RequestExchange();">머니 전환</button>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    checkBlockNum(`#iRolling`);
+
+    let GetInt = (str) => {
+
+        let iAmount = str.replace(/,/gi, '');
+        return parseInt(iAmount);
+    }
+
+    let iUserRolling = '<%= user.iRolling%>';
+    iUserRolling = parseInt(iUserRolling);
+
+    let RequestExchange = () => {
+
+        let iRolling = GetInt($('input[name=iRolling]').val());
+
+        console.log(`RequestExchange : iRolling (${iRolling})`);
+
+        if ( iRolling == 0 )
+        {
+            alert('전환할 로링비가 없습니다.');
+            return;
+        }
+
+        if ( iRolling < 10000 || iUserRolling < 10000 )
+        {
+            alert('전환 로링비는 10,000원 이상이어야 합니다.');
+            return;
+        }
+
+        $.ajax({
+            type:'post',
+            url: "/inout/request_exchange",
+            context: document.body,
+            data:{
+                strNickname:user.strNickname,
+                strGroupID:user.strGroupID,
+                iClass:user.iClass,
+                iRolling:iRolling
+            },
+            // data:{strID:kUser.strID},
+    
+            success:function(data) {
+    
+                console.log(data);
+
+                if ( data.result == 'OK' )
+                {
+                    location.reload();
+                }	
+            }
+        });
+    }
+</script>

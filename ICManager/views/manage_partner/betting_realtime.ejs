@@ -1,0 +1,133 @@
+
+	<div class="sub_wrap">
+		<div class="container clearfix">
+			<div class="content" style="position:relative; padding:0 10px 0 10px;">
+				<ul class="list_tab" style="margin-bottom:10px;height:50px;width:75%;z-index:10000;" id="partner_header">
+				</ul>
+			</div>
+
+			<div class="search_wrap" id="div_realtimebet_overview">
+			</div>
+
+			<div class="list">
+
+				<div style="background-color:#ffffff;text-align:right;padding-right:5px;padding-top:10px;padding-bottom:10px;" colspan="19">
+					<button class="btn_blue" id="button_toggle_record" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(136, 136, 248);color:white" onclick="OnClickMonthlyRecord();"><%=__('Open')%></button>
+				</div>
+	
+
+				<div class="search_wrap" id="div_realtimebet_overview_record">
+				</div>
+			
+				<br>
+
+				<div class="list_tit">
+					<h3><%=__('SubMenuRealtime')%>
+
+						<input style="margin-left:180px;width:100px;" type="hidden" id="datepicker1" class="datepicker"/>~
+						<input style="width:100px;" type="hidden" id="datepicker2" class="datepicker" />
+						
+					</h3>
+					<div style="color:yellow;font-weight:bold;margin-top:-35px;padding-left:170px;font-size:16px;" id="current_con_cnt"></div> 
+				</div>
+		
+				<!-- <div class="search_wrap" id="div_realtimebet">
+				</div> -->
+				<div class="write">
+					<table>
+						<caption></caption>
+						<colgroup>
+							<col style="width:20%">
+							<col style="width:20%">
+							<col style="width:20%">
+							<col style="width:20%">
+							<col style="width:20%">
+						</colgroup>
+						<tr id='div_realtimebet'>
+							
+						</tr>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script type="text/javascript" src="js/time.js"></script>
+	<script type="text/javascript" src="js/manage_partner_menu.js"></script>
+	<script type="text/javascript" src="js/manage_partner_ref.js"></script>
+	<script type="text/javascript" src="js/socket.js"></script>
+	<script>
+
+		var user = JSON.parse('<%-JSON.stringify(user)%>');
+		var objectOverview = JSON.parse('<%-JSON.stringify(data.overview)%>');
+		var objectRealtime = JSON.parse('<%-JSON.stringify(data.realtime)%>');
+		var iNumRooms = parseInt('<%=room_info.count%>');
+
+		console.log(objectOverview);
+
+
+		var iocount = JSON.parse('<%-JSON.stringify(iocount)%>');
+		//Alert(iocount);
+		Alert(iocount, "<%=__('RequestInput')%>", "<%=__('RequestOutput')%>","<%=__('LetterSend')%>");
+
+		
+		//console.log(objectRecords);
+		DatePicker();
+
+		$('#datepicker1').val(GetMonthlyStartDate());
+		$('#datepicker2').val(GetMonthlyEndDate());
+
+		function UpdateRoom()
+		{
+			$("#div_realtimebet").empty();
+
+			for ( var i = 0; i < iNumRooms; ++i )
+			{
+				//SetRoom(betting_object[i]);
+				console.log(objectRealtime[i].kBettingInfo[i].iBetting);
+				SetRoom(objectRealtime[i]);
+			}
+		}
+
+		function InitRoom(roomno)
+		{
+			// for ( var i = 0; i < 22; ++i)
+			// 	betting_object[roomno][i] = 0;
+			for ( var i = 0; i < 11; ++i )
+			{
+				// objectRealtime[roomno].kBettingInfo[i].iBetting = 0;
+				// objectRealtime[roomno].kBettingInfo[i].iWin = 0;
+				objectRealtime[0].kBettingInfo[i].iBetting = 0;
+				objectRealtime[0].kBettingInfo[i].iWin = 0;				
+			}				
+
+			UpdateRoom();
+		}
+
+		for ( var i = 0; i < iNumRooms; ++i )
+		{
+			SetRoom(objectRealtime[i]);
+		}
+		//SetOverview(objectOverview);
+		SetOverview(objectOverview, "#div_realtimebet_overview", true);
+
+		$("#table_record_list").hide();
+		var bToggleRecord = false;
+		function OnClickMonthlyRecord()
+		{
+			bToggleRecord = !bToggleRecord;
+
+			if ( bToggleRecord ) {
+				$("#table_record_list").show();
+				$("#button_toggle_record").text("닫기");
+
+				RequestBettingRecord(4, user.strGroupID, user.iClass, user.strID);
+			}
+			else {
+				$("#table_record_list").hide();
+				$("#button_toggle_record").text(strOpen);
+			}
+		}
+
+		SetPartnerHeader(0, user.iClass);
+	</script>

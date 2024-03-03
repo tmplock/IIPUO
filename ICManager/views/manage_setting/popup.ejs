@@ -1,0 +1,122 @@
+<div class="sub_wrap">
+    <!-- content 시작 -->
+    <div class="container clearfix">
+
+        <% if ( parseInt(user.iClass) < 3 && user.iPermission != 100 ) { %>
+            <ul style="float:right; margin-right:10px; position:relative; z-index:10;" class="clearfix">
+                <a class="btn_red" style="background-color: red;color:white;" type="button" href="javascript:OnClickWritingLetter('');"><%=__('LetterSendAll')%></a>
+            </ul>
+        <% } %>
+
+        <div class="content" style="position:relative; padding:0 10px 0 10px;">
+            <ul class="list_tab" style="margin-bottom:10px;width:75%;z-index:10000;" id="setting_header">
+            </ul>
+        </div>
+    
+        <div class="list">
+            <div class="search_wrap">
+                <div class="list_tit" style="margin-top:20px;">
+                    <h3><%=__('Popup')%>
+                    </h3>
+                    <% if ( parseInt(user.iClass) < 3 && user.iPermission != 100 ) { %>
+                        <button class="btn_add" type="button" onclick="OnClickWriteAnnouncement('POPUP');"><%=__('Write')%></span></button>
+                    <% } %>
+                </div>
+                    
+                <table class="search_list">
+                    <thead>
+                        <tr>
+                            <th width="5%"><%=__('Type')%></th>
+                            <th width="10%"><%=__('Enable')%></th>
+                            <th width="20%"><%=__('Subject')%></th>
+                            <th width="50%"><%=__('Contents')%></th>
+                            <th width="10%"><%=__('DateWrite')%></th>
+                            <% if ( parseInt(user.iClass) < 3 && user.iPermission != 100 ) { %>
+                                <th width="5%"><%=__('Menu')%></th>
+                            <% } %>
+                        </tr>
+                    </thead>
+                    <tbody id="ann_list">
+                    </tbody>
+                </table>
+            </div>	
+        </div>
+    </div>
+</div>
+</div>
+
+<script type="text/javascript" src="js/enum.js"></script>
+<script type="text/javascript" src="js/time.js"></script>
+<script type="text/javascript" src="js/manage_setting_menu.js"></script>
+<script type="text/javascript" src="js/manage_setting_ref.js"></script>
+<script type="text/javascript" src="js/socket.js"></script>
+<script>
+    let user = JSON.parse('<%-JSON.stringify(user)%>');
+
+    let iocount = JSON.parse('<%-JSON.stringify(iocount)%>');
+    Alert(iocount, "<%=__('RequestInput')%>", "<%=__('RequestOutput')%>","<%=__('LetterSend')%>");
+
+    SetSettingHeader(3, user.iClass);
+
+    let RequestAnnList = () => {
+
+        $.ajax({
+            url:"/manage_setting_popup/request_announcementlist",
+            type:"POST",
+            context: document.body,
+            data:{eType:'POPUP'},
+            success: function (obj) {
+
+                console.log(obj);
+                $('#ann_list').empty();
+
+                let anns = obj.anns;
+
+                for ( let i in anns )
+                {
+                    let tagSOTitle = `${strEnable}`;
+                    let tagSO = 
+                    `
+                    <option value="ENABLE" selected>${strEnable}</option>
+                    <option value="DISABLE">${strDisable}</option>
+                    `;
+                    if ( anns[i].eState == 'DISABLE')
+                    {
+                        tagSO = 
+                        `
+                            <option value="ENABLE">${strEnable}</option>
+                            <option value="DISABLE" selected>${strDisable}</option>
+                        `;
+                        tagSOTitle = `${strDisable}`;
+                    }
+
+                    let tag = 
+                    `
+                    <tr height="30">
+                        <td>${anns[i].id}</td>
+                        <% if ( parseInt(user.iClass) < 3 && user.iPermission != 100 ) { %>
+                            <td>
+                                <select style="vertical-align:middle;width:100%;" id="ann_state${anns[i].id}" onchange="OnAnnChangeState('${anns[i].id}');">
+                                    ${tagSO}
+                                </select>
+                            </td>
+                        <% } else { %>
+                            <td>${tagSOTitle}</td>
+                        <% } %>
+                        <td><a style="color:blue;" href="javascript:ReadAnnouncement('${anns[i].id}');">${anns[i].strSubject}</a></td>
+                        <td><a style="color:blue;" href="javascript:ReadAnnouncement('${anns[i].id}');">${anns[i].strContents}</a></td>
+                        <td>${anns[i].createdAt}</td>
+                        <% if ( parseInt(user.iClass) < 3 && user.iPermission != 100 ) { %>
+                            <td><a class="btn_red" href="javascript:RemoveAnnouncement('${anns[i].id}', '${anns[i].strSubject}');">${strRemove}</a></td>
+                        <% } %>
+                    </tr>
+                    `;
+                    $('#ann_list').append(tag);
+                }
+            }
+        });
+    }
+
+    RequestAnnList();
+
+</script>

@@ -1,0 +1,72 @@
+<div class="sub_wrap">
+    <!-- content 시작 -->
+    <div class="container clearfix">
+        <div class="content" style="position:relative; padding:0 10px 0 10px;">
+
+        </div>
+        <!-- 네비게이션 종료 -->
+        
+        <div class="list">
+        <!-- 검색창 시작 -->
+            <div class="list_tit">
+            <form name="s_mem" id="s_mem" method="post" action="game_current_money2.php">
+                <input type="hidden" name="s_game_type" value="bakara"/>
+                <input type="hidden" name="mode" value="daytot"/>
+                <input type="hidden" name="bmenu" value="1_3"/>
+                <input type="hidden" name="smenu" value="9"/>
+                
+                    <h3><%=__('Announcement')%>
+                &nbsp;&nbsp;
+                <select name="field" size="1" style="vertical-align:middle;width:6%;">
+                    <option value=""><%=__('Search')%></option>
+                                            <option value="content" ><%=__('Contents')%></option>
+                                        </select>
+                <input type="text" title="검색" name="keyword" id="keyword" style="width:15%;" value="">
+                &nbsp;
+                <a href="javascript:s_mem.submit();" class="btn_blue"><%=__('Search')%></a>
+                </h3>
+            </form>
+            </div>
+        <!-- 검색창 종료 -->
+            
+        <!-- 리스트 시작 -->
+        <div class="list">
+            <div class="search_wrap">	
+                <table class="search_list">
+                <thead>
+                <tr>
+					<th width="5%" style="font-size:15px;"><%=__('Index')%></th>
+					<th width="5%" style="font-size:15px;"><%=__('Subject')%></th>
+                    <th width="85%" style="font-size:15px;"><%=__('Contents')%></th>
+                    <th width="10%" style="font-size:15px;"><%=__('Time')%></th>
+                </tr>
+                </thead>
+				
+                <tbody>
+					<% data.forEach((list, index)=> { %>
+                    <tr>
+						<td height="40"><strong><%=list.id%></strong></td>
+                        <td height="40"><strong><%=list.subject%></strong></td>
+						<td height="40"><strong><%=list.content%></strong></td>
+						<td height="40"><strong><%=list.createdAt%></strong></td>
+                    </tr>
+					<% }) %>
+                </tbody>
+                </table>
+
+                <!-- 페이징 시작 -->
+                    <div class="pagination mt0">
+                        <a href="/admanage/partner/member_list.php?pageNo=1&bmenu=1_3&smenu=1&field=user_nick&keyword=부본사닉&v_sect=PAT&s_gubun=IN&s_level=3&s_gender=&s_sect1=&s_sect2=&s_cnt=&s_order=1&s_sido=&s_gugun=&s_dong=&s_date=2022-01-11&e_date=2022-01-11&s_cate=" class="on">1</a>
+                    </div>
+                    <!-- 페이징 종료 -->
+            </div>
+        </div>
+    <!-- content 종료 -->
+</div>
+</div>
+
+<script type="text/javascript", src="js/time.js"></script>
+<script type="text/javascript", src="js/manage_user_menu.js"></script>
+<script>
+    var user = JSON.parse('<%-JSON.stringify(user)%>');
+</script>

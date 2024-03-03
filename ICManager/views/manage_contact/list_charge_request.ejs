@@ -1,0 +1,270 @@
+<div class="sub_wrap">
+    <div class="container clearfix">
+        <div class="content" style="position:relative; padding:0 10px 0 10px;">
+            <ul class="list_tab" style="margin-bottom:10px;width:75%;z-index:10000;">
+                <li >
+                    <a href="#" id="list_contact_receive">받은쪽지 목록</a> &nbsp; &nbsp;
+                </li>
+                <li >
+                    <a href="#" id="list_contact_send">보낸쪽지 목록</a> &nbsp;
+                </li>
+            </ul>
+        </div>
+
+        <div class="list">
+
+            <div style="background-color:#ffffff;text-align:right;padding-right:5px;padding-top:0px;padding-bottom:0px;" colspan="19">
+
+                <input style="margin-left:180px;width:100px;" type="text" id="datepicker1" class="datepicker"/>~
+                <input style="width:100px;" type="text" id="datepicker2" class="datepicker" />
+                <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="RequestList(0);"><%=__('Search')%></button>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <%=__('Search')%>
+                <select style="width:80px;">
+                    <option value="NICKNAME"><%=__('Nickname')%></option>
+                </select>
+                <input id="keyword" style="margin-left:0px;width:100px;" type="text"/>
+                <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="RequestList(0);"><%=__('Search')%></button>
+                <select id="select_limit" style="width:80px;">
+                    <option value="20">20개씩</option>
+                    <option value="50">50개씩</option>
+                    <option value="100">100개씩</option>
+                </select>
+            </div>
+
+            <div class="search_wrap">
+                <div class="list_tit" style="margin-top:20px;">
+                    <h3>충전요청 목록
+                    </h3>
+                    <% if (user.iClass >= 2 && user.iPermission != 100) { %>
+                        <button class="btn_add" type="button" onclick="OnClickChargeRequest(0);">충전요청</button>
+                    <% } %>
+                </div>
+
+                <div id="member_temple_request_area">
+                    <table class="search_list">
+                        <caption><%=__('SearchResult')%></caption>
+                        <thead>
+                        <tr>
+                            <th width="5%"><%=__('Index')%></th>
+                            <th width="10%"><%=__('Nickname')%></th>
+                            <th width="10%"><%=__('InputAmount')%></th>
+                            <th width="10%"><%=__('StateStandby')%></th>
+                            <th width="10%"><%=__('StateProcess')%></th>
+                            <th width="10%"><%=__('DateRequest')%></th>
+                            <th width="10%"><%=__('DateProcess')%></th>
+                            <th width="10%"><%=__('Cancel')%></th>
+                            <th width="25%"><%=__('Memo')%></th>
+                        </tr>
+                        </thead>
+                        <tbody id="content_list">
+                        </tbody>
+                    </table>
+
+                    <div class="pagination mt0" id="pagination">
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="js/constants.js"></script>
+<script type="text/javascript" src="js/enum.js"></script>
+<script type="text/javascript" src="js/time.js"></script>
+<script type="text/javascript" src="js/socket.js"></script>
+<script type="text/javascript" src="js/manage_contact_menu.js"></script>
+<script type="text/javascript" src="js/manage_contact_ref.js"></script>
+<script type="text/javascript" src="js/pagination.js"></script>
+<script>
+    let user = JSON.parse('<%-JSON.stringify(user)%>');
+    let iocount = JSON.parse('<%-JSON.stringify(iocount)%>');
+    let list = [];
+
+    let iCurrentPage = 1;
+    let iLimit = 20;
+    $('#select_limit').on("change", function () {
+        iLimit = this.value;
+    });
+
+    $(document).ready(() => {
+        DatePicker();
+        $("#datepicker1").val(GetCurrentDate());
+        $("#datepicker2").val(GetCurrentDate());
+
+        Alert(iocount, "<%=__('RequestInput')%>", "<%=__('RequestOutput')%>,","<%=__('LetterSend')%>");
+        AlertintervalSoundOff('alert_charge');
+
+        RequestList(0);
+    });
+
+
+    let RequestList = (iPage) => {
+        const strKeyword = $('#keyword').val();
+        const dateStart = $('#datepicker1').val();
+        const dateEnd = $('#datepicker2').val();
+
+        $.ajax({
+            url:"/manage_contact/request_list_charge_request",
+            type:"POST",
+            context: document.body,
+            data: {
+                page:iPage,
+                strNickname:user.strNickname,
+                strKeyword:strKeyword,
+                dateStart:dateStart,
+                dateEnd:dateEnd,
+                iLimit: iLimit,
+                iPage: iCurrentPage
+            },
+            success: function (obj) {
+
+                $('#content_list').empty();
+                $('#pagination').empty();
+
+                if (obj.result == 'OK') {
+                    Alert(obj.iocount);
+
+                    $('#pagination').append(getPagination(iLimit, obj.totalCount, iCurrentPage));
+                    let totalCount = parseInt(obj.totalCount);
+                    let iStartIndex = totalCount;
+                    if ( totalCount > (iCurrentPage*iLimit) )
+                        iStartIndex = totalCount - iCurrentPage*iLimit;
+
+                    for ( let i in obj.list )
+                    {
+                        let iIndex = iStartIndex - i;
+                        let aObject = obj.list[i];
+                        list.push(aObject);
+
+                        let tagWait = '<td></td>';
+                        let tagProcess = '<td></td>';
+                        let tagCancel = '<td></td>';
+                        let strCompletedAt = '';
+                        let tagMemo = `<td>${aObject.strMemo}</td>`;
+                        // tagMemo = `<td id="input_memo" listid="${aObject.id}">
+                        //     <p id="memo_tx_${aObject.id}" style="color: black;"> ${aObject.strMemo} </p>
+                        //     <input type="text" style="width:90%; display:none" id="memo_${aObject.id}" value="${aObject.strMemo}" />
+                        //     <a href="#" style="display:none" class="btn_red save" id="button_memo_save_${aObject.id}">${strSave}</a>
+                        // </td>`;
+
+                        if (aObject.strTo == user.strNickname && user.iPermission != 100) {
+                            if ( aObject.eState == 'REQUEST' ) {
+                                tagWait = `<td id="td_state_wait_${aObject.id}"><a class="btn_blue" type="button" href="javascript:OnClickState('${aObject.id}', 0);">입금신청</a></td>`;
+                                tagCancel = `<td id="td_state_cancel_${aObject.id}"><a class="btn_red" type="button" href="javascript:OnClickCancel('${aObject.id}', 2);">취소</afont></td>`;
+                            } else if ( aObject.eState == 'STANDBY' ) {
+                                tagProcess = `<td id="td_state_process_${aObject.id}"><a class="btn_green" href="javascript:OnClickState('${aObject.id}', 1);">${strStateStandby}</a></td>`;
+                                tagCancel = `<td id="td_state_cancel_${aObject.id}"><a class="btn_red" type="button" href="javascript:OnClickCancel('${aObject.id}', 2);">취소</a></td>`;
+                            } else if ( aObject.eState == 'COMPLETE' ) {
+                                tagProcess = `<td id="td_state_process_${aObject.id}"><font style="color:blue;">처리완료</font></td>`;
+                                strCompletedAt = aObject.completedAt;
+                            } else if  ( aObject.eState == 'CANCEL' ) {
+                                tagProcess = `<td id="td_state_${aObject.id}"><font style="color:red;">취소</font></td>`;
+                                strCompletedAt = aObject.completedAt;
+                            }
+                        } else {
+                            if ( aObject.eState == 'REQUEST' )
+                                tagWait = '<td>확인중</td>';
+                            if ( aObject.eState == 'STANDBY' )
+                                tagProcess = '<td>확인중</td>'
+                            else if ( aObject.eState == 'COMPLETE' ) {
+                                tagProcess = `<td id="td_state_process_${aObject.id}"><font style="color:blue;">완료</font></td>`;
+                                strCompletedAt = aObject.completedAt;
+                            } else if  ( aObject.eState == 'CANCEL' ) {
+                                tagProcess = `<td id="td_state_cancel_${aObject.id}"><font style="color:red;">취소</font></td>`;
+                                strCompletedAt = aObject.completedAt;
+                            }
+                        }
+
+                        let strMemo = aObject.strMemo.replace(/(<br>)/g,' ');
+
+                        let tag =
+                            `
+                            <tr height="30">
+                                <td>${iIndex}</td>
+                                <td>${aObject.strFrom}</td>
+                                <td style="color: blue">${GetNumber(aObject.iAmount)}</td>
+                                ${tagWait}
+                                ${tagProcess}
+                                <td>${aObject.createdAt}</td>
+                                <td>${strCompletedAt}</td>
+                                ${tagCancel}
+                                ${tagMemo}
+                            </tr>
+                            `;
+
+                        $('#content_list').append(tag);
+                    }
+                }
+            }
+        });
+    }
+
+    let OnClickPage = (iPage) => {
+        if (iPage < 1) {
+            return;
+        }
+        iCurrentPage = iPage;
+        RequestList(iCurrentPage);
+    }
+
+    $(document).on('click', '#input_memo',  (event) => {
+        const id = $(event.currentTarget).attr('listid');
+        OnClickMemo(id);
+    });
+
+    let OnClickMemo = (id) => {
+        for (let i=0; i < list.length; i++) {
+            let memo_id = `memo_${list[i].id}`;
+            let memo_tx_id = `memo_tx_${list[i].id}`;
+            let button_memo_save = `button_memo_save_${list[i].id}`;
+            if (list[i].id==id) {
+                document.getElementById(memo_id).style = "width:80%";
+                document.getElementById(memo_tx_id).style = 'display:none';
+                document.getElementById(button_memo_save).style = "height:80%;";
+            } else {
+                document.getElementById(memo_id).style = 'width:80%; display:none';
+                document.getElementById(memo_tx_id).style = '';
+                document.getElementById(button_memo_save).style = "display:none";
+            }
+        }
+    }
+
+    let OnClickState = (id, type) => {
+        $.ajax({
+            url:'/manage_contact/request_charge_apply',
+            type:"POST",
+            data: {
+                id:id,
+                type:type
+            },
+            dataType: "json",
+            success: function (obj) {
+
+                if ( obj.result == 'OK' )
+                {
+                    // $(`#button_request_${id}`).remove();
+                    // $(`#button_standby_${id}`).remove();
+                    // $(`#button_cancel_${id}`).remove();
+                    // $(`#td_state_${id}`).append(`<font style="color:red;">${strCancel}</font>`);
+                }
+                else if ( obj.result == 'ERROR' )
+                {
+                    alert(strAlertErrorAlreadyComplete);
+
+                }
+
+                location.reload();
+            }
+        });
+    }
+
+    let OnClickCancel = (id, type) => {
+        if ( confirm(strConfirmCancel) ) {
+            OnClickState(id, type);
+        }
+    }
+
+</script>

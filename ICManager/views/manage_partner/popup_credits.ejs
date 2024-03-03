@@ -1,0 +1,206 @@
+<div style="height:5px;"></div>
+
+<div class="list">
+    <div class="search_wrap">
+        <p style="background-repeat:no-repeat; background-position:left center; font-size:20px; color:#454545; padding-left:22px;margin-top:10px;height:30px;margin-bottom:5px;">
+            가불 목록
+        </p>
+        <div style="background-color:#ffffff;text-align:right;padding-right:5px;padding-top:10px;padding-bottom:10px;" colspan="19">
+            <input style="margin-left:180px;width:100px;" type="text" id="datepicker1" class="datepicker"/>~
+            <input style="width:100px;" type="text" id="datepicker2" class="datepicker" />
+            <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearchInput(false);"><%=__('Search')%></button>
+        </div>
+        <table class="search_list">
+            <thead>
+            <tr>
+                <th width="5%"><%=__('Index')%></th>
+                <th width="15%">가불전 금액</th>
+                <th width="15%">가불 금액</th>
+                <th width="15%">가불후 금액</th>
+                <th width="15%">처리자</th>
+                <th width="15%">일시</th>
+                <th width="50%">메모</th>
+            </tr>
+            </thead>
+            <tbody id="credit_list">
+            </tbody>
+        </table>
+
+        <div class="pagination mt0">
+            <a href="javascript:get_data('inner_partner_list2.php', 'inner_content', 's_sido=13&s_gugun=parent_level=4&s_date=&e_date=&s_cate=&pageNo=1');" class="on" style="color:#ffffff;">1</a>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="js/constants.js"></script>
+<script type="text/javascript" src="js/enum.js"></script>
+<script type="text/javascript" src="js/time.js"></script>
+<script type="text/javascript" src="js/util.js"></script>
+<script type="text/javascript" src="js/manage_partner_popup_menu.js"></script>
+<script type="text/javascript" src="js/manage_inout_ref.js"></script>
+<script type="text/javascript">
+    let agent = JSON.parse('<%-JSON.stringify(agent)%>');
+    let list = JSON.parse('<%-JSON.stringify(list)%>');
+    let isEdit = JSON.parse('<%-JSON.stringify(isEdit)%>');
+
+    DatePicker();
+    $("#datepicker1").val(GetCurrentDate());
+    $("#datepicker2").val(GetCurrentDate());
+
+    $(document).ready( ()=> {
+        SetList(list);
+    });
+
+    let OnClickSearchInput = (bSearch) => {
+
+        let date1 = $("#datepicker1").val();
+        let date2 = $("#datepicker2").val();
+
+        let strNickname = '';
+        if ( bSearch == true )
+            strNickname = $('#strSearchNickname').val();
+
+        $.ajax(
+            {
+                type:'post',
+                url: "/manage_partner/request_credits",
+                context: document.body,
+                data:{dateStart:date1, dateEnd:date2, strID:agent.strID, strNickname:strNickname},
+
+                success:function(obj) {
+                    console.log(obj);
+
+                    SetList(obj.data);
+                }
+            }
+        );
+    }
+
+    let OnClickMemo = (id) => {
+        console.log(`id : ${id}`);
+
+        let memo = $(`#memoinput_${id}`).val();
+
+        $.ajax({
+            type:'post',
+            url: "/manage_partner/request_credit_memo_apply",
+            context: document.body,
+            data:{id:id, strMemo:memo},
+
+            success: (obj) => {
+
+                if ( obj.result == 'OK' ) {
+                    window.opener.location.reload(true);
+                } else {
+                    if ( obj.reason == 'NOTENOUGH' ) {
+                        alert(strAlertErrorNotEnoughMoney);
+                    } else {
+                        alert(strAlertComplete);
+                        window.opener.location.reload(true);
+                    }
+                }
+                location.reload();
+            },
+            error:function(request,status,error){
+                alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+            }
+        });
+    }
+
+    let SetList = (list) => {
+        $("#credit_list").empty();
+        if (list.length > 0) {
+            let sumBefore = 0;
+            let sumIncrease = 0;
+            let sumTotal = 0;
+
+            for (let i = 0; i<list.length; i++) {
+                let aObject = list[i];
+                let iSettleAccBefore = parseInt(aObject.iSettleAccBefore);
+                if (iSettleAccBefore == 0)
+                {
+                    iSettleAccBefore = parseInt(aObject.iSettleAcc);
+                }
+
+                let target = '';
+                switch ( parseInt(aObject.iClass) )
+                {
+                    case EAgent.eAdmin:
+                        target = '본사';
+                        break;
+                    case EAgent.eProAdmin: //  PAdmin
+                        // target = EAgent.eProAdmin;
+                        target = '대본사';
+                        break;
+                    case EAgent.eViceAdmin: //  VAdmin
+                        // target = EAgent.eViceAdmin;
+                        target = '부본사';
+                        break;
+                    case EAgent.eAgent: //  Agent
+                        // target = EAgent.eAgent;
+                        target = '총판';
+                        break;
+                    case EAgent.eShop: //  Shop
+                        // target = EAgent.eShop;
+                        target = '매장';
+                        break;
+                }
+
+                let iBeforeCredit = parseInt(list[i].iBeforeCredit);
+                if (isNaN(iBeforeCredit)) {
+                    iBeforeCredit = 0;
+                }
+                sumBefore = sumBefore + iBeforeCredit;
+
+                let iIncrease = parseInt(list[i].iIncrease);
+                if (isNaN(iIncrease)) {
+                    iIncrease = 0;
+                }
+                sumIncrease = sumIncrease + iIncrease;
+
+                sumTotal = sumTotal + (iBeforeCredit + iIncrease);
+
+                let memoTag = `<input style="width:70%;" type="text" id="memoinput_${list[i].id}" value="${list[i].strMemo}" disabled="disabled">`;
+                if (isEdit) {
+                    memoTag = `<input style="width:70%;" type="text" id="memoinput_${list[i].id}" value="${list[i].strMemo}"><button style="color:white;" class="menu4" onclick="OnClickMemo(${list[i].id});">저장</button>`;
+                }
+
+                $('#credit_list').append(`
+                    <tr>
+                        <td>${i+1}</td>
+                        <td style="font-weight:100;">${GetNumberSign(iBeforeCredit, '0')}</td>
+                        <td style="font-weight:100;">${GetNumberSign(iIncrease, '0')}</td>
+                        <td style="font-weight:100;">${GetNumberSign((iBeforeCredit + iIncrease), '0')}</td>
+                        <td>${list[i].writer}</td>
+                        <td>${list[i].createdAt}</td>
+                        <td>${memoTag}</td>
+                    </tr>
+                `);
+            }
+
+            $('#credit_list').append(`
+                    <tr>
+                        <td>합</td>
+                        <td style="font-weight:100;"></td>
+                        <td style="font-weight:100;">${GetNumberSign(sumIncrease, '0')}</td>
+                        <td style="font-weight:100;"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                `);
+        } else {
+            $('#credit_list').append(`
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+            `);
+        }
+    }
+</script>

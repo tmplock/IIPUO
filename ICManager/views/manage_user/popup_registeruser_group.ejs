@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="format-detection" content="telephone=no">
+<meta name="Keywords" content="">
+<meta name="Description" content="">
+<title>부본사등록</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script type="text/javascript" src="/js/jquery.bxslider.min.js"></script>
+<script type="text/javascript" src="/js/placeholders.js"></script>
+<script type="text/javascript" src="/js/layout.js"></script>
+<script type="text/javascript" src="/js/common_js.js"></script>
+<link rel="stylesheet" type="text/css" href="/css/general.css"/>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css" type="text/css" /> 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>  
+<script src="https://code.jquery.com/ui/1.8.18/jquery-ui.min.js"></script>  
+</head>
+<body>
+	
+		<!-- content 시작 -->
+		<div class="content" style="position:relative; padding:0 10px 0 10px;">
+				
+				<div class="list_tit">
+					<h3 style="font-size:35px;color:yellow;font-weight:bold;padding-top:10px;">회원 일괄등록</h3>
+				</div>
+				<!-- 네비게이션 종료 -->
+				<div class="write">
+				
+				<form name="frm" action="member_write_action.php" target="_fra_admin" method="post"  enctype="multipart/form-data">
+					<input type="hidden" name="bmenu" value="1_3"/>
+					<input type="hidden" name="smenu" value=""/>
+					<input type="hidden" name="user_level" value="7"/>
+
+					<input type="hidden" name="id_ok" id="id_ok" value=""/>
+					<input type="hidden" name="nick_ok" id="nick_ok" value=""/>
+					<input type="hidden" name="member_type" id="member_type" value="PAT"/>
+					<input type="hidden" name="member_gubun" id="member_gubun" value="IN"/>
+					<input type="hidden" name="vmode" value="popup"/>
+
+					<input type="hidden" name="up_slot_slot" id="up_slot_slot"/>
+					<input type="hidden" name="up_bakara_bakara" id="up_bakara_bakara"/>
+					<input type="hidden" name="up_bakara_over" id="up_bakara_over"/>
+					<input type="hidden" name="up_blackj_blackj" id="up_blackj_blackj"/>
+
+					<p style="background-repeat:no-repeat; background-position:left center; font-size:16px; color:#454545; padding-left:22px;">파트너 정보</p>
+
+					<table>
+						<caption>게시글 등록</caption>
+						<colgroup>
+							<col style="width:15%;">
+							<col style="width:35%;">
+							<col style="width:15%;">
+							<col style="width:35%;">
+						</colgroup>
+							<tr>
+							<th scope="row">소속 매장</th>
+							<td colspan="3">
+								<select name="chuchun_idx" id="chuchun_idx" size="1" style="vertical-align:middle;width:20%;" required="yes" message="소속매장">
+									<option value="">소속 매장 선택</option>
+																			<option value="8" >매장 1</option>
+																			<option value="25" >문집</option>
+																	</select>	
+							</td>
+						</tr>
+						<tr>
+							<th scope="row">생성할 계정</th>
+							<td colspan="3">
+								<input type="text" style="width:20%;" name="attach_count_1" id="attach_count_1" required="yes" message="생성할 계정 갯수" is_num="yes"/>&nbsp;개의 계정을 일괄 생성합니다.
+							</td>
+						</tr>					
+					</table>
+								
+				</form>
+
+					<div class="write_btn align_r mt35">
+						<button class="btn_modify" onclick="go_submit();"><%=__('Save')%></button>
+						<a href="javascript:self.close();" class="btn_list"><%=__('Close')%></a>
+					
+					</div>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript", src="js/manage_user_popup_menu.js"></script>
+<script type="text/javascript">
+	var agent = JSON.parse('<%-JSON.stringify(agent)%>');
+</script>
+
+<div id="top_payment_alarm_area" style="text-align:right;top:15px;left:85%;width:10%;z-index:1000;position:absolute;">
+
+</div>
+
+
+</body>
+</html>

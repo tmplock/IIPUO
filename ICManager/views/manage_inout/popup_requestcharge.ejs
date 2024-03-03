@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="format-detection" content="telephone=no">
+<meta name="Keywords" content="">
+<meta name="Description" content="">
+<title>Inout</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script type="text/javascript" src="../../js/jquery.bxslider.min.js"></script>
+<script type="text/javascript" src="../../js/placeholders.js"></script>
+<script type="text/javascript" src="../../js/layout.js"></script>
+<script type="text/javascript" src="../../js/common_js.js"></script>
+<link rel="stylesheet" type="text/css" href="../../css/general.css"/>
+<link rel="stylesheet" type="text/css" href="../../css/button.css"/>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css" type="text/css" /> 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>  
+<script src="https://code.jquery.com/ui/1.8.18/jquery-ui.min.js"></script>
+<link href='//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css' rel='stylesheet' type='text/css'>
+</head>
+
+<body style="font-family:'Spoqa Han Sans Neo';">
+		<div class="content" style="position:relative; padding:0 10px 0 10px;">
+			<div class="list_tit">
+					<h3 style="font-size:25px;color:yellow;font-weight:bold;"><%=__('RequestInput')%> ▶ <font style="color:white;"><%=user.strNickname%></font></h3>
+					<h3></h3>
+					<h3></h3>
+				</div>
+
+			<div class="write">
+					<table style="font-size:15px;background-color:#c0c0c0;">
+						<caption><%=__('Partner')%> <%=__('Modify')%></caption>
+						<colgroup>
+							<col style="width:30%">
+							<col style="width:70%">
+						</colgroup>
+						
+						<tr style="background-color:#a4aaa7;"><td colspan="4" style="height:15px;background-color:#d8c8b2;"></td></tr>
+						
+						<tr style="background-color:#a4aaa7;">
+							<th scope="row" style="font-size:15px;"><%=__('MyCash')%></th>
+							<td colspan="3">
+								<%=user.iCash.toLocaleString()%> <%=__('Currency')%>
+							</td>
+						</tr>
+						<tr style="background-color:#a4aaa7;"><td colspan="4" style="height:15px;background-color:#d8c8b2;"></td></tr>
+						<tr style="background-color:#a4aaa7;">
+							<th scope="row" style="font-size:15px;" rowspan="1">은행명</th>
+							<td colspan="3"><%=bank.strBankName%></td>
+						</tr>
+						<tr style="background-color:#a4aaa7;">
+							<th scope="row" style="font-size:15px;" rowspan="1">예금주</th>
+							<td colspan="3"><%=bank.strBankHolder%></td>
+						</tr>
+						<tr style="background-color:#a4aaa7;">
+							<th scope="row" style="font-size:15px;" rowspan="1">계좌번호</th>
+							<td colspan="3"><%=bank.strBankNumber%></td>
+						</tr>
+						<tr style="background-color:#a4aaa7;"><td colspan="4" style="height:15px;background-color:#d8c8b2;"></td></tr>
+						<tr style="background-color:#a4aaa7;">
+							<th scope="row" style="font-size:15px;" rowspan="1"><%=__('RequestMoney')%></th>
+							<td colspan="3">
+								<input type="number" style="width:30%;height:30px;" id="amount" value=""> <%=__('Currency')%>
+							</td>
+						</tr>
+
+						<tr style="background-color:#a4aaa7;"><td colspan="2" style="height:15px;background-color:#d8c8b2;"></td></tr>
+						<tr style="background-color:#a4aaa7;">
+							<th scope="row" style="font-size:15px;" rowspan="1">입금자명</th>
+							<td colspan="3">
+								<input type="text" style="width:30%;" id="strAccountOwner" value="">
+							</td>
+						</tr>
+				</table>
+				
+				<div class="align_c margin_t20">
+					<button id='request_adjustinput' class="custom-btn btn-3" style="font-family:'Spoqa Han Sans Neo';"><span><%=__('RequestInput')%></span></button>
+					<button onclick="javascript:self.close();" class="custom-btn btn-5" style="font-family:'Spoqa Han Sans Neo';"><%=__('Cancel')%></button>
+				</div>
+			</div>
+		</div>
+
+        <div id="top_payment_alarm_area" style="text-align:right;top:15px;left:85%;width:10%;z-index:1000;position:absolute;">
+
+        </div>
+
+    </body>
+
+	<script>
+		let user = JSON.parse('<%-JSON.stringify(user)%>');
+		let bank = JSON.parse('<%-JSON.stringify(bank)%>');
+		console.log(user);
+
+		const strAlertIncorrectInputMoney = '<%=__("AlertIncorrectInputMoney")%>';
+		const strAlertComplete = '<%=__("AlertComplete")%>';
+		const strAlertIncorrectPassword = '<%=__("AlertIncorrectPassword")%>';
+		const strConfirmRequest = '<%=__("ConfirmRequest")%>';
+
+		$(document).ready(() => {
+			checkBlockCharSpecial('#strAccountOwner');
+			checkBlockNum(`#amount`);
+		});
+
+		$(document).on('click', '#request_adjustinput', (event) => {
+
+			const iAmount = parseInt($('#amount').val());
+
+			if ( iAmount == 0 || iAmount == '' )
+			{
+				alert(strAlertIncorrectInputMoney);
+				return;
+			}
+
+			const strAccountOwner = $('#strAccountOwner').val();
+
+			if ( confirm(strConfirmRequest))
+			{
+				$.ajax({
+					type:'post',
+					url: "/manage_inout_popup/request_adjustinput",
+					context: document.body,
+					data:{strNickname:user.strNickname, strGroupID:user.strGroupID, iClass:user.iClass, iAmount:iAmount, iPreviousCash:user.iCash, strBankOwner:strAccountOwner,
+						strBankName: bank.strBankName, strAccountNumber: bank.strAccountNumber},
+			
+					success:function(data) {
+
+                        let result = data.result;
+						if ( result == 'OK' )
+						{
+							alert(strAlertComplete);
+							self.close();
+						}
+                        else
+                        {
+                            alert(data.msg);
+                        }
+		
+					}
+				});
+			}
+		})
+	</script>
+</html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="format-detection" content="telephone=no">
+<meta name="Keywords" content="">
+<meta name="Description" content="">
+<title><%=__('Letter')%></title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script type="text/javascript" src="js/jquery.bxslider.min.js"></script>
+<script type="text/javascript" src="js/placeholders.js"></script>
+<script type="text/javascript" src="js/layout.js"></script>
+<script type="text/javascript" src="js/common_js.js"></script>
+<link rel="stylesheet" type="text/css" href="css/general.css"/>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css" type="text/css" /> 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>  
+<script src="https://code.jquery.com/ui/1.8.18/jquery-ui.min.js"></script>  
+</head>
+
+<body>
+<!-- content 시작 -->
+	<div class="content" style="position:relative; padding:0 10px 0 10px;">
+		<!-- 타이틀 시작 -->
+			<div class="list_tit" style="height:80px;">
+				<h3> 
+					<span style="font-size:35px;color:yellow;font-weight:bold;padding-top:10px; font-family: 'Hahmlet', serif;">[유저] &nbsp;<%=agent.strNickname%> (<%=agent.strID%>)</span> 
+				</h3>
+				<h3>
+					<div style="text-align:right;padding-right:0px;margin-top:-55px;">
+					
+						<span id="top_total_point_area">
+							<font style="color:#00FFFF;font-size:15px;font-weight:bold;">캐시 :</font>
+							<font style="color:yellow;font-size:15px;font-weight:bold;"><%=agent.iCash.toLocaleString()%></font>
+							&nbsp;&nbsp;
+							<font style="color:#00FFFF;font-size:15px;font-weight:bold;">로링비 :</font>
+							<font style="color:yellow;font-size:15px;font-weight:bold;"><%=parseInt(agent.iRolling).toLocaleString()%></font>
+							&nbsp;&nbsp;
+							<font style="color:#00FFFF;font-size:15px;font-weight:bold;">죽장 :</font>
+							<font style="color:yellow;font-size:15px;font-weight:bold;">0</font>
+							&nbsp;&nbsp;&nbsp;
+						</span>
+					</div>
+				</h3>
+
+			</div>
+		<!-- 타이틀 종료 -->
+
+		<div class="write">
+				<form name="frm" id="frm" action="memo_send_dan_action.php" target="_fra_admin" method="post"  enctype="multipart/form-data">
+					<input type="hidden" name="member_idx" value="84"/>
+
+					<input type="hidden" name="mode" value="msg_send"/>
+					<input type="hidden" name="msg_key" value="1642467649QGKEX"/>
+					<input type="hidden" name="send_sect" value="member"/>
+					<input type="hidden" name="goods" >	
+					<input type="hidden" name="user_sect" value="GEN"> 
+				
+					<input type="hidden"  name="msg_gubun" value="memo"> <!-- 발송대상이 회원 -->	
+
+					<table>
+						<caption>가맹점 수정</caption>
+						<colgroup>
+							<col style="width:20%">
+							<col style="width:30%">
+							<col style="width:20%">
+							<col style="width:30%">
+						</colgroup>
+						<tr>
+							<th scope="row" style="font-size:15px;">수신인</th>
+							<td colspan="3" style="font-size:15px;">
+								보석 (YGW00084)
+							</td>
+						</tr>
+						<tr>
+							<th style="font-size:15px;">쪽지내용</th>
+							<td colspan="3">
+								<textarea name="content" id="content" style="width:100%;height:100px;" required="yes"  message=""></textarea>
+							</td>
+					</tr>
+					</table>
+
+				</form>
+				
+					<div class="write_btn align_r">
+						<button class="btn_modify" onclick="go_submit();">보내기</button>
+						<a href="javascript:self.close();" class="btn_list">닫기</a>
+					</div>
+				
+			</div>
+
+<!-- 히스토리 시작 -->
+				<div class="list_tit">
+					<h3 style="font-size:28px;color:yellow;font-weight:bold;">보석 (YGW00084) 에게 발신한 쪽지 내역</h3>
+				</div>
+
+				<div class="search_wrap">
+					
+					<table class="search_list">
+				<thead>
+					<tr>
+					<th width="5%"><%=__('Index')%></th>
+						<th width="80%" style="font-size:15px;">발송내용</th>
+						<th width="15%" style="font-size:15px;">발송일시</th>
+					</tr>
+				</thead>
+				<tbody>
+									<tr>
+						<td colspan="20" height="40"><strong>발송 내역이 없습니다.</strong></td>
+					</tr>
+				
+			
+				</tbody>
+			</table>
+
+				<div class="pagination mt0">
+						<a href="javascript:get_data('inner_partner_list2.php', 'inner_content', 's_sido=13&s_gugun=parent_level=4&s_date=&e_date=&s_cate=&pageNo=1');" class="on" style="color:#ffffff;">1</a>
+								</div>
+				</div>
+			
+		<!-- 본문 종료 -->
+	</div>
+<!-- content 종료 -->
+<script type="text/javascript", src="js/manage_user_popup_menu.js"></script>
+<script type="text/javascript">
+	var agent = JSON.parse('<%-JSON.stringify(agent)%>');
+// $(document).ready(function() {
+// 	day_tot_view('N');
+// 	$("#day_tot_list_area").hide();
+// });
+
+// function day_tot_view(viewy){
+// 	if(viewy == "N"){
+// 		$("#day_tot_list_area").hide();
+
+// 		$(".day_tot_row").hide();
+// 		$("#day_tot_btn_1").hide();
+// 		$("#day_tot_btn_2").show();
+// 	} else if(viewy == "Y"){
+// 		$("#day_tot_list_area").show();
+
+// 		$(".day_tot_row").show();
+// 		$("#day_tot_btn_1").show();
+// 		$("#day_tot_btn_2").hide();
+// 	}
+// }
+
+
+</script>
+
+<div id="top_payment_alarm_area" style="text-align:right;top:15px;left:85%;width:10%;z-index:1000;position:absolute;">
+
+</div>
+
+
+</body>
+</html>

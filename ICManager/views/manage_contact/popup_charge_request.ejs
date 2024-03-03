@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="Keywords" content="">
+    <meta name="Description" content="">
+    <meta http-equiv="Expires" content="Mon, 06 Jan 1990 00:00:01 GMT">
+    <meta http-equiv="Expires" content="-1">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Cache-Control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="requiresActiveX=true" >
+    <title>Inout</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script type="text/javascript" src="../../js/jquery.bxslider.min.js"></script>
+    <script type="text/javascript" src="../../js/placeholders.js"></script>
+    <script type="text/javascript" src="../../js/layout.js"></script>
+    <script type="text/javascript" src="../../js/common_js.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../css/general.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/button.css"/>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css" type="text/css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.8.18/jquery-ui.min.js"></script>
+    <link href='//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css' rel='stylesheet' type='text/css'>
+</head>
+
+<body style="font-family:'Spoqa Han Sans Neo';">
+<div class="content" style="position:relative; padding:0 10px 0 10px;">
+    <div id="list_tit">
+    </div>
+
+    <div class="write">
+        <table style="font-size:15px;background-color:#c0c0c0;">
+            <caption><%=__('Partner')%> <%=__('Modify')%></caption>
+            <colgroup>
+                <col style="width:30%">
+                <col style="width:70%">
+            </colgroup>
+
+            <tr style="background-color:#a4aaa7;"><td colspan="4" style="height:15px;background-color:#d8c8b2;"></td></tr>
+            <tr style="background-color:#a4aaa7;">
+                <th scope="row" style="font-size:15px;" rowspan="1"><%=__('RequestMoney')%></th>
+                <td colspan="3">
+                    <input type="number" style="width:30%;height:30px;" id="iAmount" value=""> <%=__('Currency')%>
+                </td>
+            </tr>
+            <tr style="background-color:#a4aaa7;"><td colspan="2" style="height:15px;background-color:#d8c8b2;"></td></tr>
+            <tr style="background-color:#a4aaa7;">
+                <th scope="row" style="font-size:15px;" rowspan="1">메모</th>
+                <td colspan="3">
+                    <input type="text" style="width:30%;" id="strMemo" value="">
+                </td>
+            </tr>
+        </table>
+
+        <div class="align_c margin_t20">
+            <a href="javascript:Send();" class="custom-btn btn-3"><span><%=__('Send')%></span></a>
+            <a href="javascript:ExitPopup();" class="custom-btn btn-5"><%=__('Cancel')%></a>
+        </div>
+
+    </div>
+</div>
+
+<div id="top_payment_alarm_area" style="text-align:right;top:15px;left:85%;width:10%;z-index:1000;position:absolute;">
+</div>
+
+<script>
+    let user = JSON.parse('<%-JSON.stringify(user)%>');
+    let strTo = JSON.parse('<%-JSON.stringify(strTo)%>');
+    console.log(user);
+    console.log(strTo);
+
+    const strAlertIncorrectInputMoney = '<%=__("AlertIncorrectInputMoney")%>';
+    const strAlertComplete = '<%=__("AlertComplete")%>';
+    const strAlertIncorrectPassword = '<%=__("AlertIncorrectPassword")%>';
+    const strConfirmRequest = '<%=__("ConfirmRequest")%>';
+
+    $(`#list_tit`).empty();
+    $(`#list_tit`).append(`
+        <h3 style="font-size:25px;color:yellow;font-weight:bold;">충전요청 ▶ <font style="color:white;">${user.strNickname}</font> [${user.strGroupID}]</h3>
+        <h3></h3>
+        <h3></h3>
+    `);
+
+    let Send = () => {
+        let iAmount = parseInt($('#iAmount').val());
+        if (iAmount == null || isNaN(iAmount)) {
+            alert('신청 금액을 입력해주세요');
+            return;
+        }
+
+        let strMemo = $('#strMemo').val().replace(/(\n|\r\n)/g, '<br>');
+
+        if ( strTo == '' )
+        {
+            alert(strAlertNoReceivers);
+        }
+        else if ( iAmount <= 0 )
+        {
+            alert('신청 금액을 입력해주세요');
+        }
+        else
+        {
+            $.ajax({
+                url:"/manage_contact/request_charge_request",
+                type:"POST",
+                context: document.body,
+                data: {
+                    iClass:user.iClass,
+                    strTo:strTo,
+                    strFrom:user.strNickname,
+                    strGroupID:user.strGroupID,
+                    // iPreviousCash:req.body.iPreviousCash,
+                    iAmount:iAmount,
+                    strMemo:strMemo,
+                },
+                success: function (obj) {
+
+                    if ( obj.result == 'OK' )
+                    {
+                        alert(strAlertComplete);
+                        self.close();
+                    }
+                }
+            });
+        }
+    }
+
+    let ExitPopup = () => {
+        window.open('', '_self');
+        window.close();
+    }
+</script>
+
+</body>
+</html>

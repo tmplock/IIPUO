@@ -1,0 +1,58 @@
+<html>
+<html lang="ko"></html>
+
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="css/default.css">
+    <script  src="http://code.jquery.com/jquery-latest.min.js"></script>
+    <script src='/socket.io/socket.io.js'></script>
+</head>
+
+    <body>
+
+        <a id = "supersong"></a>
+
+        <div class="table-box">
+            <table class="table table--min" cellspacing="0" cellpadding="0">
+                <thead>
+                    <tr>
+                        <th style="width:10%">Game</th>
+                        <th>User</th>
+                        <th>Target</th>
+                        <th>Chips</th>
+                    </tr>
+                </thead>
+                <tbody id="list">
+
+                </tbody>
+            </table>
+        </div>
+
+        <script>
+            var socket = io();
+
+            socket.on("supersong", (betting) => {
+
+              console.log(betting);
+                //alert(iChips);
+                //$("#supersong").text(chips.chips);
+
+                var tag = `<tr>
+                <td></td>    
+                <td>${"test"}</td>
+                <td>${betting.target}</td>
+                <td>${betting.chips}</td>
+                </tr>`;
+
+                $('#list').append(tag);
+
+            });
+
+            function betting()
+            {
+                $("#betting").submit();
+            }
+        </script>
+    </body>
+
+</html>

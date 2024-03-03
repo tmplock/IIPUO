@@ -1,0 +1,193 @@
+<div style="height:5px;"></div>
+<div class="list">
+	<div class="search_wrap">
+		<p style="background-repeat:no-repeat; background-position:left center; font-size:20px; color:#454545; padding-left:22px;margin-top:10px;height:30px;margin-bottom:5px;"><%=__('Memo')%></p>
+			<form name="frm_note" action="note_write_action.php" target="_fra_admin" method="post"  enctype="multipart/form-data">
+				<input type="hidden" name="s_member" value="">
+				<table class="search_list">
+						<caption><%=__('Write')%></caption>
+						<colgroup>
+							<col style="width:90%;">
+							<col style="width:10%;">
+						</colgroup>
+						<thead>
+							<tr>
+								<th scope="col"><%=__('Contents')%></th>
+								<th scope="col"><%=__('Register')%></th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>
+									<textarea style="width:90%;height:50px;" name="content" id="content" required="yes" message="메모내용"></textarea>
+								</td>
+								<td><a href="javascript:go_submit_note();" class="btn_blue"><%=__('Register')%></a></td>						
+							</tr>
+						</tbody>
+				</table>
+			</form>
+			<table class="search_list" style="margin-top:10px;">
+				<thead>
+					<tr>
+						<th width="5%"><%=__('Index')%></th>
+						<th width="70%"><%=__('Contents')%></th>
+						<th width="15%"><%=__('Time')%></th>
+						<th width="15%"><%=__('Remove')%></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td colspan="4" height="40"><strong><%=__('AlertNone')%></strong></td>
+					</tr>
+				</tbody>
+			</table>
+			<div class="pagination mt0">
+				<a href="javascript:get_data('inner_partner_list2.php', 'inner_content', 's_sido=13&s_gugun=parent_level=4&s_date=&e_date=&s_cate=&pageNo=1');" class="on" style="color:#ffffff;">1</a>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript", src="js/manage_partner_popup_menu.js"></script>
+<script type="text/javascript">
+	var agent = JSON.parse('<%-JSON.stringify(agent)%>');
+	// $(document).on('click', '#popup_agentinfo', ()=> {
+
+	// 	var $form = $('<form></form>');
+	// 	$form.attr('action', '/manage_partner_popup/agentinfo');
+	// 	$form.attr('method', 'post');
+	// 	//$form.attr('target', 'popupChk');
+	// 	$form.appendTo('body');
+
+	// 	var idx = $(`<input type="hidden" value="<%=agent.strNickname%>" name="strNickname">`);
+	// 	var page = $(`<input type="hidden" value="<%=agent.strGroupID%>" name="strGroupID">`);
+	// 	var category = $(`<input type="hidden" value=<%=agent.iClass%> name="iClass">`);
+
+	// 	$form.append(idx).append(page).append(category);
+	// 	//$form.append(idx);
+	// 	$form.submit();
+	// });
+
+	// $(document).on('click', '#popup_agentlist', ()=> {
+
+	// 	var $form = $('<form></form>');
+	// 	$form.attr('action', '/manage_partner_popup/agentlist');
+	// 	$form.attr('method', 'post');
+	// 	//$form.attr('target', 'popupChk');
+	// 	$form.appendTo('body');
+
+	// 	var idx = $(`<input type="hidden" value="<%=agent.strNickname%>" name="strNickname">`);
+	// 	var page = $(`<input type="hidden" value="<%=agent.strGroupID%>" name="strGroupID">`);
+	// 	var category = $(`<input type="hidden" value=<%=agent.iClass%> name="iClass">`);
+
+	// 	$form.append(idx).append(page).append(category);
+	// 	//$form.append(idx);
+	// 	$form.submit();
+	// });
+
+	// $(document).on('click', '#popup_shoplist', ()=> {
+
+	// 	var $form = $('<form></form>');
+	// 	$form.attr('action', '/manage_partner_popup/shoplist');
+	// 	$form.attr('method', 'post');
+	// 	//$form.attr('target', 'popupChk');
+	// 	$form.appendTo('body');
+
+	// 	var idx = $(`<input type="hidden" value="<%=agent.strNickname%>" name="strNickname">`);
+	// 	var page = $(`<input type="hidden" value="<%=agent.strGroupID%>" name="strGroupID">`);
+	// 	var category = $(`<input type="hidden" value=<%=agent.iClass%> name="iClass">`);
+
+	// 	$form.append(idx).append(page).append(category);
+	// 	//$form.append(idx);
+	// 	$form.submit();	
+	// });
+
+	// $(document).on('click', '#popup_userlist', ()=> {
+
+	// 	var $form = $('<form></form>');
+	// 	$form.attr('action', '/manage_partner_popup/userlist');
+	// 	$form.attr('method', 'post');
+	// 	//$form.attr('target', 'popupChk');
+	// 	$form.appendTo('body');
+
+	// 	var idx = $(`<input type="hidden" value="<%=agent.strNickname%>" name="strNickname">`);
+	// 	var page = $(`<input type="hidden" value="<%=agent.strGroupID%>" name="strGroupID">`);
+	// 	var category = $(`<input type="hidden" value=<%=agent.iClass%> name="iClass">`);
+
+	// 	$form.append(idx).append(page).append(category);
+	// 	//$form.append(idx);
+	// 	$form.submit();	
+	// });
+
+	// $(document).on('click', '#popup_charges', ()=> {
+	// 	var $form = $('<form></form>');
+	// 	$form.attr('action', '/manage_partner_popup/charges');
+	// 	$form.attr('method', 'post');
+	// 	//$form.attr('target', 'popupChk');
+	// 	$form.appendTo('body');
+
+	// 	var idx = $(`<input type="hidden" value="<%=agent.strNickname%>" name="strNickname">`);
+	// 	var page = $(`<input type="hidden" value="<%=agent.strGroupID%>" name="strGroupID">`);
+	// 	var category = $(`<input type="hidden" value=<%=agent.iClass%> name="iClass">`);
+
+	// 	$form.append(idx).append(page).append(category);
+	// 	//$form.append(idx);
+	// 	$form.submit();	
+	// });
+
+	// $(document).on('click', '#popup_exchanges', ()=> {
+
+	// 	var $form = $('<form></form>');
+	// 	$form.attr('action', '/manage_partner_popup/exchanges');
+	// 	$form.attr('method', 'post');
+	// 	//$form.attr('target', 'popupChk');
+	// 	$form.appendTo('body');
+
+	// 	var idx = $(`<input type="hidden" value="<%=agent.strNickname%>" name="strNickname">`);
+	// 	var page = $(`<input type="hidden" value="<%=agent.strGroupID%>" name="strGroupID">`);
+	// 	var category = $(`<input type="hidden" value=<%=agent.iClass%> name="iClass">`);
+
+	// 	$form.append(idx).append(page).append(category);
+	// 	//$form.append(idx);
+	// 	$form.submit();	
+	// });
+
+	// $(document).on('click', '#popup_points', ()=> {
+
+	// 	var $form = $('<form></form>');
+	// 	$form.attr('action', '/manage_partner_popup/points');
+	// 	$form.attr('method', 'post');
+	// 	//$form.attr('target', 'popupChk');
+	// 	$form.appendTo('body');
+
+	// 	var idx = $(`<input type="hidden" value="<%=agent.strNickname%>" name="strNickname">`);
+	// 	var page = $(`<input type="hidden" value="<%=agent.strGroupID%>" name="strGroupID">`);
+	// 	var category = $(`<input type="hidden" value=<%=agent.iClass%> name="iClass">`);
+
+	// 	$form.append(idx).append(page).append(category);
+	// 	//$form.append(idx);
+	// 	$form.submit();	
+	// });
+
+	// $(document).on('click', '#popup_games', ()=> {
+
+	// 	var $form = $('<form></form>');
+	// 	$form.attr('action', '/manage_partner_popup/games');
+	// 	$form.attr('method', 'post');
+	// 	//$form.attr('target', 'popupChk');
+	// 	$form.appendTo('body');
+
+	// 	var idx = $(`<input type="hidden" value="<%=agent.strNickname%>" name="strNickname">`);
+	// 	var page = $(`<input type="hidden" value="<%=agent.strGroupID%>" name="strGroupID">`);
+	// 	var category = $(`<input type="hidden" value=<%=agent.iClass%> name="iClass">`);
+
+	// 	$form.append(idx).append(page).append(category);
+	// 	//$form.append(idx);
+	// 	$form.submit();	
+	// });
+
+	// $(document).on('click', '#popup_memos', ()=> {
+
+	// });
+
+</script>

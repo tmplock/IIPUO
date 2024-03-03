@@ -1,0 +1,183 @@
+<div class="search_wrap">
+    <div class="container clearfix">
+        <p style="background-repeat:no-repeat; background-position:left center; font-size:20px; color:#454545; padding-left:22px;margin-top:10px;height:30px;margin-bottom:5px;">
+            대본보관죽장 목록
+        </p>
+        <div class="list">
+            <div class="search_wrap" id="div_realtimebet">
+                <table class="search_list">
+                    <caption><%=__('SearchResult')%></caption>
+                    <colgroup>
+                        <col style="width:5%">
+                        <col style="width:15%">
+                        <col style="width:15%">
+                        <col style="width:15%">
+                        <col style="width:30%">
+                        <% if (user.iPermission != 100) { %>
+                            <col style="width:10%">
+                        <% } %>
+                    </colgroup>
+                    <thead>
+                    <tr>
+                        <th scope="col">순번</th>
+                        <th scope="col">본사</th>
+                        <th scope="col">대본사</th>
+                        <th scope="col">보관죽장</th>
+                        <th scope="col" >메모</th>
+                        <% if (user.iPermission != 100) { %>
+                            <th scope="col" >본사이동</th>
+                        <% } %>
+                    </tr>
+                    </thead>
+                    <tbody id="list_agents">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<script type="text/javascript" src="js/constants.js"></script>
+<script type="text/javascript" src="js/enum.js"></script>
+<script type="text/javascript" src="js/time.js"></script>
+<script type="text/javascript" src="js/manage_partner_popup_menu.js"></script>
+<script type="text/javascript" src="js/manage_partner_menu.js"></script>
+<script type="text/javascript" src="js/util.js"></script>
+<script type="text/javascript" src="js/common_menu.js"></script>
+<script type="text/javascript">
+    let agent = JSON.parse('<%-JSON.stringify(agent)%>');
+    let user = JSON.parse('<%-JSON.stringify(user)%>');
+    let list = JSON.parse('<%-JSON.stringify(list)%>');
+
+    $(document).ready( ()=> {
+        SetList(list, false);
+        RequestList();
+    });
+
+    let SetList = (list) => {
+        $("#list_agents").empty();
+        if (list.length > 0) {
+            let total = 0;
+            for (let i = 0; i<list.length; i++) {
+                let aObject = list[i];
+                let strNickname = aObject.strNickname ?? '';
+                let iSettleAcc = aObject.iSettleAcc ?? '0';
+                let strMemo = aObject.strSettleMemo ?? '';
+                total = parseInt(total) + parseInt(iSettleAcc);
+
+                $('#list_agents').append(`
+                    <tr class="Settle" id=${aObject.strNickname}>
+                        <td>${i+1}</td>
+                        <td id='agent_${aObject.parentNickname}'>${aObject.parentNickname}</td>
+                        <td id='strNickname_${strNickname}'>${strNickname}</td>
+                        <td id='iSettleAcc_${strNickname}'>${GetNumberSign(iSettleAcc, '0')}</td>
+                        <% if (user.iPermission != 100) { %>
+                            <td>
+                                메모 : <input style='width:30%;' type='text' id="memo_${aObject.strID}" value='${strMemo}'>
+                                <button style='color:white;' class='menu4' onclick='OnClickMemoApply("${aObject.strID}", "${aObject.strNickname}");'>적용</button>
+                            </td>
+                            <td style="" class="parent_row_31">
+                                <a href="#" class="list_menu btn_blue move" strNickname=${aObject.parentNickname} strGroupID=${aObject.parentGroupID} iClass=${aObject.parentClass}>${strMove}</a>
+                            </td>
+                        <% } else { %>
+                            <td style="" class="parent_row_31">
+                                ${strMemo}
+                            </td>
+                        <% } %>
+                    </tr>
+                `);
+                if (user.iPermission != 100) {
+                    checkBlockCharSpecial2(`#memo_${aObject.strID}`);
+                }
+            }
+            $('#list_agents').append(`
+                    <tr style="font-weight: bold">
+                        <td colspan="3">합계</td>
+                        <td>${GetNumberSign(total, '0')}</td>
+                        <td></td>
+                        <% if (user.iPermission != 100) { %>
+                            <td></td>
+                        <% } %>
+                    </tr>
+                `);
+        } else {
+            console.log('else');
+            $('#list_agents').append(`
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <% if (user.iPermission != 100) { %>
+                            <td></td>
+                        <% } %>
+                    </tr>
+            `);
+        }
+    }
+
+    let RequestList = () => {
+
+        $.ajax({
+            url:'/manage_calculation/request_proadmin_settle_list',
+            type:"POST",
+            data: {
+                strNickname:user.strNickname,
+            },
+            dataType: "json",
+            success: function (obj) {
+                console.log(obj);
+                if ( obj.result == 'OK')
+                {
+                    SetList(obj.list);
+                }
+                else
+                {
+                    alert(obj.msg);
+                }
+            }
+        });
+    }
+
+    let OnClickNickname = (strNickname) => {
+        console.log(`OnClickRegisterShare : ${strNickname}`);
+        window.open('', 'popupChkRegisterShareUser', 'width=1280, height=720, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
+        let $form = $('<form></form>');
+        $form.attr('action', '/manage_partner_popup/popup_view_share_user');
+        $form.attr('method', 'post');
+        $form.attr('target', 'popupChkRegisterShareUser');
+        $form.appendTo('body');
+        let idx = $(`<input type="hidden" value="${strNickname}" name="strNickname">`);
+        $form.append(idx);
+        $form.submit();
+    }
+
+    let OnClickMemoApply = (strID, strNickname) => {
+        let memo = $(`#memo_${strID}`).val();
+        let strModified = memo.replace(/(\n|\r\n)/g, '<br>');
+
+        $.ajax({
+            url:'/manage_calculation/request_savememo',
+            type:"POST",
+            data: {
+                strValue:strModified,
+                strNickname:strNickname,
+            },
+            dataType: "json",
+            success: function (obj) {
+
+                if ( obj.result == 'OK')
+                {
+                    alert('저장 되었습니다.');
+                    location.reload();
+                }
+                else
+                {
+                    let msg = obj.msg;
+                    alert(`저장 실패 : ${msg}`);
+                }
+            }
+        });
+    }
+</script>

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="format-detection" content="telephone=no">
+<meta name="Keywords" content="">
+<meta name="Description" content="">
+<title><%=__('RecordInout')%></title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script type="text/javascript" src="js/jquery.bxslider.min.js"></script>
+<script type="text/javascript" src="js/placeholders.js"></script>
+<script type="text/javascript" src="js/layout.js"></script>
+<script type="text/javascript" src="js/common_js.js"></script>
+<link rel="stylesheet" type="text/css" href="css/general.css"/>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css" type="text/css" /> 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>  
+<script src="https://code.jquery.com/ui/1.8.18/jquery-ui.min.js"></script>  
+</head>
+
+<body>
+<!-- content 시작 -->
+	<div class="content" style="position:relative; padding:0 10px 0 10px;">
+		<!-- 타이틀 시작 -->
+			<div class="list_tit" style="height:80px;">
+				<h3> 
+					<span style="font-size:35px;color:yellow;font-weight:bold;padding-top:10px;">[유저] &nbsp;<%=agent.strNickname%> (<%=agent.strID%>)</span> 
+				</h3>
+			</div>
+		<!-- 타이틀 종료 -->
+
+		<!-- 네비게이션 시작 -->
+			<div style="padding-left:10px;margin-top:10px;margin-bottom:10px;">	
+				<a href="#" class="btn_green" id="popup_userinfo"><%=__('Information')%></a> &nbsp; 
+				<a href="#" class="btn_blue" id="popup_translate"><%=__('Inout')%></a> &nbsp; 
+				<a href="#" class="btn_green" id="popup_pointrecord"><%=__('RecordPointExchange')%></a> &nbsp; 
+				<a href="#" class="btn_green" id="popup_bettingrecord"><%=__('RecordBetting')%></a> &nbsp;
+				<a href="#" class="btn_green" id="popup_notelist"><%=__('Letter')%></a> &nbsp;
+				<a href="#" class="btn_green" id="popup_memo"><%=__('Memo')%></a> &nbsp;
+			</div>
+			<div style="height:5px;"></div>
+		<!-- 네비게이션 종료 -->
+
+		<!-- 본문 시작 -->
+
+		<div class="list">
+
+		<div class="search_wrap">
+			<p style="background-repeat:no-repeat; background-position:left center; font-size:20px; color:#454545; padding-left:22px;margin-top:10px;height:30px;margin-bottom:5px;">
+				<%=__('User')%> <%=__('RecordInout')%>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			</p>
+			<form name="s_mem" id="s_mem" method="post" action="member_info.php">
+				<input type="hidden" name="member_idx" value="13"/>
+				<input type="hidden" name="tmenu" value="5"/>	
+							
+				<div style="text-align:right;padding-right:500px;margin-top:-40px;margin-bottom:10px;">
+					<input type="text" id="s_date" name="s_date" class="datepicker" autocomplete="off" value="2021-11-01" style="width:10%;"> ~ <input type="text" id="e_date" name="e_date" class="datepicker" autocomplete="off" value="2022-01-31" style="width:10%;">
+						&nbsp;&nbsp;
+						<%=__('ID')%> : <input type="text" id="s_send" name="s_send" value="" style="width:8%;">
+						&nbsp;&nbsp;
+					<a href="javascript:go_member_info();" class="btn_green">확인</a>	
+				</div>
+			</form>
+			<table class="search_list">
+				<thead>
+					<tr>
+						<th width="4%"><%=__('Index')%></th>
+						<th width="6%"><%=__('Token')%></th>
+						<th width="5%"><%=__('ID')%></th>
+						<th width="8%"><%=__('Inout')%></th>
+						<th width="8%"><%=__('Inout')%></th>
+						<th width="8%"><%=__('Inout')%></th>
+						<th width="9%"><%=__('BankAccountHolderName')%></th>
+						<th width="9%"><%=__('Contact')%></th>
+						<th width="8%"><%=__('DateRequest')%></th>
+						<th width="8%"><%=__('DateProcess')%></th>
+					</tr>
+				</thead>
+				<tbody>
+					<form name="frm_modify_0" method="post" action="member_point_modify_action.php"  target="_fra_admin">
+						<input type="hidden" name="total_param" value="field=&keyword=&point_sect=refund&s_gubun=A&v_sect=GEN&s_member=13&s_send=&s_date=2021-11-01&e_date=2022-01-31&s_cate=&tmenu=5"/>
+						<input type="hidden" name="pageNo" value="1"/>
+						<input type="hidden" name="point_sect" value="refund"/>
+						<input type="hidden" name="member_idx" value="1607"/>
+						<input type="hidden" name="mile_pre" value="0"/>
+						<input type="hidden" name="mile_sect" value="A"/>
+
+
+				<% for ( let i in list ) { %>
+
+					<% let color = '#ff9e9e';%>
+					<% if ( list[i].eType == 'INPUT' ) { %>
+					<% color = '#38befc';%>
+					<% } %>
+	
+					<tr>
+						<td style="background-color:<%=color%>;"><%=list[i].id%></td>
+						<td style="background-color:<%=color%>;"><%=list[i].eType%></td>
+						<td style="background-color:<%=color%>;"><%=list[i].strID%></td>
+						<td style="background-color:<%=color%>;"><%=list[i].iPreviousCash.toLocaleString()%></td>
+						<td style="background-color:<%=color%>;"><%=list[i].iAmount.toLocaleString()%></td>
+						<td style="background-color:<%=color%>;"></td>
+						<td style="background-color:<%=color%>;"><%=list[i].strName%></td>
+						<td style="background-color:<%=color%>;"><%=list[i].strAccountNumber%></td>
+						<td style="background-color:<%=color%>;"><%=list[i].createdAt%></td>
+						<td style="background-color:<%=color%>;"><%=list[i].updatedAt%></td>
+					</tr>
+				<% } %>
+
+				</form>
+				
+				<tr>
+						<td style="color:red;"><%=__('Total')%></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td>1,000,000</td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+				</tr>
+				</tbody>
+			</table>
+			
+			<div class="pagination mt0">
+			     					
+						<a href="javascript:get_data('inner_partner_list2.php', 'inner_content', 's_sido=13&s_gugun=parent_level=4&s_date=&e_date=&s_cate=&pageNo=1');" class="on" style="color:#ffffff;">1</a>
+								</div>
+				</div>
+			
+		<!-- 본문 종료 -->
+	</div>
+</div>
+<!-- content 종료 -->
+<script type="text/javascript", src="js/manage_user_popup_menu.js"></script>
+<script type="text/javascript">
+var agent = JSON.parse('<%-JSON.stringify(agent)%>');
+	// $(document).on('click', '#popup_userinfo', ()=> {
+
+	// var $form = $('<form></form>');
+	// $form.attr('action', '/manage_user_popup/userinfo');
+	// $form.attr('method', 'post');
+	// //$form.attr('target', 'popupChk');
+	// $form.appendTo('body');
+
+	// var idx = $(`<input type="hidden" value="<%=agent.strNickname%>" name="strNickname">`);
+	// var page = $(`<input type="hidden" value="<%=agent.strGroupID%>" name="strGroupID">`);
+	// var category = $(`<input type="hidden" value=<%=agent.iClass%> name="iClass">`);
+
+	// $form.append(idx).append(page).append(category);
+	// //$form.append(idx);
+	// $form.submit();	
+	// });
+
+	// $(document).on('click', '#popup_pointrecord', ()=> {
+
+	// var $form = $('<form></form>');
+	// $form.attr('action', '/manage_user_popup/pointrecord');
+	// $form.attr('method', 'post');
+	// //$form.attr('target', 'popupChk');
+	// $form.appendTo('body');
+
+	// var idx = $(`<input type="hidden" value="<%=agent.strNickname%>" name="strNickname">`);
+	// var page = $(`<input type="hidden" value="<%=agent.strGroupID%>" name="strGroupID">`);
+	// var category = $(`<input type="hidden" value=<%=agent.iClass%> name="iClass">`);
+
+	// $form.append(idx).append(page).append(category);
+	// //$form.append(idx);
+	// $form.submit();	
+	// })		
+
+	// $(document).on('click', '#popup_bettingrecord', ()=> {
+
+	// var $form = $('<form></form>');
+	// $form.attr('action', '/manage_user_popup/bettingrecord');
+	// $form.attr('method', 'post');
+	// //$form.attr('target', 'popupChk');
+	// $form.appendTo('body');
+
+	// var idx = $(`<input type="hidden" value="<%=agent.strNickname%>" name="strNickname">`);
+	// var page = $(`<input type="hidden" value="<%=agent.strGroupID%>" name="strGroupID">`);
+	// var category = $(`<input type="hidden" value=<%=agent.iClass%> name="iClass">`);
+
+	// $form.append(idx).append(page).append(category);
+	// //$form.append(idx);
+	// $form.submit();	
+	// })
+
+	// $(document).on('click', '#popup_notelist', ()=> {
+
+	// var $form = $('<form></form>');
+	// $form.attr('action', '/manage_user_popup/notelist');
+	// $form.attr('method', 'post');
+	// //$form.attr('target', 'popupChk');
+	// $form.appendTo('body');
+
+	// var idx = $(`<input type="hidden" value="<%=agent.strNickname%>" name="strNickname">`);
+	// var page = $(`<input type="hidden" value="<%=agent.strGroupID%>" name="strGroupID">`);
+	// var category = $(`<input type="hidden" value=<%=agent.iClass%> name="iClass">`);
+
+	// $form.append(idx).append(page).append(category);
+	// //$form.append(idx);
+	// $form.submit();	
+	// })
+
+	// $(document).on('click', '#popup_memo', ()=> {
+
+	// var $form = $('<form></form>');
+	// $form.attr('action', '/manage_user_popup/memo');
+	// $form.attr('method', 'post');
+	// //$form.attr('target', 'popupChk');
+	// $form.appendTo('body');
+
+	// var idx = $(`<input type="hidden" value="<%=agent.strNickname%>" name="strNickname">`);
+	// var page = $(`<input type="hidden" value="<%=agent.strGroupID%>" name="strGroupID">`);
+	// var category = $(`<input type="hidden" value=<%=agent.iClass%> name="iClass">`);
+
+	// $form.append(idx).append(page).append(category);
+	// //$form.append(idx);
+	// $form.submit();	
+	// })	
+</script>
+
+<div id="top_payment_alarm_area" style="text-align:right;top:15px;left:85%;width:10%;z-index:1000;position:absolute;">
+
+</div>
+
+</body>
+</html>

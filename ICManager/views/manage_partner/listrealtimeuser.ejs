@@ -1,0 +1,340 @@
+<div class="sub_wrap">
+    <div class="container clearfix">
+        <div class="content" style="position:relative; padding:0 10px 0 10px; position:relative; z-index:10;">
+            <ul class="list_tab" style="margin-bottom:10px;width:75%;z-index:10000;" id="partner_header">
+            </ul>
+        </div>
+
+        <div class="search_wrap" id="div_realtimebet_overview_today">
+        </div>
+
+        <div class="list">
+
+            <div style="background-color:#ffffff;text-align:right;padding-right:5px;padding-top:0px;padding-bottom:0px;" colspan="19">
+                <%=__('Search')%>
+                <select id="select_roomno" style="width:80px;">
+                    <option><%=__('Nickname')%></option>
+                </select>
+                <input style="margin-left:0px;width:100px;" id="strSearchNickname" type="text"/>
+                <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearchNickname();"><%=__('Search')%></button>
+            </div>
+
+            <div class="search_wrap" id="div_realtimebet_overview_record">
+            </div>
+
+            <div class="list_tit">
+                <h3><%=__('RealtimeOnlineUserList')%>
+
+                    <div style="text-align:right;padding-right:55%;margin-top:-60px;">
+                        <button onclick="javascript:UpdateRealtimeUserList();" class="custom-btn btn-12"><span>Update</span><span id="span_onlineusers"><%=__('RealtimeOnlineUserList')%></span></button>
+                    </div>
+                    <div id="exchange">
+                    </div>
+                </h3>
+            </div>
+
+            <div class="search_wrap">
+                <table class="search_list">
+                    <caption><%=__('SearchResult')%></caption>
+                    <colgroup>
+                        <col style="width:5%">
+                        <% if (user.iClass == 2 ) { %>
+                            <col style="width:5%">
+                        <% } %>
+                        <col style="width:5%">
+                        <col style="width:5%">
+                        <col style="width:5%">
+                        <col style="width:5%">
+                        <col style="width:5%">
+
+                        <col style="width:10%">
+                        <col style="width:10%">
+                        <col style="width:10%">
+                        <col style="width:10%">
+                        <col style="width:10%">
+
+                        <col style="width:10%">
+                        <col style="width:10%">
+                        <col style="width:10%">
+                        <col style="width:5%">
+                        <% if (user.iRootClass <= 3 && user.iPermission != 100) { %>
+                            <col style="width:5%">
+                            <col style="width:5%">
+                        <% } %>
+                    </colgroup>
+                    <thead>
+                    <tr>
+                        <th scope="col"><%=__('Index')%></th>
+                        <% if (user.iClass == 2) { %>
+                        <th scope="col"><%=__('Admin')%></th>
+                        <% } %>
+                        <th scope="col"><%=__('ProAdmin')%></th>
+                        <th scope="col"><%=__('ViceAdmin')%></th>
+                        <th scope="col"><%=__('Agent')%></th>
+                        <th scope="col"><%=__('Shop')%></th>
+                        <th scope="col"><%=__('Nickname')%></th>
+
+                        <th scope="col"><%=__('Input')%></th>
+                        <th scope="col"><%=__('Output')%></th>
+                        <th scope="col"><%=__('MyCash')%></th>
+                        <th scope="col"><%=__('Rolling')%></th>
+                        <th scope="col"><%=__('Total')%></th>
+
+                        <th scope="col"><%=__('DateRegister')%></th>
+                        <th scope="col"><%=__('DateLogin')%></th>
+                        <th scope="col"><%=__('IP')%></th>
+                        <th scope="col"><%=__('State')%></th>
+                        <% if (user.iRootClass <= 3 && user.iPermission != 100) { %>
+                        <th scope="col"><%=__('Letter')%></th>
+                        <th scope="col"><%=__('Menu')%></th>
+                        <% } %>
+                    </tr>
+                    </thead>
+                    <tbody id = "userlist">
+                    </tbody>
+                </table>
+
+                <!-- 페이징 시작 -->
+                <div class="pagination mt0" id="pagination">
+                </div>
+                <!-- 페이징 종료 -->
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="js/enum.js"></script>
+<script type="text/javascript" src="js/time.js"></script>
+<script type="text/javascript" src="js/manage_partner_ref.js"></script>
+<script type="text/javascript" src="js/manage_partner_menu.js"></script>
+<script type="text/javascript" src="js/manage_setting_ref.js"></script>
+<script type="text/javascript" src="js/manage_user_menu.js"></script>
+<script type="text/javascript" src="js/socket.js"></script>
+<script>
+    let user = JSON.parse('<%-JSON.stringify(user)%>');
+    let iocount = JSON.parse('<%-JSON.stringify(iocount)%>');
+
+    let bToggleRecord = false;
+    const cTClass = parseInt(user.iClass);
+
+    $(document).ready(() => {
+        DatePicker();
+
+        $('#datepicker1').val(GetCurrentDate());
+        $('#datepicker2').val(GetCurrentDate());
+
+        $("#table_record_list").hide();
+
+        $('#exchange').empty();
+        if (user.iClass > 3) {
+            $('#exchange').append(`
+                <div style="text-align:right;padding-right:500px;margin-top:-55px;">
+                    <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);border-radius:3px;width:70px;height:25px;text-align:center;background-color: rgb(240, 90, 90);color:white" onclick="OnClickChangeMoney('<%=user.strNickname%>', '<%=user.strGroupID%>', '<%=user.iClass%>');"><%=__('ExchangeCash')%></button>
+                    <span id="top_total_point_area">
+                        <font style="color:#00FFFF;font-size:15px;font-weight:bold;"><%=__('Cash')%> :</font><font style="color:yellow;font-size:15px;font-weight:bold;"><%=parseInt(agentinfo.iCash).toLocaleString()%></font>
+                        &nbsp;&nbsp;
+                        <font style="color:#00FFFF;font-size:15px;font-weight:bold;"><%=__('Rolling')%> :</font><font style="color:yellow;font-size:15px;font-weight:bold;"><%=parseInt(agentinfo.iRolling).toLocaleString()%></font>
+                        &nbsp;&nbsp;
+                        <font style="color:#00FFFF;font-size:15px;font-weight:bold;"><%=__('Settle')%> :</font><font style="color:yellow;font-size:15px;font-weight:bold;">0</font>
+                        &nbsp;&nbsp;&nbsp;
+                    </span>
+                </div>
+            `);
+        }
+
+        Alert(iocount, "<%=__('RequestInput')%>", "<%=__('RequestOutput')%>","<%=__('LetterSend')%>");
+
+        SetPartnerHeader(8, user.iClass);
+
+        if ( user.iClass <= 3 ) {
+            RequestOverviewToday(cTClass, user.strGroupID, user.iClass, '', user.strID);
+
+            setInterval(async () => {
+                RequestOverviewToday(cTClass, user.strGroupID, user.iClass, '', user.strID);
+            }, 10000);
+        }
+        RequestUserList(user.strGroupID, user.iClass);
+    });
+
+    let SetUserList = (userlist) => {
+        $('#userlist').empty();
+
+        let total = {cash:0, input:0, output:0, rolling:0, loan:0, total:0};
+
+        let cNumUsers = userlist.length;
+        for ( let i in userlist )
+        {
+            let strColor = 'rgb(0, 126, 199)';
+            let bgcolor = 'white';
+
+            if ( userlist[i].eState == 'BLOCK' )
+            {
+                strColor = 'rgb(207, 61, 4)';
+                bgcolor = '#fcd7e6';
+            }
+            else if ( userlist[i].eState == 'NOTICE' )
+            {
+                strColor = 'rgb(207, 100, 4)';
+                bgcolor = '#faecd9';
+            }
+
+            let tagState = `<td style="background-color:${bgcolor};">${strNormal}</td>`;
+            if ( userlist[i].eState == 'BLOCK' )
+                tagState = `<td style="background-color:${bgcolor};">${strBlock}</td>`;
+            else if ( userlist[i].eState == 'NOTICE' )
+                tagState = `<td style="background-color:${bgcolor};">${strNotice}</td>`;
+
+            let strLoginedAt = userlist[i].loginedAt.replace(/T/, ' ').replace(/\..+/, '');
+            let strCreatedAt = userlist[i].createdAt.replace(/T/, ' ').replace(/\..+/, '');
+
+            let tagAdmin = '';
+            if ( user.iClass == 2 )
+                tagAdmin = `<td style="background-color:${bgcolor};">${userlist[i].lev1}</td>`;
+
+            let tagOut = '';
+            if ( user.iRootClass <= 3 && user.iPermission != 100 )
+                tagOut = `<a href="javascript:OnClickLogout('${userlist[i].strNickname}');" class="btn_green">로그아웃</a>`;
+
+            let total = parseInt(userlist[i].iTotal)-parseInt(userlist[i].iMyRollingMoney);
+            let tag = `
+                <tr>
+                    <td style="background-color:${bgcolor};">${cNumUsers-parseInt(i)}</td>
+                    ${tagAdmin}
+                    <td style="background-color:${bgcolor};">${userlist[i].lev2}</td>
+                    <td style="background-color:${bgcolor};">${userlist[i].lev3}</td>
+                    <td style="background-color:${bgcolor};">${userlist[i].lev4}</td>
+                    <td style="background-color:${bgcolor};">${userlist[i].lev5}</td>
+                    
+                    <td style="background-color:${bgcolor};"><a href="javascript:click_user('${userlist[i].strNickname}', '${userlist[i].strGroupID}', '${userlist[i].iClass}');" style="color:blue;">${userlist[i].strNickname}</a></td>
+                    <td style="background-color:${bgcolor};">${GetNumber(userlist[i].iInput)}</td>
+                    <td style="background-color:${bgcolor};">${GetNumber(userlist[i].iOutput)}</td>
+                    <td style="background-color:${bgcolor};">${GetNumber(userlist[i].iCash)}</td>
+                    <td style="background-color:${bgcolor};"><font color="${GetClassSettleColor(userlist[i].iMyRollingMoney, user.iRootClass)}">${GetNumber(userlist[i].iMyRollingMoney)}</font></td>
+                    <td style="background-color:${bgcolor};"><font color="${GetClassColor(total, user.iRootClass)}">${GetNumber(total)}</font></td>
+                    
+                    <td style="background-color:${bgcolor};">${strCreatedAt}</td>
+                    <td style="background-color:${bgcolor};">${strLoginedAt}</td>
+                    <td style="background-color:${bgcolor};">${userlist[i].strIP}</td>
+
+                    <td style="background-color:${bgcolor};">
+                        <a href="javascript:OnClickWritingLetter('${userlist[i].strNickname}');" class="btn_green">${strLetter}</a>
+                    </td>
+                    ${tagState}
+                    <td id="btn_84" style="background-color:${bgcolor};">
+                       ${tagOut}
+                    </td>
+                </tr>`;
+
+            $('#userlist').append(tag);
+
+            total.cash += parseInt(userlist[i].iCash);
+            total.input += parseInt(userlist[i].iInput);
+            total.output += parseInt(userlist[i].iOutput);
+            total.rolling += parseInt(userlist[i].iMyRollingMoney);
+            total.loan += parseInt(userlist[i].iLoan);
+            total.total += (parseInt(userlist[i].iTotal)-parseInt(userlist[i].iMyRollingMoney));
+        }
+
+        let stateTag = `<td></td>`;
+        if ( user.iRootClass <= 3 && user.iPermission != 100 ) {
+            stateTag = `
+            <td></td>
+            <td></td>
+            <td></td>`;
+        }
+
+        let tagAdminTotal = '';
+        if ( user.iClass == 2 )
+            tagAdminTotal = `<td></td>`;
+
+        let endtag = `
+        <tr>
+            <td>${strTotal}</td>
+            <td></td>
+            ${tagAdminTotal}
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+
+            <td>${GetNumber(total.input)}</td>
+            <td>${GetNumber(total.output)}</td>
+            <td>${GetNumber(total.cash)}</td>
+            <td><font color="${GetClassSettleColor(total.rolling, user.iRootClass)}">${GetNumber(total.rolling)}</font></td>
+            <td><font color="${GetClassColor(total.total, user.iRootClass)}">${GetNumber(total.total)}</font></td>
+
+            <td></td>
+            <td></td>
+            <td></td>
+            ${stateTag}
+        </tr>`;
+
+        $('#userlist').append(endtag);
+    }
+
+    function click_user(strNickname, strGroupID, iClass)
+    {
+        var scLeft = window.screenLeft + 50;
+        var scTop = window.screenTop + 50;
+        window.open('', 'popupUser', `width=1280, height=720, top=${scTop}, left=${scLeft}, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no`);
+
+        let $form = $('<form></form>');
+        $form.attr('action', '/manage_user_popup/bettingrecord');
+        $form.attr('method', 'post');
+        $form.attr('target', 'popupUser');
+        $form.appendTo('body');
+
+        let idx = $(`<input type="hidden" value="${strNickname}" name="strNickname">`);
+        let page = $(`<input type="hidden" value="${strGroupID}" name="strGroupID">`);
+        let category = $(`<input type="hidden" value=${parseInt(iClass)} name="iClass">`);
+
+        $form.append(idx).append(page).append(category);
+        $form.submit();
+    }
+
+    let RequestUserList = (strGroupID, iClass) => {
+        const dateStart = GetCurrentDate();
+        const dateEnd = GetCurrentDate();
+        const strNickname = $('#strSearchNickname').val();
+
+        $.ajax({
+            type:'post',
+            url: "/manage_user/request_realtimeuserlist",
+            context: document.body,
+            data:{strGroupID:strGroupID, iClass:iClass, dateStart:dateStart, dateEnd:dateEnd, strSearchNickname:strNickname},
+            success: (obj) => {
+                SetUserList(obj.userlist);
+            },
+            error:function(request,status,error){
+                alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+            }
+        });
+    }
+
+    let OnClickSearchNickname = () => {
+        RequestUserList(user.strGroupID, user.iClass);
+    }
+
+    let UpdateRealtimeUserList = () => {
+        RequestUserList(user.strGroupID, user.iClass);
+    }
+
+    let OnClickLogout = (strNickname) => {
+        if (confirm(`${strNickname} 회원을 로그아웃 하시겠습니까?`)) {
+            $.ajax({
+                type:'post',
+                url: "/manage_user/logout",
+                context: document.body,
+                data:{strNickname:strNickname},
+                success: (obj) => {
+                    if (obj.result == true) {
+                        self.location.reload();
+                    }
+                },
+                error:function(request,status,error){
+                    alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+                }
+            });
+        }
+    }
+
+</script>

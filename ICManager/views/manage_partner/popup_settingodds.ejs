@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="format-detection" content="telephone=no">
+<meta name="Keywords" content="">
+<meta name="Description" content="">
+<title>Income Settings</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script type="text/javascript" src="../../js/jquery.bxslider.min.js"></script>
+<script type="text/javascript" src="../../js/placeholders.js"></script>
+<script type="text/javascript" src="../../js/layout.js"></script>
+<script type="text/javascript" src="../../js/common_js.js"></script>
+<link rel="stylesheet" type="text/css" href="../../css/general.css"/>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css" type="text/css" /> 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>  
+<script src="https://code.jquery.com/ui/1.8.18/jquery-ui.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" 교차 출처>
+<link href="https: //fonts.googleapis.com/css2? family= Noto+Sans+KR & display=swap" rel="stylesheet">
+</head>
+<body>
+	
+		<div class="content" style="position:relative; padding:0 10px 0 10px;">
+			<div class="list_tit" id="registeragent_title">
+				<h3 style="font-size:28px;color:yellow;font-weight:bold; font-family: 'Noto Sans KR sans-serif';">본사 수수료 일괄 수정</h3>
+			</div>
+			<div class="write">
+				<p style="background-repeat:no-repeat; background-position:left center; font-size:16px; color:#454545; padding-left:22px;">롤링 설정</p>
+				<table>
+				<colgroup>
+					<col width="25%" />
+					<col width="25%" />
+					<col width="25%" />
+					<col width="25%" />
+				</colgroup>
+					
+				<tr>
+					<th scope="row"><%=__('Baccarat')%></th>
+					<td>
+						<input type="text" style="width:40%;" required="no"  message="바카라" id="fRollingBaccarat"value="20"> %
+					</td>
+					<th scope="row">파워볼A (1.93)</th>
+					<td>
+						<input type="text" style="width:40%;" required="no"  message="PB" id="fRollingPBA"value="20"> %
+					</td>
+				</tr>
+				<tr>
+					<th scope="row"><%=__('UnderOver')%></th>
+					<td>
+						<input type="text" style="width:40%;" required="no"  message="바카라 오버" id="fRollingUnderOver"value="20"> %
+					</td>
+					<th scope="row">파워볼B (1.95) 단폴</th>
+					<td>
+						<input type="text" style="width:40%;" required="no"  message="PB" id="fRollingPBBSingle"value="20"> %
+					</td>
+				</tr>
+				<tr>
+					<th scope="row"><%=__('Slot')%></th>
+					<td>
+						<input type="text" style="width:40%;" required="no" message="슬롯" id="fRollingSlot" value="20"> %
+					</td>
+					<th scope="row">파워볼B (1.95) 투폴</th>
+					<td>
+						<input type="text" style="width:40%;" required="no"  message="PB" id="fRollingPBBDouble"value="20"> %
+					</td>
+				</tr>
+				<tr>
+					<th scope="row"></th>
+					<td>
+					</td>
+					<th scope="row">파워볼B (1.95) 쓰리폴</th>
+					<td>
+						<input type="text" style="width:40%;" required="no"  message="PB" id="fRollingPBBTriple"value="20"> %
+					</td>
+				</tr>
+
+				
+				</table>
+
+				<p style="background-repeat:no-repeat; background-position:left center; font-size:16px; color:#454545; padding-left:22px;">죽장 설정</p>
+				<table>
+				<colgroup>
+					<col width="15%" />
+					<col width="35%" />
+					<col width="15%" />
+					<col width="35%" />
+				</colgroup>
+					
+				<tr>
+					<th scope="row"><%=__('Slot')%></th>
+					<td>
+						<input type="text" style="width:40%;" name="slot_slot" required="no"  message="슬롯" id="fSettleSlot"value="20"> %
+					</td>
+					<th scope="row"><%=__('Baccarat')%></th>
+					<td>
+						<input type="text" style="width:40%;" name="bakara_bakara" required="no"  message="바카라" id="fSettleBaccarat"value="20"> %
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">파워볼A</th>
+					<td>
+						<input type="text" style="width:40%;" name="slot_slot" required="no"  message="파워볼A" id="fSettlePBA"value="20"> %
+					</td>
+					<th scope="row">파워볼B</th>
+					<td>
+						<input type="text" style="width:40%;" name="bakara_bakara" required="no"  message="파워볼B" id="fSettlePBB"value="20"> %
+					</td>
+				</tr>
+				</table>
+
+					<div class="write_btn align_r mt35">
+						<button class="btn_modify" onclick="OnClickSettingOdds();"><%=__('Save')%></button>
+						<a href="javascript:self.close();" class="btn_list"><%=__('Close')%></a>					
+					</div>
+				</div>
+			</div>
+		</div>
+
+	<script type="text/javascript" src="js/enum.js"></script>
+	<script type="text/javascript" src="js/manage_partner_popup_register.js"></script>
+	<script type="text/javascript">
+
+	const agent = JSON.parse('<%-JSON.stringify(agent)%>');
+	console.log(agent);
+
+	const strAlertComplete = '<%=__("AlertComplete")%>';
+	const strAlertEnableToUse = '<%=__("AlertEnableToUse")%>';
+	const strAlertDisableToUse = '<%=__("AlertDisableToUse")%>';
+	const strAlertNeedToDuplicationCheckID = '<%=__("AlertNeedToDuplicationCheckID")%>';
+	const strAlertNeedToDuplicationCheckNickname = '<%=__("AlertNeedToDuplicationCheckNickname")%>';
+	const strAlertDifferentPasswordAndConfirm = '<%=__("AlertDifferentPasswordAndConfirm")%>';
+	const strAlertErrorRollingValue = '<%=__("AlertErrorRollingValue")%>';
+	const strAlertErrorSettleValue = '<%=__("AlertErrorSettleValue")%>';
+
+	$('#fRollingBaccarat').val(agent.fBaccaratR);
+	$('#fRollingUnderOver').val(agent.fUnderOverR);
+	$('#fRollingSlot').val(agent.fSlotR);
+
+	$('#fRollingPBA').val(agent.fPBR);
+	$('#fRollingPBBSingle').val(agent.fPBSingleR);
+	$('#fRollingPBBDouble').val(agent.fPBDoubleR);
+	$('#fRollingPBBTriple').val(agent.fPBTripleR);
+
+	$('#fSettleSlot').val(agent.fSettleSlot);
+	$('#fSettleBaccarat').val(agent.fSettleBaccarat);
+	$('#fSettlePBA').val(agent.fSettlePBA);
+	$('#fSettlePBB').val(agent.fSettlePBB);
+
+	let OnClickSettingOdds = () => {
+		let data = {};
+		data.strGroupID = agent.strGroupID;
+		data.iClass = 3;
+		data.fRollingSlot = $('#fRollingSlot').val();
+		data.fRollingBaccarat = $('#fRollingBaccarat').val();
+		data.fRollingUnderOver = $('#fRollingUnderOver').val();
+		data.fSettleSlot = $('#fSettleSlot').val();
+		data.fSettleBaccarat = $('#fSettleBaccarat').val();
+		data.fSettlePBA = $('#fSettlePBA').val();
+		data.fSettlePBB = $('#fSettlePBB').val();
+		data.fRollingPBA = $('#fRollingPBA').val();
+		data.fRollingPBBSingle = $('#fRollingPBBSingle').val();
+		data.fRollingPBBDouble = $('#fRollingPBBDouble').val();
+		data.fRollingPBBTriple = $('#fRollingPBBTriple').val();
+		console.log(data);
+
+		$.ajax({
+			type:'post',
+			url: "/manage_partner_popup/request_settingodds",
+			context: document.body,
+			data:data,
+	
+			success:function(data) {
+
+				if ( data.result == 'OK' )
+				{
+					alert('수정 완료');
+				}
+				else
+				{
+					alert(`${data.message}`);
+				}
+			}
+		});
+
+	}
+
+</script>
+
+
+</body>
+</html>

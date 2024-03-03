@@ -1,0 +1,160 @@
+<div class="sub_wrap">
+    <div class="container clearfix">
+        <div class="content" style="position:relative; padding:0 10px 0 10px;">
+            <ul class="list_tab" style="margin-bottom:10px;width:100%;z-index:10000;" id="bettingrecord_header">
+            </ul>
+        </div>
+        
+        <div style="background-color:#ffffff;text-align:right;padding-right:5px;padding-top:0px;padding-bottom:0px;">
+            <input style="margin-left:180px;width:100px;height:18px;" type="text" id="datepicker1" class="datepicker"/>~
+            <input style="width:100px;height:18px;" type="text" id="datepicker2" class="datepicker" />
+
+            <button class="btn_blue" id="button_toggle_record" style="width:100px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickRecord(false);"><%=__('Search')%></button>
+
+            <%=__('Search')%>
+            <select id="select_roomno" style="width:80px;">
+                <option><%=__('Nickname')%></option>
+            </select>
+            <input style="margin-left:0px;width:100px;" id="strSearchNickname" type="text"/>
+            <button class="btn_blue" id="button_toggle_record" style="width:100px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickRecord(true);"><%=__('Search')%></button>
+            <select id="select_limit" style="width:80px; display: none;" >
+                <option value="30">30개씩</option>
+                <option value="50">50개씩</option>
+                <option value="100">100개씩</option>
+            </select>
+        </div>
+        
+        <div class="list">
+            <div class="list_tit">
+                <h3>카지노 베팅내역
+                </h3>
+            </div>
+
+            <div class='list'>
+                <div class="search_wrap">
+                    <table class="search_list">
+                        <caption><%=__('SearchResult')%></caption>
+                        <colgroup>
+                            <col style="width:3%;">
+                            <col style="width:5%;">
+                            <col style="width:7%;">
+                            <col style="width:7%;">
+                            <col style="width:7%;">
+                            <col style="width:7%;">
+                            <col style="width:5%;">
+                            <col style="width:5%;">
+                            <col style="width:5%;">
+                            <col style="width:7%;">
+                            <col style="width:7%;">
+                            <col style="width:7%;">
+                            <col style="width:10%;">
+                            <col style="width:10%;">
+                            <col style="width:7%;">
+                        </colgroup>
+                        <thead>
+                        <tr>
+                            <th scope="col">번호</th>
+                            <th scope="col">벤더</th>
+                            <th scope="col">테이블</th>
+                            <th scope="col"><%=__('Round')%></th>
+                            <th scope="col"><%=__('Nickname')%></th>
+                            <th scope="col"><%=__('BettingOriginCash')%></th>
+                            <th scope="col" colspan="3"><%=__('BettingAccount')%></th>
+                            <th scope="col"><%=__('BettingAmount')%></th>
+                            <th scope="col"><%=__('BettingWin')%></th>
+                            <th scope="col">베팅후 금액</th>
+                            <th scope="col"><%=__('BettingTime')%></th>
+                            <th scope="col">당첨 결과</th>
+                            <th scope="col">비고</th>
+                        </tr>
+                        </thead>
+                        <tbody id="betting_list">
+                        </tbody>
+                    </table>
+                    <div class="pagination mt0" id="pagination">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="js/enum.js"></script>
+<script type="text/javascript" src="js/time.js"></script>
+<script type="text/javascript" src="js/manage_bettingrecord_menu.js"></script>
+<script type="text/javascript" src="js/manage_bettingrecord_ref.js"></script>
+<script type="text/javascript" src="js/manage_setting_ref.js"></script>
+<script type="text/javascript" src="js/pagination.js"></script>
+<script type="text/javascript" src="js/socket.js"></script>
+<script>
+    let user = JSON.parse('<%-JSON.stringify(user)%>');
+    let iocount = JSON.parse('<%-JSON.stringify(iocount)%>');
+
+    let iCurrentPage = 1;
+    let iLimit = 30;
+    $('#select_limit').on("change", function () {
+        iLimit = this.value;
+    });
+
+    $(document).ready(() => {
+        DatePicker();
+        $('#datepicker1').val(GetCurrentDate());
+        $('#datepicker2').val(GetCurrentDate());
+
+        Alert(iocount, "<%=__('RequestInput')%>", "<%=__('RequestOutput')%>","<%=__('LetterSend')%>");
+
+        SetBettingRecordHeader(0, user.iRootClass);
+
+        OnClickRecord(false);
+    });
+
+    let RequestRecord = (dateStart, dateEnd, strNickname) => {
+        $.ajax({
+            url:"/manage_bettingrecord/request_casino_record",
+            type:"POST",
+            context: document.body,
+            data : {
+                strNickname:strNickname,
+                strGroupID:user.strGroupID,
+                iClass:user.iClass,
+                dateStart:dateStart,
+                dateEnd:dateEnd,
+                iComplete:'0,1,2',
+                iLimit:iLimit,
+                iPage:iCurrentPage,
+            },
+            success: function (obj) {
+
+                console.log(obj);
+
+                if ( obj.result == 'OK' )
+                {
+                    const total = obj.totalCount ?? 0;
+                    SetBettingList(obj.list, getNo(iLimit, total, iCurrentPage, 0));
+
+                    $('#pagination').empty();
+                    $('#pagination').append(getPagination(iLimit, obj.totalCount, iCurrentPage));
+                }
+            }
+        });
+    }
+
+    let OnClickPage = (iPage) => {
+        if (iPage < 1) {
+            return;
+        }
+        iCurrentPage = iPage;
+        const dateStart = $('#datepicker1').val();
+        const dateEnd =  $('#datepicker2').val();
+        let strNickname = $('#strSearchNickname').val();
+        RequestRecord(dateStart, dateEnd, strNickname);
+    }
+
+    let OnClickRecord = (bNickname) => {
+        iCurrentPage = 1;
+        const dateStart = $('#datepicker1').val();
+        const dateEnd =  $('#datepicker2').val();
+        let strNickname = $('#strSearchNickname').val();
+        RequestRecord(dateStart, dateEnd, strNickname);
+    }
+</script>

@@ -1,0 +1,335 @@
+<div class="sub_wrap">
+    <div class="container clearfix">
+        <div class="content" style="position:relative; padding:0 10px 0 10px;">
+            <ul class="list_tab" style="margin-bottom:10px;width:75%;z-index:10000;" id="calculation_header">
+            </ul>
+        </div>
+
+        <div class="list">
+            <div class="list_tit" id = "list_tit">
+            </div>
+
+            <div style="background-color:#ffffff;text-align:right;padding-right:5px;padding-top:0px;padding-bottom:0px;" colspan="19">
+                <%=__('Search')%>
+                <select id="select_roomno" style="width:80px;">
+                    <option><%=__('Nickname')%></option>
+                </select>
+                <input style="margin-left:0px;width:100px;" id="strSearchNickname" type="text"/>
+                <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearchNickname();"><%=__('Search')%></button>
+            </div>
+
+            <div class="search_wrap" id="div_realtimebet">
+                <table class="search_list">
+                    <caption><%=__('SearchResult')%></caption>
+                    <colgroup>
+                        <col style="width:10%">
+                        <col style="width:10%">
+                        <col style="width:10%">
+                        <col style="width:10%">
+                        <col style="width:10%">
+                        <% if ( user.iPermission != 100 ) { %>
+                            <col style="width:44%">
+                        <% } %>
+                        <col style="width:6%">
+                    </colgroup>
+                    <thead>
+                    <tr>
+                        <th scope="col">대상</th>
+                        <th scope="col"><%=__('ID')%></th>
+                        <th scope="col"><%=__('Nickname')%></th>
+                        <th scope="col">가불전</th>
+                        <th scope="col">가불후</th>
+                        <% if ( user.iPermission != 100 ) { %>
+                            <th scope="col" >가불</th>
+                        <% } %>
+                        <th scope="col">조회</th>
+                    </tr>
+                    </thead>
+                    <tbody id="list_agents">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<script type="text/javascript" src="js/constants.js"></script>
+<script type="text/javascript" src="js/enum.js"></script>
+<script type="text/javascript" src="js/time.js"></script>
+<script type="text/javascript" src="js/util.js"></script>
+<script type="text/javascript" src="js/manage_calculation_menu.js"></script>
+<script type="text/javascript" src="js/manage_setting_ref.js"></script>
+<script type="text/javascript" src="js/manage_user_menu.js"></script>
+<script type="text/javascript" src="js/socket.js"></script>
+<script>
+    let user = JSON.parse('<%-JSON.stringify(user)%>');
+    let iocount = JSON.parse('<%-JSON.stringify(iocount)%>');
+    let agent = JSON.parse('<%-JSON.stringify(agent)%>');
+    let list = JSON.parse('<%-JSON.stringify(list)%>');
+
+    Alert(iocount, "<%=__('RequestInput')%>", "<%=__('RequestOutput')%>","<%=__('LetterSend')%>");
+    SetCalculationHeader(3, user.iClass);
+
+    $(document).ready( ()=> {
+        SetList(list);
+    });
+
+    let SetList = (list) => {
+
+        $(`#list_tit`).empty();
+        if ( user.iClass <= 3 ) {
+            let title = '가불';
+            if (user.iClass == 3) {
+                title = '대본 가불';
+            } else if (user.iClass == 2) {
+                title = '본사 가불';
+            }
+            $(`#list_tit`).append(`
+                            <h3>${title}
+<!--                                <button id='button_applycredit' style="margin-left:300px;width:200px;height:40px;text-align:center;background-color: rgb(218, 107, 107);color:white" onclick="javascript:RequestApplyCredit();"><strong>가불 적용</strong></button>-->
+                            </h3>
+					    `);
+        }
+
+        $("#list_agents").empty();
+        if (list.length > 0) {
+            for (var i = 0; i<list.length; i++) {
+                let aObject = list[i];
+                let iCreditAccBefore = parseInt(aObject.iCreditAccBefore); // 죽장시 전월이월금액(전월이월금액 + 이월금액)
+
+                let target = '';
+                switch ( parseInt(aObject.iClass) )
+                {
+                    case EAgent.eAdmin:
+                        target = '본사';
+                        break;
+                    case EAgent.eProAdmin: //  PAdmin
+                        // target = EAgent.eProAdmin;
+                        target = '대본사';
+                        break;
+                    case EAgent.eViceAdmin: //  VAdmin
+                        // target = EAgent.eViceAdmin;
+                        target = '부본사';
+                        break;
+                    case EAgent.eAgent: //  Agent
+                        // target = EAgent.eAgent;
+                        target = '총판';
+                        break;
+                    case EAgent.eShop: //  Shop
+                        // target = EAgent.eShop;
+                        target = '매장';
+                        break;
+                }
+
+                $('#list_agents').append(`
+                    <tr>
+                        <td>${target}</td>
+                        <td>
+                            <a href="javascript:RequestPartnerInfo('${aObject.strNickname}', '${aObject.strGroupID}', '${aObject.iClass}', '${aObject.iPermission}');"  style="color:blue;">${aObject.strID}</a>
+                        </td>
+                        <td>${aObject.strNickname}</td>
+                        <td style="font-weight:100; color:black};">${GetNumberSign(iCreditAccBefore, '0')}</td>
+                        <td style="font-weight:100; color:black;">${GetNumberSign(aObject.iSettleAcc, '0')}</td>
+                        <% if (user.iPermission != 100) { %>
+                            <td>
+                                <input type="radio" name="mile_sect" required="yes" message="구분" value="M" id="credit_type_1" onclick="OnClickCreditType('MINUS');">
+                                <label for="mile_sect_cash_1" style="color:red;font-size:15px;">가불</label>
+                                <input type="radio" name="mile_sect" required="yes" message="구분" value="P" id="credit_type_2" onclick="OnClickCreditType('PLUS');">
+                                <label for="mile_sect_cash_2" style="color:blue;font-size:15px;">적립</label>&nbsp;&nbsp;
+                                <input style='width:30%;' type='number' id="credit_${aObject.strID}" value=''>&nbsp;&nbsp;
+                                메모 : <input style='width:30%;' type='text' id="creditmemo_${aObject.strID}" value=''>
+                                <button style='color:white;' class='menu4' onclick='OnClickCreditApply("${aObject.strID}", "${user.strNickname}");'>적용</button>
+                            </td>
+                        <% } %>
+                        <td>
+                            <button style='color:white;' class='menu4' onclick="RequestPartnerCredits('${aObject.strNickname}', '${aObject.strGroupID}', '${aObject.iClass}', '${aObject.iPermission}', '${aObject.strID}');">조회하기</button>
+                        </td>
+                    </tr>
+                `);
+                checkBlockNum(`#credit_${aObject.strID}`);
+                checkBlockCharSpecial2(`#creditmemo_${aObject.strID}`);
+            }
+        } else {
+            $('#list_agents').append(`
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <% if (user.iPermission != 100) { %>
+                            <td></td>
+                        <% } %>
+                        <td></td>
+                    </tr>
+            `);
+        }
+    }
+
+    let OnClickCreditApply = (strID, writer) => {
+        let type = $('input[name="mile_sect"]:checked').val();
+        let credit = $(`#credit_${strID}`).val();
+        let iCredit = parseInt(credit);
+        if (isNaN(iCredit)) {
+            iCredit = 0;
+        }
+
+        if (iCredit <= 0) {
+            alert('가불액을 확인해주세요');
+            return;
+        }
+
+        if (type != 'M' && type != 'P') {
+            alert('가불/적립 여부를 선택해주세요');
+            return;
+        }
+
+        if (type == 'M') {
+            iCredit = -iCredit;
+        }
+
+
+        let creditMemo = $(`#creditmemo_${strID}`).val();
+        let strModified = creditMemo.replace(/(\n|\r\n)/g, '<br>');
+
+        let list = [];
+        list.push(strID);
+        list.push(iCredit);
+        list.push(strModified);
+        list.push(writer);
+        let data = list.join(',');
+        console.log(data);
+
+        $.ajax({
+            url:'/manage_calculation/request_credit_apply',
+            type:"POST",
+            data: {
+                data:data
+            },
+            dataType: "json",
+            success: function (obj) {
+
+                if ( obj.result == 'OK')
+                {
+                    alert('저장 되었습니다.');
+                    location.reload();
+                }
+                else
+                {
+                    let msg = obj.msg;
+                    alert(`저장 실패 : ${msg}`);
+                }
+            }
+        });
+    }
+
+    function RequestPartnerInfo(strNickname, strGroupID, iClass, iPermission)
+    {
+        var scLeft = window.screenLeft + 50;
+        var scTop = window.screenTop + 50;
+        window.open('', 'popupChk', `width=1280, height=720, top=${scTop}, left=${scLeft}, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no`);
+
+        var $form = $('<form></form>');
+        $form.attr('action', '/manage_partner_popup/games');
+        $form.attr('method', 'post');
+        $form.attr('target', 'popupChk');
+        $form.appendTo('body');
+
+        var idx = $(`<input type="hidden" value="${strNickname}" name="strNickname">`);
+        var page = $(`<input type="hidden" value="${strGroupID}" name="strGroupID">`);
+        var category = $(`<input type="hidden" value=${parseInt(iClass)} name="iClass">`);
+        var iPermission = $(`<input type="hidden" value=${parseInt(iPermission)} name="iPermission">`);
+
+        $form.append(idx).append(page).append(category).append(iPermission);
+        $form.submit();
+    }
+
+    let RequestPartnerCredits = (strNickname, strGroupID, iClass, iPermission, strID) => {
+        window.open('', 'popupChkSub', 'width=1280, height=720, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
+        var $form = $('<form></form>');
+        $form.attr('action', '/manage_partner_popup/credits');
+        $form.attr('method', 'post');
+        $form.attr('target', 'popupChkSub');
+        $form.appendTo('body');
+
+        var id = $(`<input type="hidden" value="${strID}" name="strID">`);
+        var idx = $(`<input type="hidden" value="${strNickname}" name="strNickname">`);
+        var page = $(`<input type="hidden" value="${strGroupID}" name="strGroupID">`);
+        var category = $(`<input type="hidden" value=${parseInt(iClass)} name="iClass">`);
+        var iPermission = $(`<input type="hidden" value=${parseInt(iPermission)} name="iPermission">`);
+
+        $form.append(idx).append(page).append(category).append(iPermission).append(id);
+        $form.submit();
+    }
+
+    let RequestApplyCredit = () => {
+        console.log('RequestApplyCredit');
+
+        if (confirm('가불정산을 하시겠습니까(가불액에 입력된 대상만 저장 됩니다)')) {
+            let list = [];
+            for ( let i in listProAdmin )
+            {
+                let aObject = listProAdmin[i];
+                let credit = $(`#credit_${aObject.strID}`).val();
+                let iCredit = parseInt(credit);
+                if (isNaN(iCredit)) {
+                    iCredit = 0;
+                }
+                if (iCredit <= 0) {
+                    continue
+                }
+                let creditMemo = $(`#creditmemo_${aObject.strID}`).val();
+                let strModified = creditMemo.replace(/(\n|\r\n)/g, '<br>');
+
+                list.push(user.strNickname);
+                list.push(iCredit);
+                list.push(creditMemo);
+                console.log(list);
+            }
+
+            if (list.length <= 0) {
+                alert('가불액이 입력된 항목이 없습니다');
+                return;
+            }
+
+            let data = list.join(',');
+            console.log(data);
+
+            $.ajax({
+                url:'/manage_calculation/request_credit_apply',
+                type:"POST",
+                data: {
+                    data:data
+                },
+                dataType: "json",
+                success: function (obj) {
+
+                    if ( obj.result == 'OK')
+                    {
+                        alert('저장 되었습니다.');
+                        location.reload();
+                    }
+                    else
+                    {
+                        alert('저장 중 오류 발생');
+                    }
+                }
+            });
+        }
+    };
+
+    let OnClickSearchNickname = () => {
+        let nickname = $('#strSearchNickname').val();
+        if (nickname != null && nickname != undefined && nickname != '') {
+            let searchList = [];
+            for (let i = 0; i<list.length; i++) {
+                if (list[i].strNickname.indexOf(`${nickname}`) == 0) {
+                    searchList.push(list[i]);
+                }
+            }
+            SetList(searchList);
+        } else {
+            SetList(list);
+        }
+    }
+
+</script>

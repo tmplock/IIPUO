@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="format-detection" content="telephone=no">
+	<meta name="Keywords" content="">
+	<meta name="Description" content="">
+	<title><%=__('Money')%><%=__('Exchange')%></title>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	<script type="text/javascript" src="../../js/jquery.bxslider.min.js"></script>
+	<script type="text/javascript" src="../../js/placeholders.js"></script>
+	<script type="text/javascript" src="../../js/layout.js"></script>
+	<script type="text/javascript" src="../../js/common_js.js"></script>
+	<link rel="stylesheet" type="text/css" href="../../css/general.css"/>
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css" type="text/css" /> 
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>  
+	<script src="https://code.jquery.com/ui/1.8.18/jquery-ui.min.js"></script>  
+	<link href='//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css' rel='stylesheet' type='text/css'>
+</head>
+
+<body style="font-family:'Spoqa Han Sans Neo';">
+	<div class="content" style="position:relative; padding:0 10px 0 10px;">
+		
+		<div class="list_tit">
+			<h3 style="font-size:21px; color:yellow;font-weight:bold;margin-top:10px;">
+				<% if ( agent.iClass == 1 ) { %>
+					<span style="margin-left:10px;">[<%=__('HQ')%>]<span style="color:#f56868;"><%=agent.strNickname%></span></span>
+				<% } else if ( agent.iClass == 2 ) { %>
+					<span style="margin-left:10px;">[<%=__('ViceHQ')%>]<span style="color:#f56868;"><%=agent.strNickname%></span></span>
+				<% } else if ( agent.iClass == 3 ) { %>
+					<span style="margin-left:10px;">[<%=__('Admin')%>]<span style="color:#f56868;"><%=agent.strNickname%></span></span>
+				<% } else if ( agent.iClass == 4 ) { %>
+					<span style="margin-left:10px;">[<%=__('ProAdmin')%>]<span style="color:#f56868;"><%=agent.strNickname%></span></span>
+				<% } else if ( agent.iClass == 5 ) { %>
+					<span style="margin-left:10px;">[<%=__('ViceAdmin')%>]<span style="color:#f56868;"><%=agent.strNickname%></span></span>
+				<% } else if ( agent.iClass == 6 ) { %>
+					<span style="margin-left:10px;">[<%=__('Agent')%>]<span style="color:#f56868;"><%=agent.strNickname%></span></span>
+				<% } else if ( agent.iClass == 7 ) { %>
+					<span style="margin-left:10px;">[<%=__('Shop')%>]<span style="color:#f56868;"><%=agent.strNickname%></span></span>
+				<% } %>
+
+				<% if ( agent.iClass == 4 ) { %>
+					<span style="float:right; margin-left:10px;">죽장이월 : <span id="settleacc" style="color:#ffffff;"></span></span>
+				<% } %>
+				<% if ( agent.iClass <= 5 ) { %>
+					<span style="float:right; margin-left:10px;"><%=__('Settle')%> : <span id="settle" style="color:#f56868;"></span></span>
+				<% } %>
+				<% if ( agent.iClass <= 7 ) { %>
+					<span style="float:right; margin-left:10px;"><%=__('Rolling')%> : <span id="rolling" style="color:#7fbe18;"></span></span>
+				<% } %>
+				<span style="float:right; margin-left:10px;"><%=__('Cash')%> : <span id="cash" style="color:#ffffff;"></span></span>
+			</h3>
+		</div>
+
+		<div class="write">
+
+			<% if ( agent.iClass != 3 && agent.iPermission != 100 ) { %>
+			<table style="font-size:15px;background-color:#092E13;">
+				<caption><%=__('Partner')%> <%=__('Modify')%></caption>
+				<colgroup>
+					<col style="width:20%">
+					<col style="width:30%">
+					<col style="width:20%">
+					<col style="width:30%">
+				</colgroup>
+				
+				<tr style="background-color:#a4aaa7;"><td colspan="4" style="height:15px;background-color:#d8c8b2;"></td></tr>
+				
+				<tr style="background-color:#a4aaa7;">
+					<th scope="row" style="font-size:18px;color:blue;" rowspan="3"><%=__('Cash')%> <%=__('Modify')%></th>
+					<td colspan="3">
+						<%=__('Give')%><%=__('Token')%> : 
+						<input type="radio" name="mile_sect" required="yes" message="지급구분" value="A" id="mile_sect_cash_1" onclick="OnClickGTType('GIVE');" checked> 
+						<label for="mile_sect_cash_1" style="color:blue;font-size:15px;"><%=__('Give')%></label>  &nbsp;&nbsp;&nbsp;&nbsp; 
+						<input type="radio" name="mile_sect" required="yes" message="지급구분" value="M" id="mile_sect_cash_2" onclick="OnClickGTType('TAKE');"> 
+						<label for="mile_sect_cash_2" style="color:red;font-size:15px;"><%=__('Take')%></label> 
+					</td>
+				</tr>
+
+				<tr style="background-color:#a4aaa7;">
+					<td colspan="3">
+						<%=__('Give')%><%=__('Classification')%> : 
+						<% if ( agent.iClass == 1 ) { %>
+							<input type="radio" id="at_vicehq" name="pat_type" required="yes" message="지급분류" value="4" id="pat_type_1" onclick="OnClickAgentType('VHQ');"> 
+							<label style="color:black;font-size:15px;"><%=__('ViceHQ')%></label>  &nbsp;&nbsp;&nbsp;&nbsp; 
+						<% } if ( agent.iClass == 2 ) { %>
+							<input type="radio" id="at_admin" name="pat_type" required="yes" message="지급분류" value="4" id="pat_type_1" onclick="OnClickAgentType('ADMIN');"> 
+							<label style="color:black;font-size:15px;"><%=__('Admin')%></label>  &nbsp;&nbsp;&nbsp;&nbsp; 
+						<% } if ( agent.iClass <= 4 && agent.iClass != 2 && agent.iClass != 1) {%>
+							<input type="radio" id="at_vadmin" name="pat_type" required="yes" message="지급분류" value="4" id="pat_type_1" onclick="OnClickAgentType('VADMIN');"> 
+							<label style="color:black;font-size:15px;"><%=__('ViceAdmin')%></label>  &nbsp;&nbsp;&nbsp;&nbsp; 
+						<% } if ( agent.iClass <= 5 && agent.iClass != 2 && agent.iClass != 1) {%>
+							<input type="radio" id="at_agent" name="pat_type" required="yes" message="지급분류" value="4" id="pat_type_1" onclick="OnClickAgentType('AGENT');"> 
+							<label style="color:black;font-size:15px;"><%=__('Agent')%></label>  &nbsp;&nbsp;&nbsp;&nbsp; 
+						<% } if ( agent.iClass <= 6 && agent.iClass != 2 && agent.iClass != 1) { %> 
+							<input type="radio" id="at_shop" required="yes" message="지급분류" value="7" id="pat_type_2" onclick="OnClickAgentType('SHOP');"> 
+							<label style="color:black;font-size:15px;"><%=__('Shop')%></label> &nbsp;&nbsp;&nbsp;&nbsp; 
+						<% } if ( agent.iClass <= 7 && agent.iClass != 2 && agent.iClass != 1) {%>
+							<input type="radio" id="at_user" required="yes" message="지급분류" value="11" id="pat_type_3" onclick="OnClickAgentType('USER');"> 
+							<label style="color:black;font-size:15px;"><%=__('User')%></label>
+						<% } %>
+						<!-- <div id="patidx_cash_area" style="display:none;padding-top:10px;padding-left:10px;"></div> -->
+						<select style="margin-left:100px; width:100px;" id="agent_list">
+						</select>
+					</td>
+				</tr>
+			
+				<tr style="background-color:#a4aaa7;">
+					<td colspan="3">
+						<%=__('Modify')%><%=__('Money')%> : 
+						<input type="number" style="width:20%;" name="chg_mile" required="yes" message="조정금액" is_num = "yes" value="" id="GTMoney"> <%=__('Currency')%>
+							&nbsp; <a class="btn_gray" href="javascript:OnClickProcess();"><%=__('OK')%></a>
+					</td>
+				</tr>
+			
+				<tr style="background-color:#a4aaa7;">
+					<td colspan="4" style="height:15px;background-color:#d8c8b2;"></td>
+				</tr>
+			
+				<% if (agent.iClass > 3) { %>
+					<% if ( agent.iClass <= 5 ) { %>
+						<tr style="background-color:#a4aaa7;">
+							<th scope="row" style="font-size:18px;color:red;"><%=__('Rolling')%><%=__('Exchange')%></th>
+							<td>
+								<input type="number" id="translate_rolling" value="">
+								<a class="btn_gray" href="javascript:OnClickTranslate('ROLLING');"><%=__('Exchange')%></a>
+							</td>
+							<th scope="row" style="font-size:18px;color:red;"><%=__('Settle')%><%=__('Exchange')%></th>
+							<td>
+								<input type="number" id="translate_settle" value="">
+								<a class="btn_gray" href="javascript:OnClickTranslate('SETTLE');"><%=__('Exchange')%></a>
+							</td>
+						</tr>
+					<% } else { %>
+						<tr style="background-color:#a4aaa7;">
+							<th scope="row" style="font-size:18px;color:red;"><%=__('Rolling')%><%=__('Exchange')%></th>
+							<td colspan="3">
+								<input type="number" id="translate_rolling" value="">
+								<a class="btn_gray" href="javascript:OnClickTranslate('ROLLING');"><%=__('Exchange')%></a>
+							</td>
+						</tr>
+					<% } %>
+				<%}%>
+			</table>
+			<%}%>
+
+			<div style="background-color:#ffffff;text-align:right;padding-right:5px;padding-top:10px;padding-bottom:10px;" colspan="19">
+				<input style="width:100px;" type="text" id="datepicker1" class="datepicker"/>~
+				<input style="width:100px;" type="text" id="datepicker2" class="datepicker" />
+				<button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearch();"><%=__('Search')%></button>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<%=__('Search')%>
+				<select id="select_roomno" style="width:80px;">
+					<option><%=__('Nickname')%></option>
+				</select>
+				<input style="margin-left:0px;width:100px;" type="text" id="strNickname"/>
+				<button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearchBy();"><%=__('Search')%></button>
+			</div>
+
+			<div class="search_wrap">
+				<table>
+					<tr>
+						<td style="width:49.5%" valign="top">
+							<p style="background-repeat:no-repeat; background-position:left center; font-size:15px; color:#454545; padding-left:22px;color:blue;"><%=__('RecordSend')%></p>
+							
+							<div id="adjust_list_cash">
+								<!-- 캐시 히스토리 영역 -->
+								<table class="search_list">
+									<thead>
+										<tr>
+											<th width="20%" style="font-size:15px;"><%=__('Index')%></th>
+											<th width="15%" style="font-size:15px;"><%=__('Target')%></th>
+											<th width="25%" style="font-size:15px;"><%=__('Modify')%><%=__('Money')%></th>
+											<th width="15%" style="font-size:15px;"><%=__('Input')%><%=__('Token')%></th>
+											<th width="25%" style="font-size:15px;"><%=__('Date')%></th>
+										</tr>
+									</thead>
+									<tbody id="gtrecord_cash">
+										<tr>
+											<td colspan="20" height="40"><strong><%=__('AlertNone')%></strong></td>
+										</tr>
+									</tbody>
+								</table>
+								<div class="pagination mt0">
+									<a href="javascript:get_data('inner_partner_list2.php', 'inner_content', 's_sido=13&s_gugun=parent_level=4&s_date=&e_date=&s_cate=&pageNo=1');" class="on" style="color:#ffffff;">1</a>
+								</div>
+	
+							</div>
+						</td>
+	
+						<td style="width:1%;background-color:#ffffff;"></td>
+	
+						<td style="width:49.5%" valign="top">
+							<p style="background-repeat:no-repeat; background-position:left center; font-size:15px; color:#454545; padding-left:22px;color:red;"><%=__('RecordReceive')%></p>
+						
+							<div id="adjust_list_point">
+								<!-- 로링비 히스토리 영역 -->
+								<table class="search_list">
+									<thead>
+										<tr>
+											<th width="20%" style="font-size:15px;"><%=__('Index')%></th>
+											<th width="15%" style="font-size:15px;"><%=__('Target')%></th>
+											<th width="25%" style="font-size:15px;"><%=__('Modify')%><%=__('Money')%></th>
+											<th width="15%" style="font-size:15px;"><%=__('Input')%><%=__('Token')%></th>
+											<th width="25%" style="font-size:15px;"><%=__('Date')%></th>
+										</tr>
+									</thead>
+									<tbody id="gtrecord_rolling">
+										<tr>
+											<td colspan="20" height="40"><strong><%=__('AlertNone')%></strong></td>
+										</tr>
+									</tbody>
+								</table>
+								<div class="pagination mt0">
+									<a href="javascript:get_data('inner_partner_list2.php', 'inner_content', 's_sido=13&s_gugun=parent_level=4&s_date=&e_date=&s_cate=&pageNo=1');" class="on" style="color:#ffb579;">1</a>
+								</div>
+	
+							</div>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</div>
+
+	<script type="text/javascript" src="js/enum.js"></script>
+	<script type="text/javascript" src="js/time.js"></script>
+	<script type="text/javascript" src="js/util.js"></script>
+	<script type="text/javascript">
+		let agent = JSON.parse('<%-JSON.stringify(agent)%>');
+		let eGTType = 'GIVE';
+		let iTargetAgentClass = 5;
+
+		const strNoRecord = '<%=__("NoRecord")%>';
+		const strConfirmGive = '<%=__("ConfirmGive")%>';
+		const strConfirmTake = '<%=__("ConfirmTake")%>';
+		const strGive = '<%=__("Give")%>';
+		const strTake = '<%=__("Take")%>';
+		const strConfirmExchange = '<%=__("ConfirmExchange")%>';
+		const strAlertIncorrectInputValue = '<%=__("AlertIncorrectInputValue")%>';
+		const strAlertErrorNotEnoughMoney = '<%=__("AlertErrorNotEnoughMoney")%>';
+		const strAlertComplete = '<%=__("AlertComplete")%>';
+
+		$(document).ready(() => {
+			DatePicker();
+			if (parseInt(agent.iClass) == 1) {
+				$('#datepicker1').val(GetHalfYearStartDate());
+			} else {
+				$('#datepicker1').val(GetCurrentDate());
+			}
+			$('#datepicker2').val(GetCurrentDate());
+
+			$('#cash').text(GetNumber(agent.iCash, '0'));
+			$('#rolling').text(GetNumber(agent.iRolling, '0'));
+			$('#settle').text(GetNumber(agent.iSettle, '0'));
+			$('#settleacc').text(GetNumberSign(agent.iSettleAcc, '0'));
+
+			OnClickSearch();
+		});
+
+		let OnClickGTType = (type) => 
+		{
+			eGTType = type;
+
+			$('#agent_list').empty();
+			$('#at_vadmin').attr('checked', false);
+			$('#at_agent').attr('checked', false);
+			$('#at_shop').attr('checked', false);
+			$('#at_user').attr('checked', false);
+			$('#at_admin').attr('checked', false);
+			$('#at_vicehq').attr('checked', false);
+		}
+
+		let OnClickAgentType = (type) => 
+		{
+			if ( type == 'VHQ' )
+			{
+				iTargetAgentClass = EAgent.eViceHQ;
+				RequestTargetClassAgentList(agent.strNickname, agent.strGroupID, agent.iClass, iTargetAgentClass);
+				$('#at_vicehq').attr('checked', true);
+			}
+			else if ( type == 'ADMIN' )
+			{
+				iTargetAgentClass = EAgent.eAdmin;
+				RequestTargetClassAgentList(agent.strNickname, agent.strGroupID, agent.iClass, iTargetAgentClass);
+				$('#at_admin').attr('checked', true);
+			}
+			else if ( type == 'VADMIN' )
+			{
+				iTargetAgentClass = EAgent.eViceAdmin;
+				RequestTargetClassAgentList(agent.strNickname, agent.strGroupID, agent.iClass, iTargetAgentClass);
+				$('#at_agent').attr('checked', false);
+				$('#at_shop').attr('checked', false);
+				$('#at_user').attr('checked', false);
+
+				$('#at_vadmin').attr('checked', true);
+			}
+			else if ( type == 'AGENT' )
+			{
+				iTargetAgentClass = EAgent.eAgent;
+				RequestTargetClassAgentList(agent.strNickname, agent.strGroupID, agent.iClass, iTargetAgentClass);
+				$('#at_vadmin').attr('checked', false);
+				$('#at_shop').attr('checked', false);
+				$('#at_user').attr('checked', false);
+
+				$('#at_agent').attr('checked', true);
+			}
+			else if ( type == 'SHOP' )
+			{
+				iTargetAgentClass = EAgent.eShop;
+				RequestTargetClassAgentList(agent.strNickname, agent.strGroupID, agent.iClass, iTargetAgentClass);
+				$('#at_agent').attr('checked', false);
+				$('#at_vadmin').attr('checked', false);
+				$('#at_user').attr('checked', false);
+			}
+			else if ( type == 'USER' )
+			{
+				iTargetAgentClass	= EAgent.eUser;
+				RequestTargetClassAgentList(agent.strNickname, agent.strGroupID, agent.iClass, iTargetAgentClass);
+				$('#at_vadmin').attr('checked', false);
+				$('#at_agent').attr('checked', false);
+				$('#at_shop').attr('checked', false);
+			}
+		}
+
+		let RequestTargetClassAgentList = (strNickname, strGroupID, iClass, iTargetClass) => {
+			$.ajax({
+				type:'post',
+				url: "/manage_user_popup/request_targetclassagentlist",
+				context: document.body,
+				data:{eType:eGTType, iTargetClass:iTargetClass, strGroupID:strGroupID, iClass:iClass, strNickname:strNickname},
+				success: (obj) => {
+					$('#agent_list').empty();
+					for ( let i in obj )
+					{
+						$('#agent_list').append(`<option>${obj[i].strNickname}</option>`);
+					}
+				},
+				error:function(request,status,error){
+					alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+				}
+			});
+		}
+
+		let OnClickProcess = () => {
+
+			let strTarget = $('#agent_list').val();
+			let iMoney = $('#GTMoney').val();
+
+			if ( strTarget == null || strTarget == '' || iMoney == null || iMoney == '' || iMoney == 0)
+			{
+				alert(strAlertIncorrectInputValue);
+				return;
+			}
+
+			let strConfirm = strConfirmGive;
+			let strGTType = strGive;
+			if ( eGTType == 'TAKE' )
+			{
+				strGTType = strTake;
+				strConfirm = strConfirmTake;
+			}
+
+			if ( confirm(strConfirm) )
+			{
+				$.ajax({
+					type:'post',
+					url: "/manage_user_popup/request_gt",
+					context: document.body,
+					data:{strTo:strTarget, strFrom:agent.strNickname, iAmount:iMoney, eType:eGTType},
+
+					success: (obj) => {
+
+						if ( obj.result == 'OK' )
+						{
+							RequestGTRecord('TO');
+							RequestGTRecord('FROM');
+
+							$('#cash').text(GetNumber(parseInt(obj.cash)));
+							$('#rolling').text(GetNumber(parseInt(obj.rolling)));
+							$('#settle').text(GetNumber(parseInt(obj.settle)));
+
+							window.opener.location.reload(true);
+						}
+						else {
+							if ( obj.reason == 'NOTENOUGH' )
+							{
+								alert(strAlertErrorNotEnoughMoney);
+							}
+							else
+							{
+								alert(strAlertComplete);		
+								window.opener.location.reload(true);						
+							}
+						}
+						location.reload();
+					},
+					error:function(request,status,error){
+						alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+					}
+				});
+			}
+		}
+
+		let RequestGTRecord = (eType, strSearch) => {
+
+			let dateStart = $('#datepicker1').val();
+			let dateEnd = $('#datepicker2').val();
+
+			$.ajax({
+				type:'post',
+				url: "/manage_user_popup/request_gtrecord",
+				context: document.body,
+				data:{strNickname:agent.strNickname, eType:eType, dateStart:dateStart, dateEnd:dateEnd, strSearch:strSearch, iClass: agent.iClass},
+
+				success: (list) => {
+					console.log(list);
+					UpdateGTRecord(eType, list);
+				},
+				error:function(request,status,error){
+					alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+				}
+			});
+		}
+
+		let GetGTType = (eType) => {
+			if ( eType == 'GIVE' )
+				return "지급";
+			else if ( eType == 'TAKE' )
+				return "차감";
+			else if ( eType == 'ROLLING')
+				return "롤링 전환";
+			else if ( eType == 'SETTLE' )
+				return "죽장 전환";
+			else if ( eType == 'GETSETTLE' )
+				return "죽장 지급";
+		}
+
+		let GetGTColor = (eType) => {
+			if ( eType == 'GIVE' )
+				//return "#000000";
+				return 'red';
+			else if ( eType == 'TAKE' )
+				//return "#000000";
+				return 'blue';
+			else if ( eType == 'ROLLING')
+				return "#7fbe18";
+			else if ( eType == 'SETTLE' )
+				return "#f56868";
+			else if ( eType == 'GETSETTLE' )
+				return "#ff6868";
+		}
+
+		let UpdateGTRecord = (eType, list) => {
+			let parent_id = '#gtrecord_cash';
+			if ( eType == "FROM")
+				parent_id = '#gtrecord_rolling';
+			$(parent_id).empty();
+			if ( list.length == 0 ) 
+			{
+				let tag = 
+				`
+				<tr>
+					<td colspan="20" height="40"><strong>${strNoRecord}</strong></td>
+				</tr>
+				`;
+				$(parent_id).append(tag);
+			}
+			else 
+			{
+				let iTotalGive = 0;
+				let iTotalTake = 0;
+				for ( let i in list )
+				{
+					let target = list[i].strTo;
+					if ( eType == 'FROM' )
+						target = list[i].strFrom;
+
+					if ( list[i].eType == 'GIVE')
+						iTotalGive += parseInt(list[i].iAmount);
+					else if ( list[i].eType == 'TAKE' )
+						iTotalTake += parseInt(list[i].iAmount);
+
+					let tag = 
+					`
+					<tr>
+						<td style="color:${GetGTColor(list[i].eType)};">${parseInt(i)+1}</td>
+						<td style="color:${GetGTColor(list[i].eType)};">${target}</td>
+						<td style="color:${GetGTColor(list[i].eType)};">${GetNumber(list[i].iAmount)}</td>
+						<td style="color:${GetGTColor(list[i].eType)};">${GetGTType(list[i].eType)}</td>
+						<td style="color:${GetGTColor(list[i].eType)};">${list[i].createdAt}</td>
+					</tr>
+					`;
+					$(parent_id).append(tag);
+				}
+
+				let total = parseInt(iTotalGive) + parseInt(iTotalTake);
+
+				let finaltag = `
+					<tr>
+						<td style="background-color:gray;color:white;">전체 : ${GetNumber(total)}</td>
+						<td style="background-color:gray;color:white;">지급총합</td>
+						<td style="background-color:gray;color:skyblue;">${GetNumber(iTotalGive)}</td>
+						<td style="background-color:gray;color:white;">차감총합</td>
+						<td style="background-color:gray;color:orange;">${GetNumber(iTotalTake)}</td>
+					</tr>`;
+				$(parent_id).append(finaltag);
+			}
+		}
+
+		let OnClickTranslate = (eType) => {
+
+			let iSettle = $('#translate_settle').val();
+			let iRolling = $('#translate_rolling').val();
+			let strType = '';
+			let iMoney = 0;
+
+			if ( eType == 'SETTLE' )
+			{
+				strType = '죽장';
+				if ( iSettle <= agent.iSettle )
+					iMoney = iSettle;
+			}
+			else if ( eType == 'ROLLING' )
+			{
+				strType = '롤링';
+				if ( iRolling <= agent.iRolling )
+					iMoney = iRolling;
+			}
+
+			if ( iMoney == '' || iMoney == 0 )
+			{
+				alert(strAlertIncorrectInputValue);
+				return;
+			}
+
+			if ( confirm(strConfirmExchange) )
+			{
+				$.ajax({
+					type:'post',
+					url: "/manage_user_popup/request_gt",
+					context: document.body,
+					data:{strTo:agent.strNickname, strFrom:agent.strNickname, iAmount:iMoney, eType:eType},
+					success: (obj) => {
+						if ( obj.result == 'OK' )
+						{
+							RequestGTRecord('TO', '');
+							RequestGTRecord('FROM', '');
+							$('#cash').text(GetNumber(parseInt(obj.cash)));
+							$('#rolling').text(GetNumber(parseInt(obj.rolling)));
+							$('#settle').text(GetNumber(parseInt(obj.settle)));
+							location.reload();
+						}
+						else {
+							if ( obj.reason == 'NOTENOUGH')
+							{
+								alert(strAlertErrorNotEnoughMoney);
+							}
+							else
+								alert(strAlertError);
+						}
+					},
+					error:function(request,status,error){
+						alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+					}
+				});
+			}
+		}
+
+		let OnClickSearch = () => {
+			let strNickname = $('#strNickname').val();
+			if ( strNickname == undefined )
+				strNickname = '';
+			RequestGTRecord('TO', strNickname);
+			RequestGTRecord('FROM', strNickname);
+		}
+
+		let OnClickSearchBy = () => {
+			let strNickname = $('#strNickname').val();
+			RequestGTRecord('TO', strNickname);
+			RequestGTRecord('FROM', strNickname);
+		}
+
+		let OnClickSearchNickname = () => {
+			RequestAgentList(EAgent.eProAdmin, user.strGroupID, user.iClass);
+		}
+	</script>
+</body>
+</html>

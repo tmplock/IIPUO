@@ -1,0 +1,162 @@
+<div class="sub_wrap">
+    <div class="container clearfix">
+        <div class="content" style="position:relative; padding:0 10px 0 10px;">
+            <ul class="list_tab" style="margin-bottom:10px;width:75%;z-index:10000;" id="calculation_header">
+            </ul>
+        </div>
+
+        <div class="list">
+
+            <div class="list_tit">
+                <h3><%=__('BettingRecord')%>
+                    <% if ( user.iClass > 3 ) { %>
+                    <div style="text-align:right;padding-right:500px;margin-top:-55px;">
+                        <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);border-radius:3px;width:70px;height:25px;text-align:center;background-color: rgb(240, 90, 90);color:white" onclick="OnClickChangeMoney('<%=user.strNickname%>', '<%=user.strGroupID%>', '<%=user.iClass%>');"><%=__('ExchangeCash')%></button>
+                        <span id="top_total_point_area">
+                                    <font style="color:#00FFFF;font-size:15px;font-weight:bold;"><%=__('Cash')%> :</font><font style="color:yellow;font-size:15px;font-weight:bold;"><%=parseInt(agentinfo.iCash).toLocaleString()%></font>
+                                    &nbsp;&nbsp;
+                                    <font style="color:#00FFFF;font-size:15px;font-weight:bold;"><%=__('Rolling')%> :</font><font style="color:yellow;font-size:15px;font-weight:bold;"><%=parseInt(agentinfo.iRolling).toLocaleString()%></font>
+                                    &nbsp;&nbsp;
+                                    <font style="color:#00FFFF;font-size:15px;font-weight:bold;"><%=__('Settle')%> :</font><font style="color:yellow;font-size:15px;font-weight:bold;">0</font>
+                                    &nbsp;&nbsp;&nbsp;
+                                </span>
+                    </div>
+                    <%}%>
+                </h3>
+            </div>
+
+            <div class="search_wrap" id="div_realtimebet_overview">
+            </div>
+
+            <div style="background-color:#ffffff;text-align:right;padding-right:5px;padding-top:0px;padding-bottom:0px;" colspan="19">
+
+                <input style="margin-left:180px;width:100px;" type="text" id="datepicker1" class="datepicker"/>~
+                <input style="width:100px;" type="text" id="datepicker2" class="datepicker" />
+
+                <button class="menu1" id="button_search" style="border:1px solid rgb(95, 93, 93);width:70px;;height:25px;text-align:center;color:white" onclick="OnClickSearch(4, '<%=user.strGroupID%>', '<%=user.iClass%>');"><%=__('Search')%></button>
+
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+                <button class="menu1" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;color:white" onclick="OnClickTodayRecord();"><%=__('Today')%></button>
+                &nbsp;
+                <button class="menu1" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;" onclick="OnClickMonthly1stRecord();"><%=__('Half1')%></button>
+                &nbsp;
+                <button class="menu1" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;" onclick="OnClickMonthly2ndRecord();"><%=__('Half2')%></button>
+                &nbsp;
+                <button class="menu3" id="button_toggle_record" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(136, 136, 248);color:white" onclick="OnClickMonthlyRecord();"><%=__('Open')%></button>
+            </div>
+
+            <div class="search_wrap" id="div_realtimebet_overview_record">
+            </div>
+        </div>
+
+    </div>
+</div>
+</div>
+<script type="text/javascript" src="js/enum.js"></script>
+<script type="text/javascript" src="js/time.js"></script>
+<script type="text/javascript" src="js/manage_partner_ref.js"></script>
+<script type="text/javascript" src="js/manage_calculation_menu.js"></script>
+<script type="text/javascript" src="js/manage_setting_ref.js"></script>
+<script type="text/javascript" src="js/manage_user_menu.js"></script>
+<script type="text/javascript" src="js/socket.js"></script>
+<script>
+
+    let user = JSON.parse('<%-JSON.stringify(user)%>');
+    let iocount = JSON.parse('<%-JSON.stringify(iocount)%>');
+    let objectOverview = JSON.parse('<%-JSON.stringify(data.overview)%>');
+
+    let bToggleRecord = false;
+    let bClickDateSelection	= false;
+    const cTClass	= parseInt(user.iClass);
+
+    $(document).on('click', '.menu1', (e) => {
+        $('.menu5').attr('class', 'menu1');
+        $(e.currentTarget).attr('class', 'menu5');
+    });
+
+    $(document).ready(() => {
+        DatePicker();
+
+        $('#datepicker1').val(GetCurrentDate());
+        $('#datepicker2').val(GetCurrentDate());
+        $("#table_record_list").hide();
+
+        SetCalculationHeader(0, user.iClass);
+        SetOverview(objectOverview, "#div_realtimebet_overview", true, user.iRootClass);
+        Alert(iocount, "<%=__('RequestInput')%>", "<%=__('RequestOutput')%>","<%=__('LetterSend')%>");
+    });
+
+    let OnClickTodayRecord = () => {
+
+        bClickDateSelection	= true;
+
+        $('#datepicker1').val(GetCurrentDate());
+        $('#datepicker2').val(GetCurrentDate());
+
+        bToggleRecord = true;
+        $("#button_toggle_record").text("<%=__('Close')%>");
+        RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
+        RequestOverview(cTClass, user.strGroupID, user.iClass, user.iPermission, user.strNickname, user.strID);
+    }
+
+    function OnClickMonthlyRecord()
+    {
+        bToggleRecord = !bToggleRecord;
+
+        if ( bToggleRecord ) {
+            $("#table_record_list").show();
+            $("#button_toggle_record").text("<%=__('Close')%>");
+
+            if ( false == bClickDateSelection )
+            {
+                $('#datepicker1').val(GetMonthlyStartDate());
+                $('#datepicker2').val(GetMonthlyEndDate());
+            }
+            RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
+        }
+        else {
+            $("#table_record_list").hide();
+            $("#button_toggle_record").text(strOpen);
+        }
+    }
+
+    let OnClickMonthly1stRecord = () => {
+
+        bClickDateSelection	= true;
+
+        $('#datepicker1').val(GetMonthly1stStartDate());
+        $('#datepicker2').val(GetMonthly1stEndDate());
+
+        bToggleRecord = true;
+        $("#button_toggle_record").text("<%=__('Close')%>");
+
+        RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
+        RequestOverview(user.iClass, user.strGroupID, user.iClass, user.iPermission, user.strNickname, user.strID);
+    }
+
+    let OnClickMonthly2ndRecord = () => {
+        bClickDateSelection	= true;
+        $('#datepicker1').val(GetMonthly2ndStartDate());
+        $('#datepicker2').val(GetMonthly2ndEndDate());
+
+        bToggleRecord = true;
+        $("#button_toggle_record").text("<%=__('Close')%>");
+        RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
+        RequestOverview(user.iClass, user.strGroupID, user.iClass, user.iPermission, user.strNickname, user.strID);
+    }
+
+    let OnClickSearch = (iTargetClass, strGroupID, iClass) => {
+
+        bToggleRecord = true;
+        $("#button_toggle_record").text("<%=__('Close')%>");
+
+        RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
+        RequestOverview(user.iClass, user.strGroupID, user.iClass, user.iPermission, user.strNickname, user.strID);
+    }
+
+    let OnClickSearchNickname = () => {
+        RequestUserList(user.iClass, user.strGroupID, user.iClass);
+    }
+
+</script>

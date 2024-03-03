@@ -1,0 +1,131 @@
+<div style="height:5px;"></div>
+<div class="list">
+
+	<div class="search_wrap">
+		<p style="background-repeat:no-repeat; background-position:left center; font-size:20px; color:#454545; padding-left:22px;margin-top:10px;height:30px;margin-bottom:5px;">
+			<%=__('User')%> <%=__('RecordOutput')%>
+		</p>
+
+		<div style="background-color:#ffffff;text-align:right;padding-right:5px;padding-top:10px;padding-bottom:10px;" colspan="19">
+			<input style="margin-left:180px;width:100px;" type="text" id="datepicker1" class="datepicker"/>~
+			<input style="width:100px;" type="text" id="datepicker2" class="datepicker" />
+			<!-- <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearch(8, '<%=agent.strGroupID%>', '<%=agent.iClass%>');"><%=__('Search')%></button> -->
+			<button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearchInput(true);"><%=__('Search')%></button>
+		</div>
+
+		<table class="search_list">
+			<thead>
+				<tr>
+					<th width="4%"><%=__('Index')%></th>
+					<th width="6%"><%=__('Type')%></th>
+					<th width="5%"><%=__('Nickname')%></th>
+					<th width="8%"><%=__('CashBeforeOutput')%></th>
+					<th width="8%"><%=__('OutputAmount')%></th>
+					<th width="9%"><%=__('BankAccountHolderName')%></th>
+					<th width="8%"><%=__('DateRequest')%></th>
+					<th width="8%"><%=__('DateProcess')%></th>
+				</tr>
+			</thead>
+			<!-- <tbody id="userpopup_outputrecord"> -->
+			<tbody id="input_list">
+			</tbody>
+		</table>
+
+		<div class="pagination mt0" id="pagination">
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript" src="js/enum.js"></script>
+<script type="text/javascript" src="js/time.js"></script>
+<script type="text/javascript" src="js/util.js"></script>
+<script type="text/javascript" src="js/manage_user_popup_menu.js"></script>
+<script type="text/javascript" src="js/manage_partner_ref.js"></script>
+<script type="text/javascript">
+	let agent = JSON.parse('<%-JSON.stringify(agent)%>');
+	let iCurrentPage = 1;
+	let iLimit = 20;
+
+	$('#select_limit').on("change", function () {
+		iLimit = this.value;
+	});
+
+	$(document).ready(() => {
+		DatePicker();
+		$('#datepicker1').val(GetCurrentDate());
+		$('#datepicker2').val(GetCurrentDate());
+
+		OnClickSearchInput(true);
+	});
+
+	let OnClickSearchInput = (bSearch) => {
+
+		let date1 = $("#datepicker1").val();
+		let date2 = $("#datepicker2").val();
+
+		$.ajax(
+			{
+				type:'post',
+				url: "/manage_inout/request_searchby",
+				context: document.body,
+				data:{
+					type:'OUTPUT',
+					dateStart:date1,
+					dateEnd:date2,
+					strGroupID:agent.strGroupID,
+					strSearchNickname: agent.strNickname,
+					iLimit: iLimit,
+					iPage:iCurrentPage,
+					iClass:agent.iClass
+				},
+
+				success:function(obj) {
+
+					console.log(obj);
+					
+					SetList(obj.data);
+				}
+			}
+		);
+	}
+
+	let SetList = (data) =>
+	{
+		let iTotal = 0;
+
+		$('#input_list').empty();
+		for ( let i in data )
+		{
+			if ( data[i].eState == 'COMPLETE' )
+			{
+				let tag = `
+				<tr>
+					<td>${parseInt(i)+1}</td>
+					<td>${data[i].id}</td>
+					<td>${data[i].strID}</td>
+					<td>${data[i].iPreviousCash.toLocaleString()}</td>
+					<td>${data[i].iAmount.toLocaleString()}</td>
+					<td>${data[i].strName}</td>
+					<td>${data[i].createdAt}</td>
+					<td>${data[i].updatedAt}</td>
+				</tr>
+				`;
+				$('#input_list').append(tag);
+
+				iTotal += parseInt(data[i].iAmount);
+			}
+		}
+
+		let endtag = `
+			<td style="color:red;"><%=__('Total')%></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td>${iTotal.toLocaleString()}</td>
+			<td></td>
+			<td></td>
+			<td></td>
+		`;
+		$('#input_list').append(endtag);
+	}
+</script>

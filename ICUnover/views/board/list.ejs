@@ -1,0 +1,57 @@
+<div class="container">
+    <!--서브페이지들-->
+    <div class="sub-wrap">
+
+        <div class="subscr" style="background: none; border:none;">
+            <div class="subtitle">
+                <h1>공지사항</h1>
+                <span>언오버 카지노 이벤트 입니다.</span>
+            </div>
+            <table>
+                <colgroup>
+                    <col style="width:14%;">
+                    <col style="width:55%;">
+                    <col style="width:23%;">
+
+                </colgroup>
+                <thead>
+                    <tr style="background: #191919;">
+                        <th>번호</th>
+                        <th>제목</th>
+                        <th>작성일자</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+
+                <% for ( let i in listAnnouncement ) { %>
+
+                <tr class="boardl" >
+                    <td style="text-align: center;"><%=listAnnouncement[i].id%></td>
+                    <td style="text-align: left; font-weight: 600;">
+                        <% const address = `/board/ann?id=${listAnnouncement[i].id}`;%>
+                        <a href="<%=address%>"><font color="#ffffff" size="2"><%=listAnnouncement[i].strSubject%></font></a>
+                    </td>
+                    <td style="text-align: center;"><%=listAnnouncement[i].createdAt%></td>
+                </tr>
+
+                <% } %>
+
+
+
+                </tbody>
+            </table>
+            <!-- <div class="pagination">
+            <a href="#">&laquo;</a>
+            <a id="active" href="#">1</a>
+            <a href="#">2</a>
+            <a href="#">3</a>
+            <a href="#">4</a>
+            <a href="#">5</a>
+            <a href="#">&raquo;</a>
+            </div> -->
+        </div>
+
+    </div>
+      
+</div>

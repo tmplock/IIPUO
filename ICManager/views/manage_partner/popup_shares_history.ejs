@@ -1,0 +1,188 @@
+<div class="search_wrap">
+    <div class="container clearfix">
+        <p style="background-repeat:no-repeat; background-position:left center; font-size:20px; color:#454545; padding-left:22px;margin-top:10px;height:30px;margin-bottom:5px;">
+            지분자 이력 목록
+        </p>
+        <div class="list">
+            <div class="search_wrap" id="div_realtimebet">
+                <div style="background-color:#ffffff;text-align:right;padding-right:5px;padding-top:10px;padding-bottom:10px;" colspan="19">
+                    <%=__('Search')%>
+                    <select id="select_roomno" style="width:80px;">
+                        <option><%=__('Nickname')%></option>
+                    </select>
+                    <input style="margin-left:0px;width:100px;" id="strSearchNickname" type="text"/>
+                    <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearchInput(true);"><%=__('Search')%></button>
+                    <input style="margin-left:10px;width:100px;" type="text" id="datepicker1" class="datepicker"/>~
+                    <input style="width:100px;" type="text" id="datepicker2" class="datepicker" />
+                    <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearchInput(false);"><%=__('Search')%></button>
+                </div>
+
+                <table class="search_list">
+                    <caption><%=__('SearchResult')%></caption>
+                    <colgroup>
+                        <col style="width:14%">
+                        <col style="width:14%">
+                        <col style="width:14%">
+                        <col style="width:14%">
+                        <col style="width:14%">
+                        <col style="width:14%">
+                        <col style="width:16%">
+                    </colgroup>
+                    <thead>
+                    <tr>
+                        <th scope="col">본사</th>
+                        <th scope="col">지분자</th>
+                        <th scope="col">입출전 금액</th>
+                        <th scope="col">입∙출 금액</th>
+                        <th scope="col">입출후 금액</th>
+                        <th scope="col">일시</th>
+                        <th scope="col">메모</th>
+                    </tr>
+                    </thead>
+                    <tbody id="list_agents">
+                    </tbody>
+                </table>
+                <div class="pagination mt0">
+                    <a href="javascript:get_data('inner_partner_list2.php', 'inner_content', 's_sido=13&s_gugun=parent_level=4&s_date=&e_date=&s_cate=&pageNo=1');" class="on" style="color:#ffffff;">1</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<script type="text/javascript" src="js/constants.js"></script>
+<script type="text/javascript" src="js/enum.js"></script>
+<script type="text/javascript" src="js/time.js"></script>
+<script type="text/javascript" src="js/manage_partner_popup_menu.js"></script>
+<script type="text/javascript" src="js/manage_inout_ref.js"></script>
+<script type="text/javascript" src="js/util.js"></script>
+<script type="text/javascript" src="js/common_menu.js"></script>
+<script type="text/javascript">
+    let agent = JSON.parse('<%-JSON.stringify(agent)%>');
+    let user = JSON.parse('<%-JSON.stringify(user)%>');
+    let list = JSON.parse('<%-JSON.stringify(list)%>');
+    let dateStart = '';
+    let dateEnd = '';
+
+    DatePicker();
+    $("#datepicker1").val(GetCurrentDate());
+    $("#datepicker2").val(GetCurrentDate());
+
+    $(document).ready( ()=> {
+        SetList(list);
+    });
+
+    let OnClickSearchInput = (bSearch) => {
+
+        let date1 = $("#datepicker1").val();
+        dateStart = date1;
+        let date2 = $("#datepicker2").val();
+        dateEnd = date2;
+
+        let strNickname = '';
+        if ( bSearch == true )
+            strNickname = $('#strSearchNickname').val();
+
+        $.ajax({
+            url:'/manage_partner_popup/request_share_history_list',
+            type:"POST",
+            data: {
+                strID:user.strID,
+                strGroupID:user.strGroupID,
+                strNickname:strNickname,
+                dateStart: dateStart,
+                dateEnd: dateEnd,
+            },
+            dataType: "json",
+            success: function (obj) {
+                console.log(obj);
+                // 해당 분기 죽장 완료 여부 체크
+                if ( obj.result == 'OK')
+                {
+                    SetList(obj.list);
+                }
+                else
+                {
+                    alert(obj.msg);
+                }
+            }
+        });
+    }
+
+    let OnClickMemo = (strNickname) => {
+        let strMemo = $(`#sharememo_${strNickname}`).val();
+        strMemo = strMemo.replace(/(\n|\r\n)/g, '<br>');
+
+        $.ajax({
+            url:'/manage_partner/request_share_memo_apply',
+            type:"POST",
+            data: {
+                strNickname: strNickname,
+                strMemo: strMemo,
+                strID: strID,
+                strQuater: strQuater,
+            },
+            dataType: "json",
+            success: function (obj) {
+
+                if ( obj.result == 'OK')
+                {
+                    alert(obj.msg);
+                    window.opener.location.reload(true);
+                }
+                else
+                {
+                    alert(obj.msg);
+                    window.opener.location.reload(true);
+                }
+            }
+        });
+    }
+
+    let SetList = (list) => {
+        console.log('SetList');
+        console.log(list);
+        console.log(list.length);
+
+        $(`#list_tit`).empty();
+
+        $("#list_agents").empty();
+        if (list.length > 0) {
+            for (let i = 0; i<list.length; i++) {
+                let aObject = list[i];
+                let parentNickname = aObject.parentNickname;
+                let strNickname = aObject.strNickname ?? '';
+                let iBeforeCredit = aObject.iBeforeCredit ?? 0;
+                let iIncrease = aObject.iIncrease ?? 0;
+                let iAfterCredit = iBeforeCredit + iIncrease;
+                let strMemo = aObject.strMemo ?? '';
+
+                $('#list_agents').append(`
+                    <tr>
+                        <td>${parentNickname}</td>
+                        <td>${strNickname}</td>
+                        <td>${GetNumberSign(iBeforeCredit, '0')}</td>
+                        <td>${GetNumberSign(iIncrease, '0')}</td>
+                        <td>${GetNumberSign(iAfterCredit, '0')}</td>
+                        <td>${aObject.createdAt}</td>
+                        <td>${strMemo}</td>
+                    </tr>
+                `);
+            }
+        } else {
+            console.log('else');
+            $('#list_agents').append(`
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+            `);
+        }
+    }
+
+</script>

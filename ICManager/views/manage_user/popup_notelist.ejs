@@ -1,0 +1,31 @@
+<div style="height:5px;"></div>
+<div class="list">
+	<div class="search_wrap">
+		<p style="background-repeat:no-repeat; background-position:left center; font-size:20px; color:#454545; padding-left:22px;margin-top:10px;height:30px;margin-bottom:5px;"><%=__('Letter')%></p>
+		<table class="search_list">
+			<thead>
+				<tr>
+					<th width="5%"><%=__('Index')%></th>
+					<th width="80%"><%=__('Contents')%></th>
+					<th width="15%"><%=__('Date')%></th>
+				</tr>
+			</thead>
+			<tbody>
+								<tr>
+					<td colspan="3" height="40"><strong><%=__('AlertNone')%></strong></td>
+				</tr>
+			
+			
+			</tbody>
+		</table>
+
+		<div class="pagination mt0">
+			<a href="javascript:get_data('inner_partner_list2.php', 'inner_content', 's_sido=13&s_gugun=parent_level=4&s_date=&e_date=&s_cate=&pageNo=1');" class="on" style="color:#ffffff;">1</a>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript", src="js/manage_user_popup_menu.js"></script>
+<script type="text/javascript">
+	var agent = JSON.parse('<%-JSON.stringify(agent)%>');
+</script>

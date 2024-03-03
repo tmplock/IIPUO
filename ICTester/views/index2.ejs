@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>IIP Tester</title>
+
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<body>
+<label for="basic-url">사이트 부하 테스트</label>
+<div class="input-group mb-3">
+	<table>
+		<thead>
+			<tr>
+				<th scope="col">No.</th>
+				<th scope="col">유저 아이디</th>
+				<th scope="col">동시 호출수(동접)</th>
+				<th scope="col">호출 간격(초)</th>
+				<th scope="col">실행여부</th>
+			</tr>
+		</thead>
+		<tbody id="list">
+		</tbody>
+	</table>
+</div>
+<button type="button" id="add" class="btn btn-primary" onclick="Add()">추가</button>
+<button type="button" id="add" class="btn btn-primary" onclick="StopAll()">전체중지</button>
+
+<script>
+	let userList = JSON.parse('<%-JSON.stringify(list)%>');
+
+	$(document).ready(() => {
+		SetList(userList);
+	});
+
+	let SetList = (list) => {
+		$(`#list`).empty();
+
+		for (let i in list) {
+			const user = list[i];
+			if (user.enableAction === 1) {
+				$(`#list`).append(`
+				<tr>
+					<td><label class="form-control" id="id_${user.id}" aria-describedby="basic-addon3">${user.id}</td>
+					<td><input type="text" class="form-control" id="userId_${user.id}" aria-describedby="basic-addon3" value="${user.userId}" disabled></td>
+					<td><input type="number" class="form-control" id="access_${user.id}" aria-describedby="basic-addon3" value="${user.access}" disabled></td>
+					<td><input type="number" class="form-control" id="interval_${user.id}" aria-describedby="basic-addon3" value="${user.interval}" disabled></td>
+					<td><button type="button" class="btn btn-primary" onclick="Stop('${user.id}')">중지</button></td>
+				</tr>
+				`);
+			} else {
+				$(`#list`).append(`
+				<tr>
+					<td><label class="form-control" id="id_${user.id}" aria-describedby="basic-addon3">${user.id}</td>
+					<td><input type="text" class="form-control" id="userId_${user.id}" aria-describedby="basic-addon3" value="${user.userId}"></td>
+					<td><input type="number" class="form-control" id="access_${user.id}" aria-describedby="basic-addon3" value="${user.access}"></td>
+					<td><input type="number" class="form-control" id="interval_${user.id}" aria-describedby="basic-addon3" value="${user.interval}"></td>
+					<td><button type="button" class="btn btn-primary" onclick="Start('${user.id}')">실행</button></td>
+				</tr>
+				`);
+			}
+		}
+	}
+
+	let Add = () => {
+		$.ajax({
+			type: 'post',
+			url: '/router/request_id',
+			success: (data) => {
+				console.log(data);
+				if (data.result === true) {
+					SetList(data.list);
+				} else {
+					alert(data.msg);
+				}
+			}
+		});
+	}
+
+	let Start = (id) => {
+		const userId = $(`#userId_${id}`).val();
+		const access = $(`#access_${id}`).val();
+		const interval = $(`#interval_${id}`).val();
+		const enableAction = 1;
+		$.ajax({
+			type:'post',
+			url: "/router/request_action",
+			context: document.body,
+			data:{
+				id:id,
+				userId:userId,
+				access:access,
+				interval:interval,
+			},
+
+			success: (data) => {
+				console.log(data);
+				if (data.result === true) {
+					SetList(data.list);
+				} else {
+					alert(data.msg);
+				}
+			}
+		});
+	}
+
+	let Stop = (id) => {
+		$.ajax({
+			type:'post',
+			url: "/router/request_stop",
+			context: document.body,
+			data:{
+				id:id
+			},
+			success: (data) => {
+				console.log(data);
+				if (data.result === true) {
+					SetList(data.list);
+				} else {
+					alert(data.msg);
+				}
+			},
+		});
+	}
+
+	let StopAll = () => {
+		$.ajax({
+			type:'post',
+			url: "/router/request_stop_all",
+			context: document.body,
+			success: (data) => {
+				console.log(data);
+				if (data.result === true) {
+					SetList(data.list);
+				} else {
+					alert(data.msg);
+				}
+			},
+		});
+	}
+
+</script>
+</body>
+</html>

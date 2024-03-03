@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="format-detection" content="telephone=no">
+<meta name="Keywords" content="">
+<meta name="Description" content="">
+<title>당첨 결과</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script type="text/javascript" src="../../js/jquery.bxslider.min.js"></script>
+<script type="text/javascript" src="../../js/placeholders.js"></script>
+<script type="text/javascript" src="../../js/layout.js"></script>
+<script type="text/javascript" src="../../js/common_js.js"></script>
+<link rel="stylesheet" type="text/css" href="../../css/general.css"/>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css" type="text/css" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/ui/1.8.18/jquery-ui.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com">
+<link href='//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css' rel='stylesheet' type='text/css'>
+
+</head>
+
+<body style="font-family:'Spoqa Han Sans Neo';">
+<div>
+	<div class="content" style="position:relative; padding:0 10px 0 10px;">
+		<div class="list_tit" id="registeragent_title">
+			<h3 style="font-size:22px;color:yellow;font-weight:bold;">당첨 결과 보기</h3>
+		</div>
+		<div>
+			<div class="list_tit" style="margin-top:20px;">
+				<h3>게임정보</h3>
+			</div>
+			<div>
+				<div class="list">
+					<div class="search_wrap">
+						<table class="search_list">
+							<caption><%=__('SearchResult')%></caption>
+							<colgroup>
+								<col style="width:50%;">
+								<col style="width:50%;">
+							</colgroup>
+							<thead>
+							<tr>
+								<th scope="col">구분</th>
+								<th scope="col">내용</th>
+							</tr>
+							</thead>
+							<tbody id="game_info_detail">
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+
+			<div class="list_tit" style="margin-top:20px;">
+				<h3>배팅정보</h3>
+			</div>
+			<div>
+				<div class="list">
+					<div class="search_wrap">
+						<table class="search_list">
+							<caption><%=__('SearchResult')%></caption>
+							<colgroup>
+								<col style="width:33%;">
+								<col style="width:33%;">
+								<col style="width:34%;">
+							</colgroup>
+							<thead>
+							<tr>
+								<th scope="col">베팅</th>
+								<th scope="col">베팅금액</th>
+								<th scope="col">당첨금액</th>
+							</tr>
+							</thead>
+							<tbody id="betting_info">
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			<div>
+				<div class="list">
+					<div class="search_wrap">
+						<table class="search_list">
+							<caption><%=__('SearchResult')%></caption>
+							<colgroup>
+								<col style="width:50%;">
+								<col style="width:50%;">
+							</colgroup>
+							<thead>
+							<tr>
+								<th scope="col">Player</th>
+								<th scope="col">Banker</th>
+							</tr>
+							</thead>
+							<tbody id="card_info">
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+<script>
+	let GetBettingTarget = (iTarget) => {
+		let tagTarget = ``;
+		let cBettingTarget = iTarget;
+
+		switch ( cBettingTarget )
+		{
+			case 0:
+				tagTarget = `T`;
+				break;
+			case 1:
+				tagTarget = `P`;
+				break;
+			case 2: //  Banker
+				tagTarget = `B`;
+				break;
+			case 3:
+				tagTarget = `P-Pair`;
+				break;
+			case 4:
+				tagTarget = `B-Pair`;
+				break;
+			case 5: //  Either Pair
+				tagTarget = `E-Pair`;
+				break;
+			case 6: //  Perfect Pair
+				tagTarget = `Perfect Pair`;
+				break;
+			case 7: //  Player Bonus
+				tagTarget = `P-Bonus`;
+				break;
+			case 8: //  Banker Bonus
+				tagTarget = `B-Bonus`;
+				break;
+
+
+			case 100:
+				tagTarget = `P-Under`;
+				break;
+			case 101:
+				tagTarget = `P-Over`;
+				break;
+			case 102:
+				tagTarget = `B-Under`;
+				break;
+			case 103:
+				tagTarget = `B-Over`;
+				break;
+
+			case 400:
+				tagTarget = `Roulette`;
+				break;
+			case 500:
+				tagTarget = `Blackjack`;
+				break;
+			case 600:
+				tagTarget = `DragonTiger`;
+				break;
+			case 700:
+				tagTarget = `Holdem`;
+				break;
+			case 800:
+				tagTarget = `Teen Patti`;
+				break;
+		}
+		return tagTarget;
+	}
+</script>
+
+<script>
+		let result = JSON.parse('<%-JSON.stringify(result)%>');
+		if (result != 'OK') {
+			let msg = JSON.parse('<%-JSON.stringify(msg)%>');
+			var isOK = confirm(msg);
+			if (isOK) {
+				window.close();
+			}
+		} else {
+			let info = JSON.parse('<%-JSON.stringify(info)%>');
+
+			$('#game_info_detail').append(`
+					<tr>
+						<td>일련번호</td>
+						<td>${info.iTransactionID}</td>
+					</tr>`);
+			$('#game_info_detail').append(`
+					<tr>
+						<td>회원정보</td>
+						<td>${info.strNickname}</td>
+					</tr>`);
+			$('#game_info_detail').append(`
+					<tr>
+						<td>게임사</td>
+						<td>${info.strVender}</td>
+					</tr>`);
+			$('#game_info_detail').append(`
+					<tr>
+						<td>테이블명(라운드)</td>
+						<td>${info.strTableID ?? ''}(${info.strRound ?? ''})</td>
+					</tr>`);
+			$('#game_info_detail').append(`
+					<tr>
+						<td>배팅시간</td>
+						<td>${info.createdAt}</td>
+					</tr>`);
+			$('#game_info_detail').append(`
+					<tr>
+						<td>종료시간</td>
+						<td>${info.endedAt}</td>
+					</tr>`);
+			$('#game_info_detail').append(`
+					<tr>
+						<td>상태</td>
+						<td>${info.status}</td>
+					</tr>`);
+
+			try {
+				let bets = JSON.parse('<%-JSON.stringify(bets)%>');
+				if (bets.length > 0) {
+					for (let i in bets) {
+						$('#betting_info').append(`
+						<tr><td>${GetBettingTarget(bets[i].T)}</td><td>${parseInt(bets[i].B)}</td><td>${parseInt(bets[i].W)}</td></tr>
+					`);
+					}
+				}
+			} catch (err) {}
+
+			try {
+				let cards = JSON.parse('<%-JSON.stringify(cards)%>');
+
+				let playerNum = 0;
+				let player = '';
+				let plist = cards.P ?? [];
+				// {"B":[{"C":"D","N":"J"},{"C":"C","N":"6"}],"P":[{"C":"S","N":"K"},{"C":"D","N":"4"},{"C":"D","N":"5"}]}
+				for (let i in plist) {
+					let num = parseInt(plist[i].N) ?? 0;
+					if (num >= 10) {
+						playerNum += 0;
+					} else {
+						playerNum += num;
+					}
+					player = player == '' ? `${plist[i].C}-${plist[i].N}` : `${player} | ${plist[i].C}-${plist[i].N}`;
+				}
+				playerNum = playerNum%10;
+
+				let bankerNum = 0;
+				let banker = '';
+				let blist = cards.B ?? [];
+				for (let i in blist) {
+					let num = parseInt(blist[i].N) ?? 0;
+					if (num >= 10) {
+						bankerNum += 0;
+					} else {
+						bankerNum += num;
+					}
+					banker = banker == '' ? `${blist[i].C}-${blist[i].N}` : `${banker} | ${blist[i].C}-${blist[i].N}`;
+				}
+				bankerNum = bankerNum%10;
+
+				$('#card_info').append(`
+				<tr>
+					<td>${playerNum}</td>
+					<td>${bankerNum}</td>
+				</tr>
+			`);
+
+				$('#card_info').append(`
+				<tr>
+					<td>${player}</td>
+					<td>${banker}</td>
+				</tr>
+			`);
+			} catch (err) {
+			}
+		}
+	</script>
+</body>
+</html>

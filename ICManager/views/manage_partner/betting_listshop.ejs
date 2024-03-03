@@ -1,0 +1,228 @@
+<div class="sub_wrap">
+	<div class="container clearfix">
+
+		<ul class="list_tab" style="float:right; margin-right:10px; position:relative; z-index:10;">
+			<a href="#" id="register_agent" iAgentClass="7" class="btn_gray"><%=__('Shop')%><%=__('Register')%></a>
+			<a href="#" id="register_agent" iAgentClass="8" class="btn_gray"><%=__('User')%><%=__('Register')%></a>
+		</ul>
+
+		<div class="content" style="position:relative; padding:0 10px 0 10px;">
+			<ul class="list_tab" style="margin-bottom:10px;width:75%;z-index:10000;" id="partner_header">
+			</ul>
+		</div>
+			
+	<div class="list">
+		<div style="background-color:#ffffff;text-align:right;padding-right:5px;padding-top:0px;padding-bottom:0px;" colspan="19">
+			<input style="width:100px;" type="text" id="datepicker1" class="datepicker"/>~
+			<input style="width:100px;" type="text" id="datepicker2" class="datepicker" />
+			<button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearch(7, '<%=user.strGroupID%>', '<%=user.iClass%>');"><%=__('Search')%></button>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<%=__('Search')%>
+			<select id="select_roomno" style="width:80px;">
+				<option><%=__('Nickname')%></option>
+			</select>
+			<input style="margin-left:0px;width:100px;" id="strSearchNickname" type="text"/>
+			<button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearchNickname();"><%=__('Search')%></button>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<button class="menu5" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;color:white" onclick="OnClickTodayRecord();"><%=__('Today')%></button>
+			&nbsp;
+			<button class="menu1" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;color:white" onclick="OnClickMonthly1stRecord();"><%=__('Half1')%></button>
+			&nbsp;
+			<button class="menu1" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;color:white" onclick="OnClickMonthly2ndRecord();"><%=__('Half2')%></button>
+			&nbsp;
+		</div>
+
+		<div class="list_tit">
+			<h3><%=__('SubMenuShopList')%>
+			</h3>
+		</div>
+
+		<div class="search_wrap" id="div_realtimebet">
+			<table class="search_list">
+				<caption><%=__('SearchResult')%></caption>
+				<colgroup>
+					<col style="width:2%">
+					<col style="width:2%">
+					<col style="width:2%">
+					<col style="width:2%">
+					<col style="width:3%">
+					<col style="width:3%">
+
+					<col style="width:3%">
+					<col style="width:3%">
+					<col style="width:3%">
+					<col style="width:3%">
+					<col style="width:3%">
+					<col style="width:3%">
+					<col style="width:3%">
+					
+					<col style="width:7%;">
+					<col style="width:7%;">
+					<col style="width:7%;">
+					<% if ( user.iRootClass <= 3 && user.iPermission != 100 ) { %>
+						<col style="width:7%;">
+					<% } %>
+					<col style="width:7%;">
+					<col style="width:7%;">
+
+					<col style="width:6%">
+					<col style="width:6%">
+					<col style="width:6%;">
+
+					<% if ( user.iRootClass <= 3 ) { %>
+						<col style="width:3%;">
+					<% } %>
+					<col style="width:6%;">
+
+					<% if ( user.iRootClass <= 3 && user.iPermission != 100 ) { %>
+						<col style="width:3%;">
+						<col style="width:3%;">
+						<col style="width:3%;">
+					<% } else { %>
+						<col style="width:9%;">
+					<% } %>
+				</colgroup>
+				<thead>
+					<tr>
+						<th scope="col"><%=__('ViceAdmin')%></th>				
+						<th scope="col"><%=__('Agent')%></th>
+						<th scope="col"><%=__('Shop')%></th>
+						<th scope="col"><%=__('User')%></th>
+						<th scope="col"><%=__('ID')%></th>
+						<th scope="col"><%=__('Nickname')%></th>
+
+						<th scope="col" style="background-color:#f0d17e;color:black;"><%=__('Slot')%></th>
+						<th scope="col" style="background-color:#f0d17e;color:black;"><%=__('Baccarat')%></th>
+						<th scope="col" style="background-color:#f0d17e;color:black;"><%=__('UnderOver')%></th>
+						<th scope="col" style="background-color:#f0d17e;color:black;">파워A</th>
+						<th scope="col" style="background-color:#f0d17e;color:black;">파워B<br>단폴</th>
+						<th scope="col" style="background-color:#f0d17e;color:black;">파워B<br>투폴</th>
+						<th scope="col" style="background-color:#f0d17e;color:black;">파워B<br>쓰리폴</th>
+
+						<th scope="col"><%=__('Input')%></th>
+						<th scope="col"><%=__('Output')%></th>
+						<th scope="col"><%=__('MyCoin')%></th>
+						<% if ( user.iRootClass <= 3 ) { %>
+							<th scope="col"><%=__('WinLose')%></th>
+						<% } %>
+						<th scope="col"><%=__('Rolling')%></th>
+						<th scope="col"><%=__('Total')%></th>
+
+						<th scope="col">롤링</th>
+						<th scope="col">미전환롤링</th>
+						<th scope="col"><%=__('Settle')%></th>
+
+						<% if ( user.iRootClass <= 3 && user.iPermission != 100 ) { %>
+							<th scope="col"><%=__('TemporaryModify')%></th>
+						<% } %>
+
+						<th scope="col">관리자 <%=__('MyCoin')%></th>
+						<th scope="col"><%=__('State')%></th>
+
+						<% if ( user.iRootClass <= 3 && user.iPermission != 100 ) { %>
+							<th scope="col"><%=__('ShortCut')%></th>
+							<th scope="col"><%=__('Remove')%></th>
+						<% } %>
+					</tr>
+				</thead>
+				<tbody id="vadmin_list">
+					
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+</div>
+
+<script type="text/javascript" src="js/enum.js"></script>
+<script type="text/javascript" src="js/time.js"></script>
+<script type="text/javascript" src="js/manage_partner_menu.js"></script>
+<script type="text/javascript" src="js/manage_partner_ref.js"></script>
+<script type="text/javascript" src="js/manage_partner_register.js"></script>
+<script type="text/javascript" src="js/manage_inout_ref.js"></script>
+<script type="text/javascript" src="js/socket.js"></script>
+<script>
+
+	let user = JSON.parse('<%-JSON.stringify(user)%>');
+	let objectVA = JSON.parse('<%-JSON.stringify(data.agents)%>');
+	let iocount = JSON.parse('<%-JSON.stringify(iocount)%>');
+
+	$(document).on('click', '.menu1', (e) => {
+
+		$('.menu5').attr('class', 'menu1');
+
+		$(e.currentTarget).attr('class', 'menu5');
+	});
+
+	let bClickDateSelection	= false;
+	const cTClass = parseInt(user.iClass);
+	let bToggleRecord = false;
+
+	$(document).ready(() => {
+		$("#table_record_list").hide();
+
+		DatePicker();
+		$('#datepicker1').val(GetCurrentDate());
+		$('#datepicker2').val(GetCurrentDate());
+
+		Alert(iocount, "<%=__('RequestInput')%>", "<%=__('RequestOutput')%>","<%=__('LetterSend')%>");
+
+		SetPartnerHeader(7, user.iClass);
+
+		Init("#vadmin_list");
+
+		RequestAgentList(EAgent.eShop, user.strGroupID, user.iClass);
+
+		$('.menu').each(function(index){
+			$(this).attr('menu-index', index);
+		}).click(function(){
+			var index = $(this).attr('menu-index');
+			$('.menu[menu-index=' + index + ']').addClass('clicked_menu');
+			$('.menu[menu-index!=' + index + ']').removeClass('clicked_menu');
+		});
+	});
+
+	let OnClickTodayRecord = () => {
+
+		bClickDateSelection	= true;
+
+		$('#datepicker1').val(GetCurrentDate());
+		$('#datepicker2').val(GetCurrentDate());
+
+		bToggleRecord = true;
+		RequestAgentList(EAgent.eShop, user.strGroupID, user.iClass);
+	}
+
+	let OnClickMonthly1stRecord = () => {
+
+		bClickDateSelection	= true;
+
+		$('#datepicker1').val(GetMonthly1stStartDate());
+		$('#datepicker2').val(GetMonthly1stEndDate());
+
+		bToggleRecord = true;
+		RequestAgentList(EAgent.eShop, user.strGroupID, user.iClass);
+	}
+
+	let OnClickMonthly2ndRecord = () => {
+
+		bClickDateSelection	= true;
+
+		$('#datepicker1').val(GetMonthly2ndStartDate());
+		$('#datepicker2').val(GetMonthly2ndEndDate());
+
+		bToggleRecord = true;
+		RequestAgentList(EAgent.eShop, user.strGroupID, user.iClass);
+	}
+
+	let OnClickSearch = (iTargetClass, strGroupID, iClass) => {
+		bToggleRecord = true;
+		$("#button_toggle_record").text("닫기");
+		RequestAgentList(iTargetClass, strGroupID, iClass);
+	}
+
+	let OnClickSearchNickname = () => {
+		RequestAgentList(EAgent.eShop, user.strGroupID, user.iClass);
+	}
+
+</script>

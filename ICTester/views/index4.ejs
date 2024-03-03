@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>IIP Tester</title>
+
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<body>
+	<label for="basic-url">*** 서버 부하 테스트 *** </label>
+	<label for="basic-url">(호출시작시 호출수 만큼 한번에 호출함)</label>
+<div class="input-group mb-3">
+	<div class="input-group-prepend">
+	</div>
+	<table style="padding: 10px;">
+		<tr>
+			<td>배팅수</td><td>승리횟수</td><td>배팅 방식</td>
+		</tr>
+		<t>
+			<td>
+<!--				<input type="radio" id="radio_vivo"  name="gameType" value="VIVO" checked>VIVO<br>-->
+				<input type="radio" id="radio_ezugi" name="gameType" value="EZUGI" checked>EZUGI<br>
+			</td>
+		</t>
+		<tr>
+			<td><input type="number" class="form-control" id="input_count" aria-describedby="basic-addon3"></td>
+			<td><input type="number" class="form-control" id="input_win" aria-describedby="basic-addon3"></td>
+			<td>
+				<input type="radio" id="radio_fixed"  name="bettingType" value="fixed" checked>고정 배팅(1,000원 고정 배팅됨) <br>
+				<input type="radio" id="radio_random" name="bettingType" value="random">랜덤 배팅(1,000~100,000원 사이에서 1,000원 단위로 랜덤 배팅됨)<br>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="3">아이디(미입력시 test로 배팅함, 입력 예시) test,test2 처럼 ,로 구분하여 입력)</td>
+		</tr>
+		<tr>
+			<td colspan="3"><input type="text" class="form-control" id="input_ids" aria-describedby="basic-addon3"></td>
+		</tr>
+	</table>
+</div>
+<button type="button" id="off" class="btn btn-primary">배팅시작</button>
+<br>
+<div id="history">
+</div>
+	<script>
+
+		$(document).on('click', '.btn', (e) => {
+			const input_count = parseInt($('#input_count').val() ?? '');
+			const input_win = parseInt($('#input_win').val() ?? '');
+			const bettingType = $('input[name=bettingType]:checked').val() ?? '';
+			const gameType = $('input[name=gameType]:checked').val() ?? '';
+			const input_ids = $('#input_ids').val() ?? '';
+
+			if (input_count == undefined || input_count == null || input_count == 0) {
+				alert('배팅수에 값을 입력해주세요');
+				return;
+			}
+
+			if (input_win == undefined || input_win == null || input_win == 0) {
+				alert('승리횟수에 값을 입력해주세요');
+				return;
+			}
+
+			if (bettingType == undefined || bettingType == null) {
+				alert('배팅 방식을 선택해주세요');
+				return;
+			}
+			RequestActionOnce(input_count, input_win, bettingType, input_ids, gameType);
+		});
+
+		let RequestActionOnce = (count, win, type, ids, gameType) => {
+			$.ajax({
+				type:'post',
+				url: "/request_action_once",
+				context: document.body,
+				data:{
+					count: count,
+					win: win,
+					type: type,
+					strIds: ids,
+					gameType:gameType
+				},
+				success:function(data) {
+					if (data.result == false) {
+						alert(data.msg);
+						return;
+					}
+					console.log(data);
+					let strType = type == 'fixed' ? '고정배팅' : '랜덤배팅';
+					let label = `게임사: ${data.gameType} / 호출시간 : ${data.date} / 요청베팅수 : ${count} / 처리 베팅수 : ${data.success} / 승리횟수 : ${data.winCount} / 배팅방식 : ${strType} / 아이디 : ${ids}`;
+					if (data.errMsg != '') {
+						label = `${label} / ${data.errMsg}`;
+					}
+					$('#history').append(`
+						<label>${label}</label><br>
+					`);
+					alert(label);
+				}
+			});
+		}
+	</script>
+</body>
+</html>

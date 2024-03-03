@@ -1,0 +1,51 @@
+    <title>UNOVER CASINO</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+    <link href='https://fonts.googleapis.com/css?family=Noto+Sans' rel='stylesheet' type='text/css'>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+    <script type="text/javascript" src="/js/plugin/jquery.placeholder.js"></script>
+    <script type="text/javascript" src="/js/plugin/fingerprint2.js"></script>
+
+    <script src="https://www.google.com/jsapi" type="text/javascript"></script>
+    <script type="text/javascript" src="/js/common/menu.js?ver=8967564565"></script>
+    <script type='text/javascript' src="/js/common/common.js?ver=8967564565"></script>
+    <script type='text/javascript' src="/js/common/game.js?ver=8967564565"></script>
+    <script type='text/javascript' src='/js/page/main.js?ver=8967564565'></script>
+
+    <link href="/css/index.css?ver=8967564565" rel="stylesheet" type="text/css" />
+    <link href="/css/common.css?ver=8967564565" rel="stylesheet" type="text/css" />
+    <link href="/css/media-q.css?ver=8967564565" rel="stylesheet" type="text/css" />
+    <link href="/css/slider.css" rel="stylesheet" type="text/css" />
+    <script src="/js/bxslider.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css">
+
+    <audio id="audio3"><source src="sound/audio3.wav" type="audio/mp3"></audio>
+    <script src='/socket.io/socket.io.js'></script>
+    <script type="text/javascript" src="source/socket.js"></script>
+    
+    <script>
+        $(document).ready(function () {
+            // ajaxContents("/ajaxCall/topWithdraw", "day");
+            // ajaxContents("/ajaxCall/callCenter", "callcenter");
+            // ajaxContents("/ajaxCall/topWeekWithdraw", "week");
+        });
+
+        function showWithdrawStatus(tabName) {
+            console.log("tab");
+            $("#tab_day").removeClass("on")
+            $("#area_day").hide();
+            $("#tab_week").removeClass("on")
+            $("#area_week").hide();
+            $("#tab_" + tabName).addClass("on")
+            $("#area_" + tabName).show();
+
+        }
+
+        $(document).ready(function(){
+            $('.bxslider').bxSlider({auto: true,
+                autoControls: true,pager:true,});
+        });
+    </script>

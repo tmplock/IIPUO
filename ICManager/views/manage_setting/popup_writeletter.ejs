@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="format-detection" content="telephone=no">
+<meta name="Keywords" content="">
+<meta name="Description" content="">
+<meta http-equiv="Expires" content="Mon, 06 Jan 1990 00:00:01 GMT">
+<meta http-equiv="Expires" content="-1">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Cache-Control" content="no-cache">
+<meta http-equiv="X-UA-Compatible" content="requiresActiveX=true" >
+<title>Setting</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script type="text/javascript" src="../js/jquery.bxslider.min.js"></script>
+<script type="text/javascript" src="../js/placeholders.js"></script>
+<script type="text/javascript" src="../js/layout.js"></script>
+<script type="text/javascript" src="../js/common_js.js"></script>
+<link rel="stylesheet" type="text/css" href="../css/general.css"/>
+<link rel="stylesheet" type="text/css" href="../../css/button.css"/>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css" type="text/css" /> 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>  
+<script src="https://code.jquery.com/ui/1.8.18/jquery-ui.min.js"></script>
+<link href='//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css' rel='stylesheet' type='text/css'>
+</head>
+
+<body style="font-family:'Spoqa Han Sans Neo';">
+<div id="wrap" class="skin_type01">
+    <div class="list_tit">
+        <h3 style="font-size:20px;color:yellow;font-weight:bold;"><%=__('LetterSend')%></h3>
+    </div>
+    <div class="write">
+
+        <table width="100%">
+            <tr>
+                <td width="100%" valign="top">
+                    <table class="t_view">
+                        <colgroup>
+                            <col width="25%" /><col  />
+                        </colgroup>
+                        <tr>
+                            <th>받는사람</th>
+                            <td style="height:30px;">
+                                <div id="receiver"></div>
+                            </td>
+                        </tr>
+                        <div id="targets">
+                        </div>
+                        <% if (agent.iClass <= 3 && directSend == false) { %>
+                            <tr>
+                                <th>하부 회원</th>
+                                <td style="height:30px;">
+                                    <select style="margin-left:0px; width:100px; display: none" id="agent_list"></select>
+                                </td>
+                            </tr>
+                        <% } %>
+                        <tr>
+                            <th>제목</th>
+                            <td>
+                                <input type="text" id="subject" style="width:100%;height:30px;" required="yes"  message="제목"></textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th><%=__('Contents')%></th>
+                            <td>
+                                <textarea name="content11" id="contents" style="width:100%;height:170px;" required="yes"  message="내용"></textarea>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+
+        <div class="align_c margin_t20">
+            <a href="javascript:SendLetter();" class="custom-btn btn-3"><span><%=__('Send')%></span></a>
+            <a href="javascript:ExitPopup();" class="custom-btn btn-5"><%=__('Cancel')%></a>
+        </div>
+    </div>
+</div>
+</body>
+
+<script type="text/javascript" src="js/enum.js"></script>
+<script type="text/javascript" src="./js/manage_setting_ref.js"></script>
+
+<script>
+    const strAlertNoContents = '<%=__("AlertNoContents")%>';
+    const strAlertComplete = '<%=__("AlertComplete")%>';
+    const strAlertNoReceivers = '<%=__("AlertNoReceivers")%>';
+
+    let user = JSON.parse('<%-JSON.stringify(agent)%>');
+    let strTo = JSON.parse('<%-JSON.stringify(strTo)%>');
+    let strParent = JSON.parse('<%-JSON.stringify(strParent)%>');
+    let directSend = JSON.parse('<%-JSON.stringify(directSend)%>');
+
+    let adminList = [];
+    let proAdminList = [];
+    let viceAdminList = [];
+    let agentList = [];
+    let shopList = [];
+    let userList = [];
+
+    $('select').on('change', function() {
+        strTo = this.value;
+    });
+
+    $(document).ready(() => {
+        if (strTo != '') {
+            if (user.iRootClass <= 3) {
+                $('#receiver').append(
+                    `
+                        <input type="radio" name="mile_sect" required="yes" message="" value="" id="type" onclick="" checked>
+                        <label for="mile_sect_cash_1" style="color:blue;font-size:15px;">${strTo}</label>  &nbsp;&nbsp;&nbsp;&nbsp;
+                    `
+                );
+            } else {
+                $('#receiver').append(
+                    `
+                        <input type="radio" name="mile_sect" required="yes" message="" value="" id="type" onclick="" checked>
+                        <label for="mile_sect_cash_1" style="color:blue;font-size:15px;">관리자</label>  &nbsp;&nbsp;&nbsp;&nbsp;
+                    `
+                );
+            }
+            return;
+        }
+
+        $('#receiver').empty();
+        if (user.iClass > 3) {
+            strTo = strParent;
+            $('#receiver').append(
+                `
+                        <input type="radio" name="mile_sect" required="yes" message="" value="" id="type" checked>
+                        <label for="mile_sect_cash_1" style="color:blue;font-size:15px;">관리자</label>  &nbsp;&nbsp;&nbsp;&nbsp;
+                    `
+            );
+        } else {
+            if (user.iClass <= 3) {
+                if (user.iClass <= 2) {
+                    $('#receiver').append(`
+                            <input type="radio" name="mile_sect" required="yes" message="" value="" id="type" onclick="OnClickClass(3);">
+                            <label for="mile_sect_cash_1" style="color:blue;font-size:15px;">본사</label>  &nbsp;&nbsp;&nbsp;&nbsp;
+                        `);
+                }
+
+                $('#receiver').append(
+                    `
+                            <input type="radio" name="mile_sect" required="yes" message="" value="" id="type" onclick="OnClickClass(4);">
+                            <label for="mile_sect_cash_1" style="color:blue;font-size:15px;">대본사</label>  &nbsp;&nbsp;&nbsp;&nbsp;
+                            <input type="radio" name="mile_sect" required="yes" message="" value="" id="type" onclick="OnClickClass(5);">
+                            <label for="mile_sect_cash_1" style="color:blue;font-size:15px;">부본사</label>  &nbsp;&nbsp;&nbsp;&nbsp;
+                            <input type="radio" name="mile_sect" required="yes" message="" value="" id="type" onclick="OnClickClass(6);">
+                            <label for="mile_sect_cash_1" style="color:blue;font-size:15px;">총판</label>  &nbsp;&nbsp;&nbsp;&nbsp;
+                            <input type="radio" name="mile_sect" required="yes" message="" value="" id="type" onclick="OnClickClass(7);">
+                            <label for="mile_sect_cash_1" style="color:blue;font-size:15px;">매장</label>  &nbsp;&nbsp;&nbsp;&nbsp;
+                            <input type="radio" name="mile_sect" required="yes" message="" value="" id="type" onclick="OnClickClass(8);">
+                            <label for="mile_sect_cash_1" style="color:blue;font-size:15px;">회원</label>  &nbsp;&nbsp;&nbsp;&nbsp;
+                        `
+                );
+            }
+        }
+
+        checkBlockCharSpecial2(`#subject`);
+        checkBlockCharSpecial2(`#contents`);
+    });
+
+    let OnClickClass = (iClass) => {
+        if (parseInt(iClass) == 3) {
+            if (adminList.length == 0) {
+                RequestReceiver(iClass);
+                return;
+            }
+            SetOptionList(adminList);
+        } else if (parseInt(iClass) == 4) {
+            if (proAdminList.length == 0) {
+                RequestReceiver(iClass);
+                return;
+            }
+            SetOptionList(proAdminList);
+        } else if (parseInt(iClass) == 5) {
+            if (viceAdminList.length == 0) {
+                RequestReceiver(iClass);
+                return;
+            }
+            SetOptionList(viceAdminList);
+        } else if (parseInt(iClass) == 6) {
+            if (agentList.length == 0) {
+                RequestReceiver(iClass);
+                return;
+            }
+            SetOptionList(agentList);
+        } else if (parseInt(iClass) == 7) {
+            if (shopList.length == 0) {
+                RequestReceiver(iClass);
+                return;
+            }
+            SetOptionList(shopList);
+        } else if (parseInt(iClass) == 8) {
+            if (userList.length == 0) {
+                RequestReceiver(iClass);
+                return;
+            }
+            SetOptionList(userList);
+        } else {
+            $('#agent_list').css("display","none");
+        }
+    }
+
+    let SetOptionList = (list) => {
+        $('#agent_list').empty();
+        for ( let i in list ) {
+            $('#agent_list').append(`<option value="${list[i]}">${list[i]}</option>`);
+        }
+        // 기본값 설정
+        if (list.length > 0) {
+            strTo = list[0];
+        }
+        $('#agent_list').css("display","");
+    }
+
+    let RequestReceiver = (iClass) => {
+        $.ajax({
+            url:"/manage_setting_popup/request_receiver",
+            type:"POST",
+            context: document.body,
+            data: {
+                strGroupID:user.strGroupID,
+                iClass:iClass,
+            },
+            success: function (obj) {
+
+                if ( obj.result == 'OK' )
+                {
+                    const iClass = parseInt(obj.iClass);
+                    if (iClass == 3) {
+                        adminList = obj.strChildes;
+
+                    } else if (iClass == 4) {
+                        proAdminList = obj.strChildes;
+
+                    } else if (iClass == 5) {
+                        viceAdminList = obj.strChildes;
+
+                    } else if (iClass == 6) {
+                        agentList = obj.strChildes;
+
+                    } else if (iClass == 7) {
+                        shopList = obj.strChildes;
+
+                    } else if (iClass == 8) {
+                        userList = obj.strChildes;
+                    }
+                    OnClickClass(iClass);
+                }
+            }
+        });
+    }
+
+    let SendLetter = () => {
+        const strSubjects = $('#subject').val();
+        const strContents = $('#contents').val();
+
+        if ( strTo == '' )
+        {
+            alert(strAlertNoReceivers);
+        }
+        else if ( strContents == '' )
+        {
+            alert(strAlertNoContents);
+        }
+        else if ( strSubjects == '' )
+        {
+            alert('제목을 입력해주세요');
+        }
+
+        else
+        {
+            let strModified = strContents.replace(/(\n|\r\n)/g, '<br>');
+            let strModifiedSubject = strSubjects.replace(/(\n|\r\n)/g, '<br>');
+
+            $.ajax({
+                url:"/manage_setting_popup/request_writeletter_partner",
+                type:"POST",
+                context: document.body,
+                data: {
+                    strFrom:user.strNickname,
+                    strFromID:user.strID,
+                    receivers:strTo,
+                    contents:strModified,
+                    subjects:strModifiedSubject,
+                    iClass:user.iClass,
+                },
+                success: function (obj) {
+
+                    if ( obj.result == 'OK' )
+                    {
+                        alert(strAlertComplete);
+                        if (typeof(window.opener) != 'undefined') {
+                            window.opener.parent.location.reload();
+                        }
+                        self.close();
+                    }
+                }
+            });
+        }
+    }
+
+    let ExitPopup = () => {
+        window.open('', '_self');
+        window.close();
+    }
+</script>
+</html>

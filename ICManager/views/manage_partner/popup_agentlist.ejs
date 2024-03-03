@@ -1,0 +1,221 @@
+	<div style="height:5px;">
+	</div>
+	<div class="search_wrap" id="div_realtimebet_overview">
+	</div>
+	<div class="list">
+	<div style="background-color:#ffffff;text-align:right;padding-right:5px;padding-top:10px;padding-bottom:10px;" colspan="19">
+
+		<input style="margin-left:180px;width:100px;" type="text" id="datepicker1" class="datepicker"/>~
+		<input style="width:100px;" type="text" id="datepicker2" class="datepicker" />
+		
+		<!-- <button class="btn_blue" id="button_search" style="border:1px solid rgb(95, 93, 93);width:70px;;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearch(6, '<%=agent.strGroupID%>', '<%=agent.iClass%>');"><%=__('Search')%></button> -->
+		<button class="menu1" id="button_search" style="border:1px solid rgb(95, 93, 93);width:70px;;height:25px;text-align:center;" onclick="OnClickSearch('<%=agent.iClass%>', '<%=agent.strGroupID%>', '<%=agent.iClass%>', '<%=agent.iPermission%>' );"><%=__('Search')%></button>
+		&nbsp;
+		<button class="menu5" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;" onclick="OnClickTodayRecord();"><%=__('Today')%></button>
+		&nbsp;
+		<button class="menu1" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;" onclick="OnClickMonthly1stRecord();"><%=__('Half1')%></button>
+		&nbsp;
+		<button class="menu1" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;" onclick="OnClickMonthly2ndRecord();"><%=__('Half2')%></button>
+		&nbsp;
+		<button class="btn_blue" id="button_toggle_record" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(136, 136, 248);" onclick="OnClickRecord();"><%=__('Open')%></button>
+	</div>
+
+	<div class="search_wrap" id="div_realtimebet_overview_record">
+		<div id="table_record_list" class="day_tot_list_area" style="margin-top:20px;">
+			<table class="search_list" style="margin-bottom:20px;">
+				<thead>
+					<tr>
+						<th width="7.5%" rowspan="2"><%=__('Date')%></th>
+						<th width="5%" rowspan="2"><%=__('Input')%></th>
+						<th width="5%" rowspan="2"><%=__('Output')%></th>
+						<th width="6%" rowspan="2"><%=__('MyCoin')%></th>
+						<th width="4%" rowspan="2"></th>
+						<th width="45%" colspan="9"><%=__('Baccarat')%></th>
+						<th width="6%" rowspan="2"><%=__('Evolution')%></th>
+						<th width="5%" rowspan="2"><%=__('Blackjack')%></th>
+						<th width="5%" rowspan="2"><%=__('Roulette')%></th>
+						<th width="5%" rowspan="2"><%=__('Slot')%></th>
+						<th width="5%" rowspan="2"><%=__('PowerBall')%></th>
+						<th width="6.5%" rowspan="2"><%=__('Total')%></th>
+					</tr>
+					<tr>
+						<th width="5%"><%=__('Tie')%></th>
+						<th width="5%"><%=__('Player')%></th>
+						<th width="5%"><%=__('PlayerUnder')%></th>
+						<th width="5%"><%=__('PlayerOver')%></th>
+						<th width="5%"><%=__('Banker')%></th>
+						<th width="5%"><%=__('BankerUnder')%></th>
+						<th width="5%"><%=__('BankerOver')%></th>
+						<th width="5%"><%=__('PlayerPair')%></th>
+						<th width="5%"><%=__('BankerPair')%></th>
+						<th width="5%"><%=__('EitherPair')%></th>
+						<th width="5%"><%=__('PerfectPair')%></th>
+					</tr>
+				</thead>
+				<tbody id="tbody_record_list">
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<div class="search_wrap">
+		<!-- <input style="margin-left:180px;width:100px;" type="hidden" id="datepicker1" class="datepicker"/>~
+		<input style="width:100px;" type="hidden" id="datepicker2" class="datepicker" /> -->
+
+		<p style="background-repeat:no-repeat; background-position:left center; font-size:20px; color:#454545; padding-left:22px;margin-top:10px;height:30px;margin-bottom:5px;"><%=__('SubMenuAgentList')%></p>
+		<table class="search_list">
+			<caption><%=__('SearchResult')%></caption>
+			<colgroup>
+				<col style="width:4%">
+				<col style="width:7%">
+				<col style="width:5%">
+				<col style="width:5%">
+				<col style="width:5%">
+	
+				<col style="width:5%">
+	
+				<col style="width:10%">
+				<col style="width:10%">
+				<col style="width:10%;">
+				<col style="width:10%;">
+				<col style="width:10%;">
+	
+				<col style="width:5%;">
+	
+				<col style="width:10%;">
+				
+			</colgroup>
+			<thead>
+				<tr>
+					<th scope="col"><%=__('Number')%></th>
+					<th scope="col"><%=__('User')%><%=__('Number')%></th>
+					<th scope="col"><%=__('Nickname')%></th>
+					<th scope="col"><%=__('Slot')%></th>
+					<th scope="col"><%=__('Baccarat')%></th>
+					<th scope="col"><%=__('UnderOver')%></th>
+					<th scope="col"><%=__('Input')%></th>
+					<th scope="col"><%=__('Output')%></th>
+					<th scope="col"><%=__('MyCoin')%></th>
+					<th scope="col"><%=__('Rolling')%></th>
+					<th scope="col"><%=__('Total')%></th>
+					<th scope="col"><%=__('State')%></th>
+					<th scope="col"><%=__('Rolling')%></th>
+					
+				</tr>
+			</thead>
+			<tbody id="agent_list">
+			</tbody>
+		</table>
+
+		<div class="pagination mt0">
+			<a href="javascript:get_data('inner_partner_list2.php', 'inner_content', 's_sido=13&s_gugun=parent_level=4&s_date=&e_date=&s_cate=&pageNo=1');" class="on" style="color:#ffffff;">1</a>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript" src="js/enum.js"></script>
+<script type="text/javascript" src="js/util.js"></script>
+<script type="text/javascript" src="js/time.js"></script>
+<script type="text/javascript" src="js/manage_partner_ref.js"></script>
+<script type="text/javascript" src="js/manage_partner_popup_menu.js"></script>
+<script type="text/javascript" src="js/manage_partner_popup_ref.js"></script>
+<script type="text/javascript">
+	let agent = JSON.parse('<%-JSON.stringify(agent)%>');
+	let objectOverview = JSON.parse('<%-JSON.stringify(overview)%>');
+
+	$(document).on('click', '.menu1', (e) => {
+
+		$('.menu5').attr('class', 'menu1');
+
+		$(e.currentTarget).attr('class', 'menu5');
+	});
+
+	let bToggleRecord = false;
+	let bClickDateSelection	= false;
+
+	$(document).ready(() => {
+		DatePicker();
+		$('#datepicker1').val(GetCurrentDate());
+		$('#datepicker2').val(GetCurrentDate());
+		$("#table_record_list").hide();
+
+		SetOverview(objectOverview, "#div_realtimebet_overview", true, agent.iRootClass);
+		RequestAgentListOnPopup(EAgent.eAgent, agent.strGroupID, agent.iClass, agent.iPermission, agent.strID);
+	});
+	
+
+	let OnClickTodayRecord = () => {
+
+		bClickDateSelection	= true;
+
+		$('#datepicker1').val(GetCurrentDate());
+		$('#datepicker2').val(GetCurrentDate());
+
+		bToggleRecord = true;
+		$("#button_toggle_record").text("닫기");
+
+		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
+		RequestAgentListOnPopup(EAgent.eAgent, agent.strGroupID, agent.iClass, agent.iPermission, agent.strID);
+		RequestBettingRecord(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
+	}
+
+	function OnClickRecord()
+	{
+		bToggleRecord = !bToggleRecord;
+
+		if ( bToggleRecord ) {
+			$("#table_record_list").show();
+			$("#button_toggle_record").text("닫기");
+
+			if ( false == bClickDateSelection )
+			{
+				$('#datepicker1').val(GetMonthlyStartDate());
+				$('#datepicker2').val(GetMonthlyEndDate());
+			}
+			RequestBettingRecord(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
+		}
+		else {
+			$("#table_record_list").hide();
+			$("#button_toggle_record").text(strOpen);
+		}
+	}
+
+	let OnClickMonthly1stRecord = () => {
+
+		bClickDateSelection	= true;
+		$('#datepicker1').val(GetMonthly1stStartDate());
+		$('#datepicker2').val(GetMonthly1stEndDate());
+
+		bToggleRecord = true;
+		$("#button_toggle_record").text("닫기");
+
+		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
+		RequestAgentListOnPopup(EAgent.eAgent, agent.strGroupID, agent.iClass, agent.iPermission, agent.strID);
+		RequestBettingRecord(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
+	}
+
+	let OnClickMonthly2ndRecord = () => {
+
+		bClickDateSelection	= true;
+		$('#datepicker1').val(GetMonthly2ndStartDate());
+		$('#datepicker2').val(GetMonthly2ndEndDate());
+
+		bToggleRecord = true;
+		$("#button_toggle_record").text("닫기");
+
+		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
+		RequestAgentListOnPopup(EAgent.eAgent, agent.strGroupID, agent.iClass, agent.iPermission, agent.strID);
+		RequestBettingRecord(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
+	}
+
+	let OnClickSearch = (iTargetClass, strGroupID, iClass, iPermission) => {
+
+		bClickDateSelection	= true;
+		bToggleRecord = true;
+		$("#button_toggle_record").text("닫기");
+
+		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
+		RequestAgentListOnPopup(EAgent.eAgent, agent.strGroupID, agent.iClass, agent.iPermission, agent.strID);
+		RequestBettingRecord(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
+	}
+</script>

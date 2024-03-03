@@ -1,0 +1,431 @@
+<div class="sub_wrap">
+    <div class="container clearfix">
+        <div class="content" style="position:relative; padding:0 10px 0 10px;">
+            <ul class="list_tab" style="margin-bottom:10px;width:100%;z-index:10000;" id="bettingrecord_header">
+            </ul>
+        </div>
+        
+        <div style="background-color:#ffffff;text-align:right;padding-right:5px;padding-top:0px;padding-bottom:0px;">
+            
+            <% if ( parseInt(user.iClass) < 3 ) { %>
+                회차 <input style="margin-left:0px;width:100px;height:18px;" type="text" id="manual_round" value="">
+                일반볼
+                <select id="normalball_oddeven">
+                    <option value="odd">홀</option>
+                    <option value="even">짝</option>
+                </select>
+                <select id="normalball_underover">
+                    <option value="under">언더</option>
+                    <option value="over">오버</option>
+                </select>
+                <select id="normalball_bigmediumsmall">
+                    <option value="big">대</option>
+                    <option value="medium">중</option>
+                    <option value="small">소</option>
+                </select>
+                파워볼
+                <select id="powerball_oddeven">
+                    <option value="odd">홀</option>
+                    <option value="even">짝</option>
+                </select>
+                <select id="powerball_underover">
+                    <option value="under">언더</option>
+                    <option value="over">오버</option>
+                </select>
+                <button class="btn_blue" id="button_toggle_record" style="width:200px;text-align:center;background-color: rgb(66, 186, 190);color:white" onclick="OnClickIncompletedToCompleted();">수동 베팅완료</button>
+
+                <button class="btn_blue" id="button_toggle_record" style="width:200px;text-align:center;background-color: rgb(255, 175, 25);color:white" onclick="OnClickIncompletedRecord(false);">미완료 베팅내역</button>
+                <button class="btn_blue" id="button_toggle_record" style="width:200px;text-align:center;background-color: rgb(255, 92, 92);color:white" onclick="OnClickIncompletedCancel();">미완료 일괄취소</button>
+            <%}%>
+            
+            <div><input style="margin-left:180px;width:100px;height:18px;" type="text" id="datepicker1" class="datepicker"/>~
+            <input style="width:100px;height:18px;" type="text" id="datepicker2" class="datepicker" />
+
+            <button class="btn_blue" id="button_toggle_record" style="width:100px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickRecord(false);"><%=__('Search')%></button>
+
+            <%=__('Search')%>
+            <select id="select_roomno" style="width:80px;">
+                <option><%=__('Nickname')%></option>
+            </select>
+            <input style="margin-left:0px;width:100px;" id="strSearchNickname" type="text"/>
+            <button class="btn_blue" id="button_toggle_record" style="width:100px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickRecord(true);"><%=__('Search')%></button>
+                <select id="select_limit" style="width:80px; display: none;" >
+                    <option value="30">30개씩</option>
+                    <option value="50">50개씩</option>
+                    <option value="100">100개씩</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="list">
+            <div class="list_tit">
+                <h3>파워볼 베팅내역
+
+
+                </h3>
+            </div>
+
+            <div class="list">
+                <div class="search_wrap">	
+                    <table class="search_list">
+                            <caption><%=__('SearchResult')%></caption>
+                            <colgroup>
+                                <col style="width:3%;">
+                                <col style="width:5%;">
+                                <col style="width:7%;">
+                                <col style="width:7%;">
+                                <col style="width:7%;">
+                                <col style="width:7%;">
+                                <col style="width:7%;">
+                                <col style="width:7%;">
+                                <col style="width:7%;">
+                                <col style="width:7%;">
+                                <col style="width:15%;">
+                                <col style="width:10%;">
+                                <col style="width:10%;">
+                            </colgroup>
+                            <thead>
+                                <tr>
+                                    <th scope="col">번호</th>
+                                    <th scope="col">벤더</th>
+                                    <th scope="col">테이블</th>
+                                    <th scope="col"><%=__('Round')%></th>
+                                    <th scope="col"><%=__('Nickname')%></th>
+                                    <th scope="col"><%=__('BettingOriginCash')%></th>
+                                    <th scope="col"><%=__('BettingAccount')%></th>
+                                    <th scope="col"><%=__('BettingAmount')%></th>
+                                    <th scope="col"><%=__('BettingWin')%></th>
+                                    <th scope="col">베팅후 금액</th>
+                                    <th scope="col"><%=__('BettingTime')%></th>
+                                    <th scope="col">배팅 처리</th>
+                                    <th scope="col">비고</th>
+                                </tr>
+                            </thead>
+                            <tbody id="record_list">
+                                
+                            <tr>
+                        </tbody>
+                    </table>
+
+                    <div class="pagination mt0" id="pagination">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="js/enum.js"></script>
+<script type="text/javascript" src="js/time.js"></script>
+<script type="text/javascript" src="js/manage_bettingrecord_menu.js"></script>
+<script type="text/javascript" src="js/manage_setting_ref.js"></script>
+<script type="text/javascript" src="js/pagination.js"></script>
+<script type="text/javascript" src="js/socket.js"></script>
+<script>
+    let user = JSON.parse('<%-JSON.stringify(user)%>');
+    let iocount = JSON.parse('<%-JSON.stringify(iocount)%>');
+
+    let iCurrentPage = 1;
+    let iLimit = 30;
+    $('#select_limit').on("change", function () {
+        iLimit = this.value;
+    });
+
+    $(document).ready(() => {
+        DatePicker();
+        $('#datepicker1').val(GetCurrentDate());
+        $('#datepicker2').val(GetCurrentDate());
+
+        Alert(iocount, "<%=__('RequestInput')%>", "<%=__('RequestOutput')%>","<%=__('LetterSend')%>");
+
+        SetBettingRecordHeader(4, user.iRootClass);
+
+        OnClickRecord(false);
+    });
+
+    let GetBettingTarget = (iTarget, strTableID, color) => {
+        const colorBlue = '#52acff';
+        const colorRed = '#da5656';
+        const colorGreen = '#15ca2d';
+        const colorOrange = '#e7af16';
+        const fontSize = '15px';
+
+        let tagTarget = ``;
+        switch ( parseInt(iTarget) )
+        {
+        case 0: //파워볼 홀
+            tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorBlue};">파워볼 홀</td>`;
+            break;
+        case 1: //파워볼 짝
+        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorRed};">파워볼 짝</td>`;
+            break;
+        case 2: //파워볼 오버
+        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorRed};">파워볼 오버</td>`;
+            break;
+        case 3: //파워볼 언더
+        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorBlue};">파워볼 언더</td>`;
+            break;
+        case 4: //파워볼 홀오버
+        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorRed};">파워볼 홀오버</td>`;
+            break;
+        case 5: //파워볼 홀언더
+        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorBlue};">파워볼 홀언더</td>`;
+            break;
+        case 6: //파워볼 짝오버
+        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorRed};">파워볼 짝오버</td>`;
+            break;
+        case 7: //파워볼 짝언더
+        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorBlue};">파워볼 짝언더</td>`;
+            break;
+        case 8: //일반볼 홀
+        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorBlue};">일반볼 홀</td>`;
+            break;
+        case 9: //일반볼 짝
+        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorRed};">일반볼 짝</td>`;
+            break;
+        case 10: //일반볼 오버
+        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorRed};">일반볼 오버</td>`;
+            break;
+        case 11: //일반볼 언더
+        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorBlue};">일반볼 언더</td>`;
+            break;
+        case 12: //일반볼 대
+        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorGreen};">일반볼 대</td>`;
+            break;
+        case 13: //일반볼 중
+        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorGreen};">일반볼 중</td>`;
+            break;
+        case 14: //일반볼 소
+        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorGreen};">일반볼 소</td>`;
+            break;
+        case 15: //일반볼 홀오버
+        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorBlue};">일반볼 홀오버</td>`;
+            break;
+        case 16: //일반볼 홀언더
+        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorRed};">일반볼 홀언더</td>`;
+            break;
+        case 17: //일반볼 짝오버
+        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorRed};">일반볼 짝오버</td>`;
+            break;
+        case 18: //일반볼 짝언더
+        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorBlue};">일반볼 짝언더</td>`;
+            break;
+        case 19: //일반볼 홀대
+        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorGreen};">일반볼 홀대</td>`;
+            break;
+        case 20: //일반볼 짝대
+        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorGreen};">일반볼 짝대</td>`;
+            break;
+        case 21: //일반볼 홀중
+        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorGreen};">일반볼 홀중</td>`;
+            break;
+        case 22: //일반볼 짝중
+        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorGreen};">일반볼 짝중</td>`;
+            break;
+        case 23: //일반볼 홀소
+        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorGreen};">일반볼 홀소</td>`;
+            break;
+        case 24: //일반볼 짝소
+        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorGreen};">일반볼 짝소</td>`;
+            break;
+        case 25://홀+언더+P홀
+        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorBlue};">홀+언더+P홀</td>`;
+            break;
+        case 26://홀+언더+P짝
+        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorRed};">홀+언더+P짝</td>`;
+            break;
+        case 27://홀+오버+P홀
+        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorBlue};">홀+오버+P홀</td>`;
+            break;
+        case 28://홀+오버+P짝
+        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorRed};">홀+오버+P짝</td>`;
+            break;
+        case 29://짝+언더+P홀
+        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorBlue};">짝+언더+P홀</td>`;
+            break;
+        case 30://짝+언더+P짝
+        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorRed};">짝+언더+P짝</td>`;
+            break;
+        case 31://짝+오버+P홀
+        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorBlue};">짝+오버+P홀</td>`;
+            break;
+        case 32://짝+오버+P짝
+        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorRed};">짝+오버+P짝</td>`;
+            break;
+        }
+        return tagTarget;
+    }
+
+    let RequestRecord = (dateStart, dateEnd, strNickname, strComplete) => {
+        $.ajax({
+            url:"/manage_bettingrecord/request_record",
+            type:"POST",
+            context: document.body,
+            data : {
+                strNickname:strNickname,
+                strGroupID:user.strGroupID,
+                iClass:user.iClass,
+                dateStart:dateStart,
+                dateEnd:dateEnd,
+                strVender:'PBGPowerball',
+                iComplete:strComplete,
+                iLimit:iLimit,
+                iPage:iCurrentPage,
+            },
+            success: function (obj) {
+
+                console.log(obj);
+
+                if ( obj.result == 'OK' )
+                {
+                    $('#record_list').empty();
+
+                    let records = obj.data;
+
+                    let objectTotal = {
+                        iBetting:0,
+                        iWin:0,
+                        iTotal:0
+                    };
+
+                    for ( let i in records )
+                    {
+                        let color = '#FFFFFF';
+                        if ( records[i].iWin > 0 ) {
+                            color = '#d6f3c9';
+                        }
+                        if ( records[i].iComplete == 2 )
+                        {
+                            color = `rgb(255, 150, 125);`;
+                        }
+
+                        objectTotal.iBetting += records[i].iBetting;
+                        objectTotal.iWin += records[i].iWin;
+                        objectTotal.iTotal = objectTotal.iBetting - objectTotal.iWin;
+
+                        let cBettingTarget = parseInt(records[i].iTarget) % 1000;
+
+                        let tagWin = `<td style="background-color:${color};">${GetNumber(records[i].iWin)}</td>`;
+                        if ( records[i].iComplete == 2 )
+                            tagWin = `<td style="background-color:${color};">취소</td>`;
+                        let tagTarget = GetBettingTarget(cBettingTarget, records[i].strTableID, color);
+
+                        let tag = `<tr>
+                                        <td style="background-color:${color};">${getNo(iLimit, obj.totalCount, iCurrentPage, i)}</td>
+                                        <td style="background-color:${color};">${records[i].strVender}</td>
+                                        <td style="background-color:${color};">${records[i].strTableID}</td>
+                                        <td style="background-color:${color};">${records[i].strRound}</td>
+                                        <td style="background-color:${color};"><a style="color:blue;" onclick="OnClickNickname('${records[i].strNickname}')" href="#">${GetClassNickName(records[i].iClass, records[i].strNickname)}</a></td>
+                                        <td style="background-color:${color};">${GetNumber(records[i].iPreviousCash)}</td>
+                                        ${tagTarget}
+                                        <td style="background-color:${color};color:blue;">${GetNumber(records[i].iBetting)}</td>
+                                        ${tagWin}
+                                        <td style="background-color:${color};">${GetNumber(records[i].iAfterCash)}</td>
+                                        <td style="background-color:${color};">${records[i].createdAt}</td>
+                                        <td style="background-color:${color};">${records[i].updatedAt ?? ''}</td>
+                                        <td style="background-color:${color};"></td>
+                                    </tr>`;
+                        $('#record_list').append(tag);
+                    }
+
+                    let tagTotal = `<tr>
+                                        <td colspan="7" style="font-weight: bold;">${strTotal}</td>
+                                        <td style="color:blue;">${GetNumber(objectTotal.iBetting)}</td>
+                                        <td style="color:red;">${GetNumber(objectTotal.iWin)}</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>`;
+                    $('#record_list').append(tagTotal);
+
+                    $('#pagination').empty();
+                    $('#pagination').append(getPagination(iLimit, obj.totalCount, iCurrentPage));
+                }
+            }
+        });
+    }
+
+    let OnClickPage = (iPage) => {
+        if (iPage < 1) {
+            return;
+        }
+        iCurrentPage = iPage;
+        const dateStart = $('#datepicker1').val();
+        const dateEnd =  $('#datepicker2').val();
+        let strNickname = $('#strSearchNickname').val();
+        RequestRecord(dateStart, dateEnd, strNickname);
+    }
+
+    let OnClickRecord = (bNickname) => {
+        const dateStart = $('#datepicker1').val();
+        const dateEnd =  $('#datepicker2').val();
+        let strNickname = $('#strSearchNickname').val();
+        iCurrentPage = 1;
+        RequestRecord(dateStart, dateEnd, strNickname, '1,2');
+    }
+
+    let OnClickIncompletedRecord = (bNickname) => {
+        const dateStart = $('#datepicker1').val();
+        const dateEnd =  $('#datepicker2').val();
+        let strNickname = '';
+        if ( bNickname == true )
+            strNickname = $('#strSearchNickname').val();
+
+        RequestRecord(dateStart, dateEnd, strNickname, '0');
+    }
+
+    let OnClickIncompletedCancel = () => {
+        $.ajax({
+            url:"/manage_bettingrecord/request_incompletecancel",
+            type:"POST",
+            context: document.body,
+            data : {
+            },
+            success: function (obj) {
+
+                console.log(obj);
+
+                if ( obj.result == 'OK' )
+                {
+                    alert('수정이 완료 되었습니다.');
+                    OnClickIncompletedRecord(false);
+                }
+            }
+        });
+    }
+
+    let OnClickIncompletedToCompleted = () => {
+        let strRound = $('#manual_round').val();
+        let strNBOddEven = $('#normalball_oddeven').val();
+        let strNBUnderOver = $('#normalball_underover').val();
+        let strNBBigSmall = $('#normalball_bigmediumsmall').val();
+        let strPBOddEven = $('#powerball_oddeven').val();
+        let strPBUnderOver = $('#powerball_underover').val();
+
+        console.log(`${strRound}, ${strNBOddEven}, ${strNBUnderOver}, ${strNBBigSmall}, ${strPBOddEven}, ${strPBUnderOver}`);
+
+        $.ajax({
+            url:"/manage_bettingrecord/request_incompletedmanual",
+            type:"POST",
+            context: document.body,
+            data : {
+                strRound:strRound,
+                strPowerOddEven:strPBOddEven,
+                strPowerUnderOver:strPBUnderOver,
+                strNormalOddEven:strNBOddEven,
+                strNormalUnderOver:strNBUnderOver,
+                strPeriod:strNBBigSmall,
+            },
+            success: function (obj) {
+                console.log(obj);
+
+                if ( obj.result == 'OK' )
+                {
+                    alert('수정이 완료 되었습니다.');
+                    OnClickIncompletedRecord(false);
+                }
+            }
+        });
+    }
+</script>

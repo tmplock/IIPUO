@@ -1,0 +1,253 @@
+<br><br><br><br><br>
+
+<div class="container">
+    <!--서브페이지들-->
+    <div class="sub-wrap">
+
+
+        <form action="" method="post" accept-charset="utf-8" id="modiFrm" name="modiFrm">
+        <div style="display:none">
+            <input type="hidden" name="csrf_test_name" value="37a91791ba8d12fd314271036f83e34f" />
+        </div>
+        <input type="hidden" name="hp_no">
+        <input type="hidden" name="hp_no_old">
+        <input type="hidden" id="hp_no1_old" name="hp_no1_old" value="010">
+        <input type="hidden" id="hp_no2_old_f" name="hp_no2_old_f" value="55">
+        <input type="hidden" id="hp_no3_old_l" name="hp_no3_old_l" value="84">
+        <input type="hidden" name="Hidden_bank_name" value="1007">
+        <input type="hidden" name="Hidden_acc_name" value="김재천">
+
+        <div class="subscr" style="display:block;">
+            <div class="subtitle">
+                <h1>기본정보변경</h1>
+                
+            </div>
+            <table>
+                <colgroup>
+                    <col style="width:24%;">
+                    <col style="width:50%;">
+                </colgroup>
+                <tr>
+                    <td>현재비밀번호</td>
+                    <td><input type="password" class="wd200" name="pwchk" class="pwchk" id="textfield" /></td>
+                </tr>
+                <tr>
+                    <td>변경하실 비밀번호</td>
+                    <td><input type="password" class="wd200" name="password" class="password" id="textfield" /></td>
+                </tr>
+                <tr>
+                    <td>비밀번호 재입력</td>
+                    <td><input type="password" class="wd200" name="confirm" class="select01" id="confirm" /></td>
+                </tr>
+                <tr>
+                    <td>추천아이디</td>
+                    <td>
+                    </td>
+                </tr>
+            </table>
+            <p align="center" style="padding-left:0px; color: #DC4F00; font-size: 15px; margin-right: 20px;">회원님의 기본정보변경란입니다.</p>
+            <div class="btn_area">
+                <button type="button" onclick="modiSubmit();">정보변경하기</button>
+            </div>
+        </div>
+
+
+        <div class="subscr" style="display:block;">
+            <div class="subtitle">
+                <h1>2차인증 사용여부 변경</h1>
+                
+            </div>
+            <table>
+                <colgroup>
+                    <col style="width:24%;">
+                    <col style="width:50%;">
+                </colgroup>
+                <tr>
+                    <td>사용여부</td>
+                    <td>
+                        <div class="box_div">
+                            <input type="radio" name="phoneCertify" id="phoneCertify" value="Y"> 사용
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <input type="radio" name="phoneCertify" id="phoneCertify" value="N" checked > 미사용
+                        </div>
+                    </td>
+                </tr>
+
+            </table>
+            <p align="center" style="padding-left:0px; color: #DC4F00; font-size: 15px; margin-right: 20px;">회원님의 2차인증 사용여부 변경란입니다.</p>
+            <div class="btn_area">
+                <button type="button" onclick="phoneCertifySubmit();">수정하기</button>
+            </div>
+        </div>
+
+
+
+        <div class="subscr">
+            <div class="subtitle">
+                <h1>휴대폰번호변경</h1>
+                
+            </div>
+            <table>
+                <colgroup>
+                    <col style="width:24%;">
+                    <col style="width:50%;">
+                </colgroup>
+                <tr>
+                    <td>기존휴대폰번호	</td>
+                    <td style="padding: 15px 0;">
+
+                        010 - 1200
+                         -
+                        <input class="sel-short-02" name="hp_no3_old_f" type="text" id="hp_no3_old_f" maxlength="2" value="**" onclick="if(this.value=='**')this.value='';" onblur="if(this.value=='')this.value='**';" />
+                        <br>
+                        <span>* 현재 휴대폰 번호4자리를 입력하세요</span>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td>변경할 휴대폰번호</td>
+                    <td>
+                        <select name="hp_no1" class="sel-short" id="hp_no1" onchange="javascript:hpChangeStatus();">
+                            <option value="">선택</option>
+                            <option value="010">010</option>
+                            <option value="011">011</option>
+                            <option value="016">016</option>
+                            <option value="017">017</option>
+                            <option value="018">018</option>
+                            <option value="019">019</option>
+                            <option value="070">070</option>
+                        </select>
+                         - <input class="sel-short-02" name="hp_no2" type="text" id="hp_no2" maxlength="4" onchange="javascript:hpChangeStatus();" />
+                         - <input class="sel-short-02" name="hp_no3" type="text" id="hp_no3" maxlength="4" value="" onchange="javascript:hpChangeStatus();" />
+                        
+
+
+
+                    </td>
+                </tr>
+
+
+
+            </table>
+            <p align="center" style="padding-left:0px; color: #DC4F00; font-size: 15px; margin-right: 20px;">회원님의 휴대폰변경란입니다. 본인 명의의 휴대폰으로만 변경 및 사용가능합니다.<br>입력된 핸드폰으로 입금계좌가 전송되오니 정확히 입력하시기 바랍니다.</p>
+            <div class="btn_area">
+                <button type="button" onclick="hpEdit('M', 'A');">정보변경하기</button>
+            </div>
+        </div>
+
+
+
+
+        <div class="subscr">
+            <div class="subtitle">
+                <h1>계좌번호 변경</h1>
+                
+            </div>
+            <table>
+                <colgroup>
+                    <col style="width:24%;">
+                    <col style="width:50%;">
+                </colgroup>
+
+                <tr>
+                    <td>기존은행</td>
+                    <td>
+                        <select class="wd200" name="bank_cd_old" style="width:120px;"  >
+                        <option value="">--선택--</option>
+                        <option value="1001" >국민은행</option>
+                        <option value="1002" >농협</option>
+                        <option value="1003" >우리은행</option>
+                        <option value="1004" >우체국</option>
+                        <option value="1005" >하나은행</option>
+                        <option value="1006" >기업은행</option>
+                        <option value="1007" selected>신한은행</option>
+                        <option value="1008" >시티은행</option>
+                        <option value="1009" >외환은행</option>
+                        <option value="1010" >제일은행</option>
+                        <option value="1011" >경남은행</option>
+                        <option value="1012" >광주은행</option>
+                        <option value="1013" >부산은행</option>
+                        <option value="1014" >새마을금고</option>
+                        <option value="1016" >신협</option>
+                        <option value="1018" >전북은행</option>
+                        <option value="1019" >제주은행</option>
+                        <option value="1020" >조흥은행</option>
+                        <option value="1021" >산업은행</option>
+                        <option value="1022" >한국씨티은행</option>
+                        <option value="1035" >HSBC</option>
+                        <option value="1038" >산림조합</option>
+                        <option value="1061" >코인충전</option>
+                        </select>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>기존예금주</td>
+                    <td>
+                        <input class="wd100" name="acc_name_old" type="text" id="acc_name_old" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>기존 계좌번호	</td>
+                    <td>
+                        <input name="acc_no_old" type="text" id="acc_no_old" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>변경할 은행</td>
+                    <td>
+
+                        <select class="wd200" name="bank_cd" style="width:120px;" >
+                        <option value="">--선택--</option>
+                        <option value="1001" >국민은행</option>
+                        <option value="1002" >농협</option>
+                        <option value="1003" >우리은행</option>
+                        <option value="1004" >우체국</option>
+                        <option value="1005" >하나은행</option>
+                        <option value="1006" >기업은행</option>
+                        <option value="1007" selected>신한은행</option>
+                        <option value="1008" >시티은행</option>
+                        <option value="1009" >외환은행</option>
+                        <option value="1010" >제일은행</option>
+                        <option value="1011" >경남은행</option>
+                        <option value="1012" >광주은행</option>
+                        <option value="1013" >부산은행</option>
+                        <option value="1014" >새마을금고</option>
+                        <option value="1016" >신협</option>
+                        <option value="1018" >전북은행</option>
+                        <option value="1019" >제주은행</option>
+                        <option value="1020" >조흥은행</option>
+                        <option value="1021" >산업은행</option>
+                        <option value="1022" >한국씨티은행</option>
+                        <option value="1035" >HSBC</option>
+                        <option value="1038" >산림조합</option>
+                        <option value="1061" >코인충전</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>변경할 예금주</td>
+                    <td>
+                        <input name="acc_name" type="text" id="acc_name" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>변경할 계좌번호</td>
+                    <td>
+                        <input name="acc_no" type="text" id="acc_no" />
+                    </td>
+
+                </tr>
+
+            </table>
+            <p align="center" style="padding-left:0px; color: #DC4F00; font-size: 15px; margin-right: 20px;">회원님의 계좌 변경란입니다. 본인명의의 계좌만 변경 및 수정이 가능합니다.</p>
+            <div class="btn_area">
+                <button type="button" onclick="acctmodifyNew();">정보변경하기</button>
+            </div>
+        </div>
+
+        </form>
+
+    </div>
+        
+</div>

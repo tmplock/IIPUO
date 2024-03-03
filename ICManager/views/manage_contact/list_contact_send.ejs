@@ -1,0 +1,287 @@
+<div class="sub_wrap">
+    <div class="container clearfix">
+        <div class="content" style="position:relative; padding:0 10px 0 10px;">
+            <ul class="list_tab" style="margin-bottom:10px;width:75%;z-index:10000;">
+                <li >
+                    <a href="#" id="list_contact_receive">받은쪽지 목록</a> &nbsp; &nbsp;
+                </li>
+                <li class="on">
+                    <a href="#" id="list_contact_send">보낸쪽지 목록</a> &nbsp;
+                </li>
+            </ul>
+        </div>
+
+        <div class="list">
+
+            <div style="background-color:#ffffff;text-align:right;padding-right:5px;padding-top:0px;padding-bottom:0px;" colspan="19">
+
+                <input style="margin-left:180px;width:100px;" type="text" id="datepicker1" class="datepicker"/>~
+                <input style="width:100px;" type="text" id="datepicker2" class="datepicker" />
+                <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="RequestList(0);"><%=__('Search')%></button>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+                <%=__('Confirm')%>
+                <select id="letter_state" style="width:80px;">
+                    <option value="ALL"><%=__('All')%></option>
+                    <option value="READED"><%=__('Read')%></option>
+                    <option value="UNREAD"><%=__('Unread')%></option>
+                </select>
+                <%=__('Search')%>
+                <select style="width:80px;">
+                    <option value="NICKNAME"><%=__('Nickname')%></option>
+                </select>
+                <input id="keyword" style="margin-left:0px;width:100px;" type="text"/>
+                <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="RequestList(0);"><%=__('Search')%></button>
+                <select id="select_limit" style="width:80px;">
+                    <option value="20">20개씩</option>
+                    <option value="50">50개씩</option>
+                    <option value="100">100개씩</option>
+                </select>
+            </div>
+
+
+            <div class="search_wrap">
+
+                <div class="list_tit" style="margin-top:20px;">
+                    <h3><%=__('LetterListSended')%>
+                    </h3>
+                    <button class="btn_add" type="button" onclick="OnClickWritingContact('');">쪽지 쓰기</button>
+                </div>
+
+                <table class="search_list">
+                    <thead>
+                    <tr>
+                        <th width="3%"><input type="checkbox" id="chkAll" value=""></th>
+                        <th width="5%"><%=__('Index')%></th>
+                        <th width="10%"><%=__('Nickname')%></th>
+                        <th width="35%">제목</th>
+                        <th width="5%"><%=__('State')%></th>
+                        <th width="10%"><%=__('DateSend')%></th>
+                        <th width="10%"><%=__('DateRead')%></th>
+                        <th width="5%">답변여부</th>
+                        <th width="10%">답변날짜</th>
+                        <th width="10%"><%=__('Menu')%></th>
+                    </tr>
+                    </thead>
+                    <tbody id="content_list">
+
+                    </tbody>
+                </table>
+                <button class="btn_del" id="remove_select" style="width:80px;height:25px;text-align:center;background-color: grey;color:white">선택삭제</button>
+                <div class="pagination mt0" id="pagination">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<script type="text/javascript" src="js/enum.js"></script>
+<script type="text/javascript" src="js/time.js"></script>
+<script type="text/javascript" src="js/socket.js"></script>
+<script type="text/javascript" src="js/manage_contact_menu.js"></script>
+<script type="text/javascript" src="js/manage_contact_ref.js"></script>
+<script type="text/javascript" src="js/pagination.js"></script>
+<script>
+    let user = JSON.parse('<%-JSON.stringify(user)%>');
+    let iocount = JSON.parse('<%-JSON.stringify(iocount)%>');
+
+    let iCurrentPage = 1;
+    let iLimit = 20;
+
+    $('#select_limit').on("change", function () {
+        iLimit = this.value;
+    });
+
+    $('#chkAll').on("click", function () {
+        $('.chkGrp').attr('checked', this.checked);
+
+        let groupIds = '';
+        $(".chkGrp:checked").each((idx, item) => {
+            if (idx === 0) {
+                groupIds += item.value;
+            } else {
+                groupIds += ','+item.value;
+            }
+        });
+        if (groupIds !== '') {
+            $('#remove_select').css('background-color', 'red');
+        } else {
+            $('#remove_select').css('background-color', 'grey');
+        }
+    });
+
+    $('#remove_select').on('click', function () {
+        let groupIds = '';
+        $(".chkGrp:checked").each((idx, item) => {
+            if (idx == 0) {
+                groupIds += item.value;
+            } else {
+                groupIds += ','+item.value;
+            }
+        });
+        console.log(groupIds);
+        if (groupIds == '') {
+            alert('삭제할 항목을 선택해주세요');
+            return;
+        }
+        if (confirm('선택 항목을 완전히 삭제하시겠습니까?')) {
+            OnClickRemoveLetters(groupIds);
+        }
+    });
+
+    let OnClickRemoveLetters = (ids) => {
+        $.ajax({
+            url:"/manage_contact/request_contact_select_remove",
+            type:"POST",
+            context: document.body,
+            data: {
+                ids: ids,
+                strNickname:user.strNickname,
+                iClass:user.iClass,
+                strGroupID:user.strGroupID,
+            },
+            success: function (obj) {
+                console.log(obj);
+                if (obj.result == 'OK') {
+                    reload();
+                } else {
+                    alert(obj.msg);
+                }
+            }
+        });
+    }
+
+    $(document).ready(() => {
+        DatePicker();
+        $("#datepicker1").val(GetCurrentDate());
+        $("#datepicker2").val(GetCurrentDate());
+
+        Alert(iocount, "<%=__('RequestInput')%>", "<%=__('RequestOutput')%>","<%=__('LetterSend')%>");
+        AlertintervalSoundOff('alert_contact');
+        AlertintervalSoundOff('alert_contact_reply');
+
+        RequestList(0);
+    });
+
+    let RequestContactListFromSearch  = () => {
+        RequestList(0);
+    }
+
+    let RequestList = (iPage) => {
+        const strKeyword = $('#keyword').val();
+        const eRead = $('#letter_state').val();
+        const dateStart = $('#datepicker1').val();
+        const dateEnd = $('#datepicker2').val();
+
+        $.ajax({
+            url:"/manage_contact/request_list_contact_send",
+            type:"POST",
+            context: document.body,
+            data: {
+                page:iPage,
+                strNickname:user.strNickname,
+                strKeyword:strKeyword,
+                eRead:eRead,
+                dateStart:dateStart,
+                dateEnd:dateEnd,
+                iLimit: iLimit,
+                iPage:iCurrentPage,
+            },
+            success: function (obj) {
+
+                $('#content_list').empty();
+
+                $('#pagination').empty();
+                $('#pagination').append(getPagination(iLimit, obj.totalCount, iCurrentPage));
+
+                $('#remove_select').css('background-color', 'grey');
+
+                let list = obj.list;
+                let totalCount = parseInt(obj.totalCount);
+                let iStartIndex = totalCount;
+                if (iCurrentPage > 1) {
+                    iStartIndex = totalCount - (iCurrentPage - 1) * iLimit;
+                }
+                for ( let i in list )
+                {
+                    let iIndex = iStartIndex-i;
+                    let color = 'blue';
+                    let color2 = 'black';
+                    let eRead = strRead;
+                    let strReadDate = list[i].updatedAt;
+                    if ( list[i].eRead == 'UNREAD' ) {
+                        eRead = strUnread;
+                        strReadDate = '';
+                        color = 'red';
+                        color2 = 'red';
+                    } else if ( list[i].eRead == 'REPLY' && list[i].strFrom == user.strNickname) {
+                        eRead = '답변미확인';
+                        color2 = 'red';
+                    }
+
+                    let eState = '대기';
+                    let strStateDate = '';
+                    if ( list[i].eState == 'REPLY' ) {
+                        eState = '답변완료';
+                        strStateDate = list[i].completedAt;
+                    }
+
+                    let strSubject = list[i].strSubject.replace(/(<br>)/g,' ');
+
+                    let tag =
+                        `
+                    <tr height="30">
+                        <td><input type="checkbox" id="chk" class="chkGrp" value="${list[i].id}"></td>
+                        <td>${iIndex}</td>
+						<td><a href="#" onclick="OnClickNickname('${list[i].strTo}')">${GetClassNickName(list[i].iClass, list[i].strTo)}</a></td>
+						<td><a style="text-align:left;padding-left:10px;color:${color};" href="#" onclick="OnClickRead('${list[i].id}', '${list[i].eRead}');">${strSubject}</a></td>
+                        <td style="color:${color2};">${eRead}</td>
+                        <td>${list[i].createdAt}</td>
+                        <td>${strReadDate}</td>
+                        <td>${eState}</td>
+                        <td>${strStateDate}</td>
+                        <td><a class="btn_red" href="#" onclick="OnClickRemoveLetters('${list[i].id}');">${strRemove}</a></td>
+                    </tr>
+                    `;
+                    $('#content_list').append(tag);
+
+                    $('.chkGrp').on("click", function () {
+                        let groupIds = '';
+                        $(".chkGrp:checked").each((idx, item) => {
+                            if (idx == 0) {
+                                groupIds += item.value;
+                            } else {
+                                groupIds += ','+item.value;
+                            }
+                        });
+                        if (groupIds !== '') {
+                            $('#remove_select').css('background-color', 'red');
+                        } else {
+                            $('#remove_select').css('background-color', 'grey');
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    function reload() {
+        RequestList(iCurrentPage);
+    }
+
+    let OnClickRead = (id, eRead) => {
+        OnClickReadContact(id);
+        if (eRead == 'UNREAD' || eRead == 'REPLY') {
+            reload();
+        }
+    }
+
+    let OnClickPage = (iPage) => {
+        if (iPage < 1) {
+            return;
+        }
+        iCurrentPage = iPage;
+        RequestList(iCurrentPage);
+    }
+</script>

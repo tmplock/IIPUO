@@ -1,0 +1,149 @@
+<div style="height:5px;"></div>
+
+<div class="list">
+	<div class="search_wrap">
+
+			<p style="background-repeat:no-repeat; background-position:left center; font-size:20px; color:#454545; padding-left:22px;margin-top:10px;height:30px;margin-bottom:5px;"><%=__('RecordInput')%>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			</p>
+
+			<div style="background-color:#ffffff;text-align:right;padding-right:5px;padding-top:10px;padding-bottom:10px;" colspan="19">
+				<input style="margin-left:180px;width:100px;" type="text" id="datepicker1" class="datepicker"/>~
+				<input style="width:100px;" type="text" id="datepicker2" class="datepicker" />
+	
+				<button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearchInput(false);"><%=__('Search')%></button>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<%=__('Search')%>
+				<select id="select_search" style="width:80px;">
+					<option value="Nickname"><%=__('Nickname')%></option>
+				</select>
+	
+				<input type="text" value="" style="width:10%;"id="strSearchNickname">
+				<button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearchInput(true);"><%=__('Search')%></button>
+	
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			</div>
+			<table class="search_list">
+				<thead>
+					<tr>
+						<th width="4%"><%=__('Index')%></th>
+						<th width="6%"><%=__('Token')%></th>
+						<th width="5%"><%=__('ID')%></th>
+						<th width="8%"><%=__('CashBeforeInput')%></th>
+						<th width="8%"><%=__('Input')%></th>
+						<th width="9%"><%=__('InputHolderName')%></th>
+						<th width="8%"><%=__('DateRequest')%></th>
+						<th width="8%"><%=__('DateProcess')%></th>
+					</tr>
+				</thead>
+			<tbody id="input_list">
+	
+			<% let iTotal = 0; %>
+			<% for ( var i in inputs ) { %> 
+				<tr>
+					<td><%=parseInt(i)+1%></td>
+					<td><%=inputs[i].id%></td>
+					<td><%=inputs[i].strID%></td>
+					<td><%=inputs[i].iPreviousCash.toLocaleString()%></td>
+					<td><%=inputs[i].iAmount.toLocaleString()%></td>
+					<td><%=inputs[i].strName%></td>
+					<td><%=inputs[i].createdAt%></td>
+					<td><%=inputs[i].updatedAt%></td>
+				</tr>
+				<% iTotal += inputs[i].iAmount; %>
+				<%} %>
+			
+			<tr>
+				<td style="color:red;"><%=__('Total')%></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td><%=iTotal.toLocaleString()%></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+			</tbody>
+		</table>
+		
+		<div class="pagination mt0">
+			<a href="javascript:get_data('inner_partner_list2.php', 'inner_content', 's_sido=13&s_gugun=parent_level=4&s_date=&e_date=&s_cate=&pageNo=1');" class="on" style="color:#ffffff;">1</a>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript" src="js/time.js"></script>
+<script type="text/javascript" src="js/enum.js"></script>
+<script type="text/javascript" src="js/manage_partner_popup_menu.js"></script>
+<script type="text/javascript" src="js/manage_inout_ref.js"></script>
+<script type="text/javascript">
+	var agent = JSON.parse('<%-JSON.stringify(agent)%>');
+
+	DatePicker();
+	$("#datepicker1").val(GetYearlyStartDate());
+    $("#datepicker2").val(GetYearlyEndDate());
+
+	let OnClickSearchInput = (bSearch) => {
+
+		let date1 = $("#datepicker1").val();
+        let date2 = $("#datepicker2").val();
+
+        let strNickname = '';
+		if ( bSearch == true )
+			strNickname = $('#strSearchNickname').val();
+
+		$.ajax(
+            {
+                type:'post',
+                url: "/manage_inout/request_searchby",
+                context: document.body,
+                data:{type:'INPUT', dateStart:date1, dateEnd:date2, strGroupID:agent.strGroupID, strSearchNickname:strNickname, iClass:agent.iClass},
+        
+                success:function(data) {
+
+					console.log(data);
+					
+					SetList(data);
+                }
+            }
+        );
+	}
+
+	let SetList = (data) =>
+	{
+		let iTotal = 0;
+
+		$('#input_list').empty();
+		for ( let i in data )
+		{
+			if ( data[i].eState == 'COMPLETE' )
+			{
+				let tag = `
+				<tr>
+					<td>${parseInt(i)+1}</td>
+					<td>${data[i].id}</td>
+					<td>${data[i].strID}</td>
+					<td>${data[i].iPreviousCash.toLocaleString()}</td>
+					<td>${data[i].iAmount.toLocaleString()}</td>
+					<td>${data[i].strName}</td>
+					<td>${data[i].createdAt}</td>
+					<td>${data[i].updatedAt}</td>
+				</tr>
+				`;
+				$('#input_list').append(tag);
+
+				iTotal += parseInt(data[i].iAmount);
+			}
+		}
+
+		let endtag = `
+			<td colspan = "4" style="color:red;"><%=__('Total')%></td>
+			<td>${iTotal.toLocaleString()}</td>
+			<td></td>
+			<td></td>
+			<td></td>
+		`;
+		$('#input_list').append(endtag);
+	}
+
+</script>

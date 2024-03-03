@@ -1,0 +1,270 @@
+<div class="sub_wrap">
+	<div class="container clearfix">
+		<div class="content" style="position:relative; padding:0 10px 0 10px;">
+
+			<ul class="list_tab" style="float:right; margin-right:10px; position:relative; z-index:10;">
+				<% if ( parseInt(user.iClass) <= 2 && user.iPermission != 100 ) { %>
+					<a href="#" id="setting_odds" iAgentClass="3" class="btn_red">일괄 수정</a>
+					<a href="#" id="remove_db" iAgentClass="3" class="btn_red">데이터 삭제</a>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					<a href="#" id="register_agent" iAgentClass="3" class="btn_gray">본사등록</a>
+				<% } %>
+			</ul>
+
+
+			<ul class="list_tab" style="margin-bottom:10px;width:75%;z-index:10000;" id="partner_header">
+			</ul>
+		</div>
+
+		<div class="search_wrap" id="div_realtimebet_overview">
+		</div>
+
+		<div class="list">
+
+			<div style="background-color:#ffffff;text-align:right;padding-right:5px;padding-top:0px;padding-bottom:0px;" colspan="19">
+
+				<input style="width:100px;" type="text" id="datepicker1" class="datepicker"/>~
+				<input style="width:100px;" type="text" id="datepicker2" class="datepicker" />
+				<button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearch(3, '<%=user.strGroupID%>', '<%=user.iClass%>', '<%=user.iPermission%>');"><%=__('Search')%></button>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<%=__('Search')%>
+				<select id="select_roomno" style="width:80px;">
+					<option><%=__('Nickname')%></option>
+				</select>
+				<input style="margin-left:0px;width:100px;" id="strSearchNickname" type="text"/>
+				<button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearchNickname();"><%=__('Search')%></button>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+				<button class="menu5" data-menu="1" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;" onclick="OnClickTodayRecord();"><%=__('Today')%></button>
+				&nbsp;
+				<button class="menu1" data-menu="2" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;" onclick="OnClickMonthly1stRecord();"><%=__('Half1')%></button>
+				&nbsp;
+				<button class="menu1" data-menu="3" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;" onclick="OnClickMonthly2ndRecord();"><%=__('Half2')%></button>
+				&nbsp;
+				<button class="btn_blue search_btn" search_btn-index="3" id="button_toggle_record" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(136, 136, 248);color:white" onclick="OnClickOpen();"><%=__('Open')%></button>
+
+			</div>
+
+			<div class="search_wrap" id="div_realtimebet_overview_record">
+			</div>
+
+			<!-- <br> -->
+
+			<div class="list_tit">
+				<h3><%=__('SubMenuAdminList')%>
+				</h3>
+			</div>
+
+
+			<div class="search_wrap" id="div_realtimebet">
+
+				<!-- <table class="search_list" style='font-family:"Consalas", Consalas, monospace; font-size:95%'> -->
+				<table class="search_list">
+					<caption><%=__('SearchResult')%></caption>
+					<colgroup>
+						<col style="width:2%">
+						<col style="width:2%">
+						<col style="width:2%">
+						<col style="width:2%">
+						<col style="width:2%">
+						<col style="width:6%">
+						<col style="width:6%">
+
+						<col style="width:7%;">
+						<col style="width:7%;">
+						<col style="width:7%;">
+						<col style="width:7%;">
+						<col style="width:7%;">
+						<col style="width:7%;">
+
+						<col style="width:6%">
+						<col style="width:6%">
+						<col style="width:5%;">
+						<% if ( user.iClass <= 3 && user.iPermission != 100 ) {%>
+							<col style="width:8%;">
+							<col style="width:5%;">
+						<% } %>
+					</colgroup>
+					<thead>
+					<tr>
+						<th scope="col"><%=__('ProAdmin')%></th>
+						<th scope="col"><%=__('ViceAdmin')%></th>
+						<th scope="col"><%=__('Agent')%></th>
+						<th scope="col"><%=__('Shop')%></th>
+						<th scope="col"><%=__('User')%></th>
+						<th scope="col"><%=__('ID')%></th>
+						<th scope="col"><%=__('Nickname')%></th>
+
+						<th scope="col"><%=__('Input')%></th>
+						<th scope="col"><%=__('Output')%></th>
+						<th scope="col"><%=__('MyCoin')%></th>
+						<th scope="col"><%=__('WinLose')%></th>
+						<th scope="col"><%=__('Rolling')%></th>
+						<th scope="col"><%=__('Total')%></th>
+
+						<th scope="col">미전환롤링</th>
+						<th scope="col">죽장</th>
+
+						<th scope="col"><%=__('Admin')%> <%=__('MyCoin')%></th>
+						<th scope="col"><%=__('State')%></th>
+						<% if ( user.iClass <= 3 && user.iPermission != 100 ) {%>
+						<th scope="col"><%=__('ShortCut')%></th>
+						<th scope="col"><%=__('Remove')%></th>
+						<% }%>
+					</tr>
+					</thead>
+					<tbody id="vadmin_list">
+
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+
+<style>
+	.clicked_menu{
+		color: red;
+	}
+</style>
+<script>
+	$('.search_btn').each(function(index){
+		$(this).attr('search_btn-index', index);
+	}).click(function(){
+		/*클릭된 <div>의 menu-index 값을 index 변수에 할당한다.*/
+		var index = $(this).attr('search_btn-index');
+		/*클릭한 <div>에  clicked_menu 클래스 추가*/
+		$('.search_btn[search_btn-index=' + index + ']').addClass('clicked_menu');
+		/*그 외 <div>는  clicked_menu 클래스 삭제*/
+		$('.search_btn[search_btn-index!=' + index + ']').removeClass('clicked_menu');
+	});
+
+	$(document).on('click', '.menu1', (e) => {
+
+		$('.menu5').attr('class', 'menu1');
+
+		$(e.currentTarget).attr('class', 'menu5');
+	});
+
+</script>
+<script type="text/javascript" src="js/enum.js"></script>
+<script type="text/javascript" src="js/time.js"></script>
+<script type="text/javascript" src="js/manage_partner_menu.js"></script>
+<script type="text/javascript" src="js/manage_partner_ref.js"></script>
+<script type="text/javascript" src="js/manage_partner_register.js"></script>
+<script type="text/javascript" src="js/socket.js"></script>
+<script>
+
+	let user = JSON.parse('<%-JSON.stringify(user)%>');
+	let objectOverview = JSON.parse('<%-JSON.stringify(data.overview)%>');
+	let objectVA = JSON.parse('<%-JSON.stringify(data.agents)%>');
+	let agentinfo = JSON.parse('<%-JSON.stringify(agentinfo)%>');
+	let iocount = JSON.parse('<%-JSON.stringify(iocount)%>');
+
+	const cTClass	= parseInt(user.iClass);
+	let bClickDateSelection = false;
+	let bToggleRecord = false;
+
+	$(document).on('click', '.menu1', (e) => {
+
+		$('.menu5').attr('class', 'menu1');
+
+		$(e.currentTarget).attr('class', 'menu5');
+	});
+
+	$(document).ready(() => {
+		DatePicker();
+
+		$('#datepicker1').val(GetCurrentDate());
+		$('#datepicker2').val(GetCurrentDate());
+
+		$("#table_record_list").hide();
+
+		Alert(iocount, "<%=__('RequestInput')%>", "<%=__('RequestOutput')%>","<%=__('LetterSend')%>");
+
+		SetPartnerHeader(3, user.iClass);
+
+		Init("#vadmin_list");
+		SetOverview(objectOverview, "#div_realtimebet_overview", true);
+		SetAdminList(EAgent.eAdmin, "#vadmin_list", objectVA, user.iPermission);
+	});
+
+	function OnClickOpen()
+	{
+		bToggleRecord = !bToggleRecord;
+
+		if ( bToggleRecord ) {
+			$("#table_record_list").show();
+			$("#button_toggle_record").text("닫기");
+
+			if ( false == bClickDateSelection )
+			{
+				$('#datepicker1').val(GetMonthlyStartDate());
+				$('#datepicker2').val(GetMonthlyEndDate());
+			}
+
+			RequestBettingRecord(cTClass, user.strGroupID, user.iClass);
+		}
+		else {
+			$("#table_record_list").hide();
+			$("#button_toggle_record").text(strOpen);
+		}
+	}
+
+	let OnClickTodayRecord = () => {
+
+		bClickDateSelection	= true;
+
+		$('#datepicker1').val(GetCurrentDate());
+		$('#datepicker2').val(GetCurrentDate());
+
+		bToggleRecord = true;
+		$("#button_toggle_record").text("닫기");
+		RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
+
+		RequestOverview(cTClass, user.strGroupID, user.iClass, user.iPermission, user.strNickname, user.strID);
+		RequestAdminList(EAgent.eAdmin, user.strGroupID, user.iClass, user.iPermission);
+	}
+
+	let OnClickMonthly1stRecord = () => {
+
+		bClickDateSelection	= true;
+
+		$('#datepicker1').val(GetMonthly1stStartDate());
+		$('#datepicker2').val(GetMonthly1stEndDate());
+
+		bToggleRecord = true;
+		$("#button_toggle_record").text("닫기");
+		RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
+
+		RequestOverview(cTClass, user.strGroupID, user.iClass, user.iPermission, '', user.strID);
+		RequestAdminList(EAgent.eAdmin, user.strGroupID, user.iClass, user.iPermission);
+	}
+
+	let OnClickMonthly2ndRecord = () => {
+
+		$('#datepicker1').val(GetMonthly2ndStartDate());
+		$('#datepicker2').val(GetMonthly2ndEndDate());
+
+		bToggleRecord = true;
+		$("#button_toggle_record").text("닫기");
+		RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
+
+		RequestOverview(cTClass, user.strGroupID, user.iClass, user.iPermission, '', user.strID);
+		RequestAdminList(EAgent.eAdmin, user.strGroupID, user.iClass, user.iPermission);
+	}
+
+	let OnClickSearch = (iTargetClass, strGroupID, iClass, iPermission) => {
+
+		bToggleRecord = true;
+		$("#button_toggle_record").text("닫기");
+
+		RequestBettingRecord(cTClass, strGroupID, iClass, user.strID);
+		RequestOverview(cTClass, strGroupID, iClass, iPermission, '', user.strID);
+		RequestAdminList(iTargetClass, strGroupID, iClass, user.iPermission);
+	}
+
+	let OnClickSearchNickname = () => {
+		RequestAdminList(EAgent.eAdmin, user.strGroupID, user.iClass, user.iPermission);
+	}
+</script>

@@ -1,0 +1,455 @@
+<div class="search_wrap">
+    <div class="container clearfix">
+        <p style="background-repeat:no-repeat; background-position:left center; font-size:20px; color:#454545; padding-left:22px;margin-top:10px;height:30px;margin-bottom:5px;">
+            지분자 목록
+            <% if (user.iPermission != 100) { %>
+                <button id="button_share_regist" class="menu1" data-menu="2" style="border:1px solid rgb(95, 93, 93);width:80px;height:25px;text-align:center;color:white" onclick="OnClickRegisterShare('<%=user.strNickname%>', '<%=user.strGroupID%>', '<%=user.iClass%>');">지분자등록</button>
+            <% } %>
+        </p>
+        <div id="share_buttons">
+        </div>
+        <div style="background-color:#ffffff;text-align:right;padding-right:5px;padding-top:0px;padding-bottom:0px;" colspan="19">
+            <select id="quater_month" style="width:100px;">
+                <option value="0">1</option>
+                <option value="1">2</option>
+                <option value="2">3</option>
+                <option value="3">4</option>
+                <option value="4">5</option>
+                <option value="5">6</option>
+                <option value="6">7</option>
+                <option value="7">8</option>
+                <option value="8">9</option>
+                <option value="9">10</option>
+                <option value="10">11</option>
+                <option value="11">12</option>
+            </select>월
+            <button id="button_quater" class="menu1" data-menu="2" style="border:1px solid rgb(95, 93, 93);width:170px;height:25px;text-align:center;color:white" onclick="Request1stHalf();"><%=__('Half1')%></button>
+            <button id="button_quater" class="menu1" data-menu="3" style="border:1px solid rgb(95, 93, 93);width:170px;height:25px;text-align:center;color:white" onclick="Request2ndHalf();"><%=__('Half2')%></button>
+            <div id="testSettle" style="background-color:#ffffff;text-align:right;padding-right:5px;padding-top:0px;padding-bottom:0px;" colspan="19">
+            </div>
+        </div>
+
+        <div class="list">
+            <div class="search_wrap" id="div_realtimebet">
+                <table class="search_list">
+                    <caption><%=__('SearchResult')%></caption>
+                    <colgroup>
+                        <col style="width:9%">
+                        <col style="width:9%">
+                        <col style="width:9%">
+                        <col style="width:9%">
+                        <col style="width:9%">
+                        <col style="width:9%">
+                        <col style="width:9%">
+                        <col style="width:9%">
+                        <col style="width:28%">
+                    </colgroup>
+                    <thead>
+                    <tr>
+                        <th scope="col">본사</th>
+                        <th scope="col">지분자</th>
+                        <th scope="col">순이익</th>
+                        <th scope="col">지분율% </th>
+                        <th scope="col">배당금</th>
+                        <th scope="col">전월 이월 금액</th>
+                        <th scope="col" >입출전 금액</th>
+                        <th scope="col">입출후 금액</th>
+                        <th scope="col" >비고</th>
+                    </tr>
+                    </thead>
+                    <tbody id="list_agents">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<script type="text/javascript" src="js/constants.js"></script>
+<script type="text/javascript" src="js/enum.js"></script>
+<script type="text/javascript" src="js/time.js"></script>
+<script type="text/javascript" src="js/manage_partner_popup_menu.js"></script>
+<script type="text/javascript" src="js/manage_inout_ref.js"></script>
+<script type="text/javascript" src="js/util.js"></script>
+<script type="text/javascript" src="js/common_menu.js"></script>
+<script type="text/javascript">
+    let agent = JSON.parse('<%-JSON.stringify(agent)%>');
+    let user = JSON.parse('<%-JSON.stringify(user)%>');
+    let list = JSON.parse('<%-JSON.stringify(list)%>');
+    let strQuater = '';
+    let dateQuaterStart = '';
+    let dateQuaterEnd = '';
+    let selectQuaterMonth = '';
+    let selectQuater = 0;
+
+    console.log(list);
+    DatePicker();
+
+    let date = new Date();
+    $('#quater_month').val(date.getMonth());
+    selectQuaterMonth = date.getMonth();
+    $('#quater_month').on('change', () => {
+        let month = $('#quater_month').val();
+        if (parseInt(selectQuaterMonth ?? -1) != parseInt(month)) {
+            selectQuaterMonth = month;
+            if (selectQuater == 1) {
+                Request1stHalf();
+            } else if (selectQuater == 2) {
+                Request2ndHalf();
+            }
+        }
+    });
+
+    $(document).ready( ()=> {
+        SetList(list, false);
+    });
+
+    $(document).on('click', '#button_quater', (e) => {
+
+        $('.menu5').attr('class', 'menu1');
+
+        $(e.currentTarget).attr('class', 'menu5');
+    });
+
+    let SetList = (list, enable) => {
+        console.log('SetList');
+        console.log(list);
+        console.log(list.length);
+
+        $(`#share_buttons`).empty();
+        if (enable) {
+            $('#share_buttons').append(
+                `
+            <h3>지분 정산
+                <% if (user.iPermission != 100) { %>
+                    <button id='button_changeshare' style="margin-left:8%;width:200px;height:40px;text-align:center;background-color: rgb(82, 161, 206);color:white" onclick="javascript:DoApplyShare();"><strong>지분율 적용</strong></button>
+                    <button id='button_applyshare' style="margin-left:300px;width:200px;height:40px;text-align:center;background-color: rgb(218, 107, 107);color:white" onclick="javascript:RequestApplyShare();"><strong>지분 지급</strong></button>
+                <% } %>
+            </h3>
+            `
+            );
+        }
+
+        $(`#list_tit`).empty();
+
+        $("#list_agents").empty();
+        if (list.length > 0) {
+            for (var i = 0; i<list.length; i++) {
+                let aObject = list[i];
+
+                let parentNickname = aObject.parentNickname ?? '';
+                let strNickname = aObject.strNickname ?? '';
+                let iShareOrgin = parseInt(aObject.iShareOrgin ?? '0');
+                if (enable) {
+                    // 순이익 계산
+                    let iTotalSum = parseInt(aObject.iTotal)  + parseInt(aObject.iTotalUnover) + parseInt(aObject.iTotalSlot) + parseInt(aObject.iTotalPB);
+                    let iTotalSettle = parseInt(aObject.iTotalSettle);
+                    let iTotalCommission = parseInt(aObject.iTotalCommission);
+                    iShareOrgin = iTotalSum - parseInt(aObject.iTotalSettle) - parseInt(aObject.iTotalCommission);
+                }
+                let fShareR = parseFloat(aObject.fShareR ?? '0.0');
+                let iShare = parseInt(aObject.iShare ?? '0'); // 해당 분기 배당금
+                if (enable) {
+                    // 배당금 금액(지분율 계산 금액)
+                    iShare = iShareOrgin * (fShareR/100);
+                }
+                let iShareAccBefore = parseInt(aObject.iShareAccBefore); // 전월 이월금액
+                let iCreditBefore = parseInt(aObject.iCreditBefore); // 가불전 금액(배당금 + 전월 이월 금액)
+                // let iTotalIncrease = parseInt(aObject.iTotalIncrease); // 가불 총 금액
+                let iCreditAfer = parseInt(aObject.iCreditAfer); // 가불후 금액
+
+                let tagoption = 'disabled="disabled"';
+                if (enable) {
+                    tagoption = '';
+                }
+
+                console.log(aObject);
+                $('#list_agents').append(`
+                    <tr class="Share" id=${aObject.strNickname}>
+                        <td id='agent_${strNickname}'>${parentNickname}</td>
+                        <td id='strNickname_${strNickname}'><a href='#' onclick="OnClickNickname('${strNickname}')";>${strNickname}</a></td>
+                        <td id='iShareOrgin_${strNickname}'>${GetNumberSign(iShareOrgin, '0')}</td>
+                        <td>
+                            <input type="number" style="width:50%;" name="bakara_over_31" id="fShareR_${aObject.strNickname}" required="no" message="지분" value=${aObject.fShareR} ${tagoption}>%
+                        </td>
+                        <td id='iShare_${strNickname}'>${GetNumberSign(iShare)}</td>
+                        <td id='iShareAccBefore_${strNickname}'>${GetNumberSign(iShareAccBefore)}</td>
+                        <td id='iCreditBefore_${strNickname}'>${GetNumberSign(iCreditBefore, '0')}</td>
+                        <td id='iCreditAfer_${strNickname}'>${GetNumberSign(iCreditAfer, '0')}</td>
+                        <% if (user.iPermission != 100) { %>
+                            <td>
+                                <input type="radio" name="mile_sect" required="yes" message="구분" value="M" id="share_type_1" onclick="OnClickCreditType('MINUS');">
+                                <label for="mile_sect_cash_1" style="color:red;font-size:15px;">가불</label>
+                                <input type="radio" name="mile_sect" required="yes" message="구분" value="P" id="share_type_2" onclick="OnClickCreditType('PLUS');">
+                                <label for="mile_sect_cash_2" style="color:blue;font-size:15px;">적립</label>
+                                <input style='width:30%;' type='number' id="iIncrease_${strNickname}" value=''>&nbsp;&nbsp;
+                                메모 : <input style='width:30%;' type='text' id="sharememo_${strNickname}" value=''>
+                                <button style='color:white;' class='menu4' onclick='OnClickShareApply("${aObject.strID}", "${strNickname}");'>적용</button>
+                            </td>
+                        <% } else { %>
+                            <td>
+                            </td>
+                        <% } %>
+                    </tr>
+                `);
+
+                checkBlockNum(`#fShareR_${aObject.strNickname}`);
+                checkBlockNum(`#iIncrease_${strNickname}`);
+                checkBlockCharSpecial2(`#sharememo_${strNickname}`);
+            }
+        } else {
+            console.log('else');
+            $('#list_agents').append(`
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+            `);
+        }
+    }
+
+    // 지분자 비율 적용
+    let DoApplyShare = () => {
+        var list = [];
+        var total = 0;
+        var agents = document.querySelectorAll("tr[class=Share]");
+        for (var i = 0; i < agents.length; i++)
+        {
+            const element = agents[i];
+
+            let strNickname = element.id;
+            let fShareR = parseFloat($(`#fShareR_${element.id}`).val());
+
+            list.push(strNickname);
+            list.push(fShareR);
+
+            total = total + fShareR;
+        }
+
+        if (total > 100) {
+            alert('지분율은 100%를 넘을 수 없습니다');
+            return;
+        }
+
+        $.ajax({
+            url:'/manage_partner/request_modify_share_group',
+            type:"POST",
+            data: {
+                data: JSON.stringify(list)
+            },
+            dataType: "json",
+            success: function (obj) {
+
+                if ( obj.result == 'OK')
+                {
+                    alert(obj.msg);
+                    location.reload();
+                }
+                else
+                {
+                    alert(obj.msg);
+                }
+            }
+        });
+    }
+
+    // 지분 지급
+    let RequestApplyShare = () => {
+
+        if (strQuater == '' || strQuater == undefined) {
+            alert('분기를 선택해주세요');
+            return;
+        }
+
+        var list = [];
+        var credits = [];
+        var agents = document.querySelectorAll("tr[class=Share]");
+        for (var i = 0; i < agents.length; i++)
+        {
+            const element = agents[i];
+
+            let strNickname = element.id;
+            let iShareOrgin = $(`#iShareOrgin_${element.id}`).text(); // 순이익
+            iShareOrgin = iShareOrgin?.replace(/,/g, '') ?? '0';
+            let fShareR = $(`#fShareR_${element.id}`).val();
+            fShareR = fShareR?.replace(/,/g, '') ?? '0';
+            let iShare = $(`#iShare_${element.id}`).text()
+            iShare = iShare?.replace(/,/g, '') ?? '0';
+            let iShareAccBefore = $(`#iShareAccBefore_${element.id}`).text();
+            iShareAccBefore = iShareAccBefore?.replace(/,/g, '') ?? '0';
+
+            list.push(strNickname);
+            list.push(iShareOrgin);
+            list.push(fShareR);
+            list.push(iShare);
+            list.push(iShareAccBefore);
+
+            let iIncrease = $(`#iIncrease_${element.id}`).val();
+            iIncrease = iIncrease?.replace(/,/g, '') ?? '0';
+            let strMemo = $(`#sharememo_${element.id}`).val();
+            strMemo = strMemo.replace(/(\n|\r\n)/g, '<br>');
+        }
+
+        $.ajax({
+            url:'/manage_partner/request_share_apply',
+            type:"POST",
+            data: {
+                data: JSON.stringify(list),
+                strID: user.strID,
+                strGroupID: user.strGroupID,
+                strQuater: strQuater,
+            },
+            dataType: "json",
+            success: function (obj) {
+
+                if ( obj.result == 'OK')
+                {
+                    alert(obj.msg);
+                    RequestShareList();
+                    // location.reload();
+                }
+                else
+                {
+                    alert(obj.msg);
+                }
+            }
+        });
+    }
+
+    let OnClickShareApply = (strID, strNickname) => {
+        let type = $('input[name="mile_sect"]:checked').val();
+        let iIncrease = $(`#iIncrease_${strNickname}`).val();
+        iIncrease = parseInt(iIncrease);
+
+        if (iIncrease <= 0) {
+            alert('가불액을 확인해주세요');
+            return;
+        }
+
+        if (type != 'M' && type != 'P') {
+            alert('가불/적립 여부를 선택해주세요');
+            return;
+        }
+
+        if (type == 'M') {
+            iIncrease = -iIncrease;
+        }
+
+        let strMemo = $(`#sharememo_${strNickname}`).val();
+        strMemo = strMemo.replace(/(\n|\r\n)/g, '<br>');
+
+        $.ajax({
+            url:'/manage_partner/request_share_credit_apply',
+            type:"POST",
+            data: {
+                strNickname: strNickname,
+                strID: user.strID,
+                strGroupID: user.strGroupID,
+                iIncrease: iIncrease,
+                writer: user.strNickname,
+                strMemo: strMemo,
+            },
+            dataType: "json",
+            success: function (obj) {
+
+                if ( obj.result == 'OK')
+                {
+                    alert(obj.msg);
+                    location.reload();
+                }
+                else
+                {
+                    alert(obj.msg);
+                }
+            }
+        });
+    }
+
+    let Request1stHalf = () => {
+        let iMonth = parseInt($('#quater_month').val());
+        dateQuaterStart = Get1QuaterStartDate(iMonth);
+        dateQuaterEnd = Get1QuaterEndDate(iMonth);
+        strQuater = `${parseInt(iMonth)+1}-1`;
+        selectQuater = 1;
+        RequestShareList();
+    }
+
+    let Request2ndHalf = () => {
+        let iMonth = parseInt($('#quater_month').val());
+        dateQuaterStart = Get2QuaterStartDate(iMonth);
+        dateQuaterEnd = Get2QuaterEndDate(iMonth);
+        strQuater = `${parseInt(iMonth)+1}-2`;
+        selectQuater = 2;
+        RequestShareList();
+    }
+
+    let RequestShareList = () => {
+
+        $.ajax({
+            url:'/manage_partner_popup/request_share_list',
+            type:"POST",
+            data: {
+                strID:user.strID,
+                strGroupID: user.strGroupID,
+                strNickname:user.strNickname,
+                dateStart: dateQuaterStart,
+                dateEnd: dateQuaterEnd,
+                strQuater:strQuater,
+                iMonth: selectQuaterMonth,
+                iQuater: selectQuater,
+            },
+            dataType: "json",
+            success: function (obj) {
+                console.log(obj);
+                // 해당 분기 죽장 완료 여부 체크
+                if ( obj.result == 'OK')
+                {
+                    SetList(obj.list, obj.enable);
+                }
+                else
+                {
+                    alert(obj.msg);
+                }
+            }
+        });
+    }
+
+    let OnClickNickname = (strNickname) => {
+        console.log(`OnClickRegisterShare : ${strNickname}`);
+        window.open('', 'popupChkRegisterShareUser', 'width=1280, height=720, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
+        let $form = $('<form></form>');
+        $form.attr('action', '/manage_partner_popup/popup_view_share_user');
+        $form.attr('method', 'post');
+        $form.attr('target', 'popupChkRegisterShareUser');
+        $form.appendTo('body');
+        let idx = $(`<input type="hidden" value="${strNickname}" name="strNickname">`);
+        $form.append(idx);
+        $form.submit();
+    }
+
+
+    let OnClickRegisterShare = (strNickname, strGroupID, iClass) => {
+        window.open('', 'popupChkRegisterShareUser', 'width=1080, height=420, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
+        let $form = $('<form></form>');
+        $form.attr('action', '/manage_partner_popup/popup_registershare');
+        $form.attr('method', 'post');
+        $form.attr('target', 'popupChkRegisterShareUser');
+        $form.appendTo('body');
+
+        let id = $(`<input type="hidden" value="${strID}" name="strID">`);
+        let idx = $(`<input type="hidden" value="${strNickname}" name="strNickname">`);
+        let page = $(`<input type="hidden" value="${strGroupID}" name="strGroupID">`);
+        let category = $(`<input type="hidden" value=${parseInt(iClass)} name="iClass">`);
+
+        $form.append(idx).append(page).append(category).append(id);
+        $form.submit();
+    }
+
+</script>

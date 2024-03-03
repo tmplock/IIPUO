@@ -1,0 +1,464 @@
+<div class="sub_wrap">
+	<div class="container clearfix">
+		<div class="content" style="position:relative; padding:0 10px 0 10px;">
+
+			<ul class="list_tab" style="float:right; margin-right:10px; position:relative; z-index:10;">
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<% if ( parseInt(user.iClass) == 1 && user.iPermission != 100) { %>
+					<a href="#" id="register_agent" iAgentClass="2" class="btn_gray"><%=__('ViceHQ')%><%=__('Register')%></a>
+					<a href="#" id="remove_db" iAgentClass="2" class="btn_red">데이터 삭제</a>
+				<% } %>
+			</ul>
+			<ul class="list_tab" style="margin-bottom:10px;width:75%;z-index:10000;" id="partner_header">
+			</ul>
+		</div>
+
+		<div class="search_wrap" id="div_realtimebet_overview">
+		</div>
+
+		<div class="list">
+
+			<div style="background-color:#ffffff;text-align:right;padding-right:5px;padding-top:0px;padding-bottom:0px;" colspan="19">
+
+				<input style="width:100px;" type="text" id="datepicker1" class="datepicker"/>~
+				<input style="width:100px;" type="text" id="datepicker2" class="datepicker" />
+				<button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearch(2, '<%=user.strGroupID%>', '<%=user.iClass%>', '<%=user.iPermission%>');"><%=__('Search')%></button>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<%=__('Search')%>
+				<select id="select_roomno" style="width:80px;">
+					<option><%=__('Nickname')%></option>
+				</select>
+				<input style="margin-left:0px;width:100px;" type="text"/>
+				<button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="testclick();"><%=__('Search')%></button>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<button class="menu5" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;" onclick="OnClickTodayRecord();"><%=__('Today')%></button>
+				&nbsp;
+				<button class="menu1" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;" onclick="OnClickMonthly1stRecord();"><%=__('Half1')%></button>
+				&nbsp;
+				<button class="menu1" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;" onclick="OnClickMonthly2ndRecord();"><%=__('Half2')%></button>
+				&nbsp;
+				<button class="btn_blue" id="button_toggle_record" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(136, 136, 248);" onclick="OnClickOpen();"><%=__('Open')%></button>
+			
+			</div>
+
+			<div class="search_wrap" id="div_realtimebet_overview_record">
+			</div>
+
+			<div class="list_tit">
+				<h3><%=__('SubMenuViceHQList')%>
+				</h3>
+			</div>
+
+	
+			<div class="search_wrap" id="div_realtimebet">
+				<table class="search_list">
+					<caption><%=__('SearchResult')%></caption>
+					<colgroup>
+						<col style="width:2%">
+						<col style="width:2%">
+						<col style="width:2%">
+						<col style="width:2%">
+						<col style="width:2%">
+						<col style="width:2%">
+
+						<col style="width:5%">
+						<col style="width:5%">
+
+						<col style="width:5%">
+						<col style="width:5%">
+						<col style="width:5%">
+
+						<col style="width:5%">
+						<col style="width:5%">
+						<col style="width:5%">
+						<col style="width:5%">
+						<col style="width:5%">
+
+						<col style="width:8%;">
+
+<!--						<col style="width:15%">-->
+
+						<col style="width:5%">
+						<col style="width:5%">
+						<col style="width:5%">
+					</colgroup>
+					<thead>
+						<tr>
+							<th scope="col"><%=__('Admin')%></th>
+							<th scope="col"><%=__('ProAdmin')%></th>
+							<th scope="col"><%=__('ViceAdmin')%></th>
+							<th scope="col"><%=__('Agent')%></th>
+							<th scope="col"><%=__('Shop')%></th>
+							<th scope="col"><%=__('User')%></th>
+							<th scope="col"><%=__('ID')%></th>
+							<th scope="col"><%=__('Nickname')%></th>
+						
+							<th scope="col"><%=__('Input')%></th>
+							<th scope="col"><%=__('Output')%></th>
+							<th scope="col"><%=__('MyCoin')%></th>
+							<th scope="col">B <%=__('WinLose')%></th>
+							<th scope="col">U <%=__('WinLose')%></th>
+							<th scope="col">S <%=__('WinLose')%></th>
+							<th scope="col">P <%=__('WinLose')%></th>
+							<th scope="col"><%=__('Total')%></th>
+							<th scope="col"><%=__('ViceHQ')%> <%=__('MyCoin')%></th>
+<!--							<th scope="col"><%=__('Memo')%></th>-->
+							<th scope="col"><%=__('State')%></th>
+							<th scope="col"><%=__('ShortCut')%></th>
+							<th scope="col"><%=__('Remove')%></th>
+						</tr>
+					</thead>
+					<tbody id="vadmin_list">
+						
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript" src="js/enum.js"></script>
+<script type="text/javascript" src="js/time.js"></script>
+<script type="text/javascript" src="js/manage_partner_menu.js"></script>
+<script type="text/javascript" src="js/manage_partner_ref.js"></script>
+<script type="text/javascript" src="js/manage_partner_register.js"></script>
+<script type="text/javascript" src="js/socket.js"></script>
+<script>
+
+	var user = JSON.parse('<%-JSON.stringify(user)%>');
+	var objectVA = JSON.parse('<%-JSON.stringify(data.agents)%>');
+	var agentinfo = JSON.parse('<%-JSON.stringify(agentinfo)%>');
+	var iocount = JSON.parse('<%-JSON.stringify(iocount)%>');
+	Alert(iocount, "<%=__('RequestInput')%>", "<%=__('RequestOutput')%>","<%=__('LetterSend')%>");
+	console.log('');
+	console.log(agentinfo);
+
+	const cTClass = parseInt(user.iClass);
+
+	DatePicker();
+
+	$('#datepicker1').val(GetCurrentDate());
+	$('#datepicker2').val(GetCurrentDate());
+
+	Init("#vadmin_list");
+	let bClickDateSelection = false;
+
+	$("#table_record_list").hide();
+	var bToggleRecord = false;
+
+	$(document).on('click', '.menu1', (e) => {
+		$('.menu5').attr('class', 'menu1');
+		$(e.currentTarget).attr('class', 'menu5');
+	});
+
+	$(document).on('click', '.save', (event)=> {
+		OnSave(event);
+		event.target.reset();
+	});
+	$(document).on('click', '#input_memo',  (event) => {
+		const id = $(event.currentTarget).attr('listid');
+		OnClickMemo(id);
+	});
+	let OnClickMemo = (id) => {
+		for (let i=0; i < list.length; i++) {
+			let memo_id = `memo_${list[i].id}`;
+			let memo_tx_id = `memo_tx_${list[i].id}`;
+			let button_memo_save = `button_memo_save_${list[i].id}`;
+			if (list[i].id==id) {
+				document.getElementById(memo_id).style = "width:80%";
+				document.getElementById(memo_tx_id).style = 'display:none';
+				document.getElementById(button_memo_save).style = "height:80%;";
+			} else {
+				document.getElementById(memo_id).style = 'width:80%; display:none';
+				document.getElementById(memo_tx_id).style = '';
+				document.getElementById(button_memo_save).style = "display:none";
+			}
+		}
+	}
+
+	let OnSave = (event) => {
+
+		let tr = $(event.currentTarget).closest('tr');
+		const id = tr.attr('name');
+		const strID = tr.attr('nickname');
+		const strMemo = $(`#memo_${id}`).val();
+
+		$(`#memo_tx_${id}`).css({display: ""});
+		$(`#memo_${id}`).css({width:"90%", display: "none"});
+		$(`#button_memo_save_${id}`).css({display: "none"});
+
+		$(`#memo_tx_${id}`).text(`${strMemo}`);
+		$(`#memo_${id}`).text(`${strMemo}`);
+
+		$.ajax({
+			url:"/manage_partner/request_savememo",
+			type:"POST",
+			data: {
+				type:1,
+				id:id,
+				strMemo:strMemo
+			},
+			dataType: "json",
+			success: function (obj) {
+				$(`#button_standby_${id}`).remove();
+				$(`#button_cancel_${id}`).remove();
+				$(`#td_state_${id}`).append(`<font style="color:blue;">${strStateComplete}</font>`);
+			}
+		});
+	}
+
+	$(document).ready(() => {
+		 RequestViceAdminList(EAgent.eViceHQ, user.strGroupID, user.iClass, user.strID);
+	});
+
+	function OnClickOpen()
+	{
+		bToggleRecord = !bToggleRecord;
+
+		if ( bToggleRecord ) {
+			$("#table_record_list").show();
+			$("#button_toggle_record").text(strClose);
+
+			if ( false == bClickDateSelection )
+			{
+				$('#datepicker1').val(GetMonthlyStartDate());
+				$('#datepicker2').val(GetMonthlyEndDate());
+			}
+
+			RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
+		}
+		else {
+			$("#table_record_list").hide();
+			$("#button_toggle_record").text(strOpen);
+		}
+	}
+
+	let OnClickTodayRecord = () => {
+
+		bClickDateSelection	= true;
+
+		$('#datepicker1').val(GetCurrentDate());
+		$('#datepicker2').val(GetCurrentDate());
+
+		bToggleRecord = true;
+		$("#button_toggle_record").text("닫기");
+		RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
+		RequestViceAdminList(EAgent.eViceHQ, user.strGroupID, user.iClass, user.strID);
+	}
+
+	let OnClickMonthly1stRecord = () => {
+		bClickDateSelection	= true;
+
+		$('#datepicker1').val(GetMonthly1stStartDate());
+		$('#datepicker2').val(GetMonthly1stEndDate());
+
+		bToggleRecord = true;
+		$("#button_toggle_record").text("닫기");
+		RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
+		RequestViceAdminList(EAgent.eViceHQ, user.strGroupID, user.iClass, user.strID);
+	}
+
+	let OnClickMonthly2ndRecord = () => {
+		$('#datepicker1').val(GetMonthly2ndStartDate());
+		$('#datepicker2').val(GetMonthly2ndEndDate());
+
+		bToggleRecord = true;
+		$("#button_toggle_record").text("닫기");
+		RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
+		RequestViceAdminList(EAgent.eViceHQ, user.strGroupID, user.iClass, user.strID);
+	}
+
+	let OnClickSearch = (iTargetClass, strGroupID, iClass, iPermission) => {
+
+		bToggleRecord = true;
+		$("#button_toggle_record").text("닫기");
+
+		RequestBettingRecord(cTClass, strGroupID, iClass, user.strID);
+		RequestViceAdminList(iTargetClass, strGroupID, iClass, user.strID);
+	}
+
+	SetPartnerHeader(2, user.iClass);
+
+	let RequestViceAdminList = (iTargetClass, strGroupID, iClass, strID) => {
+
+		console.log(`FindFromDate strGroupID : ${strGroupID}, iClass : ${iClass}`);
+
+		const dateStart = $('#datepicker1').val();
+		const dateEnd = $('#datepicker2').val();
+		const strNickname = $('#strSearchNickname').val();
+
+		$.ajax({
+			type:'post',
+			url: "/manage_partner/request_agentlist",
+			context: document.body,
+			data:{iTargetClass:iTargetClass, strGroupID:strGroupID, iClass:iClass, dateStart:dateStart, dateEnd:dateEnd, strSearchNickname:strNickname, strID},
+
+			success: (obj) => {
+
+				Init("#vadmin_list");
+				SetViceAdminList(iTargetClass, "#vadmin_list", obj.list, obj.iPermission);
+			},
+			error:function(request,status,error)
+			{
+				alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+			}
+		});
+	}
+
+	let SetViceAdminList = (iRootClass, strParentTag, aObject, iPermission) => {
+
+		var tag = "";
+
+		response_list = [];
+
+		let iInput = 0,
+				iOutput = 0,
+				iTotalMoney = 0,
+				iBWinLose = 0,
+				iUWinLose = 0,
+				iSWinLose = 0,
+				iPBWinLose = 0,
+				iWinLose = 0,
+				iMyMoney = 0
+		;
+
+		for ( let i in aObject)
+		{
+			let subtag = AddViceAdmin(iRootClass, aObject[i], iPermission);
+
+			response_list.push({me:aObject[i].strNickname, childs:[], visible:true});
+
+			iInput += parseInt(aObject[i].iInputGts);
+			iOutput += parseInt(aObject[i].iOutputGts);
+			iTotalMoney += parseInt(aObject[i].iTotalMoney);
+
+			iBWinLose += parseInt(aObject[i].iBaccaratTotal) + parseInt(aObject[i].iBaccaratRollingMoney);
+			iUWinLose += parseInt(aObject[i].iUnderOverTotal) + parseInt(aObject[i].iUnderOverRollingMoney);
+			iSWinLose += parseInt(aObject[i].iSlotTotal) + parseInt(aObject[i].iSlotRollingMoney);
+			iPBWinLose += (parseInt(aObject[i].iPBTotal) + parseInt(aObject[i].iPBRollingMoney));
+
+			iMyMoney += parseInt(aObject[i].iMyMoney);
+
+			tag += subtag;
+		}
+		iWinLose = iBWinLose + iUWinLose + iSWinLose + iPBWinLose;
+		$(strParentTag).append(tag);
+		let total_tag = `
+			<tr style="font-weight: bold;">
+			<td colspan="8">${strTotal}</td>
+			<td>${GetNumber(iInput)}</td>
+			<td>${GetNumber(iOutput)}</td>
+			<td>${GetNumber(iTotalMoney)}</td>
+			<td style="color:${GetColor(iBWinLose)}">${GetNumber(iBWinLose)}</td>
+			<td style="color:${GetColor(iUWinLose)}">${GetNumber(iUWinLose)}</td>
+			<td style="color:${GetColor(iSWinLose)}">${GetNumber(iSWinLose)}</td>
+			<td style="color:${GetColor(iPBWinLose)}">${GetNumber(iPBWinLose)}</td>
+			<td style="color:${GetColor(iWinLose)}">${GetNumber(iWinLose)}</td>
+			<td style="color:${GetColor(iMyMoney)}">${GetNumber(iMyMoney)}</td>
+<!--			<td></td>-->
+			<td></td>
+			<td></td>
+			<td></td>
+			</tr>
+		`;
+		$(strParentTag).append(total_tag);
+	}
+
+	let AddViceAdmin = (iRootClass, aObject, iPermission) => {
+
+		let color = '#ffffff';
+
+		let subtag = `
+
+		<tr id=${aObject.strNickname} class='Agent'>
+
+			<input type='hidden' id='iClass${aObject.strNickname}' value='${aObject.iClass}' >`;
+
+			console.log(iRootClass);
+			console.log(EAgent.eViceHQ);
+
+			if ( iRootClass == EAgent.eViceHQ )
+				subtag += `<td style="background-color:${color};"  class="parent_row_31">${GetNumber(aObject.iNumAdmins)}</td>`;
+
+
+			subtag += `<td style="background-color:${color};"  class="parent_row_31">${GetNumber(aObject.iNumProAdmins)}</td>`;
+			subtag += `<td style="background-color:${color};"  class="parent_row_31">${GetNumber(aObject.iNumViceAdmins)}</td>`;
+
+			subtag += `<td style="background-color:${color};"  class="parent_row_31">${GetNumber(aObject.iNumAgents)}</td>`;
+			subtag += `<td style="background-color:${color};"  class="parent_row_31">${GetNumber(aObject.iNumShops)}</td>`;
+			subtag += `<td style="background-color:${color};"  class="parent_row_31">${GetNumber(aObject.iNumUsers)}</td>`;
+			subtag += `
+
+			<td style="background-color:${color};"  class="parent_row_31">
+
+			<a href="javascript:RequestPartnerInfo('${aObject.strNickname}', '${aObject.strGroupID}', '${aObject.iClass}');"  style="color:blue;">${aObject.strID}</a>
+
+			</td>
+
+			<td style="background-color:${color};"  class="parent_row_31">
+				<a href="#"  style="color:blue;">${aObject.strNickname}</a>
+			</td>
+		`;
+
+
+		let iInput = parseInt(aObject.iInputGts);
+		let iOutput = parseInt(aObject.iOutputGts);
+		let iTotalMoney = parseInt(aObject.iTotalMoney);
+
+		let iBWinLose = parseInt(aObject.iBaccaratTotal) + parseInt(aObject.iBaccaratRollingMoney);
+		let iUWinLose = parseInt(aObject.iUnderOverTotal) + parseInt(aObject.iUnderOverRollingMoney);
+		let iSWinLose = parseInt(aObject.iSlotTotal) + parseInt(aObject.iSlotRollingMoney);
+		let iPBWinLose = parseInt(aObject.iPBTotal) + parseInt(aObject.iPBRollingMoney);
+		let iWinLose = iBWinLose + iUWinLose + iSWinLose + iPBWinLose;
+
+		let iMyMoney = parseInt(aObject.iMyMoney);
+
+		subtag += `<td style="background-color:${color};"  class="parent_row_31">${GetNumber(iInput)}</td>`;
+		subtag += `<td style="background-color:${color};"  class="parent_row_31">${GetNumber(iOutput)}</td>`;
+		subtag += `<td style="background-color:${color};"  class="parent_row_31">${GetNumber(iTotalMoney)}</td>`;
+		subtag += `<td style="background-color:${color};color:${GetColor(iBWinLose)}"  class="parent_row_31">${GetNumber(iBWinLose)}</td>`;
+		subtag += `<td style="background-color:${color};color:${GetColor(iUWinLose)}"  class="parent_row_31">${GetNumber(iUWinLose)}</td>`;
+		subtag += `<td style="background-color:${color};color:${GetColor(iSWinLose)}"  class="parent_row_31">${GetNumber(iSWinLose)}</td>`;
+		subtag += `<td style="background-color:${color};color:${GetColor(iPBWinLose)}"  class="parent_row_31">${GetNumber(iPBWinLose)}</td>`;
+		subtag += `<td style="background-color:${color};color:${GetColor(iWinLose)}"  class="parent_row_31">${GetNumber(iWinLose)}</td>`;
+		subtag += `<td style="background-color:${color};color:${GetColor(iMyMoney)}"  class="parent_row_31">${GetNumber(iMyMoney)}</td>`;
+		// subtag += `<td>메모</td>`;
+		if (iPermission != 100) {
+			if ( aObject.eState == 'NORMAL' )
+			{
+				subtag += `<td style="background-color:${color};"class="parent_row_31">
+				<select style="vertical-align:middle;width:100%;" id="partner_agentstatus_${aObject.strNickname}" onchange="OnChangeStatus('${aObject.strNickname}');">
+				<option value="NORMAL" selected>${strNormal}</option>
+				<option value="BLOCK">${strBlock}</option>
+				</select>
+				</td>`;
+			}
+			else {
+				subtag += `<td style="background-color:${color};"class="parent_row_31">
+				<select style="vertical-align:middle;width:100%;background-color:rgb(207, 61, 4);color: white;" id="partner_agentstatus_${aObject.strNickname}" onchange="OnChangeStatus('${aObject.strNickname}');">
+				<option value="NORMAL">${strNormal}</option>
+				<option value="BLOCK" selected>${strBlock}</option>
+				</select>
+				</td>`;
+			}
+
+			subtag += `
+					<td style="background-color:${color};"class="parent_row_31">
+						<a href="#" class="list_menu btn_blue move" strNickname=${aObject.strNickname} strGroupID=${aObject.strGroupID} iClass=${aObject.iClass}>${strMove}</a>
+					</td>
+					<td style="background-color:${color};"class="parent_row_31">
+						<a href="#" class="list_menu btn_red removeagent" strNickname=${aObject.strNickname} strGroupID=${aObject.strGroupID} iClass=${aObject.iClass}>${strRemove}</a>
+					</td>
+				`;
+		} else {
+			if ( aObject.eState == 'NORMAL' ) {
+				subtag += `<td style="background-color:${color};"class="parent_row_31">${strNormal}</td>`;
+			} else {
+				subtag += `<td style="background-color:${color};"class="parent_row_31">${strBlock}</td>`;
+			}
+		}
+
+		subtag += '</tr>';
+		return subtag;
+	}
+</script>

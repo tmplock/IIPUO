@@ -1,0 +1,207 @@
+<br><br><br>
+
+<div class="container">
+    <!--서브페이지들-->
+    <div class="sub-wrap">
+
+        <div class="subscr" style="display:block;">
+            <div class="subtitle">
+                <h1>출금신청</h1>
+            </div>
+            <table>
+                <colgroup>
+                    <col style="width:24%;">
+                    <col style="width:50%;">
+                </colgroup>
+
+                <tr>
+                    <td>출금가능금액</td>
+                    <td style="padding: 15px 0;">
+                        <input placeholder="" name="iValuedPoint" type="text" id="iValuedPoint" style="color:#e2a826; font-weight: bold" disabled>
+                        <button type="button" style="width: 150px;" onclick="RequestAccount();">출금계좌 조회</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>출금금액</td>
+                    <td style="padding: 15px 0;">
+                        <input placeholder="출금금액을 입력해 주세요" name="iAmount" type="text" id="inputPrice" readonly>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <button type="button" onclick="AddAmount(10000);">1만원</button>
+                        <button type="button" onclick="AddAmount(50000);">5만원</button>
+                        <button type="button" onclick="AddAmount(100000);">10만원</button>
+                        <button type="button" onclick="AddAmount(300000);">30만원</button>
+                        <button type="button" onclick="AddAmount(500000);">50만원</button>
+                        <button type="button" onclick="AddAmount(1000000);">100만원</button>
+                        <button type="button" onclick="AddAmount(-1);" style="background-color:orange;">초기화</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>은행명</td>
+                    <td style="padding: 15px 0;">
+                        <input placeholder="" name="strBankName" type="text" value="" disabled>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>예금주</td>
+                    <td><input name="strBankOwner" type="text" id="acc_name" value="" disabled />
+                        <span>
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>계좌번호</td>
+                    <td style="padding: 15px 0;">
+                        <input class="wd200" name="strBankAccount" type="text" disabled>
+                    </td>
+                </tr>
+            </table>
+            <div class="text-info-01">* 24시간 출금이 가능 합니다.<br/>* 은행 및 금융감독원 점검시간 및 전산장애시에는 다소 지연될 수 있습니다.<br/>* 최소출금액은 50,000원입니다.</div>
+            <div class="btn_area_one">
+                <button type="button" onclick="RequestOutput();">출금신청하기</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+
+    let bankname = '';
+    let banknumber = '';
+    let bankholder = '';
+
+    checkBlockNum(`#inputPrice`);
+
+    $('#iValuedPoint').val($('#MainLayoutCoin').text());
+
+    let GetInt = (str) => {
+        let iAmount = str.replace(/,/gi, '');
+        return parseInt(iAmount);
+    }
+
+    let AddAmount = (aAmount) => {
+
+        console.log(`AddAmount : ${aAmount}`);
+
+        if ( aAmount == -1 )
+        {
+            $('input[name=iAmount]').val(0);
+            return;
+        }
+
+        let value = $('input[name=iAmount]').val();
+        console.log(value);
+
+        let iAmount = 0;
+        if ( value == '' )
+        {
+            iAmount = 0;            
+        }
+        else
+        {
+            iAmount = value.replace(/,/gi, '');
+        }
+        iAmount = parseInt(iAmount) + parseInt(aAmount);
+        console.log(`ret : ${iAmount}`);
+        $('input[name=iAmount]').val(iAmount.toLocaleString());
+    }
+
+    let RequestOutput = () => {
+
+        console.log(`RequestOutput`);
+
+        if (bankname == '') {
+            alert('출금계좌조회를 눌러 주세요');
+            return;
+        }
+
+        const iValuedPoint = GetInt($('#MainLayoutCoin').text());
+        const iAmount = GetInt($('input[name=iAmount]').val());
+
+        console.log(`iValuedPoint : ${iValuedPoint}, iAmount : ${iAmount}`);
+
+        if ( iAmount > iValuedPoint )
+        {
+            alert('출금금액이 출금가능금액 보다 큽니다.');
+            return;
+        }
+
+        $.ajax({
+            type:'post',
+            url: "/inout/request_output",
+            context: document.body,
+            data:{strID:user.strID, iAmount:iAmount, strGroupID:user.strGroupID},
+
+            success:function(data) {
+
+                if ( data.result == 'OK' ) {
+
+                    alert(`출금 신청이 완료 되었습니다.`);
+
+                    const cCash = data.iAmount;
+
+                    console.log(data);
+
+                    $('#MainLayoutCash').text(cCash);
+                    $('#MainLayoutCoin').text(cCash);
+                    //window.location.reload()
+
+                    location.href = '/';
+                }
+                else if ( data.result == 'FAIL' )
+                {
+                    if ( data.reason == 'NOTENOUGH' )
+                    {
+                        alert('보유금액이 부족 합니다.');
+                    }
+                    else ( data.reason == 'INCORRECTPASSWORD')
+                    {
+                        alert('비밀번호 오류 입니다.');
+                    }
+                }
+                else
+                    alert('출금 신청에 실패 하였습니다.');
+
+            }
+        });
+    }
+
+    let RequestAccount = () => {
+        let input = prompt('로그인 비밀번호를 입력해주세요');
+        if (input == null) {
+            return;
+        } else if (input.length == 0) {
+            alert(`비밀번호를 입력하지 않았습니다`);
+            return;
+        }
+        $.ajax({
+            type:'post',
+            url: "/inout/request_user_bank",
+            data:{input:input},
+            success: (obj) => {
+                if (obj.result == 'OK') {
+                    bRequestAccount = true;
+                    strRequestAccountMsg = obj.msg;
+                    bankname = obj.bankname;
+                    banknumber = obj.banknumber;
+                    bankholder = obj.bankholder;
+                    $('input[name=strBankAccount]').val(banknumber);
+                    $('input[name=strBankName]').val(bankname);
+                    $('input[name=strBankOwner]').val(bankholder);
+                } else if (obj.result == 'FAIL') {
+                    bRequestAccount = false;
+                    alert(obj.msg);
+                }
+            },
+            error:function(request,status,error){
+                alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+            }
+        });
+    }
+
+</script>

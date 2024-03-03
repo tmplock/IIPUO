@@ -1,0 +1,580 @@
+<div style="height:5px;">
+</div>
+<div class="write">
+	<p style="background-repeat:no-repeat; background-position:left center; font-size:16px; color:#454545; padding-left:22px;">회원 정보</p>
+		<table>
+			<caption><%=__('Partner')%> <%=__('Modify')%></caption>
+			<colgroup>
+				<col style="width:15%">
+				<col style="width:35%">
+				<col style="width:15%">
+				<col style="width:35%">
+			</colgroup>
+			<input type="hidden" name="chuchun_idx" id="chuchun_idx" value="3"/>
+			<tr>
+				<th scope="row"><%=__('Nickname')%></th>
+				<td>
+					<input type="text" style="width:50%;" name="member_nick" id="member_nick" required="no"  message="" value="<%=agent.strNickname%>">&nbsp;
+					<% if (agent.iPermission != 100) { %>
+						<a href="javascript:CheckNickname();" class="btn_brightred"><%=__('Duplication')%><%=__('OK')%></a>
+					<% } %>
+				</td>
+				<th scope="row"><%=__('BankName')%></th>
+				<td>
+					<% if ((agent.iRootClass > 3 && agent.iRootClass != 7) || agent.iRootClass == 7) { %>
+						<input type="password" style="width:50%;" name="bank_name" id="bank_name" required="no" message="" value="<%=agent.strBankname%>">
+					<% } else { %>
+						<input type="text" style="width:50%;" name="bank_name" id="bank_name" required="no" message="" value="<%=agent.strBankname%>">
+					<% } %>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row"><%=__('ID')%></th>
+				<td>
+					<input type="text" style="width:50%;" name="member_id" id="member_id" value="<%=agent.strID%>" required="yes"  message=""/>&nbsp;
+					<% if (agent.iPermission != 100) { %>
+						<a href="javascript:CheckID();" class="btn_brightred"><%=__('Duplication')%><%=__('OK')%></a>
+					<% } %>
+				</td>
+				<th scope="row"><%=__('BankAccount')%></th>
+				<td>
+					<% if ((agent.iRootClass > 3 && agent.iRootClass != 7) || agent.iRootClass == 7) { %>
+						<input type="password" style="width:50%;" name="bank_num" id="bank_num" required="no" message="" value="<%=agent.strBankAccount%>">
+					<% } else { %>
+						<input type="text" style="width:50%;" name="bank_num" id="bank_num" required="no" message="" value="<%=agent.strBankAccount%>">
+					<% } %>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row"><%=__('Password')%></th>
+				<td>
+					<% if ((agent.iRootClass > 3 && agent.iRootClass != 7) || agent.iRootClass == 7) { %>
+						<input type="password" maxlength="16" name="member_password" id="member_password" required="no"  message="" style="width:50%; ime-mode:disabled" value = "<%=agent.strPassword%>"> <span style="display:inline-block; padding-top:4px;" > </span>
+					<% } else { %>
+						<input type="text" maxlength="16" name="member_password" id="member_password" required="no"  message="" style="width:50%; ime-mode:disabled" value = "<%=agent.strPassword%>"> <span style="display:inline-block; padding-top:4px;" > </span>
+					<% } %>
+				</td>
+				<th scope="row"><%=__('BankAccountHolderName')%></th>
+				<td>
+					<% if ((agent.iRootClass > 3 && agent.iRootClass != 7) || agent.iRootClass == 7) { %>
+						<input type="password" style="width:50%;" name="bank_owner" id="bank_owner" required="no"  message="" value="<%=agent.strBankOwner%>">
+					<% } else { %>
+						<input type="text" style="width:50%;" name="bank_owner" id="bank_owner" required="no"  message="" value="<%=agent.strBankOwner%>">
+					<% } %>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row"><%=__('PasswordConfirm')%></th>
+				<td>
+					<% if ((agent.iRootClass > 3 && agent.iRootClass != 7) || agent.iRootClass == 7) { %>
+						<input type="password" maxlength="16" name="member_password2" id="member_password2"required="no"  message="" style="width:50%; ime-mode:disabled" value = "<%=agent.strPassword%>"> <span style="display:inline-block; padding-top:4px;" > </span>
+					<% } else { %>
+						<input type="text" maxlength="16" name="member_password2" id="member_password2"required="no"  message="" style="width:50%; ime-mode:disabled" value = "<%=agent.strPassword%>"> <span style="display:inline-block; padding-top:4px;" > </span>
+					<% } %>
+				</td>
+				<th scope="row"><%=__('Contact')%></th>
+				<td>
+					<% if ((agent.iRootClass > 3 && agent.iRootClass != 7) || agent.iRootClass == 7) { %>
+						<input type="password" style="width:50%;" name="cell" id="cell" required="no"  message="" value="<%=agent.strMobile%>">
+					<% } else { %>
+						<input type="text" style="width:50%;" name="cell" id="cell" required="no"  message="" value="<%=agent.strMobile%>">
+					<% } %>
+				</td>
+			</tr>
+		</table>
+
+		<table>
+			<colgroup>
+				<col style="width:15%">
+				<col style="width:35%">
+				<col style="width:15%">
+				<col style="width:35%">
+			</colgroup>
+			<p style="background-repeat:no-repeat; background-position:left center; font-size:16px; color:#454545; padding-left:22px;">롤링 설정</p>
+		<tr>
+			<th scope="row">바카라 롤링</th>
+			<td>
+				<input type="text" style="width:30%;" name="bank_password" id="fBaccaratR" required="no"  message="" value="<%=agent.fBaccaratR%>">
+			</td>
+			<th scope="row" style="background-color:beige;">파워볼 A (1.93) 롤링</th>
+			<td style="background-color:beige;">
+				<input type="text" style="width:30%;" name="bank_password" id="fPBR" required="no"  message="" value="<%=agent.fPBR%>">
+			</td>
+		</tr>
+		<tr>
+			<th scope="row">언오버 롤링</th>
+			<td>
+				<input type="text" style="width:30%;" name="bank_password" id="fUnderOverR" required="no"  message="" value="<%=agent.fUnderOverR%>">
+			</td>
+			<th scope="row" style="background-color:beige">파워볼 B (1.95) 단폴 롤링</th>
+			<td style="background-color:beige">
+				<input type="text" style="width:30%;" name="bank_password" id="fPBSingleR" required="no"  message="" value="<%=agent.fPBSingleR%>">
+			</td>
+		</tr>
+		<tr>
+			<th scope="row">슬롯 롤링</th>
+			<td>
+				<input type="text" style="width:30%;" name="bank_password" id="fSlotR" required="no"  message="" value="<%=agent.fSlotR%>">
+			</td>
+
+			<th scope="row" style="background-color:beige">파워볼 B (1.95) 투폴 롤링</th>
+			<td style="background-color:beige">
+				<input type="text" style="width:30%;" name="bank_password" id="fPBDoubleR" required="no"  message="" value="<%=agent.fPBDoubleR%>">
+			</td>
+		</tr>
+		<tr>
+			<th></th>
+			<td></td>
+			<th scope="row" style="background-color:beige">파워볼 B (1.95) 쓰리폴 롤링</th>
+			<td style="background-color:beige">
+				<input type="text" style="width:30%;" name="bank_password" id="fPBTripleR" required="no"  message="" value="<%=agent.fPBTripleR%>">
+			</td>
+		</tr>
+		</table>
+
+		<table>
+			<colgroup>
+				<col style="width:15%">
+				<col style="width:35%">
+				<col style="width:15%">
+				<col style="width:35%">
+			</colgroup>
+			<p style="background-repeat:no-repeat; background-position:left center; font-size:16px; color:#454545; padding-left:22px;">파워볼 정보</p>
+			<tr>
+				<th scope="row">파워볼 베팅제한 통합 금액</th>
+				<td>
+					<input type="text" style="width:30%;" name="bank_password" id="iPBLimit" required="no"  message="" value="<%=agent.iPBLimit%>">
+				</td>
+				<th scope="row">단폴 베팅제한 금액</th>
+				<td>
+					<input type="text" style="width:30%;" name="bank_password" id="iPBSingleLimit" required="no"  message="" value="<%=agent.iPBSingleLimit%>">
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">투폴 베팅제한 금액</th>
+				<td>
+					<input type="text" style="width:30%;" name="bank_password" id="iPBDoubleLimit" required="no"  message="" value="<%=agent.iPBDoubleLimit%>">
+				</td>
+				<th scope="row">쓰리폴 베팅제한 금액</th>
+				<td>
+					<input type="text" style="width:30%;" name="bank_password" id="iPBTripleLimit" required="no"  message="" value="<%=agent.iPBTripleLimit%>">
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">파워볼 타입</th>
+				<td>
+					<select id="strPowerballType">
+						<option value="A">A</option>
+						<option value="B">B</option>
+					</select>
+					A타입 : 1.93 / B타입 : 1.95
+				</td>
+				<th scope="row">단폴 베팅 가능</th>
+				<td>
+					<input type="checkbox" style="width:30px;height:30px;" name="using_output" id="using_single" required="no" message="" > <strong>체크시 단폴 사용</strong>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">투폴 베팅 가능</th>
+				<td>
+					<input type="checkbox" style="width:30px;height:30px;" name="using_output" id="using_double" required="no" message="" > <strong>체크시 투폴 사용</strong>
+				</td>
+				<th scope="row">쓰리폴 베팅 가능</th>
+				<td>
+					<input type="checkbox" style="width:30px;height:30px;" name="using_output" id="using_triple" required="no" message="" > <strong>체크시 쓰리폴 사용</strong>
+				</td>
+			</tr>
+		</table>
+
+		<table>
+			<colgroup>
+				<col style="width:15%">
+				<col style="width:35%">
+				<col style="width:15%">
+				<col style="width:35%">
+			</colgroup>
+			<p style="background-repeat:no-repeat; background-position:left center; font-size:16px; color:#454545; padding-left:22px;">입출금 설정</p>
+		<tr>
+			<th scope="row"><%=__('UsingInput')%></th>
+			<td>
+				<input type="checkbox" style="width:30px;height:30px;" name="using_input" id="using_input" required="no" message=""> <strong><%=__('DescUsingInput')%></strong>
+			</td>
+			<th scope="row"><%=__('UsingOutput')%></th>
+			<td>
+				<input type="checkbox" style="width:30px;height:30px;" name="using_output" id="using_output" required="no" message="" > <strong><%=__('DescUsingOutput')%></strong>
+			</td>
+		</tr>
+	</table>
+
+	<div class="write_btn align_r" id="confirm">
+	</div>
+</div>
+
+<script type="text/javascript" src="js/manage_user_popup_menu.js"></script>
+<script src="https://code.jquery.com/ui/1.8.18/jquery-ui.min.js"></script>
+<script>
+
+	let agent = JSON.parse('<%-JSON.stringify(agent)%>');
+
+	$(document).ready( ()=> {
+		let cPowerballType = parseInt(agent.strPBOptionCode[0]);
+		if ( cPowerballType == 0 )
+			$('#strPowerballType option[value="A"]').attr('selected', 'selected');
+		else
+			$('#strPowerballType option[value="B"]').attr('selected', 'selected');
+
+		let bUsingSingle = parseInt(agent.strPBOptionCode[1]);
+		if ( bUsingSingle == 1 )
+			$('#using_single').attr('checked', true);
+		else
+			$('#using_single').attr('checked', false);
+
+		let bUsingDouble = parseInt(agent.strPBOptionCode[2]);
+		if ( bUsingDouble == 1 )
+			$('#using_double').attr('checked', true);
+		else
+			$('#using_double').attr('checked', false);
+
+		let bUsingTriple = parseInt(agent.strPBOptionCode[3]);
+		if ( bUsingTriple == 1 )
+			$('#using_triple').attr('checked', true);
+		else
+			$('#using_triple').attr('checked', false);
+
+		let cUsingInput = parseInt(agent.strOptionCode[0]);
+		let cUsingOutput = parseInt(agent.strOptionCode[1]);
+
+		if ( cUsingInput == 1 )
+			$('#using_input').attr('checked', true);
+		else
+			$('#using_input').attr('checked', false);
+
+		if ( cUsingOutput == 1 )
+			$('#using_output').attr('checked', true);
+		else
+			$('#using_output').attr('checked', false);
+
+		/**
+		 * 수정 가능 여부에 대한 처리(비활성할 태그를 여기에 추가)
+		 */
+		<% if ( agent.iPermission == 100) { %>
+			["#member_nick", "#member_id",
+				"#member_password", '#member_password2', '#bank_owner', '#bank_name', '#bank_num', '#cell'
+				, '#fBaccaratR', '#fPBR', '#fUnderOverR', '#fPBSingleR'
+				, '#fSlotR', '#fPBDoubleR', '#fPBTripleR'
+				, '#using_single', '#using_double', '#using_triple', '#using_input', '#using_output'
+				, '#iPBLimit', '#iPBSingleLimit', '#iPBDoubleLimit', '#iPBTripleLimit', '#strPowerballType'
+			].forEach(item => {
+				$(item).get(0).disabled = true;
+			});
+			$('#btn_brightred').hide();
+		<% } else if ( parseInt(agent.iRootClass) == parseInt(agent.iClass) ) { %>
+			[
+				"#member_password", '#member_password2', '#bank_owner', '#bank_name', '#bank_num', '#cell'
+				, '#fBaccaratR', '#fPBR', '#fUnderOverR', '#fPBSingleR'
+				, '#fSlotR', '#fPBDoubleR', '#fPBTripleR'
+				, '#using_single', '#using_double', '#using_triple', '#using_input', '#using_output'
+				, '#iPBLimit', '#iPBSingleLimit', '#iPBDoubleLimit', '#iPBTripleLimit', '#strPowerballType'
+			].forEach(item => {
+				$(item).get(0).disabled = true;
+			});
+			$('#btn_brightred').hide();
+		<% } else if ( parseInt(agent.iRootClass) == 7 ) { %>
+			['#bank_owner', '#bank_name', '#bank_num', '#cell'
+				, '#using_single', '#using_double', '#using_triple'
+				, '#using_input', '#using_output'
+				,'#strPowerballType'
+			].forEach(item => {
+				$(item).get(0).disabled = true;
+			});
+			$('#btn_brightred').hide();
+		<% } else if ( parseInt(agent.iRootClass) > 3 ) { %>
+			// 관리 권한이 없을 경우 수정 불가한 태그 id 추가
+			["#member_password", '#member_password2', '#bank_owner', '#bank_name', '#bank_num', '#cell'
+				, '#using_single', '#using_double', '#using_triple'
+				, '#using_input', '#using_output'
+				,'#strPowerballType'
+			].forEach(item => {
+				$(item).get(0).disabled = true;
+			});
+			$('#btn_brightred').hide();
+		<% } %>
+
+		$('#confirm').empty();
+		$('#confirm').append(`
+			<% if (agent.iPermission != 100) { %>
+				<button class="btn_modify" onclick="ModifyAgentInfo();"><%=__('Confirm')%></button>
+			<% } %>
+		`);
+
+		['#bank_name', '#bank_owner'].forEach(item => {
+			checkBlockCharSpecial($(item));
+		});
+		['#bank_num', '#cell',
+			'#fBaccaratR', '#fUnderOverR', '#fSlotR',
+			'#fPBR', '#fPBSingleR', '#fPBDoubleR', '#fPBTripleR',
+			'#iPBLimit', '#iPBSingleLimit', '#iPBDoubleLimit', '#iPBTripleLimit',
+		].forEach(item => {
+			checkBlockNum($(item));
+		});
+		["#member_nick", '#member_id', '#member_password', '#member_password2'].forEach(item => {
+			checkBlockCharNickname($(item));
+		});
+	});
+
+	let CheckID = () => {
+		$.ajax({
+			type : "POST",
+			url : "/manage_partner_popup/request_confirmagentid",
+			data : {strID:$('#member_id').val()},
+			success : (data) => {
+
+				if ( data == 'OK' )
+				{
+					alert(strAlertEnableToUse);
+				}
+				else
+				{
+					alert(strAlertDisableToUse);
+				}
+			},
+		});
+	}
+
+
+	let CheckNickname = () => {
+		$.ajax({
+			type : "POST",
+			url : "/manage_partner_popup/request_confirmagentnickname",
+			data : {strNickname:$('#member_nick').val()},
+			success : (data) => {
+
+				if ( data == 'OK' )
+				{
+					alert(strAlertEnableToUse);
+				}
+				else
+				{
+					alert(strAlertDisableToUse);
+				}
+			},
+		});
+	}
+
+	let InitOutputPassword = () => {
+
+		let objectData = agent;
+
+		$.ajax({
+			type:'POST',
+			url:'/manage_partner_popup/request_initoutputpass',
+			data:objectData,
+			success: (data) => {
+
+				if ( data.result == 'OK' )
+				{
+					alert(strAlertComplete);
+				}
+			}
+		});
+	}
+
+	let replaceCharacter = (str, index, char) => {
+
+		let array = str.split('');
+		array.splice(index, 1);
+		array.splice(index, 0, char);
+
+		let ret = array.toString();
+		return ret.replace(/,/g, "");
+	}
+
+
+	let ModifyAgentInfo = () => {
+
+		let objectData = {};
+		const strNickname = $('#member_nick').val();
+		const strMobile = $('#cell').val();
+		const strID = $('#member_id').val();
+		const strPassword = $('#member_password').val();
+		const strPasswordConfirm = $('#member_password2').val();
+		const strBankname = $('#bank_name').val();
+		const strBankAccount = $('#bank_num').val();
+		const strBankOwner = $('#bank_owner').val();
+
+		const fSlotR = $('#fSlotR').val();
+		const fBaccaratR = $('#fBaccaratR').val();
+		const fUnderOverR = $('#fUnderOverR').val();
+		const fPBR = $('#fPBR').val();
+		const fPBSingleR = $('#fPBSingleR').val();
+		const fPBDoubleR = $('#fPBDoubleR').val();
+		const fPBTripleR = $('#fPBTripleR').val();
+
+		//const strBankPassword = $('#bank_password').val();
+
+		// let fSlotR = agent.fSlotR;
+		// let fBaccaratR = agent.fBaccaratR;
+		// let fUnderOverR = agent.fUnderOverR;
+		// let fPBR = agent.fPBR;
+		// let fPBSingleR = agent.fPBSingleR;
+		// let fPBDoubleR = agent.fPBDoubleR;
+		// let fPBTripleR = agent.fPBTripleR;
+		let fSettleBaccarat = agent.fSettleBaccarat;
+		let fSettleSlot = agent.fSettleSlot;
+		let fSettlePBA = agent.fSettlePBA;
+		let fSettlePBB = agent.fSettlePBB;
+
+		let iPBLimit = $('#iPBLimit').val();
+		let iPBSingleLimit = $('#iPBSingleLimit').val();
+		let iPBDoubleLimit = $('#iPBDoubleLimit').val();
+		let iPBTripleLimit = $('#iPBTripleLimit').val();
+		let strPBOptionCode = agent.strPBOptionCode;
+		let strOptionCode = agent.strOptionCode;
+
+		let value = $("#strPowerballType").val();
+		if ( value == 'A' )
+			strPBOptionCode = replaceCharacter(strPBOptionCode, 0, '0');
+		else
+			strPBOptionCode = replaceCharacter(strPBOptionCode, 0, '1');
+
+		let bSingle = $('#using_single').attr('checked');
+		if ( bSingle != undefined )
+			strPBOptionCode = replaceCharacter(strPBOptionCode, 1, '1');
+		else
+			strPBOptionCode = replaceCharacter(strPBOptionCode, 1, '0');
+
+		let bDouble = $('#using_double').attr('checked');
+		if ( bDouble != undefined )
+			strPBOptionCode = replaceCharacter(strPBOptionCode, 2, '1');
+		else
+			strPBOptionCode = replaceCharacter(strPBOptionCode, 2, '0');
+
+		let bTriple = $('#using_triple').attr('checked');
+		if ( bTriple != undefined )
+			strPBOptionCode = replaceCharacter(strPBOptionCode, 3, '1');
+		else
+			strPBOptionCode = replaceCharacter(strPBOptionCode, 3, '0');
+
+		let strUsingInput = $('#using_input').attr('checked');
+		let strUsingOutput = $('#using_output').attr('checked');
+
+		//let strOptionCode = agent.strOptionCode.toString();
+		if ( strUsingInput != undefined ) {
+			strOptionCode = replaceCharacter(strOptionCode, 0, '1');
+
+			console.log(`1 ${strOptionCode}`);
+		}
+		else {
+			strOptionCode = replaceCharacter(strOptionCode, 0, '0');
+
+			console.log(`2 ${strOptionCode}`);
+		}
+		if ( strUsingOutput != undefined ) {
+			strOptionCode = replaceCharacter(strOptionCode, 1, '1');
+
+			console.log(`3 ${strOptionCode}`);
+		}
+		else {
+			strOptionCode = replaceCharacter(strOptionCode, 1, '0');
+
+			console.log(`4 ${strOptionCode}`);
+		}
+
+		// let strUsingInput = $('#using_input').attr('checked');
+		// let strUsingOutput = $('#using_output').attr('checked');
+
+		// let strOptionCode = agent.strOptionCode.toString();
+		// if ( strUsingInput != undefined ) {
+		// 	strOptionCode = replaceCharacter(strOptionCode, 0, '1');
+
+		// 	console.log(`1 ${strOptionCode}`);
+		// }
+		// else {
+		// 	strOptionCode = replaceCharacter(strOptionCode, 0, '0');
+
+		// 	console.log(`2 ${strOptionCode}`);
+		// }
+		// if ( strUsingOutput != undefined ) {
+		// 	strOptionCode = replaceCharacter(strOptionCode, 1, '1');
+
+		// 	console.log(`3 ${strOptionCode}`);
+		// }
+		// else {
+		// 	strOptionCode = replaceCharacter(strOptionCode, 1, '0');
+
+		// 	console.log(`4 ${strOptionCode}`);
+		// }
+		objectData.strNickname = strNickname;
+		objectData.strMobile = strMobile;
+		objectData.strID = strID;
+		objectData.strPassword = strPassword;
+		objectData.strPasswordConfirm = strPasswordConfirm;
+		objectData.strBankname = strBankname;
+		objectData.strBankAccount = strBankAccount;
+		objectData.strBankOwner = strBankOwner;
+		objectData.strOptionCode = strOptionCode;
+		objectData.strOriginNickname = agent.strNickname;
+		objectData.strOriginID = agent.strID;
+
+		objectData.fSlotR = fSlotR;
+		objectData.fBaccaratR = fBaccaratR;
+		objectData.fUnderOverR = fUnderOverR;
+		objectData.fPBR = fPBR;
+		objectData.fPBSingleR = fPBSingleR;
+		objectData.fPBDoubleR = fPBDoubleR;
+		objectData.fPBTripleR = fPBTripleR;
+		objectData.fSettleBaccarat = fSettleBaccarat;
+		objectData.fSettleSlot = fSettleSlot;
+		objectData.fSettlePBA = fSettlePBA;
+		objectData.fSettlePBB = fSettlePBB;
+
+		objectData.strPBOptionCode = strPBOptionCode;
+		objectData.iPBLimit = iPBLimit;
+		objectData.iPBSingleLimit = iPBSingleLimit;
+		objectData.iPBDoubleLimit = iPBDoubleLimit;
+		objectData.iPBTripleLimit = iPBTripleLimit;
+
+		if ( strPassword != strPasswordConfirm ){
+			alert(strAlertDifferentPasswordAndConfirm);
+			return;
+		}
+
+		$.ajax({
+			type:'POST',
+			url:'/manage_partner_popup/request_agentinfo_modify',
+			data:objectData,
+			success: (data) => {
+
+				if ( data.result == 'OK' )
+				{
+					alert(strAlertComplete);
+
+					opener.location.reload();
+					self.close();
+				}
+				else
+				{
+					if ( data.code == 'UnknownUser' )
+					{
+						alert('에이전트 조회에 실패 하였습니다.');
+					}
+					else if ( data.code == 'GreaterThanParent' )
+					{
+						alert('상위 보다 값이 커서 변경 할 수 없습니다.');
+					}
+					else if ( data.code == 'LessThanChild' )
+					{
+						alert('하위보다 값이 작아 변경 할 수 없습니다.');
+					}
+					else
+					{
+						alert(strAlertError);
+					}
+				}
+			}
+		});
+	};
+
+</script>
+	
+<script type="text/javascript", src="js/manage_partner_popup_menu.js"></script>

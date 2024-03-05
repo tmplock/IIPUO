@@ -4,15 +4,25 @@ const Sequelize = require('sequelize');
 
 //const sequelize = new Sequelize('iiplive', 'sss', '1111', {host:'103.60.124.87', dialect:'mysql'});
 
+// const sequelize = new Sequelize({
+//     host: 'db-mysql-sgp1-27012-do-user-11246819-0.b.db.ondigitalocean.com',
+//     database: 'livecasino',
+//     username: 'doadmin',
+//     password: '8qGHgv3sI6qfmVO1',
+//     dialect: 'mysql',
+//     port:25060,
+//     timezone:'+09:00',
+//     logging: false
+// });
 const sequelize = new Sequelize({
-    host: 'db-mysql-sgp1-27012-do-user-11246819-0.b.db.ondigitalocean.com',
-    database: 'livecasino',
+    host: 'db-mysql-sgp1-78563-do-user-11246819-0.c.db.ondigitalocean.com',
+    //database: 'iipcor',
+    database:'iipc',
     username: 'doadmin',
-    password: '8qGHgv3sI6qfmVO1',
+    password: 'AVNS_M3_YxbEdNmi41c9HbLu',
     dialect: 'mysql',
     port:25060,
-    timezone:'+09:00',
-    logging: false
+    timezone:'Asia/Seoul'
 });
 
 const db = {};

@@ -12,7 +12,7 @@ router.use(express.json());
 router.use(express.urlencoded({ extended: false }));
 
 let IAccount = {
-    strAgentCode:'iip1',
+    strAgentCode:'iip',
     strSecretCode:'iip_unover_secret',
 };
 

@@ -168,6 +168,7 @@ exports.ProcessHLink = async (listDB, listOverview, listOdds, listUpdateDB) => {
         //console.log(`Couldn't get RD`);
         for (let i in listDB)
         {
+            const cData = listDB[i];
             //listUpdateDB.push({id:cData.id, eState:'PENDING'});
             listUpdateDB.push({id:cData.id, eType:'BET', eState:'PENDING'});
         }

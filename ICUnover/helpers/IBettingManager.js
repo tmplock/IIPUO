@@ -51,7 +51,8 @@ exports.ProcessBet = async (strID, strNickname, strGroupID, iClass, iBalance, iG
             eType = 'BETRD';
             break;
         case 'HONORLINK':
-            if ( iGameCode == 0 )
+            //if ( iGameCode == 0 )
+            if ( strGameID == 'evolution' && iGameCode == 0 )
                 eType = 'BETRD';
             break;
     }

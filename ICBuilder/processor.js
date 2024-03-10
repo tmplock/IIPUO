@@ -155,11 +155,16 @@ exports.ProcessCQ9 = async (listDB, listOverview, listOdds, listUpdateDB) => {
 
 exports.ProcessHLink = async (listDB, listOverview, listOdds, listUpdateDB) => {
 
+    console.log(`ProcessHLink`);
+    console.log(listDB);
+    console.log(listOdds);
+
     if ( listDB.length <= 0 )
         return;
 
     let res = await RDHLink.GetRangeRD(listDB[0].updatedAt, listDB[listDB.length-1].updatedAt);
     if (res == null) {
+        console.log(`Couldn't get RD`);
         return;
     }
 

@@ -1317,10 +1317,11 @@ exports.ProcessRollingBet = (oRO, iGameCode, iBet, strDate) => {
 
     const cBetAmount = parseInt(iBet);
 
-    console.log(`cBetAmount : ${cBetAmount}`);
+    console.log(`cBetAmount : ${cBetAmount}, iGameCode : ${iGameCode}`);
     switch ( iGameCode )
     {
         case Enum.EGameCode.Baccarat:
+        case 500:
             console.log(`##### 0`);
             objectData.iPAdminRB += CalculateRollingAmount(o.strPAdminID, cBetAmount, o.fPAdminBaccaratR, o.fVAdminBaccaratR);
             objectData.iVAdminRB += CalculateRollingAmount(o.strVAdminID, cBetAmount, o.fVAdminBaccaratR, o.fAgentBaccaratR);

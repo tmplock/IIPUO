@@ -163,7 +163,7 @@ exports.ProcessHLink = async (listDB, listOverview, listOdds, listUpdateDB) => {
     if ( listDB.length <= 0 )
         return;
 
-    let res = await RDHLink.GetRangeRD(listDB[0].updatedAt, listDB[listDB.length-1].updatedAt);
+    let res = await RDHLink.GetRangeRD(listDB[0].createdAt, listDB[listDB.length-1].updatedAt);
     if (res == null) {
         console.log(`Couldn't get RD`);
         return;

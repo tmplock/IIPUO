@@ -3,6 +3,7 @@ const ODDS = require('./helpers/odds');
 const RDVivo = require('./vender/vivo');
 const RDEzugi = require('./vender/ezugi');
 const RDCQ9 = require('./vender/cq9');
+const RDHLink = require('./vender/honorlink');
 
 
 let GetElapsedSeconds = (strBaseDate) => {

@@ -172,6 +172,9 @@ exports.ProcessHLink = async (listDB, listOverview, listOdds, listUpdateDB) => {
     {
         const cData = listDB[i];
 
+        console.log(`listDB ${i}`);
+        console.log(cData);
+
         let listData = RDHLink.GetRD(res, cData.strUniqueID);
         if (listData != null)
         {

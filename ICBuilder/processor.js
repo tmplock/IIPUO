@@ -165,7 +165,12 @@ exports.ProcessHLink = async (listDB, listOverview, listOdds, listUpdateDB) => {
 
     let res = await RDHLink.GetRangeRD(listDB[0].createdAt, listDB[listDB.length-1].updatedAt);
     if (res == null) {
-        console.log(`Couldn't get RD`);
+        //console.log(`Couldn't get RD`);
+        for (let i in listDB)
+        {
+            //listUpdateDB.push({id:cData.id, eState:'PENDING'});
+            listUpdateDB.push({id:cData.id, eType:'BET', eState:'PENDING'});
+        }
         return;
     }
 

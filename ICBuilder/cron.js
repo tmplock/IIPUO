@@ -122,9 +122,10 @@ let lProcessID = -1;
     {
         const cData = listUpdateDB[i];
 
-        if ( listUpdateDB[i].eType == 'PENDING' )
+        //if ( listUpdateDB[i].eType == 'PENDING' )
+        if ( listUpdateDB[i].eType == 'BET' && listUpdateDB[i].eState == 'PENDING')
         {
-            await db.RecordBets.update({eState:'PENDING'}, {where:{id:cData.id}});
+            await db.RecordBets.update({eType:'BET', eState:'STANDBY'}, {where:{id:cData.id}});
         }
         else
         {

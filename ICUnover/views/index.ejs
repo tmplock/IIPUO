@@ -19,6 +19,12 @@
 
     var GoGame = (strGame, strGameKey) => {
 
+        if ( strGame == 'LIVE_VIVO' || strGame == 'LIVE_WORLD' )
+        {
+            alert('준비중입니다.');
+            return;
+        }
+
         console.log(bLogin);
         if ( "false" == bLogin )
         {

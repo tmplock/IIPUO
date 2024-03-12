@@ -18,6 +18,7 @@
 		&nbsp;
 		<button class="menu1" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;color:white" onclick="OnClickMonthly2ndRecord();"><%=__('Half2')%></button>
 		&nbsp;
+		<button class="btn_blue" id="button_toggle_record" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(136, 136, 248);color:white" onclick="OnClickRecord();"><%=__('Open')%></button>
 		<select id="select_limit" style="width:80px; display: none;" >
 			<option value="30">30개씩</option>
 			<option value="50">50개씩</option>
@@ -32,6 +33,43 @@
 			<div style="text-align:right;padding-right:10px;margin-top:-40px;margin-bottom:10px;">
 			</div>
 	</div>
+	<div class="search_wrap" id="div_realtimebet_overview_record">
+		<div id="table_record_list" class="day_tot_list_area" style="margin-top:20px;">
+			<table class="search_list" style="margin-bottom:20px;">
+				<thead>
+				<tr>
+					<th width="7.5%" rowspan="2"><%=__('Date')%></th>
+					<th width="5%" rowspan="2"><%=__('Input')%></th>
+					<th width="5%" rowspan="2"><%=__('Output')%></th>
+					<th width="6%" rowspan="2"><%=__('MyCoin')%></th>
+					<th width="4%" rowspan="2"></th>
+					<th width="45%" colspan="9"><%=__('Baccarat')%></th>
+					<th width="6%" rowspan="2"><%=__('Evolution')%></th>
+					<th width="5%" rowspan="2"><%=__('Blackjack')%></th>
+					<th width="5%" rowspan="2"><%=__('Roulette')%></th>
+					<th width="5%" rowspan="2"><%=__('Slot')%></th>
+					<th width="5%" rowspan="2"><%=__('PowerBall')%></th>
+					<th width="6.5%" rowspan="2"><%=__('Total')%></th>
+				</tr>
+				<tr>
+					<th width="5%"><%=__('Tie')%></th>
+					<th width="5%"><%=__('Player')%></th>
+					<th width="5%"><%=__('PlayerUnder')%></th>
+					<th width="5%"><%=__('PlayerOver')%></th>
+					<th width="5%"><%=__('Banker')%></th>
+					<th width="5%"><%=__('BankerUnder')%></th>
+					<th width="5%"><%=__('BankerOver')%></th>
+					<th width="5%"><%=__('PlayerPair')%></th>
+					<th width="5%"><%=__('BankerPair')%></th>
+					<th width="5%"><%=__('EitherPair')%></th>
+					<th width="5%"><%=__('PerfectPair')%></th>
+				</tr>
+				</thead>
+				<tbody id="tbody_record_list">
+				</tbody>
+			</table>
+		</div>
+	</div>
 	<div class="search_wrap">
 		<p style="background-repeat:no-repeat; background-position:left center; font-size:20px; color:#454545; padding-left:22px;margin-top:10px;height:30px;margin-bottom:5px;"><%=__('Baccarat')%> <%=__('RecordBetting')%></p>
 		<table class="search_list">
@@ -43,13 +81,15 @@
 				<col style="width:7%;">
 				<col style="width:7%;">
 				<col style="width:7%;">
+				<col style="width:5%;">
+				<col style="width:5%;">
+				<col style="width:5%;">
 				<col style="width:7%;">
 				<col style="width:7%;">
 				<col style="width:7%;">
-				<col style="width:7%;">
-				<col style="width:15%;">
 				<col style="width:10%;">
 				<col style="width:10%;">
+				<col style="width:7%;">
 			</colgroup>
 			<thead>
 				<tr>
@@ -59,12 +99,12 @@
 					<th scope="col"><%=__('Round')%></th>
 					<th scope="col"><%=__('Nickname')%></th>
 					<th scope="col"><%=__('BettingOriginCash')%></th>
-					<th scope="col"><%=__('BettingAccount')%></th>
-					<th scope="col"><%=__('BettingAmount')%></th>
-					<th scope="col"><%=__('BettingWin')%></th>
+					<th scope="col" colspan="3"><%=__('BettingAccount')%></th>
 					<th scope="col">베팅후 금액</th>
+					<th scope="col"><%=__('BettingWin')%></th>
+					<th scope="col">당첨후 금액</th>
 					<th scope="col"><%=__('BettingTime')%></th>
-					<th scope="col">배팅 처리</th>
+					<th scope="col">당첨 결과</th>
 					<th scope="col">비고</th>
 				</tr>
 			</thead>
@@ -81,9 +121,11 @@
 <script type="text/javascript" src="js/enum.js"></script>
 <script type="text/javascript" src="js/util.js"></script>
 <script type="text/javascript" src="js/time.js"></script>
+<script type="text/javascript" src="js/manage_bettingrecord_ref.js"></script>
 <script type="text/javascript" src="js/manage_partner_ref.js"></script>
 <script type="text/javascript" src="js/manage_partner_popup_menu.js"></script>
 <script type="text/javascript" src="js/manage_partner_popup_ref.js"></script>
+<script type="text/javascript" src="js/manage_setting_ref.js"></script>
 <script type="text/javascript" src="js/pagination.js"></script>
 <script type="text/javascript">
 
@@ -106,7 +148,8 @@
 	$('#datepicker2').val(GetCurrentDate());
 
 	RequestOverviewUser(agent.iClass, agent.strGroupID, agent.iClass, agent.strNickname);
-	RequestBettingListOnPopup(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, iLimit, iCurrentPage);
+	RequestBettingRecordMe(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
+	RequestBettingListOnPopup(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, iLimit, iCurrentPage, agent.strID);
 
 	$("#table_record_list").hide();
 	
@@ -123,7 +166,8 @@
 		bToggleRecord = true;
 		$("#button_toggle_record").text("닫기");
 		RequestOverviewUser(agent.iClass, agent.strGroupID, agent.iClass, agent.strNickname);
-		RequestBettingListOnPopup(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, iLimit, iCurrentPage);
+		RequestBettingRecordMe(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
+		RequestBettingListOnPopup(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, iLimit, iCurrentPage, agent.strID);
 	}
 
 	let OnClickPage = (iPage) => {
@@ -131,7 +175,21 @@
 			return;
 		}
 		iCurrentPage = iPage;
-		OnClickSearch();
+		RequestBettingListOnPopup(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, iLimit, iCurrentPage, agent.strID);
+	}
+
+	function OnClickRecord()
+	{
+		bToggleRecord = !bToggleRecord;
+
+		if ( bToggleRecord ) {
+			$("#table_record_list").show();
+			$("#button_toggle_record").text(strClose);
+		}
+		else {
+			$("#table_record_list").hide();
+			$("#button_toggle_record").text(strOpen);
+		}
 	}
 
 	let OnClickMonthly1stRecord = () => {
@@ -143,7 +201,8 @@
 		$('#datepicker2').val(GetMonthly1stEndDate());
 
 		RequestOverviewUser(agent.iClass, agent.strGroupID, agent.iClass, agent.strNickname);
-		RequestBettingListOnPopup(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, iLimit, iCurrentPage);
+		RequestBettingRecordMe(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
+		RequestBettingListOnPopup(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, iLimit, iCurrentPage, agent.strID);
 	}
 
 	let OnClickMonthly2ndRecord = () => {
@@ -155,16 +214,14 @@
 		$('#datepicker2').val(GetMonthly2ndEndDate());
 
 		RequestOverviewUser(agent.iClass, agent.strGroupID, agent.iClass, agent.strNickname);
-		RequestBettingListOnPopup(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, iLimit, iCurrentPage);
+		RequestBettingRecordMe(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
+		RequestBettingListOnPopup(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, iLimit, iCurrentPage, agent.strID);
 	}
 
 	let OnClickSearch = (iTargetClass, strGroupID, iClass) => {
-
-		bToggleRecord = true;
-		$("#button_toggle_record").text(strClose);
-
 		RequestOverviewUser(agent.iClass, agent.strGroupID, agent.iClass, agent.strNickname);
-		RequestBettingListOnPopup(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, iLimit, iCurrentPage);
+		RequestBettingRecordMe(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
+		RequestBettingListOnPopup(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, iLimit, iCurrentPage, agent.strID);
 	}
 
 	let OnClickSearchNickname = () => {

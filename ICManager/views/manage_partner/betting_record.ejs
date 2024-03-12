@@ -102,7 +102,27 @@
 
 	let OnClickSearch = (iTargetClass, strGroupID, iClass, iPermission) => {
 		RequestBettingRecord(iTargetClass, strGroupID, iClass, user.strID);
-		RequestOverview(iTargetClass, strGroupID, iClass, iPermission, user.strID);
+		RequestSelfOverview(iTargetClass, strGroupID, iClass, iPermission, user.strID);
 	}
 
+	let RequestSelfOverview = (iTargetClass, strGroupID, iClass, iPermission, strNickname, strID) => {
+
+		const dateStart = $('#datepicker1').val();
+		const dateEnd = $('#datepicker2').val();
+
+		$.ajax({
+			type:'post',
+			url: "/manage_partner/request_overview_self",
+			context: document.body,
+			data:{iTargetClass:iTargetClass, strGroupID:strGroupID, iClass:iClass, dateStart:dateStart, dateEnd:dateEnd, iPermission:iPermission, strNickname:strNickname, strID:strID},
+
+			success: (obj) => {
+
+				SetOverview(obj.overview, "#div_realtimebet_overview", true, obj.iRootClass);
+			},
+			error:function(request,status,error){
+				alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+			}
+		});
+	}
 </script>

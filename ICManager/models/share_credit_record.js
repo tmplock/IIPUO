@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
         strGroupID: {
             type:DataTypes.STRING,
         },
-        iBeforeCredit: {
+        iCreditBefore: {
             type:DataTypes.INTEGER,
         },
         // 증감

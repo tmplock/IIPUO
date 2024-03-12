@@ -146,7 +146,6 @@
 <script type="text/javascript" src="js/pagination.js"></script>
 <script>
     let user = JSON.parse('<%-JSON.stringify(user)%>');
-    let list = JSON.parse('<%-JSON.stringify(req_list)%>');
     let iocount = JSON.parse('<%-JSON.stringify(iocount)%>');
     let totalCount = JSON.parse('<%-JSON.stringify(totalCount)%>');
 
@@ -155,17 +154,15 @@
     let iLimit = 20;
     let bToggleRecord = false;
 
+    let list = [];
+
     $('#select_limit').on("change", function () {
         iLimit = this.value;
     });
 
     $(document).ready( ()=> {
         DatePicker();
-        if (parseInt(user.iClass) == 1) {
-            $('#datepicker1').val(GetYearStartDate());
-        } else {
-            $("#datepicker1").val(GetCurrentDate(0));
-        }
+        $("#datepicker1").val(GetCurrentDateBefore(30));
         $("#datepicker2").val(GetCurrentDate(0));
 
         $("#pagination").append(getPagination(iLimit, totalCount, iCurrentPage));
@@ -207,25 +204,42 @@
         OnSave(event);
         event.target.reset();
     });
-    $(document).on('click', '#input_memo',  (event) => {
-        const id = $(event.currentTarget).attr('listid');
-        OnClickMemo(id);
-    });
-    let OnClickMemo = (id) => {
-        for (let i=0; i < list.length; i++) {
-            let memo_id = `memo_${list[i].id}`;
-            let memo_tx_id = `memo_tx_${list[i].id}`;
-            let button_memo_save = `button_memo_save_${list[i].id}`;
-            if (list[i].id==id) {
-                document.getElementById(memo_id).style = "width:80%";
-                document.getElementById(memo_tx_id).style = 'display:none';
-                document.getElementById(button_memo_save).style = "height:80%;";
-            } else {
-                document.getElementById(memo_id).style = 'width:80%; display:none';
-                document.getElementById(memo_tx_id).style = '';
-                document.getElementById(button_memo_save).style = "display:none";
-            }
+
+    let OnClickSearchByInput = (iPage) => {
+
+        let date1 = $("#datepicker1").val();
+        let date2 = $("#datepicker2").val();
+        let limit = $("#select_limit").val();
+
+        let strNickname = $('#strSearchNickname').val();
+        if (strNickname != null && strNickname != undefined) {
+            strNickname = '';
         }
+
+        $.ajax(
+            {
+                type:'post',
+                url: "/manage_inout/request_searchby",
+                context: document.body,
+                data:{type:'INPUT', dateStart:date1, dateEnd:date2, strGroupID:user.strGroupID, strSearchNickname:strNickname, iLimit:limit, iPage:iPage, iClass:user.iClass},
+
+                success:function(obj) {
+                    let data = obj.data;
+                    if (iPage > 1) {
+                        list.push(data)
+                    } else {
+                        list = data;
+                    }
+                    SetInputList(data, obj.iRootClass);
+                    RequestOverview(true);
+                    $("#page").append(getPagination(limit, obj.totalCount, iPage));
+                    $(document).on('click', '#input_memo',  (event) => {
+                        const id = $(event.currentTarget).attr('listid');
+                        OnClickMemo(id);
+                    });
+                }
+            }
+        );
     }
 
     let OnClickRequestInout = (charge) => {

@@ -17,12 +17,16 @@ module.exports = (sequelize, DataTypes) => {
         fShareR: {
             type: DataTypes.FLOAT,
         },
-        // 지분금액(현재 잔액)
-        iShare: {
-            type:DataTypes.INTEGER,
-        },
         // 전월금액
         iShareAccBefore: {
+            type:DataTypes.INTEGER,
+        },
+        // 입출전 금액
+        iCreditBefore: {
+            type:DataTypes.INTEGER,
+        },
+        // 입출후 금액
+        iCreditAfter: {
             type:DataTypes.INTEGER,
         },
         // 본사 아이디

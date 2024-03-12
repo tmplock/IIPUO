@@ -112,29 +112,33 @@ let GetBettingTargets = (bets, color) => {
         console.log(tags);
     }
 
-    return `<td style="background-color:${color};">${tags}</td>`
+    return `<td style="font-size: 12px; background-color:${color}; padding: 10px; line-height: 1.5;">${tags}</td>`
 }
 
 let GetBettingTargetBettings = (bets, color) => {
     let tags = '';
-    for (let i in bets)
-    {
-        let cBetting = bets[i].B;
-        let tag = `<font style="color: black;">${cBetting.toLocaleString()}</font>`;
-        tags = (tags == '') ? tag : `${tags}<br>${tag}`;
-    }
-    return `<td style="background-color:${color};">${tags}</td>`
+    try {
+        for (let i in bets)
+        {
+            let cBetting = bets[i].B;
+            let tag = `<font style="color: black;">${cBetting.toLocaleString()}</font>`;
+            tags = (tags == '') ? tag : `${tags}<br style="padding: 10px;">${tag}`;
+        }
+    } catch (err) {}
+    return `<td style="font-size: 12px; background-color:${color}; padding: 10px; line-height: 1.5;">${tags}</td>`
 }
 
 let GetBettingTargetWins = (bets, color) => {
     let tags = '';
-    for (let i in bets)
-    {
-        let cBetting = bets[i].W;
-        let tag = `<font style="color: black;">${cBetting.toLocaleString()}</font>`;
-        tags = (tags == '') ? tag : `${tags}<br>${tag}`;
-    }
-    return `<td style="background-color:${color};">${tags}</td>`
+    try {
+        for (let i in bets)
+        {
+            let cBetting = bets[i].W;
+            let tag = `<font style="color: black;">${cBetting.toLocaleString()}</font>`;
+            tags = (tags == '') ? tag : `${tags}<br>${tag}`;
+        }
+    } catch (err) {}
+    return `<td style="font-size: 12px; background-color:${color}; padding: 10px; line-height: 1.5;">${tags}</td>`
 }
 
 let OnClickRoundDetail = (id) => {
@@ -160,36 +164,61 @@ let SetBettingList = (records, startIndex) => {
 
     for ( let i in records )
     {
+        console.log('records[i]');
+        console.log(records[i]);
         let color = '#FFFFFF';
         if ( records[i].iWin > 0 ) {
             // color = '#d6f3c9';
-            color = '#E3F5DB';
+            color = '#E8FCDE';
+            // color = '#C8F5B4';
         }
         if ( records[i].iComplete == 2 )
         {
             color = `rgb(255, 150, 125);`;
         }
 
-        let tagWin = `<td style="background-color:${color};"></td>`;
-        if ( records[i].iWin > 0 )
-            tagWin = `<td style="background-color:${color};color:red;">${records[i].iWin.toLocaleString()}</td>`;
-        if ( records[i].iComplete == 2 )
-            tagWin = `<td style="background-color:${color};">취소</td>`;
+        let iBalance = parseInt(records[i].iBalance);
+        let iPreviousCash = iBalance;
+        let iBet = parseInt(records[i].iBet);
+        let iAfterCash = 0;
+        let iWin = parseInt(records[i].iWin);
+        let iResultCash = 0;
 
-        let bets = GetBets(records[i].strBets);
+        let tagWin = `<td style="background-color:${color};"></td>`;
+        let tagWinResult = `<td style="background-color:${color};"></td>`;
+
+        if ( iWin > 0 ) {
+            iAfterCash = iBalance - iBet;
+            iResultCash = iAfterCash + iWin;
+            tagWinResult = `<td style="background-color:${color};color:black;">${GetNumber(iResultCash)}</td>`;
+            tagWin = `<td style="background-color:${color};color:red;">${GetNumber(iWin)}</td>`;
+        } else {
+            iAfterCash = iBalance - iBet;
+        }
+
+
+        let bets = GetBets(records[i].strDetail);
         let tagTarget = GetBettingTargets(bets, color);
         let tagTargetBet = GetBettingTargetBettings(bets, color);
         let tagTargetWin = GetBettingTargetWins(bets, color);
 
-        let hasCards = ((records[i].strRound ?? '') != '') ? true : false;
-
         let tagDetail = '';
-        if (records[i].eState == 'STANDBY') {
-        } else if (records[i].eState == 'COMPLETE' &&  bets.length > 0) {
-            if (hasCards)
-                tagDetail =  `<a style="color:red;" onclick="OnClickRoundDetail('${records[i].id}')" href="#">당첨 결과</a>`;
-        } else if (records[i].eState == 'PENDING') {
-            tagDetail =  `<a style="color:blue;" href="#">당첨 결과 확인중</a>`;
+        let iGameCode = parseInt(records[i].iGameCode);
+        let eState = records[i].eState;
+        let updatedAt = '';
+        if (iGameCode == 0 || iGameCode == 100) {
+            if (eState == 'COMPLETE') {
+                if ( records[i].iWin > 0 ) {
+                    tagDetail =  `<a style="color:red;" onclick="OnClickRoundDetail('${records[i].id}')" href="#">당첨 결과</a>`;
+                } else {
+                    tagDetail =  `<a style="color:blue;" onclick="OnClickRoundDetail('${records[i].id}')" href="#">당첨 결과</a>`;
+                }
+                updatedAt = records[i].updatedAt;
+            } else if (eState == 'PENDING') {
+                tagDetail =  `<a style="color:blue;"></a>`;
+            } else if (eState == 'ERROR') {
+                tagDetail =  `<a style="color:#e7af16;" href="#">당첨 조회 오류</a>`;
+            }
         }
 
         let tag =
@@ -200,29 +229,30 @@ let SetBettingList = (records, startIndex) => {
             <td style="background-color:${color};">${records[i].strTableID}</td>
             <td style="background-color:${color};">${records[i].strRound}</td>
             <td style="background-color:${color};"><a style="color:blue;" onclick="OnClickNickname('${records[i].strNickname}')" href="#">${GetClassNickName(records[i].iClass, records[i].strNickname)}</a></td>
-            <td style="background-color:${color};">${GetNumber(records[i].iPreviousCash)}</td>
+            <td style="background-color:${color};">${GetNumber(iPreviousCash)}</td>
             ${tagTarget}
             ${tagTargetBet}
             ${tagTargetWin}
-            <td style="background-color:${color};">${GetNumber(records[i].iBetting)}</td>
+            <td style="background-color:${color};">${GetNumber(iAfterCash)}</td>
             ${tagWin}
-            <td style="background-color:${color};">${GetNumber(records[i].iAfterCash)}</td>
+            ${tagWinResult}
             <td style="background-color:${color};">${records[i].createdAt}</td>
-            <td style="background-color:${color};">${records[i].updatedAt ?? ''}</td>
+            <td style="background-color:${color};">${updatedAt}</td>
             <td style="background-color:${color};">${tagDetail}</td>
         </tr>											
         `;
         $('#betting_list').append(tag);
 
-        console.log(`${records[i].iWin}, ${records[i].iBetting}, ${iTotalBet}, ${iTotalWin}`);
-        iTotalBet += records[i].iBetting;
-        iTotalWin += records[i].iWin;
+        iTotalBet += iBet;
+        iTotalWin += iWin;
     }
 
     let tagEnd = `
     <tr style="font-weight: bold;">
-        <td colspan="9" style="font-weight: bold;">${strTotal}</td>
+        <td colspan="7" style="font-weight: bold;">${strTotal}</td>
         <td style="color:blue;">${GetNumber(iTotalBet)}</td>
+        <td style="color:red;">${GetNumber(iTotalWin)}</td>
+        <td style="color:blue;"></td>
         <td style="color:red;">${GetNumber(iTotalWin)}</td>
         <td></td>
         <td></td>
@@ -230,7 +260,7 @@ let SetBettingList = (records, startIndex) => {
         <td style="color:${GetColor(iTotalBet-iTotalWin)};">${strTotal} : ${GetNumber(iTotalBet-iTotalWin)}</td>
     </tr>											
     `;
-    $('#bettings').append(tagEnd);
+    $('#betting_list').append(tagEnd);
 
 }
 

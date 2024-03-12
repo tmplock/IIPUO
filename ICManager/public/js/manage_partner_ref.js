@@ -81,7 +81,7 @@ function SetRoom(aObject)
 	$("#div_realtimebet").append(tag1+tag2);
 }
 
-function AddTable(iHeader, iInput, iOutput, iCash, aObject, iRootClass)
+function AddTable(iHeader, iInput, iOutput, iCash, aObject, iRootClass, hidden)
 {
 	console.log(`AddTable`);
 	console.log(aObject);
@@ -93,8 +93,20 @@ function AddTable(iHeader, iInput, iOutput, iCash, aObject, iRootClass)
 	let iTotalRolling = objectValue.iRolling;
 	let iTotal = objectValue.iTotal;
 
+	// +/- 모두 나와야함
+	if (hidden != undefined && hidden == true) {
+		const total = parseInt(iTotalBetting ?? 0);
+		const input = parseInt(aObject.iInput ?? 0);
+		const exchange = parseInt(aObject.iExchange ?? 0);
+		const output = parseInt(aObject.iOutput ?? 0);
+
+		if (total == 0 && input == 0 && exchange == 0 && output == 0) {
+			return '';
+		}
+	}
+
 	var tag = `<tr>`;
-	let fontWeight = 'font-weight:100;';
+	let fontWeight = 'font-weight:normal;';
 
 	//	합계
 	if ( iHeader == 0 )
@@ -140,6 +152,82 @@ function AddTable(iHeader, iInput, iOutput, iCash, aObject, iRootClass)
 	return tag;
 }
 
+function AddTableOwner(iHeader, iInput, iOutput, iCash, aObject, iRootClass)
+{
+	console.log(`AddTableOwner`);
+	console.log(aObject);
+
+	let objectValue = GetTotalBWR(aObject.kBettingInfo);
+
+	let iTotalBetting = objectValue.iBetting;
+	let iTotalWin = objectValue.iWin;
+	let iTotalRolling = objectValue.iRolling;
+	let iTotal = objectValue.iTotal;
+
+	var tag = `<tr>`;
+	let fontWeight = 'font-weight:100;';
+
+	//	합계
+	if ( iHeader == 0 )
+	{
+		tag = `<tr style="font-weight: bold;">`;
+		fontWeight = 'font-weight: bold;';
+		tag += `<td>${strTotal}</td>`;
+	}
+	else
+	{
+		tag += `<td><a style="font-size:17px;">${iHeader}</a></td>`
+	}
+
+	tag += `<td><a style="${fontWeight}">${GetNumber(aObject.iInput)}</a></td>`;
+	tag += `<td><a style="${fontWeight}">${GetNumber(aObject.iExchange)}</a></td>`;
+	tag += `<td><a style="${fontWeight}">${GetNumber(aObject.iOutput)}</a></td>`;
+	tag += `<td><a style="${fontWeight}">${GetNumber(aObject.iTotalCash)}</a></td>`;
+
+	tag += `<td style="text-align:right;">`;
+	tag += `<a style="${fontWeight}">${GetNumber(iTotalBetting)}</a><br>`;
+	if (iTotalBetting > 0) {
+		tag += `<a style="${fontWeight}"><font color="red">${GetNumber(iTotalWin)}</font></a><br>`;
+		tag += `<a style="${fontWeight}"><font color="${GetClassSettleColor(iTotalRolling, iRootClass)}">${GetNumber(iTotalRolling)}</font></a><br>`;
+		tag += `<a style="${fontWeight}"><font color="${GetClassColor(iTotal, iRootClass)}">${GetNumber(iTotal)}</font></a><br>`;
+	} else {
+		tag += `<a style="${fontWeight}"><font color="red">${GetNumber(0)}</font></a><br>`;
+		tag += `<a style="${fontWeight}"><font color="${GetClassSettleColor(0, iRootClass)}">${GetNumber(0)}</font></a><br>`;
+		tag += `<a style="${fontWeight}"><font color="${GetClassColor(0, iRootClass)}">${GetNumber(0)}</font></a><br>`;
+	}
+
+	tag += `</td>`;
+
+	tag += `<td style="color:red; ${fontWeight}"><a>${strBetting}<br>${strWin}<br>${strRolling}<br>${strTotal}<br></a></td>`;
+
+	let listGroup = GetBettingGroup(aObject.kBettingInfo);
+
+	console.log(listGroup);
+
+	for ( let i in listGroup )
+	{
+		if (iTotalBetting > 0) {
+			tag += `<td style="text-align:right;">`;
+			tag += `<a style="${fontWeight}">${GetNumber(listGroup[i].iBetting)}</a><br>`;
+			tag += `<a style="${fontWeight}"><font color="red">${GetNumber(listGroup[i].iWin)}</font></a><br>`;
+			tag += `<a style="${fontWeight}"><font color="${GetClassSettleColor(listGroup[i].iRolling, iRootClass)}">${GetNumber(listGroup[i].iRolling)}</font></a><br>`;
+			tag += `<a style="${fontWeight}"><font color="${GetClassColor(listGroup[i].iTotal, iRootClass)}">${GetNumber(listGroup[i].iTotal)}</font></a><br>`;
+			tag += `</td>`;
+		} else {
+			tag += `<td style="text-align:right;">`;
+			tag += `<a style="${fontWeight}">${GetNumber(0)}</a><br>`;
+			tag += `<a style="${fontWeight}"><font color="red">${GetNumber(0)}</font></a><br>`;
+			tag += `<a style="${fontWeight}"><font color="${GetClassSettleColor(0, iRootClass)}">${GetNumber(0)}</font></a><br>`;
+			tag += `<a style="${fontWeight}"><font color="${GetClassColor(0, iRootClass)}">${GetNumber(0)}</font></a><br>`;
+			tag += `</td>`;
+		}
+
+	}
+	tag += `</tr>`;
+
+	return tag;
+}
+
 let AddOverviewTableHeader = () => {
 
 	return `
@@ -163,6 +251,137 @@ let AddOverviewTableHeader = () => {
 
 }
 
+function SetOverviewUser(aObject, strParentTag, bClear, iRootClass)
+{
+	if ( bClear == true )
+		$(strParentTag).empty();
+
+	let tag = AddOverviewTableHeader();
+
+	console.log(aObject);
+
+	tag += AddTableOwner(aObject.strDate, 0, 0, 0, aObject, iRootClass);
+
+	let listGroup = GetBettingGroup(aObject.kBettingInfo);
+
+	let iBetting = listGroup[0].iBetting + listGroup[1].iBetting;
+	let iSlotBetting = listGroup[2].iBetting;
+	let iPBBetting = listGroup[3].iBetting;
+	let totalBet = iBetting + iSlotBetting + iPBBetting;
+
+	let iWin = listGroup[0].iWin + listGroup[1].iWin;
+	let iSlotWin = listGroup[2].iWin;
+	let iPBWin = listGroup[3].iWin;
+
+	let iTotal = listGroup[0].iTotal + listGroup[1].iTotal;
+	let iSlotTotal = listGroup[2].iTotal;
+	let iPBTotal = listGroup[3].iTotal;
+	let iWinLose = listGroup[0].iTotal + listGroup[0].iRolling + listGroup[1].iTotal + listGroup[1].iRolling;
+	let iSlotWinLose = listGroup[2].iTotal + listGroup[2].iRolling;
+	let iPBWinLose = listGroup[3].iTotal + listGroup[3].iRolling;
+
+	let iRolling = listGroup[0].iRolling + listGroup[1].iRolling;;
+	let iSlotRolling = listGroup[2].iRolling;
+	let iPBRolling = listGroup[3].iRolling;
+	let iMyRollingMoney = iRolling + iSlotRolling + iPBRolling;
+	// 정산관리 > 배팅내역의 Overview > 롤링값은 대본사 이하는 본인의 롤링만 표시(본사 이상은 전체 토탈로 표시)
+	if (aObject.iClass >= 4) {
+		iMyRollingMoney = aObject.iMyRollingMoney ?? 0;
+	}
+
+	if (totalBet == 0) {
+		iTotal = 0;
+		iRolling = 0;
+		iSlotRolling = 0;
+		iPBRolling = 0;
+		iMyRollingMoney = 0;
+	}
+
+	tag +=
+		`
+				<thead>
+				<tr>
+					<th width="5%"></th>
+					<th width="10%" style="text-align:center;">${strBetting}</th>
+					<th width="10%" style="text-align:center;">${strWin}</th>
+					<th width="10%" style="text-align:center;">${strWinLose}</th>
+					<th width="10%" style="text-align:center;">${strCommission}</th>
+					<th width="10%" style="text-align:center;">${strTotal}</th>
+					<th width="5%"></th>
+					<th width="10%" style="text-align:center;">롤링</th>
+					<th width="10%" style="text-align:center;">미전환롤링</th>
+					<th width="10%" style="text-align:center;">죽장합</th>
+					<th width="10%" style="text-align:center;"></th>
+
+				</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td style="text-align:center;padding-top: 5px; padding-bottom: 5px;padding-right:5px;background-color:#FFFACD; font-weight: bold;vertical-align: top;">
+							B<br>
+							S<br>
+							P
+						</td>
+						<td style="text-align:right;padding-top: 5px; padding-bottom: 5px;padding-right:5px;background-color:#FFFACD;vertical-align: top;">
+							<font style="color:black;">${GetNumber(iBetting)}</font>
+							<br>
+							<font style="color:black;">${GetNumber(iSlotBetting)}</font>
+							<br>
+							<font style="color:black;">${GetNumber(iPBBetting)}</font>
+						</td>
+						<td style="text-align:right;padding-top: 5px; padding-bottom: 5px;padding-right:5px;background-color:#FFFACD;vertical-align: top;">
+							<font style="color:red;">${GetNumber(iWin)}</font>
+							<br>
+							<font style="color:red;">${GetNumber(iSlotWin)}</font>
+							<br>
+							<font style="color:red;">${GetNumber(iPBWin)}</font>
+						</td>
+						<td style="text-align:right;padding-top: 5px; padding-bottom: 5px;padding-right:5px;background-color:#FFFACD;vertical-align: top;">
+							<font style="color:${GetClassColor(iWinLose, iRootClass)};">${GetNumber(iWinLose)}</font>
+							<br>
+							<font style="color:${GetClassColor(iSlotWinLose, iRootClass)};">${GetNumber(iSlotWinLose)}</font>
+							<br>
+							<font style="color:${GetClassColor(iPBWinLose, iRootClass)};">${GetNumber(iPBWinLose)}</font>
+						</td>
+						<td style="text-align:right;padding-top: 5px; padding-bottom: 5px;padding-right:5px;background-color:#FFFACD;vertical-align: top;">
+							<font style="color:${GetClassSettleColor(iRolling, iRootClass)};">${GetNumber(iRolling)}</font>
+							<br>
+							<font style="color:${GetClassSettleColor(iSlotRolling, iRootClass)};">${GetNumber(iSlotRolling)}</font>
+							<br>
+							<font style="color:${GetClassSettleColor(iPBRolling, iRootClass)};">${GetNumber(iPBRolling)}</font>
+						</td>
+						<td style="text-align:right;padding-top: 5px; padding-bottom: 5px;padding-right:5px;background-color:#FFFACD;vertical-align: top;">
+							<font style="color:${GetClassColor(iTotal, iRootClass)};">${GetNumber(iTotal)}</font>
+							<br>
+							<font style="color:${GetClassColor(iSlotTotal, iRootClass)};">${GetNumber(iSlotTotal)}</font>
+							<br>
+							<font style="color:${GetClassColor(iPBTotal, iRootClass)};">${GetNumber(iPBTotal)}</font>
+						</td>
+						<td>
+						</td>
+						<td style="text-align:right;padding-top: 5px; padding-bottom: 5px;padding-right:5px;background-color:#FFFACD;">
+							<font style="color:${GetClassSettleColor(iMyRollingMoney, iRootClass)};">${GetNumber(iMyRollingMoney, '0')}</font>
+						</td>
+						<td style="text-align:right;padding-right:5px;background-color:#FFFACD;">
+							<font style="color:${GetClassSettleColor(aObject.iRolling, iRootClass)};">${GetNumber(aObject.iRolling)}</font>
+						</td>
+						<td style="text-align:right;padding-right:5px;background-color:#FFFACD;">
+							<font style="color:${GetClassSettleColor(aObject.iSettle, iRootClass)};">${GetNumber(aObject.iSettle)}</font>
+						</td>
+						<td style="text-align:right;padding-right:5px;background-color:#FFFACD;">
+							<font style="color:black;"></font>
+						</td>
+					</tr>
+				</tbody>
+	`;
+
+	tag += `
+		</tbody>
+	</table>
+	`;
+
+	$(strParentTag).append(tag);
+}
 function SetOverview(aObject, strParentTag, bClear, iRootClass)
 {
 	if ( bClear == true )
@@ -307,7 +526,10 @@ function SetOverviewRecordList(aObject, strParentTag, bClear, iRootClass)
 	for ( var root = 0; root < aObject.length-1; ++root)
 	{
 		var tObject = aObject[root];
-		tag += AddTable(aObject[root].strDate, 0, 0, 0, tObject, iRootClass);
+		let row = AddTable(aObject[root].strDate, 0, 0, 0, tObject, iRootClass, false);
+		if (row != '') {
+			tag += row;
+		}
 
 		console.log(`## AddTable`);
 		console.log(tObject);
@@ -447,17 +669,19 @@ var response_list = [];
 function AddPartner(iRootClass, aObject, bDisableRolling, iPermission)
 {
 	var color = '#ffffff';
+	let bInputDisable = false;
 	switch(aObject.iClass)
 	{
 		case EAgent.eProAdmin:
 			headtag = `<td>┗</td><td>─</td><td>─</td><td>─</td>`;
+			// bInputDisable = true;
 			break;
 		case EAgent.eViceAdmin:
 			headtag = `<td></td><td>┗</td><td>─</td><td>─</td>`;
+			// bInputDisable = true;
 			if ( iRootClass != EAgent.eViceAdmin )
 				// color = 'rgb(255, 223, 188)';
 				color = '#c9c9c4';
-
 			break;
 		case EAgent.eAgent:
 			headtag = `<td></td><td></td><td>┗</td><td>─</td>`;
@@ -478,6 +702,10 @@ function AddPartner(iRootClass, aObject, bDisableRolling, iPermission)
 	var tagoption = 'disabled="disabled"';
 	if ( bDisableRolling == false )
 		tagoption = '';
+
+	if ( bInputDisable == true )
+		tagoption = tagoption == '' ? 'disabled="disabled"' : '';
+
 	var subtag = `
 
 	<tr id=${aObject.strNickname} class='Agent'>
@@ -664,7 +892,7 @@ function AddPartner(iRootClass, aObject, bDisableRolling, iPermission)
 	}
 
 	let tagState = '';
-	if ( iRootClass <= 3 && iPermission != 100 )
+	if ( (iRootClass <= 3 && iPermission != 100) || iRootClass == 3 )
 	{
 
 		if ( aObject.eState == 'NORMAL' )
@@ -1463,7 +1691,7 @@ let RequestAgentList = (iTargetClass, strGroupID, iClass) => {
 			if ( iTargetClass == 4 )
 				SetPartnerList(obj.iRootClass, "#vadmin_list", obj.list, false, obj.iPermission, obj.overview);
 			else
-				SetPartnerList(obj.iRootClass, "#vadmin_list", obj.list, true, obj.iPermission, obj.overview);
+				SetPartnerList(obj.iRootClass, "#vadmin_list", obj.list, false, obj.iPermission, obj.overview);
 		},
 		error:function(request,status,error)
 		{
@@ -1480,6 +1708,26 @@ let RequestBettingRecord = (iTargetClass, strGroupID, iClass, strID) => {
 	$.ajax({
 		type:'post',
 		url: "/manage_partner/request_bettingrecord",
+		context: document.body,
+		data:{iTargetClass:iClass, strGroupID:strGroupID, iClass:iClass, dateStart:dateStart, dateEnd:dateEnd, strID:strID},
+
+		success: (obj) => {
+			SetOverviewRecordList(obj.record, "#div_realtimebet_overview_record", true, obj.iRootClass);
+		},
+		error:function(request,status,error){
+			alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+		}
+	});
+}
+
+let RequestBettingRecordMe = (iTargetClass, strGroupID, iClass, strID) => {
+
+	const dateStart = $('#datepicker1').val();
+	const dateEnd = $('#datepicker2').val();
+
+	$.ajax({
+		type:'post',
+		url: "/manage_partner/request_bettingrecord_me",
 		context: document.body,
 		data:{iTargetClass:iClass, strGroupID:strGroupID, iClass:iClass, dateStart:dateStart, dateEnd:dateEnd, strID:strID},
 
@@ -1545,7 +1793,7 @@ let RequestOverviewUser = (iTargetClass, strGroupID, iClass, strNickname) => {
 		data:{iTargetClass:iTargetClass, strGroupID:strGroupID, iClass:iClass, strNickname:strNickname, dateStart:dateStart, dateEnd:dateEnd},
 
 		success: (obj) => {
-			SetOverview(obj.overview, "#div_realtimebet_overview", true, obj.iRootClass);
+			SetOverviewUser(obj.overview, "#div_realtimebet_overview", true, obj.iRootClass);
 		},
 		error:function(request,status,error){
 			alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);

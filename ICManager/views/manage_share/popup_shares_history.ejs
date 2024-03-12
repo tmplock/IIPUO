@@ -33,7 +33,7 @@
                         <th scope="col">본사</th>
                         <th scope="col">지분자</th>
                         <th scope="col">입출전 금액</th>
-                        <th scope="col">입∙출 금액</th>
+                        <th scope="col">입출 금액</th>
                         <th scope="col">입출후 금액</th>
                         <th scope="col">일시</th>
                         <th scope="col">메모</th>
@@ -54,7 +54,6 @@
 <script type="text/javascript" src="js/enum.js"></script>
 <script type="text/javascript" src="js/time.js"></script>
 <script type="text/javascript" src="js/manage_partner_popup_menu.js"></script>
-<script type="text/javascript" src="js/manage_inout_ref.js"></script>
 <script type="text/javascript" src="js/util.js"></script>
 <script type="text/javascript" src="js/common_menu.js"></script>
 <script type="text/javascript">
@@ -84,7 +83,7 @@
             strNickname = $('#strSearchNickname').val();
 
         $.ajax({
-            url:'/manage_partner_popup/request_share_history_list',
+            url:'/manage_share/request_share_history_list',
             type:"POST",
             data: {
                 strID:user.strID,
@@ -152,18 +151,18 @@
                 let aObject = list[i];
                 let parentNickname = aObject.parentNickname;
                 let strNickname = aObject.strNickname ?? '';
-                let iBeforeCredit = aObject.iBeforeCredit ?? 0;
+                let iCreditBefore = aObject.iCreditBefore ?? 0;
                 let iIncrease = aObject.iIncrease ?? 0;
-                let iAfterCredit = iBeforeCredit + iIncrease;
+                let iCreditAfter = iCreditBefore + iIncrease;
                 let strMemo = aObject.strMemo ?? '';
 
                 $('#list_agents').append(`
                     <tr>
                         <td>${parentNickname}</td>
                         <td>${strNickname}</td>
-                        <td>${GetNumberSign(iBeforeCredit, '0')}</td>
+                        <td>${GetNumberSign(iCreditBefore, '0')}</td>
                         <td>${GetNumberSign(iIncrease, '0')}</td>
-                        <td>${GetNumberSign(iAfterCredit, '0')}</td>
+                        <td>${GetNumberSign(iCreditAfter, '0')}</td>
                         <td>${aObject.createdAt}</td>
                         <td>${strMemo}</td>
                     </tr>

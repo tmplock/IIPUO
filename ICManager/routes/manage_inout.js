@@ -19,7 +19,8 @@ const {isLoggedIn, isNotLoggedIn} = require('./middleware');
 const ITime = require('../utils/time');
 
 const ISocket = require('../implements/socket');
-const IAgent = require("../implements/agent");
+const IAgent = require("../implements/agent3");
+const moment = require("moment");
 
 router.post('/request_page', isLoggedIn, async(req, res) => {
 
@@ -46,7 +47,7 @@ router.post('/request_page', isLoggedIn, async(req, res) => {
             eType:eType
     
         },
-        order:[['updatedAt','DESC']]});
+        order:[['createdAt','DESC']]});
     
         res.send(result);
     }
@@ -64,7 +65,7 @@ router.post('/request_page', isLoggedIn, async(req, res) => {
             eType:eType
     
         },
-        order:[['updatedAt','DESC']]});
+        order:[['createdAt','DESC']]});
     
         res.send(result);
     
@@ -124,7 +125,7 @@ router.post('/request_searchby', isLoggedIn, async(req, res) => {
                 },
                 offset:iOffset,
                 limit:iLimit,
-                order:[['updatedAt','DESC']]
+                order:[['createdAt','DESC']]
             });
         } else {
             list = await db.Inouts.findAll({
@@ -137,7 +138,7 @@ router.post('/request_searchby', isLoggedIn, async(req, res) => {
                 },
                 offset:iOffset,
                 limit:iLimit,
-                order:[['updatedAt','DESC']]
+                order:[['createdAt','DESC']]
             });
         }
         res.send({data: list, totalCount: totalCount, iRootClass: req.user.iClass});
@@ -179,7 +180,7 @@ router.post('/request_searchby', isLoggedIn, async(req, res) => {
                 },
                 offset:iOffset,
                 limit:iLimit,
-                order:[['updatedAt','DESC']]
+                order:[['createdAt','DESC']]
             });
 
         } else {
@@ -193,7 +194,7 @@ router.post('/request_searchby', isLoggedIn, async(req, res) => {
                 },
                 offset:iOffset,
                 limit:iLimit,
-                order:[['updatedAt','DESC']]
+                order:[['createdAt','DESC']]
             });
         }
 
@@ -218,9 +219,15 @@ router.post('/charge', isLoggedIn, async(req, res) => {
 
     let totalCount = 0;
     let list = [];
+    let date = new Date();
+    let now = moment(date).format('YYYY-MM-DD');
+    let end = moment(date).add(1, 'days').format('YYYY-MM-DD');
     if (parseInt(req.body.iClass) == 1) {
         totalCount = await db.Inouts.count({
             where: {
+                createdAt:{
+                    [Op.between]:[now, end],
+                },
                 strGroupID:{
                     [Op.like]:user.strGroupID+'%'
                 },
@@ -230,6 +237,9 @@ router.post('/charge', isLoggedIn, async(req, res) => {
         });
         list = await db.Inouts.findAll({
             where: {
+                createdAt:{
+                    [Op.between]:[now, end],
+                },
                 strGroupID:{
                     [Op.like]:user.strGroupID+'%'
                 },
@@ -243,6 +253,9 @@ router.post('/charge', isLoggedIn, async(req, res) => {
     } else {
         totalCount = await db.Inouts.count({
             where: {
+                createdAt:{
+                    [Op.between]:[now, end],
+                },
                 strGroupID:{
                     [Op.like]:user.strGroupID+'%'
                 },
@@ -254,6 +267,9 @@ router.post('/charge', isLoggedIn, async(req, res) => {
         });
         list = await db.Inouts.findAll({
             where: {
+                createdAt:{
+                    [Op.between]:[now, end],
+                },
                 strGroupID:{
                     [Op.like]:user.strGroupID+'%'
                 },
@@ -290,9 +306,16 @@ router.post('/exchange', isLoggedIn, async(req, res) => {
 
     let totalCount = 0;
     let list = [];
+    let date = new Date();
+    let now = moment(date).format('YYYY-MM-DD');
+    let end = moment(date).add(1, 'days').format('YYYY-MM-DD');
+
     if (parseInt(req.body.iClass) == 1) {
         totalCount = await db.Inouts.count({
             where: {
+                createdAt:{
+                    [Op.between]:[now, end],
+                },
                 strGroupID:{
                     [Op.like]:user.strGroupID+'%'
                 },
@@ -302,6 +325,9 @@ router.post('/exchange', isLoggedIn, async(req, res) => {
         });
         list = await db.Inouts.findAll({
             where: {
+                createdAt:{
+                    [Op.between]:[now, end],
+                },
                 strGroupID:{
                     [Op.like]:user.strGroupID+'%'
                 },
@@ -310,11 +336,14 @@ router.post('/exchange', isLoggedIn, async(req, res) => {
             },
             offset:iOffset,
             limit:iLimit,
-            order:[['updatedAt','DESC']]
+            order:[['createdAt','DESC']]
         });
     } else {
         totalCount = await db.Inouts.count({
             where: {
+                createdAt:{
+                    [Op.between]:[now, end],
+                },
                 strGroupID:{
                     [Op.like]:user.strGroupID+'%'
                 },
@@ -326,6 +355,9 @@ router.post('/exchange', isLoggedIn, async(req, res) => {
         });
         list = await db.Inouts.findAll({
             where: {
+                createdAt:{
+                    [Op.between]:[now, end],
+                },
                 strGroupID:{
                     [Op.like]:user.strGroupID+'%'
                 },
@@ -336,7 +368,7 @@ router.post('/exchange', isLoggedIn, async(req, res) => {
             },
             offset:iOffset,
             limit:iLimit,
-            order:[['updatedAt','DESC']]
+            order:[['createdAt','DESC']]
         });
     }
 
@@ -735,7 +767,7 @@ router.post('/request_inouttotal', isLoggedIn, async (req, res) => {
         ],
         where: {
             strID:{[Op.like]:'%'+req.body.search+'%'},
-            updatedAt:{
+            createdAt:{
                 [Op.gt]:req.body.s_date,
                 [Op.lte]:req.body.e_date
             },
@@ -751,7 +783,7 @@ router.post('/request_inouttotal', isLoggedIn, async (req, res) => {
         ],
         where: {
             strID:{[Op.like]:'%'+req.body.search+'%'},
-            updatedAt:{
+            createdAt:{
                 [Op.gt]:req.body.s_date,
                 [Op.lte]:req.body.e_date
             },

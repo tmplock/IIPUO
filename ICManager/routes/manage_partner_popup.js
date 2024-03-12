@@ -14,8 +14,8 @@ const ITime = require('../utils/time');
 const IUtil = require("../utils/util");
 const ISocket = require('../implements/socket');
 const {Op}= require('sequelize');
-const IAgent = require('../implements/agent');
-const IAgent2 = require('../implements/agent3');
+const IAgentSettle = require('../implements/agent_settle3');
+const IAgent = require('../implements/agent3');
 const {isLoggedIn, isNotLoggedIn} = require('./middleware');
 const IInout = require("../implements/inout");
 //////////////////////////////////////////////////////////////////////////////
@@ -25,7 +25,7 @@ router.post('/agentinfo', isLoggedIn, async (req, res) => {
     console.log(`/agentinfo`);
     console.log(req.body);
     
-    const user = await IAgent2.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
+    const user = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
     user.iRootClass = req.user.iClass;
     user.iRootNickname = req.user.strNickname;
     user.iPermission = req.user.iPermission;
@@ -62,15 +62,15 @@ router.post('/agentinfo', isLoggedIn, async (req, res) => {
 });
 
 router.post('/viceadminlist', isLoggedIn, async (req, res) => {
-    const agent = await IAgent2.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
+    const agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
     agent.iRootClass = req.user.iClass;
     agent.iPermission = req.user.iPermission;
 
     const dateStart = ITime.getTodayStart();
     const dateEnd = ITime.getTodayEnd();
 
-    let overview = await IAgent2.CalculateBettingRecord(req.body.strGroupID, req.body.iClass, dateStart, dateEnd, '', agent.strID);
-    let agentlist = await IAgent2.GetComputedAgentList(req.body.strGroupID, parseInt(req.body.iClass)+1, dateStart, dateEnd, '', true);
+    let overview = await IAgent.CalculateBettingRecord(req.body.strGroupID, req.body.iClass, dateStart, dateEnd, '', agent.strID);
+    let agentlist = await IAgent.GetComputedAgentList(req.body.strGroupID, parseInt(req.body.iClass)+1, dateStart, dateEnd, '', true);
 
     let strParent = await IAgent.GetParentNickname(req.body.strNickname);
 
@@ -79,44 +79,44 @@ router.post('/viceadminlist', isLoggedIn, async (req, res) => {
 });
 
 router.post('/proadminlist', isLoggedIn, async (req, res) => {
-    const agent = await IAgent2.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
+    const agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
     agent.iRootClass = req.user.iClass;
     agent.iPermission = req.user.iPermission;
 
     const dateStart = ITime.getTodayStart();
     const dateEnd = ITime.getTodayEnd();
 
-    let overview = await IAgent2.CalculateBettingRecord(0, req.body.strGroupID, req.body.iClass, dateStart, dateEnd, '', agent.strID);
-    let agentlist = await IAgent2.GetComputedAgentList(req.body.strGroupID, parseInt(req.body.iClass)+1, dateStart, dateEnd, '', true);
+    let overview = await IAgent.CalculateBettingRecord(req.body.strGroupID, req.body.iClass, dateStart, dateEnd, '', agent.strID);
+    let agentlist = await IAgent.GetComputedAgentList(req.body.strGroupID, parseInt(req.body.iClass)+1, dateStart, dateEnd, '', true);
     let strParent = await IAgent.GetParentNickname(req.body.strNickname);
 
     res.render('manage_partner/popup_proadminlist', {iLayout:2, iHeaderFocus:10, agent:agent, overview:overview, agentlist:agentlist, strParent:strParent});
 
 });
 router.post('/agentlist', isLoggedIn, async (req, res) => {
-    const agent = await IAgent2.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
+    const agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
     agent.iRootClass = req.user.iClass;
     agent.iPermission = req.user.iPermission;
 
     const dateStart = ITime.getTodayStart();
     const dateEnd = ITime.getTodayEnd();
 
-    let overview = await IAgent2.CalculateBettingRecord(req.body.strGroupID, req.body.iClass, dateStart, dateEnd, '', agent.strID);
-    let agentlist = await IAgent2.GetComputedAgentList(req.body.strGroupID, parseInt(req.body.iClass)+1, dateStart, dateEnd, '', true);
+    let overview = await IAgent.CalculateBettingRecord(req.body.strGroupID, req.body.iClass, dateStart, dateEnd, '', agent.strID);
+    let agentlist = await IAgent.GetComputedAgentList(req.body.strGroupID, parseInt(req.body.iClass)+1, dateStart, dateEnd, '', true);
     let strParent = await IAgent.GetParentNickname(req.body.strNickname);
 
     res.render('manage_partner/popup_agentlist', {iLayout:2, iHeaderFocus:2, agent:agent, overview:overview, agentlist:agentlist, strParent:strParent});
 });
 
 router.post('/shoplist', isLoggedIn, async (req, res) => {
-    const agent = await IAgent2.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
+    const agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
     agent.iRootClass = req.user.iClass;
     agent.iPermission = req.user.iPermission;
     const dateStart = ITime.getTodayStart();
     const dateEnd = ITime.getTodayEnd();
-    let overview = await IAgent2.CalculateBettingRecord(req.body.strGroupID, req.body.iClass, dateStart, dateEnd, agent.strNickname, agent.strID);
-    let bettingrecord = await IAgent2.CalculateTermBettingRecord(req.body.strGroupID, req.body.iClass, dateStart, dateEnd, agent.strNickname, agent.strID);
-    let agentlist = await IAgent2.GetComputedAgentList(req.body.strGroupID, 3, dateStart, dateEnd,  '', true);
+    let overview = await IAgent.CalculateBettingRecord(req.body.strGroupID, req.body.iClass, dateStart, dateEnd, agent.strNickname, agent.strID);
+    let bettingrecord = await IAgent.CalculateTermBettingRecord(req.body.strGroupID, req.body.iClass, dateStart, dateEnd, agent.strNickname, agent.strID);
+    let agentlist = await IAgent.GetComputedAgentList(req.body.strGroupID, 3, dateStart, dateEnd,  '', true);
     let strParent = await IAgent.GetParentNickname(req.body.strNickname);
 
     res.render('manage_partner/popup_shoplist', {iLayout:2, iHeaderFocus:3, agent:agent, overview:overview, bettingrecord:bettingrecord, agentlist:agentlist, strParent:strParent});
@@ -125,15 +125,15 @@ router.post('/shoplist', isLoggedIn, async (req, res) => {
 
 router.post('/userlist', isLoggedIn, async (req, res) => {
     console.log(req.body);
-    const agent = await IAgent2.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
+    const agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
     agent.iRootClass = req.user.iClass;
     agent.iPermission = req.user.iPermission;
 
     const dateStart = ITime.getTodayStart();
     const dateEnd = ITime.getTodayEnd();
-    let overview = await IAgent2.CalculateBettingRecord(req.body.strGroupID, req.body.iClass, dateStart, dateEnd, agent.strNickname, agent.strID);
-    let bettingrecord = await IAgent2.CalculateTermBettingRecord(req.body.strGroupID, req.body.iClass, dateStart, dateEnd, agent.strNickname, agent.strID);
-    let agentlist = await IAgent2.GetComputedAgentList(req.body.strGroupID, 8, dateStart, dateEnd);
+    let overview = await IAgent.CalculateBettingRecord(req.body.strGroupID, req.body.iClass, dateStart, dateEnd, agent.strNickname, agent.strID);
+    let bettingrecord = await IAgent.CalculateTermBettingRecord(req.body.strGroupID, req.body.iClass, dateStart, dateEnd, agent.strNickname, agent.strID);
+    let agentlist = await IAgent.GetComputedAgentList(req.body.strGroupID, 8, dateStart, dateEnd);
     let strParent = await IAgent.GetParentNickname(req.body.strNickname);
     res.render('manage_partner/popup_userlist', {iLayout:2, iHeaderFocus:4, agent:agent, overview:overview, bettingrecord:bettingrecord, agentlist:agentlist, strParent:strParent});
 });
@@ -150,7 +150,8 @@ router.post('/charges', isLoggedIn, async (req, res) => {
             },
             eType:'INPUT',
             eState:'COMPLETE'
-        }    
+        },
+        order:[['createdAt','DESC']]
     });
     let strParent = await IAgent.GetParentNickname(req.body.strNickname);
 
@@ -170,7 +171,8 @@ router.post('/exchanges', isLoggedIn, async (req, res) => {
             },
             eType:'OUTPUT',
             eState:'COMPLETE'
-        }    
+        },
+        order:[['createdAt','DESC']]
     });
     let strParent = await IAgent.GetParentNickname(req.body.strNickname);
 
@@ -240,25 +242,25 @@ router.post('/logs', isLoggedIn, async (req, res) => {
 });
 
 router.post('/games', isLoggedIn, async (req, res) => {
-    const agent = await IAgent2.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
+    const agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
     agent.iRootClass = req.user.iClass;
     agent.iPermission = req.user.iPermission;
     const dateStart = ITime.getTodayStart();
     const dateEnd = ITime.getTodayEnd();
-    let overview = await IAgent2.CalculateBettingRecord(req.body.strGroupID, req.body.iClass, dateStart, dateEnd, agent.strNickname, agent.strID);
-    let bettingrecord = await IAgent2.CalculateTermBettingRecord(req.body.strGroupID, req.body.iClass, dateStart, dateEnd, agent.strNickname, agent.strID);
+    let overview = await IAgent.CalculateBettingRecord(req.body.strGroupID, req.body.iClass, dateStart, dateEnd, agent.strNickname, agent.strID);
+    let bettingrecord = await IAgent.CalculateTermBettingRecord(req.body.strGroupID, req.body.iClass, dateStart, dateEnd, agent.strNickname, agent.strID);
     let strParent = await IAgent.GetParentNickname(req.body.strNickname);
     res.render('manage_partner/popup_games', {iLayout:2, iHeaderFocus:9, agent:agent, overview:overview, bettingrecord:bettingrecord, strParent:strParent});
 });
 
 router.post('/bettingrecord', isLoggedIn, async (req, res) => {
-    const agent = await IAgent2.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
+    const agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
     agent.iRootClass = req.user.iClass;
     agent.iPermission = req.user.iPermission;
     const dateStart = ITime.getTodayStart();
     const dateEnd = ITime.getTodayEnd();
-    let overview = await IAgent2.CalculateSelfBettingRecord(req.body.strGroupID, req.body.iClass, dateStart, dateEnd, agent.strNickname, agent.strID);
-    let bettingrecord = await IAgent2.CalculateTermSelfBettingRecord(req.body.strGroupID, req.body.iClass, dateStart, dateEnd, agent.strNickname, agent.strID);
+    let overview = await IAgent.CalculateSelfBettingRecord(req.body.strGroupID, req.body.iClass, dateStart, dateEnd, agent.strNickname, agent.strID);
+    let bettingrecord = await IAgent.CalculateTermSelfBettingRecord(req.body.strGroupID, req.body.iClass, dateStart, dateEnd, agent.strNickname, agent.strID);
     let strParent = await IAgent.GetParentNickname(req.body.strNickname);
     res.render('manage_partner/popup_bettingrecord', {iLayout:2, iHeaderFocus:8, agent:agent, overview:overview, bettingrecord:bettingrecord, strParent:strParent});
 });
@@ -600,61 +602,54 @@ router.post('/request_agentlist', isLoggedIn, async (req, res) => {
 
     console.log(req.body);
 
-    const list = await IAgent2.GetComputedAgentList(req.body.strGroupID, parseInt(req.body.iTargetClass), req.body.dateStart, req.body.dateEnd, req.body.strSearchNickname, true);
+    const list = await IAgent.GetComputedAgentList(req.body.strGroupID, parseInt(req.body.iTargetClass), req.body.dateStart, req.body.dateEnd, req.body.strSearchNickname, true);
 
     res.send({list:list, iRootClass:req.user.iClass, iPermission: req.user.iPermission});
 });
 
+/**
+ * 본인 베팅 레코드 조회
+ */
 router.post('/request_bettinglist', isLoggedIn, async (req, res) => {
     console.log(req.body);
 
     let strTimeStart = req.body.dateStart;
     let strTimeEnd = req.body.dateEnd;
     let strGroupID = req.body.strGroupID;
-    let strNickname = req.body.strNickname ?? '';
+    let strID = req.body.strID ?? '';
 
     let iLimit = parseInt(req.body.iLimit);
     let iPage = parseInt(req.body.iPage);
     let iOffset = (iPage-1) * iLimit;
 
-    let totalCount = await db.BettingRecords.count({
+    let totalCount = await db.RecordBets.count({
         where: {
             createdAt:{
                 [Op.between]:[ strTimeStart, require('moment')(strTimeEnd).add(1, 'days').format('YYYY-MM-DD')],
             },
-            strGroupID:{
-                [Op.like]:strGroupID+'%'
+            strID:strID,
+            iGameCode: {
+                [Op.in]:[0, 100]
             },
-            strNickname:{
-                [Op.like]:'%'+strNickname+'%',
-            },
-            iGameCode:{
-                [Op.or]:[0, 100]
-            },
-            // iComplete:{
-            //     [Op.or]:listComplete
-            // },
+            // eState:{
+            //     [Op.notIn]:['STANDBY']
+            // }
         }
     });
 
-    let list = await db.BettingRecords.findAll(
+    let list = await db.RecordBets.findAll(
         {
             where: {
                 createdAt:{
                     [Op.between]:[ strTimeStart, require('moment')(strTimeEnd).add(1, 'days').format('YYYY-MM-DD')],
                 },
-                strGroupID:{
-                    [Op.like]:strGroupID+'%'
+                strID:strID,
+                iGameCode: {
+                    [Op.in]:[0, 100]
                 },
-                strNickname:{
-                    [Op.like]:'%'+strNickname+'%',
-                },
-                iGameCode:{
-                    [Op.or]:[0, 100]
-                },
-                // iComplete:{
-                //     [Op.or]:listComplete
-                // },
+                // eState:{
+                //     [Op.notIn]:['STANDBY']
+                // }
             },
             offset:iOffset,
             limit:iLimit,
@@ -665,32 +660,27 @@ router.post('/request_bettinglist', isLoggedIn, async (req, res) => {
 
     for ( let i in list )
     {
-        let updatedAt = '';
-        if (list[i].strBets != '' && list[i].strDetails != '') {
-            updatedAt = list[i].updatedAt;
-        }
-
         records.push({
             id: list[i].id,
-            strVender:list[i].strVender,
+            strID:list[i].strID,
             strNickname:list[i].strNickname,
-            iPreviousCash:list[i].iPreviousCash,
-            iAfterCash:list[i].iAfterCash,
-            iGameCode:list[i].iGameCode,
-            iBetting:list[i].iBetting,
-            iWin: list[i].iWin,
-            iTarget:list[i].iTarget,
-            strRound:list[i].strRound,
-            strRoundDetails: list[i].strDetails,
-            strTableID:list[i].strTableID,
-            iTransactionID:list[i].iTransactionID,
             strGroupID:list[i].strGroupID,
-            iComplete:list[i].iComplete,
             iClass:list[i].iClass,
+            iBalance:list[i].iBalance,
+            iGameCode:list[i].iGameCode,
+            strVender:list[i].strVender,
+            strTableID:list[i].strTableID,
+            strRound:list[i].strRound,
+            strUniqueID:list[i].strUniqueID,
+            strDetail:list[i].strDetail,
+            strResult:list[i].strResult,
+            iBet:list[i].iBet,
+            iWin: list[i].iWin,
+            eState:list[i].eState,
+            eType:list[i].eType,
+            iTarget:list[i].iTarget,
             createdAt:list[i].createdAt,
-            updatedAt:updatedAt,
-            strBets:list[i].strBets,
-            eState:list[i].eState
+            updatedAt:list[i].updatedAt
         });
     }
     console.log(records);
@@ -701,18 +691,18 @@ router.post('/request_bettinglist', isLoggedIn, async (req, res) => {
 router.post('/request_bettinglist_page', isLoggedIn, async (req, res) => {
     console.log(req.body);
 
-    const full = await db.BettingRecords.findAll({where:{
+    const full = await db.RecordBets.findAll({where:{
         createdAt:{
             [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
         },
         strGroupID:{[Op.like]:req.body.strGroupID+'%'},
-        strNickname:req.body.strNickname, iHistory: 0
+        strNickname:req.body.strNickname
         }
     });
 
     const cOffset = parseInt(req.body.iPage) * 50;
 
-    const result = await db.BettingRecords.findAll({offset:cOffset, limit:50, where:{
+    const result = await db.RecordBets.findAll({offset:cOffset, limit:50, where:{
         createdAt:{
             [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
         },
@@ -849,9 +839,8 @@ router.post('/request_removedb', isLoggedIn, async (req, res) => {
     console.log(req.body);
     try {
         const ids = req.body.ids ?? '';
-
-        if (-1 !== ids.indexOf(`BettingRecords`)) {
-            await db.BettingRecords.destroy({where:{createdAt:{[Op.lte]:req.body.strDate}}});
+        if (-1 !== ids.indexOf(`RecordBets`)) {
+            await db.RecordBets.destroy({where:{createdAt:{[Op.lte]:req.body.strDate}}});
         }
         if (-1 !== ids.indexOf(`GTs`)) {
             await db.GTs.destroy({where:{createdAt:{[Op.lte]:req.body.strDate}}});
@@ -988,6 +977,10 @@ router.post('/request_agentinfo_modify',isLoggedIn, async (req, res) => {
             });
             for ( let i in children )
             {
+                // 대본사는 부본사 값 무시(대본사와 부본사는 동일하게 설정됨)
+                if (user.iClass == 4 && children[i].iClass == 5) {
+                    continue;
+                }
                 let child = children[i];
                 if ( 
                     child.fSlotR > req.body.fSlotR ||
@@ -1066,6 +1059,85 @@ router.post('/request_agentinfo_modify',isLoggedIn, async (req, res) => {
                 });
             }
 
+            // 대본사 롤링값이 변경될 경우 부본사 롤링값도 같이 변경 처리
+            if (user.iClass == 4) {
+                let msg = '';
+                if (user.fBaccaratR != data.fBaccaratR) {
+                    if (msg == '')
+                        msg = `바카라롤링 변경(${user.fBaccaratR}=>${data.fBaccaratR})`;
+                    else
+                        msg = `${msg} | 바카라롤링 변경(${user.fBaccaratR}=>${data.fBaccaratR})`;
+                }
+                if (user.fUnderOverR != data.fUnderOverR) {
+                    if (msg == '')
+                        msg = `언오버롤링 변경(${user.fUnderOverR}=>${data.fUnderOverR})`;
+                    else
+                        msg = `${msg} | 언오버롤링 변경(${user.fUnderOverR}=>${data.fUnderOverR})`;
+                }
+                if (user.fSlotR != data.fSlotR) {
+                    if (msg == '')
+                        msg = `슬롯롤링 변경(${user.fSlotR}=>${data.fSlotR})`;
+                    else
+                        msg = `${msg} | 슬롯롤링 변경(${user.fSlotR}=>${data.fSlotR})`;
+                }
+                if (user.fPBR != data.fPBR) {
+                    if (msg == '')
+                        msg = `파워볼A롤링 변경(${user.fPBR}=>${data.fPBR})`;
+                    else
+                        msg = `${msg} | 파워볼A롤링 변경(${user.fPBR}=>${data.fPBR})`;
+                }
+                if (user.fPBSingleR != data.fPBSingleR) {
+                    if (msg == '')
+                        msg = `파워볼B단폴롤링 변경(${user.fPBSingleR}=>${data.fPBSingleR})`;
+                    else
+                        msg = `${msg} | 파워볼B단폴롤링 변경(${user.fPBSingleR}=>${data.fPBSingleR})`;
+                }
+                if (user.fPBDoubleR != data.fPBDoubleR) {
+                    if (msg == '')
+                        msg = `파워볼B투폴롤링 변경(${user.fPBDoubleR}=>${data.fPBDoubleR})`;
+                    else
+                        msg = `${msg} | 파워볼B투폴롤링 변경(${user.fPBDoubleR}=>${data.fPBDoubleR})`;
+                }
+                if (user.fPBTripleR != data.fPBTripleR) {
+                    if (msg == '')
+                        msg = `파워볼B쓰리폴롤링 변경(${user.fPBTripleR}=>${data.fPBTripleR})`;
+                    else
+                        msg = `${msg} | 파워볼B쓰리폴롤링 변경(${user.fPBTripleR}=>${data.fPBTripleR})`;
+                }
+
+                if ( msg != '' ) {
+                    // 부본사 리스트 가져오기
+                    let children = await db.Users.findAll({
+                        where: {
+                            iParentID:user.id,
+                            iPermission: {
+                                [Op.notIn]: [100]
+                            },
+                        }
+                    });
+
+                    for (let i in children) {
+                        await children[i].update({
+                            fSlotR:data.fSlotR,
+                            fBaccaratR:data.fBaccaratR,
+                            fUnderOverR:data.fUnderOverR,
+                            fPBR:data.fPBR,
+                            fPBSingleR:data.fPBSingleR,
+                            fPBDoubleR:data.fPBDoubleR,
+                            fPBTripleR:data.fPBTripleR,
+                        });
+
+                        await db.DataLogs.create({
+                            strNickname: children[i].strNickname,
+                            strID: children[i].strID,
+                            strGroupID: children[i].strGroupID,
+                            strLogs: msg,
+                            strEditorNickname: req.user.strNickname,
+                        });
+                    }
+                }
+            }
+
             await user.update(data);
 
             //  현재 정책상 본사일 경우만 롤링을 수정할 수 있다. 아래의 코드는 하위 에이전트 전체를 같은 값으로 세팅 하는 것이다.
@@ -1096,7 +1168,7 @@ router.post('/request_agentinfo_modify',isLoggedIn, async (req, res) => {
 
             if ( req.body.strNickname != req.body.strOriginNickname && bUpdate == true )
             {
-                await db.BettingRecords.update({strID:req.body.strNickname}, {where:{strID:req.body.strOriginNickname}});
+                await db.RecordBets.update({strNickname:req.body.strNickname}, {where: {strNickname:req.body.strOriginNickname}});
                 await db.Inouts.update({strID:req.body.strNickname}, {where:{strID:req.body.strOriginNickname}});
             }
 
@@ -1242,6 +1314,7 @@ const logMessage = (source, data) => {
     return msg;
 }
 
+
 /**
  * 가불 현황 목록
  */
@@ -1357,230 +1430,6 @@ router.post('/popup_credits', isLoggedIn, async (req, res) => {
     res.render('manage_partner/popup_credits_history', {iLayout:5, iHeaderFocus:1, user:user, agent:agent, iocount:iocount, list:list, strParent:strParent});
 });
 
-router.post('/popup_shares', isLoggedIn, async (req, res) => {
-    let parent = await IAgent.GetParentNickname();
-    let strParent = await IAgent.GetParentNickname(req.body.strNickname);
-    let strParentGroupID = await IAgent.GetParentGroupID(req.body.strNickname);
-
-    const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
-    let iCash = 0;
-    let strID = '';
-    let strGroupID = '';
-    if ( dbuser != null ) {
-        iCash = dbuser.iCash;
-        strID = dbuser.strID;
-        strGroupID = dbuser.strGroupID;
-    }
-
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, strID:strID,
-                    iRootClass:req.user.iClass, iPermission:req.user.iPermission};
-
-    const agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
-
-    let list = await IAgent.GetPopupShareInfo(strID, strGroupID);
-
-    res.render('manage_partner/popup_shares', {iLayout:6, iHeaderFocus:0, user:user, agent:agent, list:list, strParent:strParent});
-});
-
-router.post('/popup_shares_history', isLoggedIn, async (req, res) => {
-    console.log(req.body);
-
-    let parent = await IAgent.GetParentNickname();
-    let strParent = await IAgent.GetParentNickname(req.body.strNickname);
-    let strParentGroupID = await IAgent.GetParentGroupID(req.body.strNickname);
-
-    let user = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
-
-    let strGroupID = user.strGroupID;
-
-    const agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
-
-    const list = await db.sequelize.query(`
-        SELECT u.strNickname AS parentNickname, DATE_FORMAT(sc.createdAt,'%Y-%m-%d %H:%i:%S') AS createdAt, 
-        sc.strID, sc.strNickname, sc.strGroupID, sc.iIncrease, sc.writer, sc.strMemo, sc.iBeforeCredit, sc.eType
-        FROM ShareCreditRecords sc
-        LEFT JOIN Users u ON u.strID = sc.strID
-        WHERE sc.strGroupID LIKE CONCAT('${strGroupID}', '%')
-        ORDER BY sc.createdAt DESC
-    `);
-
-    res.render('manage_partner/popup_shares_history', {iLayout:6, iHeaderFocus:1, user:user, agent:agent, list:list[0], strParent:strParent});
-});
-
-router.post('/request_share_history_list', isLoggedIn, async (req, res) => {
-    console.log(req.body);
-
-    let strID = req.body.strID;
-    let strGroupID = req.body.strGroupID;
-    let dateStart = req.body.dateStart;
-    let dateEnd = req.body.dateEnd;
-    let strNickname = req.body.strNickname;
-
-    const list = await db.sequelize.query(`
-        SELECT u.strNickname AS parentNickname, DATE_FORMAT(sc.createdAt,'%Y-%m-%d %H:%i:%S') AS createdAt, 
-        sc.strID, sc.strNickname, sc.strGroupID, sc.iIncrease, sc.writer, sc.strMemo, sc.iBeforeCredit, sc.eType
-        FROM ShareCreditRecords sc
-        LEFT JOIN Users u ON u.strID = sc.strID
-        WHERE sc.strGroupID LIKE CONCAT('${strGroupID}', '%') 
-        AND date(sc.createdAt) BETWEEN '${dateStart}' AND '${dateEnd}'
-        AND sc.strNickname LIKE '%${strNickname}%'
-        ORDER BY sc.createdAt DESC
-    `);
-
-    res.send({result: 'OK', list: list[0]});
-});
-
-router.post('/popup_registershare', isLoggedIn, async(req, res) => {
-    console.log(req.body);
-    const user = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
-    console.log(`######################################################################## popup_registershare`);
-    console.log(user);
-    let agent = {strNickname:user.strNickname, strID:user.strID, strGroupID:user.strGroupID};
-    res.render('manage_partner/popup_registershare', {iLayout:1, iHeaderFocus:0, agent:agent});
-});
-
-// 지분자 등록
-router.post('/reqister_share', isLoggedIn, async(req, res) => {
-
-    console.log(req.body);
-    const dbuser = await db.ShareUsers.findOne({where:{strNickname:req.body.strNickname}});
-    if ( dbuser != null ) {
-        res.send({result:'FAIL', msg: '이미 있는 닉네임입니다'});
-    }
-
-    await db.ShareUsers.create({
-        strID: req.body.strID,
-        strNickname: req.body.strNickname,
-        fShareR:req.body.fShareR,
-        strGroupID: req.body.strGroupID,
-    });
-    res.send({result: 'OK', msg: '저장되었습니다'});
-});
-
-router.post('/popup_view_share_user', isLoggedIn, async(req, res) => {
-    console.log(req.body);
-    const user = await db.ShareUsers.findOne({where:{strNickname:req.body.strNickname}});
-    console.log(user);
-    let agent = {strNickname:user.strNickname, strID:user.strID};
-    res.render('manage_partner/popup_viewshare', {iLayout:1, iHeaderFocus:0, agent:agent, user:user});
-});
-
-router.post('/update_share_user', isLoggedIn, async(req, res) => {
-    console.log(req.body);
-    const user = await db.ShareUsers.findOne({where:{strNickname:req.body.strNickname}});
-    if (user == null)
-    {
-        res.send({result: 'FAIL', msg: '대상자가 없습니다'});
-        return;
-    }
-    await user.update({
-       fShareR: req.body.fShareR
-    });
-    res.send({result: 'OK', msg: '저장 되었습니다'});
-});
-
-// 지분자 등록
-router.post('/delete_share_user', isLoggedIn, async(req, res) => {
-
-    console.log(req.body);
-    const dbuser = await db.ShareUsers.findOne({where:{strNickname:req.body.strNickname}});
-    if (dbuser == null)
-    {
-        res.send({result: 'FAIL', msg: '삭제 대상자가 없습니다'});
-        return;
-    }
-
-    await db.ShareUsers.destroy({where:{strNickname:req.body.strNickname}});
-    res.send({result: 'OK', msg: '삭제되었습니다'});
-});
-
-// 지분자 분기별 목록 조회
-router.post('/request_share_list', isLoggedIn, async(req, res) => {
-
-    console.log(req.body);
-
-    // 해당 분기 죽장 완료 체크
-    let strQuater = req.body.strQuater;
-    let strGroupID = req.body.strGroupID;
-    if (strQuater == '' || strQuater == undefined || strGroupID == '' || strGroupID == undefined) {
-        res.send({result: 'FAIL', msg: '필수 입력값 없음'});
-        return;
-    }
-
-    let exist = await db.SettleRecords.findOne({
-        where:
-            {
-                strQuater: strQuater,
-                strGroupID: {
-                    [Op.like]:strGroupID+'%'
-                }
-            }
-    });
-
-    if (null == exist) {
-        res.send({result:'FAIL', msg: '죽장 완료 후 조회 가능합니다'});
-        return;
-    }
-
-    let strID = req.body.strID;
-    let dateStart = req.body.dateStart;
-    let dateEnd = req.body.dateEnd;
-
-    // 가불 기간 조회(다음 분기)
-    let iMonth = parseInt(req.body.iMonth);
-    let iQuater = parseInt(req.body.iQuater);
-    let dateStartCredit;
-    let dateEndCredit;
-    if ( iQuater == 1 )
-    {
-        dateStartCredit = ITime.get2QuaterStartDate(iMonth);
-        dateEndCredit = ITime.get2QuaterEndDate(iMonth);
-    }
-    else if ( iQuater == 2 )
-    {
-        dateStartCredit = ITime.get1QuaterStartDate(iMonth+1);
-        dateEndCredit = ITime.get1QuaterEndDate(iMonth+1);
-    }
-    console.log(`iMonth / iQuater : ${iMonth} / ${iQuater}`);
-    console.log(`share credit : ${dateStartCredit} ~ ${dateEndCredit}`);
-
-    // 리스트
-    const list = await db.sequelize.query(`
-            SELECT u.strNickname AS parentNickname, su.strNickname AS strNickname, su.fShareR AS fShareR, su.strID AS strID, su.iShareAccBefore AS iShareAccBefore,
-                IFNULL((SELECT sum(iBetting)-sum(iWin)-sum(iRollingPAdmin)-sum(iRollingAgent)-sum(iRollingVAdmin)-sum(iRollingShop)-sum(iRollingUser) FROM BettingRecords WHERE strGroupID LIKE CONCAT(su.strGroupID,'%') AND iGameCode = 0 AND iComplete = 1 AND date(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iTotal,
-                IFNULL((SELECT sum(iBetting)-sum(iWin)-sum(iRollingPAdmin)-sum(iRollingAgent)-sum(iRollingVAdmin)-sum(iRollingShop)-sum(iRollingUser) FROM BettingRecords WHERE strGroupID LIKE CONCAT(su.strGroupID,'%') AND iGameCode = 100 AND iComplete = 1 AND date(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iTotalUnover,
-                IFNULL((SELECT sum(iBetting)-sum(iWin)-sum(iRollingPAdmin)-sum(iRollingAgent)-sum(iRollingVAdmin)-sum(iRollingShop)-sum(iRollingUser) FROM BettingRecords WHERE strGroupID LIKE CONCAT(su.strGroupID,'%') AND iGameCode = 200 AND iComplete = 1 AND date(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iTotalSlot,
-                IFNULL((SELECT sum(iBetting)-sum(iWin)-sum(iRollingPAdmin)-sum(iRollingAgent)-sum(iRollingVAdmin)-sum(iRollingShop)-sum(iRollingUser) FROM BettingRecords WHERE strGroupID LIKE CONCAT(su.strGroupID,'%') AND iGameCode = 300 AND iComplete = 1 AND date(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iTotalPB,
-                IFNULL((SELECT sum(iSettle) FROM SettleRecords WHERE strGroupID LIKE CONCAT(su.strGroupID,'%') AND strQuater = '${strQuater}'),0) as iTotalSettle,
-                IFNULL((SELECT sum(iCommissionB)+sum(iCommissionS) FROM SettleRecords WHERE strGroupID LIKE CONCAT(su.strGroupID,'%') AND strQuater = '${strQuater}'),0) as iTotalCommission,
-                sr.iShareOrgin AS iShareOrgin,
-                sr.iShare AS iShare,
-                sr.iShareAccBefore AS iShareAccBefore,
-                (sr.iShare + sr.iShareAccBefore) AS iCreditBefore,
-                IFNULL((SELECT sum(iIncrease) FROM ShareCreditRecords WHERE strNickname = su.strNickname AND date(createdAt) BETWEEN '${dateStartCredit}' AND '${dateEndCredit}'), 0) AS iTotalIncrease,
---                 (IFNULL((SELECT sum(iIncrease) FROM ShareCreditRecords WHERE strNickname = su.strNickname AND date(createdAt) BETWEEN '${dateStartCredit}' AND '${dateEndCredit}'), 0) + sr.iShare + sr.iShareAccBefore) AS iCreditAfer,
-                su.iShare AS iCreditAfer,
-                IFNULL(sr.id, 0) AS id
-            FROM ShareUsers su
-            LEFT JOIN Users u ON u.strID = su.strID
-            LEFT JOIN ( SELECT strNickname, iShareOrgin, iShare, iShareAccBefore, strQuater, id 
-                        FROM ShareRecords
-                        WHERE strQuater='${strQuater}'
-                ) sr ON su.strNickname = sr.strNickname
-            WHERE su.strGroupID LIKE CONCAT('${strGroupID}', '%')
-        `);
-
-    // 죽장 여부 (true: 지분지급 가능 상태)
-    let enable = true;
-    for (let i in list[0]) {
-        if (list[0][i].id != 0) {
-            enable = false;
-            break;
-        }
-    }
-    res.send({result: 'OK', list: list[0], enable: enable});
-});
-
 let GetViceHQs = async (strGroupID) => {
 
     let list = await db.Users.findAll({where:{iClass:2,
@@ -1597,7 +1446,7 @@ let GetViceHQs = async (strGroupID) => {
 
 let GetAdmins = async (strGroupID, strQuater) => {
     if (strQuater != null && strQuater.length > 0) {
-        let list = await IAgent.GetAdminForSettle(strGroupID, strQuater, 3);
+        let list = await IAgentSettle.GetAdminForSettle(strGroupID, strQuater, 3);
         return list;
     }
 
@@ -1616,7 +1465,7 @@ let GetAdmins = async (strGroupID, strQuater) => {
 let GetProAdmins = async (strGroupID, strQuater) => {
 
     if (strQuater != null && strQuater.length > 0) {
-        let list = await IAgent.GetAdminForSettle(strGroupID, strQuater, 4);
+        let list = await IAgentSettle.GetAdminForSettle(strGroupID, strQuater, 4);
         return list;
     }
 

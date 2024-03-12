@@ -10,14 +10,6 @@
 		<input style="margin-left:180px;width:100px;" type="text" id="datepicker1" class="datepicker"/>~
 		<input style="width:100px;" type="text" id="datepicker2" class="datepicker" />
 		<button class="btn_blue" id="button_search" style="border:1px solid rgb(95, 93, 93);width:70px;;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearch('<%=agent.iClass%>', '<%=agent.strGroupID%>', '<%=agent.iClass%>');"><%=__('Search')%></button>
-
-		<!-- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-		<%=__('Search')%>
-		<select id="select_roomno" style="width:80px;">
-			<option><%=__('Nickname')%></option>
-		</select>
-		<input style="margin-left:0px;width:100px;" id="strSearchNickname" type="text"/>
-		<button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearchNickname();"><%=__('Search')%></button> -->
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
 		<button class="menu5" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;color:white" onclick="OnClickTodayRecord();"><%=__('Today')%></button>
@@ -66,51 +58,6 @@
 			</table>
 		</div>
 	</div>
-
-	<!-- <div class="search_wrap">
-		
-		<p style=" font-size:20px; color:#454545; padding-left:22px;margin-top:10px;height:30px;margin-bottom:5px;"></p>
-		<input type="hidden" name="data_member_idx" value=""/>
-			<div style="text-align:right;padding-right:10px;margin-top:-40px;margin-bottom:10px;">
-			</div>
-	</div>
-	<div class="search_wrap">
-		<p style="background-repeat:no-repeat; background-position:left center; font-size:20px; color:#454545; padding-left:22px;margin-top:10px;height:30px;margin-bottom:5px;"><%=__('Baccarat')%> <%=__('RecordBetting')%></p>
-		<table class="search_list">
-			<caption><%=__('SearchResult')%></caption>
-			<colgroup>
-				<col style="width:10%">
-				<col style="width:15%;">
-				<col style="width:10%;">
-				<col style="width:7%;">
-				<col style="width:15%;">
-				<col style="width:15%;">
-				<col style="width:15%;">
-				<col style="width:15%;">
-				<col style="width:15%;">
-			</colgroup>
-			<thead>
-				<tr>
-					<th scope="col">벤더</th>
-					<th scope="col">테이블</th>
-					<th scope="col"><%=__('Round')%></th>
-					<th scope="col"><%=__('Nickname')%></th>
-					<th scope="col"><%=__('BettingOriginCash')%></th>
-					<th scope="col"><%=__('BettingAccount')%></th>
-					<th scope="col"><%=__('BettingAmount')%></th>
-					<th scope="col"><%=__('BettingWin')%></th>
-					<th scope="col"><%=__('BettingTime')%></th>
-				</tr>
-			</thead>
-			<tbody id="betting_list">
-			</tbody>
-		</table>
-		<input type="hidden" id="strSearchNickname" value="<%=agent.strNickname%>"/>
-			
-		<div class="pagination mt0" id="page">
-		</div>
-	</div> -->
-
 </div>
 
 <script type="text/javascript" src="js/enum.js"></script>
@@ -141,7 +88,7 @@
 
 		$("#table_record_list").hide();
 
-		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.iRootClass, agent.strID);
+		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, '', agent.strID);
 	});
 	
 	let OnClickTodayRecord = () => {
@@ -154,7 +101,7 @@
 		bToggleRecord = true;
 		$("#button_toggle_record").text("닫기");
 
-		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
+		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, '', agent.strID);
 		RequestBettingRecord(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
 	}
 
@@ -172,7 +119,7 @@
 				$('#datepicker2').val(GetMonthlyEndDate());
 			}
 
-			RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
+			RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, '', agent.strID);
 			RequestBettingRecord(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
 		}
 		else {
@@ -189,7 +136,7 @@
 		$('#datepicker1').val(GetMonthly1stStartDate());
 		$('#datepicker2').val(GetMonthly1stEndDate());
 
-		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
+		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, '', agent.strID);
 		RequestBettingRecord(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
 	}
 
@@ -201,7 +148,7 @@
 		$('#datepicker1').val(GetMonthly2ndStartDate());
 		$('#datepicker2').val(GetMonthly2ndEndDate());
 
-		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
+		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, '', agent.strID);
 		RequestBettingRecord(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
 	}
 
@@ -210,7 +157,7 @@
 		bToggleRecord = true;
 		$("#button_toggle_record").text(strClose);
 
-		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
+		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, '', agent.strID);
 		RequestBettingRecord(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
 	}
 

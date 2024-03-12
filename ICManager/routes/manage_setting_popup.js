@@ -12,20 +12,11 @@ router.use(express.static(path.join(__dirname, '../', 'objects')));
 let axios = require('axios');
 
 const db = require('../models');
-//const db = require('../db');
-const ITime = require('../utils/time');
 const IInout = require('../implements/inout');
 const {Op, where}= require('sequelize');
 
-const IAgent = require('../implements/agent');
-const IRolling = require('../implements/rolling');
-const ISettle = require('../implements/settle');
+const IAgent = require('../implements/agent3');
 const ISocket = require('../implements/socket');
-
-const {isLoggedIn, isNotLoggedIn} = require('./middleware');
-const res = require('express/lib/response');
-const {Axios} = require("axios");
-
 
 router.post('/writeannouncement', async (req, res) => {
     
@@ -318,6 +309,11 @@ router.post('/request_writeletter_partner', async (req, res) => {
     console.log(req.body);
 
     const fromUser = await db.Users.findOne({where:{strNickname:req.body.strFrom}});
+    if (fromUser.iPermission == 100 && fromUser.iRelUserID != null) {
+        const relUser = await db.Users.findOne({where: {id: fromUser.iRelUserID}});
+        fromUser.strID = relUser.strID;
+        fromUser.strNickname = relUser.strNickname;
+    }
     const toUser = await db.Users.findOne({where:{strNickname:req.body.receivers}});
 
     const parents = await IAgent.GetParentList(fromUser.strGroupID, fromUser.iClass);
@@ -392,6 +388,13 @@ router.post('/request_letterrecord', async (req, res) => {
     else
         listState.push(req.body.eState);
 
+    let strNickname = req.body.strNickname;
+    const user = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
+    if (user.iRelUserID != null) {
+        const relUser = await db.Users.findOne({where:{id: user.iRelUserID}});
+        strNickname = relUser.strNickname;
+    }
+
     let totalCount = 0;
     if (req.body.iClass == 2) {
         totalCount = await db.Letters.count({
@@ -399,7 +402,7 @@ router.post('/request_letterrecord', async (req, res) => {
                 createdAt:{
                     [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
                 },
-                strFrom:req.body.strNickname,
+                strFrom:strNickname,
                 strTo:{[Op.like]:'%'+req.body.strKeyword+'%'},
                 eRead:{[Op.or]:listState},
             },
@@ -410,7 +413,7 @@ router.post('/request_letterrecord', async (req, res) => {
                 createdAt:{
                     [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
                 },
-                strFrom:req.body.strNickname,
+                strFrom:strNickname,
                 strTo:{[Op.like]:'%'+req.body.strKeyword+'%'},
                 eRead:{[Op.or]:listState},
             },
@@ -428,7 +431,7 @@ router.post('/request_letterrecord', async (req, res) => {
                 createdAt:{
                     [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
                 },
-                strFrom:req.body.strNickname,
+                strFrom:strNickname,
                 strTo:{[Op.like]:'%'+req.body.strKeyword+'%'},
                 eRead:{[Op.or]:listState},
             },
@@ -442,7 +445,7 @@ router.post('/request_letterrecord', async (req, res) => {
                 createdAt:{
                     [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
                 },
-                strFrom:req.body.strNickname,
+                strFrom:strNickname,
                 strTo:{[Op.like]:'%'+req.body.strKeyword+'%'},
                 eRead:{[Op.or]:listState},
             },
@@ -474,6 +477,12 @@ router.post('/request_letterlist', async (req, res) => {
     else
         listState.push(req.body.eState);
 
+    let strNickname = req.body.strNickname;
+    const user = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
+    if (user.iRelUserID != null) {
+        strNickname = user.strNickname;
+    }
+
     let totalCount = 0;
     if (req.body.iClass == 2) {
         totalCount = await db.Letters.count({
@@ -496,7 +505,7 @@ router.post('/request_letterlist', async (req, res) => {
                 createdAt:{
                     [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
                 },
-                strTo:req.body.strNickname,
+                strTo:strNickname,
                 strFrom:{[Op.like]:'%'+req.body.strKeyword+'%'},
                 eRead:{[Op.or]:listState}
             },
@@ -532,7 +541,7 @@ router.post('/request_letterlist', async (req, res) => {
                 createdAt:{
                     [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
                 },
-                strTo:req.body.strNickname,
+                strTo:strNickname,
                 strFrom:{[Op.like]:'%'+req.body.strKeyword+'%'},
                 eRead:{[Op.or]:listState}
             },

@@ -70,8 +70,12 @@ module.exports = (sequelize, DataTypes) => {
         iPWinlose: {
             type:DataTypes.INTEGER,
         },
-        // 죽장(부본죽장 or 대본죽장)
+        // 대본죽장
         iSettle: {
+            type:DataTypes.INTEGER,
+        },
+        // 부본죽장
+        iSettleVice: {
             type:DataTypes.INTEGER,
         },
         // 순이익(매출 합계 - B윈로스 - S윈로스 - 부본죽장 - 대본B알값 - 대본S알값 - 대본죽장)
@@ -92,6 +96,18 @@ module.exports = (sequelize, DataTypes) => {
         },
         // 전월죽장이월
         iSettleBeforeAcc: {
+            type:DataTypes.INTEGER,
+        },
+        // 총이월(전월죽장이월 + 죽장 분기 - 죽장 지급)
+        iSettleAccTotal: {
+            type:DataTypes.INTEGER,
+        },
+        // 죽장 지급 후 해당 분기 사용 누적 금액
+        iSettleAfter: {
+            type:DataTypes.INTEGER,
+        },
+        // 수금액(전월이월금액에 대한 수금액) - 죽장이 완료되야 계산됨
+        iPayback: {
             type:DataTypes.INTEGER,
         },
         iClass: {

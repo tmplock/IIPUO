@@ -15,9 +15,7 @@ const ITime = require('../utils/time');
 const ISocket = require('../implements/socket');
 
 const {Op}= require('sequelize');
-
-const IAgent = require('../implements/agent');
-const IAgent2 = require('../implements/agent3');
+const IAgent = require('../implements/agent3');
 const {isLoggedIn, isNotLoggedIn} = require('./middleware');
 
 router.post('/userinfo', isLoggedIn, async(req, res) => {
@@ -25,7 +23,7 @@ router.post('/userinfo', isLoggedIn, async(req, res) => {
     console.log(`/manage_user_popup/userinfo`);
     console.log(req.body);
 
-    const user = await IAgent2.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
+    const user = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
     user.iRootClass = req.user.iClass;
     user.iPermission = req.user.iPermission;
 
@@ -101,10 +99,7 @@ router.post('/input', isLoggedIn, async(req, res) => {
     }});
     console.log(list.length);
 
-    //var overview = await IAgent.CalculateDailyBettingRecord(0, req.body.strGroupID, req.body.iClass);
     let parents = await IAgent.GetParentList(req.body.strGroupID, req.body.iClass);
-
-    //res.render('manage_user/popup_input', {iLayout:3, iHeaderFocus:1, agent:user, list:list, overview:overview, parents:parents});
     res.render('manage_user/popup_input', {iLayout:3, iHeaderFocus:1, agent:user, list:list, parents:parents});
 });
 
@@ -149,7 +144,7 @@ router.post('/pointrecord', isLoggedIn, async(req, res) => {
 
 router.post('/bettingrecord', isLoggedIn, async(req, res) => {
 
-    const user = await IAgent2.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
+    const user = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
     user.iRootClass = req.user.iClass;
     user.iPermission = req.user.iPermission;
 
@@ -161,7 +156,7 @@ router.post('/bettingrecord', isLoggedIn, async(req, res) => {
 
     const dateStart = ITime.getTodayStart();
     const dateEnd = ITime.getTodayEnd();
-    var overview = await IAgent2.CalculateSelfBettingRecord(req.body.strGroupID, req.body.iClass, dateStart, dateEnd, user.strNickname, user.strID);
+    var overview = await IAgent.CalculateSelfBettingRecord(req.body.strGroupID, req.body.iClass, dateStart, dateEnd, user.strNickname, user.strID);
 
     let parents = await IAgent.GetParentList(req.body.strGroupID, req.body.iClass);
 
@@ -527,6 +522,22 @@ router.post('/request_gt', isLoggedIn, async(req, res) => {
                 iCash:iAfterCashTo,
                 iSettle:iAfterSettleTo,
             });
+
+            // 마지막 죽장의 입출후 금액을 갱신하기
+            let settle = await db.SettleRecords.findAll({
+                where: {
+                    strID: to.strID,
+                },
+                order: [['id', 'DESC']],
+                limit: 1
+            });
+            if (settle.length > 0) {
+                for (let i in settle) {
+                    await settle[i].update({
+                        iSettleAfter:iAfterSettleTo
+                    });
+                }
+            }
 
             const iBeforeCashFrom = parseInt(from.iCash);
             const iAfterCashFrom = iBeforeCashFrom - cAmount;

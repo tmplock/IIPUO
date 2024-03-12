@@ -219,9 +219,9 @@
             let strCreatedAt = '';
             strCreatedAt = userlist[i].createdAt.replace(/T/, ' ').replace(/\..+/, '');
 
-            let strClassTag = `<td style='background-color:${bgcolor};'><a href="javascript:click_user('${userlist[i].strNickname}', '${userlist[i].strGroupID}', '${userlist[i].iClass}');" style="color:blue;">${userlist[i].strNickname}</a></td>`;
+            let strClassTag = `<td style='background-color:${bgcolor};'><a href="#" onclick="OnClickNickname('${userlist[i].strNickname}')" style="color:blue;">${userlist[i].strNickname}</a></td>`;
             if ( userlist[i].iClass != 8 )
-                strClassTag = `<td style='background-color:${bgcolor};'><a href="javascript:RequestPartnerInfo('${userlist[i].strNickname}', '${userlist[i].strGroupID}', '${userlist[i].iClass}');" style="color:blue;">${userlist[i].strNickname}</a></td>`;
+                strClassTag = `<td style='background-color:${bgcolor};'><a href="#" onclick="OnClickNickname('${userlist[i].strNickname}')" style="color:blue;">${userlist[i].strNickname}</a></td>`;
 
             let strDeleteTag = '';
             if (user.iRootClass <= 3 && user.iPermission != 100) {
@@ -229,7 +229,7 @@
                                     <a href="javascript:OnClickRemove('${userlist[i].strNickname}', '${userlist[i].strGroupID}', '${userlist[i].iClass}');" class="btn_red">${strRemove}</a>
                                 </td>`;
             }
-            let letter = `<p>-</p>`;
+            let letter = ``;
             if (user.iRootClass <= 3 && user.iPermission != 100) {
                 letter = `<a href="javascript:OnClickWritingLetter('${userlist[i].strNickname}');" class="btn_green">${strLetter}</a>`;
             }
@@ -251,9 +251,7 @@
                     <td style='background-color:${bgcolor};'>${class6}</td>
                     <td style='background-color:${bgcolor};'>${class7}</td>
                     ${strClassTag}
-                    <td style='background-color:${bgcolor};'>
-                        ${letter}
-                    </td>
+                    ${letter}
                     ${strDeleteTag}
                     <td style='background-color:${bgcolor};'>${GetNumber(userlist[i].iInput)}</td>
                     <td style='background-color:${bgcolor};'>${GetNumber(userlist[i].iOutput)}</td>
@@ -341,26 +339,6 @@
         </tr>`;
 
         $('#userlist').append(endtag);
-    }
-
-    function click_user(strNickname, strGroupID, iClass)
-    {
-        var scLeft = window.screenLeft + 50;
-        var scTop = window.screenTop + 50;
-        window.open('', 'popupUser', `width=1280, height=720, top=${scTop}, left=${scLeft}, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no`);
-
-        var $form = $('<form></form>');
-        $form.attr('action', '/manage_user_popup/bettingrecord');
-        $form.attr('method', 'post');
-        $form.attr('target', 'popupUser');
-        $form.appendTo('body');
-
-        var idx = $(`<input type="hidden" value="${strNickname}" name="strNickname">`);
-        var page = $(`<input type="hidden" value="${strGroupID}" name="strGroupID">`);
-        var category = $(`<input type="hidden" value=${parseInt(iClass)} name="iClass">`);
-
-        $form.append(idx).append(page).append(category);
-        $form.submit();
     }
 
     let RequestUserList = (iTargetClass, strGroupID, iClass) => {

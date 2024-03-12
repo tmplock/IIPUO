@@ -6,7 +6,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="Keywords" content="">
     <meta name="Description" content="">
-    <title>지분자 <%=__('Register')%></title>
+    <title>지분자 보기</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script type="text/javascript" src="/js/jquery.bxslider.min.js"></script>
     <script type="text/javascript" src="/js/placeholders.js"></script>
@@ -23,7 +23,7 @@
 <div class="content" style="position:relative; padding:0 10px 0 10px;">
 
     <div class="list_tit">
-        <h3 style="font-size:35px;color:yellow;font-weight:bold;padding-top:10px; font-family: 'Hahmlet', serif;">지분자 <%=__('Register')%></h3>
+        <h3 style="font-size:35px;color:yellow;font-weight:bold;padding-top:10px; font-family: 'Hahmlet', serif;">지분자 보기</h3>
     </div>
     <!-- 네비게이션 종료 -->
     <div class="write">
@@ -37,18 +37,18 @@
                 <caption><%=__('BoardWrite')%> <%=__('Register')%></caption>
                 <colgroup>
                     <col style="width:15%;">
-                    <col style="width:35%;">
+                    <col style="width:25%;">
                     <col style="width:15%;">
-                    <col style="width:31%;">
+                    <col style="width:15%;">
                 </colgroup>
                 <tr>
                     <th scope="row"> <%=__('Nickname')%></th>
                     <td>
-                        <input type="text" style="width:70%;" name="nickname" required="no"  message="닉네임" id="nickname">
+                        <input type="text" style="width:100%;" name="nickname" required="no"  message="닉네임" id="nickname" disabled="disabled">
                     </td>
                     <th scope="row">지분율(%)</th>
                     <td>
-                        <input type="text" style="width:70%;" name="fShare" required="no"  message="지분율" id="fShare">%
+                        <input type="number" style="width:70%;" name="fShareR" required="no"  message="지분율" id="fShareR"> %
                     </td>
                 </tr>
             </table>
@@ -56,7 +56,8 @@
         </form>
 
         <div class="write_btn align_r mt35" id="bottom_btns">
-            <button class="btn_modify" onclick="SubmitShareUser();"><%=__('Save')%></button>
+            <button class="btn_red" style="background-color: red" onclick="DeleteShareUser();">삭제</button>
+            <button class="btn_modify" onclick="UpdateShareUser();"><%=__('Save')%></button>
             <a href="javascript:self.close();" class="btn_list"><%=__('Close')%></a>
         </div>
     </div>
@@ -65,12 +66,60 @@
 <script type="text/javascript", src="js/manage_user_popup_menu.js"></script>
 <script type="text/javascript">
     var agent = JSON.parse('<%-JSON.stringify(agent)%>');
+    var user =  JSON.parse('<%-JSON.stringify(user)%>');
 
-    let SubmitShareUser = () => {
-        const strID = agent.strID;
-        const strGroupID = agent.strGroupID;
+    console.log(agent);
+    console.log(user);
+
+    let strNickname = user.strNickname;
+    let fShareR = user.fShareR;
+
+    checkBlockNum(`#fShare`);
+
+    $('#nickname').val(strNickname);
+    $('#fShareR').val(fShareR);
+
+    let UpdateShareUser = () => {
+
         const strNickname = $('#nickname').val();
-        const fShare = $('#fShare').val();
+        const fShareB = $('#fShareB').val();
+        const fShareS = $('#fShareS').val();
+
+        $.ajax(
+            {
+                type:'post',
+                url: "/manage_share/update_share_user",
+                context: document.body,
+                data:{
+                    fShareR: fShareR,
+                    strNickname:strNickname,
+                },
+                success:function(data) {
+                    if ( data.result == 'OK' )
+                    {
+                        alert(data.msg);
+                        opener.location.reload();
+                        window.close();
+                    }
+                    else
+                    {
+                        alert(data.msg);
+                    }
+                },
+                error:function(request,status,error){
+                    alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+                }
+            }
+        );
+    }
+
+    let DeleteShareUser = () => {
+        if (!confirm('삭제하시겠습니까')) {
+            return;
+        }
+
+        const strID = agent.strID;
+        const strNickname = $('#nickname').val();
         if (strNickname == '' || strNickname == undefined) {
             alert("닉네임을 입력해주세요.");
             return;
@@ -79,13 +128,11 @@
         $.ajax(
             {
                 type:'post',
-                url: "/manage_partner_popup/reqister_share",
+                url: "/manage_share/delete_share_user",
                 context: document.body,
                 data:{
                     strID: strID,
                     strNickname:strNickname,
-                    fShareR:fShare,
-                    strGroupID:strGroupID,
                 },
                 success:function(data) {
                     if ( data.result == 'OK' )

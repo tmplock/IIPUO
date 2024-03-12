@@ -76,13 +76,15 @@
                                 <col style="width:7%;">
                                 <col style="width:7%;">
                                 <col style="width:7%;">
+                                <col style="width:5%;">
+                                <col style="width:5%;">
+                                <col style="width:5%;">
                                 <col style="width:7%;">
                                 <col style="width:7%;">
                                 <col style="width:7%;">
-                                <col style="width:7%;">
-                                <col style="width:15%;">
                                 <col style="width:10%;">
                                 <col style="width:10%;">
+                                <col style="width:7%;">
                             </colgroup>
                             <thead>
                                 <tr>
@@ -92,19 +94,17 @@
                                     <th scope="col"><%=__('Round')%></th>
                                     <th scope="col"><%=__('Nickname')%></th>
                                     <th scope="col"><%=__('BettingOriginCash')%></th>
-                                    <th scope="col"><%=__('BettingAccount')%></th>
-                                    <th scope="col"><%=__('BettingAmount')%></th>
-                                    <th scope="col"><%=__('BettingWin')%></th>
+                                    <th scope="col" colspan="3"><%=__('BettingAccount')%></th>
                                     <th scope="col">베팅후 금액</th>
+                                    <th scope="col">당첨 금액</th>
+                                    <th scope="col">당첨후 금액</th>
                                     <th scope="col"><%=__('BettingTime')%></th>
-                                    <th scope="col">배팅 처리</th>
+                                    <th scope="col">당첨 결과</th>
                                     <th scope="col">비고</th>
                                 </tr>
                             </thead>
-                            <tbody id="record_list">
-                                
-                            <tr>
-                        </tbody>
+                            <tbody id="betting_list">
+                            </tbody>
                     </table>
 
                     <div class="pagination mt0" id="pagination">
@@ -118,6 +118,7 @@
 <script type="text/javascript" src="js/enum.js"></script>
 <script type="text/javascript" src="js/time.js"></script>
 <script type="text/javascript" src="js/manage_bettingrecord_menu.js"></script>
+<script type="text/javascript" src="js/manage_bettingrecord_ref.js"></script>
 <script type="text/javascript" src="js/manage_setting_ref.js"></script>
 <script type="text/javascript" src="js/pagination.js"></script>
 <script type="text/javascript" src="js/socket.js"></script>
@@ -143,119 +144,6 @@
         OnClickRecord(false);
     });
 
-    let GetBettingTarget = (iTarget, strTableID, color) => {
-        const colorBlue = '#52acff';
-        const colorRed = '#da5656';
-        const colorGreen = '#15ca2d';
-        const colorOrange = '#e7af16';
-        const fontSize = '15px';
-
-        let tagTarget = ``;
-        switch ( parseInt(iTarget) )
-        {
-        case 0: //파워볼 홀
-            tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorBlue};">파워볼 홀</td>`;
-            break;
-        case 1: //파워볼 짝
-        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorRed};">파워볼 짝</td>`;
-            break;
-        case 2: //파워볼 오버
-        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorRed};">파워볼 오버</td>`;
-            break;
-        case 3: //파워볼 언더
-        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorBlue};">파워볼 언더</td>`;
-            break;
-        case 4: //파워볼 홀오버
-        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorRed};">파워볼 홀오버</td>`;
-            break;
-        case 5: //파워볼 홀언더
-        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorBlue};">파워볼 홀언더</td>`;
-            break;
-        case 6: //파워볼 짝오버
-        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorRed};">파워볼 짝오버</td>`;
-            break;
-        case 7: //파워볼 짝언더
-        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorBlue};">파워볼 짝언더</td>`;
-            break;
-        case 8: //일반볼 홀
-        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorBlue};">일반볼 홀</td>`;
-            break;
-        case 9: //일반볼 짝
-        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorRed};">일반볼 짝</td>`;
-            break;
-        case 10: //일반볼 오버
-        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorRed};">일반볼 오버</td>`;
-            break;
-        case 11: //일반볼 언더
-        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorBlue};">일반볼 언더</td>`;
-            break;
-        case 12: //일반볼 대
-        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorGreen};">일반볼 대</td>`;
-            break;
-        case 13: //일반볼 중
-        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorGreen};">일반볼 중</td>`;
-            break;
-        case 14: //일반볼 소
-        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorGreen};">일반볼 소</td>`;
-            break;
-        case 15: //일반볼 홀오버
-        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorBlue};">일반볼 홀오버</td>`;
-            break;
-        case 16: //일반볼 홀언더
-        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorRed};">일반볼 홀언더</td>`;
-            break;
-        case 17: //일반볼 짝오버
-        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorRed};">일반볼 짝오버</td>`;
-            break;
-        case 18: //일반볼 짝언더
-        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorBlue};">일반볼 짝언더</td>`;
-            break;
-        case 19: //일반볼 홀대
-        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorGreen};">일반볼 홀대</td>`;
-            break;
-        case 20: //일반볼 짝대
-        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorGreen};">일반볼 짝대</td>`;
-            break;
-        case 21: //일반볼 홀중
-        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorGreen};">일반볼 홀중</td>`;
-            break;
-        case 22: //일반볼 짝중
-        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorGreen};">일반볼 짝중</td>`;
-            break;
-        case 23: //일반볼 홀소
-        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorGreen};">일반볼 홀소</td>`;
-            break;
-        case 24: //일반볼 짝소
-        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorGreen};">일반볼 짝소</td>`;
-            break;
-        case 25://홀+언더+P홀
-        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorBlue};">홀+언더+P홀</td>`;
-            break;
-        case 26://홀+언더+P짝
-        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorRed};">홀+언더+P짝</td>`;
-            break;
-        case 27://홀+오버+P홀
-        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorBlue};">홀+오버+P홀</td>`;
-            break;
-        case 28://홀+오버+P짝
-        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorRed};">홀+오버+P짝</td>`;
-            break;
-        case 29://짝+언더+P홀
-        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorBlue};">짝+언더+P홀</td>`;
-            break;
-        case 30://짝+언더+P짝
-        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorRed};">짝+언더+P짝</td>`;
-            break;
-        case 31://짝+오버+P홀
-        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorBlue};">짝+오버+P홀</td>`;
-            break;
-        case 32://짝+오버+P짝
-        tagTarget = `<td style="background-color:${color};font-size:${fontSize};color:${colorRed};">짝+오버+P짝</td>`;
-            break;
-        }
-        return tagTarget;
-    }
-
     let RequestRecord = (dateStart, dateEnd, strNickname, strComplete) => {
         $.ajax({
             url:"/manage_bettingrecord/request_record",
@@ -278,66 +166,8 @@
 
                 if ( obj.result == 'OK' )
                 {
-                    $('#record_list').empty();
-
-                    let records = obj.data;
-
-                    let objectTotal = {
-                        iBetting:0,
-                        iWin:0,
-                        iTotal:0
-                    };
-
-                    for ( let i in records )
-                    {
-                        let color = '#FFFFFF';
-                        if ( records[i].iWin > 0 ) {
-                            color = '#d6f3c9';
-                        }
-                        if ( records[i].iComplete == 2 )
-                        {
-                            color = `rgb(255, 150, 125);`;
-                        }
-
-                        objectTotal.iBetting += records[i].iBetting;
-                        objectTotal.iWin += records[i].iWin;
-                        objectTotal.iTotal = objectTotal.iBetting - objectTotal.iWin;
-
-                        let cBettingTarget = parseInt(records[i].iTarget) % 1000;
-
-                        let tagWin = `<td style="background-color:${color};">${GetNumber(records[i].iWin)}</td>`;
-                        if ( records[i].iComplete == 2 )
-                            tagWin = `<td style="background-color:${color};">취소</td>`;
-                        let tagTarget = GetBettingTarget(cBettingTarget, records[i].strTableID, color);
-
-                        let tag = `<tr>
-                                        <td style="background-color:${color};">${getNo(iLimit, obj.totalCount, iCurrentPage, i)}</td>
-                                        <td style="background-color:${color};">${records[i].strVender}</td>
-                                        <td style="background-color:${color};">${records[i].strTableID}</td>
-                                        <td style="background-color:${color};">${records[i].strRound}</td>
-                                        <td style="background-color:${color};"><a style="color:blue;" onclick="OnClickNickname('${records[i].strNickname}')" href="#">${GetClassNickName(records[i].iClass, records[i].strNickname)}</a></td>
-                                        <td style="background-color:${color};">${GetNumber(records[i].iPreviousCash)}</td>
-                                        ${tagTarget}
-                                        <td style="background-color:${color};color:blue;">${GetNumber(records[i].iBetting)}</td>
-                                        ${tagWin}
-                                        <td style="background-color:${color};">${GetNumber(records[i].iAfterCash)}</td>
-                                        <td style="background-color:${color};">${records[i].createdAt}</td>
-                                        <td style="background-color:${color};">${records[i].updatedAt ?? ''}</td>
-                                        <td style="background-color:${color};"></td>
-                                    </tr>`;
-                        $('#record_list').append(tag);
-                    }
-
-                    let tagTotal = `<tr>
-                                        <td colspan="7" style="font-weight: bold;">${strTotal}</td>
-                                        <td style="color:blue;">${GetNumber(objectTotal.iBetting)}</td>
-                                        <td style="color:red;">${GetNumber(objectTotal.iWin)}</td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                    </tr>`;
-                    $('#record_list').append(tagTotal);
+                    const total = obj.totalCount ?? 0;
+                    SetBettingList(obj.data, getNo(iLimit, total, iCurrentPage, 0));
 
                     $('#pagination').empty();
                     $('#pagination').append(getPagination(iLimit, obj.totalCount, iCurrentPage));

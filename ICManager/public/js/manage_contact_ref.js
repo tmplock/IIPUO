@@ -73,44 +73,6 @@ let OnClickChargeRequest = () => {
 	$form.submit();
 }
 
-let SetPage = (iCurrentPage, iType, iSubType) => {
-	$("#page").empty();
-
-	for ( let i = 0; i < page; ++i )
-	{
-		let strOn = '';
-		if ( i == iCurrentPage )
-			strOn = 'on';
-
-		let tag = `<a href="#" onclick='OnClickPage(${i}, ${iType}, ${iSubType});' class=${strOn}>${i+1}</a>`;
-		$("#page").append(tag);
-	}
-}
-
-let RemoveContact = (id) => {
-
-	if ( confirm(strConfirmRemove) )
-	{
-		$.ajax({
-			url:"/manage_contact/request_removecontact",
-			type:"POST",
-			context: document.body,
-			data: {
-				id:id
-			},
-			success: function (obj) {
-
-				if( obj.result == 'OK' )
-				{
-					alert(strAlertComplete);
-					location.reload();
-				}
-			}
-		});
-	}
-}
-
-
 let OnClickNickname = (strNickname) => {
 	$.ajax({
 		type:'post',

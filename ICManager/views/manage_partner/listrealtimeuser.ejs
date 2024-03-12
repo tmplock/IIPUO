@@ -203,8 +203,8 @@
                     <td style="background-color:${bgcolor};">${userlist[i].lev3}</td>
                     <td style="background-color:${bgcolor};">${userlist[i].lev4}</td>
                     <td style="background-color:${bgcolor};">${userlist[i].lev5}</td>
-                    
-                    <td style="background-color:${bgcolor};"><a href="javascript:click_user('${userlist[i].strNickname}', '${userlist[i].strGroupID}', '${userlist[i].iClass}');" style="color:blue;">${userlist[i].strNickname}</a></td>
+
+                    <td style="background-color:${bgcolor};"><a href="#" onclick="OnClickNickname('${userlist[i].strNickname}')" style="color:blue;">${userlist[i].strNickname}</a></td>
                     <td style="background-color:${bgcolor};">${GetNumber(userlist[i].iInput)}</td>
                     <td style="background-color:${bgcolor};">${GetNumber(userlist[i].iOutput)}</td>
                     <td style="background-color:${bgcolor};">${GetNumber(userlist[i].iCash)}</td>
@@ -269,26 +269,6 @@
         </tr>`;
 
         $('#userlist').append(endtag);
-    }
-
-    function click_user(strNickname, strGroupID, iClass)
-    {
-        var scLeft = window.screenLeft + 50;
-        var scTop = window.screenTop + 50;
-        window.open('', 'popupUser', `width=1280, height=720, top=${scTop}, left=${scLeft}, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no`);
-
-        let $form = $('<form></form>');
-        $form.attr('action', '/manage_user_popup/bettingrecord');
-        $form.attr('method', 'post');
-        $form.attr('target', 'popupUser');
-        $form.appendTo('body');
-
-        let idx = $(`<input type="hidden" value="${strNickname}" name="strNickname">`);
-        let page = $(`<input type="hidden" value="${strGroupID}" name="strGroupID">`);
-        let category = $(`<input type="hidden" value=${parseInt(iClass)} name="iClass">`);
-
-        $form.append(idx).append(page).append(category);
-        $form.submit();
     }
 
     let RequestUserList = (strGroupID, iClass) => {

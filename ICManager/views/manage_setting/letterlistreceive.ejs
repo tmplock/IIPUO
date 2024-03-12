@@ -161,7 +161,7 @@
 
 	$(document).ready(() => {
 		DatePicker();
-		$("#datepicker1").val(GetCurrentDate());
+		$("#datepicker1").val(GetCurrentDateBefore(30));
 		$("#datepicker2").val(GetCurrentDate());
 
 		Alert(iocount, "<%=__('RequestInput')%>", "<%=__('RequestOutput')%>","<%=__('LetterSend')%>");

@@ -12,7 +12,7 @@ router.use(express.static(path.join(__dirname, '../', 'objects')));
 const db = require('../models');
 const ITime = require('../utils/time');
 const ISocket = require('../implements/socket');
-const IAgent = require('../implements/agent');
+const IAgent = require('../implements/agent3');
 
 const {Op}= require('sequelize');
 const {isLoggedIn, isNotLoggedIn} = require('./middleware');
@@ -275,7 +275,7 @@ router.post('/request_adjustoutput', isLoggedIn, async (req, res) => {
         }
         nickname = ISocket.GetNicknameClass(req.body.strGroupID, 3);
         if (nickname != '') {
-            ISocket.AlertByNickname(nickname, 'alert_input');
+            ISocket.AlertByNickname(nickname, 'alert_output');
         }
     }
 

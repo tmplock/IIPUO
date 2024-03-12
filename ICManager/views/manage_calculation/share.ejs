@@ -82,7 +82,7 @@
         $.ajax(
             {
                 type:'post',
-                url: "/manage_partner/request_shares",
+                url: "/manage_share/request_shares",
                 context: document.body,
                 data:{dateStart:date1, dateEnd:date2, strID:agent.strID, strNickname:strNickname},
 
@@ -134,21 +134,19 @@
             let sumTotal = 0;
 
             for (let i = 0; i<list.length; i++) {
-                let iBeforeCredit = parseInt(list[i].iBeforeCredit);
-                if (isNaN(iBeforeCredit)) {
-                    iBeforeCredit = 0;
+                let iCreditBefore = parseInt(list[i].iCreditBefore);
+                if (isNaN(iCreditBefore)) {
+                    iCreditBefore = 0;
                 }
-                console.log(`누계1 : ${sumBefore} / ${iBeforeCredit}`);
-                sumBefore = sumBefore + iBeforeCredit;
+                sumBefore = sumBefore + iCreditBefore;
 
                 let iIncrease = parseInt(list[i].iIncrease);
                 if (isNaN(iIncrease)) {
                     iIncrease = 0;
                 }
-                console.log(`누계2 : ${sumIncrease} / ${iIncrease}`);
                 sumIncrease = sumIncrease + iIncrease;
 
-                sumTotal = sumTotal + (iBeforeCredit + iIncrease);
+                sumTotal = sumTotal + (iCreditBefore + iIncrease);
 
                 $('#share_list').append(`
                     <tr>

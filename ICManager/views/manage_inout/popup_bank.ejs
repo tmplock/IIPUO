@@ -5,7 +5,7 @@
         <p style="background-repeat:no-repeat; background-position:left center; font-size:20px; color:#454545; padding-left:22px;margin-top:10px;height:30px;margin-bottom:5px;">
             계좌 목록
         </p>
-        <a class="btn_thinorange" style="position:absolute;top:35px; right:15%;" href="javascript:OnClickAdd();">계좌 등록</a>
+        <a class="btn_thinorange" style="position:absolute;top:35px; right:15%;" href="javascript:OnClickAddBank();">계좌 등록</a>
         <table class="search_list">
             <thead>
             <tr>
@@ -30,7 +30,6 @@
 <script type="text/javascript" src="js/enum.js"></script>
 <script type="text/javascript" src="js/time.js"></script>
 <script type="text/javascript" src="js/util.js"></script>
-<script type="text/javascript" src="js/manage_inout_ref.js"></script>
 <script type="text/javascript">
     let user = JSON.parse('<%-JSON.stringify(user)%>');
     let list = [];
@@ -156,7 +155,7 @@
         }
     }
 
-    let OnClickAdd = () => {
+    let OnClickAddBank = () => {
         window.open('', 'popupChk223', 'width=680, height=520, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
         var $form = $('<form></form>');
         $form.attr('action', '/manage_inout/popup_bank_add');

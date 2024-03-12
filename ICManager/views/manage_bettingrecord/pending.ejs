@@ -26,7 +26,7 @@
         
         <div class="list">
             <div class="list_tit">
-                <h3>카지노 베팅내역
+                <h3>조회실패 베팅내역
                 </h3>
             </div>
 
@@ -110,7 +110,7 @@
 
     let RequestRecord = (dateStart, dateEnd, strNickname) => {
         $.ajax({
-            url:"/manage_bettingrecord/request_casino_record",
+            url:"/manage_bettingrecord/request_pending_record",
             type:"POST",
             context: document.body,
             data : {

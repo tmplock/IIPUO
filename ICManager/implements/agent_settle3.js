@@ -35,131 +35,44 @@ exports.GetAdminForSettle = inline_GetAdminForSettle;
 var inline_GetAgentListForSettle = async (strGroupID, iClass, strQuater, dateStart, dateEnd, strNickname) => {
 
     console.log(`############################################################################################### 2GetAgentListForSettle : iClass = ${iClass}, strGroupID : ${strGroupID}, ${dateStart} ~ ${dateEnd}`);
+
+    let strQuater2 = '';
+    let quaterList = strQuater.split('-');
+    if (quaterList[1] == '2') {
+        strQuater2 = `${quaterList[0]}-1`;
+    } else {
+        strQuater2 = `${parseInt(quaterList[0])-1}-2`;
+    }
+
     let subQuery = '';
     if ( iClass == EAgent.eProAdmin )
     {
         subQuery = `
             IFNULL((SELECT iSettleOrigin FROM SettleRecords WHERE strNickname ='${strNickname}' AND strQuater='${strQuater}'),0) as iSettleOrigin,
             IFNULL((SELECT iSettleAcc FROM SettleRecords WHERE strNickname ='${strNickname}' AND strQuater='${strQuater}'),0) as iSettleAcc,
-            
-            IFNULL((SELECT sum(iBRolling) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iBaccaratRollingMoney,
-            IFNULL((SELECT sum(iUORolling) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iUnderOverRollingMoney,
-            IFNULL((SELECT sum(iSlotRolling) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iSlotRollingMoney,
-            IFNULL((SELECT sum(iPBRolling) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iPBRollingMoney,
-            
-            IFNULL((SELECT sum(iRollingVAdmin) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iMyRollingMoney,
-            
-            IFNULL((SELECT -sum(iRollingUser + iRollingShop + iRollingAgent + iRollingVAdmin + iRollingPAdmin) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iRollingMoney,
-            IFNULL((SELECT -sum(iBWinLose + iBRollingUser + iBRollingShop + iBRollingAgent + iBRollingVAdmin) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iBaccaratTotal,
-            IFNULL((SELECT -sum(iUOWinLose + iUORollingUser + iUORollingShop + iUORollingAgent + iUORollingVAdmin) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iUnderOverTotal,
-            IFNULL((SELECT -sum(iSlotWinLose + iSlotRollingUser + iSlotRollingShop + iSlotRollingAgent + iSlotRollingVAdmin) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iSlotTotal,
-            IFNULL((SELECT -(sum(iPBWinLose + iPBRollingUser + iPBRollingShop + iPBRollingAgent + iPBRollingVAdmin) - sum(iPBBWinLose + iPBBRollingUser + iPBBRollingShop + iPBBRollingAgent + iPBBRollingVAdmin)) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iPBATotal,
-            IFNULL((SELECT -sum(iPBBWinLose + iPBBRollingUser + iPBBRollingShop + iPBBRollingAgent + iPBBRollingVAdmin) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iPBBTotal,
+        `;
+    }
 
-            IFNULL((SELECT -sum(iBWinLose) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iBaccaratWinLose,
-            IFNULL((SELECT -sum(iUOWinLose) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iUnderOverWinLose,
-            IFNULL((SELECT -sum(iSlotWinLose) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iSlotWinLose,
-            IFNULL((SELECT -sum(iPBWinLose) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iPBWinLose
-        `;
-    }
-    else if ( iClass == EAgent.eViceAdmin )
-    {
-        subQuery = `
-            IFNULL((SELECT sum(iBRolling) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iBaccaratRollingMoney,
-            IFNULL((SELECT sum(iUORolling) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iUnderOverRollingMoney,
-            IFNULL((SELECT sum(iSlotRolling) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iSlotRollingMoney,
-            IFNULL((SELECT sum(iPBRolling) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iPBRollingMoney,
+    let subQuery11 = `
+            IFNULL((SELECT sum(iAgentRollingB) FROM RecordDailyOverviews WHERE strID = t2.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iBaccaratRollingMoney,
+            IFNULL((SELECT sum(iAgentRollingUO) FROM RecordDailyOverviews WHERE strID = t2.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iUnderOverRollingMoney,
+            IFNULL((SELECT sum(iAgentRollingS) FROM RecordDailyOverviews WHERE strID = t2.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iSlotRollingMoney,
+            IFNULL((SELECT sum(iAgentRollingPBA + iAgentRollingPBB) FROM RecordDailyOverviews WHERE strID = t2.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iPBRollingMoney,
             
-            IFNULL((SELECT sum(iRollingVAdmin) FROM DailyRecords WHERE strGroupID LIKE CONCAT(t2.strGroupID,'%') AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iMyRollingMoney,
+            IFNULL((SELECT sum(iAgentRollingB + iAgentRollingUO + iAgentRollingS + iAgentRollingPBA + iAgentRollingPBB) FROM RecordDailyOverviews WHERE strID = t2.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iMyRollingMoney,
             
-            IFNULL((SELECT -sum(iRollingUser + iRollingShop + iRollingAgent + iRollingVAdmin) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iRollingMoney,
-            IFNULL((SELECT -sum(iBWinLose + iBRollingUser + iBRollingShop + iBRollingAgent + iBRollingVAdmin) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iBaccaratTotal,
-            IFNULL((SELECT -sum(iUOWinLose + iUORollingUser + iUORollingShop + iUORollingAgent + iUORollingVAdmin) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iUnderOverTotal,
-            IFNULL((SELECT -sum(iSlotWinLose + iSlotRollingUser + iSlotRollingShop + iSlotRollingAgent + iSlotRollingVAdmin) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iSlotTotal,
-            IFNULL((SELECT -(sum(iPBWinLose + iPBRollingUser + iPBRollingShop + iPBRollingAgent + iPBRollingVAdmin) - sum(iPBBWinLose + iPBBRollingUser + iPBBRollingShop + iPBBRollingAgent + iPBBRollingVAdmin)) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iPBATotal,
-            IFNULL((SELECT -sum(iPBBWinLose + iPBBRollingUser + iPBBRollingShop + iPBBRollingAgent + iPBBRollingVAdmin) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iPBBTotal,
-            
-            IFNULL((SELECT -sum(iBWinLose) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iBaccaratWinLose,
-            IFNULL((SELECT -sum(iUOWinLose) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iUnderOverWinLose,
-            IFNULL((SELECT -sum(iSlotWinLose) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iSlotWinLose,
-            IFNULL((SELECT -sum(iPBWinLose) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iPBWinLose
-        `;
-    }
-    else if ( iClass == EAgent.eAgent )
-    {
-        subQuery = `
-            IFNULL((SELECT sum(iBRolling) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iBaccaratRollingMoney,
-            IFNULL((SELECT sum(iUORolling) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iUnderOverRollingMoney,
-            IFNULL((SELECT sum(iSlotRolling) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iSlotRollingMoney,
-            IFNULL((SELECT sum(iPBRolling) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iPBRollingMoney,
-            
-            IFNULL((SELECT sum(iRollingAgent) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iMyRollingMoney,
-            
-            IFNULL((SELECT -sum(iRollingUser + iRollingShop + iRollingAgent) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iRollingMoney,
-            IFNULL((SELECT -sum(iBWinLose + iBRolling) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iBaccaratTotal,
-            IFNULL((SELECT -sum(iUOWinLose + iUORolling) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iUnderOverTotal,
-            IFNULL((SELECT -sum(iSlotWinLose + iSlotRolling) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iSlotTotal,
-            IFNULL((SELECT -(sum(iPBWinLose + iPBRolling) - sum(iPBBWinLose + iPBBRolling)) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iPBATotal,
-            IFNULL((SELECT -sum(iPBBWinLose + iPBBRolling) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iPBBTotal,
-            
-            IFNULL((SELECT -sum(iBWinLose) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iBaccaratWinLose,
-            IFNULL((SELECT -sum(iUOWinLose) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iUnderOverWinLose,
-            IFNULL((SELECT -sum(iSlotWinLose) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iSlotWinLose,
-            IFNULL((SELECT -sum(iPBWinLose) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iPBWinLose
-        `;
-    }
-    else if ( iClass == EAgent.eShop )
-    {
-        subQuery = `
-            IFNULL((SELECT COUNT(*) FROM Users WHERE strGroupID LIKE CONCAT(t2.strGroupID,'%') AND iClass=${EAgent.eUser}),0) as iNumUsers,
-            
-            IFNULL((SELECT sum(iBRolling) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iBaccaratRollingMoney,
-            IFNULL((SELECT sum(iUORolling) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iUnderOverRollingMoney,
-            IFNULL((SELECT sum(iSlotRolling) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iSlotRollingMoney,
-            IFNULL((SELECT sum(iPBRolling) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iPBRollingMoney,
-            
-            IFNULL((SELECT sum(iRollingShop) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iMyRollingMoney,
-            
-            IFNULL((SELECT -sum(iRollingUser)+sum(iRollingShop)+sum(iRollingAgent)+sum(iRollingVAdmin)+sum(iRollingPAdmin) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iRollingMoney,
-            IFNULL((SELECT -sum(iBWinLose + iBRolling) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iBaccaratTotal,
-            IFNULL((SELECT -sum(iUOWinLose + iUORolling) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iUnderOverTotal,
-            IFNULL((SELECT -sum(iSlotWinLose + iSlotRolling) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iSlotTotal,
-            IFNULL((SELECT -(sum(iPBWinLose + iPBRolling) - sum(iPBBWinLose + iPBBRolling)) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iPBATotal,
-            IFNULL((SELECT -sum(iPBBWinLose + iPBBRolling) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iPBBTotal,
-            
-            IFNULL((SELECT -sum(iBWinLose) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iBaccaratWinLose,
-            IFNULL((SELECT -sum(iUOWinLose) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iUnderOverWinLose,
-            IFNULL((SELECT -sum(iSlotWinLose) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iSlotWinLose,
-            IFNULL((SELECT -sum(iPBWinLose) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iPBWinLose
-        `;
-    }
-    else if ( iClass == EAgent.eUser )
-    {
-        subQuery = `
-            0 as iNumViceAdmins, 0 as iNumAgents, 0 as iNumShops, 0 as iNumUsers,
-            
-            IFNULL((SELECT sum(iBRolling) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iBaccaratRollingMoney,
-            IFNULL((SELECT sum(iUORolling) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iUnderOverRollingMoney,
-            IFNULL((SELECT sum(iSlotRolling) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iSlotRollingMoney,
-            IFNULL((SELECT sum(iPBRolling) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iPBRollingMoney,
-            
-            IFNULL((SELECT sum(iRollingUser) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iMyRollingMoney,
-            
-            IFNULL((SELECT -sum(iRollingUser)+sum(iRollingShop)+sum(iRollingAgent)+sum(iRollingVAdmin)+sum(iRollingPAdmin) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iRollingMoney,
-            IFNULL((SELECT -sum(iBWinLose + iBRolling) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iBaccaratTotal,
-            IFNULL((SELECT -sum(iUOWinLose + iUORolling) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iUnderOverTotal,
-            IFNULL((SELECT -sum(iSlotWinLose + iSlotRolling) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iSlotTotal,
-            IFNULL((SELECT -(sum(iPBWinLose + iPBRolling) - sum(iPBBWinLose + iPBBRolling)) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iPBATotal,
-            IFNULL((SELECT -sum(iPBBWinLose + iPBBRolling) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iPBBTotal,
-            
-            IFNULL((SELECT -sum(iBWinLose) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iBaccaratWinLose,
-            IFNULL((SELECT -sum(iUOWinLose) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iUnderOverWinLose,
-            IFNULL((SELECT -sum(iSlotWinLose) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iSlotWinLose,
-            IFNULL((SELECT -sum(iPBWinLose) FROM DailyRecords WHERE strID = t2.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iPBWinLose
-        `;
-    } else {
-        return null;
-    }
+            IFNULL((SELECT -sum(iAgentRollingB + iAgentRollingUO + iAgentRollingS + iAgentRollingPBA + iAgentRollingPBB) FROM RecordDailyOverviews WHERE strID = t2.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iRollingMoney,
+            IFNULL((SELECT -sum(-(iAgentBetB - iAgentWinB) + iAgentRollingB) FROM RecordDailyOverviews WHERE strID = t2.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iBaccaratTotal,
+            IFNULL((SELECT -sum(-(iAgentBetUO - iAgentWinUO) + iAgentRollingUO) FROM RecordDailyOverviews WHERE strID = t2.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iUnderOverTotal,
+            IFNULL((SELECT -sum(-(iAgentBetS - iAgentWinS) + iAgentRollingS) FROM RecordDailyOverviews WHERE strID = t2.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iSlotTotal,
+            IFNULL((SELECT -sum(-(iAgentBetPB - iAgentWinPB) + iAgentRollingPBA) FROM RecordDailyOverviews WHERE strID = t2.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iPBATotal,
+            IFNULL((SELECT -sum(-(iAgentBetPB - iAgentWinPB) + iAgentRollingPBB) FROM RecordDailyOverviews WHERE strID = t2.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iPBBTotal,
+
+            IFNULL((SELECT sum(iAgentBetB - iAgentWinB) FROM RecordDailyOverviews WHERE strID = t2.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iBaccaratWinLose,
+            IFNULL((SELECT sum(iAgentBetUO - iAgentWinUO) FROM RecordDailyOverviews WHERE strID = t2.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iUnderOverWinLose,
+            IFNULL((SELECT sum(iAgentBetS - iAgentWinS) FROM RecordDailyOverviews WHERE strID = t2.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iSlotWinLose,
+            IFNULL((SELECT sum(iAgentBetPB - iAgentWinPB) FROM RecordDailyOverviews WHERE strID = t2.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iPBWinLose
+    `;
 
     let subQuery2 = `
         IFNULL((SELECT sum(iAmount) FROM Inouts WHERE strGroupID LIKE CONCAT(t2.strGroupID,'%') AND eState = 'COMPLETE' AND eType = 'INPUT' AND date(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}' ),0) as iInput,
@@ -175,6 +88,7 @@ var inline_GetAgentListForSettle = async (strGroupID, iClass, strQuater, dateSta
     const [list] = await db.sequelize.query(`
         SELECT
         t2.*, t2.iSettleAcc AS iSettleAccUser, t2.iCash as iMyMoney,
+        IFNULL((SELECT iSettleAccTotal FROM SettleRecords WHERE strNickname = t2.strNickname AND strQuater='${strQuater2}'),0) as iSettleAccTotalBefore,
         IFNULL((SELECT SUM(iCash) FROM Users WHERE strGroupID LIKE CONCAT(t2.strGroupID,'%')),0) as iTotalMoney,
         IFNULL((SELECT iSettleAcc FROM SettleRecords WHERE strNickname ='${strNickname}' AND strQuater='${strQuater}'),0) as iSettleAccQuater,
         IFNULL((SELECT iSettle FROM SettleRecords WHERE strNickname ='${strNickname}' AND strQuater='${strQuater}'),0) as iSettleComplete,
@@ -184,6 +98,7 @@ var inline_GetAgentListForSettle = async (strGroupID, iClass, strQuater, dateSta
         IFNULL((SELECT sum(iAmount) FROM GTs WHERE eType='SETTLE' AND strGroupID LIKE CONCAT(t2.strGroupID, '%') AND date(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iSettleTranslate,
         ${subQuery2},
         ${subQuery}
+        ${subQuery11}
         FROM Users AS t1
         LEFT JOIN Users AS t2 ON t2.iParentID = t1.id
         WHERE t2.iClass=${iClass} AND t2.strGroupID LIKE CONCAT('${strGroupID}', '%')
@@ -207,6 +122,48 @@ var inline_GetAgentListForSettleRecord = async (strGroupID, iClass, strQuater, d
 };
 exports.GetAgentListForSettleRecord = inline_GetAgentListForSettleRecord;
 
+
+let inline_CalculateOverviewSettleCurrent = async (strGroupID, strQuater) => {
+    let data = {iSettlePlus:0, iSettleMinus:0, iCurrentTotalSettle:0};
+
+    let list = await db.SettleRecords.findAll({
+        where: {
+            strQuater: strQuater,
+            iClass: {
+                [Op.in]:[4,5]
+            },
+            strGroupID: {
+                [Op.like]:`${strGroupID}%`
+            }
+        }
+    });
+
+    if (list.length == 0) {
+        list = await db.SettleRecords.findAll({
+            where: {
+                strQuater: GetBeforeQuater(strQuater),
+                iClass: {
+                    [Op.in]:[4,5]
+                },
+                strGroupID: {
+                    [Op.like]:`${strGroupID}%`
+                }
+            }
+        });
+    }
+
+    for (let i in list) {
+        const iSettleAfter = parseInt(list[i].iSettleAfter ?? 0);
+        if (iSettleAfter > 0) {
+            data.iSettlePlus += iSettleAfter;
+        } else {
+            data.iSettleMinus += iSettleAfter;
+        }
+        data.iCurrentTotalSettle += iSettleAfter;
+    }
+    return data;
+};
+exports.CalculateOverviewSettleCurrent = inline_CalculateOverviewSettleCurrent;
 let inline_CalculateOverviewSettle = async (strGroupID, iClass, strQuater, dateStart, dateEnd) => {
 
     let iTotalSettle = `IFNULL((SELECT sum(iSettle) FROM SettleRecords WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND strQuater = '${strQuater}'),0) as iTotalSettle,`;
@@ -219,43 +176,44 @@ let inline_CalculateOverviewSettle = async (strGroupID, iClass, strQuater, dateS
     }
 
     let subQuery = `
-        IFNULL((SELECT sum(iBBetting) FROM DailyRecords WHERE strID = t1.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iBetting,
-        IFNULL((SELECT sum(iUOBetting) FROM DailyRecords WHERE strID = t1.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iBettingUnover,
-        IFNULL((SELECT sum(iSlotBetting) FROM DailyRecords WHERE strID = t1.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iBettingSlot,
-        IFNULL((SELECT sum(iPBBetting) FROM DailyRecords WHERE strID = t1.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iBettingPB,
+        IFNULL((SELECT sum(iAgentBetB) FROM RecordDailyOverviews WHERE strID = t1.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iBetting,
+        IFNULL((SELECT sum(iAgentBetUO) FROM RecordDailyOverviews WHERE strID = t1.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iBettingUnover,
+        IFNULL((SELECT sum(iAgentBetS) FROM RecordDailyOverviews WHERE strID = t1.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iBettingSlot,
+        IFNULL((SELECT sum(iAgentBetPB) FROM RecordDailyOverviews WHERE strID = t1.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iBettingPB,
         
-        IFNULL((SELECT sum(iBWin) FROM DailyRecords WHERE strID = t1.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iWin,
-        IFNULL((SELECT sum(iUOWin) FROM DailyRecords WHERE strID = t1.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iWinUnover,
-        IFNULL((SELECT sum(iSlotWin) FROM DailyRecords WHERE strID = t1.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iWinSlot,
-        IFNULL((SELECT sum(iPBWin) FROM DailyRecords WHERE strID = t1.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iWinPB,
+        IFNULL((SELECT sum(iAgentWinB) FROM RecordDailyOverviews WHERE strID = t1.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iWin,
+        IFNULL((SELECT sum(iAgentWinUO) FROM RecordDailyOverviews WHERE strID = t1.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iWinUnover,
+        IFNULL((SELECT sum(iAgentWinS) FROM RecordDailyOverviews WHERE strID = t1.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iWinSlot,
+        IFNULL((SELECT sum(iAgentWinPB) FROM RecordDailyOverviews WHERE strID = t1.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iWinPB,
     
-        IFNULL((SELECT sum(iBRollingPAdmin)+sum(iBRollingVAdmin)+sum(iBRollingAgent)+sum(iBRollingShop)+sum(iBRollingUser) FROM DailyRecords WHERE strID = t1.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iTotalRolling,
-        IFNULL((SELECT sum(iUORollingPAdmin)+sum(iUORollingVAdmin)+sum(iUORollingAgent)+sum(iUORollingShop)+sum(iUORollingUser) FROM DailyRecords WHERE strID = t1.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iTotalRollingUnover,
-        IFNULL((SELECT sum(iSlotRollingPAdmin)+sum(iSlotRollingVAdmin)+sum(iSlotRollingAgent)+sum(iSlotRollingShop)+sum(iSlotRollingUser) FROM DailyRecords WHERE strID = t1.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iTotalRollingSlot,
-        IFNULL((SELECT sum(iPBRollingPAdmin)+sum(iPBRollingVAdmin)+sum(iPBRollingAgent)+sum(iPBRollingShop)+sum(iPBRollingUser) FROM DailyRecords WHERE strID = t1.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iTotalRollingPB,
+        IFNULL((SELECT sum(iAgentRollingB) FROM RecordDailyOverviews WHERE strID = t1.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iTotalRolling,
+        IFNULL((SELECT sum(iAgentRollingUO) FROM RecordDailyOverviews WHERE strID = t1.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iTotalRollingUnover,
+        IFNULL((SELECT sum(iAgentRollingS) FROM RecordDailyOverviews WHERE strID = t1.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iTotalRollingSlot,
+        IFNULL((SELECT sum(iAgentRollingPBA + iAgentRollingPBB) FROM RecordDailyOverviews WHERE strID = t1.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iTotalRollingPB,
         
-        IFNULL((SELECT sum(iSelfRollingPAdmin) FROM DailyRecords WHERE strID = t1.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iMyRollingMoney,
+        IFNULL((SELECT sum(iAgentRollingB + iAgentRollingUO + iAgentRollingS + iAgentRollingPBA + iAgentRollingPBB) FROM RecordDailyOverviews WHERE strID = t1.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iMyRollingMoney,
         
-        IFNULL((SELECT sum(iBBetting)-sum(iBWin)-sum(iBRollingPAdmin)-sum(iBRollingAgent)-sum(iBRollingVAdmin)-sum(iBRollingShop)-sum(iBRollingUser) FROM DailyRecords WHERE strID = t1.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iTotal,
-        IFNULL((SELECT sum(iUOBetting)-sum(iUOWin)-sum(iUORollingPAdmin)-sum(iUORollingAgent)-sum(iUORollingVAdmin)-sum(iUORollingShop)-sum(iUORollingUser) FROM DailyRecords WHERE strID = t1.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iTotalUnover,
-        IFNULL((SELECT sum(iSlotBetting)-sum(iSlotWin)-sum(iSlotRollingPAdmin)-sum(iSlotRollingAgent)-sum(iSlotRollingVAdmin)-sum(iSlotRollingShop)-sum(iSlotRollingUser) FROM DailyRecords WHERE strID = t1.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iTotalSlot,
-        IFNULL((SELECT sum(iSlotBetting)-sum(iSlotWin)-sum(iSlotRollingPAdmin)-sum(iSlotRollingAgent)-sum(iSlotRollingVAdmin)-sum(iSlotRollingShop)-sum(iSlotRollingUser) FROM DailyRecords WHERE strID = t1.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iTotalPB,
+        IFNULL((SELECT sum(iAgentBetB - iAgentWinB - iAgentRollingB) FROM RecordDailyOverviews WHERE strID = t1.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iTotal,
+        IFNULL((SELECT sum(iAgentBetUO - iAgentWinUO - iAgentRollingUO) FROM RecordDailyOverviews WHERE strID = t1.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iTotalUnover,
+        IFNULL((SELECT sum(iAgentBetS - iAgentWinS - iAgentRollingS) FROM RecordDailyOverviews WHERE strID = t1.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iTotalSlot,
+        IFNULL((SELECT sum(iAgentBetPB - iAgentWinPB - iAgentRollingPBA - iAgentRollingPBB) FROM RecordDailyOverviews WHERE strID = t1.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iTotalPB,
         
-        IFNULL((SELECT sum(iBBetting)-sum(iBWin) FROM DailyRecords WHERE strID = t1.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iWinLose,
-        IFNULL((SELECT sum(iUOBetting)-sum(iUOWin) FROM DailyRecords WHERE strID = t1.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iWinLoseUnover,
-        IFNULL((SELECT sum(iSlotBetting)-sum(iSlotWin) FROM DailyRecords WHERE strID = t1.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iWinLoseSlot,
-        IFNULL((SELECT sum(iPBBetting)-sum(iPBWin) FROM DailyRecords WHERE strID = t1.strID AND date(daily) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iWinLosePB
+        IFNULL((SELECT sum(iAgentBetB - iAgentWinB) FROM RecordDailyOverviews WHERE strID = t1.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iWinLose,
+        IFNULL((SELECT sum(iAgentBetUO - iAgentWinUO) FROM RecordDailyOverviews WHERE strID = t1.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iWinLoseUnover,
+        IFNULL((SELECT sum(iAgentBetS - iAgentWinS) FROM RecordDailyOverviews WHERE strID = t1.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iWinLoseSlot,
+        IFNULL((SELECT sum(iAgentBetPB - iAgentWinPB) FROM RecordDailyOverviews WHERE strID = t1.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iWinLosePB
     `;
 
     const [list] = await db.sequelize.query(`
         SELECT
         IFNULL((SELECT COUNT(id) FROM SettleRecords WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND strQuater = '${strQuater}'),0) as iSettleCount,
         ${iTotalSettle}
-        IFNULL((SELECT SUM(iSettleAcc) FROM SettleRecords WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND strQuater = '${strQuater}') ,0) as iTotalSettleAcc,
-        IFNULL((SELECT sum(iShareAccBefore) FROM ShareRecords WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND strQuater = '${strQuater}'),0) as iTotalShareAccBefore,
-        IFNULL((SELECT sum(iShare) FROM ShareRecords WHERE strGroupID LIKE CONCAT('${strGroupID}', '%') AND strQuater = '${strQuater}'),0) as iTotalShare,
-        IFNULL((SELECT sum(iShare) FROM ShareUsers WHERE strGroupID LIKE CONCAT('${strGroupID}', '%')),0) as iCurrentTotalShare,
+        IFNULL((SELECT SUM(iSettleAccTotal) FROM SettleRecords WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND strQuater = '${strQuater}') ,0) as iTotalSettleAcc,
+        IFNULL((SELECT SUM(iSettleAcc - iPayback) FROM SettleRecords WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND strQuater = '${strQuater}') ,0) as iTotalSettleBeforeAcc1,
+        IFNULL((SELECT SUM(iSettleBeforeAcc + iPayback) FROM SettleRecords WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND strQuater = '${strQuater}') ,0) as iTotalSettleBeforeAcc2,
         IFNULL((SELECT sum(iCommissionB)+sum(iCommissionS) FROM SettleRecords WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND strQuater = '${strQuater}'),0) as iTotalCommission,
+        IFNULL((SELECT sum(iSettleGive) FROM SettleRecords WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND strQuater = '${strQuater}' AND iClass IN (4,5)),0) as iSettleGive,
+        IFNULL((SELECT sum(iSWinlose) FROM SettleRecords WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND strQuater = '${strQuater}' AND iClass = 4 AND fSettleSlot = 0),0) as iSWinlose,
         IFNULL((SELECT sum(iAmount) FROM GTs WHERE eType='ROLLING' AND strGroupID LIKE CONCAT('${strGroupID}', '%') AND date(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iRollingTranslate,
         IFNULL((SELECT sum(iAmount) FROM GTs WHERE eType='SETTLE' AND strGroupID LIKE CONCAT('${strGroupID}', '%') AND date(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iSettleTranslate,
         ${iRolling}
@@ -272,3 +230,220 @@ let inline_CalculateOverviewSettle = async (strGroupID, iClass, strQuater, dateS
     return list;
 };
 exports.CalculateOverviewSettle = inline_CalculateOverviewSettle;
+
+
+
+/**
+ * 죽장 정산 Overview 내 지분자 정보
+ */
+let inline_CalculateOverviewShareCurrent = async (strGroupID, strQuater) => {
+    let data = {iSharePlus:0, iShareMinus:0, iCurrentTotalShare:0};
+
+    let list = await db.ShareRecords.findAll({
+        where: {
+            strQuater: strQuater,
+            strGroupID: {
+                [Op.like]:`${strGroupID}%`
+            }
+        }
+    });
+
+    if (list.length == 0) {
+        // 이전분기에서 한번더 검색
+        list = await db.ShareRecords.findAll({
+            where: {
+                strQuater: GetBeforeQuater(strQuater),
+                strGroupID: {
+                    [Op.like]:`${strGroupID}%`
+                }
+            }
+        });
+    }
+
+    for (let i in list) {
+        const iCreditAfter = parseInt(list[i].iCreditAfter ?? 0);
+        if (iCreditAfter > 0) {
+            data.iSharePlus += iCreditAfter;
+        } else {
+            data.iShareMinus += iCreditAfter;
+        }
+        data.iCurrentTotalShare += iCreditAfter;
+    }
+
+    return data;
+};
+exports.CalculateOverviewShareCurrent = inline_CalculateOverviewShareCurrent;
+
+/**
+ * 죽장 정산 Overview 내 지분자 정보
+ */
+let inline_CalculateOverviewShare = async (strGroupID, strQuater) => {
+    const [list] = await db.sequelize.query(`
+        SELECT
+        IFNULL((SELECT SUM(iShareOrgin) FROM ShareRecords WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND strQuater = '${strQuater}') ,0) as iShareOrgin,
+        IFNULL((SELECT SUM(iShare) FROM ShareRecords WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND strQuater = '${strQuater}') ,0) as iShare,
+        IFNULL((SELECT SUM(iSlotCommission) FROM ShareRecords WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND strQuater = '${strQuater}') ,0) as iSlotCommission,
+        IFNULL((SELECT SUM(iPayback) FROM ShareRecords WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND strQuater = '${strQuater}') ,0) as iPayback,
+        IFNULL((SELECT SUM(iShareAccBefore) FROM ShareRecords WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND strQuater = '${strQuater}') ,0) as iShareAccBefore,
+        IFNULL((SELECT SUM(iCreditBefore) FROM ShareRecords WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND strQuater = '${strQuater}') ,0) as iCreditBefore,
+        IFNULL((SELECT SUM(iCreditAfter) FROM ShareRecords WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND strQuater = '${strQuater}') ,0) as iCreditAfter
+        FROM ShareRecords AS sr
+        WHERE sr.strGroupID LIKE CONCAT('${strGroupID}', '%') AND sr.strQuater = '${strQuater}';
+    `);
+
+    return list;
+};
+exports.CalculateOverviewShare = inline_CalculateOverviewShare;
+
+exports.GetSettleClass = async (strGroupID, iClass, strQuater, dateStart, dateEnd, iOffset, iLimit) => {
+    let offset = parseInt(iOffset ?? 0);
+    let limit = parseInt(iLimit ?? 30);
+    let strQuater2 = '';
+    let quaterList = strQuater.split('-');
+    if (quaterList[1] == '2') {
+        strQuater2 = `${quaterList[0]}-1`;
+    } else {
+        strQuater2 = `${parseInt(quaterList[0])-1}-2`;
+    }
+
+    if (iClass == 4) {
+        let list = await db.sequelize.query(`
+            SELECT
+                t3.strID AS strAdminID, t3.strNickname AS strAdminNickname,
+                t4.strID, t4.strNickname, t4.strGroupID, t4.iClass,
+                t4.fBaccaratR, t4.fSlotR, t4.fUnderOverR, t4.fPBR, t4.fPBSingleR, t4.fPBDoubleR, t4.fPBTripleR,
+                t4.fSettleBaccarat, t4.fSettleSlot, t4.fSettlePBA, t4.fSettlePBB,
+                t4.iSettleAcc AS iSettleAccUser, t4.iCash as iMyMoney,
+                IFNULL((SELECT SUM(iCash) FROM Users WHERE strGroupID LIKE CONCAT(t4.strGroupID,'%')),0) as iTotalMoney,
+                
+                IFNULL((SELECT COUNT(id) FROM SettleRecords WHERE strID = t4.strID AND strQuater='${strQuater}'),0) as settleCount,
+                IFNULL((SELECT iSettleAccTotal FROM SettleRecords WHERE strNickname = t4.strNickname AND strQuater='${strQuater}'),0) as iSettleAccTotal,
+                IFNULL((SELECT iSettleAcc FROM SettleRecords WHERE strNickname = t4.strNickname AND strQuater='${strQuater}'),0) as iSettleAccQuater,
+                IFNULL((SELECT iSettle FROM SettleRecords WHERE strNickname = t4.strNickname AND strQuater='${strQuater}'),0) as iSettleComplete,
+                IFNULL((SELECT iSettleGive FROM SettleRecords WHERE strNickname =t4.strNickname AND strQuater='${strQuater}'),0) as iSettleGive,
+                IFNULL((SELECT iSettleBeforeAcc FROM SettleRecords WHERE strNickname = t4.strNickname AND strQuater='${strQuater}'),0) as iSettleBeforeAcc,
+                IFNULL((SELECT iSettleAfter FROM SettleRecords WHERE strNickname = t4.strNickname AND strQuater='${strQuater}'),0) as iSettleAfter,
+                IFNULL((SELECT iSettleAfter FROM SettleRecords WHERE strNickname = t4.strNickname AND strQuater='${strQuater2}'),0) as iSettleAfter2,
+                IFNULL((SELECT iSettleOrigin FROM SettleRecords WHERE strNickname = t4.strNickname AND strQuater='${strQuater}'),0) as iSettleOrigin,
+                IFNULL((SELECT (iSettleAcc - iPayback) FROM SettleRecords WHERE strNickname = t4.strNickname AND strQuater='${strQuater}'),0) as iSettleAcc,
+                IFNULL((SELECT iPayback FROM SettleRecords WHERE strNickname = t4.strNickname AND strQuater='${strQuater}'),0) as iPayback,
+
+                IFNULL((SELECT sum(iAmount) FROM GTs WHERE eType='ROLLING' AND strGroupID LIKE CONCAT(t4.strGroupID, '%') AND date(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iRollingTranslate,
+                IFNULL((SELECT sum(iAmount) FROM GTs WHERE eType='SETTLE' AND strGroupID LIKE CONCAT(t4.strGroupID, '%') AND date(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iSettleTranslate,
+
+                IFNULL((SELECT sum(iAgentRollingB) FROM RecordDailyOverviews WHERE strID = t4.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iBaccaratRollingMoney,
+                IFNULL((SELECT sum(iAgentRollingUO) FROM RecordDailyOverviews WHERE strID = t4.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iUnderOverRollingMoney,
+                IFNULL((SELECT sum(iAgentRollingS) FROM RecordDailyOverviews WHERE strID = t4.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iSlotRollingMoney,
+                IFNULL((SELECT sum(iAgentRollingPBA + iAgentRollingPBB) FROM RecordDailyOverviews WHERE strID = t4.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iPBRollingMoney,
+                IFNULL((SELECT sum(iAgentRollingB + iAgentRollingUO + iAgentRollingS + iAgentRollingPBA + iAgentRollingPBB) FROM RecordDailyOverviews WHERE strID = t4.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iMyRollingMoney,
+                IFNULL((SELECT -sum(iAgentRollingB + iAgentRollingUO + iAgentRollingS + iAgentRollingPBA + iAgentRollingPBB) FROM RecordDailyOverviews WHERE strID = t4.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iRollingMoney,
+                IFNULL((SELECT -sum(-(iAgentBetB - iAgentWinB) + iAgentRollingB) FROM RecordDailyOverviews WHERE strID = t4.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iBaccaratTotal,
+                IFNULL((SELECT -sum(-(iAgentBetUO - iAgentWinUO) + iAgentRollingUO) FROM RecordDailyOverviews WHERE strID = t4.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iUnderOverTotal,
+                IFNULL((SELECT -sum(-(iAgentBetS - iAgentWinS) + iAgentRollingS) FROM RecordDailyOverviews WHERE strID = t4.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iSlotTotal,
+                IFNULL((SELECT -sum(-(iAgentBetPB - iAgentWinPB) + iAgentRollingPBA) FROM RecordDailyOverviews WHERE strID = t4.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iPBATotal,
+                IFNULL((SELECT -sum(-(iAgentBetPB - iAgentWinPB) + iAgentRollingPBB) FROM RecordDailyOverviews WHERE strID = t4.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iPBBTotal,
+                IFNULL((SELECT sum(iAgentBetB - iAgentWinB) FROM RecordDailyOverviews WHERE strID = t4.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iBaccaratWinLose,
+                IFNULL((SELECT sum(iAgentBetUO - iAgentWinUO) FROM RecordDailyOverviews WHERE strID = t4.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iUnderOverWinLose,
+                IFNULL((SELECT sum(iAgentBetS - iAgentWinS) FROM RecordDailyOverviews WHERE strID = t4.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iSlotWinLose,
+                IFNULL((SELECT sum(iAgentBetPB - iAgentWinPB) FROM RecordDailyOverviews WHERE strID = t4.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iPBWinLose,
+
+                IFNULL((SELECT -sum(-(iAgentBetB - iAgentWinB) + iAgentRollingB)*t5.fSettleBaccarat*0.01 FROM RecordDailyOverviews WHERE t5.strID=strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iBaccaratTotalVice,
+                IFNULL((SELECT -sum(-(iAgentBetUO - iAgentWinUO) + iAgentRollingUO)*t5.fSettleBaccarat*0.01 FROM RecordDailyOverviews WHERE t5.strID=strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iUnderOverTotalVice,
+                IFNULL((SELECT -sum(-(iAgentBetS - iAgentWinS) + iAgentRollingS)*t5.fSettleSlot*0.01 FROM RecordDailyOverviews WHERE t5.strID=strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iSlotTotalVice,
+                IFNULL((SELECT -sum(-(iAgentBetPB - iAgentWinPB) + iAgentRollingPBA)*t5.fSettlePBA*0.01 FROM RecordDailyOverviews WHERE t5.strID=strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iPBATotalVice,
+                IFNULL((SELECT -sum(-(iAgentBetPB - iAgentWinPB) + iAgentRollingPBB)*t5.fSettlePBB*0.01 FROM RecordDailyOverviews WHERE t5.strID=strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iPBBTotalVice,
+
+                IFNULL((SELECT sum(iAmount) FROM Inouts WHERE strGroupID LIKE CONCAT(t4.strGroupID,'%') AND eState = 'COMPLETE' AND eType = 'INPUT' AND date(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}' ),0) as iInput,
+                IFNULL((SELECT sum(iAmount) FROM Inouts WHERE strGroupID LIKE CONCAT(t4.strGroupID,'%') AND eState = 'COMPLETE' AND eType = 'OUTPUT' AND date(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iOutput,
+                IFNULL((SELECT sum(iAmount) FROM Inouts WHERE eState = 'COMPLETE' AND eType = 'INPUT' AND strID = t4.strNickname AND date(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}' ),0) as iInput,
+                IFNULL((SELECT sum(iAmount) FROM Inouts WHERE eState = 'COMPLETE' AND eType = 'OUTPUT' AND strID = t4.strNickname AND date(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iOutput
+            FROM Users t4
+                     LEFT JOIN Users t3 ON t3.id = t4.iParentID
+                     LEFT JOIN Users t5 ON t5.iParentID = t4.id
+            WHERE t4.iClass = ${iClass} AND t4.strGroupID LIKE CONCAT('${strGroupID}', '%')
+            ORDER BY settleCount ASC, t4.strGroupID ASC
+                LIMIT ${limit}
+            OFFSET ${offset}
+        `);
+        return list[0];
+    } else if (iClass == 5) {
+        let list = await db.sequelize.query(`
+            SELECT
+                t3.strID AS strAdminID, t3.strNickname AS strAdminNickname,
+                t5.strID, t5.strNickname, t5.strGroupID, t5.iClass,
+                t5.fBaccaratR, t5.fSlotR, t5.fUnderOverR, t5.fPBR, t5.fPBSingleR, t5.fPBDoubleR, t5.fPBTripleR,
+                t5.fSettleBaccarat, t5.fSettleSlot, t5.fSettlePBA, t5.fSettlePBB,
+                t5.iSettleAcc AS iSettleAccUser, t5.iCash as iMyMoney,
+                IFNULL((SELECT SUM(iCash) FROM Users WHERE strGroupID LIKE CONCAT(t5.strGroupID,'%')),0) as iTotalMoney,
+                
+                IFNULL((SELECT COUNT(id) FROM SettleRecords WHERE strID = t5.strID AND strQuater='${strQuater}'),0) as settleCount,
+                IFNULL((SELECT iSettleAccTotal FROM SettleRecords WHERE strNickname = t5.strNickname AND strQuater='${strQuater}'),0) as iSettleAccTotal,
+                IFNULL((SELECT iSettleAcc FROM SettleRecords WHERE strNickname = t5.strNickname AND strQuater='${strQuater}'),0) as iSettleAccQuater,
+                IFNULL((SELECT iSettle FROM SettleRecords WHERE strNickname = t5.strNickname AND strQuater='${strQuater}'),0) as iSettleComplete,
+                IFNULL((SELECT iSettleGive FROM SettleRecords WHERE strNickname = t5.strNickname AND strQuater='${strQuater}'),0) as iSettleGive,
+                IFNULL((SELECT iSettleBeforeAcc FROM SettleRecords WHERE strNickname = t5.strNickname AND strQuater='${strQuater}'),0) as iSettleBeforeAcc,
+                IFNULL((SELECT iSettleAfter FROM SettleRecords WHERE strNickname = t5.strNickname AND strQuater='${strQuater}'),0) as iSettleAfter,
+                IFNULL((SELECT iSettleAfter FROM SettleRecords WHERE strNickname = t5.strNickname AND strQuater='${strQuater2}'),0) as iSettleAfter2,
+                IFNULL((SELECT iSettleOrigin FROM SettleRecords WHERE strNickname = t5.strNickname AND strQuater='${strQuater}'),0) as iSettleOrigin,
+                IFNULL((SELECT (iSettleAcc - iPayback) FROM SettleRecords WHERE strNickname = t5.strNickname AND strQuater='${strQuater}'),0) as iSettleAcc,
+                IFNULL((SELECT iPayback FROM SettleRecords WHERE strNickname = t5.strNickname AND strQuater='${strQuater}'),0) as iPayback,
+
+                IFNULL((SELECT sum(iAmount) FROM GTs WHERE eType='ROLLING' AND strGroupID LIKE CONCAT(t5.strGroupID, '%') AND date(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iRollingTranslate,
+                IFNULL((SELECT sum(iAmount) FROM GTs WHERE eType='SETTLE' AND strGroupID LIKE CONCAT(t5.strGroupID, '%') AND date(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iSettleTranslate,
+
+                IFNULL((SELECT sum(iAgentRollingB) FROM RecordDailyOverviews WHERE strID = t5.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iBaccaratRollingMoney,
+                IFNULL((SELECT sum(iAgentRollingUO) FROM RecordDailyOverviews WHERE strID = t5.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iUnderOverRollingMoney,
+                IFNULL((SELECT sum(iAgentRollingS) FROM RecordDailyOverviews WHERE strID = t5.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iSlotRollingMoney,
+                IFNULL((SELECT sum(iAgentRollingPBA + iAgentRollingPBB) FROM RecordDailyOverviews WHERE strID = t5.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iPBRollingMoney,
+                IFNULL((SELECT sum(iAgentRollingB + iAgentRollingUO + iAgentRollingS + iAgentRollingPBA + iAgentRollingPBB) FROM RecordDailyOverviews WHERE strID = t5.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iMyRollingMoney,
+                IFNULL((SELECT -sum(iAgentRollingB + iAgentRollingUO + iAgentRollingS + iAgentRollingPBA + iAgentRollingPBB) FROM RecordDailyOverviews WHERE strID = t5.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iRollingMoney,
+                IFNULL((SELECT -sum(-(iAgentBetB - iAgentWinB) + iAgentRollingB) FROM RecordDailyOverviews WHERE strID = t5.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iBaccaratTotal,
+                IFNULL((SELECT -sum(-(iAgentBetUO - iAgentWinUO) + iAgentRollingUO) FROM RecordDailyOverviews WHERE strID = t5.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iUnderOverTotal,
+                IFNULL((SELECT -sum(-(iAgentBetS - iAgentWinS) + iAgentRollingS) FROM RecordDailyOverviews WHERE strID = t5.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iSlotTotal,
+                IFNULL((SELECT -sum(-(iAgentBetPB - iAgentWinPB) + iAgentRollingPBA) FROM RecordDailyOverviews WHERE strID = t5.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iPBATotal,
+                IFNULL((SELECT -sum(-(iAgentBetPB - iAgentWinPB) + iAgentRollingPBB) FROM RecordDailyOverviews WHERE strID = t5.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iPBBTotal,
+                IFNULL((SELECT sum(iAgentBetB - iAgentWinB) FROM RecordDailyOverviews WHERE strID = t5.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iBaccaratWinLose,
+                IFNULL((SELECT sum(iAgentBetUO - iAgentWinUO) FROM RecordDailyOverviews WHERE strID = t5.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iUnderOverWinLose,
+                IFNULL((SELECT sum(iAgentBetS - iAgentWinS) FROM RecordDailyOverviews WHERE strID = t5.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iSlotWinLose,
+                IFNULL((SELECT sum(iAgentBetPB - iAgentWinPB) FROM RecordDailyOverviews WHERE strID = t5.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iPBWinLose,
+                      
+                IFNULL((SELECT sum(iAmount) FROM Inouts WHERE strGroupID LIKE CONCAT(t5.strGroupID,'%') AND eState = 'COMPLETE' AND eType = 'INPUT' AND date(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}' ),0) as iInput,
+                IFNULL((SELECT sum(iAmount) FROM Inouts WHERE strGroupID LIKE CONCAT(t5.strGroupID,'%') AND eState = 'COMPLETE' AND eType = 'OUTPUT' AND date(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iOutput,
+                IFNULL((SELECT sum(iAmount) FROM Inouts WHERE eState = 'COMPLETE' AND eType = 'INPUT' AND strID = t5.strNickname AND date(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}' ),0) as iInput,
+                IFNULL((SELECT sum(iAmount) FROM Inouts WHERE eState = 'COMPLETE' AND eType = 'OUTPUT' AND strID = t5.strNickname AND date(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iOutput
+            FROM Users t5
+                LEFT JOIN Users t4 ON t4.id = t5.iParentID
+                LEFT JOIN Users t3 ON t3.id = t4.iParentID
+            WHERE t5.iClass = ${iClass} AND t5.strGroupID LIKE CONCAT('${strGroupID}', '%')
+            ORDER BY settleCount ASC, t5.strGroupID ASC
+            LIMIT ${limit}
+            OFFSET ${offset}
+        `);
+        return list[0];
+    }
+    return [];
+}
+
+exports.GetSettleList = async (strGroupID, strQuater) => {
+    let list = await db.SettleRecords.findAll({where: {
+            strQuater: `${strQuater}`,
+            strGroupID: {
+                [Op.like] : `${strGroupID}%`
+            }
+        },
+        order: [['iClass', 'ASC']],
+    });
+    return list;
+}
+
+
+let GetBeforeQuater = (strQuater) => {
+    let strQuater2 = '';
+    let quaterList = strQuater.split('-');
+    if (quaterList[1] == '2') {
+        strQuater2 = `${quaterList[0]}-1`;
+    } else {
+        strQuater2 = `${parseInt(quaterList[0])-1}-2`;
+    }
+    return strQuater2;
+}

@@ -23,8 +23,8 @@
                 <option value="10">11</option>
                 <option value="11">12</option>
             </select>월
-            <button id="button_quater" class="menu1" data-menu="2" style="border:1px solid rgb(95, 93, 93);width:170px;height:25px;text-align:center;color:white" onclick="Request1stHalf();"><%=__('Half1')%></button>
-            <button id="button_quater" class="menu1" data-menu="3" style="border:1px solid rgb(95, 93, 93);width:170px;height:25px;text-align:center;color:white" onclick="Request2ndHalf();"><%=__('Half2')%></button>
+            <button id="button_quater1" class="menu1" data-menu="2" style="border:1px solid rgb(95, 93, 93);width:170px;height:25px;text-align:center;color:white" onclick="Request1stHalf();"><%=__('Half1')%></button>
+            <button id="button_quater2" class="menu1" data-menu="3" style="border:1px solid rgb(95, 93, 93);width:170px;height:25px;text-align:center;color:white" onclick="Request2ndHalf();"><%=__('Half2')%></button>
             <div id="testSettle" style="background-color:#ffffff;text-align:right;padding-right:5px;padding-top:0px;padding-bottom:0px;" colspan="19">
             </div>
         </div>
@@ -34,22 +34,28 @@
                 <table class="search_list">
                     <caption><%=__('SearchResult')%></caption>
                     <colgroup>
-                        <col style="width:9%">
-                        <col style="width:9%">
-                        <col style="width:9%">
-                        <col style="width:9%">
-                        <col style="width:9%">
-                        <col style="width:9%">
-                        <col style="width:9%">
-                        <col style="width:9%">
-                        <col style="width:28%">
+                        <col style="width:7%">
+                        <col style="width:7%">
+                        <col style="width:7%">
+                        <col style="width:7%">
+                        <col style="width:7%">
+                        <col style="width:7%">
+                        <col style="width:7%">
+                        <col style="width:7%">
+                        <col style="width:7%">
+                        <col style="width:7%">
+                        <col style="width:7%">
+                        <col style="width:23%">
                     </colgroup>
                     <thead>
                     <tr>
                         <th scope="col">본사</th>
                         <th scope="col">지분자</th>
                         <th scope="col">순이익</th>
-                        <th scope="col">지분율% </th>
+                        <th scope="col">슬롯 알값</th>
+                        <th scope="col">수금</th>
+                        <th scope="col">합계</th>
+                        <th scope="col">지분율%</th>
                         <th scope="col">배당금</th>
                         <th scope="col">전월 이월 금액</th>
                         <th scope="col" >입출전 금액</th>
@@ -81,33 +87,43 @@
     let dateQuaterEnd = '';
     let selectQuaterMonth = '';
     let selectQuater = 0;
+    let shareList = [];
 
-    console.log(list);
     DatePicker();
 
     let date = new Date();
-    $('#quater_month').val(date.getMonth());
-    selectQuaterMonth = date.getMonth();
+
     $('#quater_month').on('change', () => {
-        let month = $('#quater_month').val();
-        if (parseInt(selectQuaterMonth ?? -1) != parseInt(month)) {
-            selectQuaterMonth = month;
-            if (selectQuater == 1) {
-                Request1stHalf();
-            } else if (selectQuater == 2) {
-                Request2ndHalf();
-            }
-        }
+        $('#button_quater1').attr('class', 'menu1');
+        $('#button_quater2').attr('class', 'menu1');
     });
 
     $(document).ready( ()=> {
+        $('#quater_month').val(date.getMonth());
+        selectQuaterMonth = date.getMonth();
+
         SetList(list, false);
     });
 
-    $(document).on('click', '#button_quater', (e) => {
-
+    $(document).on('click', '#button_quater1', (e) => {
+        let iMonth = parseInt($('#quater_month').val());
+        // if (!ValidationSettleHalf1(iMonth)) {
+        // 	$(e.currentTarget).attr('class', 'menu1');
+        // 	alert('현재 해당 분기는 조회할 수 없습니다(16일부터 가능합니다)');
+        // 	return;
+        // }
         $('.menu5').attr('class', 'menu1');
+        $(e.currentTarget).attr('class', 'menu5');
+    });
 
+    $(document).on('click', '#button_quater2', (e) => {
+        let iMonth = parseInt($('#quater_month').val());
+        // if (!ValidationSettleHalf2(iMonth)) {
+        // 	$(e.currentTarget).attr('class', 'menu1');
+        // 	alert('현재 해당 분기는 조회할 수 없습니다(1일부터 가능합니다)');
+        // 	return;
+        // }
+        $('.menu5').attr('class', 'menu1');
         $(e.currentTarget).attr('class', 'menu5');
     });
 
@@ -134,29 +150,32 @@
 
         $("#list_agents").empty();
         if (list.length > 0) {
+            shareList = [];
             for (var i = 0; i<list.length; i++) {
                 let aObject = list[i];
 
                 let parentNickname = aObject.parentNickname ?? '';
                 let strNickname = aObject.strNickname ?? '';
-                let iShareOrgin = parseInt(aObject.iShareOrgin ?? '0');
+                let iShareOrgin = parseInt(aObject.iShareOrgin ?? '0'); // 순이익
+                let iSlotCommission = parseInt(aObject.iSlotCommission ?? 0);
+                let iPayback = parseInt(aObject.iPayback ?? 0);
+                let iSum = iShareOrgin + iSlotCommission + iPayback;
+                let fShareR = parseInt(aObject.fShareR ?? 0); // 지분율
+                let iShare = parseInt(aObject.iShare ?? 0); // 배당금
                 if (enable) {
-                    // 순이익 계산
-                    let iTotalSum = parseInt(aObject.iTotal)  + parseInt(aObject.iTotalUnover) + parseInt(aObject.iTotalSlot) + parseInt(aObject.iTotalPB);
-                    let iTotalSettle = parseInt(aObject.iTotalSettle);
-                    let iTotalCommission = parseInt(aObject.iTotalCommission);
-                    iShareOrgin = iTotalSum - parseInt(aObject.iTotalSettle) - parseInt(aObject.iTotalCommission);
+                    iSlotCommission = -parseInt(aObject.iSWinlose ?? 0) * 0.1; // 슬롯 알값(슬롯 죽장이 0일 경우 슬롯에 대한 수수료를 지분자들이 부담)
+                    iSum = iShareOrgin + iSlotCommission + iPayback;
+                    // 서버 전송용
+                    aObject.iSlotCommission = iSlotCommission;
+                    aObject.iSum = iSum;
+                    aObject.iShare = 0; // 배당금은 서버에서 계산 처리
+                } else {
+                    aObject.iSum = iSum;
                 }
-                let fShareR = parseFloat(aObject.fShareR ?? '0.0');
-                let iShare = parseInt(aObject.iShare ?? '0'); // 해당 분기 배당금
-                if (enable) {
-                    // 배당금 금액(지분율 계산 금액)
-                    iShare = iShareOrgin * (fShareR/100);
-                }
-                let iShareAccBefore = parseInt(aObject.iShareAccBefore); // 전월 이월금액
-                let iCreditBefore = parseInt(aObject.iCreditBefore); // 가불전 금액(배당금 + 전월 이월 금액)
-                // let iTotalIncrease = parseInt(aObject.iTotalIncrease); // 가불 총 금액
-                let iCreditAfer = parseInt(aObject.iCreditAfer); // 가불후 금액
+
+                let iShareAccBefore = parseInt(aObject.iShareAccBefore ?? 0); // 전월 이월금액
+                let iCreditBefore = parseInt(aObject.iCreditBefore ?? 0); // 가불전 금액(배당금 + 전월 이월 금액)
+                let iCreditAfter = parseInt(aObject.iCreditAfter ?? 0); // 가불후 금액
 
                 let tagoption = 'disabled="disabled"';
                 if (enable) {
@@ -167,15 +186,28 @@
                 $('#list_agents').append(`
                     <tr class="Share" id=${aObject.strNickname}>
                         <td id='agent_${strNickname}'>${parentNickname}</td>
-                        <td id='strNickname_${strNickname}'><a href='#' onclick="OnClickNickname('${strNickname}')";>${strNickname}</a></td>
-                        <td id='iShareOrgin_${strNickname}'>${GetNumberSign(iShareOrgin, '0')}</td>
-                        <td>
-                            <input type="number" style="width:50%;" name="bakara_over_31" id="fShareR_${aObject.strNickname}" required="no" message="지분" value=${aObject.fShareR} ${tagoption}>%
+                        <td id='strNickname_${strNickname}'><a style="color:blue;" href='#' onclick="OnClickNickname('${strNickname}')";>${strNickname}</a></td>
+                        <td id='iShareOrgin_${strNickname}' style="font-size: 12px; padding: 10px; line-height: 1.5;">
+                            <label id='iShareOrgin_${strNickname}' for="mile_sect_cash_2" style="font-size:12px;">${GetNumberSign(iShareOrgin, '0')}</label>
                         </td>
-                        <td id='iShare_${strNickname}'>${GetNumberSign(iShare)}</td>
+                        <td id='iShareCommision_${strNickname}' style="font-size: 12px; padding: 10px; line-height: 1.5;">
+                            <label id='iShareCommisionS_${strNickname}' for="mile_sect_cash_2" style="font-size:12px;">${GetNumberSign(iSlotCommission, '0')}</label>
+                        </td>
+                        <td id='iSharePayback_${strNickname}' style="font-size: 12px; padding: 10px; line-height: 1.5;">
+                            <label id='iSharePayback_${strNickname}' for="mile_sect_cash_2" style="font-size:12px;">${GetNumberSign(iPayback, '0')}</label>
+                        </td>
+                        <td id='iShareTotal_${strNickname}' style="font-size: 12px; padding: 10px; line-height: 1.5;">
+                            <label id='iShareTotal_${strNickname}' for="mile_sect_cash_2" style="font-size:12px;">${GetNumberSign(iSum, '0')}</label>
+                        </td>
+                        <td style="font-size: 12px; padding: 10px; line-height: 1.5;">
+                            <input type="number" style="width:50%;" name="bakara_over_31" id="fShareB_${aObject.strNickname}" required="no" message="지분" value=${aObject.fShareR} ${tagoption}>%
+                        </td>
+                        <td id='iShare_${strNickname}' style="font-size: 12px; padding: 10px; line-height: 1.5;">
+                            <label id='iShare_${strNickname}' for="mile_sect_cash_2" style="font-size:12px;">${GetNumberSign(iShare, '0')}</label>
+                        </td>
                         <td id='iShareAccBefore_${strNickname}'>${GetNumberSign(iShareAccBefore)}</td>
                         <td id='iCreditBefore_${strNickname}'>${GetNumberSign(iCreditBefore, '0')}</td>
-                        <td id='iCreditAfer_${strNickname}'>${GetNumberSign(iCreditAfer, '0')}</td>
+                        <td id='iCreditAfter_${strNickname}'>${GetNumberSign(iCreditAfter, '0')}</td>
                         <% if (user.iPermission != 100) { %>
                             <td>
                                 <input type="radio" name="mile_sect" required="yes" message="구분" value="M" id="share_type_1" onclick="OnClickCreditType('MINUS');">
@@ -196,7 +228,47 @@
                 checkBlockNum(`#fShareR_${aObject.strNickname}`);
                 checkBlockNum(`#iIncrease_${strNickname}`);
                 checkBlockCharSpecial2(`#sharememo_${strNickname}`);
+
+
+                shareList.push(aObject);
+
             }
+
+            // total
+            let strIDs = [];
+            let data = {strID:'', iShareOrgin:0, iSlotCommission:0, iSum:0, iShare:0, iShareAccBefore: 0, iCreditBefore: 0, iCreditAfter: 0, iPayback: 0};
+            for (let i in shareList) {
+                let strID = shareList[i].strID;
+                if (strIDs.includes(strID)) {
+                    continue;
+                }
+                strIDs.push(strID);
+                data.iShareOrgin += parseInt(shareList[i].iShareOrgin ?? 0);
+                data.iSlotCommission += parseInt(shareList[i].iSlotCommission ?? 0);
+                data.iSum += parseInt(shareList[i].iSum ?? 0);
+                if (!enable) {
+                    data.iShare += parseInt(shareList[i].iShare ?? 0);
+                }
+                data.iShareAccBefore += parseInt(shareList[i].iShareAccBefore ?? 0);
+                data.iCreditBefore += parseInt(shareList[i].iCreditBefore ?? 0);
+                data.iCreditAfter += parseInt(shareList[i].iCreditAfter ?? 0);
+                data.iPayback += parseInt(shareList[i].iPayback ?? 0);
+            }
+            $('#list_agents').append(`
+                    <tr class="Total" style="font-weight: bold">
+                        <td colspan="2">합계</td>
+                        <td>${GetNumberSign(data.iShareOrgin, '0')}</td>
+                        <td>${GetNumberSign(data.iSlotCommission, '0')}</td>
+                        <td>${GetNumberSign(data.iPayback, '0')}</td>
+                        <td>${GetNumberSign(data.iSum, '0')}</td>
+                        <td></td>
+                        <td>${GetNumberSign(data.iShare, '0')}</td>
+                        <td>${GetNumberSign(data.iShareAccBefore)}</td>
+                        <td>${GetNumberSign(data.iCreditBefore, '0')}</td>
+                        <td>${GetNumberSign(data.iCreditAfter, '0')}</td>
+                        <td></td>
+                    </tr>
+                `);
         } else {
             console.log('else');
             $('#list_agents').append(`
@@ -210,15 +282,18 @@
                         <td></td>
                         <td></td>
                         <td></td>
+                        <td></td>
                     </tr>
             `);
         }
+
+
     }
 
     // 지분자 비율 적용
     let DoApplyShare = () => {
         var list = [];
-        var total = 0;
+        var totalR = 0;
         var agents = document.querySelectorAll("tr[class=Share]");
         for (var i = 0; i < agents.length; i++)
         {
@@ -226,20 +301,19 @@
 
             let strNickname = element.id;
             let fShareR = parseFloat($(`#fShareR_${element.id}`).val());
-
             list.push(strNickname);
             list.push(fShareR);
 
-            total = total + fShareR;
+            totalR = totalR + fShareR;
         }
 
-        if (total > 100) {
+        if (totalR > 100) {
             alert('지분율은 100%를 넘을 수 없습니다');
             return;
         }
 
         $.ajax({
-            url:'/manage_partner/request_modify_share_group',
+            url:'/manage_share/request_modify_share_group',
             type:"POST",
             data: {
                 data: JSON.stringify(list)
@@ -250,7 +324,7 @@
                 if ( obj.result == 'OK')
                 {
                     alert(obj.msg);
-                    location.reload();
+                    RequestShareList();
                 }
                 else
                 {
@@ -270,35 +344,29 @@
 
         var list = [];
         var credits = [];
-        var agents = document.querySelectorAll("tr[class=Share]");
-        for (var i = 0; i < agents.length; i++)
-        {
-            const element = agents[i];
 
-            let strNickname = element.id;
-            let iShareOrgin = $(`#iShareOrgin_${element.id}`).text(); // 순이익
-            iShareOrgin = iShareOrgin?.replace(/,/g, '') ?? '0';
-            let fShareR = $(`#fShareR_${element.id}`).val();
-            fShareR = fShareR?.replace(/,/g, '') ?? '0';
-            let iShare = $(`#iShare_${element.id}`).text()
-            iShare = iShare?.replace(/,/g, '') ?? '0';
-            let iShareAccBefore = $(`#iShareAccBefore_${element.id}`).text();
-            iShareAccBefore = iShareAccBefore?.replace(/,/g, '') ?? '0';
+        for (let i in shareList) {
+            let obj = shareList[i];
+            let iShareOrgin = obj.iShareOrgin ?? 0;
+            let iSlotCommission = obj.iSlotCommission ?? 0;
+            let iPayback = obj.iPayback ?? 0;
+            let iSum = obj.iSum ?? 0;
+            let fShareR = obj.fShareR ?? 0;
+            let iShare = obj.iShare ?? 0;
+            let iShareAccBefore = obj.iShareAccBefore  ?? 0;
 
-            list.push(strNickname);
+            list.push(obj.strNickname);
             list.push(iShareOrgin);
+            list.push(iSlotCommission)
+            list.push(iPayback)
+            list.push(iSum);
             list.push(fShareR);
             list.push(iShare);
             list.push(iShareAccBefore);
-
-            let iIncrease = $(`#iIncrease_${element.id}`).val();
-            iIncrease = iIncrease?.replace(/,/g, '') ?? '0';
-            let strMemo = $(`#sharememo_${element.id}`).val();
-            strMemo = strMemo.replace(/(\n|\r\n)/g, '<br>');
         }
 
         $.ajax({
-            url:'/manage_partner/request_share_apply',
+            url:'/manage_share/request_share_apply',
             type:"POST",
             data: {
                 data: JSON.stringify(list),
@@ -346,7 +414,7 @@
         strMemo = strMemo.replace(/(\n|\r\n)/g, '<br>');
 
         $.ajax({
-            url:'/manage_partner/request_share_credit_apply',
+            url:'/manage_share/request_share_credit_apply',
             type:"POST",
             data: {
                 strNickname: strNickname,
@@ -393,7 +461,7 @@
     let RequestShareList = () => {
 
         $.ajax({
-            url:'/manage_partner_popup/request_share_list',
+            url:'/manage_share/request_share_list',
             type:"POST",
             data: {
                 strID:user.strID,
@@ -423,9 +491,9 @@
 
     let OnClickNickname = (strNickname) => {
         console.log(`OnClickRegisterShare : ${strNickname}`);
-        window.open('', 'popupChkRegisterShareUser', 'width=1280, height=720, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
+        window.open('', 'popupChkRegisterShareUser', 'width=1000, height=250, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
         let $form = $('<form></form>');
-        $form.attr('action', '/manage_partner_popup/popup_view_share_user');
+        $form.attr('action', '/manage_share/popup_view_share_user');
         $form.attr('method', 'post');
         $form.attr('target', 'popupChkRegisterShareUser');
         $form.appendTo('body');
@@ -436,9 +504,9 @@
 
 
     let OnClickRegisterShare = (strNickname, strGroupID, iClass) => {
-        window.open('', 'popupChkRegisterShareUser', 'width=1080, height=420, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
+        window.open('', 'popupChkRegisterShareUser', 'width=1000, height=250, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
         let $form = $('<form></form>');
-        $form.attr('action', '/manage_partner_popup/popup_registershare');
+        $form.attr('action', '/manage_share/popup_registershare');
         $form.attr('method', 'post');
         $form.attr('target', 'popupChkRegisterShareUser');
         $form.appendTo('body');

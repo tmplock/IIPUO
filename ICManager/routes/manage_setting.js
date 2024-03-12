@@ -11,15 +11,8 @@ router.use(express.static(path.join(__dirname, '../', 'objects')));
 
 const db = require('../models');
 //const db = require('../db');
-const ITime = require('../utils/time');
 const IInout = require('../implements/inout');
 const {Op}= require('sequelize');
-
-const IAgent = require('../implements/agent');
-const IRolling = require('../implements/rolling');
-const ISettle = require('../implements/settle');
-const ISocket = require('../implements/socket');
-
 const {isLoggedIn, isNotLoggedIn} = require('./middleware');
 
 router.get('/letterlistreceive', isLoggedIn, async(req, res) => {
@@ -30,6 +23,11 @@ router.get('/letterlistreceive', isLoggedIn, async(req, res) => {
 
     const user = {strNickname:req.user.strNickname, strGroupID:req.user.strGroupID, iClass:parseInt(req.user.iClass), iCash:iCash,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission};
+    if (dbuser.iPermission == 100 && dbuser.iRelUserID != null) {
+        const relUser = await db.Users.findOne({where:{id: dbuser.iRelUserID}});
+        user.strID = relUser.strID;
+    }
+
     let iocount = await IInout.GetProcessing(dbuser.strGroupID, dbuser.strNickname, dbuser.iClass);
 
     res.render('manage_setting/letterlistreceive', {iLayout:0, iHeaderFocus:5, user:user, iocount:iocount});
@@ -45,6 +43,12 @@ router.post('/letterlistsend', isLoggedIn, async(req, res) => {
 
     const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash,
         iRootClass: req.user.iClass, iPermission:req.user.iPermission};
+
+    if (dbuser.iPermission == 100 && dbuser.iRelUserID != null) {
+        const relUser = await db.Users.findOne({where:{id: dbuser.iRelUserID}});
+        user.strID = relUser.strID;
+    }
+
     let iocount = await IInout.GetProcessing(req.body.strGroupID, req.body.strNickname, dbuser.iClass);
     res.render('manage_setting/letterlistsend', {iLayout:0, iHeaderFocus:5, user:user, iocount:iocount});
 });
@@ -59,6 +63,12 @@ router.post('/letterlistreceive', isLoggedIn, async(req, res) => {
 
     const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission};
+
+    if (dbuser.iPermission == 100 && dbuser.iRelUserID != null) {
+        const relUser = await db.Users.findOne({where:{id: dbuser.iRelUserID}});
+        user.strID = relUser.strID;
+    }
+
     let iocount = await IInout.GetProcessing(dbuser.strGroupID, dbuser.strNickname, dbuser.iClass);
 
     res.render('manage_setting/letterlistreceive', {iLayout:0, iHeaderFocus:5, user:user, iocount:iocount});
@@ -74,6 +84,12 @@ router.post('/announcement', isLoggedIn, async(req, res) => {
 
     const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission};
+
+    if (dbuser.iPermission == 100 && dbuser.iRelUserID != null) {
+        const relUser = await db.Users.findOne({where:{id: dbuser.iRelUserID}});
+        user.strID = relUser.strID;
+    }
+
     let iocount = await IInout.GetProcessing(user.strGroupID, user.strNickname, dbuser.iClass);
 
     res.render('manage_setting/announcement', {iLayout:0, iHeaderFocus:5, user:user, iocount:iocount});

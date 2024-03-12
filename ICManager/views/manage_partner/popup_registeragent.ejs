@@ -134,21 +134,11 @@
 
 				<tr>
 				</tr>
-				<!-- <tr>
-
-
-							<th scope="row"> <%=__('Password')%></th>
-							<td>
-								<input type="text" style="width:30%;" id="strAccountPassword" required="no"  message="">
-							</td>
-						</tr> -->
-
 
 			</table>
 
 			<% if ( parent.iAgentClass !=9 && parent.iAgentClass !=0 && parent.iAgentClass !=1 ) { %>
-				<p
-					style="background-repeat:no-repeat; background-position:left center; font-size:16px; color:#454545; padding-left:22px;">
+				<p style="background-repeat:no-repeat; background-position:left center; font-size:16px; color:#454545; padding-left:22px;">
 					<%=__('Rolling')%>
 						<%=__('Setting')%>
 				</p>
@@ -170,7 +160,7 @@
 
 						<th scope="row" style="background-color:lightsteelblue">파워볼 A (1.93)</th>
 						<td style="background-color:lightsteelblue">
-							<input type="text" style="width:40%;" required="no" message="" id="fRollingPB"> %
+							<input type="text" style="width:40%;" required="no" message="" id="fRollingPB" > %
 						</td>
 
 					</tr>
@@ -179,12 +169,12 @@
 							<%=__('UnderOver')%>
 						</th>
 						<td>
-							<input type="text" style="width:40%;" required="no" message="" id="fRollingUnderOver"> %
+							<input type="text" style="width:40%;" required="no" message="" id="fRollingUnderOver" > %
 						</td>
 
 						<th scope="row" style="background-color:beige">파워볼 B (1.95) 단폴</th>
 						<td style="background-color:beige">
-							<input type="text" style="width:40%;" required="no" message="" id="fRollingPBSingle"> %
+							<input type="text" style="width:40%;" required="no" message="" id="fRollingPBSingle" > %
 						</td>
 					</tr>
 
@@ -193,12 +183,12 @@
 							<%=__('Slot')%>
 						</th>
 						<td>
-							<input type="text" style="width:40%;" required="no" message="" id="fRollingSlot"> %
+							<input type="text" style="width:40%;" required="no" message="" id="fRollingSlot" > %
 						</td>
 
 						<th scope="row" style="background-color:beige">파워볼 B (1.95) 투폴</th>
 						<td style="background-color:beige">
-							<input type="text" style="width:40%;" required="no" message="" id="fRollingPBDouble"> %
+							<input type="text" style="width:40%;" required="no" message="" id="fRollingPBDouble" > %
 						</td>
 					</tr>
 					<tr>
@@ -211,52 +201,11 @@
 						<td style="background-color:beige">
 							<input type="text" style="width:40%;" required="no" message="" id="fRollingPBTriple"> %
 						</td>
-
-						<!-- <th scope="row">블랙잭</th>
-						<td>
-							<input type="text" style="width:40%;" name="blackj_blackj" required="no"  message="블랙잭"> %
-						</td> -->
 					</tr>
 
 				</table>
 				<%}%>
-					<!-- <% if ( parent.iAgentClass != 8 && parent.iAgentClass != 0 && parent.iAgentClass != 1 ) { %>
-                    <p style="background-repeat:no-repeat; background-position:left center; font-size:16px; color:#454545; padding-left:22px;"><%=__('Settle')%> <%=__('Setting')%></p>
-					<table>
-					<colgroup>
-						<col width="15%" />
-						<col width="35%" />
-						<col width="15%" />
-						<col width="35%" />
-					</colgroup>
-						
-					<tr>
-						<th scope="row"><%=__('Slot')%></th>
-						<td>
-							<input type="text" style="width:40%;" name="slot_slot" required="no"  message="" id="fSettleSlot"> %
-						</td>
-						<th scope="row"><%=__('Baccarat')%></th>
-						<td>
-							<input type="text" style="width:40%;" name="bakara_bakara" required="no"  message="" id="fSettleBaccarat"> %
-						</td>
-					</tr>
-
-					<tr>
-						<th scope="row">파워볼 A</th>
-						<td>
-							<input type="text" style="width:40%;" name="slot_slot" required="no"  message="" id="fSettlePBA"> %
-						</td>
-						<th scope="row">파워볼 B</th>
-						<td>
-							<input type="text" style="width:40%;" name="bakara_bakara" required="no"  message="" id="fSettlePBB"> %
-						</td>
-					</tr>
-					</table>
-					<%}%> -->
-
-					<p
-						style="background-repeat:no-repeat; background-position:left center; font-size:16px; color:#454545; padding-left:22px;">
-						파워볼 설정</p>
+					<p style="background-repeat:no-repeat; background-position:left center; font-size:16px; color:#454545; padding-left:22px;">파워볼 설정</p>
 					<table>
 						<colgroup>
 							<col width="15%" />
@@ -389,7 +338,6 @@
 
 		const caAgentType = ['', '<%=__("HQ")%>', '<%=__("ViceHQ")%>', '<%=__("Admin")%>', '<%=__("ProAdmin")%>', '<%=__("ViceAdmin")%>', '<%=__("Agent")%>', '<%=__("Shop")%>', '<%=__("User")%>'];
 
-		//$('#registeragent_title').append(`<h3 style="font-weight:regular;color:yellow;font-size:25px;font-family:'Spoqa Han Sans Neo', 'sans-serif';">${cAgentType[parseInt(parent.iAgentClass)]} 등록</h3>`);
 		$('#registeragent_title').append(`<a style="font-weight:regular;color:yellow;font-size:25px;font-family:'Spoqa Han Sans Neo', 'sans-serif';">${caAgentType[parseInt(parent.iAgentClass)]} ${"<%=__('Register')%>"}</a>`);
 
 		RequestParentEnableList(parent.strNickname, parent.strGroupID, parent.iClass, parent.iAgentClass, parent.iPermission);
@@ -415,6 +363,15 @@
 		checkBlockNum(`#fRollingSlot`);
 		checkBlockNum(`#fRollingPBDouble`);
 		checkBlockNum(`#fRollingPBTriple`);
+		// if ( parseInt(parent.iAgentClass) == 5 ) {
+		// 	$('#fRollingBaccarat').attr('disabled', 'disabled');
+		// 	$('#fRollingPB').attr('disabled', 'disabled');
+		// 	$('#fRollingUnderOver').attr('disabled', 'disabled');
+		// 	$('#fRollingPBSingle').attr('disabled', 'disabled');
+		// 	$('#fRollingSlot').attr('disabled', 'disabled');
+		// 	$('#fRollingPBDouble').attr('disabled', 'disabled');
+		// 	$('#fRollingPBTriple').attr('disabled', 'disabled');
+		// }
 
 		checkBlockNum(`#iPBLimit`);
 		checkBlockNum(`#iPBSingleLimit`);

@@ -17,8 +17,7 @@ const {Op, where}= require('sequelize');
 
 //const IObject = require('../objects/betting');
 
-const IAgent = require('../implements/agent');
-const IAgent2 = require('../implements/agent3');
+const IAgent = require('../implements/agent3');
 const IRolling = require('../implements/rolling');
 const ISettle = require('../implements/settle');
 const ISocket = require('../implements/socket');
@@ -44,7 +43,7 @@ router.get('/default', isLoggedIn, async(req, res) => {
         fBaccaratR: dbuser.fBaccaratR, fSlotR: dbuser.fSlotR, fUnderOverR: dbuser.fUnderOverR, fPBR: dbuser.fPBR, fPBSingleR: dbuser.fPBSingleR, fPBDoubleR: dbuser.fPBDoubleR, fPBTripleR: dbuser.fPBTripleR,
         iRootClass: req.user.iClass, iPermission: req.user.iPermission, strID: dbuser.strID};
 
-    const agentinfo = await IAgent2.GetPopupAgentInfo(req.user.strGroupID, parseInt(req.user.iClass), req.user.strNickname);
+    const agentinfo = await IAgent.GetPopupAgentInfo(req.user.strGroupID, parseInt(req.user.iClass), req.user.strNickname);
 
     const dateStart = ITime.getTodayStart();
     const dateEnd = ITime.getTodayEnd();
@@ -56,25 +55,25 @@ router.get('/default', isLoggedIn, async(req, res) => {
 
     if ( req.user.iClass == 1 )
     {
-        var agents = await IAgent2.GetComputedAgentList(user.strGroupID, IAgent.EAgent.eViceHQ, dateStart, dateEnd);
+        var agents = await IAgent.GetComputedAgentList(user.strGroupID, IAgent.EAgent.eViceHQ, dateStart, dateEnd);
         bobj.agents = agents;
         res.render('manage_partner/betting_listvicehq', {iLayout:0, iHeaderFocus:0, data:bobj, user:user, agentinfo:agentinfo, iocount:iocount});
     }
     else if ( req.user.iClass == 4 )
     {
-        var agents = await IAgent2.GetComputedAgentList(user.strGroupID, IAgent.EAgent.eViceAdmin, dateStart, dateEnd);
+        var agents = await IAgent.GetComputedAgentList(user.strGroupID, IAgent.EAgent.eViceAdmin, dateStart, dateEnd);
         bobj.agents = agents;
         res.render('manage_partner/betting_listviceadmin', {iLayout:0, iHeaderFocus:0, user:user, data:bobj, agentinfo:agentinfo, iocount:iocount});
     }
     else if ( req.user.iClass == 5 )
     {
-        var agents = await IAgent2.GetComputedAgentList(user.strGroupID, IAgent.EAgent.eAgent, dateStart, dateEnd);
+        var agents = await IAgent.GetComputedAgentList(user.strGroupID, IAgent.EAgent.eAgent, dateStart, dateEnd);
         bobj.agents = agents;
         res.render('manage_partner/betting_listagent', {iLayout:0, iHeaderFocus:0, user:user, data:bobj, agentinfo:agentinfo, iocount:iocount});
     }
     else if ( req.user.iClass == 6 )
     {
-        var agents = await IAgent2.GetComputedAgentList(user.strGroupID, IAgent.EAgent.eShop, dateStart, dateEnd);
+        var agents = await IAgent.GetComputedAgentList(user.strGroupID, IAgent.EAgent.eShop, dateStart, dateEnd);
         bobj.agents = agents;
         res.render('manage_partner/betting_listshop', {iLayout:0, iHeaderFocus:0, user:user, data:bobj, agentinfo:agentinfo, iocount:iocount});
     }
@@ -123,8 +122,8 @@ router.post('/realtime', isLoggedIn, async(req, res) => {
     const dateStart = ITime.getTodayStart();
     const dateEnd = ITime.getTodayEnd();
 
-    var overview = await IAgent2.CalculateBettingRecord(user.strGroupID, user.iClass, dateStart, dateEnd, dbuser.strNickname, dbuser.strID);
-    var realtime = await IAgent2.CalculateRealtimeBettingRecord(0, user.strGroupID);
+    var overview = await IAgent.CalculateBettingRecord(user.strGroupID, user.iClass, dateStart, dateEnd, dbuser.strNickname, dbuser.strID);
+    var realtime = await IAgent.CalculateRealtimeBettingRecord(0, user.strGroupID);
 
     var room_info = {};
     room_info.count = cNumGameRooms;
@@ -148,16 +147,11 @@ router.post('/announcement', isLoggedIn, async(req, res) => {
 
     res.render('manage_partner/announcement', {iLayout:0,iHeaderFocus:0,user:user,data:list});
 });
-// router.get('/betting_record', isLoggedIn, async(req, res) => {
 
-//     console.log(`manage_partner/betting_record`);
 
-//     var overview = await IAgent.CalculateDailyBettingRecord(0, req.user.strGroupID, req.user.iClass);
-//     var bobj = {overview:overview};
-
-//     res.render('manage_partner/betting_record', {iLayout:0, iHeaderFocus:0, data:bobj, user:req.user});
-// });
-
+/**
+ * 본인 베팅 내역
+ */
 router.post('/record', isLoggedIn, async(req, res) => {
 
     console.log(req.body);
@@ -173,7 +167,7 @@ router.post('/record', isLoggedIn, async(req, res) => {
     const dateStart = ITime.getTodayStart();
     const dateEnd = ITime.getTodayEnd();
 
-    var overview = await IAgent2.CalculateBettingRecord(user.strGroupID, user.iClass, dateStart, dateEnd, '', dbuser.strID);
+    var overview = await IAgent.CalculateSelfBettingRecord(user.strGroupID, user.iClass, dateStart, dateEnd, '', dbuser.strID);
     var bobj = {overview:overview};
     let iocount = await IInout.GetProcessing(user.strGroupID, user.strNickname, dbuser.iClass);
     res.render('manage_partner/betting_record', {iLayout:0, iHeaderFocus:0, data:bobj, user:user, iocount:iocount});
@@ -195,9 +189,9 @@ router.post('/listvicehq', isLoggedIn, async(req, res) => {
     const dateStart = ITime.getTodayStart();
     const dateEnd = ITime.getTodayEnd();
 
-    const agentinfo = await IAgent2.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
-    var agents = await IAgent2.GetComputedAgentList(user.strGroupID, IAgent.EAgent.eViceHQ, dateStart, dateEnd);
-    var overview = await IAgent2.CalculateBettingRecord(user.strGroupID, user.iClass, dateStart, dateEnd, '', dbuser.strID);
+    const agentinfo = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
+    var agents = await IAgent.GetComputedAgentList(user.strGroupID, IAgent.EAgent.eViceHQ, dateStart, dateEnd);
+    var overview = await IAgent.CalculateBettingRecord(user.strGroupID, user.iClass, dateStart, dateEnd, '', dbuser.strID);
     var bobj = {overview:overview, agents:agents};
     let iocount = await IInout.GetProcessing(user.strGroupID, user.strNickname, dbuser.iClass);
 
@@ -219,10 +213,10 @@ router.post('/listadmin', isLoggedIn, async(req, res) => {
     const dateStart = ITime.getTodayStart();
     const dateEnd = ITime.getTodayEnd();
 
-    var agents = await IAgent2.GetComputedAgentList(user.strGroupID, IAgent.EAgent.eAdmin, dateStart, dateEnd,  '', true);
-    var overview = await IAgent2.CalculateBettingRecord(user.strGroupID, user.iClass, dateStart, dateEnd, '', dbuser.strID);
+    var agents = await IAgent.GetComputedAgentList(user.strGroupID, IAgent.EAgent.eAdmin, dateStart, dateEnd,  '', true);
+    var overview = await IAgent.CalculateBettingRecord(user.strGroupID, user.iClass, dateStart, dateEnd, '', dbuser.strID);
     var bobj = {overview:overview, agents:agents};
-    const agentinfo = await IAgent2.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
+    const agentinfo = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
     let iocount = await IInout.GetProcessing(user.strGroupID, user.strNickname, dbuser.iClass);
 
     res.render('manage_partner/betting_listadmin', {iLayout:0, iHeaderFocus:0, data:bobj, user:user, agentinfo:agentinfo, iocount:iocount});
@@ -243,10 +237,10 @@ router.post('/listproadmin', isLoggedIn, async(req, res) => {
     const dateStart = ITime.getTodayStart();
     const dateEnd = ITime.getTodayEnd();
 
-    var agents = await IAgent2.GetComputedAgentList(user.strGroupID, IAgent.EAgent.eProAdmin, dateStart, dateEnd);
-    var overview = await IAgent2.CalculateBettingRecord(user.strGroupID, user.iClass, dateStart, dateEnd, '', dbuser.strID);
+    var agents = await IAgent.GetComputedAgentList(user.strGroupID, IAgent.EAgent.eProAdmin, dateStart, dateEnd);
+    var overview = await IAgent.CalculateBettingRecord(user.strGroupID, user.iClass, dateStart, dateEnd, '', dbuser.strID);
     var bobj = {overview:overview, agents:agents};
-    const agentinfo = await IAgent2.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
+    const agentinfo = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
     let iocount = await IInout.GetProcessing(user.strGroupID, user.strNickname, dbuser.iClass);
 
     res.render('manage_partner/betting_listproadmin', {iLayout:0, iHeaderFocus:0, data:bobj, user:user, agentinfo:agentinfo, iocount:iocount});
@@ -266,10 +260,10 @@ router.post('/listviceadmin', isLoggedIn, async(req, res) => {
     const dateStart = ITime.getTodayStart();
     const dateEnd = ITime.getTodayEnd();
 
-    var overview = await IAgent2.CalculateBettingRecord(user.strGroupID, user.iClass, dateStart, dateEnd, '', dbuser.strID);
-    var agents = await IAgent2.GetComputedAgentList(user.strGroupID, IAgent.EAgent.eViceAdmin, dateStart, dateEnd);
+    var overview = await IAgent.CalculateBettingRecord(user.strGroupID, user.iClass, dateStart, dateEnd, '', dbuser.strID);
+    var agents = await IAgent.GetComputedAgentList(user.strGroupID, IAgent.EAgent.eViceAdmin, dateStart, dateEnd);
     var bobj = {overview:overview, agents:agents};
-    const agentinfo = await IAgent2.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
+    const agentinfo = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
     let iocount = await IInout.GetProcessing(user.strGroupID, user.strNickname, dbuser.iClass);
 
     res.render('manage_partner/betting_listviceadmin', {iLayout:0, iHeaderFocus:0, data:bobj, user:user, agentinfo:agentinfo, iocount:iocount});
@@ -290,10 +284,10 @@ router.post('/listagent', isLoggedIn, async(req, res) => {
     const dateStart = ITime.getTodayStart();
     const dateEnd = ITime.getTodayEnd();
 
-    var agents = await IAgent2.GetComputedAgentList(user.strGroupID, IAgent.EAgent.eAgent, dateStart, dateEnd);
-    var overview = await IAgent2.CalculateBettingRecord(user.strGroupID, user.iClass, dateStart, dateEnd, '', dbuser.strID);
+    var agents = await IAgent.GetComputedAgentList(user.strGroupID, IAgent.EAgent.eAgent, dateStart, dateEnd);
+    var overview = await IAgent.CalculateBettingRecord(user.strGroupID, user.iClass, dateStart, dateEnd, '', dbuser.strID);
     var bobj = {overview:overview, agents:agents};
-    const agentinfo = await IAgent2.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
+    const agentinfo = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
     let iocount = await IInout.GetProcessing(user.strGroupID, user.strNickname, dbuser.iClass);
 
     res.render('manage_partner/betting_listagent', {iLayout:0, iHeaderFocus:0, data:bobj, user:user, agentinfo:agentinfo, iocount:iocount});
@@ -314,10 +308,10 @@ router.post('/listshop', isLoggedIn, async(req, res) => {
     const dateStart = ITime.getTodayStart();
     const dateEnd = ITime.getTodayEnd();
 
-    var agents = await IAgent2.GetComputedAgentList(user.strGroupID, IAgent.EAgent.eShop, dateStart, dateEnd);
-    var overview = await IAgent2.CalculateBettingRecord(user.strGroupID, user.iClass, dateStart, dateEnd, '', dbuser.strID);
+    var agents = await IAgent.GetComputedAgentList(user.strGroupID, IAgent.EAgent.eShop, dateStart, dateEnd);
+    var overview = await IAgent.CalculateBettingRecord(user.strGroupID, user.iClass, dateStart, dateEnd, '', dbuser.strID);
     var bobj = {overview:overview, agents:agents};
-    const agentinfo = await IAgent2.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
+    const agentinfo = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
     let iocount = await IInout.GetProcessing(user.strGroupID, user.strNickname, dbuser.iClass);
 
     res.render('manage_partner/betting_listshop', {iLayout:0, iHeaderFocus:0, data:bobj, user:user, agentinfo:agentinfo, iocount:iocount});
@@ -361,7 +355,7 @@ router.post('/listrealtimeuser', isLoggedIn, async(req, res) => {
 
     const dateStart = ITime.getTodayStart();
     const dateEnd = ITime.getTodayEnd();
-    var overview = await IAgent2.CalculateBettingRecord(user.strGroupID, user.iClass, dateStart, dateEnd, '', dbuser.strID);
+    var overview = await IAgent.CalculateBettingRecord(user.strGroupID, user.iClass, dateStart, dateEnd, '', dbuser.strID);
     var bobj = {overview:overview};
     let iocount = await IInout.GetProcessing(user.strGroupID, user.strNickname, dbuser.iClass);
     res.render('manage_partner/listrealtimeuser', {iLayout:0, iHeaderFocus:0, user:user, data:bobj, agentinfo:agentinfo, iocount:iocount});
@@ -374,7 +368,7 @@ router.post('/request_agents', isLoggedIn, async(req, res) => {
 
     console.log(`/request_agents : `);
     console.log(req.body);
-    let list = await IAgent2.GetComputedAgentList(req.body.strGroupID, parseInt(req.body.iClass)+1, req.body.dateStart, req.body.dateEnd, '', true);
+    let list = await IAgent.GetComputedAgentList(req.body.strGroupID, parseInt(req.body.iClass)+1, req.body.dateStart, req.body.dateEnd, '', true);
 
     console.log(list);
 
@@ -434,8 +428,8 @@ router.post('/request_agentlist', isLoggedIn, async(req, res) => {
     console.log(`/request_agentlist : `);
     console.log(req.body);
 
-    const overview = await IAgent2.GetComputedAgentTotal(req.body.strGroupID, parseInt(req.body.iTargetClass), req.body.dateStart, req.body.dateEnd, req.body.strSearchNickname);
-    const list = await IAgent2.GetComputedAgentList(req.body.strGroupID, parseInt(req.body.iTargetClass), req.body.dateStart, req.body.dateEnd, req.body.strSearchNickname, true);
+    const overview = await IAgent.GetComputedAgentTotal(req.body.strGroupID, parseInt(req.body.iTargetClass), req.body.dateStart, req.body.dateEnd, req.body.strSearchNickname);
+    const list = await IAgent.GetComputedAgentList(req.body.strGroupID, parseInt(req.body.iTargetClass), req.body.dateStart, req.body.dateEnd, req.body.strSearchNickname, true);
 
     res.send({list:list, overview:overview, iRootClass: req.user.iClass, iPermission: req.user.iPermission});
 });
@@ -445,7 +439,19 @@ router.post('/request_bettingrecord', isLoggedIn, async(req, res) => {
     console.log(`/request_agentbettingrecord : `);
     console.log(req.body);
 
-    const record = await IAgent2.CalculateTermBettingRecord(req.body.strGroupID, parseInt(req.body.iTargetClass), req.body.dateStart, req.body.dateEnd, req.body.strNickname, req.body.strID);
+    const record = await IAgent.CalculateTermBettingRecord(req.body.strGroupID, parseInt(req.body.iTargetClass), req.body.dateStart, req.body.dateEnd, req.body.strNickname, req.body.strID);
+
+    let data = {record:record, iRootClass: req.user.iClass, iPermission: req.user.iPermission}
+
+    res.send(data);
+});
+
+router.post('/request_bettingrecord_me', isLoggedIn, async(req, res) => {
+
+    console.log(`/request_bettingrecord_me : `);
+    console.log(req.body);
+
+    const record = await IAgent.CalculateTermSelfBettingRecord(req.body.strGroupID, parseInt(req.body.iTargetClass), req.body.dateStart, req.body.dateEnd, req.body.strNickname, req.body.strID);
 
     let data = {record:record, iRootClass: req.user.iClass, iPermission: req.user.iPermission}
 
@@ -454,12 +460,12 @@ router.post('/request_bettingrecord', isLoggedIn, async(req, res) => {
 
 router.post('/request_bettingrecord_user', isLoggedIn, async(req, res) => {
 
-    console.log(`/request_agentbettingrecord : `);
+    console.log(`/request_bettingrecord_user : `);
     console.log(req.body);
 
     const dateEnd = ITime.getDateEnd(req.body.dateEnd);
-    const agent = await IAgent2.GetPopupAgentInfo(req.body.strGroupID, req.body.iClass, req.body.strNickname);
-    const record = await IAgent2.CalculateTermSelfBettingRecord(req.body.strGroupID, parseInt(req.body.iTargetClass), req.body.dateStart, dateEnd, req.body.strNickname, agent.strID);
+    const agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, req.body.iClass, req.body.strNickname);
+    const record = await IAgent.CalculateTermSelfBettingRecord(req.body.strGroupID, parseInt(req.body.iTargetClass), req.body.dateStart, dateEnd, req.body.strNickname, agent.strID);
 
     let data = {record:record, iRootClass:req.user.iClass, iPermission:req.user.iPermission}
 
@@ -471,7 +477,21 @@ router.post('/request_overview', isLoggedIn, async(req, res) => {
 
     console.log('request_overview : ');
     console.log(req.body);
-    const overview = await IAgent2.CalculateBettingRecord(req.body.strGroupID, parseInt(req.body.iTargetClass), req.body.dateStart, req.body.dateEnd, '', req.body.strID);
+    const overview = await IAgent.CalculateBettingRecord(req.body.strGroupID, parseInt(req.body.iTargetClass), req.body.dateStart, req.body.dateEnd, '', req.body.strID);
+
+    let data = {overview:overview, iRootClass:req.user.iClass}
+
+    res.send(data);
+});
+
+/**
+ * 팝업 > 본인 베팅 내역
+ */
+router.post('/request_overview_self', isLoggedIn, async(req, res) => {
+
+    console.log('request_overview : ');
+    console.log(req.body);
+    const overview = await IAgent.CalculateSelfBettingRecord(req.body.strGroupID, parseInt(req.body.iTargetClass), req.body.dateStart, req.body.dateEnd, '', req.body.strID);
 
     let data = {overview:overview, iRootClass:req.user.iClass}
 
@@ -482,9 +502,9 @@ router.post('/request_overview_user', isLoggedIn, async(req, res) => {
 
     console.log('request_overview_user : ');
     console.log(req.body);
-    const agent = await IAgent2.GetPopupAgentInfo(req.body.strNickname, req.body.iTargetClass, req.body.strNickname);
+    const agent = await IAgent.GetPopupAgentInfo(req.body.strNickname, req.body.iTargetClass, req.body.strNickname);
 
-    const overview = await IAgent2.CalculateSelfBettingRecord(req.body.strGroupID, parseInt(req.body.iTargetClass), req.body.dateStart, req.body.dateEnd, req.body.strNickname, agent.strID);
+    const overview = await IAgent.CalculateSelfBettingRecord(req.body.strGroupID, parseInt(req.body.iTargetClass), req.body.dateStart, req.body.dateEnd, req.body.strNickname, agent.strID);
 
     let data = {overview:overview, iRootClass:req.user.iClass}
 
@@ -496,7 +516,6 @@ router.post('/request_overview_user', isLoggedIn, async(req, res) => {
 router.post('/request_modify_rollingodds_group', isLoggedIn, async(req, res) => {
 
     var json = JSON.parse(req.body.data);
-
     var ret = await IRolling.ModifyRollingGroup(json);
     console.log(ret);
     if ( ret.result == "OK" )
@@ -506,6 +525,18 @@ router.post('/request_modify_rollingodds_group', isLoggedIn, async(req, res) => 
             let user = await db.Users.findOne({where:{strNickname:ret.data[i].strNickname}});
             if ( user != null )
             {
+                // 값이 다르면 정보로그 남기기
+                let logMsg = logRollingMessage(user, ret.data[i]);
+                if (logMsg != '') {
+                    await db.DataLogs.create({
+                        strNickname: user.strNickname,
+                        strID: user.strID,
+                        strGroupID: user.strGroupID,
+                        strLogs: logMsg,
+                        strEditorNickname: req.user.strNickname,
+                    });
+                }
+
                 await user.update(
                     {
                         fBaccaratR:ret.data[i].fBaccarat,
@@ -526,6 +557,55 @@ router.post('/request_modify_rollingodds_group', isLoggedIn, async(req, res) => 
     }
 });
 
+const logRollingMessage = (source, data) => {
+    let msg = '';
+
+    if (source.fBaccaratR != data.fBaccarat) {
+        if (msg == '')
+            msg = `바카라롤링 변경(${source.fBaccaratR}=>${data.fBaccarat})`;
+        else
+            msg = `${msg} | 바카라롤링 변경(${source.fBaccaratR}=>${data.fBaccarat})`;
+    }
+    if (source.fUnderOverR != data.fUnderOver) {
+        if (msg == '')
+            msg = `언오버롤링 변경(${source.fUnderOverR}=>${data.fUnderOver})`;
+        else
+            msg = `${msg} | 언오버롤링 변경(${source.fUnderOverR}=>${data.fUnderOver})`;
+    }
+    if (source.fSlotR != data.fSlot) {
+        if (msg == '')
+            msg = `슬롯롤링 변경(${source.fSlotR}=>${data.fSlot})`;
+        else
+            msg = `${msg} | 슬롯롤링 변경(${source.fSlotR}=>${data.fSlot})`;
+    }
+    if (source.fPBR != data.fPB) {
+        if (msg == '')
+            msg = `파워볼A롤링 변경(${source.fPBR}=>${data.fPB})`;
+        else
+            msg = `${msg} | 파워볼A롤링 변경(${source.fPBR}=>${data.fPB})`;
+    }
+    if (source.fPBSingleR != data.fPBSingle) {
+        if (msg == '')
+            msg = `파워볼B단폴롤링 변경(${source.fPBSingleR}=>${data.fPBSingle})`;
+        else
+            msg = `${msg} | 파워볼B단폴롤링 변경(${source.fPBSingleR}=>${data.fPBSingle})`;
+    }
+    if (source.fPBDoubleR != data.fPBDouble) {
+        if (msg == '')
+            msg = `파워볼B투폴롤링 변경(${source.fPBDoubleR}=>${data.fPBDouble})`;
+        else
+            msg = `${msg} | 파워볼B투폴롤링 변경(${source.fPBDoubleR}=>${data.fPBDouble})`;
+    }
+    if (source.fPBTripleR != data.fPBTriple) {
+        if (msg == '')
+            msg = `파워볼B쓰리폴롤링 변경(${source.fPBTripleR}=>${data.fPBTriple})`;
+        else
+            msg = `${msg} | 파워볼B쓰리폴롤링 변경(${source.fPBTripleR}=>${data.fPBTriple})`;
+    }
+
+    return msg;
+}
+
 router.post('/request_modify_settle_group', isLoggedIn, async(req, res) => {
 
     var json = JSON.parse(req.body.data);
@@ -539,6 +619,18 @@ router.post('/request_modify_settle_group', isLoggedIn, async(req, res) => {
             let user = await db.Users.findOne({where:{strNickname:ret.data[i].strNickname}});
             if ( user != null )
             {
+                // 값이 다르면 정보로그 남기기
+                let logMsg = logSettleMessage(user, ret.data[i]);
+                if (logMsg != '') {
+                    await db.DataLogs.create({
+                        strNickname: user.strNickname,
+                        strID: user.strID,
+                        strGroupID: user.strGroupID,
+                        strLogs: logMsg,
+                        strEditorNickname: req.user.strNickname,
+                    });
+                }
+
                 await user.update(
                     {
                         fSettleBaccarat:ret.data[i].fSettleBaccarat,
@@ -556,6 +648,38 @@ router.post('/request_modify_settle_group', isLoggedIn, async(req, res) => {
     }
 });
 
+
+const logSettleMessage = (source, data) => {
+    let msg = '';
+
+    if (source.fSettleBaccarat != data.fSettleBaccarat) {
+        if (msg == '')
+            msg = `바카라죽장 변경(${source.fSettleBaccarat}=>${data.fSettleBaccarat})`;
+        else
+            msg = `${msg} | 바카라죽장 변경(${source.fSettleBaccarat}=>${data.fSettleBaccarat})`;
+    }
+    if (source.fSettleSlot != data.fSettleSlot) {
+        if (msg == '')
+            msg = `슬롯죽장 변경(${source.fSettleSlot}=>${data.fSettleSlot})`;
+        else
+            msg = `${msg} | 슬롯죽장 변경(${source.fSettleSlot}=>${data.fSettleSlot})`;
+    }
+    if (source.fSettlePBA != data.fSettlePBA) {
+        if (msg == '')
+            msg = `파워A죽장 변경(${source.fSettlePBA}=>${data.fSettlePBA})`;
+        else
+            msg = `${msg} | 파워A죽장 변경(${source.fSettlePBA}=>${data.fSettlePBA})`;
+    }
+    if (source.fSettlePBB != data.fSettlePBB) {
+        if (msg == '')
+            msg = `파워B죽장 변경(${source.fSettlePBB}=>${data.fSettlePBB})`;
+        else
+            msg = `${msg} | 파워B죽장 변경(${source.fSettlePBB}=>${data.fSettlePBB})`;
+    }
+
+    return msg;
+}
+
 router.post('/request_removeagent', async (req, res) => {
 
     console.log(`/request_removeagent`);
@@ -569,7 +693,7 @@ router.post('/request_removeagent', async (req, res) => {
 
     console.log(`${req.body.strNickname}, ${dateStart}, ${dateEnd}`);
 
-    let listBettings = await db.BettingRecords.findAll({
+    let listBettings = await db.RecordBets.findAll({
         where: {
             createdAt:{
                 [Op.between]:[ dateStart, require('moment')(dateEnd).add(1, 'days').format('YYYY-MM-DD')],
@@ -577,7 +701,6 @@ router.post('/request_removeagent', async (req, res) => {
             strGroupID:{
                 [Op.like]:strGroupID+'%'
             },
-            iComplete:1
         },
         order:[['createdAt','DESC']]
     });
@@ -659,295 +782,6 @@ router.post('/realtimebettingend', async (req, res) => {
     res.send("OK");
 });
 
-
-/**
- * 가불
- */
-router.post('/request_credits', isLoggedIn, async (req, res) => {
-    console.log(req.body);
-    const results = await db.CreditRecords.findAll({
-        offset: 0, limit: 20, where: {
-            createdAt: {
-                [Op.between]: [req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
-            },
-            strID: req.body.strID,
-        },
-        order: [['createdAt', 'DESC']]
-    });
-
-    let data = results;
-
-    const [totals] = await db.sequelize.query(
-        `
-            SELECT IFNULL(SUM(iIncrease), 0) AS iTotal
-            FROM CreditRecords
-            WHERE strID = '${req.body.strID}'
-              AND createdAt BETWEEN '${req.body.dateStart} 00:00:00' AND '${require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD 00:00:00')}'
-            ;
-        `
-    );
-
-    let total = 0;
-    if (totals.length > 0) {
-        total = parseInt(totals[0].iTotal);
-    }
-
-    res.send({data: data, total: total});
-});
-
-
-
-router.post('/request_credits_total', isLoggedIn, async (req, res) => {
-    console.log(req.body);
-    const [totals] = await db.sequelize.query(
-        `
-            SELECT IFNULL(SUM(iIncrease), 0) AS iTotal
-            FROM CreditRecords
-            WHERE strID = '${req.body.strID}'
-            ;
-        `
-    );
-
-    let total = 0;
-    if (totals.length > 0) {
-        total = parseInt(totals[0].iTotal);
-    }
-
-    res.send({total: total});
-});
-router.post('/request_credit_apply', isLoggedIn, async (req, res) => {
-    console.log(req.body);
-    await db.CreditRecords.create({
-        strID: req.body.strID,
-        strNickname: req.body.strNickname,
-        strGroupID: req.body.strGroupID,
-        iClass: req.body.iClass,
-        iIncrease: req.body.iIncrease,
-        writer: req.body.writer,
-        eType: req.body.eType,
-        strMemo: req.body.strMemo,
-        iBeforeCredit: req.body.iBeforeCredit
-    });
-    res.send({result:  'ok'});
-});
-
-router.post('/request_credit_memo_apply', isLoggedIn, async (req, res) => {
-    console.log(req.body);
-    let credit = await db.CreditRecords.findByPk(req.body.id);
-
-    if (credit != null) {
-        await credit.update({strMemo:req.body.strMemo});
-    }
-    res.send({result:  'ok'});
-});
-
-
-/**
- * 지분자 입출금 내역
- */
-router.post('/request_shares', isLoggedIn, async  (req, res) => {
-    const results = await db.ShareRecords.findAll({
-        offset: 0, limit: 20, where: {
-            createdAt: {
-                [Op.between]: [req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
-            },
-            strID: req.body.strID,
-        },
-        order: [['createdAt', 'DESC']]
-    });
-
-    let data = results;
-
-    const [totals] = await db.sequelize.query(
-        `
-            SELECT IFNULL(SUM(iShareAcc), 0) AS iTotal
-            FROM ShareRecords
-            WHERE strID = '${req.body.strID}'
-              AND createdAt BETWEEN '${req.body.dateStart} 00:00:00' AND '${require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD 00:00:00')}'
-            ;
-        `
-    );
-
-    let total = 0;
-    if (totals.length > 0) {
-        total = parseInt(totals[0].iTotal);
-    }
-
-    res.send({data: data, total: total});
-});
-
-
-// 지분비율 수정
-router.post('/request_modify_share_group', isLoggedIn, async(req, res) => {
-
-    var json = JSON.parse(req.body.data);
-
-    let ret = {result:"OK"};
-    let list = [];
-    for ( var i = 0; i < json.length/2; ++i)
-    {
-        const cDefault = parseInt(i*2);
-        var object = {};
-        object.strNickname = json[cDefault+0];
-        object.fShareR = json[cDefault+1];
-        list.push(object);
-    }
-    ret.data = list;
-
-    console.log(ret);
-    if ( ret.result == "OK" )
-    {
-        for ( let i in ret.data )
-        {
-            let strNickname = ret.data[i].strNickname;
-            let fShareR = ret.data[i].fShareR;
-
-            let user = await db.ShareUsers.findOne({where:{strNickname:strNickname}});
-            if ( user != null )
-            {
-                await user.update(
-                    {
-                        fShareR:fShareR,
-                    });
-            }
-        }
-        res.send({result:'OK', msg: '적용되었습니다'});
-    }
-    else
-    {
-        res.send({result:'Error', msg:ret.name})
-    }
-});
-
-// 지분 지급
-router.post('/request_share_apply', isLoggedIn, async  (req, res) => {
-    console.log(req.body);
-
-    let strID = req.body.strID;
-    let strGroupID = req.body.strGroupID;
-    let strQuater = req.body.strQuater;
-    let json = JSON.parse(req.body.data);
-
-    if (strID == '' || strID == undefined || strQuater == '' || strQuater == undefined) {
-        res.send({result:'Error', msg: '필수 항목 부족'});
-        return;
-    }
-
-    let ret = {result:"OK"};
-    let list = [];
-    for ( let i = 0; i < json.length/5; ++i)
-    {
-        const cDefault = parseInt(i*5);
-        var object = {};
-        object.strNickname = json[cDefault+0];
-        object.iShareOrgin = json[cDefault+1]; // 순이익
-        object.fShareR = json[cDefault+2];  // 지분율(ShareUsers)
-        object.iShare = json[cDefault+3];  // 가불전 이월 금액
-        object.iShareAccBefore = json[cDefault+4];  // 가불전 이월 금액
-        list.push(object);
-    }
-    ret.data = list;
-
-    // let credits = [];
-    // for ( let i = 0; i < jsonCredits.length/3; ++i)
-    // {
-    //     const cDefault = parseInt(i*4);
-    //     var object = {};
-    //     object.strNickname = json[cDefault+0];
-    //     object.iIncrease = json[cDefault+1]; // 가불 증감
-    //     object.strMemo = json[cDefault+2];  // 가불 메모
-    //     credits.push(object);
-    // }
-    // ret.data = list;
-
-    console.log(ret);
-    if ( ret.result == "OK" )
-    {
-        for ( let i in ret.data )
-        {
-            let strNickname = ret.data[i].strNickname;
-            let iShareOrgin = ret.data[i].iShareOrgin;
-            let fShareR = ret.data[i].fShareR;
-            let iShare = ret.data[i].iShare;
-            let iShareAccBefore = ret.data[i].iShareAccBefore;
-
-            let user = await db.ShareUsers.findOne({where:{strNickname:strNickname}});
-
-            if ( user != null )
-            {
-                await db.ShareRecords.create(
-                    {
-                        strNickname: strNickname,
-                        iShareOrgin: iShareOrgin,
-                        fShareR: fShareR,
-                        iShare: iShare,
-                        strID: strID,
-                        strGroupID: strGroupID,
-                        strQuater: strQuater,
-                        iShareAccBefore: iShareAccBefore
-                    });
-
-                let updateShareAcc = parseInt(user.iShare) + parseInt(iShare);
-
-                await user.update({
-                    iShareAccBefore: iShareAccBefore,
-                    iShare: updateShareAcc
-                })
-
-            }
-        }
-        res.send({result:'OK', msg: '지급 되었습니다'});
-        return;
-    }
-
-    res.send({result:'Error', msg:'지급 중 오류가 발생했습니다'});
-});
-
-router.post('/request_share_credit_apply', isLoggedIn, async  (req, res) => {
-    console.log(req.body);
-
-    let strNickname = req.body.strNickname;
-    let strID = req.body.strID;
-    let strGroupID = req.body.strGroupID;
-    let iIncrease = req.body.iIncrease;
-    let writer = req.body.writer;
-    let strMemo = req.body.strMemo;
-    // let iBeforeCredit = req.body.iBeforeCredit;
-
-    let user = await db.ShareUsers.findOne({where: {
-            strNickname: strNickname
-        }});
-
-    if ( user == null )
-    {
-        res.send({result:'Error', msg: '해당 유저 없음'});
-        return;
-    }
-
-    let iShareAccBefore = user.iShare;
-
-    await db.ShareCreditRecords.create(
-        {
-            strNickname: strNickname,
-            strID: strID,
-            strGroupID: strGroupID,
-            iIncrease: iIncrease,
-            writer: writer,
-            strMemo: strMemo,
-            iBeforeCredit:iShareAccBefore,
-        });
-
-    let updateShare = parseInt(user.iShare) + parseInt(iIncrease);
-    await user.update({
-        strMemo: strMemo,
-        iShare: updateShare,
-        iShareAccBefore:iShareAccBefore,
-    })
-
-    res.send({result:'OK', msg: '저장되었습니다'});
-});
-
-
 /**
  * 파트너관리 > 신규 회원 조회
  */
@@ -964,12 +798,12 @@ router.post('/listtodayregist', isLoggedIn, async(req, res) => {
     const strTimeStart = ITime.getTodayStart();
     const strTimeEnd = ITime.getTodayEnd();
 
-    let result = await IAgent2.GetUserList(strTimeStart, strTimeEnd, user.strGroupID);
+    let result = await IAgent.GetUserList(strTimeStart, strTimeEnd, user.strGroupID);
     // TODO: iClass에 따라 조정 필요
-    let listShops = await IAgent2.GetShopList(strTimeStart, strTimeEnd, user.strGroupID);
-    let listAgents = await IAgent2.GetAgentList(strTimeStart, strTimeEnd, user.strGroupID);
-    let listViceAdmins = await IAgent2.GetViceAdminList(strTimeStart, strTimeEnd, user.strGroupID);
-    let listProAdmins = await  IAgent2.GetProAdminList(strTimeStart, strTimeEnd, user.strGroupID);
+    let listShops = await IAgent.GetShopList(strTimeStart, strTimeEnd, user.strGroupID);
+    let listAgents = await IAgent.GetAgentList(strTimeStart, strTimeEnd, user.strGroupID);
+    let listViceAdmins = await IAgent.GetViceAdminList(strTimeStart, strTimeEnd, user.strGroupID);
+    let listProAdmins = await  IAgent.GetProAdminList(strTimeStart, strTimeEnd, user.strGroupID);
 
     let total = {iTotalCash:0};
 
@@ -983,9 +817,9 @@ router.post('/listtodayregist', isLoggedIn, async(req, res) => {
             total.iTotalCash += parseInt(result[i].iCash);
     }
 
-    var overview = await IAgent2.CalculateBettingRecord(user.strGroupID, user.iClass, strTimeStart, strTimeEnd, '', dbuser.strID);
+    var overview = await IAgent.CalculateBettingRecord(user.strGroupID, user.iClass, strTimeStart, strTimeEnd, '', dbuser.strID);
     var bobj = {overview:overview};
-    const agentinfo = await IAgent2.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
+    const agentinfo = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
     let iocount = await IInout.GetProcessing(user.strGroupID, user.strNickname, dbuser.iClass);
 
     res.render('manage_partner/listtodayregist', {iLayout:0, iHeaderFocus:0, user:user, userlist:result, shoplist:listShops, agentlist:listAgents, vadminlist:listViceAdmins, proadminlist: listProAdmins, total:total, data:bobj, agentinfo:agentinfo, iocount:iocount});
@@ -997,233 +831,14 @@ router.post('/request_todayregistlist', isLoggedIn, async ( req, res ) => {
     const strTimeStart = ITime.getTodayStart();
     const strTimeEnd = ITime.getTodayEnd();
 
-    let result = await IAgent2.GetUserList(strTimeStart, strTimeEnd, req.body.strGroupID, req.body.strSearchNickname);
+    let result = await IAgent.GetUserList(strTimeStart, strTimeEnd, req.body.strGroupID, req.body.strSearchNickname);
     // TODO: iClass에 따라 조정 필요
-    let listShops = await IAgent2.GetShopList(strTimeStart, strTimeEnd, req.body.strGroupID, req.body.strSearchNickname);
-    let listAgents = await IAgent2.GetAgentList(strTimeStart, strTimeEnd, req.body.strGroupID, req.body.strSearchNickname);
-    let listViceAdmins = await IAgent2.GetViceAdminList(strTimeStart, strTimeEnd, req.body.strGroupID, req.body.strSearchNickname);
-    let listProAdmins = await IAgent2.GetProAdminList(strTimeStart, strTimeEnd, req.body.strGroupID, req.body.strSearchNickname);
+    let listShops = await IAgent.GetShopList(strTimeStart, strTimeEnd, req.body.strGroupID, req.body.strSearchNickname);
+    let listAgents = await IAgent.GetAgentList(strTimeStart, strTimeEnd, req.body.strGroupID, req.body.strSearchNickname);
+    let listViceAdmins = await IAgent.GetViceAdminList(strTimeStart, strTimeEnd, req.body.strGroupID, req.body.strSearchNickname);
+    let listProAdmins = await IAgent.GetProAdminList(strTimeStart, strTimeEnd, req.body.strGroupID, req.body.strSearchNickname);
 
     res.send({userlist:result, shoplist:listShops, agentlist:listAgents, vadminlist:listViceAdmins, proadminlist: listProAdmins, iRootClass: req.user.iClass});
 });
-
-
-let GetUserList = async (strTimeStart, strTimeEnd, strGroupID, strSearchNickname) => {
-
-    let tagSearch = '';
-    if ( strSearchNickname != undefined && strSearchNickname != '' )
-        tagSearch = `AND t6.strNickname='${strSearchNickname}'`;
-
-    const [result] = await db.sequelize.query(
-        `
-            SELECT t1.strNickname AS lev1, t2.strNickname as lev2, t3.strNickname as lev3, t4.strNickname as lev4, t5.strNickname as lev5, t6.strNickname as lev6, t6.iClass, t6.strID, t6.strNickname,
-                   t6.iCash, t6.iClass, t6.strGroupID, t6.eState, t6.createdAt, t6.loginedAt, t6.strIP,
-                   IFNULL(charges.iInput,0) AS iInput,
-                   IFNULL(exchanges.iOutput,0) AS iOutput,
-                   IFNULL(BettingRecords.iMyRollingMoney,0) AS iMyRollingMoney,
-                   IFNULL((SELECT sum(iBetting)-sum(iWin) FROM BettingRecords WHERE strGroupID LIKE CONCAT(t6.strGroupID,'%') AND t6.strID = strID AND iComplete = 1 AND date(createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'),0) as iTotal,
-                   t6.iRolling AS iCurrentRolling,
-                   t6.iLoan
-            FROM Users AS t1
-                     LEFT JOIN Users AS t2 ON t2.iParentID = t1.id
-                     LEFT JOIN Users AS t3 ON t3.iParentID = t2.id
-                     LEFT JOIN Users AS t4 ON t4.iParentID = t3.id
-                     LEFT JOIN Users AS t5 ON t5.iParentID = t4.id
-                     LEFT JOIN Users AS t6 ON t6.iParentID = t5.id
-                     LEFT JOIN ( SELECT strID, sum(iAmount) as iInput
-                                 FROM Inouts
-                                 where DATE(completedAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'
-                    AND eState = 'COMPLETE'
-                    AND eType = 'INPUT'
-            GROUP BY strID) charges
-            ON t6.strNickname = charges.strID
-                LEFT JOIN ( SELECT strID, sum(iAmount) as iOutput
-                FROM Inouts
-                where DATE(completedAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'
-                AND eState = 'COMPLETE'
-                AND eType = 'OUTPUT'
-                GROUP BY strID) exchanges
-                ON t6.strNickname = exchanges.strID
-                LEFT JOIN ( SELECT strID, sum(iRollingUser) as iMyRollingMoney
-                FROM BettingRecords
-                where DATE(updatedAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'
-                AND iComplete = 1
-                GROUP BY strID) BettingRecords
-                ON t6.strID = BettingRecords.strID
-            WHERE t6.iClass=${IAgent.EAgent.eUser} AND DATE(t6.createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}' AND t6.strGroupID LIKE CONCAT('${strGroupID}', '%')${tagSearch};
-        `
-    );
-    return result;
-}
-
-let GetShopList = async (strTimeStart, strTimeEnd, strGroupID, strSearchNickname) => {
-
-    let tagSearch = '';
-    if ( strSearchNickname != undefined && strSearchNickname != '' )
-        tagSearch = `AND t5.strNickname='${strSearchNickname}'`;
-
-    const [result] = await db.sequelize.query(
-        `
-
-            SELECT t1.strNickname AS lev1, t2.strNickname as lev2, t3.strNickname as lev3, t4.strNickname as lev4, t5.strNickname as lev5, t5.strNickname as lev6, t5.iClass, t5.strID, t5.strNickname,
-                   t5.iCash, t5.iClass, t5.strGroupID, t5.eState, t5.createdAt, t5.loginedAt, t5.strIP,
-                   IFNULL(charges.iInput,0) AS iInput,
-                   IFNULL(exchanges.iOutput,0) AS iOutput,
-                   IFNULL((SELECT sum(iRollingShop) FROM BettingRecords WHERE strGroupID LIKE CONCAT(t5.strGroupID,'%') AND iComplete = 1 AND date(createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'),0) as iMyRollingMoney,
-                   IFNULL((SELECT sum(iBetting)-sum(iWin) FROM BettingRecords WHERE strGroupID LIKE CONCAT(t5.strGroupID,'%') AND t5.strID = strID AND iComplete = 1 AND date(createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'),0) as iTotal,
-                   t5.iRolling AS iCurrentRolling,
-                   t5.iLoan
-            FROM Users AS t1
-                     LEFT JOIN Users AS t2 ON t2.iParentID = t1.id
-                     LEFT JOIN Users AS t3 ON t3.iParentID = t2.id
-                     LEFT JOIN Users AS t4 ON t4.iParentID = t3.id
-                     LEFT JOIN Users AS t5 ON t5.iParentID = t4.id
-                     LEFT JOIN ( SELECT strID, sum(iAmount) as iInput
-                                 FROM Inouts
-                                 where DATE(completedAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'
-                    AND eState = 'COMPLETE'
-                    AND eType = 'INPUT'
-            GROUP BY strID) charges
-            ON t5.strNickname = charges.strID
-                LEFT JOIN ( SELECT strID, sum(iAmount) as iOutput
-                FROM Inouts
-                where DATE(completedAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'
-                AND eState = 'COMPLETE'
-                AND eType = 'OUTPUT'
-                GROUP BY strID) exchanges
-                ON t5.strNickname = exchanges.strID
-            WHERE t5.iClass=${IAgent.EAgent.eShop}
-              AND DATE(t5.createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'
-              AND t5.strGroupID LIKE CONCAT('${strGroupID}', '%')${tagSearch};
-        `
-    );
-    return result;
-}
-
-let GetAgentList = async (strTimeStart, strTimeEnd, strGroupID, strSearchNickname) => {
-
-    let tagSearch = '';
-    if ( strSearchNickname != undefined && strSearchNickname != '' )
-        tagSearch = `AND t4.strNickname='${strSearchNickname}'`;
-
-    const [result] = await db.sequelize.query(
-        `
-
-            SELECT t1.strNickname AS lev1, t2.strNickname as lev2, t3.strNickname as lev3, t4.strNickname as lev4, t4.strNickname as lev5, t4.strNickname as lev6, t4.iClass, t4.strID, t4.strNickname,
-                   t4.iCash, t4.iClass, t4.strGroupID, t4.eState, t4.createdAt, t4.loginedAt, t4.strIP,
-                   IFNULL(charges.iInput,0) AS iInput,
-                   IFNULL(exchanges.iOutput,0) AS iOutput,
-                   IFNULL((SELECT sum(iRollingAgent) FROM BettingRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID,'%') AND iComplete = 1 AND date(createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'),0) as iMyRollingMoney,
-                   IFNULL((SELECT sum(iBetting)-sum(iWin) FROM BettingRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID,'%') AND t4.strID = strID AND iComplete = 1 AND date(createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'),0) as iTotal,
-                   t4.iRolling AS iCurrentRolling,
-                   t4.iLoan
-            FROM Users AS t1
-                     LEFT JOIN Users AS t2 ON t2.iParentID = t1.id
-                     LEFT JOIN Users AS t3 ON t3.iParentID = t2.id
-                     LEFT JOIN Users AS t4 ON t4.iParentID = t3.id
-                     LEFT JOIN ( SELECT strID, sum(iAmount) as iInput
-                                 FROM Inouts
-                                 where DATE(completedAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'
-                    AND eState = 'COMPLETE'
-                    AND eType = 'INPUT'
-            GROUP BY strID) charges
-            ON t4.strNickname = charges.strID
-                LEFT JOIN ( SELECT strID, sum(iAmount) as iOutput
-                FROM Inouts
-                where DATE(completedAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'
-                AND eState = 'COMPLETE'
-                AND eType = 'OUTPUT'
-                GROUP BY strID) exchanges
-                ON t4.strNickname = exchanges.strID
-            WHERE t4.iClass=${IAgent.EAgent.eAgent}
-              AND DATE(t4.createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'
-              AND t4.strGroupID LIKE CONCAT('${strGroupID}', '%')${tagSearch};
-        `
-    );
-    return result;
-}
-
-let GetViceAdminList = async (strTimeStart, strTimeEnd, strGroupID, strSearchNickname) => {
-
-    let tagSearch = '';
-    if ( strSearchNickname != undefined && strSearchNickname != '' )
-        tagSearch = `AND t3.strNickname='${strSearchNickname}'`;
-
-    const [result] = await db.sequelize.query(
-        `
-            SELECT t1.strNickname AS lev1, t2.strNickname as lev2, t3.strNickname as lev3, t3.strNickname as lev4, t3.strNickname as lev5, t3.strNickname as lev6, t3.iClass, t3.strID, t3.strNickname,
-                   t3.iCash, t3.iClass, t3.strGroupID, t3.eState, t3.createdAt, t3.loginedAt, t3.strIP,
-                   IFNULL(charges.iInput,0) AS iInput,
-                   IFNULL(exchanges.iOutput,0) AS iOutput,
-                   IFNULL((SELECT sum(iRollingVAdmin) FROM BettingRecords WHERE strGroupID LIKE CONCAT(t3.strGroupID,'%') AND iComplete = 1 AND date(createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'),0) as iMyRollingMoney,
-                   IFNULL((SELECT sum(iBetting)-sum(iWin) FROM BettingRecords WHERE strGroupID LIKE CONCAT(t3.strGroupID,'%') AND t3.strID = strID AND iComplete = 1 AND date(createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'),0) as iTotal,
-                   t3.iRolling AS iCurrentRolling,
-                   t3.iLoan
-            FROM Users AS t1
-                     LEFT JOIN Users AS t2 ON t2.iParentID = t1.id
-                     LEFT JOIN Users AS t3 ON t3.iParentID = t2.id
-                     LEFT JOIN ( SELECT strID, sum(iAmount) as iInput
-                                 FROM Inouts
-                                 where DATE(completedAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'
-                    AND eState = 'COMPLETE'
-                    AND eType = 'INPUT'
-            GROUP BY strID) charges
-            ON t3.strNickname = charges.strID
-                LEFT JOIN ( SELECT strID, sum(iAmount) as iOutput
-                FROM Inouts
-                where DATE(completedAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'
-                AND eState = 'COMPLETE'
-                AND eType = 'OUTPUT'
-                GROUP BY strID) exchanges
-                ON t3.strNickname = exchanges.strID
-            WHERE t3.iClass=${IAgent.EAgent.eViceAdmin}
-              AND DATE(t3.createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'
-              AND t3.strGroupID LIKE CONCAT('${strGroupID}', '%')${tagSearch};
-        `
-    );
-    return result;
-}
-
-let GetProAdminList = async (strTimeStart, strTimeEnd, strGroupID, strSearchNickname) => {
-
-    let tagSearch = '';
-    if ( strSearchNickname != undefined && strSearchNickname != '' )
-        tagSearch = `AND t3.strNickname='${strSearchNickname}'`;
-
-    const [result] = await db.sequelize.query(
-        `
-            SELECT t1.strNickname AS lev1, t2.strNickname as lev2, t3.strNickname as lev3, t3.strNickname as lev4, t3.strNickname as lev5, t3.strNickname as lev6, t3.iClass, t3.strID, t3.strNickname,
-                   t3.iCash, t3.iClass, t3.strGroupID, t3.eState, t3.createdAt, t3.loginedAt, t3.strIP,
-                   0 AS iInput,
-                   0 AS iOutput,
-                   IFNULL((SELECT sum(iRollingVAdmin) FROM BettingRecords WHERE strGroupID LIKE CONCAT(t3.strGroupID,'%') AND iComplete = 1 AND date(createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'),0) as iMyRollingMoney,
-                   IFNULL((SELECT sum(iBetting)-sum(iWin) FROM BettingRecords WHERE strGroupID LIKE CONCAT(t3.strGroupID,'%') AND t3.strID = strID AND iComplete = 1 AND date(createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'),0) as iTotal,
-                   t3.iRolling AS iCurrentRolling,
-                   t3.iLoan
-            FROM Users AS t1
-                     LEFT JOIN Users AS t2 ON t2.iParentID = t1.id
-                     LEFT JOIN Users AS t3 ON t3.iParentID = t2.id
-                     LEFT JOIN ( SELECT strID, sum(iAmount) as iInput
-                                 FROM Inouts
-                                 where DATE(completedAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'
-                    AND eState = 'COMPLETE'
-                    AND eType = 'INPUT'
-            GROUP BY strID) charges
-            ON t3.strNickname = charges.strID
-                LEFT JOIN ( SELECT strID, sum(iAmount) as iOutput
-                FROM Inouts
-                where DATE(completedAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'
-                AND eState = 'COMPLETE'
-                AND eType = 'OUTPUT'
-                GROUP BY strID) exchanges
-                ON t3.strNickname = exchanges.strID
-            WHERE t3.iClass=${IAgent.EAgent.eProAdmin}
-              AND DATE(t3.createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'
-              AND t3.strGroupID LIKE CONCAT('${strGroupID}', '%')${tagSearch};
-        `
-    );
-    return result;
-}
-
 
 module.exports = router;

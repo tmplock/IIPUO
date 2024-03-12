@@ -16,7 +16,7 @@ const ISocket = require('../implements/socket');
 
 const {Op}= require('sequelize');
 
-const IAgent = require('../implements/agent');
+const IAgent = require('../implements/agent3');
 const {isLoggedIn, isNotLoggedIn} = require('./middleware');
 const IInout = require("../implements/inout");
 const {DATETIME} = require("mysql/lib/protocol/constants/types");

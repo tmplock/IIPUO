@@ -140,6 +140,13 @@ exports.getCurrentDate = () =>{
     return moment(current).format('YYYY-MM-DD');
 }
 
+exports.getCurrentDateBefore = (days) =>{
+    var current = new Date();
+    var day = days ?? 0;
+    current = new Date(current.getFullYear(), current.getMonth(), current.getDate()-day);
+    return moment(current).format('YYYY-MM-DD');
+}
+
 exports.getCurrentDateFull = () =>{
     var current = new Date();
 

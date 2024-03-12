@@ -97,9 +97,9 @@
 				<th scope="col"><%=__('Nickname')%></th>
 				<th scope="col"><%=__('BettingOriginCash')%></th>
 				<th scope="col" colspan="3"><%=__('BettingAccount')%></th>
-				<th scope="col"><%=__('BettingAmount')%></th>
-				<th scope="col"><%=__('BettingWin')%></th>
 				<th scope="col">베팅후 금액</th>
+				<th scope="col">당첨 금액</th>
+				<th scope="col">당첨후 금액</th>
 				<th scope="col"><%=__('BettingTime')%></th>
 				<th scope="col">당첨 결과</th>
 				<th scope="col">비고</th>
@@ -117,9 +117,9 @@
 <script type="text/javascript" src="js/enum.js"></script>
 <script type="text/javascript" src="js/time.js"></script>
 <script type="text/javascript" src="js/util.js"></script>
+<script type="text/javascript" src="js/manage_bettingrecord_ref.js"></script>
 <script type="text/javascript" src="js/manage_partner_ref.js"></script>
 <script type="text/javascript" src="js/manage_partner_popup_ref.js"></script>
-<script type="text/javascript" src="js/manage_bettingrecord_ref.js"></script>
 <script type="text/javascript" src="js/manage_user_popup_menu.js"></script>
 <script type="text/javascript" src="js/pagination.js"></script>
 <script type="text/javascript">
@@ -163,7 +163,7 @@
 		$("#button_toggle_record").text("<%=__('Close')%>");
 
 		RequestOverviewUser(EAgent.eUser, agent.strGroupID, agent.iClass, agent.strNickname);
-		RequestBettingListOnPopup(EAgent.eUser, agent.strGroupID, agent.iClass, agent.iPermission, iLimit, iCurrentPage);
+		RequestBettingListOnPopup(EAgent.eUser, agent.strGroupID, agent.iClass, agent.iPermission, iLimit, iCurrentPage, agent.strID);
 		RequestBettingRecordUser(EAgent.eUser, agent.strGroupID, agent.iClass, agent.strNickname);
 	}
 
@@ -177,7 +177,7 @@
 		$("#button_toggle_record").text("<%=__('Close')%>");
 
 		RequestOverviewUser(EAgent.eUser, agent.strGroupID, agent.iClass, agent.strNickname);
-		RequestBettingListOnPopup(EAgent.eUser, agent.strGroupID, agent.iClass, agent.iPermission, iLimit, iCurrentPage);
+		RequestBettingListOnPopup(EAgent.eUser, agent.strGroupID, agent.iClass, agent.iPermission, iLimit, iCurrentPage, agent.strID);
 		RequestBettingRecordUser(EAgent.eUser, agent.strGroupID, agent.iClass, agent.strNickname);
 	}
 
@@ -191,7 +191,7 @@
 		$("#button_toggle_record").text("<%=__('Close')%>");
 
 		RequestOverviewUser(EAgent.eUser, agent.strGroupID, agent.iClass, agent.strNickname);
-		RequestBettingListOnPopup(EAgent.eUser, agent.strGroupID, agent.iClass, agent.iPermission, iLimit, iCurrentPage);
+		RequestBettingListOnPopup(EAgent.eUser, agent.strGroupID, agent.iClass, agent.iPermission, iLimit, iCurrentPage, agent.strID);
 		RequestBettingRecordUser(EAgent.eUser, agent.strGroupID, agent.iClass, agent.strNickname);
 	}
 	
@@ -224,7 +224,7 @@
 		$("#button_toggle_record").text("<%=__('Close')%>");
 
 		RequestOverviewUser(EAgent.eUser, agent.strGroupID, agent.iClass, agent.strNickname);
-		RequestBettingListOnPopup(EAgent.eUser, agent.strGroupID, agent.iClass, agent.iPermission, iLimit, iCurrentPage);
+		RequestBettingListOnPopup(EAgent.eUser, agent.strGroupID, agent.iClass, agent.iPermission, iLimit, iCurrentPage, agent.strID);
 		RequestBettingRecordUser(EAgent.eUser, agent.strGroupID, agent.iClass, agent.strNickname);
 	}
 

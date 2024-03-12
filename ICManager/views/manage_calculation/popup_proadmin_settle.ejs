@@ -9,11 +9,12 @@
                     <caption><%=__('SearchResult')%></caption>
                     <colgroup>
                         <col style="width:5%">
-                        <col style="width:15%">
-                        <col style="width:15%">
-                        <col style="width:15%">
-                        <col style="width:30%">
+                        <col style="width:13%">
+                        <col style="width:13%">
+                        <col style="width:13%">
+                        <col style="width:24%">
                         <% if (user.iPermission != 100) { %>
+                            <col style="width:10%">
                             <col style="width:10%">
                         <% } %>
                     </colgroup>
@@ -25,6 +26,7 @@
                         <th scope="col">보관죽장</th>
                         <th scope="col" >메모</th>
                         <% if (user.iPermission != 100) { %>
+                            <th scope="col" >가불내역</th>
                             <th scope="col" >본사이동</th>
                         <% } %>
                     </tr>
@@ -41,6 +43,7 @@
 <script type="text/javascript" src="js/enum.js"></script>
 <script type="text/javascript" src="js/time.js"></script>
 <script type="text/javascript" src="js/manage_partner_popup_menu.js"></script>
+<script type="text/javascript" src="js/manage_calculation_menu.js"></script>
 <script type="text/javascript" src="js/manage_partner_menu.js"></script>
 <script type="text/javascript" src="js/util.js"></script>
 <script type="text/javascript" src="js/common_menu.js"></script>
@@ -79,6 +82,9 @@
                             <td style="" class="parent_row_31">
                                 <a href="#" class="list_menu btn_blue move" strNickname=${aObject.parentNickname} strGroupID=${aObject.parentGroupID} iClass=${aObject.parentClass}>${strMove}</a>
                             </td>
+                            <td style="" class="parent_row_31">
+                                <a href="#" class="list_menu btn_blue" onclick="OnClickCredit('${aObject.parentNickname}', '${aObject.parentGroupID}', '${aObject.parentClass}');">대본 가불</a>
+                            </td>
                         <% } else { %>
                             <td style="" class="parent_row_31">
                                 ${strMemo}
@@ -97,6 +103,7 @@
                         <td></td>
                         <% if (user.iPermission != 100) { %>
                             <td></td>
+                            <td></td>
                         <% } %>
                     </tr>
                 `);
@@ -110,6 +117,7 @@
                         <td></td>
                         <td></td>
                         <% if (user.iPermission != 100) { %>
+                            <td></td>
                             <td></td>
                         <% } %>
                     </tr>
@@ -144,7 +152,7 @@
         console.log(`OnClickRegisterShare : ${strNickname}`);
         window.open('', 'popupChkRegisterShareUser', 'width=1280, height=720, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
         let $form = $('<form></form>');
-        $form.attr('action', '/manage_partner_popup/popup_view_share_user');
+        $form.attr('action', '/manage_share/popup_view_share_user');
         $form.attr('method', 'post');
         $form.attr('target', 'popupChkRegisterShareUser');
         $form.appendTo('body');
@@ -179,5 +187,22 @@
                 }
             }
         });
+    }
+
+    let OnClickCredit = (strNickname, strGroupID, iClass) => {
+        window.open('', 'popupChkCreditsSub', 'width=1280, height=720, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
+        var $form = $('<form></form>');
+        $form.attr('action', '/manage_calculation/settle_credits');
+        $form.attr('method', 'post');
+        $form.attr('target', 'popupChkCreditsSub');
+        $form.appendTo('body');
+
+        var strNickname = $(`<input type="hidden" value="${strNickname}" name="strNickname">`);
+        var strGroupID = $(`<input type="hidden" value="${strGroupID}" name="strGroupID">`);
+        var iClass = $(`<input type="hidden" value=${iClass} name="iClass">`);
+        var iPermission = $(`<input type="hidden" value=${user.iPermission} name="iPermission">`);
+
+        $form.append(strNickname).append(strGroupID).append(iClass).append(iPermission);
+        $form.submit();
     }
 </script>

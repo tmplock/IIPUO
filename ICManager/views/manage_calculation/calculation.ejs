@@ -97,7 +97,7 @@
         bToggleRecord = true;
         $("#button_toggle_record").text("<%=__('Close')%>");
         RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
-        RequestOverview(cTClass, user.strGroupID, user.iClass, user.iPermission, user.strNickname, user.strID);
+        RequestOverview(cTClass, user.strGroupID, user.iClass, user.iPermission, '', user.strID);
     }
 
     function OnClickMonthlyRecord()
@@ -114,6 +114,7 @@
                 $('#datepicker2').val(GetMonthlyEndDate());
             }
             RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
+            RequestOverview(cTClass, user.strGroupID, user.iClass, user.iPermission, '', user.strID);
         }
         else {
             $("#table_record_list").hide();
@@ -132,18 +133,18 @@
         $("#button_toggle_record").text("<%=__('Close')%>");
 
         RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
-        RequestOverview(user.iClass, user.strGroupID, user.iClass, user.iPermission, user.strNickname, user.strID);
+        RequestOverview(user.iClass, user.strGroupID, user.iClass, user.iPermission, '', user.strID);
     }
 
     let OnClickMonthly2ndRecord = () => {
         bClickDateSelection	= true;
-        $('#datepicker1').val(GetMonthly2ndStartDate());
-        $('#datepicker2').val(GetMonthly2ndEndDate());
+        $('#datepicker1').val(GetMonthly2ndStartDate(true));
+        $('#datepicker2').val(GetMonthly2ndEndDate(true));
 
         bToggleRecord = true;
         $("#button_toggle_record").text("<%=__('Close')%>");
         RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
-        RequestOverview(user.iClass, user.strGroupID, user.iClass, user.iPermission, user.strNickname, user.strID);
+        RequestOverview(user.iClass, user.strGroupID, user.iClass, user.iPermission, '', user.strID);
     }
 
     let OnClickSearch = (iTargetClass, strGroupID, iClass) => {
@@ -152,7 +153,7 @@
         $("#button_toggle_record").text("<%=__('Close')%>");
 
         RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
-        RequestOverview(user.iClass, user.strGroupID, user.iClass, user.iPermission, user.strNickname, user.strID);
+        RequestOverview(user.iClass, user.strGroupID, user.iClass, user.iPermission, '', user.strID);
     }
 
     let OnClickSearchNickname = () => {

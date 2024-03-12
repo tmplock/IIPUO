@@ -15,7 +15,6 @@ const util_time = require('../utils/time');
 const {Op}= require('sequelize');
 const {isLoggedIn, isNotLoggedIn} = require('./middleware');
 
-const IAgent = require('../implements/agent');
 const IInout = require("../implements/inout");
 
 const cPBGOdds = [
@@ -222,96 +221,6 @@ router.post('/world', isLoggedIn, async(req, res) => {
     res.render('manage_bettingrecord/world', {iLayout:0, iHeaderFocus:3, iSubHeaderFocus:7, user:user, iocount:iocount});
 });
 
-router.post('/request_pending_record', isLoggedIn, async(req, res) => {
-
-    console.log('/request_pending_record');
-    console.log(req.body);
-
-    let strTimeStart = req.body.dateStart;
-    let strTimeEnd = req.body.dateEnd;
-    let strGroupID = req.body.strGroupID;
-    let strNickname = req.body.strNickname;
-
-    let listComplete = req.body.iComplete.split(',');
-    let iLimit = parseInt(req.body.iLimit);
-    let iPage = parseInt(req.body.iPage);
-    let iOffset = (iPage-1) * iLimit;
-
-    let totalCount = await db.BettingRecords.count({
-        where: {
-            createdAt:{
-                [Op.between]:[ strTimeStart, require('moment')(strTimeEnd).add(1, 'days').format('YYYY-MM-DD')],
-            },
-            strGroupID:{
-                [Op.like]:strGroupID+'%'
-            },
-            strNickname:{
-                [Op.like]:'%'+strNickname+'%',
-            },
-            eState:{
-                [Op.or]:['PENDING', 'ERROR']
-            }
-        }
-    });
-
-    let list = await db.BettingRecords.findAll(
-        {
-            where: {
-                createdAt:{
-                    [Op.between]:[ strTimeStart, require('moment')(strTimeEnd).add(1, 'days').format('YYYY-MM-DD')],
-                },
-                strGroupID:{
-                    [Op.like]:strGroupID+'%'
-                },
-                strNickname:{
-                    [Op.like]:'%'+strNickname+'%',
-                },
-                eState:{
-                    [Op.or]:['PENDING', 'ERROR']
-                }
-            },
-            offset:iOffset,
-            limit:iLimit,
-            order:[['id','DESC']]
-        });
-
-    let records = [];
-
-    for ( let i in list )
-    {
-        let updatedAt = '';
-        if (list[i].strBets != '' && list[i].strDetails != '') {
-            updatedAt = list[i].updatedAt;
-        }
-
-        records.push({
-            id: list[i].id,
-            strVender:list[i].strVender,
-            strNickname:list[i].strNickname,
-            iPreviousCash:list[i].iPreviousCash,
-            iAfterCash:list[i].iAfterCash,
-            iGameCode:list[i].iGameCode,
-            iBetting:list[i].iBetting,
-            iWin: list[i].iWin,
-            iTarget:list[i].iTarget,
-            strRound:list[i].strRound,
-            strRoundDetails: list[i].strDetails,
-            strTableID:list[i].strTableID,
-            iTransactionID:list[i].iTransactionID,
-            strGroupID:list[i].strGroupID,
-            iComplete:list[i].iComplete,
-            iClass:list[i].iClass,
-            createdAt:list[i].createdAt,
-            updatedAt:updatedAt,
-            strBets:list[i].strBets,
-            eState:list[i].eState
-        });
-    }
-    console.log(records);
-
-    res.send({result:'OK', list:records, totalCount: totalCount});
-});
-
 router.post('/request_casino_record', isLoggedIn, async(req, res) => {
 
     console.log('/request_casino_record');
@@ -327,7 +236,7 @@ router.post('/request_casino_record', isLoggedIn, async(req, res) => {
     let iPage = parseInt(req.body.iPage);
     let iOffset = (iPage-1) * iLimit;
 
-    let totalCount = await db.BettingRecords.count({
+    let totalCount = await db.RecordBets.count({
         where: {
             createdAt:{
                 [Op.between]:[ strTimeStart, require('moment')(strTimeEnd).add(1, 'days').format('YYYY-MM-DD')],
@@ -338,16 +247,16 @@ router.post('/request_casino_record', isLoggedIn, async(req, res) => {
             strNickname:{
                 [Op.like]:'%'+strNickname+'%',
             },
-            iGameCode:{
-                [Op.or]:[0, 100]
+            iGameCode: {
+                [Op.in]:[0, 100]
             },
-            // iComplete:{
-            //     [Op.or]:listComplete
-            // },
+            // eState:{
+            //     [Op.notIn]:['STANDBY']
+            // }
         }
     });
 
-    let list = await db.BettingRecords.findAll(
+    let list = await db.RecordBets.findAll(
         {
             where: {
                 createdAt:{
@@ -359,12 +268,12 @@ router.post('/request_casino_record', isLoggedIn, async(req, res) => {
                 strNickname:{
                     [Op.like]:'%'+strNickname+'%',
                 },
-                iGameCode:{
-                    [Op.or]:[0, 100]
+                iGameCode: {
+                  [Op.in]:[0, 100]
                 },
-                // iComplete:{
-                //     [Op.or]:listComplete
-                // },
+                // eState:{
+                //     [Op.notIn]:['STANDBY']
+                // }
             },
             offset:iOffset,
             limit:iLimit,
@@ -375,37 +284,32 @@ router.post('/request_casino_record', isLoggedIn, async(req, res) => {
 
     for ( let i in list )
     {
-        let updatedAt = '';
-        if (list[i].strBets != '' && list[i].strDetails != '') {
-            updatedAt = list[i].updatedAt;
-        }
-
         records.push({
             id: list[i].id,
-            strVender:list[i].strVender,
+            strID:list[i].strID,
             strNickname:list[i].strNickname,
-            iPreviousCash:list[i].iPreviousCash,
-            iAfterCash:list[i].iAfterCash,
-            iGameCode:list[i].iGameCode,
-            iBetting:list[i].iBetting,
-            iWin: list[i].iWin,
-            iTarget:list[i].iTarget,
-            strRound:list[i].strRound,
-            strRoundDetails: list[i].strDetails,
-            strTableID:list[i].strTableID,
-            iTransactionID:list[i].iTransactionID,
             strGroupID:list[i].strGroupID,
-            iComplete:list[i].iComplete,
             iClass:list[i].iClass,
+            iBalance:list[i].iBalance,
+            iGameCode:list[i].iGameCode,
+            strVender:list[i].strVender,
+            strTableID:list[i].strTableID,
+            strRound:list[i].strRound,
+            strUniqueID:list[i].strUniqueID,
+            strDetail:list[i].strDetail,
+            strResult:list[i].strResult,
+            iBet:list[i].iBet,
+            iWin: list[i].iWin,
+            eState:list[i].eState,
+            eType:list[i].eType,
+            iTarget:list[i].iTarget,
             createdAt:list[i].createdAt,
-            updatedAt:updatedAt,
-            strBets:list[i].strBets,
-            eState:list[i].eState
+            updatedAt:list[i].updatedAt
         });
     }
     console.log(records);
 
-    res.send({result:'OK', list:records, totalCount: totalCount});
+    res.send({result:'OK', data:records, totalCount: totalCount});
 });
 
 router.post('/request_slot_record', isLoggedIn, async(req, res) => {
@@ -423,7 +327,7 @@ router.post('/request_slot_record', isLoggedIn, async(req, res) => {
     let iPage = parseInt(req.body.iPage);
     let iOffset = (iPage-1) * iLimit;
 
-    let totalCount = await db.BettingRecords.count({
+    let totalCount = await db.RecordBets.count({
         where: {
             createdAt:{
                 [Op.between]:[ strTimeStart, require('moment')(strTimeEnd).add(1, 'days').format('YYYY-MM-DD')],
@@ -434,14 +338,14 @@ router.post('/request_slot_record', isLoggedIn, async(req, res) => {
             strNickname:{
                 [Op.like]:'%'+strNickname+'%',
             },
-            iGameCode:200,
-            iComplete:{
-                [Op.or]:listComplete
-            },
+            iGameCode: 200,
+            // eState:{
+            //     [Op.notIn]:['STANDBY']
+            // }
         }
     });
 
-    let list = await db.BettingRecords.findAll(
+    let list = await db.RecordBets.findAll(
         {
             where: {
                 createdAt:{
@@ -453,10 +357,10 @@ router.post('/request_slot_record', isLoggedIn, async(req, res) => {
                 strNickname:{
                     [Op.like]:'%'+strNickname+'%',
                 },
-                iGameCode:200,
-                iComplete:{
-                    [Op.or]:listComplete
-                },
+                iGameCode: 200,
+                // eState:{
+                //     [Op.notIn]:['STANDBY']
+                // }
             },
             offset:iOffset,
             limit:iLimit,
@@ -469,21 +373,25 @@ router.post('/request_slot_record', isLoggedIn, async(req, res) => {
     {
         records.push({
             id: list[i].id,
-            strVender:list[i].strVender,
+            strID:list[i].strID,
             strNickname:list[i].strNickname,
-            iPreviousCash:list[i].iPreviousCash,
-            iAfterCash:list[i].iAfterCash,
-            iGameCode:list[i].iGameCode,
-            iBetting:list[i].iBetting,
-            iWin:list[i].iWin,
-            iTarget:list[i].iTarget,
-            strRound:list[i].strRound,
-            strTableID:list[i].strTableID,
-            iTransactionID:list[i].iTransactionID,
-            createdAt:list[i].createdAt,
             strGroupID:list[i].strGroupID,
-            iComplete:list[i].iComplete,
             iClass:list[i].iClass,
+            iBalance:list[i].iBalance,
+            iGameCode:list[i].iGameCode,
+            strVender:list[i].strVender,
+            strTableID:list[i].strTableID,
+            strRound:list[i].strRound,
+            strUniqueID:list[i].strUniqueID,
+            strDetail:list[i].strDetail,
+            strResult:list[i].strResult,
+            iBet:list[i].iBet,
+            iWin: list[i].iWin,
+            eState:list[i].eState,
+            eType:list[i].eType,
+            iTarget:list[i].iTarget,
+            createdAt:list[i].createdAt,
+            updatedAt:list[i].updatedAt
         });
     }
     console.log(records);
@@ -491,6 +399,10 @@ router.post('/request_slot_record', isLoggedIn, async(req, res) => {
     res.send({result:'OK', data:records, totalCount: totalCount});
 });
 
+
+/**
+ * 게임사별 조회시
+ */
 router.post('/request_record', isLoggedIn, async(req, res) => {
 
     console.log('/request_record');
@@ -500,13 +412,13 @@ router.post('/request_record', isLoggedIn, async(req, res) => {
     let strTimeEnd = req.body.dateEnd;
     let strGroupID = req.body.strGroupID;
     let strNickname = req.body.strNickname;
+    let strVender = req.body.strVender;
 
-    let listComplete = req.body.iComplete.split(',');
     let iLimit = parseInt(req.body.iLimit);
     let iPage = parseInt(req.body.iPage);
     let iOffset = (iPage-1) * iLimit;
 
-    let totalCount = await db.BettingRecords.count({
+    let totalCount = await db.RecordBets.count({
             where: {
                 createdAt:{
                     [Op.between]:[ strTimeStart, require('moment')(strTimeEnd).add(1, 'days').format('YYYY-MM-DD')],
@@ -517,16 +429,16 @@ router.post('/request_record', isLoggedIn, async(req, res) => {
                 strNickname:{
                     [Op.like]:'%'+strNickname+'%',
                 },
-                strVender:req.body.strVender,
-                iComplete:{
-                    [Op.or]:listComplete
-                },
+                strVender: strVender,
+                // eState:{
+                //     [Op.notIn]:['STANDBY']
+                // }
             }
     });
 
-    let list = await db.BettingRecords.findAll(
+    let list = await db.RecordBets.findAll(
     { 
-        where: {  
+        where: {
             createdAt:{
                 [Op.between]:[ strTimeStart, require('moment')(strTimeEnd).add(1, 'days').format('YYYY-MM-DD')],
             },
@@ -536,10 +448,7 @@ router.post('/request_record', isLoggedIn, async(req, res) => {
             strNickname:{
                 [Op.like]:'%'+strNickname+'%',
             },
-            strVender:req.body.strVender,
-            iComplete:{
-                [Op.or]:listComplete
-            },
+            strVender: strVender,
         },
         offset:iOffset,
         limit:iLimit,
@@ -552,36 +461,27 @@ router.post('/request_record', isLoggedIn, async(req, res) => {
     {
         records.push({
             id: list[i].id,
-            strVender:list[i].strVender,
+            strID:list[i].strID,
             strNickname:list[i].strNickname,
-            iPreviousCash:list[i].iPreviousCash,
-            iAfterCash:list[i].iAfterCash,
-            iGameCode:list[i].iGameCode,
-            iBetting:list[i].iBetting,
-            iWin:list[i].iWin,
-            iTarget:list[i].iTarget,
-            strRound:list[i].strRound,
-            strTableID:list[i].strTableID,
-            iTransactionID:list[i].iTransactionID,
-            createdAt:list[i].createdAt,
             strGroupID:list[i].strGroupID,
-            iComplete:list[i].iComplete,
             iClass:list[i].iClass,
+            iBalance:list[i].iBalance,
+            iGameCode:list[i].iGameCode,
+            strVender:list[i].strVender,
+            strTableID:list[i].strTableID,
+            strRound:list[i].strRound,
+            strUniqueID:list[i].strUniqueID,
+            strDetail:list[i].strDetail,
+            strResult:list[i].strResult,
+            iBet:list[i].iBet,
+            iWin: list[i].iWin,
+            eState:list[i].eState,
+            eType:list[i].eType,
+            iTarget:list[i].iTarget,
+            createdAt:list[i].createdAt,
+            updatedAt:list[i].updatedAt
         });
     }
-    // let objectData = await IAgent.GetParentList(strGroupID, 8);
-    // if ( objectData != null )
-    // {
-    //     console.log(objectData);
-    //     for ( let i in records )
-    //     {
-    //         records[i].strAdmin = objectData.strAdmin;
-    //         records[i].strPAdmin = objectData.strPAdmin;
-    //         records[i].strVAdmin = objectData.strVAdmin;
-    //         records[i].strAgent = objectData.strAgent;
-    //         records[i].strShop = objectData.strShop;
-    //     }
-    // }
     console.log(records);
 
     res.send({result:'OK', data:records, totalCount: totalCount});
@@ -592,7 +492,9 @@ router.post('/request_incompletecancel', async (req, res) => {
     console.log('/request_incompletecancel');
     console.log(req.body);
 
-    let list = await db.BettingRecords.findAll({where:{iComplete:0}});
+    let list = await db.RecordBets.findAll({where:{
+            eType:'BET'
+    }});
 
     for ( let i in list )
     {
@@ -618,7 +520,7 @@ router.post('/request_incompletedmanual', async (req, res) => {
     console.log('/request_incompletedmanual');
     console.log(req.body);
 
-    let list = await db.BettingRecords.findAll({where:{strRound:req.body.strRound, iComplete:0}});
+    let list = await db.RecordBets.findAll({where:{strRound:req.body.strRound, eType:'BET'}});
 
     for ( let i in list )
     {
@@ -636,6 +538,7 @@ router.post('/request_incompletedmanual', async (req, res) => {
             console.log(`Default`);
         }
 
+        //TODO:파워볼 취소시 롤링 롤백 기능 확인 필요
         //  Update Rolling & Settle
         const cTotalOdds = list[i].fRollingAdmin + list[i].fRollingVAdmin + list[i].fRollingAgent + list[i].fRollingShop + list[i].fRollingUser;
 
@@ -736,7 +639,7 @@ router.post('/popup_round_detail', async (req, res) => {
     }
 
     let info = {
-        iTransactionID: '',
+        strUniqueID: '',
         strNickname:'',
         strVender:'',
         strTableID:'',
@@ -745,12 +648,13 @@ router.post('/popup_round_detail', async (req, res) => {
         endedAt:'', // 배팅 종료시간
         status:'',
 
-        iBetting: '',
-        iTarget: '',
+        iBalance:'',
+        iBet: '',
         iWin: '',
+        iTarget: '',
     }
 
-    let obj = await db.BettingRecords.findOne({
+    let obj = await db.RecordBets.findOne({
         where: {
             id: id
         },
@@ -759,39 +663,44 @@ router.post('/popup_round_detail', async (req, res) => {
         res.render('manage_bettingrecord/popup_round_detail', {iLayout:1, iHeaderFocus:0, result: 'FAIL', msg: '해당 항목을 조회할 수 없습니다', cards:cards, info: {}, bets:[]});
         return;
     }
-    let obj2 = await db.BettingRecords.findOne({
-        where: {
-            strID: obj.strID,
-            strVender: obj.strVender,
-            strRound:obj.strRound,
-            strTableID:obj.strTableID
-        }
-    });
 
-    info.iTransactionID = obj.iTransactionID;
+    info.strUniqueID = obj.strUniqueID;
     info.strNickname = obj.strNickname;
     info.strVender = obj.strVender;
     info.strTableID = obj.strTableID;
     info.strRound = obj.strRound;
     info.createdAt = obj.createdAt;
     info.endedAt = obj.updatedAt;
-    info.status = obj.iComplete == 1 ? '완료' : '처리중';
-
-    info.iBetting = obj2.iBetting;
-    info.iTarget = obj.iTarget;
+    info.status = obj.eState;
+    if (obj.eState == 'STANDBY') {
+        info.status = '확인중';
+    } else if (obj.eState == 'COMPLETE') {
+      info.status = '완료';
+    } else if (obj.eState == 'PENDING') {
+        info.status = '확인필요';
+    } else if (obj.eState == 'ERROR') {
+        info.status = '조회오류';
+    }
+    info.iBalance = obj.iBalance;
+    info.iBet = obj.iBet;
     info.iWin = obj.iWin;
+    info.iTarget = obj.iTarget;
 
-    let strDetail = obj.strDetails ?? '';
-    if (strDetail == '') {
-        res.render('manage_bettingrecord/popup_round_detail', {iLayout:1, iHeaderFocus:0, result: 'FAIL', msg: '해당 항목을 조회할 수 없습니다', cards:cards, info: {}, bets:[]});
-        return;
+    let cards = {};
+    let strResult = obj.strResult ?? '';
+    if (strResult != '') {
+        try {
+            cards = JSON.parse(strResult);
+        } catch (err) {}
     }
 
-    let cards = JSON.parse(strDetail);
     let bets = [];
-    let strBets = obj.strBets ?? '';
-    if (strBets != '') {
-        bets = JSON.parse(strBets);
+    let strDetails = obj.strDetail ?? '';
+    if (strDetails != '') {
+        try {
+            bets = JSON.parse(strDetails);
+        } catch (err) {
+        }
     }
     res.render('manage_bettingrecord/popup_round_detail', {iLayout:1, iHeaderFocus:0, result:'OK', msg:'조회성공', info:info, cards: cards, bets:bets});
 });

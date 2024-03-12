@@ -10,7 +10,7 @@ body{font-family: 'Noto Sans KR', 'Malgun Gothic', '맑은 고딕', 'Dotum', '�
 ul, li, ol { list-style: none; }
 a { text-decoration: none; }
 img{border:0; vertical-align:middle;}
-a{color: #333333; text-decoration: none; }
+a{color: #000000; text-decoration: none; }
 a:hover{text-decoration:none;}
 caption{font-size:0}
 table{border-collapse:collapse;border-spacing:0; table-layout:fixed;}

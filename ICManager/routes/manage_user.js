@@ -22,216 +22,9 @@ const moment = require('moment');
 
 const {Op}= require('sequelize');
 
-const IAgent = require('../implements/agent');
-const IAgent2 = require('../implements/agent3');
+const IAgent = require('../implements/agent3');
 const {isLoggedIn, isNotLoggedIn} = require('./middleware');
 const { isNumberObject } = require('util/types');
-
-// let GetUserList = async (strTimeStart, strTimeEnd, strGroupID, strSearchNickname) => {
-//
-//     let tagSearch = '';
-//     if ( strSearchNickname != undefined && strSearchNickname != '' )
-//         tagSearch = `AND t6.strNickname='${strSearchNickname}'`;
-//
-//     const [result] = await db.sequelize.query(
-//         `
-//         SELECT t1.strNickname AS lev1, t2.strNickname as lev2, t3.strNickname as lev3, t4.strNickname as lev4, t5.strNickname as lev5, t6.strNickname as lev6, t6.iClass, t6.strID, t6.strNickname,
-//         t6.iCash, t6.iClass, t6.strGroupID, t6.eState, t6.createdAt, t6.loginedAt, t6.strIP,
-//         IFNULL(charges.iInput,0) AS iInput,
-//         IFNULL(exchanges.iOutput,0) AS iOutput,
-//         IFNULL(dailyBetting.iMyRollingMoney,0) AS iMyRollingMoney,
-//         IFNULL((SELECT sum(iBBetting + iUOBetting + iSlotBetting + iPBBetting)-sum(iBWin + iUOWin + iSlotWin + iPBWin) FROM DailyBettingRecords WHERE strGroupID LIKE CONCAT(t6.strGroupID,'%') AND t6.strID = strID AND date(createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'),0) as iTotal,
-//         t6.iRolling AS iCurrentRolling,
-//         t6.iLoan
-//         FROM Users AS t1
-//         LEFT JOIN Users AS t2 ON t2.iParentID = t1.id
-//         LEFT JOIN Users AS t3 ON t3.iParentID = t2.id
-//         LEFT JOIN Users AS t4 ON t4.iParentID = t3.id
-//         LEFT JOIN Users AS t5 ON t5.iParentID = t4.id
-//         LEFT JOIN Users AS t6 ON t6.iParentID = t5.id
-//         LEFT JOIN ( SELECT strID, sum(iAmount) as iInput
-//                     FROM Inouts
-//                     where DATE(completedAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'
-//                     AND eState = 'COMPLETE'
-//                     AND eType = 'INPUT'
-//                     GROUP BY strID) charges
-//                 ON t6.strNickname = charges.strID
-//         LEFT JOIN ( SELECT strID, sum(iAmount) as iOutput
-//                     FROM Inouts
-//                     where DATE(completedAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'
-//                     AND eState = 'COMPLETE'
-//                     AND eType = 'OUTPUT'
-//                     GROUP BY strID) exchanges
-//                 ON t6.strNickname = exchanges.strID
-//         LEFT JOIN ( SELECT strID, sum(iRollingUser) as iMyRollingMoney
-//                     FROM DailyBettingRecords
-//                     where DATE(createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'
-//                     GROUP BY strID) dailyBetting
-//                 ON t6.strID = dailyBetting.strID
-//         WHERE t6.iClass=${IAgent.EAgent.eUser} AND t6.strGroupID LIKE CONCAT('${strGroupID}', '%')${tagSearch};
-//         `
-//         );
-//         return result;
-// }
-//
-// let GetShopList = async (strTimeStart, strTimeEnd, strGroupID, strSearchNickname) => {
-//
-//     let tagSearch = '';
-//     if ( strSearchNickname != undefined && strSearchNickname != '' )
-//         tagSearch = `AND t5.strNickname='${strSearchNickname}'`;
-//
-//     const [result] = await db.sequelize.query(
-//         `
-//         SELECT t1.strNickname AS lev1, t2.strNickname as lev2, t3.strNickname as lev3, t4.strNickname as lev4, t5.strNickname as lev5, t5.strNickname as lev6, t5.iClass, t5.strID, t5.strNickname,
-//         t5.iCash, t5.iClass, t5.strGroupID, t5.eState, t5.createdAt, t5.loginedAt, t5.strIP,
-//         IFNULL(charges.iInput,0) AS iInput,
-//         IFNULL(exchanges.iOutput,0) AS iOutput,
-//         IFNULL((SELECT sum(iSelfRollingShop) FROM DailyBettingRecords WHERE strGroupID LIKE CONCAT(t5.strGroupID,'%') AND date(createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'),0) as iMyRollingMoney,
-//         IFNULL((SELECT sum(iSelfBBetting + iSelfUOBetting + iSelfSlotBetting + iSelfPBBetting)-sum(iSelfBWin + iSelfUOWin + iSelfSlotWin + iSelfPBWin) FROM DailyBettingRecords WHERE strID = t5.strID AND date(createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'),0) as iTotal,
-//         t5.iRolling AS iCurrentRolling,
-//         t5.iLoan
-//         FROM Users AS t1
-//         LEFT JOIN Users AS t2 ON t2.iParentID = t1.id
-//         LEFT JOIN Users AS t3 ON t3.iParentID = t2.id
-//         LEFT JOIN Users AS t4 ON t4.iParentID = t3.id
-//         LEFT JOIN Users AS t5 ON t5.iParentID = t4.id
-//         LEFT JOIN ( SELECT strID, sum(iAmount) as iInput
-//                     FROM Inouts
-//                     where DATE(completedAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'
-//                     AND eState = 'COMPLETE'
-//                     AND eType = 'INPUT'
-//                     GROUP BY strID) charges
-//                 ON t5.strNickname = charges.strID
-//         LEFT JOIN ( SELECT strID, sum(iAmount) as iOutput
-//                     FROM Inouts
-//                     where DATE(completedAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'
-//                     AND eState = 'COMPLETE'
-//                     AND eType = 'OUTPUT'
-//                     GROUP BY strID) exchanges
-//                 ON t5.strNickname = exchanges.strID
-//         WHERE t5.iClass=${IAgent.EAgent.eShop} AND t5.strGroupID LIKE CONCAT('${strGroupID}', '%')${tagSearch};
-//         `
-//         );
-//         return result;
-// }
-//
-// let GetAgentList = async (strTimeStart, strTimeEnd, strGroupID, strSearchNickname) => {
-//
-//     let tagSearch = '';
-//     if ( strSearchNickname != undefined && strSearchNickname != '' )
-//         tagSearch = `AND t4.strNickname='${strSearchNickname}'`;
-//
-//     const [result] = await db.sequelize.query(
-//         `
-//         SELECT t1.strNickname AS lev1, t2.strNickname as lev2, t3.strNickname as lev3, t4.strNickname as lev4, t4.strNickname as lev5, t4.strNickname as lev6, t4.iClass, t4.strID, t4.strNickname,
-//         t4.iCash, t4.iClass, t4.strGroupID, t4.eState, t4.createdAt, t4.loginedAt, t4.strIP,
-//         IFNULL(charges.iInput,0) AS iInput,
-//         IFNULL(exchanges.iOutput,0) AS iOutput,
-//         IFNULL((SELECT sum(iSelfRollingAgent) FROM DailyBettingRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID,'%') AND date(createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'),0) as iMyRollingMoney,
-//         IFNULL((SELECT sum(iSelfBBetting + iSelfUOBetting + iSelfSlotBetting + iSelfPBBetting)-sum(iSelfBWin + iSelfUOWin + iSelfSlotWin + iSelfPBWin) FROM DailyBettingRecords WHERE strID = t4.strID AND date(createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'),0) as iTotal,
-//         t4.iRolling AS iCurrentRolling,
-//         t4.iLoan
-//         FROM Users AS t1
-//         LEFT JOIN Users AS t2 ON t2.iParentID = t1.id
-//         LEFT JOIN Users AS t3 ON t3.iParentID = t2.id
-//         LEFT JOIN Users AS t4 ON t4.iParentID = t3.id
-//         LEFT JOIN ( SELECT strID, sum(iAmount) as iInput
-//                     FROM Inouts
-//                     where DATE(completedAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'
-//                     AND eState = 'COMPLETE'
-//                     AND eType = 'INPUT'
-//                     GROUP BY strID) charges
-//                 ON t4.strNickname = charges.strID
-//         LEFT JOIN ( SELECT strID, sum(iAmount) as iOutput
-//                     FROM Inouts
-//                     where DATE(completedAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'
-//                     AND eState = 'COMPLETE'
-//                     AND eType = 'OUTPUT'
-//                     GROUP BY strID) exchanges
-//                 ON t4.strNickname = exchanges.strID
-//         WHERE t4.iClass=${IAgent.EAgent.eAgent} AND t4.strGroupID LIKE CONCAT('${strGroupID}', '%')${tagSearch};
-//         `
-//         );
-//         return result;
-// }
-//
-// let GetViceAdminList = async (strTimeStart, strTimeEnd, strGroupID, strSearchNickname) => {
-//
-//     let tagSearch = '';
-//     if ( strSearchNickname != undefined && strSearchNickname != '' )
-//         tagSearch = `AND t3.strNickname='${strSearchNickname}'`;
-//
-//     const [result] = await db.sequelize.query(
-//         `
-//         SELECT t1.strNickname AS lev1, t2.strNickname as lev2, t3.strNickname as lev3, t3.strNickname as lev4, t3.strNickname as lev5, t3.strNickname as lev6, t3.iClass, t3.strID, t3.strNickname,
-//         t3.iCash, t3.iClass, t3.strGroupID, t3.eState, t3.createdAt, t3.loginedAt, t3.strIP,
-//         IFNULL(charges.iInput,0) AS iInput,
-//         IFNULL(exchanges.iOutput,0) AS iOutput,
-//         IFNULL((SELECT sum(iSelfRollingVAdmin) FROM DailyBettingRecords WHERE strGroupID LIKE CONCAT(t3.strGroupID,'%') AND date(createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'),0) as iMyRollingMoney,
-//         IFNULL((SELECT sum(iSelfBBetting + iSelfUOBetting + iSelfSlotBetting + iSelfPBBetting)-sum(iSelfBWin + iSelfUOWin + iSelfSlotWin + iSelfPBWin) FROM DailyBettingRecords WHERE strID = t3.strID AND date(createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'),0) as iTotal,
-//         t3.iRolling AS iCurrentRolling,
-//         t3.iLoan
-//         FROM Users AS t1
-//         LEFT JOIN Users AS t2 ON t2.iParentID = t1.id
-//         LEFT JOIN Users AS t3 ON t3.iParentID = t2.id
-//         LEFT JOIN ( SELECT strID, sum(iAmount) as iInput
-//                     FROM Inouts
-//                     where DATE(completedAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'
-//                     AND eState = 'COMPLETE'
-//                     AND eType = 'INPUT'
-//                     GROUP BY strID) charges
-//                 ON t3.strNickname = charges.strID
-//         LEFT JOIN ( SELECT strID, sum(iAmount) as iOutput
-//                     FROM Inouts
-//                     where DATE(completedAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'
-//                     AND eState = 'COMPLETE'
-//                     AND eType = 'OUTPUT'
-//                     GROUP BY strID) exchanges
-//                 ON t3.strNickname = exchanges.strID
-//         WHERE t3.iClass=${IAgent.EAgent.eViceAdmin} AND t3.strGroupID LIKE CONCAT('${strGroupID}', '%')${tagSearch};
-//         `
-//         );
-//         return result;
-// }
-//
-// let GetProAdminList = async (strTimeStart, strTimeEnd, strGroupID, strSearchNickname) => {
-//
-//     let tagSearch = '';
-//     if ( strSearchNickname != undefined && strSearchNickname != '' )
-//         tagSearch = `AND t3.strNickname='${strSearchNickname}'`;
-//
-//     const [result] = await db.sequelize.query(
-//         `
-//         SELECT t1.strNickname AS lev1, t2.strNickname as lev2, t3.strNickname as lev3, t3.strNickname as lev4, t3.strNickname as lev5, t3.strNickname as lev6, t3.iClass, t3.strID, t3.strNickname,
-//         t3.iCash, t3.iClass, t3.strGroupID, t3.eState, t3.createdAt, t3.loginedAt, t3.strIP,
-//         0 AS iInput,
-//         0 AS iOutput,
-//         IFNULL((SELECT sum(iSelfRollingVAdmin) FROM DailyBettingRecords WHERE strID = t3.strID AND date(createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'),0) as iMyRollingMoney,
-//         IFNULL((SELECT sum(iSelfBBetting + iSelfUOBetting + iSelfSlotBetting + iSelfPBBetting)-sum(iSelfBWin + iSelfUOWin + iSelfSlotWin + iSelfPBWin) FROM DailyBettingRecords WHERE strID = t3.strID AND date(createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'),0) as iTotal,
-//         t3.iRolling AS iCurrentRolling,
-//         t3.iLoan
-//         FROM Users AS t1
-//         LEFT JOIN Users AS t2 ON t2.iParentID = t1.id
-//         LEFT JOIN Users AS t3 ON t3.iParentID = t2.id
-//         LEFT JOIN ( SELECT strID, sum(iAmount) as iInput
-//                     FROM Inouts
-//                     where DATE(completedAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'
-//                     AND eState = 'COMPLETE'
-//                     AND eType = 'INPUT'
-//                     GROUP BY strID) charges
-//                 ON t3.strNickname = charges.strID
-//         LEFT JOIN ( SELECT strID, sum(iAmount) as iOutput
-//                     FROM Inouts
-//                     where DATE(completedAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'
-//                     AND eState = 'COMPLETE'
-//                     AND eType = 'OUTPUT'
-//                     GROUP BY strID) exchanges
-//                 ON t3.strNickname = exchanges.strID
-//         WHERE t3.iClass=${IAgent.EAgent.eProAdmin} AND t3.strGroupID LIKE CONCAT('${strGroupID}', '%')${tagSearch};
-//         `
-//     );
-//     return result;
-// }
 
 router.get('/userlist', isLoggedIn, async(req, res) => {
 
@@ -247,9 +40,9 @@ router.get('/userlist', isLoggedIn, async(req, res) => {
     const strTimeStart = ITime.getTodayStart();
     const strTimeEnd = ITime.getTodayEnd();
 
-    let result = await IAgent2.GetUserList(strTimeStart, strTimeEnd, user.strGroupID);
-    let listShops = await IAgent2.GetShopList(strTimeStart, strTimeEnd, user.strGroupID);
-    let listAgents = await IAgent2.GetAgentList(strTimeStart, strTimeEnd, user.strGroupID);
+    let result = await IAgent.GetUserList(strTimeStart, strTimeEnd, user.strGroupID);
+    let listShops = await IAgent.GetShopList(strTimeStart, strTimeEnd, user.strGroupID);
+    let listAgents = await IAgent.GetAgentList(strTimeStart, strTimeEnd, user.strGroupID);
     let listViceAdmins = [];
     let listProAdmins = [];
     // let listViceAdmins = await GetViceAdminList(strTimeStart, strTimeEnd, user.strGroupID);
@@ -269,7 +62,7 @@ router.get('/userlist', isLoggedIn, async(req, res) => {
     //  Shops
     var bobj = {overview:null};
 
-    const agentinfo = await IAgent2.GetPopupAgentInfo(req.user.strGroupID, parseInt(req.user.iClass), req.user.strNickname);
+    const agentinfo = await IAgent.GetPopupAgentInfo(req.user.strGroupID, parseInt(req.user.iClass), req.user.strNickname);
 
     console.log(`###################################################### ${req.user.iClass}, ${req.user.strNickname}`);
     console.log(agentinfo);
@@ -294,9 +87,9 @@ router.post('/userlist', isLoggedIn, async(req, res) => {
     const strTimeStart = ITime.getTodayStart();
     const strTimeEnd = ITime.getTodayEnd();
 
-    let result = await IAgent2.GetUserList(strTimeStart, strTimeEnd, user.strGroupID);
-    let listShops = await IAgent2.GetShopList(strTimeStart, strTimeEnd, user.strGroupID);
-    let listAgents = await IAgent2.GetAgentList(strTimeStart, strTimeEnd, user.strGroupID);
+    let result = await IAgent.GetUserList(strTimeStart, strTimeEnd, user.strGroupID);
+    let listShops = await IAgent.GetShopList(strTimeStart, strTimeEnd, user.strGroupID);
+    let listAgents = await IAgent.GetAgentList(strTimeStart, strTimeEnd, user.strGroupID);
     let listViceAdmins = [];
     let listProAdmins = [];
     // let listViceAdmins = await GetViceAdminList(strTimeStart, strTimeEnd, user.strGroupID);
@@ -314,8 +107,8 @@ router.post('/userlist', isLoggedIn, async(req, res) => {
             total.iTotalCash += parseInt(result[i].iCash);
     }
 
-    const agentinfo = await IAgent2.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
-    let overview = await IAgent2.CalculateBettingRecord(user.strGroupID, user.iClass, strTimeStart, strTimeEnd, '', agentinfo.strID);
+    const agentinfo = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
+    let overview = await IAgent.CalculateBettingRecord(user.strGroupID, user.iClass, strTimeStart, strTimeEnd, '', agentinfo.strID);
     let bobj = {overview:overview};
     let iocount = await IInout.GetProcessing(user.strGroupID, user.strNickname, dbuser.iClass);
 
@@ -345,9 +138,9 @@ router.post('/request_userlist', isLoggedIn, async ( req, res ) => {
 
     console.log(`/request_userlist : ${req.body.dateStart}, ${req.body.dateEnd}`);
 
-    let result = await IAgent2.GetUserList(req.body.dateStart, req.body.dateEnd, req.body.strGroupID, req.body.strSearchNickname);
-    let listShops = await IAgent2.GetShopList(req.body.dateStart, req.body.dateEnd, req.body.strGroupID, req.body.strSearchNickname);
-    let listAgents = await IAgent2.GetAgentList(req.body.dateStart, req.body.dateEnd, req.body.strGroupID, req.body.strSearchNickname);
+    let result = await IAgent.GetUserList(req.body.dateStart, req.body.dateEnd, req.body.strGroupID, req.body.strSearchNickname);
+    let listShops = await IAgent.GetShopList(req.body.dateStart, req.body.dateEnd, req.body.strGroupID, req.body.strSearchNickname);
+    let listAgents = await IAgent.GetAgentList(req.body.dateStart, req.body.dateEnd, req.body.strGroupID, req.body.strSearchNickname);
     // let listViceAdmins = await GetViceAdminList(req.body.dateStart, req.body.dateEnd, req.body.strGroupID, req.body.strSearchNickname);
     // let listProAdmins = await GetProAdminList(req.body.dateStart, req.body.dateEnd, req.body.strGroupID, req.body.strSearchNickname);
 
@@ -396,7 +189,7 @@ router.post('/request_realtimeuserlist', isLoggedIn, async ( req, res ) => {
     {
         if ( realtime_userlist[i].iClass == 5 )
         {
-            let list = await IAgent2.GetViceAdminList(req.body.dateStart, req.body.dateEnd, req.body.strGroupID, realtime_userlist[i].strNickname);
+            let list = await IAgent.GetViceAdminList(req.body.dateStart, req.body.dateEnd, req.body.strGroupID, realtime_userlist[i].strNickname);
 
             for ( let i in list )
             {
@@ -405,7 +198,7 @@ router.post('/request_realtimeuserlist', isLoggedIn, async ( req, res ) => {
         }
         else if ( realtime_userlist[i].iClass == 6 )
         {
-            let list = await IAgent2.GetAgentList(req.body.dateStart, req.body.dateEnd, req.body.strGroupID, realtime_userlist[i].strNickname);
+            let list = await IAgent.GetAgentList(req.body.dateStart, req.body.dateEnd, req.body.strGroupID, realtime_userlist[i].strNickname);
 
             for ( let i in list )
             {
@@ -414,7 +207,7 @@ router.post('/request_realtimeuserlist', isLoggedIn, async ( req, res ) => {
         }
         else if ( realtime_userlist[i].iClass == 7 )
         {
-            let list = await IAgent2.GetShopList(req.body.dateStart, req.body.dateEnd, req.body.strGroupID, realtime_userlist[i].strNickname);
+            let list = await IAgent.GetShopList(req.body.dateStart, req.body.dateEnd, req.body.strGroupID, realtime_userlist[i].strNickname);
 
             for ( let i in list )
             {
@@ -423,7 +216,7 @@ router.post('/request_realtimeuserlist', isLoggedIn, async ( req, res ) => {
         }
         else if ( realtime_userlist[i].iClass == 8 )
         {
-            let list = await IAgent2.GetUserList(req.body.dateStart, req.body.dateEnd, req.body.strGroupID, realtime_userlist[i].strNickname);
+            let list = await IAgent.GetUserList(req.body.dateStart, req.body.dateEnd, req.body.strGroupID, realtime_userlist[i].strNickname);
 
             for ( let i in list )
             {
@@ -451,13 +244,12 @@ router.post('/request_removeuser', async (req, res) => {
         return;
     }
 
-    let listBettings = await db.BettingRecords.findAll({ 
+    let listBettings = await db.RecordBets.findAll({
         where: {  
             createdAt:{
                 [Op.between]:[ dateStart, require('moment')(dateEnd).add(1, 'days').format('YYYY-MM-DD')],
             },
             strID:req.body.strNickname,
-            iComplete:1
         },
         order:[['createdAt','DESC']]
     });

@@ -49,7 +49,24 @@ let SetParentValues = (strNickname) => {
     for ( let i in parentenablelist ) {
         if ( parentenablelist[i].strNickname == strNickname ) {
 
-            if ( parentenablelist[i].iClass == EAgent.eShop )
+            if ( EAgent.eProAdmin == parentenablelist[i].iClass )
+            {
+                $('#fRollingSlot').val(parentenablelist[i].fSlotR);
+                $('#fRollingBaccarat').val(parentenablelist[i].fBaccaratR);
+                $('#fRollingUnderOver').val(parentenablelist[i].fUnderOverR);
+
+                $('#fRollingPB').val(parentenablelist[i].fPBR);
+                $('#fRollingPBSingle').val(parentenablelist[i].fPBSingleR);
+                $('#fRollingPBDouble').val(parentenablelist[i].fPBDoubleR);
+                $('#fRollingPBTriple').val(parentenablelist[i].fPBTripleR);
+
+                $('#fSettleSlot').val(parentenablelist[i].fSettleSlot);
+                $('#fSettleBaccarat').val(parentenablelist[i].fSettleBaccarat);
+
+                $('#fSettlePBA').val(parentenablelist[i].fSettlePBA);
+                $('#fSettlePBB').val(parentenablelist[i].fSettlePBB);
+            }
+            else if ( parentenablelist[i].iClass == EAgent.eShop )
             {
                 // $('#fRollingSlot').val(0);
                 // $('#fRollingBaccarat').val(0);
@@ -58,7 +75,8 @@ let SetParentValues = (strNickname) => {
                 // $('#fSettleSlot').val(0);
                 // $('#fSettleBaccarat').val(0);
             }
-            else {
+            else
+            {
                 // $('#fRollingSlot').val(parentenablelist[i].fSlotR);
                 // $('#fRollingBaccarat').val(parentenablelist[i].fBaccaratR);
                 // $('#fRollingUnderOver').val(parentenablelist[i].fUnderOverR);

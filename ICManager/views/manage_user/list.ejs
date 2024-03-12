@@ -183,7 +183,7 @@
             }
 
             let tagState = '';
-            if (user.iRootClass <= 3 && user.iPermission != 100) {
+            if ((user.iRootClass <= 3 && user.iPermission != 100) || user.iRootClass == 3 ) {
                 tagState = `<td class="parent_row_31" style='background-color:${bgcolor};'>
                             <select style="vertical-align:middle;width:100%; background-color:${strColor}; color:white;" id="partner_agentstatus_${userlist[i].strNickname}" onchange="OnChangeStatus('${userlist[i].strNickname}');">
                             <option value="NORMAL" selected>${strNormal}</option>
@@ -358,26 +358,6 @@
         $('#datepicker2').val(GetCurrentDate());
 
         RequestUserList(user.iClass, user.strGroupID, user.iClass);
-    }
-
-    function click_user(strNickname, strGroupID, iClass)
-    {
-        var scLeft = window.screenLeft + 50;
-        var scTop = window.screenTop + 50;
-        window.open('', 'popupUser', `width=1280, height=720, top=${scTop}, left=${scLeft}, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no`);
-
-        var $form = $('<form></form>');
-        $form.attr('action', '/manage_user_popup/bettingrecord');
-        $form.attr('method', 'post');
-        $form.attr('target', 'popupUser');
-        $form.appendTo('body');
-
-        var idx = $(`<input type="hidden" value="${strNickname}" name="strNickname">`);
-        var page = $(`<input type="hidden" value="${strGroupID}" name="strGroupID">`);
-        var category = $(`<input type="hidden" value=${parseInt(iClass)} name="iClass">`);
-
-        $form.append(idx).append(page).append(category);
-        $form.submit();
     }
 
     let OnClickMonthly1stRecord = () => {

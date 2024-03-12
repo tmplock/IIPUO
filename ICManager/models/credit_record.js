@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
         iClass: {
             type:DataTypes.INTEGER,
         },
-        iBeforeCredit: {
+        iCreditBefore: {
             type:DataTypes.INTEGER,
         },
         // 증감

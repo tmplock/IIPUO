@@ -32,6 +32,24 @@ $(document).on('click', '#calculation_settle', ()=> {
 
 });
 
+$(document).on('click', '#calculation_settle_all', ()=> {
+
+    var $form = $('<form></form>');
+    $form.attr('action', '/manage_calculation/settle_all');
+    $form.attr('method', 'post');
+    $form.appendTo('body');
+
+    var strNickname = $(`<input type="hidden" value="${user.strNickname}" name="strNickname">`);
+    var strGroupID = $(`<input type="hidden" value="${user.strGroupID}" name="strGroupID">`);
+    var iClass = $(`<input type="hidden" value=${user.iClass} name="iClass">`);
+    var iPermission = $(`<input type="hidden" value=${user.iPermission} name="iPermission">`);
+
+    $form.append(strNickname).append(strGroupID).append(iClass).append(iPermission);
+    $form.submit();
+
+});
+
+
 $(document).on('click', '#calculation_settle_credits', ()=> {
     window.open('', 'popupChkCreditsSub', 'width=1280, height=720, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
     var $form = $('<form></form>');
@@ -126,17 +144,35 @@ let SetCalculationHeader = (iSection, iClass) => {
 
     if ( cClass <= 5 )
     {
-        subtag1 = 
-        `
-        <li class=${GetCalculationSectionClass(iSection, 1)}>
-            <a href="#" style="color:${GetCalculationSectionColor(iSection, 1)};" id="calculation_settle">죽장 정산</a>
-        </li>
-        `;
-        tag += subtag1;
+        if ( cClass <= 3 )
+        {
+            subtag1 =
+                `
+                <li class=${GetCalculationSectionClass(iSection, 1)}>
+                    <a href="#" style="color:${GetCalculationSectionColor(iSection, 1)};" id="calculation_settle">죽장 정산</a>
+                </li>
+                <li class=${GetCalculationSectionClass(iSection, 11)}>
+                    <a href="#" style="color:${GetCalculationSectionColor(iSection, 11)};" id="calculation_settle_all">전체 죽장 정산</a>
+                </li>
+            `;
+            tag += subtag1;
+        }
+        else
+        {
+            subtag1 =
+                `
+                <li class=${GetCalculationSectionClass(iSection, 1)}>
+                    <a href="#" style="color:${GetCalculationSectionColor(iSection, 1)};" id="calculation_settle">죽장 정산</a>
+                </li>
+                <li class=${GetCalculationSectionClass(iSection, 11)}>
+                    <a href="#" style="color:${GetCalculationSectionColor(iSection, 11)};" id="calculation_settle_all">전체 죽장 정산</a>
+                </li>
+            `;
+            tag += subtag1;
+        }
     }
 
-    if ( cClass == 3 )
-    {
+    if (cClass == 3) {
         subtag1 =
             `
         <li class=${GetCalculationSectionClass(iSection, 3)}>
@@ -179,4 +215,14 @@ let SetCalculationHeader = (iSection, iClass) => {
 
     $('#calculation_header').empty();
     $('#calculation_header').append(tag);
+}
+
+
+let GetParseInt = (num) => {
+    let temp = parseInt(num); // 배당금
+    if (temp > 0) {
+        return Math.floor(temp);
+    } else {
+        return parseInt(temp);
+    }
 }

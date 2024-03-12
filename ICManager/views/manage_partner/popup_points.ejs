@@ -104,7 +104,7 @@
 							iClass = list[i].iClassFrom;
 						}
 						iBeforeAmount = list[i].iBeforeAmountTo;
-						iAfterAmount = list[i].iAfterAmountTo;
+						iAfterAmount = parseInt(list[i].iBeforeAmountTo) - parseInt(iAmount);
 					}
 					let tag = `	<tr>
 								<td>${list[i].id}</td>

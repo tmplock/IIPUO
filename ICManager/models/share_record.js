@@ -17,16 +17,32 @@ module.exports = (sequelize, DataTypes) => {
         iShareOrgin: {
             type: DataTypes.INTEGER,
         },
-        // 지분 비율
+        // 슬롯 알값
+        iSlotCommission: {
+            type: DataTypes.INTEGER,
+        },
+        // 수금
+        iPayback: {
+            type: DataTypes.INTEGER,
+        },
+        // 지분율
         fShareR: {
             type: DataTypes.FLOAT,
         },
-        // 지분 금액(배당금)
+        // 배당금
         iShare: {
             type:DataTypes.INTEGER,
         },
-        // 전월죽장이월
+        // 전월 이월 금액
         iShareAccBefore: {
+            type:DataTypes.INTEGER,
+        },
+        // 입출전 금액(배당금+전월이월)
+        iCreditBefore: {
+            type:DataTypes.INTEGER,
+        },
+        // 입출후 금액(해당분기)
+        iCreditAfter: {
             type:DataTypes.INTEGER,
         },
         // 메모

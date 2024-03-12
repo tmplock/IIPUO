@@ -110,6 +110,7 @@ app.use('/manage_bettingrecord', require('./routes/manage_bettingrecord'));
 app.use('/manage_setting', require('./routes/manage_setting'));
 app.use('/manage_setting_popup', require('./routes/manage_setting_popup'));
 app.use('/manage_calculation', require('./routes/manage_calculation'));
+app.use('/manage_share', require('./routes/manage_share'));
 
 app.use((req, res, next) => {
     req.io = io;
@@ -156,7 +157,7 @@ global.io = io;
 //global.strUserPageAddress = `https://unover000.com`;
 // global.strUserPageAddress = `http://165.22.102.70:3010`; // Unover001
 // global.strUserPageAddress = `http://165.22.102.70:3011`; // Unover000
-global.strUserPageAddress = `https://unover000.com`; // Unover000
+global.strUserPageAddress = `https://unover100.com`; // Unover000
 
 app.get('/', (req, res) => {
     //res.redirect('account/login');
@@ -177,6 +178,7 @@ app.get('/', (req, res) => {
 app.post('/init', async (req, res) => {
 
     await db.BettingRecords.destroy({where:{}, truncate:true});
+    await db.RecordBets.destroy({where:{}, truncate:true});
     await db.GTs.destroy({where:{}, truncate:true});
     await db.Inouts.destroy({where:{}, truncate:true});
     await db.SettleRecords.destroy({where:{}, truncate:true});
@@ -189,6 +191,8 @@ app.post('/init', async (req, res) => {
     await db.DataLogs.destroy({where:{}, truncate:true});
     await db.DailyBettingRecords.destroy({where: {}, truncate:true});
     await db.DailyRecords.destroy({where: {}, truncate:true});
+    await db.RecordBets.destroy({where:{}, truncate:true});
+    await db.RecordDailyOverviews.destroy({where:{}, truncate:true});
     // await db.ShareUsers.destroy({where:{}, truncate:true});
     let shares = await db.ShareUsers.findAll();
     for ( let i in shares )
@@ -211,7 +215,7 @@ app.post('/init', async (req, res) => {
             iSettleAccBefore:0,
         });
     }
-    
+
     res.send({string:'OK'});
 })
 

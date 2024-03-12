@@ -34,6 +34,14 @@ let getMonthlyStart = ()=> {
     return s;
 }
 
+let GetCurrentDateBefore = (days) => {
+    let date = new Date();
+    let day = days ?? 0;
+    let res = new Date(date.getFullYear(), date.getMonth(), date.getDate()-day);
+    res = new Date(+res + 3240 * 10000).toISOString().split("T")[0];
+    return res;
+}
+
 let GetCurrentDate = () => {
     let date = new Date();
     let res = new Date(date.getFullYear(), date.getMonth(), date.getDate());
@@ -70,15 +78,22 @@ let GetMonthly1stEndDate = () => {
     return res;
 }
 
-let GetMonthly2ndStartDate = () => {
+let GetMonthly2ndStartDate = (isSettle) => {
     let date = new Date();
-    // 2분기는 16일 이전에는 전분기로 조회
-    if (date.getDay() > 15) {
-        let res = new Date(date.getFullYear(), date.getMonth(), 16);
-        res = new Date(+res + 3240 * 10000).toISOString().split("T")[0];
-        return res;
+    let isSe = isSettle ?? false;
+    if (isSe == true) {
+        // 2분기는 16일 이전에는 전분기로 조회
+        if (date.getDate() > 15) {
+            let res = new Date(date.getFullYear(), date.getMonth(), 16);
+            res = new Date(+res + 3240 * 10000).toISOString().split("T")[0];
+            return res;
+        } else {
+            let res = new Date(date.getFullYear(), date.getMonth()-1, 16);
+            res = new Date(+res + 3240 * 10000).toISOString().split("T")[0];
+            return res;
+        }
     } else {
-        let res = new Date(date.getFullYear(), date.getMonth()-1, 16);
+        let res = new Date(date.getFullYear(), date.getMonth(), 16);
         res = new Date(+res + 3240 * 10000).toISOString().split("T")[0];
         return res;
     }
@@ -116,14 +131,21 @@ let ValidationMonthly2StartDate = () => {
     return true;
 }
 
-let GetMonthly2ndEndDate = () => {
+let GetMonthly2ndEndDate = (isSettle) => {
     let date = new Date();
-    if (date.getDate() > 15) {
-        let res = new Date(date.getFullYear(), date.getMonth()+1, 0);
-        res = new Date(+res + 3240 * 10000).toISOString().split("T")[0];
-        return res;
+    let isSe = isSettle ?? false;
+    if (isSe == true) {
+        if (date.getDate() > 15) {
+            let res = new Date(date.getFullYear(), date.getMonth()+1, 0);
+            res = new Date(+res + 3240 * 10000).toISOString().split("T")[0];
+            return res;
+        } else {
+            let res = new Date(date.getFullYear(), date.getMonth(), 0);
+            res = new Date(+res + 3240 * 10000).toISOString().split("T")[0];
+            return res;
+        }
     } else {
-        let res = new Date(date.getFullYear(), date.getMonth(), 0);
+        let res = new Date(date.getFullYear(), date.getMonth()+1, 0);
         res = new Date(+res + 3240 * 10000).toISOString().split("T")[0];
         return res;
     }

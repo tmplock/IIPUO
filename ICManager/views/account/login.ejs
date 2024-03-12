@@ -65,6 +65,12 @@
     
     <script type="text/javascript">
         localStorage.clear();
+        // 캐시 날리기
+        caches.keys().then(function(keyList) {
+            return Promise.all(keyList.map(function(key) {
+                return caches.delete(key);
+            }));
+        });
 
         function init_Onload(){
             document.frm.lms_id.focus();

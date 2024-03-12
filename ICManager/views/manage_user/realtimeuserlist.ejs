@@ -215,8 +215,7 @@
                     <td>${userlist[i].lev3}</td>
                     <td>${userlist[i].lev4}</td>
                     <td>${userlist[i].lev5}</td>
-                    
-                    <td><a href="javascript:click_user('${userlist[i].strNickname}', '${userlist[i].strGroupID}', '${userlist[i].iClass}');" style="color:blue;">${userlist[i].strNickname}</a></td>
+                    <td><a href="#" onclick="OnClickNickname('${userlist[i].strNickname}')">${userlist[i].strNickname}</a></td>
                     <td>${GetNumber(userlist[i].iInput)}</td>
                     <td>${GetNumber(userlist[i].iOutput)}</td>
                     <td>${GetNumber(userlist[i].iCash)}</td>
@@ -277,26 +276,6 @@
         </tr>`;
 
         $('#userlist').append(endtag);
-    }
-
-    function click_user(strNickname, strGroupID, iClass)
-    {
-        var scLeft = window.screenLeft + 50;
-        var scTop = window.screenTop + 50;
-        window.open('', 'popupUser', `width=1280, height=720, top=${scTop}, left${scLeft}, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no`);
-
-        var $form = $('<form></form>');
-        $form.attr('action', '/manage_user_popup/bettingrecord');
-        $form.attr('method', 'post');
-        $form.attr('target', 'popupUser');
-        $form.appendTo('body');
-
-        var idx = $(`<input type="hidden" value="${strNickname}" name="strNickname">`);
-        var page = $(`<input type="hidden" value="${strGroupID}" name="strGroupID">`);
-        var category = $(`<input type="hidden" value=${parseInt(iClass)} name="iClass">`);
-
-        $form.append(idx).append(page).append(category);
-        $form.submit();
     }
 
     let OnClickMonthly1stRecord = () => {

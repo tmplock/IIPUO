@@ -86,7 +86,7 @@
         $.ajax(
             {
                 type:'post',
-                url: "/manage_partner/request_credits",
+                url: "/manage_share/request_credits",
                 context: document.body,
                 data:{dateStart:date1, dateEnd:date2, strID:agent.strID, strNickname:strNickname},
 
@@ -106,7 +106,7 @@
 
         $.ajax({
             type:'post',
-            url: "/manage_partner/request_credit_memo_apply",
+            url: "/manage_share/request_credit_memo_apply",
             context: document.body,
             data:{id:id, strMemo:memo},
 
@@ -138,12 +138,11 @@
             let sumTotal = 0;
 
             for (let i = 0; i<list.length; i++) {
-                let iBeforeCredit = parseInt(list[i].iBeforeCredit);
-                if (isNaN(iBeforeCredit)) {
-                    iBeforeCredit = 0;
+                let iCreditBefore = parseInt(list[i].iCreditBefore);
+                if (isNaN(iCreditBefore)) {
+                    iCreditBefore = 0;
                 }
-                console.log(`누계1 : ${sumBefore} / ${iBeforeCredit}`);
-                sumBefore = sumBefore + iBeforeCredit;
+                sumBefore = sumBefore + iCreditBefore;
 
                 let iIncrease = parseInt(list[i].iIncrease);
                 if (isNaN(iIncrease)) {
@@ -152,14 +151,14 @@
                 console.log(`누계2 : ${sumIncrease} / ${iIncrease}`);
                 sumIncrease = sumIncrease + iIncrease;
 
-                sumTotal = sumTotal + (iBeforeCredit + iIncrease);
+                sumTotal = sumTotal + (iCreditBefore + iIncrease);
 
                 $('#credit_list').append(`
                     <tr>
                         <td>${i+1}</td>
-                        <td style="font-weight:100;">${GetNumberSign(iBeforeCredit)}</td>
+                        <td style="font-weight:100;">${GetNumberSign(iCreditBefore)}</td>
                         <td style="font-weight:100;">${GetNumberSign(iIncrease)}</td>
-                        <td style="font-weight:100;">${GetNumberSign(iBeforeCredit + iIncrease)}</td>
+                        <td style="font-weight:100;">${GetNumberSign(iCreditBefore + iIncrease)}</td>
                         <td>${list[i].writer}</td>
                         <td>${list[i].createdAt}</td>
                         <td>

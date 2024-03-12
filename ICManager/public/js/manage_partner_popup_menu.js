@@ -269,9 +269,9 @@ $(document).on('click', '#popup_proadmin_settle', ()=> {
 });
 
 $(document).on('click', '#popup_share', ()=> {
-    window.open('', 'popupChk_share', 'width=1280, height=720, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
+    window.open('', 'popupChk_share', 'width=2200, height=720, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
     let $form = $('<form></form>');
-    $form.attr('action', '/manage_partner_popup/popup_shares');
+    $form.attr('action', '/manage_share/popup_shares');
     $form.attr('method', 'post');
     $form.attr('target', 'popupChk_share');
     $form.appendTo('body');
@@ -288,7 +288,7 @@ $(document).on('click', '#popup_share', ()=> {
 $(document).on('click', '#popup_share_history', ()=> {
     // window.open('', 'popupChk_share_history', 'width=1280, height=720, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
     let $form = $('<form></form>');
-    $form.attr('action', '/manage_partner_popup/popup_shares_history');
+    $form.attr('action', '/manage_share/popup_shares_history');
     $form.attr('method', 'post');
     $form.attr('target', 'popupChk_share');
     $form.appendTo('body');

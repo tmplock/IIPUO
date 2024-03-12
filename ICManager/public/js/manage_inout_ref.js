@@ -149,156 +149,6 @@ let OnStandby = (bInput, event) => {
     });
 }
 
-let OnClickMonthlyInputList = () =>
-{
-    bToggleRecord = !bToggleRecord;
-
-    if ( bToggleRecord ) {
-        $("#daily_array").show();
-        $("#button_toggle_record").text("닫기");
-
-        const sdate = $("#datepicker1").val();
-        const edate = $("#datepicker2").val();
-        const search = $("#s_gubun").val();
-
-        $.ajax({
-            url:"/manage_inout/request_monthlyinputlist",
-            type:"POST",
-            data: {
-                s_date:sdate,
-                e_date:edate,
-                search:search,
-            },
-            dataType: "json",
-            success: function (obj) {
-
-                $("#daily_list").empty();
-
-                for ( var i in obj )
-                {
-                    let color = '#E7E6D2';
-                    if (i%2 == 0 )
-                        color = '#FFFACD';
-
-                    let tag = `<tr class="sub3_area_ subv3 day_tot_row" style="height:30px;">
-                        <td style="background-color:${color};height:30px;font-size:13px;">${obj[i].dates}</td>
-                        <td style="text-align:center;background-color:${color};font-size:13px;">${GetNumber(obj[i].iTotalAmount)}</td>	
-                        <td style="text-align:center;background-color:${color};font-size:13px;"></td>
-                        <td style="text-align:center;background-color:${color};font-size:13px;"></td>
-                    </tr>`;
-
-                    // <td style="text-align:center;background-color:${color};font-size:13px;"></td>
-                    // <td style="text-align:center;background-color:${color};font-size:13px;"></td>
-
-
-                    $("#daily_list").append(tag);
-                }
-            }
-        });
-    }
-    else {
-        $("#daily_array").hide();
-        $("#button_toggle_record").text(strOpen);
-    }
-}
-
-let OnClickInOutUser = (bInput, strNickname, strGroupID, iClass) => {
-
-    if ( iClass == EAgent.eUser )
-    {
-        let strAddress = '/manage_user_popup/output';
-        if ( bInput == true )
-            strAddress = '/manage_user_popup/input';
-        window.open('', 'popupInoutAgent', 'width=1280, height=720, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
-    
-        let $form = $('<form></form>');
-        $form.attr('action', strAddress);
-        $form.attr('method', 'post');
-        $form.attr('target', 'popupInoutAgent');
-        $form.appendTo('body');
-    
-        let idx = $(`<input type="hidden" value="${strNickname}" name="strNickname">`);
-        let page = $(`<input type="hidden" value="${strGroupID}" name="strGroupID">`);
-        let category = $(`<input type="hidden" value=${parseInt(iClass)} name="iClass">`);
-    
-        $form.append(idx).append(page).append(category);
-        $form.submit();
-    }
-    else 
-    {
-        //  Agent Popup
-        window.open('', 'popupInoutAgent', 'width=1280, height=720, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
-    
-        let $form = $('<form></form>');
-        $form.attr('action', '/manage_partner_popup/agentinfo');
-        $form.attr('method', 'post');
-        $form.attr('target', 'popupInoutAgent');
-        $form.appendTo('body');
-        
-        let idx = $(`<input type="hidden" value="${strNickname}" name="strNickname">`);
-        let page = $(`<input type="hidden" value="${strGroupID}" name="strGroupID">`);
-        let category = $(`<input type="hidden" value=${parseInt(iClass)} name="iClass">`);
-    
-        $form.append(idx).append(page).append(category);
-        $form.submit();
-    }
-}
-
-
-function OnClickMonthlyOutputList()
-{
-    bToggleRecord = !bToggleRecord;
-
-    if ( bToggleRecord ) {
-        $("#daily_array").show();
-        $("#button_toggle_record").text("닫기");
-
-        //SetOverviewRecordList(objectRecords, "#tbody_record_list", true);
-        const sdate = $("#datepicker1").val();
-        const edate = $("#datepicker2").val();
-
-        const search = $("#s_gubun").val();
-
-        $.ajax({
-            url:"/manage_inout/request_monthlyoutputlist",
-            type:"POST",
-            data: {
-                s_date:sdate,
-                e_date:edate,
-                search:search,
-            },
-            dataType: "json",
-            success: function (obj) {
-
-                $("#daily_list").empty();
-
-                for ( var i in obj )
-                {
-                    let color = '#E7E6D2';
-                    if (i%2 == 0 )
-                        color = '#FFFACD';
-
-                    let tag = `<tr class="sub3_area_ subv3 day_tot_row" style="height:30px;">
-                        <td style="background-color:${color};height:30px;font-size:13px;">${obj[i].dates}</td>
-                        <td style="text-align:center;background-color:${color};font-size:13px;">${GetNumber(obj[i].iTotalAmount)}</td>	
-                        <td style="text-align:center;background-color:${color};font-size:13px;"></td>
-                        <td style="text-align:center;background-color:${color};font-size:13px;"></td>
-                    </tr>`;
-                        // <td style="text-align:center;background-color:${color};font-size:13px;"></td>
-                        // <td style="text-align:center;background-color:${color};font-size:13px;"></td>
-
-                    $("#daily_list").append(tag);
-                }
-            }
-        });
-        $("#button_toggle_record").text(strClose);
-    }
-    else {
-        $("#daily_array").hide();
-        $("#button_toggle_record").text(strOpen);
-    }
-}
-
 let OnSave = (event) => {
 
     let tr = $(event.currentTarget).closest('tr');
@@ -665,66 +515,22 @@ let SetOutputList = (list, iRootClass) => {
         $('#output_list').append(tag);
     }
 
-    let OnClickSearchByInput = (iPage) => {
 
-        let date1 = $("#datepicker1").val();
-        let date2 = $("#datepicker2").val();
-        let limit = $("#select_limit").val();
 
-        let strNickname = $('#strSearchNickname').val();
-        if (strNickname != null && strNickname != undefined) {
-            strNickname = '';
-        }
-
-        $.ajax(
-            {
-                type:'post',
-                url: "/manage_inout/request_searchby",
-                context: document.body,
-                data:{type:'INPUT', dateStart:date1, dateEnd:date2, strGroupID:user.strGroupID, strSearchNickname:strNickname, iLimit:limit, iPage:iPage, iClass:user.iClass},
-
-                success:function(obj) {
-                    let data = obj.data;
-                    SetInputList(data, obj.iRootClass);
-                    RequestOverview(true);
-                    $("#page").append(getPagination(limit, obj.totalCount, iPage));
-                }
-            }
-        );
-    }
-
-    let OnClickSearchByOutput = (iPage) => {
-        let date1 = $("#datepicker1").val();
-        let date2 = $("#datepicker2").val();
-        let limit = $("#select_limit").val();
-        let strNickname = $('#strSearchNickname').val();
-
-        $.ajax(
-            {
-                type:'post',
-                url: "/manage_inout/request_searchby",
-                context: document.body,
-                data:{type:'OUTPUT', dateStart:date1, dateEnd:date2, strGroupID:user.strGroupID, strSearchNickname:strNickname, iLimit:limit, iPage:iPage, iClass:user.iClass},
-
-                success:function(obj) {
-                    let data = obj.data;
-                    SetOutputList(data, obj.iRootClass);
-                    RequestOverview(false);
-                    $("#pagination").empty();
-                    $("#pagination").append(getPagination(limit, obj.totalCount, iPage));
-                }
-            }
-        );
-    }
-
-    let OnClickPage = (iPage) => {
-        if (iPage < 1) {
-            return;
-        }
-        iCurrentPage = iPage;
-        if (type == 'INPUT') {
-            OnClickSearchByInput(iCurrentPage);
-        } else if (type == 'OUTPUT') {
-            OnClickSearchByOutput(iCurrentPage);
+let OnClickMemo = (id) => {
+    for (let i=0; i < list.length; i++) {
+        let memo_id = `memo_${list[i].id}`;
+        let memo_tx_id = `memo_tx_${list[i].id}`;
+        let button_memo_save = `button_memo_save_${list[i].id}`;
+        if (list[i].id==id) {
+            document.getElementById(memo_id).style = "width:80%";
+            document.getElementById(memo_tx_id).style = 'display:none';
+            document.getElementById(button_memo_save).style = "height:80%;";
+        } else {
+            document.getElementById(memo_id).style = 'width:80%; display:none';
+            document.getElementById(memo_tx_id).style = '';
+            document.getElementById(button_memo_save).style = "display:none";
         }
     }
+}
+

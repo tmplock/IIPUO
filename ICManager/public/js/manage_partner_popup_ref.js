@@ -167,7 +167,7 @@ let RequestUserListOnPopup = (iTargetClass, strGroupID, iClass, iPermission, str
 
                 let tagState = '';
 
-                if (parseInt(iRootClass) <= 3 && iPermission != 100) {
+                if ((parseInt(iRootClass) <= 3 && iPermission != 100) || parseInt(iRootClass) == 3) {
                     tagState = `<td class="parent_row_31" style='background-color:${bgcolor};'>
                         <select style="vertical-align:middle;width:100%; background-color:${strColor}; color:white;" id="partner_agentstatus_${obj.strNickname}" onchange="OnChangeStatus('${obj.strNickname}');">
                         <option value="NOTICE">${strNotice}</option>
@@ -208,7 +208,7 @@ let RequestUserListOnPopup = (iTargetClass, strGroupID, iClass, iPermission, str
                 }
 
                 let letter = ``;
-                if (parseInt(iRootClass) <= 3 && iPermission != 100) {
+                if ((parseInt(iRootClass) <= 3 && iPermission != 100) || parseInt(iRootClass) == 3) {
                     letter = `<td style='background-color:${bgcolor};'><a href="javascript:OnClickWritingLetter('${obj.strNickname}');" class="btn_green">${strLetter}</a></td>`;
                 }
 
@@ -233,7 +233,7 @@ let RequestUserListOnPopup = (iTargetClass, strGroupID, iClass, iPermission, str
             }
 
             let stateTag = '';
-            if (parseInt(iRootClass) <= 3 && iPermission != 100) {
+            if ((parseInt(iRootClass) <= 3 && iPermission != 100) || parseInt(iRootClass) == 3) {
                 stateTag = '<td></td>>';
             }
 
@@ -262,12 +262,10 @@ let RequestUserListOnPopup = (iTargetClass, strGroupID, iClass, iPermission, str
     });
 }
 
-let RequestBettingListOnPopup = (iTargetClass, strGroupID, iClass, iPermission, iLimit, iCurrentPage) => {
+let RequestBettingListOnPopup = (iTargetClass, strGroupID, iClass, iPermission, iLimit, iCurrentPage, strID) => {
 
     const dateStart = $('#datepicker1').val();
     const dateEnd = $('#datepicker2').val();
-
-    let strSearchNickname = $('#strSearchNickname').val();
 
     $.ajax({
         type:'post',
@@ -279,7 +277,7 @@ let RequestBettingListOnPopup = (iTargetClass, strGroupID, iClass, iPermission, 
             iClass:iClass,
             dateStart:dateStart,
             dateEnd:dateEnd,
-            strSearchNickname:strSearchNickname,
+            strID:strID,
             iPermission: iPermission,
             iLimit:iLimit,
             iPage:iCurrentPage,

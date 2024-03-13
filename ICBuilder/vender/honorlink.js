@@ -36,10 +36,36 @@ let GetTimeRangeFromArg = (strTimeStart, strTimeEnd) => {
     return {start:strStart, end:strEnd};
 }
 
+let GetTimeRangeFromArg2 = (strTimeStart, strTimeEnd) => {
+    console.log(`diff : ${1}`);
+
+    let dateStart = new Date(strTimeStart);
+    let dateEnd = new Date(strTimeEnd);
+    dateStart.setSeconds(dateStart.getSeconds()-1);
+    dateEnd.setSeconds(dateEnd.getSeconds()+1);
+
+    console.log(`diff : ${2}`);
+
+    let diff = (dateEnd.getTime()-dateStart.getTime()) / (1000 * 60);
+
+    console.log(`diff : ${diff}`);
+
+    if ( diff > 30 )
+    {
+        dateEnd.setMinutes(dateEnd.getMinutes()+30);
+    }
+
+    const strStart = moment(dateStart).utc().format('YYYY-MM-DD HH:mm:ss');
+    const strEnd = moment(dateEnd).utc().format('YYYY-MM-DD HH:mm:ss');
+
+    return {start:strStart, end:strEnd};
+}
+
+
 exports.GetRangeRD = async (strStart, strEnd) => {
 
     console.log(`strStart : ${strStart}, strEnd : ${strEnd} ################################################ HONORLINK Object Time Range`);
-    let objectTimeRange = GetTimeRangeFromArg(strStart, strEnd);
+    let objectTimeRange = GetTimeRangeFromArg2(strStart, strEnd);
     
     console.log(objectTimeRange);
 

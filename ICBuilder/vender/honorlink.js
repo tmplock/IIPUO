@@ -57,7 +57,7 @@ exports.GetRangeRD = async (strStart, strEnd) => {
             }
         );
         
-        // console.log(`##### CQ9`);
+
         console.log(response.data);
         console.log(response.data.data);
 
@@ -203,6 +203,7 @@ exports.GetGameCode = (strBetType) =>
 }
 
 let GetCards = (cards) => {
+    console.log(`GetCards list : ${cards}`);
     // {"banker":{"cards":["8S","9C"],"score":7},"player":{"cards":["6S","6D","TD"],"score":2},"outcome":"Banker"}
     // {'P':[{'C':'KC', 'N':'10'},{'C':'Ah','N':'11'},{'C':'9c','N':'9'}],'B':[{'C':'Qd','N':'10'},{'C':'6s','N':'6'}]} 형태로 만듬
     try {
@@ -227,6 +228,7 @@ let GetCards = (cards) => {
             return {'B': blist, 'P': plist};
         }
     } catch (err) {
+        console.log(`GetCards err : ${err}`);
     }
     return null;
 }
@@ -235,6 +237,7 @@ let GetCards = (cards) => {
 let GetBets = (list) => {
     // [{"iGameCode":0,"iTarget":1,"iBet":1000,"iWin":0},{"iGameCode":0,"iTarget":3,"iBet":1000,"iWin":0},{"iGameCode":100,"iTarget":101,"iBet":1000,"iWin":0}]
     // [{'C':0, 'T':1, 'B':1000, 'W':0}, {'C':0, 'T':3, 'B':1000, 'W':0}, {'C':100, 'T':101, 'B':1000, 'W':0}] 형태로 만듬
+    console.log(`GetBets list : ${list}`);
     try {
         let blist = [];
         for (let i in list) {
@@ -249,6 +252,7 @@ let GetBets = (list) => {
             return blist;
         }
     } catch (err) {
+        console.log(`GetBets err : ${err}`);
     }
     return null;
 }

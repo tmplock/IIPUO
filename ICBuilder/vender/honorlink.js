@@ -65,7 +65,7 @@ let GetTimeRangeFromArg2 = (strTimeStart, strTimeEnd) => {
 exports.GetRangeRD = async (strStart, strEnd) => {
 
     console.log(`strStart : ${strStart}, strEnd : ${strEnd} ################################################ HONORLINK Object Time Range`);
-    let objectTimeRange = GetTimeRangeFromArg2(strStart, strEnd);
+    let objectTimeRange = GetTimeRangeFromArg(strStart, strEnd);
     
     console.log(objectTimeRange);
 

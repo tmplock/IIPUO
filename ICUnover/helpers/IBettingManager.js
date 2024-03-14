@@ -102,7 +102,11 @@ exports.ProcessWin = async (strID, strNickname, strGroupID, iClass, iBalance, iG
                         }
                         else
                             await db.RecordBets.update({iWin:iWin, strUniqueID:strUniqueID, eType:'RD', eState:'STANDBY'}, {where:{id:bet.id}});
-                    }   
+                    }
+                    else
+                    {
+                        await db.RecordBets.update({iWin:iWin, eType:'WIN', eState:'STANDBY'}, {where:{id:bet.id}});
+                    }
                 }
                 break;
             default:

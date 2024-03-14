@@ -603,7 +603,7 @@ let SettleViceAll = async (req, res) => {
     let iOffset = (iPage-1) * iLimit;
 
     let list = [];
-    if (req.user.iClass == 4) {
+    if (req.body.iClass == 4 || req.body.iUserClass == 4) {
         // 본인것
         list = await GetSettleAll2(req.body.strGroupID, req.body.strQuater, req.body.dateStart, req.body.dateEnd, 4, 0, 1);
         // 부본 리스트
@@ -611,7 +611,7 @@ let SettleViceAll = async (req, res) => {
         for (let i in list2) {
             list.push(list2[i]);
         }
-    } else if (req.user.iClass == 5) {
+    } else if (req.body.iClass == 5 || req.body.iUserClass == 5) {
         list = await GetSettleAll2(req.body.strGroupID, req.body.strQuater, req.body.dateStart, req.body.dateEnd, 5, iOffset, iLimit);
     }
 

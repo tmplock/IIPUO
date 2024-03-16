@@ -241,7 +241,11 @@
 				let plist = cards.P ?? [];
 				// {"B":[{"C":"D","N":"J"},{"C":"C","N":"6"}],"P":[{"C":"S","N":"K"},{"C":"D","N":"4"},{"C":"D","N":"5"}]}
 				for (let i in plist) {
-					let num = parseInt(plist[i].N) ?? 0;
+					if (plist[i].N == 'J' || plist[i].N == 'T' || plist[i].N == 'K' || plist[i].N == 'Q') {
+						num = 0;
+					} else {
+						num = parseInt(plist[i].N) ?? 0;
+					}
 					if (num >= 10) {
 						playerNum += 0;
 					} else {
@@ -255,7 +259,13 @@
 				let banker = '';
 				let blist = cards.B ?? [];
 				for (let i in blist) {
-					let num = parseInt(blist[i].N) ?? 0;
+					// {"B":[{"C":"H","N":"9"},{"C":"C","N":"4"},{"C":"C","N":"J"}],"P":[{"C":"S","N":"6"},{"C":"S","N":"6"},{"C":"H","N":"T"}]}
+					let num = 0;
+					if (blist[i].N == 'J' || blist[i].N == 'T' || blist[i].N == 'K' || blist[i].N == 'Q') {
+						num = 0;
+					} else {
+						num = parseInt(blist[i].N) ?? 0;
+					}
 					if (num >= 10) {
 						bankerNum += 0;
 					} else {

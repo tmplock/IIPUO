@@ -248,7 +248,7 @@ router.post('/request_casino_record', isLoggedIn, async(req, res) => {
                 [Op.like]:'%'+strNickname+'%',
             },
             iGameCode: {
-                [Op.in]:[0, 100]
+                [Op.notIn]:[200, 300]
             },
             // eState:{
             //     [Op.notIn]:['STANDBY']
@@ -269,7 +269,7 @@ router.post('/request_casino_record', isLoggedIn, async(req, res) => {
                     [Op.like]:'%'+strNickname+'%',
                 },
                 iGameCode: {
-                  [Op.in]:[0, 100]
+                    [Op.notIn]:[200, 300]
                 },
                 // eState:{
                 //     [Op.notIn]:['STANDBY']

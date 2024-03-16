@@ -79,7 +79,7 @@ let lProcessID = -1;
 
     //  ##### CQ9
     const listCQ9DB = GetDBListFromVender(listBetDB, 'CQ9');
-    console.log(`##### EZUGI : Length : ${listCQ9DB.length}`);
+    console.log(`##### CQ9 : Length : ${listCQ9DB.length}`);
     await Processor.ProcessCQ9(listCQ9DB, listOverview, listOdds, listUpdateDB);
 
     //  ##### HonorLink

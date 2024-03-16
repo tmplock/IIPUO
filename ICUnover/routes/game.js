@@ -184,7 +184,9 @@ router.post('/bet', async (req, res) => {
     //console.log(user.iCash, parseInt(req.body.strAmount));
     if (user.iCash >= parseFloat(req.body.strAmount)) {
 
-        const cURL = req.get('origin');
+        let cURL = req.get('origin');
+        if ( cURL == undefined )
+            cURL = req.get('host');
 
         const iOriginCash = user.iCash;
         const iUpdatedCash = parseFloat(iOriginCash) - parseFloat(req.body.strAmount);

@@ -176,7 +176,9 @@ router.post('/bet', async (req, res) => {
 
     console.log('##################################################/bet');
     console.log(req.body);
-   
+    
+    console.log(`${req.get('origin')}`);
+    console.log(`${req.get('host')}`);
 
     const user = await db.Users.findOne({where: { strID: req.body.strID }});
     //console.log(user.iCash, parseInt(req.body.strAmount));

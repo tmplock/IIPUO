@@ -470,7 +470,7 @@
 <!--                            <option value="2"><a href="/jp">日本語</a></option>-->
 <!--                            <option value="3"><a href="/en">English</a></option>-->
 <!--                        </select>-->
-                        <% if ( parseInt(user.iClass) == 1 ) { %>
+                        <% if ( parseInt(user.iClass) == 1 || parseInt(user.iClass) == 2 ) { %>
                             <a class="init btn_thinred" style="position:absolute;top:35px; right:5%;" href="#">초기화</a>
                         <% } %>
                         <a class='logout btn_thinred' style="position:absolute;top:35px; right:1%;" href="/account/logout"><%=__('Logout')%></a>
@@ -611,25 +611,25 @@
 
 
         $(document).on('click', '.init', (event) => {
-            if (user.iClass != 1) {
-                alert('권한이 없습니다');
+            if (user.iClass == 1 || user.iClass == 2) {
+                var dialog = window.confirm('초기화 하시겠습니까?(유저 정보를 제외한 모든 데이터가 초기화됩니다)');
+                if (dialog) {
+                    $.ajax({
+                        url:"/init",
+                        type:"POST",
+                        dataType: "json",
+                        success: function (obj) {
+
+                            alert(obj.string);
+
+                            location.reload();
+
+                        }
+                    });
+                }
                 return;
             }
-            var dialog = window.confirm('초기화 하시겠습니까?(유저 정보를 제외한 모든 데이터가 초기화됩니다)');
-            if (dialog) {
-                $.ajax({
-                    url:"/init",
-                    type:"POST",
-                    dataType: "json",
-                    success: function (obj) {
-
-                        alert(obj.string);
-
-                        location.reload();
-
-                    }
-                });
-            }
+            alert('권한이 없습니다');
         })
         
         $(document).on('click', '.logout', (event) => {

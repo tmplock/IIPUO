@@ -746,7 +746,9 @@ router.post('/request_settingodds', isLoggedIn, async (req, res) => {
             strGroupID:{
                 [Op.like]:req.body.strGroupID+'%'
             },
-            iClass:4,
+            iClass:{
+                [Op.in]: [4,5]
+            },
             iPermission: {
                 [Op.notIn]: [100]
             },

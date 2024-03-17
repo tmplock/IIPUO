@@ -278,7 +278,7 @@ var inline_ModifyRollingGroup = async (array)=> {
                     t1.strNickname as strParentNickname
             FROM Users AS t1
             LEFT JOIN Users AS t2 ON t2.iParentID = t1.id
-            WHERE t2.strNickname="${list[i].strNickname}";
+            WHERE t2.strNickname='${list[i].strNickname}';
             `
         );
 

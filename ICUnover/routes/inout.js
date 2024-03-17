@@ -141,13 +141,40 @@ router.post('/request_input', async (req, res) => {
 
     if ( userinfo != null )
     {
+
+        let strAdminNickname = '';
+        let strPAdminNickname = '';
+        let strVAdminNickname = '';
+        let strAgentNickname = '';
+        let strShopNickname = '';
+
+        if (userinfo.iClass == 6) {
+            strAdminNickname = result[0].lev3;
+            strPAdminNickname = result[0].lev4;
+            strVAdminNickname = result[0].lev5;
+            strAgentNickname = '';
+            strShopNickname = '';
+        } else if (userinfo.iClass == 7) {
+            strAdminNickname = result[0].lev2;
+            strPAdminNickname = result[0].lev3;
+            strVAdminNickname = result[0].lev4;
+            strAgentNickname = result[0].lev5;
+            strShopNickname = '';
+        } else if (userinfo.iClass == 8) {
+            strAdminNickname = result[0].lev1;
+            strPAdminNickname = result[0].lev2;
+            strVAdminNickname = result[0].lev3;
+            strAgentNickname = result[0].lev4;
+            strShopNickname = result[0].lev5;
+        }
+
         const inputmoney = await db.Inouts.create({
             strID:userinfo.strNickname,
-            strAdminNickname:result[0].lev1,
-            strPAdminNickname:result[0].lev2,
-            strVAdminNickname:result[0].lev3,
-            strAgentNickname:result[0].lev4,
-            strShopNickname:result[0].lev5,
+            strAdminNickname:strAdminNickname,
+            strPAdminNickname:strPAdminNickname,
+            strVAdminNickname:strVAdminNickname,
+            strAgentNickname:strAgentNickname,
+            strShopNickname:strShopNickname,
             iClass:userinfo.iClass,
             strName:userinfo.strNickname,
             strGroupID:userinfo.strGroupID,
@@ -211,17 +238,43 @@ router.post('/request_output', async (req, res) => {
 
         if ( userinfo.iCash >= req.body.iAmount )
         {
+            let strAdminNickname = '';
+            let strPAdminNickname = '';
+            let strVAdminNickname = '';
+            let strAgentNickname = '';
+            let strShopNickname = '';
+
+            if (userinfo.iClass == 6) {
+                strAdminNickname = result[0].lev3;
+                strPAdminNickname = result[0].lev4;
+                strVAdminNickname = result[0].lev5;
+                strAgentNickname = '';
+                strShopNickname = '';
+            } else if (userinfo.iClass == 7) {
+                strAdminNickname = result[0].lev2;
+                strPAdminNickname = result[0].lev3;
+                strVAdminNickname = result[0].lev4;
+                strAgentNickname = result[0].lev5;
+                strShopNickname = '';
+            } else if (userinfo.iClass == 8) {
+                strAdminNickname = result[0].lev1;
+                strPAdminNickname = result[0].lev2;
+                strVAdminNickname = result[0].lev3;
+                strAgentNickname = result[0].lev4;
+                strShopNickname = result[0].lev5;
+            }
+
             console.log(`Password Checking : ${req.body.strPassword}, ${userinfo.strOutputPassword}`);
 
             //if ( userinfo.strOutputPassword == req.body.strPassword )
             //{
                 const inputmoney = await db.Inouts.create({
                     strID:userinfo.strNickname,
-                    strAdminNickname:result[0].lev1,
-                    strPAdminNickname:result[0].lev2,
-                    strVAdminNickname:result[0].lev3,
-                    strAgentNickname:result[0].lev4,
-                    strShopNickname:result[0].lev5,
+                    strAdminNickname:strAdminNickname,
+                    strPAdminNickname:strPAdminNickname,
+                    strVAdminNickname:strVAdminNickname,
+                    strAgentNickname:strAgentNickname,
+                    strShopNickname:strShopNickname,
                     iClass:userinfo.iClass,
                     strName:userinfo.strNickname,
                     strGroupID:userinfo.strGroupID,

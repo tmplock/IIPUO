@@ -212,7 +212,7 @@
         let limit = $("#select_limit").val();
 
         let strNickname = $('#strSearchNickname').val();
-        if (strNickname != null && strNickname != undefined) {
+        if (strNickname == null || strNickname == undefined) {
             strNickname = '';
         }
 

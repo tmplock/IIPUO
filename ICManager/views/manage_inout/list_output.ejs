@@ -207,6 +207,9 @@
         let date2 = $("#datepicker2").val();
         let limit = $("#select_limit").val();
         let strNickname = $('#strSearchNickname').val();
+        if (strNickname == null || strNickname == undefined) {
+            strNickname = '';
+        }
 
         $.ajax(
             {

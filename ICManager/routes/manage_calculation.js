@@ -716,10 +716,10 @@ router.post('/request_settle_all', isLoggedIn, async(req, res) => {
     console.log(req.body);
 
     // 대본, 부본은 별도 처리(정산완료건만 조회 가능)
-    if (req.user.iClass == 4 || req.user.iClass == 5) {
-        SettleViceAll(req, res);
-        return;
-    }
+    // if (req.user.iClass == 4 || req.user.iClass == 5) {
+    //     SettleViceAll(req, res);
+    //     return;
+    // }
 
     let iLimit = parseInt(req.body.iLimit);
     let iPage = parseInt(req.body.iPage);

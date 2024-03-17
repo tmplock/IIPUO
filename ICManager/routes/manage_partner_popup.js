@@ -284,16 +284,17 @@ router.post('/settingodds', isLoggedIn, async (req, res) => {
     const input = req.body.pass ?? '';
 
     // 비밀번호는 로그인한 이용자
-    const dbuser = await db.Users.findOne({where: {strNickname: req.user.strNickname, strPassword: input}});
-    if (dbuser == null) {
+    const info = await db.Users.findOne({where: {strNickname: req.user.strNickname, strPassword: input}});
+    if (info == null) {
         res.send({result: 'FAIL', msg:'비밀번호가 틀립니다'});
         return;
     }
 
-    //var agent = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:req.body.iClass};
     const agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
     agent.iRootClass = req.user.iClass;
     agent.iPermission = req.user.iPermission;
+
+    const dbuser = await db.Users.findOne({where: {strNickname: req.body.strNickname}});
 
     const user = {fSlotR: dbuser.fSlotR, fBaccaratR: dbuser.fBaccaratR, fUnderOverR: dbuser.fUnderOverR,
         fPBR:dbuser.fPBR, fPBSingleR:dbuser.fPBSingleR, fPBDoubleR:dbuser.fPBDoubleR, fPBTripleR:dbuser.fPBTripleR,

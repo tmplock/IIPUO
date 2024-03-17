@@ -634,23 +634,28 @@
 	let SetList = (list, iClass) => {
 		$('#list_agents').empty();
 
-
-		if ( user.iClass > 1 && user.iClass <= 3 ) {
+		if ( user.iClass > 1 && user.iClass <= 4 ) {
 			if (iClass == 4) {
 				iViewClass = iClass;
 				$(`#view_class`).empty();
 				$(`#view_class`).append(`
-				<button id="button_viceadmin" class="menu1" style="border:0px solid rgb(95, 93, 93);width:170px;height:25px;text-align:center;color:white" onclick="OnClickSelectPartner(5);">부본사</button>
-				<button id="button_proadmin" class="menu5" style="border:0px solid rgb(95, 93, 93);width:170px;height:25px;text-align:center;color:white" onclick="OnClickSelectPartner(4);">대본사</button>
-			`);
+					<button id="button_viceadmin" class="menu1" style="border:0px solid rgb(95, 93, 93);width:170px;height:25px;text-align:center;color:white" onclick="OnClickSelectPartner(5);">부본사</button>
+					<button id="button_proadmin" class="menu5" style="border:0px solid rgb(95, 93, 93);width:170px;height:25px;text-align:center;color:white" onclick="OnClickSelectPartner(4);">대본사</button>
+				`);
 			} else if (iClass == 5) {
 				iViewClass = iClass;
 				$(`#view_class`).empty();
 				$(`#view_class`).append(`
-				<button id="button_viceadmin" class="menu5" style="border:0px solid rgb(95, 93, 93);width:170px;height:25px;text-align:center;color:white" onclick="OnClickSelectPartner(5);">부본사</button>
-				<button id="button_proadmin" class="menu1" style="border:0px solid rgb(95, 93, 93);width:170px;height:25px;text-align:center;color:white" onclick="OnClickSelectPartner(4);">대본사</button>
-			`);
+					<button id="button_viceadmin" class="menu5" style="border:0px solid rgb(95, 93, 93);width:170px;height:25px;text-align:center;color:white" onclick="OnClickSelectPartner(5);">부본사</button>
+					<button id="button_proadmin" class="menu1" style="border:0px solid rgb(95, 93, 93);width:170px;height:25px;text-align:center;color:white" onclick="OnClickSelectPartner(4);">대본사</button>
+				`);
 			}
+		} else if (user.iClass == 5) {
+			iViewClass = iClass;
+			$(`#view_class`).empty();
+			$(`#view_class`).append(`
+				<button id="button_viceadmin" class="menu5" style="border:0px solid rgb(95, 93, 93);width:170px;height:25px;text-align:center;color:white" onclick="OnClickSelectPartner(5);">부본사</button>
+			`);
 		}
 
 		if ( user.iClass > 1 && user.iClass <= 3 && user.iPermission != 100 && bEnableSettle ) {

@@ -452,6 +452,63 @@ router.post('/request_applysettle_all', isLoggedIn, async (req, res) => {
 
             if ( settle == null )
             {
+                let iCommissionB = list[i].iCB;
+                if (iCommissionB == '') {
+                    iCommissionB = 0;
+                }
+                let iCommissionS = list[i].iCS;
+                if (iCommissionS == '') {
+                    iCommissionS = 0;
+                }
+                let iTotal = list[i].iTotal;
+                if (iTotal == '') {
+                    iTotal = 0;
+                }
+                let iRolling = list[i].iRolling;
+                if (iRolling == '') {
+                    iRolling = 0;
+                }
+                let iBWinlose = list[i].iBWinlose;
+                if (iBWinlose == '') {
+                    iBWinlose = 0;
+                }
+                let iUWinlose = list[i].iUWinlose;
+                if (iUWinlose == '') {
+                    iUWinlose = 0;
+                }
+                let iSWinlose = list[i].iSWinlose;
+                if (iSWinlose == '') {
+                    iSWinlose = 0;
+                }
+                let iPWinlose = list[i].iPWinlose;
+                if (iPWinlose == '') {
+                    iPWinlose = 0;
+                }
+                let iResult = list[i].iResult;
+                if (iResult == '') {
+                    iResult = 0;
+                }
+                let fSettleBaccarat = list[i].fSettleBaccarat;
+                if (fSettleBaccarat == '') {
+                    fSettleBaccarat = 0;
+                }
+                let fSettleSlot = list[i].fSettleSlot;
+                if (fSettleSlot == '') {
+                    fSettleSlot = 0;
+                }
+                let fSettlePBA = list[i].fSettlePBA;
+                if (fSettlePBA == '') {
+                    fSettlePBA = 0;
+                }
+                let fSettlePBB = list[i].fSettlePBB;
+                if (fSettlePBB == '') {
+                    fSettlePBB = 0;
+                }
+                let iSettleVice = list[i].iSettleVice;
+                if (iSettleVice == '') {
+                    iSettleVice = 0;
+                }
+
                 await db.SettleRecords.create({
                     strQuater:req.body.strQuater,
                     strNickname:list[i].strNickname,
@@ -461,23 +518,23 @@ router.post('/request_applysettle_all', isLoggedIn, async (req, res) => {
                     iSettleAcc:iSettleAcc, // 죽장이월(죽장분기-입력값)
                     iSettleBeforeAcc:iSettleBeforeAcc, // 전월죽장이월
                     iSettleOrigin:iSettle, // 죽장 분기
-                    iCommissionB:list[i].iCB,
-                    iCommissionS:list[i].iCS,
-                    iTotal:list[i].iTotal,
-                    iRolling:list[i].iRolling,
-                    iBWinlose:list[i].iBWinlose,
-                    iUWinlose:list[i].iUWinlose,
-                    iSWinlose:list[i].iSWinlose,
-                    iPWinlose:list[i].iPWinlose,
-                    iResult:list[i].iResult,
-                    fSettleBaccarat:list[i].fSettleBaccarat,
-                    fSettleSlot:list[i].fSettleSlot,
-                    fSettlePBA:list[i].fSettlePBA,
-                    fSettlePBB:list[i].fSettlePBB,
+                    iCommissionB:iCommissionB,
+                    iCommissionS:iCommissionS,
+                    iTotal:iTotal,
+                    iRolling:iRolling,
+                    iBWinlose:iBWinlose,
+                    iUWinlose:iUWinlose,
+                    iSWinlose:iSWinlose,
+                    iPWinlose:iPWinlose,
+                    iResult:iResult,
+                    fSettleBaccarat:fSettleBaccarat,
+                    fSettleSlot:fSettleSlot,
+                    fSettlePBA:fSettlePBA,
+                    fSettlePBB:fSettlePBB,
                     iClass:list[i].iClass,
                     strID:list[i].strID,
                     iSettleAccTotal:iSettleAccTotal,
-                    iSettleVice:list[i].iSettleVice,
+                    iSettleVice:iSettleVice,
                     iSettleAfter:iSettleAccTotal,
                     iPayback:iPayback,
                 });

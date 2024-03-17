@@ -86,7 +86,7 @@ global.io = io;
 
 // global.strAdminAddress = 'http://165.22.102.70:3030';
 // global.strAdminAddress = 'https://admintest.unover001.com';
-global.strAdminAddress = 'https://188.166.231.104:3031';
+global.strAdminAddress = 'http://188.166.231.104:3031';
 global.strVenderAddress = 'http://174.138.23.187:3001';
 
 const { default: axios2 } = require('axios');

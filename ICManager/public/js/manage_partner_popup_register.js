@@ -254,13 +254,6 @@ let Submit = () => {
     //const strAccountPassword = $('#strAccountPassword').val();
     const strAccountPassword = '1111';
 
-    let strPermissionInput = $('#using_input_permission').attr('checked');
-    if ( strPermissionInput != undefined ) {
-        strPermissionInput = 1;
-    } else {
-        strPermissionInput = 0;
-    }
-
     let fSlotR = 0;
     let fBaccaratR = 0;
     let fUnderOverR = 0;
@@ -273,67 +266,50 @@ let Submit = () => {
     let fSettlePBA = 0;
     let fSettlePBB = 0;
 
+    let iPBLimit = 0;
+    let iPBSingleLimit = 0;
+    let iPBDoubleLimit = 0;
+    let iPBTripleLimit = 0;
+
+    let strPermissionInput = $('#using_input_permission').attr('checked');
+    if ( strPermissionInput != undefined ) {
+        strPermissionInput = 1;
+    } else {
+        strPermissionInput = 0;
+    }
     let strPBOptionCode = '00000000';
     let strOptionCode = '11000000';
 
-    let iPBLimit = $('#iPBLimit').val();
-    let iPBSingleLimit = $('#iPBSingleLimit').val();
-    let iPBDoubleLimit = $('#iPBDoubleLimit').val();
-    let iPBTripleLimit = $('#iPBTripleLimit').val();
+    if (iParentClass > 1) {
+        iPBLimit = $('#iPBLimit').val();
+        iPBSingleLimit = $('#iPBSingleLimit').val();
+        iPBDoubleLimit = $('#iPBDoubleLimit').val();
+        iPBTripleLimit = $('#iPBTripleLimit').val();
 
-    let value = $("#strPowerballType").val();
-    if ( value == 'A' )
-        strPBOptionCode = replaceCharacter(strPBOptionCode, 0, '0');
-    else
-        strPBOptionCode = replaceCharacter(strPBOptionCode, 0, '1');
+        let value = $("#strPowerballType").val();
+        if ( value == 'A' )
+            strPBOptionCode = replaceCharacter(strPBOptionCode, 0, '0');
+        else
+            strPBOptionCode = replaceCharacter(strPBOptionCode, 0, '1');
 
-    let bSingle = $('#using_single').attr('checked');
-    if ( bSingle != undefined )
-        strPBOptionCode = replaceCharacter(strPBOptionCode, 1, '1');
-    else
-        strPBOptionCode = replaceCharacter(strPBOptionCode, 1, '0');
+        let bSingle = $('#using_single').attr('checked');
+        if ( bSingle != undefined )
+            strPBOptionCode = replaceCharacter(strPBOptionCode, 1, '1');
+        else
+            strPBOptionCode = replaceCharacter(strPBOptionCode, 1, '0');
 
-    let bDouble = $('#using_double').attr('checked');
-    if ( bDouble != undefined )
-        strPBOptionCode = replaceCharacter(strPBOptionCode, 2, '1');
-    else
-        strPBOptionCode = replaceCharacter(strPBOptionCode, 2, '0');
+        let bDouble = $('#using_double').attr('checked');
+        if ( bDouble != undefined )
+            strPBOptionCode = replaceCharacter(strPBOptionCode, 2, '1');
+        else
+            strPBOptionCode = replaceCharacter(strPBOptionCode, 2, '0');
 
-    let bTriple = $('#using_triple').attr('checked');
-    if ( bTriple != undefined )
-        strPBOptionCode = replaceCharacter(strPBOptionCode, 3, '1');
-    else
-        strPBOptionCode = replaceCharacter(strPBOptionCode, 3, '0');
+        let bTriple = $('#using_triple').attr('checked');
+        if ( bTriple != undefined )
+            strPBOptionCode = replaceCharacter(strPBOptionCode, 3, '1');
+        else
+            strPBOptionCode = replaceCharacter(strPBOptionCode, 3, '0');
 
-    //
-    let strUsingInput = $('#using_input').attr('checked');
-    let strUsingOutput = $('#using_output').attr('checked');
-
-    //let strOptionCode = agent.strOptionCode.toString();
-    if ( strUsingInput != undefined ) {
-        strOptionCode = replaceCharacter(strOptionCode, 0, '1');
-
-        console.log(`1 ${strOptionCode}`);
-    }
-    else {
-        strOptionCode = replaceCharacter(strOptionCode, 0, '0');
-
-        console.log(`2 ${strOptionCode}`);
-    }
-    if ( strUsingOutput != undefined ) {
-        strOptionCode = replaceCharacter(strOptionCode, 1, '1');
-
-        console.log(`3 ${strOptionCode}`);
-    }
-    else {
-        strOptionCode = replaceCharacter(strOptionCode, 1, '0');
-
-        console.log(`4 ${strOptionCode}`);
-    }
-
-    // if ( iParentClass != EAgent.eShop )
-    // {
-        
         fSlotR = $('#fRollingSlot').val();
         fBaccaratR = $('#fRollingBaccarat').val();
         fUnderOverR = $('#fRollingUnderOver').val();
@@ -341,11 +317,33 @@ let Submit = () => {
         fPBSingleR = $('#fRollingPBSingle').val();
         fPBDoubleR = $('#fRollingPBDouble').val();
         fPBTripleR = $('#fRollingPBTriple').val();
-        //fSettleBaccarat = $('#fSettleBaccarat').val();
-        //fSettleSlot = $('#fSettleSlot').val();
-        //fSettlePBA = $('#fSettlePBA').val();
-        //fSettlePBB = $('#fSettlePBB').val();
-        if(fSlotR == '' || fSlotR == undefined || fSlotR == null || fBaccaratR == '' || fBaccaratR == undefined || fBaccaratR == null || fUnderOverR == '' || fUnderOverR == undefined || fUnderOverR == null || fPBR == '' || fPBR == undefined || fPBR == null || fPBSingleR == '' || fPBSingleR == undefined || fPBSingleR == null || fPBDoubleR == '' || fPBDoubleR == undefined || fPBDoubleR == null || fPBTripleR == '' || fPBTripleR == undefined || fPBTripleR == null ) 
+
+        let strUsingInput = $('#using_input').attr('checked');
+        let strUsingOutput = $('#using_output').attr('checked');
+
+        //let strOptionCode = agent.strOptionCode.toString();
+        if ( strUsingInput != undefined ) {
+            strOptionCode = replaceCharacter(strOptionCode, 0, '1');
+
+            console.log(`1 ${strOptionCode}`);
+        }
+        else {
+            strOptionCode = replaceCharacter(strOptionCode, 0, '0');
+
+            console.log(`2 ${strOptionCode}`);
+        }
+        if ( strUsingOutput != undefined ) {
+            strOptionCode = replaceCharacter(strOptionCode, 1, '1');
+
+            console.log(`3 ${strOptionCode}`);
+        }
+        else {
+            strOptionCode = replaceCharacter(strOptionCode, 1, '0');
+
+            console.log(`4 ${strOptionCode}`);
+        }
+
+        if(fSlotR == '' || fSlotR == undefined || fSlotR == null || fBaccaratR == '' || fBaccaratR == undefined || fBaccaratR == null || fUnderOverR == '' || fUnderOverR == undefined || fUnderOverR == null || fPBR == '' || fPBR == undefined || fPBR == null || fPBSingleR == '' || fPBSingleR == undefined || fPBSingleR == null || fPBDoubleR == '' || fPBDoubleR == undefined || fPBDoubleR == null || fPBTripleR == '' || fPBTripleR == undefined || fPBTripleR == null )
         {
             alert(strAlertErrorRollingValue);
             return;
@@ -355,7 +353,7 @@ let Submit = () => {
             alert("베팅값을 입력해주세요.");
             return;
         }
-    // }
+    }
     if( strPassword == '' || strPassword == undefined || strPassword == null || strPasswordConfirm == '' || strPasswordConfirm == undefined || strPasswordConfirm == null ){
         alert(strAlertDifferentPasswordAndConfirm);
         return;

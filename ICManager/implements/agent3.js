@@ -373,7 +373,6 @@ let inline_GetIOMFromDate = async (strGroupID, iClass, strStartDate, strEndDate,
                 LEFT OUTER JOIN Users
                 ON Inouts.strAdminNickname = Users.strNickname
                 WHERE Inouts.strGroupID LIKE CONCAT('${strGroupID}','%') AND Inouts.eState = 'COMPLETE' AND DATE(Inouts.createdAt) BETWEEN '${strStartDate}' AND '${strEndDate}' ${strQueryNickname}
-                GROUP BY DATE(Inouts.createdAt)
             `
         );
         return rList;
@@ -396,7 +395,6 @@ let inline_GetIOMFromDate = async (strGroupID, iClass, strStartDate, strEndDate,
                 LEFT OUTER JOIN Users
                 ON Inouts.strAdminNickname = Users.strNickname
                 WHERE Inouts.strGroupID LIKE CONCAT('${strGroupID}','%') AND Inouts.eState = 'COMPLETE' AND DATE(Inouts.createdAt) BETWEEN '${strStartDate}' AND '${strEndDate}' ${strQueryNickname}
-                GROUP BY DATE(Inouts.createdAt)
             `
         );
         return rList;
@@ -436,7 +434,6 @@ let inline_GetIOMFromDate = async (strGroupID, iClass, strStartDate, strEndDate,
                 LEFT OUTER JOIN Users
                 ON Inouts.strAdminNickname = Users.strNickname
                 WHERE Inouts.strGroupID LIKE CONCAT('${strGroupID}','%') AND Inouts.eState = 'COMPLETE' AND DATE(Inouts.createdAt) BETWEEN '${strStartDate}' AND '${strEndDate}' ${strQueryNickname}
-                GROUP BY DATE(Inouts.createdAt)
             `
         );
         return rList;

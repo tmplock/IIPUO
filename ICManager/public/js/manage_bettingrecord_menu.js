@@ -149,6 +149,23 @@ $(document).on('click', '#bettingrecord_evolution', ()=> {
     $form.submit();
 });
 
+$(document).on('click', '#bettingrecord_pending', ()=> {
+
+    var $form = $('<form></form>');
+    $form.attr('action', '/manage_bettingrecord/pending');
+    $form.attr('method', 'post');
+    $form.appendTo('body');
+
+    var strNickname = $(`<input type="hidden" value="${user.strNickname}" name="strNickname">`);
+    var strGroupID = $(`<input type="hidden" value="${user.strGroupID}" name="strGroupID">`);
+    var iClass = $(`<input type="hidden" value=${user.iClass} name="iClass">`);
+    var iPermission = $(`<input type="hidden" value=${user.iPermission} name="iPermission">`);
+
+    $form.append(strNickname).append(strGroupID).append(iClass).append(iPermission);
+    $form.submit();
+
+});
+
 let GetBettingRecordSectionClass = (iSection, iCurrent) => {
     const cSection = parseInt(iSection);
     const cCurrent = parseInt(iCurrent);
@@ -192,9 +209,18 @@ let SetBettingRecordHeader = (iSection, iClass) => {
             <li style="padding-right: 20px;" class=${GetBettingRecordSectionClass(iSection, 7)}>
                 <a href="#" style="color:${GetSettingSectionColor(iSection, 7)}; font-size: 15px;" id="bettingrecord_world">월드</a>
             </li>
+            
+            <li style="padding-right: 20px;" class=${GetBettingRecordSectionClass(iSection, 8)}>
+                <a href="#" style="color:${GetSettingSectionColor(iSection, 8)}; font-size: 15px;" id="bettingrecord_pending">처리대기</a>
+            </li>
         `;
     }
 
+    let subTag3 = `
+        <li style="padding-right: ${padding_right};" class=${GetBettingRecordSectionClass(iSection, 4)}>
+            <a href="#" style="color:${GetSettingSectionColor(iSection, 4)}; font-size: 15px;" id="bettingrecord_powerball">파워볼</a>
+        </li>
+    `;
     let tag =
     `
         <li style="padding-right: 20px;" class=${GetBettingRecordSectionClass(iSection, 0)}>
@@ -203,9 +229,7 @@ let SetBettingRecordHeader = (iSection, iClass) => {
         <li style="padding-right: 20px;" class=${GetBettingRecordSectionClass(iSection, 1)}>
             <a href="#" style="color:${GetSettingSectionColor(iSection, 1)}; font-size: 15px;" id="bettingrecord_slot">슬롯</a>
         </li>
-        <li style="padding-right: ${padding_right};" class=${GetBettingRecordSectionClass(iSection, 4)}>
-            <a href="#" style="color:${GetSettingSectionColor(iSection, 4)}; font-size: 15px;" id="bettingrecord_powerball">파워볼</a>
-        </li>
+        ${subTag3}
         ${subTag}
     `;
     $('#bettingrecord_header').empty();

@@ -487,6 +487,107 @@ router.post('/request_record', isLoggedIn, async(req, res) => {
     res.send({result:'OK', data:records, totalCount: totalCount});
 });
 
+/**
+ * Pending 조회
+ */
+router.post('/pending', isLoggedIn, async(req, res) => {
+
+    console.log(req.body);
+
+    const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
+    let iCash = 0;
+    if ( dbuser != null )
+        iCash = dbuser.iCash;
+
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash,
+        iRootClass:req.user.iClass, iPermission: req.user.iPermission, strID: dbuser.strID};
+    let iocount = await IInout.GetProcessing(user.strGroupID, user.strNickname, dbuser.iClass);
+    res.render('manage_bettingrecord/pending', {iLayout:0, iHeaderFocus:3, iSubHeaderFocus:8, user:user, iocount:iocount});
+});
+router.post('/request_pending_record', isLoggedIn, async(req, res) => {
+
+    console.log('/request_pending_record');
+    console.log(req.body);
+
+    let strTimeStart = req.body.dateStart;
+    let strTimeEnd = req.body.dateEnd;
+    let strGroupID = req.body.strGroupID;
+    let strNickname = req.body.strNickname;
+
+    let iLimit = parseInt(req.body.iLimit);
+    let iPage = parseInt(req.body.iPage);
+    let iOffset = (iPage-1) * iLimit;
+
+    let totalCount = await db.RecordBets.count({
+        where: {
+            createdAt:{
+                [Op.between]:[ strTimeStart, require('moment')(strTimeEnd).add(1, 'days').format('YYYY-MM-DD')],
+            },
+            strGroupID:{
+                [Op.like]:strGroupID+'%'
+            },
+            strNickname:{
+                [Op.like]:'%'+strNickname+'%',
+            },
+            eState:{
+                [Op.notIn]:['COMPLETE']
+            }
+        }
+    });
+
+    let list = await db.RecordBets.findAll(
+        {
+            where: {
+                createdAt:{
+                    [Op.between]:[ strTimeStart, require('moment')(strTimeEnd).add(1, 'days').format('YYYY-MM-DD')],
+                },
+                strGroupID:{
+                    [Op.like]:strGroupID+'%'
+                },
+                strNickname:{
+                    [Op.like]:'%'+strNickname+'%',
+                },
+                eState:{
+                    [Op.notIn]:['COMPLETE']
+                }
+            },
+            offset:iOffset,
+            limit:iLimit,
+            order:[['id','DESC']]
+        });
+
+    let records = [];
+
+    for ( let i in list )
+    {
+        records.push({
+            id: list[i].id,
+            strID:list[i].strID,
+            strNickname:list[i].strNickname,
+            strGroupID:list[i].strGroupID,
+            iClass:list[i].iClass,
+            iBalance:list[i].iBalance,
+            iGameCode:list[i].iGameCode,
+            strVender:list[i].strVender,
+            strTableID:list[i].strTableID,
+            strRound:list[i].strRound,
+            strUniqueID:list[i].strUniqueID,
+            strDetail:list[i].strDetail,
+            strResult:list[i].strResult,
+            iBet:list[i].iBet,
+            iWin: list[i].iWin,
+            eState:list[i].eState,
+            eType:list[i].eType,
+            iTarget:list[i].iTarget,
+            createdAt:list[i].createdAt,
+            updatedAt:list[i].updatedAt
+        });
+    }
+    console.log(records);
+
+    res.send({result:'OK', data:records, totalCount: totalCount});
+});
+
 router.post('/request_incompletecancel', async (req, res) => {
 
     console.log('/request_incompletecancel');

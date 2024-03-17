@@ -335,8 +335,11 @@ router.post('/settingodds', isLoggedIn, async(req, res) => {
         iCash = dbuser.iCash;
 
     const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash,
-        iRootClass:req.user.iClass, iPermission:req.user.iPermission};
+        iRootClass:req.user.iClass, iPermission:req.user.iPermission,
+        fSlotR: dbuser.fSlotR, fBaccaratR: dbuser.fBaccaratR, fUnderOverR: dbuser.fUnderOverR,
+        fPBR:dbuser.fPBR, fPBSingleR:dbuser.fPBSingleR, fPBDoubleR:dbuser.fPBDoubleR, fPBTripleR:dbuser.fPBTripleR};
     let iocount = await IInout.GetProcessing(user.strGroupID, user.strNickname, dbuser.iClass);
+
     res.render('manage_partner/settingodds', {iLayout:0, iHeaderFocus:0, user:user, iocount:iocount});
 });
 

@@ -123,7 +123,7 @@
 	<script type="text/javascript">
 
 	const agent = JSON.parse('<%-JSON.stringify(agent)%>');
-	console.log(agent);
+	const user = JSON.parse('<%-JSON.stringify(user)%>');
 
 	const strAlertComplete = '<%=__("AlertComplete")%>';
 	const strAlertEnableToUse = '<%=__("AlertEnableToUse")%>';
@@ -134,19 +134,19 @@
 	const strAlertErrorRollingValue = '<%=__("AlertErrorRollingValue")%>';
 	const strAlertErrorSettleValue = '<%=__("AlertErrorSettleValue")%>';
 
-	$('#fRollingBaccarat').val(agent.fBaccaratR);
-	$('#fRollingUnderOver').val(agent.fUnderOverR);
-	$('#fRollingSlot').val(agent.fSlotR);
+	$('#fRollingBaccarat').val(user.fBaccaratR);
+	$('#fRollingUnderOver').val(user.fUnderOverR);
+	$('#fRollingSlot').val(user.fSlotR);
 
-	$('#fRollingPBA').val(agent.fPBR);
-	$('#fRollingPBBSingle').val(agent.fPBSingleR);
-	$('#fRollingPBBDouble').val(agent.fPBDoubleR);
-	$('#fRollingPBBTriple').val(agent.fPBTripleR);
+	$('#fRollingPBA').val(user.fPBR);
+	$('#fRollingPBBSingle').val(user.fPBSingleR);
+	$('#fRollingPBBDouble').val(user.fPBDoubleR);
+	$('#fRollingPBBTriple').val(user.fPBTripleR);
 
-	$('#fSettleSlot').val(agent.fSettleSlot);
-	$('#fSettleBaccarat').val(agent.fSettleBaccarat);
-	$('#fSettlePBA').val(agent.fSettlePBA);
-	$('#fSettlePBB').val(agent.fSettlePBB);
+	$('#fSettleSlot').val(user.fSettleSlot);
+	$('#fSettleBaccarat').val(user.fSettleBaccarat);
+	$('#fSettlePBA').val(user.fSettlePBA);
+	$('#fSettlePBB').val(user.fSettlePBB);
 
 	let OnClickSettingOdds = () => {
 		let data = {};

@@ -284,8 +284,8 @@ router.post('/settingodds', isLoggedIn, async (req, res) => {
     const input = req.body.pass ?? '';
 
     // 비밀번호는 로그인한 이용자
-    const info = await db.Users.findOne({where: {strNickname: req.user.strNickname, strPassword: input}});
-    if (info == null) {
+    const dbuser = await db.Users.findOne({where: {strNickname: req.user.strNickname, strPassword: input}});
+    if (dbuser == null) {
         res.send({result: 'FAIL', msg:'비밀번호가 틀립니다'});
         return;
     }
@@ -295,7 +295,12 @@ router.post('/settingodds', isLoggedIn, async (req, res) => {
     agent.iRootClass = req.user.iClass;
     agent.iPermission = req.user.iPermission;
 
-    res.render('manage_partner/popup_settingodds', {iLayout:1, iHeaderFocus:0, agent:agent});
+    const user = {fSlotR: dbuser.fSlotR, fBaccaratR: dbuser.fBaccaratR, fUnderOverR: dbuser.fUnderOverR,
+        fPBR:dbuser.fPBR, fPBSingleR:dbuser.fPBSingleR, fPBDoubleR:dbuser.fPBDoubleR, fPBTripleR:dbuser.fPBTripleR,
+        fSettleSlot:dbuser.fSettleSlot, fSettleBaccarat:dbuser.fSettleBaccarat, fSettlePBA:dbuser.fSettlePBA, fSettlePBB:dbuser.fSettlePBB
+    };
+
+    res.render('manage_partner/popup_settingodds', {iLayout:1, iHeaderFocus:0, agent:agent, user:user});
 
 });
 
@@ -717,7 +722,7 @@ router.post('/request_bettinglist_page', isLoggedIn, async (req, res) => {
     res.send({page:cNumPages, list:result});
 });
 
-router.post('/request_settingodds', async (req, res) => {
+router.post('/request_settingodds', isLoggedIn, async (req, res) => {
 
     console.log(`request_settingodds`);
     console.log(req.body);
@@ -741,7 +746,7 @@ router.post('/request_settingodds', async (req, res) => {
             strGroupID:{
                 [Op.like]:req.body.strGroupID+'%'
             },
-            iClass:iClass+1,
+            iClass:4,
             iPermission: {
                 [Op.notIn]: [100]
             },
@@ -807,7 +812,9 @@ router.post('/request_settingodds', async (req, res) => {
             strGroupID:{
                 [Op.like]:req.body.strGroupID+'%'
             },
-            iClass:iClass,
+            iClass:{
+                [Op.in]: [2,3]
+            },
             iPermission: {
                 [Op.notIn]: [100]
             },

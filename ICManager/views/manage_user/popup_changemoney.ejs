@@ -519,27 +519,27 @@
 
 			if ( eType == 'SETTLE' )
 			{
+				strType = '죽장';
+				if ( iSettle <= agent.iSettle )
+					iMoney = iSettle;
+
 				// if ( iMoney < 10000 || agent.iSettle < 10000 )
 				// {
 				// 	alert('전환 죽장비는 10,000원 이상이어야 합니다.');
 				// 	return;
 				// }
-
-				strType = '죽장';
-				if ( iSettle <= agent.iSettle )
-					iMoney = iSettle;
 			}
 			else if ( eType == 'ROLLING' )
 			{
+				strType = '롤링';
+				if ( iRolling <= agent.iRolling )
+					iMoney = iRolling;
+
 				if ( iMoney < 10000 || agent.iRolling < 10000 )
 				{
 					alert('전환 로링비는 10,000원 이상이어야 합니다.');
 					return;
 				}
-
-				strType = '롤링';
-				if ( iRolling <= agent.iRolling )
-					iMoney = iRolling;
 			}
 
 			if ( iMoney == '' || iMoney == 0 )

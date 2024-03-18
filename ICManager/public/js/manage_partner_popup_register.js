@@ -51,23 +51,31 @@ let SetParentValues = (strNickname) => {
 
             if ( EAgent.eProAdmin == parentenablelist[i].iClass )
             {
-                $('#fRollingSlot').val(parentenablelist[i].fSlotR);
-                $('#fRollingBaccarat').val(parentenablelist[i].fBaccaratR);
-                $('#fRollingUnderOver').val(parentenablelist[i].fUnderOverR);
+                $('#fRollingSlot').val(0);
+                $('#fRollingBaccarat').val(0);
+                $('#fRollingUnderOver').val(0);
 
-                $('#fRollingPB').val(parentenablelist[i].fPBR);
-                $('#fRollingPBSingle').val(parentenablelist[i].fPBSingleR);
-                $('#fRollingPBDouble').val(parentenablelist[i].fPBDoubleR);
-                $('#fRollingPBTriple').val(parentenablelist[i].fPBTripleR);
+                // $('#fRollingSlot').val(parentenablelist[i].fSlotR);
+                // $('#fRollingBaccarat').val(parentenablelist[i].fBaccaratR);
+                // $('#fRollingUnderOver').val(parentenablelist[i].fUnderOverR);
 
-                $('#fSettleSlot').val(parentenablelist[i].fSettleSlot);
-                $('#fSettleBaccarat').val(parentenablelist[i].fSettleBaccarat);
+                // $('#fRollingPB').val(parentenablelist[i].fPBR);
+                // $('#fRollingPBSingle').val(parentenablelist[i].fPBSingleR);
+                // $('#fRollingPBDouble').val(parentenablelist[i].fPBDoubleR);
+                // $('#fRollingPBTriple').val(parentenablelist[i].fPBTripleR);
 
-                $('#fSettlePBA').val(parentenablelist[i].fSettlePBA);
-                $('#fSettlePBB').val(parentenablelist[i].fSettlePBB);
+                // $('#fSettleSlot').val(parentenablelist[i].fSettleSlot);
+                // $('#fSettleBaccarat').val(parentenablelist[i].fSettleBaccarat);
+
+                // $('#fSettlePBA').val(parentenablelist[i].fSettlePBA);
+                // $('#fSettlePBB').val(parentenablelist[i].fSettlePBB);
             }
             else if ( parentenablelist[i].iClass == EAgent.eShop )
             {
+                $('#fRollingSlot').val(0);
+                $('#fRollingBaccarat').val(0);
+                $('#fRollingUnderOver').val(0);
+
                 // $('#fRollingSlot').val(0);
                 // $('#fRollingBaccarat').val(0);
                 // $('#fRollingUnderOver').val(0);
@@ -96,16 +104,16 @@ let SetParentValues = (strNickname) => {
                 $('#fRollingBaccarat').val(0);
                 $('#fRollingUnderOver').val(0);
 
-                $('#fRollingPB').val(0);
-                $('#fRollingPBSingle').val(0);
-                $('#fRollingPBDouble').val(0);
-                $('#fRollingPBTriple').val(0);
+                // $('#fRollingPB').val(0);
+                // $('#fRollingPBSingle').val(0);
+                // $('#fRollingPBDouble').val(0);
+                // $('#fRollingPBTriple').val(0);
     
-                $('#fSettleSlot').val(0);
-                $('#fSettleBaccarat').val(0);
+                // $('#fSettleSlot').val(0);
+                // $('#fSettleBaccarat').val(0);
                 
-                $('#fSettlePBA').val(0);
-                $('#fSettlePBB').val(0);
+                // $('#fSettlePBA').val(0);
+                // $('#fSettlePBB').val(0);
             }
 
             $('#strParentGroupID').val(parentenablelist[i].strGroupID);
@@ -257,19 +265,6 @@ let Submit = () => {
     let fSlotR = 0;
     let fBaccaratR = 0;
     let fUnderOverR = 0;
-    let fPBR = 0;
-    let fPBSingleR = 0;
-    let fPBDoubleR = 0;
-    let fPBTripleR = 0;
-    let fSettleBaccarat = 0;
-    let fSettleSlot = 0;
-    let fSettlePBA = 0;
-    let fSettlePBB = 0;
-
-    let iPBLimit = 0;
-    let iPBSingleLimit = 0;
-    let iPBDoubleLimit = 0;
-    let iPBTripleLimit = 0;
 
     let strPermissionInput = $('#using_input_permission').attr('checked');
     if ( strPermissionInput != undefined ) {
@@ -281,42 +276,9 @@ let Submit = () => {
     let strOptionCode = '11000000';
 
     if (iParentClass > 1) {
-        iPBLimit = $('#iPBLimit').val();
-        iPBSingleLimit = $('#iPBSingleLimit').val();
-        iPBDoubleLimit = $('#iPBDoubleLimit').val();
-        iPBTripleLimit = $('#iPBTripleLimit').val();
-
-        let value = $("#strPowerballType").val();
-        if ( value == 'A' )
-            strPBOptionCode = replaceCharacter(strPBOptionCode, 0, '0');
-        else
-            strPBOptionCode = replaceCharacter(strPBOptionCode, 0, '1');
-
-        let bSingle = $('#using_single').attr('checked');
-        if ( bSingle != undefined )
-            strPBOptionCode = replaceCharacter(strPBOptionCode, 1, '1');
-        else
-            strPBOptionCode = replaceCharacter(strPBOptionCode, 1, '0');
-
-        let bDouble = $('#using_double').attr('checked');
-        if ( bDouble != undefined )
-            strPBOptionCode = replaceCharacter(strPBOptionCode, 2, '1');
-        else
-            strPBOptionCode = replaceCharacter(strPBOptionCode, 2, '0');
-
-        let bTriple = $('#using_triple').attr('checked');
-        if ( bTriple != undefined )
-            strPBOptionCode = replaceCharacter(strPBOptionCode, 3, '1');
-        else
-            strPBOptionCode = replaceCharacter(strPBOptionCode, 3, '0');
-
         fSlotR = $('#fRollingSlot').val();
         fBaccaratR = $('#fRollingBaccarat').val();
         fUnderOverR = $('#fRollingUnderOver').val();
-        fPBR = $('#fRollingPB').val();
-        fPBSingleR = $('#fRollingPBSingle').val();
-        fPBDoubleR = $('#fRollingPBDouble').val();
-        fPBTripleR = $('#fRollingPBTriple').val();
 
         let strUsingInput = $('#using_input').attr('checked');
         let strUsingOutput = $('#using_output').attr('checked');
@@ -343,14 +305,9 @@ let Submit = () => {
             console.log(`4 ${strOptionCode}`);
         }
 
-        if(fSlotR == '' || fSlotR == undefined || fSlotR == null || fBaccaratR == '' || fBaccaratR == undefined || fBaccaratR == null || fUnderOverR == '' || fUnderOverR == undefined || fUnderOverR == null || fPBR == '' || fPBR == undefined || fPBR == null || fPBSingleR == '' || fPBSingleR == undefined || fPBSingleR == null || fPBDoubleR == '' || fPBDoubleR == undefined || fPBDoubleR == null || fPBTripleR == '' || fPBTripleR == undefined || fPBTripleR == null )
+        if(fSlotR == '' || fSlotR == undefined || fSlotR == null || fBaccaratR == '' || fBaccaratR == undefined || fBaccaratR == null || fUnderOverR == '' || fUnderOverR == undefined || fUnderOverR == null)
         {
             alert(strAlertErrorRollingValue);
-            return;
-        }
-        if(iPBLimit == '' || iPBLimit == undefined || iPBLimit == null || iPBSingleLimit == '' || iPBSingleLimit == undefined || iPBSingleLimit == null || iPBDoubleLimit == '' || iPBDoubleLimit == undefined || iPBDoubleLimit == null || iPBTripleLimit == '' || iPBTripleLimit == undefined || iPBTripleLimit == null )
-        {
-            alert("베팅값을 입력해주세요.");
             return;
         }
     }
@@ -389,24 +346,7 @@ let Submit = () => {
                 fSlotR:fSlotR,
                 fBaccaratR:fBaccaratR,
                 fUnderOverR:fUnderOverR,
-                fPBR:fPBR,
-                fPBSingleR:fPBSingleR,
-                fPBDoubleR:fPBDoubleR,
-                fPBTripleR:fPBTripleR,
-                // fSettleBaccarat:fSettleBaccarat,
-                // fSettleSlot:fSettleSlot,
-                // fSettlePBA:fSettlePBA,
-                // fSettlePBB:fSettlePBB,
-                fSettleBaccarat:0,
-                fSettleSlot:0,
-                fSettlePBA:0,
-                fSettlePBB:0,
                 strOptionCode:strOptionCode,
-                strPBOptionCode:strPBOptionCode,
-                iPBLimit:iPBLimit,
-                iPBSingleLimit:iPBSingleLimit,
-                iPBDoubleLimit:iPBDoubleLimit,
-                iPBTripleLimit:iPBTripleLimit,
                 iPermission:strPermissionInput,
             },
     

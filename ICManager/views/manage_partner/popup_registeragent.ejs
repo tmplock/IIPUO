@@ -158,13 +158,6 @@
 							<input type="text" style="width:40%;" required="no" message="" id="fRollingBaccarat"> %
 						</td>
 
-						<th scope="row" style="background-color:lightsteelblue">파워볼 A (1.93)</th>
-						<td style="background-color:lightsteelblue">
-							<input type="text" style="width:40%;" required="no" message="" id="fRollingPB" > %
-						</td>
-
-					</tr>
-					<tr>
 						<th scope="row">
 							<%=__('UnderOver')%>
 						</th>
@@ -172,10 +165,6 @@
 							<input type="text" style="width:40%;" required="no" message="" id="fRollingUnderOver" > %
 						</td>
 
-						<th scope="row" style="background-color:beige">파워볼 B (1.95) 단폴</th>
-						<td style="background-color:beige">
-							<input type="text" style="width:40%;" required="no" message="" id="fRollingPBSingle" > %
-						</td>
 					</tr>
 
 					<tr>
@@ -186,88 +175,13 @@
 							<input type="text" style="width:40%;" required="no" message="" id="fRollingSlot" > %
 						</td>
 
-						<th scope="row" style="background-color:beige">파워볼 B (1.95) 투폴</th>
+						<th scope="row" style="background-color:beige"></th>
 						<td style="background-color:beige">
-							<input type="text" style="width:40%;" required="no" message="" id="fRollingPBDouble" > %
-						</td>
-					</tr>
-					<tr>
-						<th scope="row"></th>
-						<td>
-
-						</td>
-
-						<th scope="row" style="background-color:beige">파워볼 B (1.95) 쓰리폴</th>
-						<td style="background-color:beige">
-							<input type="text" style="width:40%;" required="no" message="" id="fRollingPBTriple"> %
 						</td>
 					</tr>
 
 				</table>
 				<%}%>
-					<p style="background-repeat:no-repeat; background-position:left center; font-size:16px; color:#454545; padding-left:22px;">파워볼 설정</p>
-					<table>
-						<colgroup>
-							<col width="15%" />
-							<col width="35%" />
-							<col width="15%" />
-							<col width="35%" />
-						</colgroup>
-						<tr>
-							<th scope="row">파워볼 베팅제한 통합 금액</th>
-							<td>
-								<input type="text" style="width:30%;" name="bank_password" id="iPBLimit" required="no"
-									message="" value="">
-							</td>
-							<th scope="row">단폴 베팅제한 금액</th>
-							<td>
-								<input type="text" style="width:30%;" name="bank_password" id="iPBSingleLimit"
-									required="no" message="" value="">
-							</td>
-						</tr>
-						<tr>
-							<th scope="row">투폴 베팅제한 금액</th>
-							<td>
-								<input type="text" style="width:30%;" name="bank_password" id="iPBDoubleLimit"
-									required="no" message="" value="">
-							</td>
-							<th scope="row">쓰리폴 베팅제한 금액</th>
-							<td>
-								<input type="text" style="width:30%;" name="bank_password" id="iPBTripleLimit"
-									required="no" message="" value="">
-							</td>
-						</tr>
-
-						<tr>
-							<th scope="row">파워볼 타입</th>
-							<td>
-								<select id="strPowerballType">
-									<option value="A">A</option>
-									<option value="B">B</option>
-								</select>
-								A타입 : 1.93 / B타입 : 1.95
-							</td>
-							<th scope="row">단폴 베팅 가능</th>
-							<td>
-								<input type="checkbox" style="width:30px;height:30px;" name="using_output"
-									id="using_single" required="no" message="" checked> <strong>체크시 단폴 사용</strong>
-							</td>
-						</tr>
-
-						<tr>
-							<th scope="row">투폴 베팅 가능</th>
-							<td>
-								<input type="checkbox" style="width:30px;height:30px;" name="using_output"
-									id="using_double" required="no" message="" checked> <strong>체크시 투폴 사용</strong>
-							</td>
-							<th scope="row">쓰리폴 베팅 가능</th>
-							<td>
-								<input type="checkbox" style="width:30px;height:30px;" name="using_output"
-									id="using_triple" required="no" message="" checked> <strong>체크시 쓰리폴 사용</strong>
-							</td>
-						</tr>
-
-					</table>
 
 					<table>
 						<colgroup>
@@ -357,26 +271,8 @@
 		checkBlockNum(`#strMobileNo`);
 
 		checkBlockNum(`#fRollingBaccarat`);
-		checkBlockNum(`#fRollingPB`);
 		checkBlockNum(`#fRollingUnderOver`);
-		checkBlockNum(`#fRollingPBSingle`);
 		checkBlockNum(`#fRollingSlot`);
-		checkBlockNum(`#fRollingPBDouble`);
-		checkBlockNum(`#fRollingPBTriple`);
-		// if ( parseInt(parent.iAgentClass) == 5 ) {
-		// 	$('#fRollingBaccarat').attr('disabled', 'disabled');
-		// 	$('#fRollingPB').attr('disabled', 'disabled');
-		// 	$('#fRollingUnderOver').attr('disabled', 'disabled');
-		// 	$('#fRollingPBSingle').attr('disabled', 'disabled');
-		// 	$('#fRollingSlot').attr('disabled', 'disabled');
-		// 	$('#fRollingPBDouble').attr('disabled', 'disabled');
-		// 	$('#fRollingPBTriple').attr('disabled', 'disabled');
-		// }
-
-		checkBlockNum(`#iPBLimit`);
-		checkBlockNum(`#iPBSingleLimit`);
-		checkBlockNum(`#iPBDoubleLimit`);
-		checkBlockNum(`#iPBTripleLimit`);
 	</script>
 
 

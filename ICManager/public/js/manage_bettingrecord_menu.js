@@ -221,12 +221,13 @@ let SetBettingRecordHeader = (iSection, iClass) => {
             <a href="#" style="color:${GetSettingSectionColor(iSection, 4)}; font-size: 15px;" id="bettingrecord_powerball">파워볼</a>
         </li>
     `;
+    subTag3 = '';
     let tag =
     `
         <li style="padding-right: 20px;" class=${GetBettingRecordSectionClass(iSection, 0)}>
             <a href="#" style="color:${GetSettingSectionColor(iSection, 0)}; font-size: 15px;" id="bettingrecord_casino">카지노</a>
         </li>
-        <li style="padding-right: 20px;" class=${GetBettingRecordSectionClass(iSection, 1)}>
+        <li style="padding-right: ${padding_right};" class=${GetBettingRecordSectionClass(iSection, 1)}>
             <a href="#" style="color:${GetSettingSectionColor(iSection, 1)}; font-size: 15px;" id="bettingrecord_slot">슬롯</a>
         </li>
         ${subTag3}

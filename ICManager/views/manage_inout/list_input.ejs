@@ -242,6 +242,14 @@
         );
     }
 
+    let OnClickPage = (iPage) => {
+        if (iPage < 1) {
+            return;
+        }
+        iCurrentPage = iPage;
+        OnClickSearchByInput(iCurrentPage);
+    }
+
     let OnClickRequestInout = (charge) => {
         let input = prompt('암호입력');
         if (input == null) {

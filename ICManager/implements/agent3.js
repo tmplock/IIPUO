@@ -938,7 +938,7 @@ var inline_GetComputedAgentList = async (strGroupID, iClass, dateStart, dateEnd,
             IFNULL((SELECT COUNT(*) FROM Users WHERE strGroupID LIKE CONCAT(t2.strGroupID,'%') AND iClass=${EAgent.eShop}),0) as iNumShops,
             IFNULL((SELECT COUNT(*) FROM Users WHERE strGroupID LIKE CONCAT(t2.strGroupID,'%') AND iClass=${EAgent.eUser}),0) as iNumUsers,
             IFNULL((SELECT SUM(iCash) FROM Users WHERE strGroupID LIKE CONCAT(t2.strGroupID,'%') AND iClass > 3),0) as iTotalMoney,
-            0 AS iCurrentRollingTotal
+            IFNULL((SELECT sum(iRolling) FROM Users WHERE strGroupID LIKE CONCAT(t2.strGroupID,'%')), 0) AS iCurrentRollingTotal
             
         `;
     }
@@ -1175,7 +1175,7 @@ let GetDailyBettingQuery = (iClass, dateStart, dateEnd) => {
             IFNULL((SELECT -SUM(iAgentRollingUO) FROM RecordDailyOverviews WHERE strID = t2.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'), 0) AS iUnderOverRollingMoney,
             IFNULL((SELECT -SUM(iAgentRollingS) FROM RecordDailyOverviews WHERE strID = t2.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'), 0) AS iSlotRollingMoney,
             IFNULL((SELECT -SUM(iAgentRollingPBA + iAgentRollingPBB) FROM RecordDailyOverviews WHERE strID = t2.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'), 0) AS iPBRollingMoney,
-            0 AS iMyRollingMoney,
+            IFNULL((SELECT -SUM(iRollingB + iRollingUO + iRollingS + iRollingPBA + iRollingPBB) FROM RecordDailyOverviews WHERE strID = t2.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'), 0) AS iMyRollingMoney,
             IFNULL((SELECT -SUM((iAgentWinB + iAgentWinUO + iAgentWinS + iAgentWinPB) - (iAgentBetB + iAgentBetUO + iAgentBetS + iAgentBetPB) + (iAgentRollingB + iAgentRollingUO + iAgentRollingS + iAgentRollingPBA + iAgentRollingPBB)) FROM RecordDailyOverviews WHERE strID = t2.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'), 0) AS iTotal,
             IFNULL((SELECT -SUM(iAgentWinB - iAgentBetB + iAgentRollingB) FROM RecordDailyOverviews WHERE strID = t2.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'), 0) AS iBaccaratTotal,
             IFNULL((SELECT -SUM(iAgentWinUO - iAgentBetUO + iAgentRollingUO) FROM RecordDailyOverviews WHERE strID = t2.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'), 0) AS iUnderOverTotal,

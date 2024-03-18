@@ -96,19 +96,9 @@
 			<td>
 				<input type="text" style="width:30%;" name="bank_password" id="fBaccaratR" required="no"  message="" value="<%=agent.fBaccaratR%>">
 			</td>
-			<th scope="row" style="background-color:beige">파워볼 A (1.93) 롤링</th>
-			<td style="background-color:beige">
-				<input type="text" style="width:30%;" name="bank_password" id="fPBR" required="no"  message="" value="<%=agent.fPBR%>">
-			</td>
-		</tr>
-		<tr>
 			<th scope="row">언오버 롤링</th>
 			<td>
 				<input type="text" style="width:30%;" name="bank_password" id="fUnderOverR" required="no"  message="" value="<%=agent.fUnderOverR%>">
-			</td>
-			<th scope="row" style="background-color:beige">파워볼 B (1.95) 단폴 롤링</th>
-			<td style="background-color:beige">
-				<input type="text" style="width:30%;" name="bank_password" id="fPBSingleR" required="no"  message="" value="<%=agent.fPBSingleR%>">
 			</td>
 		</tr>
 		<tr>
@@ -116,80 +106,13 @@
 			<td>
 				<input type="text" style="width:30%;" name="bank_password" id="fSlotR" required="no"  message="" value="<%=agent.fSlotR%>">
 			</td>
-
-			<th scope="row" style="background-color:beige">파워볼 B (1.95) 투폴 롤링</th>
-			<td style="background-color:beige">
-				<input type="text" style="width:30%;" name="bank_password" id="fPBDoubleR" required="no"  message="" value="<%=agent.fPBDoubleR%>">
-			</td>
-		</tr>
-		<tr>
-			<th></th>
-			<td></td>
-			<th scope="row" style="background-color:beige">파워볼 B (1.95) 쓰리폴 롤링</th>
-			<td style="background-color:beige">
-				<input type="text" style="width:30%;" name="bank_password" id="fPBTripleR" required="no"  message="" value="<%=agent.fPBTripleR%>">
+			<th scope="row">  </th>
+			<td>
 			</td>
 		</tr>
 	</table>
 
-		<table>
-
-		<colgroup>
-			<col style="width:15%">
-			<col style="width:35%">
-			<col style="width:15%">
-			<col style="width:35%">
-		</colgroup>
-		<p style="background-repeat:no-repeat; background-position:left center; font-size:16px; color:#454545; padding-left:22px;">파워볼 설정</p>
-		<tr>
-			<th scope="row">파워볼 베팅제한 통합 금액</th>
-			<td>
-				<input type="text" style="width:30%;" name="bank_password" id="iPBLimit" required="no"  message="" value="<%=agent.iPBLimit%>">
-			</td>
-			<th scope="row">단폴 베팅제한 금액</th>
-			<td>
-				<input type="text" style="width:30%;" name="bank_password" id="iPBSingleLimit" required="no"  message="" value="<%=agent.iPBSingleLimit%>">
-			</td>
-		</tr>
-		<tr>
-			<th scope="row">투폴 베팅제한 금액</th>
-			<td>
-				<input type="text" style="width:30%;" name="bank_password" id="iPBDoubleLimit" required="no"  message="" value="<%=agent.iPBDoubleLimit%>">
-			</td>
-			<th scope="row">쓰리폴 베팅제한 금액</th>
-			<td>
-				<input type="text" style="width:30%;" name="bank_password" id="iPBTripleLimit" required="no"  message="" value="<%=agent.iPBTripleLimit%>">
-			</td>
-		</tr>
-
-		<tr>
-			<th scope="row">파워볼 타입</th>
-			<td>
-				<select id="strPowerballType">
-					<option value="A">A</option>
-					<option value="B">B</option>
-				</select>
-				A타입 : 1.93 / B타입 : 1.95
-			</td>
-			<th scope="row">단폴 베팅 가능</th>
-			<td>
-				<input type="checkbox" style="width:30px;height:30px;" name="using_output" id="using_single" required="no" message="" checked> <strong>체크시 단폴 사용</strong>
-			</td>
-		</tr>
-
-		<tr>
-			<th scope="row">투폴 베팅 가능</th>
-			<td>
-				<input type="checkbox" style="width:30px;height:30px;" name="using_output" id="using_double" required="no" message="" checked> <strong>체크시 투폴 사용</strong>
-			</td>
-			<th scope="row">쓰리폴 베팅 가능</th>
-			<td>
-				<input type="checkbox" style="width:30px;height:30px;" name="using_output" id="using_triple" required="no" message="" checked> <strong>체크시 쓰리폴 사용</strong>
-			</td>
-		</tr>
-	</table>
-
-		<table>
+	<table>
 
 		<colgroup>
 			<col style="width:15%">
@@ -221,30 +144,6 @@
 
 	$(document).ready( ()=> {
 
-		let cPowerballType = parseInt(agent.strPBOptionCode[0]);
-		if ( cPowerballType == 0 )
-			$('#strPowerballType option[value="A"]').attr('selected', 'selected');
-		else
-			$('#strPowerballType option[value="B"]').attr('selected', 'selected');
-
-		let bUsingSingle = parseInt(agent.strPBOptionCode[1]);
-		if ( bUsingSingle == 1 )
-			$('#using_single').attr('checked', true);
-		else
-			$('#using_single').attr('checked', false);
-
-		let bUsingDouble = parseInt(agent.strPBOptionCode[2]);
-		if ( bUsingDouble == 1 )
-			$('#using_double').attr('checked', true);
-		else
-			$('#using_double').attr('checked', false);
-
-		let bUsingTriple = parseInt(agent.strPBOptionCode[3]);
-		if ( bUsingTriple == 1 )
-			$('#using_triple').attr('checked', true);
-		else
-			$('#using_triple').attr('checked', false);
-
 		let cUsingInput = parseInt(agent.strOptionCode[0]);
 		let cUsingOutput = parseInt(agent.strOptionCode[1]);
 
@@ -264,11 +163,8 @@
 		if (agent.iPermission == 100) {
 			["#member_nick", "#member_id",
 				"#member_password", '#member_password2', '#bank_owner', '#bank_name', '#bank_num', '#cell'
-				, '#fBaccaratR', '#fPBR', '#fUnderOverR', '#fPBSingleR'
-				, '#fSlotR', '#fPBDoubleR', '#fPBTripleR'
-				, '#using_single', '#using_double', '#using_triple', '#using_input', '#using_output'
-				, '#iPBLimit', '#iPBSingleLimit', '#iPBDoubleLimit', '#iPBTripleLimit'
-				, '#strPowerballType'
+				, '#fBaccaratR', '#fUnderOverR', '#fSlotR'
+				, '#using_input', '#using_output'
 			].forEach(item => {
 				$(item).get(0).disabled = true;
 			});
@@ -276,27 +172,23 @@
 		} else if ( parseInt(agent.iRootClass) == parseInt(agent.iClass) ) {
 			[
 				"#member_password", '#member_password2', '#bank_owner', '#bank_name', '#bank_num', '#cell'
-				, '#fBaccaratR', '#fPBR', '#fUnderOverR', '#fPBSingleR'
-				, '#fSlotR', '#fPBDoubleR', '#fPBTripleR'
-				, '#using_single', '#using_double', '#using_triple', '#using_input', '#using_output'
-				, '#iPBLimit', '#iPBSingleLimit', '#iPBDoubleLimit', '#iPBTripleLimit'
-				, '#strPowerballType'
+				, '#fBaccaratR', '#fUnderOverR', '#fSlotR'
+				, '#using_input', '#using_output'
 			].forEach(item => {
 				$(item).get(0).disabled = true;
 			});
 			$('#btn_red').hide();
 		} else if ( parseInt(agent.iRootClass) == 4 && parseInt(agent.iClass) == 5 ) {
 			["#member_password", '#member_password2', '#bank_owner', '#bank_name', '#bank_num', '#cell'
-				, '#fBaccaratR', '#fPBR', '#fUnderOverR', '#fPBSingleR'
-				, '#fSlotR', '#fPBDoubleR', '#fPBTripleR'
-				, '#using_single', '#using_double', '#using_triple', '#using_input', '#using_output'
+				, '#fBaccaratR', '#fUnderOverR', '#fSlotR'
+				, '#using_input', '#using_output'
 			].forEach(item => {
 				$(item).get(0).disabled = true;
 			});
 			$('#btn_red').hide();
 		} else if ( parseInt(agent.iRootClass) > 3 ) {
 			["#member_password", '#member_password2', '#bank_name', '#bank_num', '#bank_owner', '#cell'
-				, '#using_single', '#using_double', '#using_triple', '#using_input', '#using_output'
+				, '#using_input', '#using_output'
 			].forEach(item => {
 				$(item).get(0).disabled = true;
 			});
@@ -344,15 +236,6 @@
 		checkBlockNum(`#fBaccaratR`);
 		checkBlockNum(`#fUnderOverR`);
 		checkBlockNum(`#fSlotR`);
-		checkBlockNum(`#fPBR`);
-		checkBlockNum(`#fPBSingleR`);
-		checkBlockNum(`#fPBDoubleR`);
-		checkBlockNum(`#fPBTripleR`);
-
-		checkBlockNum(`#iPBLimit`);
-		checkBlockNum(`#iPBSingleLimit`);
-		checkBlockNum(`#iPBDoubleLimit`);
-		checkBlockNum(`#iPBTripleLimit`);
 	});
 
 	let CheckID = () => {
@@ -461,38 +344,8 @@
 			fSlotR = $('#fSlotR').val();
 			fBaccaratR = $('#fBaccaratR').val();
 			fUnderOverR = $('#fUnderOverR').val();
-			fPBR = $('#fPBR').val();
-			fPBSingleR = $('#fPBSingleR').val();
-			fPBDoubleR = $('#fPBDoubleR').val();
-			fPBTripleR = $('#fPBTripleR').val();
 			fSettleBaccarat = $('#fSettleBaccarat').val();
 			fSettleSlot = $('#fSettleSlot').val();
-			fSettlePBA = $('#fSettlePBA').val();
-			fSettlePBB = $('#fSettlePBB').val();
-
-			let value = $("#strPowerballType").val();
-			if ( value == 'A' )
-				strPBOptionCode = replaceCharacter(strPBOptionCode, 0, '0');
-			else
-				strPBOptionCode = replaceCharacter(strPBOptionCode, 0, '1');
-
-			let bSingle = $('#using_single').attr('checked');
-			if ( bSingle != undefined )
-				strPBOptionCode = replaceCharacter(strPBOptionCode, 1, '1');
-			else
-				strPBOptionCode = replaceCharacter(strPBOptionCode, 1, '0');
-
-			let bDouble = $('#using_double').attr('checked');
-			if ( bDouble != undefined )
-				strPBOptionCode = replaceCharacter(strPBOptionCode, 2, '1');
-			else
-				strPBOptionCode = replaceCharacter(strPBOptionCode, 2, '0');
-
-			let bTriple = $('#using_triple').attr('checked');
-			if ( bTriple != undefined )
-				strPBOptionCode = replaceCharacter(strPBOptionCode, 3, '1');
-			else
-				strPBOptionCode = replaceCharacter(strPBOptionCode, 3, '0');
 
 			let strUsingInput = $('#using_input').attr('checked');
 			let strUsingOutput = $('#using_output').attr('checked');
@@ -511,11 +364,6 @@
 			}
 		}
 
-		iPBLimit = $('#iPBLimit').val();
-		iPBSingleLimit = $('#iPBSingleLimit').val();
-		iPBDoubleLimit = $('#iPBDoubleLimit').val();
-		iPBTripleLimit = $('#iPBTripleLimit').val();
-
 		objectData.strNickname = strNickname;
 		objectData.strMobile = strMobile;
 		objectData.strID = strID;
@@ -531,18 +379,10 @@
 		objectData.fSlotR = fSlotR;
 		objectData.fBaccaratR = fBaccaratR;
 		objectData.fUnderOverR = fUnderOverR;
-		objectData.fPBR = fPBR;
-		objectData.fPBSingleR = fPBSingleR;
-		objectData.fPBDoubleR = fPBDoubleR;
-		objectData.fPBTripleR = fPBTripleR;
 		objectData.fSettleBaccarat = fSettleBaccarat;
 		objectData.fSettleSlot = fSettleSlot;
 		objectData.fSettlePBA = fSettlePBA;
 		objectData.fSettlePBB = fSettlePBB;
-		objectData.iPBLimit = iPBLimit;
-		objectData.iPBSingleLimit = iPBSingleLimit;
-		objectData.iPBDoubleLimit = iPBDoubleLimit;
-		objectData.iPBTripleLimit = iPBTripleLimit;
 		objectData.strEditorNickname = agent.iRootNickname;
 
 		if ( strPassword != strPasswordConfirm ){

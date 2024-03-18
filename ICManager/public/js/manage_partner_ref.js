@@ -748,26 +748,6 @@ function AddPartner(iRootClass, aObject, bDisableRolling, iPermission)
 				<input type="number" style="width:50%;" name="bakara_over_31" id="fUnderOver${aObject.strNickname}" required="no" message="언오버 로링비" value=${aObject.fUnderOverR} ${tagoption}>
 				%
 			</td>
-	
-			<td style="background-color:${color};"  class="parent_row_31">
-				<input type="number" style="width:50%;" name="bakara_over_31" id="fPB${aObject.strNickname}" required="no" message="Powerball 로링비" value=${aObject.fPBR} ${tagoption}>
-				%
-			</td>
-	
-			<td style="background-color:${color};"  class="parent_row_31">
-				<input type="number" style="width:50%;" name="bakara_over_31" id="fPBSingle${aObject.strNickname}" required="no" message="PSingle 로링비" value=${aObject.fPBSingleR} ${tagoption}>
-				%
-			</td>
-	
-			<td style="background-color:${color};"  class="parent_row_31">
-				<input type="number" style="width:50%;" name="bakara_over_31" id="fPBDouble${aObject.strNickname}" required="no" message="PDouble 로링비" value=${aObject.fPBDoubleR} ${tagoption}>
-				%
-			</td>
-	
-			<td style="background-color:${color};"  class="parent_row_31">
-				<input type="number" style="width:50%;" name="bakara_over_31" id="fPBTriple${aObject.strNickname}" required="no" message="PTriple 로링비" value=${aObject.fPBTripleR} ${tagoption}>
-				%
-			</td>
 			`;
 	} else {
 		subtag += `
@@ -783,9 +763,7 @@ function AddPartner(iRootClass, aObject, bDisableRolling, iPermission)
 			<a id="request_partneragents" href="javascript:RequestPartnerAgent('${aObject.strNickname}', '${aObject.strGroupID}', '${aObject.iClass}', ${bDisableRolling});"  style="color:blue;">${aObject.strNickname}</a>
 			
 			</td>
-	
-			
-			
+
 			<td style="background-color:${color};"  class="parent_row_31">
 				<input type="text" style="width:40%;" name="slot_slot_31" id="fSlot${aObject.strNickname}" required="no" message="슬롯 로링비" value=${aObject.fSlotR} ${tagoption} disabled>
 				%
@@ -800,28 +778,18 @@ function AddPartner(iRootClass, aObject, bDisableRolling, iPermission)
 				<input type="text" style="width:50%;" name="bakara_over_31" id="fUnderOver${aObject.strNickname}" required="no" message="언오버 로링비" value=${aObject.fUnderOverR} ${tagoption} disabled>
 				%
 			</td>
-	
-			<td style="background-color:${color};"  class="parent_row_31">
-				<input type="text" style="width:50%;" name="bakara_over_31" id="fPB${aObject.strNickname}" required="no" message="Powerball 로링비" value=${aObject.fPBR} ${tagoption} disabled>
-				%
-			</td>
-	
-			<td style="background-color:${color};"  class="parent_row_31">
-				<input type="text" style="width:50%;" name="bakara_over_31" id="fPBSingle${aObject.strNickname}" required="no" message="PSingle 로링비" value=${aObject.fPBSingleR} ${tagoption} disabled>
-				%
-			</td>
-	
-			<td style="background-color:${color};"  class="parent_row_31">
-				<input type="text" style="width:50%;" name="bakara_over_31" id="fPBDouble${aObject.strNickname}" required="no" message="PDouble 로링비" value=${aObject.fPBDoubleR} ${tagoption} disabled>
-				%
-			</td>
-	
-			<td style="background-color:${color};"  class="parent_row_31">
-				<input type="text" style="width:50%;" name="bakara_over_31" id="fPBTriple${aObject.strNickname}" required="no" message="PTriple 로링비" value=${aObject.fPBTripleR} ${tagoption} disabled>
-				%
-			</td>
 			`;
 	}
+
+	subtag += `
+		<td style="background-color:${color};"  class="parent_row_31">
+			<input type="text" style="width:50%;" name="bakara_over_31" id="fSettleBaccarat${aObject.strNickname}" required="no" message="바카라 죽장" value=${aObject.fSettleBaccarat} ${tagoption} disabled>%
+		</td>
+	
+		<td style="background-color:${color};"  class="parent_row_31">
+			<input type="text" style="width:50%;" name="bakara_over_31" id="fSettleSlot${aObject.strNickname}" required="no" message="슬롯 죽장" value=${aObject.fSettleSlot} ${tagoption} disabled>%
+		</td>
+	`;
 
 	if ( aObject.iInput != 0)
 		subtag += `<td style="background-color:${color};"  class="parent_row_31">${parseInt(aObject.iInput).toLocaleString()}</td>`;
@@ -1234,8 +1202,8 @@ function SetPartnerList(iRootClass, strParentTag, aObject, bDisableRolling, iPer
 	{
 		checkBlockNum(`#fSettleBaccarat${aObject[i].strNickname}`);
 		checkBlockNum(`#fSettleSlot${aObject[i].strNickname}`);
-		checkBlockNum(`#fSettlePBA${aObject[i].strNickname}`);
-		checkBlockNum(`#fSettlePBB${aObject[i].strNickname}`);
+		// checkBlockNum(`#fSettlePBA${aObject[i].strNickname}`);
+		// checkBlockNum(`#fSettlePBB${aObject[i].strNickname}`);
 		checkBlockNum(`#input_${aObject[i].strNickname}`);
 		checkBlockCharSpecial2(`#memoinput_${aObject[i].strNickname}`);
 	}
@@ -1300,7 +1268,7 @@ function SetPartnerList(iRootClass, strParentTag, aObject, bDisableRolling, iPer
 
 	let total_tag = `
 		<tr style="font-weight: bold">
-		<td colspan="13">${strTotal}</td>
+		<td colspan="11">${strTotal}</td>
 		<td>${GetNumber(iInput)}</td>
 		<td>${GetNumber(iOutput)}</td>
 		<td>${GetNumber(iTotalMoney)}</td>
@@ -1596,8 +1564,8 @@ function DoApplySettle()
 
 		var fSettleBaccarat = parseFloat($(`#fSettleBaccarat${element.id}`).val());
 		var fSettleSlot = parseFloat($(`#fSettleSlot${element.id}`).val());
-		var fSettlePBA = parseFloat($(`#fSettlePBA${element.id}`).val());
-		var fSettlePBB = parseFloat($(`#fSettlePBB${element.id}`).val());
+		var fSettlePBA = 0;
+		var fSettlePBB = 0;
 
 		var iClass = parseInt($(`#iClass${element.id}`).val());
 

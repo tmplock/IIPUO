@@ -41,19 +41,9 @@
 					<td>
 						<input type="text" style="width:40%;" required="no"  message="바카라" id="fRollingBaccarat"value="20"> %
 					</td>
-					<th scope="row">파워볼A (1.93)</th>
-					<td>
-						<input type="text" style="width:40%;" required="no"  message="PB" id="fRollingPBA"value="20"> %
-					</td>
-				</tr>
-				<tr>
 					<th scope="row"><%=__('UnderOver')%></th>
 					<td>
 						<input type="text" style="width:40%;" required="no"  message="바카라 오버" id="fRollingUnderOver"value="20"> %
-					</td>
-					<th scope="row">파워볼B (1.95) 단폴</th>
-					<td>
-						<input type="text" style="width:40%;" required="no"  message="PB" id="fRollingPBBSingle"value="20"> %
 					</td>
 				</tr>
 				<tr>
@@ -61,21 +51,10 @@
 					<td>
 						<input type="text" style="width:40%;" required="no" message="슬롯" id="fRollingSlot" value="20"> %
 					</td>
-					<th scope="row">파워볼B (1.95) 투폴</th>
-					<td>
-						<input type="text" style="width:40%;" required="no"  message="PB" id="fRollingPBBDouble"value="20"> %
-					</td>
-				</tr>
-				<tr>
 					<th scope="row"></th>
 					<td>
 					</td>
-					<th scope="row">파워볼B (1.95) 쓰리폴</th>
-					<td>
-						<input type="text" style="width:40%;" required="no"  message="PB" id="fRollingPBBTriple"value="20"> %
-					</td>
 				</tr>
-
 				
 				</table>
 
@@ -96,16 +75,6 @@
 					<th scope="row"><%=__('Baccarat')%></th>
 					<td>
 						<input type="text" style="width:40%;" name="bakara_bakara" required="no"  message="바카라" id="fSettleBaccarat"value="20"> %
-					</td>
-				</tr>
-				<tr>
-					<th scope="row">파워볼A</th>
-					<td>
-						<input type="text" style="width:40%;" name="slot_slot" required="no"  message="파워볼A" id="fSettlePBA"value="20"> %
-					</td>
-					<th scope="row">파워볼B</th>
-					<td>
-						<input type="text" style="width:40%;" name="bakara_bakara" required="no"  message="파워볼B" id="fSettlePBB"value="20"> %
 					</td>
 				</tr>
 				</table>
@@ -138,15 +107,8 @@
 	$('#fRollingUnderOver').val(user.fUnderOverR);
 	$('#fRollingSlot').val(user.fSlotR);
 
-	$('#fRollingPBA').val(user.fPBR);
-	$('#fRollingPBBSingle').val(user.fPBSingleR);
-	$('#fRollingPBBDouble').val(user.fPBDoubleR);
-	$('#fRollingPBBTriple').val(user.fPBTripleR);
-
 	$('#fSettleSlot').val(user.fSettleSlot);
 	$('#fSettleBaccarat').val(user.fSettleBaccarat);
-	$('#fSettlePBA').val(user.fSettlePBA);
-	$('#fSettlePBB').val(user.fSettlePBB);
 
 	let OnClickSettingOdds = () => {
 		let data = {};
@@ -157,12 +119,6 @@
 		data.fRollingUnderOver = $('#fRollingUnderOver').val();
 		data.fSettleSlot = $('#fSettleSlot').val();
 		data.fSettleBaccarat = $('#fSettleBaccarat').val();
-		data.fSettlePBA = $('#fSettlePBA').val();
-		data.fSettlePBB = $('#fSettlePBB').val();
-		data.fRollingPBA = $('#fRollingPBA').val();
-		data.fRollingPBBSingle = $('#fRollingPBBSingle').val();
-		data.fRollingPBBDouble = $('#fRollingPBBDouble').val();
-		data.fRollingPBBTriple = $('#fRollingPBBTriple').val();
 		console.log(data);
 
 		$.ajax({

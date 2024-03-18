@@ -8,65 +8,28 @@
             <div class="subtitle">
                 <h1>출금신청</h1>
             </div>
-            <table>
-                <colgroup>
-                    <col style="width:24%;">
-                    <col style="width:50%;">
-                </colgroup>
+            <div id = 'output'>
+                <table>
+                    <colgroup>
+                        <col style="width:24%;">
+                        <col style="width:50%;">
+                    </colgroup>
 
-                <tr>
-                    <td>출금가능금액</td>
-                    <td style="padding: 15px 0;">
-                        <input placeholder="" name="iValuedPoint" type="text" id="iValuedPoint" style="color:#e2a826; font-weight: bold" disabled>
-                        <button type="button" style="width: 150px;" onclick="RequestAccount();">출금계좌 조회</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>출금금액</td>
-                    <td style="padding: 15px 0;">
-                        <input placeholder="출금금액을 입력해 주세요" name="iAmount" type="text" id="inputPrice" readonly>
-                    </td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td>
-                        <button type="button" onclick="AddAmount(10000);">1만원</button>
-                        <button type="button" onclick="AddAmount(50000);">5만원</button>
-                        <button type="button" onclick="AddAmount(100000);">10만원</button>
-                        <button type="button" onclick="AddAmount(300000);">30만원</button>
-                        <button type="button" onclick="AddAmount(500000);">50만원</button>
-                        <button type="button" onclick="AddAmount(1000000);">100만원</button>
-                        <button type="button" onclick="AddAmount(-1);" style="background-color:orange;">초기화</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>은행명</td>
-                    <td style="padding: 15px 0;">
-                        <input placeholder="" name="strBankName" type="text" value="" disabled>
-                    </td>
-                </tr>
+                    <tr>
+                        <td>출금가능금액</td>
+                        <td style="padding: 15px 0;">
+                            <input placeholder="" name="iValuedPoint" type="text" id="iValuedPoint" style="color:#e2a826; font-weight: bold" disabled>
+                        </td>
+                    </tr>
+                </table>
+            </div>
 
-                <tr>
-                    <td>예금주</td>
-                    <td><input name="strBankOwner" type="text" id="acc_name" value="" disabled />
-                        <span>
-                        </span>
-                    </td>
-                </tr>
-                <tr>
-                    <td>계좌번호</td>
-                    <td style="padding: 15px 0;">
-                        <input class="wd200" name="strBankAccount" type="text" disabled>
-                    </td>
-                </tr>
-            </table>
             <div class="text-info-01">* 24시간 출금이 가능 합니다.<br/>* 은행 및 금융감독원 점검시간 및 전산장애시에는 다소 지연될 수 있습니다.<br/>* 최소출금액은 50,000원입니다.</div>
-            <div class="btn_area_one">
-                <button type="button" onclick="RequestOutput();">출금신청하기</button>
+            <div class="btn_area_one" id="btn_area">
+                <button type="button" onclick="RequestAccount();">출금계좌 조회</button>
             </div>
         </div>
     </div>
-
 </div>
 
 <script>
@@ -125,6 +88,11 @@
 
         console.log(`iValuedPoint : ${iValuedPoint}, iAmount : ${iAmount}`);
 
+        if ( iAmount <= 0 )
+        {
+            alert('출금금액을 입력해주세요.');
+            return;
+        }
         if ( iAmount > iValuedPoint )
         {
             alert('출금금액이 출금가능금액 보다 큽니다.');
@@ -149,7 +117,6 @@
 
                     $('#MainLayoutCash').text(cCash);
                     $('#MainLayoutCoin').text(cCash);
-                    //window.location.reload()
 
                     location.href = '/';
                 }
@@ -190,9 +157,7 @@
                     bankname = obj.bankname;
                     banknumber = obj.banknumber;
                     bankholder = obj.bankholder;
-                    $('input[name=strBankAccount]').val(banknumber);
-                    $('input[name=strBankName]').val(bankname);
-                    $('input[name=strBankOwner]').val(bankholder);
+                    OnClickNext();
                 } else if (obj.result == 'FAIL') {
                     bRequestAccount = false;
                     alert(obj.msg);
@@ -202,6 +167,69 @@
                 alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
             }
         });
+    }
+
+    let OnClickNext = () => {
+        $('#output').empty();
+        let tag = `
+            <table>
+                    <colgroup>
+                        <col style="width:24%;">
+                        <col style="width:50%;">
+                    </colgroup>
+
+                    <tr>
+                        <td>출금가능금액</td>
+                        <td style="padding: 15px 0;">
+                            <input placeholder="" name="iValuedPoint" type="text" id="iValuedPoint" style="color:#e2a826; font-weight: bold" disabled>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>출금금액</td>
+                        <td style="padding: 15px 0;">
+                            <input placeholder="출금금액을 입력해 주세요" name="iAmount" type="text" id="inputPrice" readonly>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>
+                            <button type="button" onclick="AddAmount(10000);">1만원</button>
+                            <button type="button" onclick="AddAmount(50000);">5만원</button>
+                            <button type="button" onclick="AddAmount(100000);">10만원</button>
+                            <button type="button" onclick="AddAmount(300000);">30만원</button>
+                            <button type="button" onclick="AddAmount(500000);">50만원</button>
+                            <button type="button" onclick="AddAmount(1000000);">100만원</button>
+                            <button type="button" onclick="AddAmount(-1);" style="background-color:orange;">초기화</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>은행명</td>
+                        <td style="padding: 15px 0;">
+                            <input placeholder="" name="strBankName" type="text" value='${bankname}' disabled>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>예금주</td>
+                        <td><input name="strBankOwner" type="text" id="acc_name" value='${bankholder}' disabled />
+                            <span>
+                        </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>계좌번호</td>
+                        <td style="padding: 15px 0;">
+                            <input class="wd200" name="strBankAccount" type="text" value='${banknumber}' disabled>
+                        </td>
+                    </tr>
+                </table>
+        `;
+        $('#output').append(tag);
+        $('#iValuedPoint').val($('#MainLayoutCoin').text());
+
+        $('#btn_area').empty();
+        let tag2 = `<button type="button" onclick="RequestOutput();">출금신청하기</button>`;
+        $('#btn_area').append(tag2);
     }
 
 </script>

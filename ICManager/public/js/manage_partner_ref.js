@@ -1462,10 +1462,10 @@ function DoApplyRolling(user)
 		var fSlot = parseFloat($(`#fSlot${element.id}`).val());
 		var fBaccarat = parseFloat($(`#fBaccarat${element.id}`).val());
 		var fUnderOver = parseFloat($(`#fUnderOver${element.id}`).val());
-		var fPB = parseFloat($(`#fPB${element.id}`).val());
-		var fPBSingle = parseFloat($(`#fPBSingle${element.id}`).val());
-		var fPBDouble = parseFloat($(`#fPBDouble${element.id}`).val());
-		var fPBTriple = parseFloat($(`#fPBTriple${element.id}`).val());
+		var fPB = 0.0;
+		var fPBSingle = 0.0;
+		var fPBDouble = 0.0;
+		var fPBTriple = 0.0;
 
 		var iClass = parseInt($(`#iClass${element.id}`).val());
 		//

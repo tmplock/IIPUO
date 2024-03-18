@@ -298,18 +298,6 @@ var inline_ModifyRollingGroup = async (array)=> {
         } else if ( list[i].fUnderOver > parent.fParentUnderOverR ) {
             ret.result = 'FAIL';
             ret.name = `[${list[i].strNickname}] 언더오버 롤링값은 상위(${parent.strNickname})보다 높을 수 없습니다`;
-        } else if ( list[i].fPB > parent.fParentPBR ) {
-            ret.result = 'FAIL';
-            ret.name = `[${list[i].strNickname}] 파워볼 롤링값은 상위(${parent.strNickname})보다 높을 수 없습니다`;
-        } else if ( list[i].fPBSingle > parent.fParentPBSingleR ) {
-            ret.result = 'FAIL';
-            ret.name = `[${list[i].strNickname}] 파워볼 단폴 롤링값은 상위(${parent.strNickname})보다 높을 수 없습니다`;
-        } else if ( list[i].fPBDouble > parent.fParentPBDoubleR ) {
-            ret.result = 'FAIL';
-            ret.name = `[${list[i].strNickname}] 파워볼 투풀 롤링값은 상위(${parent.strNickname})보다 높을 수 없습니다`;
-        } else if ( list[i].fPBTriple > parent.fParentPBTripleR ) {
-            ret.result = 'FAIL';
-            ret.name = `[${list[i].strNickname}] 파워볼 쓰리풀 롤링값은 상위(${parent.strNickname})보다 높을 수 없습니다`;
         }
 
         if (ret.result == 'FAIL')
@@ -352,18 +340,6 @@ var inline_ModifyRollingGroup = async (array)=> {
                 } else if ( list[i].fUnderOver < child.fUnderOverR ) {
                     ret.result = "FAIL";
                     ret.name = `[${list[i].strNickname}] 언더오버 롤링값은 하위(${child.strNickname})보다 낮을 수 없습니다.`;
-                } else if ( list[i].fPB < child.fPBR ) {
-                    ret.result = "FAIL";
-                    ret.name = `[${list[i].strNickname}] 파워볼 롤링값은 하위(${child.strNickname})보다 낮을 수 없습니다.`;
-                } else if ( list[i].fPBSingle < child.fPBSingleR ) {
-                    ret.result = "FAIL";
-                    ret.name = `[${list[i].strNickname}] 파워볼 단폴 롤링값은 하위(${child.strNickname})보다 낮을 수 없습니다.`;
-                } else if ( list[i].fPBDouble < child.fPBDoubleR ) {
-                    ret.result = "FAIL";
-                    ret.name = `[${list[i].strNickname}] 파워볼 투폴 롤링값은 하위(${child.strNickname})보다 낮을 수 없습니다.`;
-                } else if ( list[i].fPBTriple < child.fPBTripleR ) {
-                    ret.result = "FAIL";
-                    ret.name = `[${list[i].strNickname}] 파워볼 쓰리폴 롤링값은 하위(${child.strNickname})보다 낮을 수 없습니다.`;
                 }
                 if (ret.result == 'FAIL')
                     return ret;

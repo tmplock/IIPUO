@@ -832,8 +832,15 @@ function AddPartner(iRootClass, aObject, bDisableRolling, iPermission)
 	else
 		subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetClassSettleColor(aObject.iCurrentRolling, iRootClass)}">${GetNumber(aObject.iCurrentRolling)}</font></td>`;
 
-	//	죽장
-	subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetClassSettleColor(aObject.iCurrentSettle, iRootClass)}">${GetSettleNumber(aObject.iCurrentSettle)}</font></td>`;
+	//	미전환죽장(전월이월이 있을 경우 전월이월 표시)
+	let iCurrentSettle = parseInt(aObject.iCurrentSettle ?? 0);
+	let iCurrentSettleAcc = parseInt(aObject.iCurrentSettleAcc ?? 0);
+	iCurrentSettle += iCurrentSettleAcc;
+	if (iCurrentSettle < 0) {
+		subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="black">${GetNumberSign(iCurrentSettle)}</font></td>`;
+	} else {
+		subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetClassSettleColor(iCurrentSettle, iRootClass)}">${GetSettleNumber(iCurrentSettle)}</font></td>`;
+	}
 
 	if ( iRootClass <= 3 && iPermission != 100 )
 	{

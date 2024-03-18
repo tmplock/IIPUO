@@ -232,7 +232,10 @@
                     }
                     SetInputList(data, obj.iRootClass);
                     RequestOverview(true);
-                    $("#page").append(getPagination(limit, obj.totalCount, iPage));
+
+                    $("#pagination").empty();
+                    $("#pagination").append(getPagination(limit, obj.totalCount, iPage));
+
                     $(document).on('click', '#input_memo',  (event) => {
                         const id = $(event.currentTarget).attr('listid');
                         OnClickMemo(id);

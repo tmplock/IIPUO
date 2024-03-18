@@ -177,8 +177,8 @@ app.get('/', (req, res) => {
 
 app.post('/init', async (req, res) => {
 
-    await db.BettingRecords.destroy({where:{}, truncate:true});
-    await db.RecordBets.destroy({where:{}, truncate:true});
+    // await db.BettingRecords.destroy({where:{}, truncate:true});
+    // await db.RecordBets.destroy({where:{}, truncate:true});
     await db.GTs.destroy({where:{}, truncate:true});
     await db.Inouts.destroy({where:{}, truncate:true});
     await db.SettleRecords.destroy({where:{}, truncate:true});

@@ -132,9 +132,9 @@
                         <td style="font-weight:100; color:black;">${GetNumberSign(aObject.iSettleAcc, '0')}</td>
                         <% if (user.iPermission != 100) { %>
                             <td>
-                                <input type="radio" name="mile_sect" required="yes" message="구분" value="M" id="credit_type_1" onclick="OnClickCreditType('MINUS');">
+                                <input type="radio" name="${aObject.strID}_mile_sect" required="yes" message="구분" value="M" id="credit_type_1">
                                 <label for="mile_sect_cash_1" style="color:red;font-size:15px;">가불</label>
-                                <input type="radio" name="mile_sect" required="yes" message="구분" value="P" id="credit_type_2" onclick="OnClickCreditType('PLUS');">
+                                <input type="radio" name="${aObject.strID}_mile_sect" required="yes" message="구분" value="P" id="credit_type_2">
                                 <label for="mile_sect_cash_2" style="color:blue;font-size:15px;">적립</label>&nbsp;&nbsp;
                                 <input style='width:30%;' type='number' id="credit_${aObject.strID}" value=''>&nbsp;&nbsp;
                                 메모 : <input style='width:30%;' type='text' id="creditmemo_${aObject.strID}" value=''>
@@ -166,7 +166,7 @@
     }
 
     let OnClickCreditApply = (strID, writer) => {
-        let type = $('input[name="mile_sect"]:checked').val();
+        let type = $(`input[name="${strID}_mile_sect"]:checked`).val();
         let credit = $(`#credit_${strID}`).val();
         let iCredit = parseInt(credit);
         if (isNaN(iCredit)) {

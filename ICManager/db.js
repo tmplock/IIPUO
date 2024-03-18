@@ -46,4 +46,6 @@ db.DataLogs = require('./models/data_log')(sequelize, Sequelize);
 db.BankRecords = require('./models/bank_record')(sequelize, Sequelize);
 db.DailyBettingRecords = require('./models/daily_betting_record')(sequelize, Sequelize);
 db.DailyRecords = require('./models/daily_record')(sequelize, Sequelize);
+db.RecordBets = require('./models/recordbet')(sequelize, Sequelize);
+db.RecordDailyOverviews = require('./models/RecordDailyOverview')(sequelize, Sequelize);
 module.exports = db;

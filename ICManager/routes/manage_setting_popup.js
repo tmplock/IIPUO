@@ -257,7 +257,6 @@ router.post('/request_writeletter', async (req, res) => {
         return;
     }
 
-    //let strAdminNickname = await IAgent.GetAdminNickname(req.body.strGroupID);
     let objectData = await IAgent.GetParentList(req.body.strGroupID, req.body.iClass);
 
     for ( let i in arrayObject )

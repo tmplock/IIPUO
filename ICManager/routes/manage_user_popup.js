@@ -437,7 +437,7 @@ router.post('/request_gt', isLoggedIn, async(req, res) => {
     else if ( req.body.eType == 'ROLLING')
     {
         let to = await db.Users.findOne({where:{strNickname:req.body.strTo}});
-        let strAdminNickname = await IAgent.GetAdminNickname(to.strGroupID);
+        let strAdminNickname = (await IAgent.GetParentList(to.strGroupID, to.iClass)).strAdmin;
         let from = await db.Users.findOne({where:{strNickname:strAdminNickname}});
 
         //  알 파는 버전
@@ -502,7 +502,7 @@ router.post('/request_gt', isLoggedIn, async(req, res) => {
     else if ( req.body.eType == 'SETTLE' )
     {
         let to = await db.Users.findOne({where:{strNickname:req.body.strTo}});
-        let strAdminNickname = await IAgent.GetAdminNickname(to.strGroupID);
+        let strAdminNickname = (await IAgent.GetParentList(to.strGroupID, to.iClass)).strAdmin;
         let from = await db.Users.findOne({where:{strNickname:strAdminNickname}});
         
         if ( to != null && from != null)

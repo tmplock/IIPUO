@@ -1460,11 +1460,11 @@
 			data:{data:JSON.stringify(list)},
 
 			success: (obj) => {
-				//alert(obj);
 				if ( obj.result == 'OK' )
 				{
 					location.reload();
 					alert(strAlertComplete);
+					// RequestList(user.strGroupID, strQuater, dateQuaterStart, dateQuaterEnd, iViewClass);
 				}
 				else
 				{
@@ -1509,7 +1509,6 @@
 				context: document.body,
 
 				success: (obj) => {
-					//alert(obj);
 					if ( obj.result == 'OK' )
 					{
 						alert('완료');

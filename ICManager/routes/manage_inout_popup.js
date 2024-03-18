@@ -17,6 +17,7 @@ const IAgent = require('../implements/agent3');
 const {Op}= require('sequelize');
 const {isLoggedIn, isNotLoggedIn} = require('./middleware');
 const { IAgentObject } = require('../objects/betting');
+const axios = require("axios");
 
 router.post('/requestcharge', isLoggedIn, async (req, res) => {
 
@@ -32,15 +33,13 @@ router.post('/requestcharge', isLoggedIn, async (req, res) => {
 
     let iClass = parseInt(req.body.iClass);
     let strAdmin = '';
-    if (iClass == 1) {
+    if (iClass == 1 || iClass == 2 || iClass == 3) {
         res.render('manage_inout/popup_requestcharge', {iLayout:1, iHeaderFocus:1, user:user, bank: {strBankName: '', strBankHolder:'', strBankNumber:''}});
         return;
-    } else if (iClass == 2) {
         // 총총에 등록된 계좌 조회
-        strAdmin = await IAgent.GetParentNickname(req.body.strNickname);
-    } else if (iClass == 3) {
+        // strAdmin = await IAgent.GetParentNickname(req.body.strNickname);
         // 총본에 등록된 계좌 조회
-        strAdmin = await IAgent.GetParentNickname(req.body.strNickname);
+        // strAdmin = await IAgent.GetParentNickname(req.body.strNickname);
     } else {
         let obj = await IAgent.GetParentList(req.body.strGroupID, iClass);
         strAdmin = obj.strAdmin;
@@ -180,48 +179,22 @@ router.post('/request_adjustoutput', isLoggedIn, async (req, res) => {
         res.send({result:'FAIL', reason:'ERROR'});
         return;
     }
-    // if ( req.body.strAdjustPassword != userinfo.strOutputPassword && req.body.iForced == 0 )
-    // {
-    //     res.send({result:'FAIL', reason:'INCORRECTPASSWORD'});
-    //     return;
-    // }
+
     if ( parseInt(req.body.iAmount) > userinfo.iCash )
     {
         res.send({result:'FAIL', reason:'NOTENOUGH'});
         return;
     }
-    // const [result] = await db.sequelize.query(
-    //     `
-    //     SELECT t1.strNickname AS lev1,
-    //     t2.strNickname AS lev2,
-    //     t3.strNickname AS lev3,
-    //     t4.strNickname AS lev4,
-    //     t5.strNickname AS lev5
-    //     FROM Users AS t1
-    //     LEFT JOIN Users AS t2 ON t2.iParentID = t1.id
-    //     LEFT JOIN Users AS t3 ON t3.iParentID = t2.id
-    //     LEFT JOIN Users AS t4 ON t4.iParentID = t3.id
-    //     LEFT JOIN Users AS t5 ON t5.iParentID = t4.id
-    //     LEFT JOIN Users AS t6 ON t6.iParentID = t5.id
-    //     WHERE t6.iClass='8' AND t6.strGroupID LIKE CONCAT('${req.body.strGroupID}', '%');
-    //     `
-    //     );
 
     let objectParents = await IAgent.GetParentList(req.body.strGroupID, req.body.iClass);
 
     await db.Inouts.create({
         strID:req.body.strNickname,
-        // strAdminNickname:result[0].lev1,
-        // strPAdminNickname:result[0].lev2,
-        // strVAdminNickname:result[0].lev3,
-        // strAgentNickname:result[0].lev4,
-        // strShopNickname:result[0].lev5,
         strAdminNickname:objectParents.strAdmin,
         strPAdminNickname:objectParents.strPAdmin,
         strVAdminNickname:objectParents.strVAdmin,
         strAgentNickname:objectParents.strAgent,
         strShopNickname:objectParents.strShop,
-
         iClass:req.body.iClass,
         strGroupID:req.body.strGroupID,
         strName:req.body.strNickname,
@@ -232,13 +205,10 @@ router.post('/request_adjustoutput', isLoggedIn, async (req, res) => {
         eState:'REQUEST',
         iPreviousCash:req.body.iPreviousCash,
         iAmount:req.body.iAmount,
-        //completedAt:ITime.getCurrentDate(),
         iRequestClass: req.user.iClass,
         strRequestNickname:req.user.strNickname,
         completedAt:null,
     });
-
-    //  
 
     let target = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
     if ( null != target )

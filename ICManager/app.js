@@ -177,8 +177,6 @@ app.get('/', (req, res) => {
 
 app.post('/init', async (req, res) => {
 
-    // await db.BettingRecords.destroy({where:{}, truncate:true});
-    // await db.RecordBets.destroy({where:{}, truncate:true});
     await db.GTs.destroy({where:{}, truncate:true});
     await db.Inouts.destroy({where:{}, truncate:true});
     await db.SettleRecords.destroy({where:{}, truncate:true});
@@ -193,13 +191,14 @@ app.post('/init', async (req, res) => {
     await db.DailyRecords.destroy({where: {}, truncate:true});
     await db.RecordBets.destroy({where:{}, truncate:true});
     await db.RecordDailyOverviews.destroy({where:{}, truncate:true});
-    // await db.ShareUsers.destroy({where:{}, truncate:true});
     let shares = await db.ShareUsers.findAll();
     for ( let i in shares )
     {
         await shares[i].update({
             iShare: 0,
-            iShareAccBefore: 0
+            iShareAccBefore: 0,
+            iCreditBefore: 0,
+            iCreditAfter: 0,
         });
     }
 
@@ -261,7 +260,7 @@ var daily = null;
 cron.schedule('0,5,10,15,20,25,30,35,40,45,50,55 * * * *', async () => {
     let date = moment(Date.now()).format('YYYY-MM-dd HH:mm:ss');
     console.log(`정산 스케줄 :  ${date}`);
-    daily =  await IAgent3.CreateOrUpdateDailyRecord(daily);
+    // daily =  await IAgent3.CreateOrUpdateDailyRecord(daily);
 });
 
 // 처음 시작시에 한번 기동되도록 수정

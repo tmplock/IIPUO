@@ -148,11 +148,8 @@ let SetCalculationHeader = (iSection, iClass) => {
         {
             subtag1 =
                 `
-                <li class=${GetCalculationSectionClass(iSection, 1)}>
-                    <a href="#" style="color:${GetCalculationSectionColor(iSection, 1)};" id="calculation_settle">죽장 정산</a>
-                </li>
                 <li class=${GetCalculationSectionClass(iSection, 11)}>
-                    <a href="#" style="color:${GetCalculationSectionColor(iSection, 11)};" id="calculation_settle_all">전체 죽장 정산</a>
+                    <a href="#" style="color:${GetCalculationSectionColor(iSection, 11)};" id="calculation_settle_all">죽장 정산</a>
                 </li>
             `;
             tag += subtag1;
@@ -161,11 +158,8 @@ let SetCalculationHeader = (iSection, iClass) => {
         {
             subtag1 =
                 `
-                <li class=${GetCalculationSectionClass(iSection, 1)}>
-                    <a href="#" style="color:${GetCalculationSectionColor(iSection, 1)};" id="calculation_settle">죽장 정산</a>
-                </li>
                 <li class=${GetCalculationSectionClass(iSection, 11)}>
-                    <a href="#" style="color:${GetCalculationSectionColor(iSection, 11)};" id="calculation_settle_all">전체 죽장 정산</a>
+                    <a href="#" style="color:${GetCalculationSectionColor(iSection, 11)};" id="calculation_settle_all">죽장 정산</a>
                 </li>
             `;
             tag += subtag1;

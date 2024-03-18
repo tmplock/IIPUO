@@ -253,6 +253,16 @@ router.post('/request_adjustoutput', isLoggedIn, async (req, res) => {
             console.log(`Pre Calculated`);
 
             ISocket.AlertCashByNickname(req.body.strNickname, iCash);
+
+            // user cash update
+            let objectAxios = {strNickname:target.strNickname, iAmount:target.iCash};
+            axios.post(`${target.strURL}/UpdateCoin`, objectAxios)
+                .then((response)=> {
+                    console.log(`Axios Success /UpdateCoin : ${iCash}`);
+                })
+                .catch((error)=> {
+                    console.log('axios Error /UpdateCoin');
+                });
         }
     }
 

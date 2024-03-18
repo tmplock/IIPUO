@@ -114,6 +114,12 @@ router.post('/request_input', async (req, res) => {
     console.log(`request_input`);
     console.log(req.body);
 
+    let iAmout  = parseInt(req.body.iAmount ?? 0);
+    if (iAmout <= 0) {
+        res.send({result:'NO', reason:'Error'});
+        return;
+    }
+
     const userinfo = await db.Users.findOne({where:{strID:req.body.strID}});
 
     const [result] = await db.sequelize.query(
@@ -212,6 +218,12 @@ router.post('/request_output', async (req, res) => {
 
     console.log(`request_output : ${1}`);
     console.log(req.body);
+
+    let iAmout = parseInt(req.body.iAmount ?? 0);
+    if (iAmout <= 50000) {
+        res.send({result:'Error', reason:'Error'});
+        return;
+    }
 
     const userinfo = await db.Users.findOne({where:{
         strID:req.body.strID

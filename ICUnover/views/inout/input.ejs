@@ -100,6 +100,7 @@
         const strName = $('input[name=strName]').val();
         let iAmount = $('input[name=iAmount]').val();
         iAmount = iAmount.replace(/,/gi, '');
+        iAmount = parseInt(iAmount ?? 0);
 
         console.log(`RequestInput : strName (${strName}), iAmount (${iAmount})`);
 

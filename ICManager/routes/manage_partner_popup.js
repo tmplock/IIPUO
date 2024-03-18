@@ -733,13 +733,6 @@ router.post('/request_settingodds', isLoggedIn, async (req, res) => {
     let fRollingUnderOver = parseFloat(req.body.fRollingUnderOver);
     let fSettleSlot = parseFloat(req.body.fSettleSlot);
     let fSettleBaccarat = parseFloat(req.body.fSettleBaccarat);
-    let fSettlePBA = parseFloat(req.body.fSettlePBA);
-    let fSettlePBB = parseFloat(req.body.fSettlePBB);
-
-    let fRollingPBA = parseFloat(req.body.fRollingPBA);
-    let fRollingPBBSingle = parseFloat(req.body.fRollingPBBSingle);
-    let fRollingPBBDouble = parseFloat(req.body.fRollingPBBDouble);
-    let fRollingPBBTriple = parseFloat(req.body.fRollingPBBTriple);
     let iClass = parseInt(req.body.iClass);
     // 본사 밑에 부본사 비율 확인
     let subUsers = await db.Users.findAll({
@@ -772,39 +765,16 @@ router.post('/request_settingodds', isLoggedIn, async (req, res) => {
             res.send({result:'FAIL', message:`[${user.strNickname}] 슬롯 롤링값은 일괄 수정 비율보다 높을 수 없습니다`});
             fail = true;
             break;
-        } else if (user.fPBR > fRollingPBA) {
-            res.send({result:'FAIL', message:`[${user.strNickname}] 파워볼 롤링값은 일괄 수정 비율보다 높을 수 없습니다`});
-            fail = true;
-            break;
-        } else if (user.fPBSingleR > fRollingPBBSingle) {
-            res.send({result:'FAIL', message:`[${user.strNickname}] 파워볼 단폴 롤링값은 일괄 수정 비율보다 높을 수 없습니다`});
-            fail = true;
-            break;
-        } else if (user.fPBDoubleR > fRollingPBBDouble) {
-            res.send({result:'FAIL', message:`[${user.strNickname}] 파워볼 투폴 롤링값은 일괄 수정 비율보다 높을 수 없습니다`});
-            fail = true;
-            break;
-        } else if (user.fPBTripleR > fRollingPBBTriple) {
-            res.send({result:'FAIL', message:`[${user.strNickname}] 파워볼 쓰리폴 롤링값은 일괄 수정 비율보다 높을 수 없습니다`});
-            fail = true;
-            break;
-        } else if (user.fSettleSlot > fSettleSlot) {
-            res.send({result:'FAIL', message:`[${user.strNickname}] 슬롯 죽장값은 일괄 수정 비율보다 높을 수 없습니다`});
-            fail = true;
-            break;
-        } else if (user.fSettleBaccarat > fSettleBaccarat) {
-            res.send({result:'FAIL', message:`[${user.strNickname}] 바카라 죽장값은 일괄 수정 비율보다 높을 수 없습니다`});
-            fail = true;
-            break;
-        } else if (user.fSettlePBA > fSettlePBA) {
-            res.send({result:'FAIL', message:`[${user.strNickname}] 파워볼A 죽장값은 일괄 수정 비율보다 높을 수 없습니다`});
-            fail = true;
-            break;
-        } else if (user.fSettlePBB > fSettlePBB) {
-            res.send({result:'FAIL', message:`[${user.strNickname}] 파워볼B 죽장값은 일괄 수정 비율보다 높을 수 없습니다`});
-            fail = true;
-            break;
         }
+        // else if (user.fSettleSlot > fSettleSlot) {
+        //     res.send({result:'FAIL', message:`[${user.strNickname}] 슬롯 죽장값은 일괄 수정 비율보다 높을 수 없습니다`});
+        //     fail = true;
+        //     break;
+        // } else if (user.fSettleBaccarat > fSettleBaccarat) {
+        //     res.send({result:'FAIL', message:`[${user.strNickname}] 바카라 죽장값은 일괄 수정 비율보다 높을 수 없습니다`});
+        //     fail = true;
+        //     break;
+        // }
     }
 
     if (fail)
@@ -832,12 +802,6 @@ router.post('/request_settingodds', isLoggedIn, async (req, res) => {
             fUnderOverR:fRollingUnderOver,
             fSettleSlot:fSettleSlot,
             fSettleBaccarat:fSettleBaccarat,
-            fSettlePBA:fSettlePBA,
-            fSettlePBB:fSettlePBB,
-            fPBR:fRollingPBA,
-            fPBSingleR:fRollingPBBSingle,
-            fPBDoubleR:fRollingPBBDouble,
-            fPBTripleR:fRollingPBBTriple,
         });
     }
 
@@ -917,37 +881,10 @@ router.post('/request_agentinfo_modify',isLoggedIn, async (req, res) => {
             if ( null != parent )
             {
                 console.log(`####################################################### ${parent.strID}, ${parent.iPBLimit}, ${req.body.iPBLimit}`);
-
-                // if ( 
-                //     parent.fSlotR < req.body.fSlotR ||
-                //     parent.fBaccaratR < req.body.fBaccaratR ||
-                //     parent.fUnderOverR < req.body.fUnderOverR ||
-                //     parent.fPBR < req.body.fPBR ||
-                //     parent.fPBSingleR < req.body.fPBSingleR ||
-                //     parent.fPBDoubleR < req.body.fPBDoubleR ||
-                //     parent.fPBTripleR < req.body.fPBTripleR ||
-                //     // parent.fSettleSlot < req.body.fSettleSlot ||
-                //     // parent.fSettleBaccarat < req.body.fSettleBaccarat ||
-                //     // parent.fSettlePBA < req.body.fSettlePBA ||
-                //     // parent.fSettlePBB < req.body.fSettlePBB ||
-                //     parent.iPBLimit < req.body.iPBLimit || 
-                //     parent.iPBSingleLimit < req.body.iPBSingleLimit || 
-                //     parent.iPBDoubleLimit < req.body.iPBDoubleLimit ||
-                //     parent.iPBTripleLimit < req.body.iPBTripleLimit
-                //    )
-                // {
-                //     console.log(`########## ModifyAgentInfo : Error Parent`);
-                //     bUpdate = false;
-                //     strErrorCode = 'GreaterThanParent';
-                // }
                 if ( 
                     parent.fSlotR < req.body.fSlotR ||
                     parent.fBaccaratR < req.body.fBaccaratR ||
-                    parent.fUnderOverR < req.body.fUnderOverR ||
-                    parent.fPBR < req.body.fPBR ||
-                    parent.fPBSingleR < req.body.fPBSingleR ||
-                    parent.fPBDoubleR < req.body.fPBDoubleR ||
-                    parent.fPBTripleR < req.body.fPBTripleR
+                    parent.fUnderOverR < req.body.fUnderOverR
                    )
                 {
                     console.log(`########## ModifyAgentInfo : Error Parent`);
@@ -956,21 +893,21 @@ router.post('/request_agentinfo_modify',isLoggedIn, async (req, res) => {
                 }
 
                 // 배팅금액은 본사가 자유롭게 조정 가능함
-                if ( parseInt(parent.iClass) > 3 )
-                {
-                    if ( parent.iPBLimit < req.body.iPBLimit ||
-                        parent.iPBSingleLimit < req.body.iPBSingleLimit ||
-                        parent.iPBDoubleLimit < req.body.iPBDoubleLimit ||
-                        parent.iPBTripleLimit < req.body.iPBTripleLimit
-                       )
-                    {
-                        console.log(`########## ModifyAgentInfo : Error Parent`);
-                        bUpdate = false;
-                        strErrorCode = 'GreaterThanParent';
-                        res.send({result:'ERROR', code:strErrorCode});
-                        return;
-                    }
-                }
+                // if ( parseInt(parent.iClass) > 3 )
+                // {
+                //     if ( parent.iPBLimit < req.body.iPBLimit ||
+                //         parent.iPBSingleLimit < req.body.iPBSingleLimit ||
+                //         parent.iPBDoubleLimit < req.body.iPBDoubleLimit ||
+                //         parent.iPBTripleLimit < req.body.iPBTripleLimit
+                //        )
+                //     {
+                //         console.log(`########## ModifyAgentInfo : Error Parent`);
+                //         bUpdate = false;
+                //         strErrorCode = 'GreaterThanParent';
+                //         res.send({result:'ERROR', code:strErrorCode});
+                //         return;
+                //     }
+                // }
             }
         }
 
@@ -995,15 +932,7 @@ router.post('/request_agentinfo_modify',isLoggedIn, async (req, res) => {
                 if ( 
                     child.fSlotR > req.body.fSlotR ||
                     child.fBaccaratR > req.body.fBaccaratR ||
-                    child.fUnderOverR > req.body.fUnderOverR ||
-                    child.fPBR > req.body.fPBR ||
-                    child.fPBSingleR > req.body.fPBSingleR ||
-                    child.fPBDoubleR > req.body.fPBDoubleR ||
-                    child.fPBTripleR > req.body.fPBTripleR ||
-                    child.iPBLimit > req.body.iPBLimit ||
-                    child.iPBSingleLimit > req.body.iPBSingleLimit ||
-                    child.iPBDoubleLimit > req.body.iPBDoubleLimit ||
-                    child.iPBTripleLimit > req.body.iPBTripleLimit
+                    child.fUnderOverR > req.body.fUnderOverR
                    )
                 {
                     console.log(`########## ModifyAgentInfo : Error Children`);
@@ -1020,22 +949,9 @@ router.post('/request_agentinfo_modify',isLoggedIn, async (req, res) => {
                 strNickname:req.body.strNickname,
                 strID:req.body.strID,
                 strOptionCode:req.body.strOptionCode,
-                strPBOptionCode:req.body.strPBOptionCode,
                 fSlotR:req.body.fSlotR,
                 fBaccaratR:req.body.fBaccaratR,
                 fUnderOverR:req.body.fUnderOverR,
-                fPBR:req.body.fPBR,
-                fPBSingleR:req.body.fPBSingleR,
-                fPBDoubleR:req.body.fPBDoubleR,
-                fPBTripleR:req.body.fPBTripleR,
-                // fSettleBaccarat:req.body.fSettleBaccarat,
-                // fSettleSlot:req.body.fSettleSlot,
-                // fSettlePBA:req.body.fSettlePBA,
-                // fSettlePBB:req.body.fSettlePBB,
-                iPBLimit:req.body.iPBLimit,
-                iPBSingleLimit:req.body.iPBSingleLimit,
-                iPBDoubleLimit:req.body.iPBDoubleLimit,
-                iPBTripleLimit:req.body.iPBTripleLimit,
                 iPermission:req.body.iPermission,
             };
 
@@ -1090,30 +1006,6 @@ router.post('/request_agentinfo_modify',isLoggedIn, async (req, res) => {
                     else
                         msg = `${msg} | 슬롯롤링 변경(${user.fSlotR}=>${data.fSlotR})`;
                 }
-                if (user.fPBR != data.fPBR) {
-                    if (msg == '')
-                        msg = `파워볼A롤링 변경(${user.fPBR}=>${data.fPBR})`;
-                    else
-                        msg = `${msg} | 파워볼A롤링 변경(${user.fPBR}=>${data.fPBR})`;
-                }
-                if (user.fPBSingleR != data.fPBSingleR) {
-                    if (msg == '')
-                        msg = `파워볼B단폴롤링 변경(${user.fPBSingleR}=>${data.fPBSingleR})`;
-                    else
-                        msg = `${msg} | 파워볼B단폴롤링 변경(${user.fPBSingleR}=>${data.fPBSingleR})`;
-                }
-                if (user.fPBDoubleR != data.fPBDoubleR) {
-                    if (msg == '')
-                        msg = `파워볼B투폴롤링 변경(${user.fPBDoubleR}=>${data.fPBDoubleR})`;
-                    else
-                        msg = `${msg} | 파워볼B투폴롤링 변경(${user.fPBDoubleR}=>${data.fPBDoubleR})`;
-                }
-                if (user.fPBTripleR != data.fPBTripleR) {
-                    if (msg == '')
-                        msg = `파워볼B쓰리폴롤링 변경(${user.fPBTripleR}=>${data.fPBTripleR})`;
-                    else
-                        msg = `${msg} | 파워볼B쓰리폴롤링 변경(${user.fPBTripleR}=>${data.fPBTripleR})`;
-                }
 
                 if ( msg != '' ) {
                     // 부본사 리스트 가져오기
@@ -1131,10 +1023,6 @@ router.post('/request_agentinfo_modify',isLoggedIn, async (req, res) => {
                             fSlotR:data.fSlotR,
                             fBaccaratR:data.fBaccaratR,
                             fUnderOverR:data.fUnderOverR,
-                            fPBR:data.fPBR,
-                            fPBSingleR:data.fPBSingleR,
-                            fPBDoubleR:data.fPBDoubleR,
-                            fPBTripleR:data.fPBTripleR,
                         });
 
                         await db.DataLogs.create({
@@ -1164,16 +1052,16 @@ router.post('/request_agentinfo_modify',isLoggedIn, async (req, res) => {
                     }
                 });
 
-                for ( let i in children )
-                {
-                    await children[i].update({
-                        iPBLimit:req.body.iPBLimit,
-                        iPBSingleLimit:req.body.iPBSingleLimit,
-                        iPBDoubleLimit:req.body.iPBDoubleLimit,
-                        iPBTripleLimit:req.body.iPBTripleLimit,
-                        strPBOptionCode:req.body.strPBOptionCode,
-                    });
-                }
+                // for ( let i in children )
+                // {
+                //     await children[i].update({
+                //         iPBLimit:req.body.iPBLimit,
+                //         iPBSingleLimit:req.body.iPBSingleLimit,
+                //         iPBDoubleLimit:req.body.iPBDoubleLimit,
+                //         iPBTripleLimit:req.body.iPBTripleLimit,
+                //         strPBOptionCode:req.body.strPBOptionCode,
+                //     });
+                // }
             }
 
             if ( req.body.strNickname != req.body.strOriginNickname && bUpdate == true )
@@ -1257,69 +1145,6 @@ const logMessage = (source, data) => {
         else
             msg = `${msg} | 슬롯롤링 변경(${source.fSlotR}=>${data.fSlotR})`;
     }
-    if (source.fPBR != data.fPBR) {
-        if (msg == '')
-            msg = `파워볼A롤링 변경(${source.fPBR}=>${data.fPBR})`;
-        else
-            msg = `${msg} | 파워볼A롤링 변경(${source.fPBR}=>${data.fPBR})`;
-    }
-    if (source.fPBSingleR != data.fPBSingleR) {
-        if (msg == '')
-            msg = `파워볼B단폴롤링 변경(${source.fPBSingleR}=>${data.fPBSingleR})`;
-        else
-            msg = `${msg} | 파워볼B단폴롤링 변경(${source.fPBSingleR}=>${data.fPBSingleR})`;
-    }
-    if (source.fPBDoubleR != data.fPBDoubleR) {
-        if (msg == '')
-            msg = `파워볼B투폴롤링 변경(${source.fPBDoubleR}=>${data.fPBDoubleR})`;
-        else
-            msg = `${msg} | 파워볼B투폴롤링 변경(${source.fPBDoubleR}=>${data.fPBDoubleR})`;
-    }
-    if (source.fPBTripleR != data.fPBTripleR) {
-        if (msg == '')
-            msg = `파워볼B쓰리폴롤링 변경(${source.fPBTripleR}=>${data.fPBTripleR})`;
-        else
-            msg = `${msg} | 파워볼B쓰리폴롤링 변경(${source.fPBTripleR}=>${data.fPBTripleR})`;
-    }
-
-    if (source.iPBLimit != data.iPBLimit) {
-        if (msg == '')
-            msg = `파워볼베팅제한 변경(${source.iPBLimit}=>${data.iPBLimit})`;
-        else
-            msg = `${msg} | 파워볼베팅제한 변경(${source.iPBLimit}=>${data.iPBLimit})`;
-    }
-    if (source.iPBSingleLimit != data.iPBSingleLimit) {
-        if (msg == '')
-            msg = `단폴베팅제한 변경(${source.iPBSingleLimit}=>${data.iPBSingleLimit})`;
-        else
-            msg = `${msg} | 단폴베팅제한 변경(${source.iPBSingleLimit}=>${data.iPBSingleLimit})`;
-    }
-    if (source.iPBDoubleLimit != data.iPBDoubleLimit) {
-        if (msg == '')
-            msg = `투폴베팅제한 변경(${source.iPBDoubleLimit}=>${data.iPBDoubleLimit})`;
-        else
-            msg = `${msg} | 투폴베팅제한 변경(${source.iPBDoubleLimit}=>${data.iPBDoubleLimit})`;
-    }
-    if (source.iPBTripleLimit != data.iPBTripleLimit) {
-        if (msg == '')
-            msg = `쓰리폴베팅제한 변경(${source.iPBTripleLimit}=>${data.iPBTripleLimit})`;
-        else
-            msg = `${msg} | 쓰리폴베팅제한 변경(${source.iPBTripleLimit}=>${data.iPBTripleLimit})`;
-    }
-
-    // 체크 여부
-    // if (source.strOptionCode != data.strOptionCode) {
-    //     if (msg == '')
-    //         msg = `파워볼타입 변경(${source.strOptionCode}=>${data.strOptionCode})`;
-    //     else
-    //         msg = `${msg} | 파워볼타입 변경(${source.strOptionCode}=>${data.strOptionCode})`;
-    // }
-    // if (source.strPBOptionCode != data.strPBOptionCode) {
-    //     if (msg == '')
-    //         msg = `파워볼타입 변경(${source.strPBOptionCode}=>${data.strPBOptionCode})`;
-    //     else
-    //         msg = `${msg} | 파워볼B쓰리폴롤링 변경(${source.strPBOptionCode}=>${data.strPBOptionCode})`;
-    // }
 
     return msg;
 }

@@ -126,10 +126,8 @@
 						<col style="width:2%">
 						<col style="width:2%">
 
-						<col style="width:2%">
-						<col style="width:2%">
-						<col style="width:2%">
-						<col style="width:2%">
+						<col style="width:4%">
+						<col style="width:4%">
 
 						<col style="width:5%;">
 						<col style="width:5%;">
@@ -159,8 +157,6 @@
 
 							<th scope="col" style="background-color:#78bfdb;color:white;"><%=__('Baccarat')%><br><%=__('Settle')%></th>
 							<th scope="col" style="background-color:#78bfdb;color:white;"><%=__('Slot')%><br><%=__('Settle')%></th>
-							<th scope="col" style="background-color:#78bfdb;color:white;">파워A<br>죽장</th>
-							<th scope="col" style="background-color:#78bfdb;color:white;">파워B<br>죽장</th>
 							
 							<th scope="col">합계</th>
 							<th scope="col">B<%=__('WinLose')%></th>
@@ -947,22 +943,11 @@
 				<input type="text" style="width:50%;" name="bakara_over_31" id="fSettleSlot${aObject.strNickname}" required="no" message="죽장" value=${aObject.fSettleSlot} ${tagoption}>
 				%
 				</td>
-
-				<td style="background-color:${color};"  class="parent_row_31">
-				<input type="text" style="width:50%;" name="bakara_over_31" id="fSettlePBA${aObject.strNickname}" required="no" message="죽장" value=${aObject.fSettlePBA} ${tagoption}>
-				%
-				</td>
-
-				<td style="background-color:${color};"  class="parent_row_31">
-				<input type="text" style="width:50%;" name="bakara_over_31" id="fSettlePBB${aObject.strNickname}" required="no" message="죽장" value=${aObject.fSettlePBB} ${tagoption}>
-				%
-				</td>`;
+				`;
 			}
 			else
 			{
 				subtag += `
-					<td style="background-color:${color};"  class="parent_row_31"></td>
-					<td style="background-color:${color};"  class="parent_row_31"></td>
 					<td style="background-color:${color};"  class="parent_row_31"></td>
 					<td style="background-color:${color};"  class="parent_row_31"></td>
 				`;
@@ -980,22 +965,11 @@
 				<input type="text" disabled style="width:50%;" name="bakara_over_31" id="fSettleSlot${aObject.strNickname}" required="no" message="죽장" value=${aObject.fSettleSlot} ${tagoption}>
 				%
 				</td>
-
-				<td style="background-color:${color};"  class="parent_row_31">
-				<input type="text" disabled style="width:50%;" name="bakara_over_31" id="fSettlePBA${aObject.strNickname}" required="no" message="죽장" value=${aObject.fSettlePBA} ${tagoption}>
-				%
-				</td>
-
-				<td style="background-color:${color};"  class="parent_row_31">
-				<input type="text" disabled style="width:50%;" name="bakara_over_31" id="fSettlePBB${aObject.strNickname}" required="no" message="죽장" value=${aObject.fSettlePBB} ${tagoption}>
-				%
-				</td>`;
+				`;
 			}
 			else
 			{
 				subtag += `
-					<td style="background-color:${color};"  class="parent_row_31"></td>
-					<td style="background-color:${color};"  class="parent_row_31"></td>
 					<td style="background-color:${color};"  class="parent_row_31"></td>
 					<td style="background-color:${color};"  class="parent_row_31"></td>
 				`;
@@ -1108,7 +1082,7 @@
 
 	let AddTotal = (aObject) => {
 		let color = '#ffffff';
-		let subtag = '<td colspan="8">합계</td>';
+		let subtag = '<td colspan="6">합계</td>';
 		subtag += `<td style="background-color:${color};"  class="parent_row_31"><a><font color="${GetColor(aObject.iTotal)}" id='total_${aObject.strNickname}'>${GetNumber(aObject.iTotal)}</font></a></td>`;
 		subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetColor(aObject.iBaccaratWinLose+aObject.iUnderOverWinLose)}" id='bwinlose_${aObject.strNickname}'>${GetNumber(parseInt(aObject.iBaccaratWinLose+aObject.iUnderOverWinLose))}</font></td>`;
 		subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetColor(aObject.iSlotWinLose)}" id='swinlose_${aObject.strNickname}'>${GetNumber(parseInt(aObject.iSlotWinLose))}</font></td>`;
@@ -1310,9 +1284,8 @@
 
 			let fSettleBarccarat = parseFloat($(`#fSettleBaccarat${settleList[i].strNickname}`).val());
 			let fSettleSlot = parseFloat($(`#fSettleSlot${settleList[i].strNickname}`).val());
-			let fSettlePBA = parseFloat($(`#fSettlePBA${settleList[i].strNickname}`).val());
-			let fSettlePBB = parseFloat($(`#fSettlePBB${settleList[i].strNickname}`).val());
-
+			let fSettlePBA = 0;
+			let fSettlePBB = 0;
 			iCommissionB = iCommissionB?.replace(/,/g, '') ?? '0';
 			iCommissionS = iCommissionS?.replace(/,/g, '') ?? '0';
 			// iSettle = iSettle?.replace(/,/g, '') ?? '0';
@@ -1450,8 +1423,8 @@
 
 			let fSettleBaccarat = parseFloat($(`#fSettleBaccarat${element.id}`).val());
 			let fSettleSlot = parseFloat($(`#fSettleSlot${element.id}`).val());
-			let fSettlePBA = parseFloat($(`#fSettlePBA${element.id}`).val());
-			let fSettlePBB = parseFloat($(`#fSettlePBB${element.id}`).val());
+			let fSettlePBA = 0.0;
+			let fSettlePBB = 0.0;
 			let iClass = parseInt($(`#iClass${element.id}`).val());
 
 			fSettleBaccaratParent = fSettleBaccarat;

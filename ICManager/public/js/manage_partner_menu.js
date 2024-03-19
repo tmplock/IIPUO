@@ -331,7 +331,7 @@ $(document).on('click', '.move', (event) => {
 
     var scLeft = window.screenLeft + 50;
     var scTop = window.screenTop + 50;
-    window.open('', strWindowName, `width=1280, height=720, top=${scTop}, left=${scLeft}, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no`);
+    window.open('', strWindowName, `width=1380, height=720, top=${scTop}, left=${scLeft}, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no`);
 
     var $form = $('<form></form>');
     $form.attr('action', strAddress);

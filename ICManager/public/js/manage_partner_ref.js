@@ -121,8 +121,11 @@ function AddTable(iHeader, iInput, iOutput, iCash, aObject, iRootClass, hidden)
 	}
 
 	tag += `<td><a style="${fontWeight}">${GetNumber(aObject.iInput)}</a></td>`;
-	tag += `<td><a style="${fontWeight}">${GetNumber(aObject.iExchange)}</a></td>`;
 	tag += `<td><a style="${fontWeight}">${GetNumber(aObject.iOutput)}</a></td>`;
+	const input = parseInt(aObject.iInput ?? 0);
+	const output = parseInt(aObject.iOutput ?? 0);
+	const cal = input - output;
+	tag += `<td><a style="${fontWeight}">${GetNumberSign(cal)}</a></td>`;
 	tag += `<td><a style="${fontWeight}">${GetNumber(aObject.iTotalCash)}</a></td>`;
 
 	tag += `<td style="text-align:right;">`;
@@ -236,8 +239,8 @@ let AddOverviewTableHeader = () => {
 			<tr>
 				<th width="5%" rowspan="2">${strDate}</th>
 				<th width="10%" rowspan="2">${strInput}</th>
-				<th width="10%" rowspan="2">${strExchangeMoney}</th>
 				<th width="10%" rowspan="2">${strOutput}</th>
+				<th width="10%" rowspan="2">차액</th>
 				<th width="10%" rowspan="2">${strMyCash}</th>
 				<th width="10%" rowspan="2">${strTotal}</th>
 				<th width="5%" rowspan="2"></th>

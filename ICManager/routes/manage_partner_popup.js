@@ -1160,12 +1160,14 @@ router.post('/credits', isLoggedIn, async (req, res) => {
 
     const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
     let iCash = 0;
+    let iChip = 0;
     let strID = '';
     if ( dbuser != null ) {
         iCash = dbuser.iCash;
+        iChip = dbuser.iChip;
         strID = dbuser.strID;
     }
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, strID:strID,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iChip:iChip, strID:strID,
                     iRootClass:req.user.iClass, iPermission:req.user.iPermission};
 
     const agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
@@ -1203,13 +1205,15 @@ router.post('/popup_credits_history', isLoggedIn, async(req, res) => {
     console.log(req.body);
     const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
     let iCash = 0;
+    let iChip = 0;
     let strID = '';
     if ( dbuser != null ) {
         iCash = dbuser.iCash;
+        iChip = dbuser.iChip;
         strID = dbuser.strID;
     }
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, strID:strID,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iChip:iChip, strID:strID,
                         iRootClass:req.user.iClass, iPermission:req.user.iPermission};
 
     const agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
@@ -1239,13 +1243,15 @@ router.post('/popup_credits', isLoggedIn, async (req, res) => {
 
     const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
     let iCash = 0;
+    let iChip = 0;
     let strID = '';
     if ( dbuser != null ) {
         iCash = dbuser.iCash;
+        iChip = dbuser.iChip;
         strID = dbuser.strID;
     }
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, strID:strID,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iChip:iChip, strID:strID,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission};
 
     const agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);

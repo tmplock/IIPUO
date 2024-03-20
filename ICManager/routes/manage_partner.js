@@ -36,10 +36,14 @@ router.get('/default', isLoggedIn, async(req, res) => {
 
     const dbuser = await db.Users.findOne({where:{strNickname:req.user.strNickname}});
     let iCash = 0;
-    if ( dbuser != null )
+    let iChip = 0;
+    if ( dbuser != null ) {
         iCash = dbuser.iCash;
+        iChip = dbuser.iChip;
+    }
 
-    const user = {strNickname:req.user.strNickname, strGroupID:req.user.strGroupID, iClass:parseInt(req.user.iClass), iCash:iCash,
+
+    const user = {strNickname:req.user.strNickname, strGroupID:req.user.strGroupID, iClass:parseInt(req.user.iClass), iCash:iCash, iChip:iChip,
         fBaccaratR: dbuser.fBaccaratR, fSlotR: dbuser.fSlotR, fUnderOverR: dbuser.fUnderOverR, fPBR: dbuser.fPBR, fPBSingleR: dbuser.fPBSingleR, fPBDoubleR: dbuser.fPBDoubleR, fPBTripleR: dbuser.fPBTripleR,
         iRootClass: req.user.iClass, iPermission: req.user.iPermission, strID: dbuser.strID};
 
@@ -113,10 +117,13 @@ router.post('/realtime', isLoggedIn, async(req, res) => {
 
     const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
     let iCash = 0;
-    if ( dbuser != null )
+    let iChip = 0;
+    if ( dbuser != null ) {
         iCash = dbuser.iCash;
+        iChip = dbuser.iChip;
+    }
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iChip:iChip,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission};
 
     const dateStart = ITime.getTodayStart();
@@ -158,10 +165,13 @@ router.post('/record', isLoggedIn, async(req, res) => {
 
     const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
     let iCash = 0;
-    if ( dbuser != null )
+    let iChip = 0;
+    if ( dbuser != null ) {
         iCash = dbuser.iCash;
+        iChip = dbuser.iChip;
+    }
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iChip:iChip,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission, strID:dbuser.strID};
 
     const dateStart = ITime.getTodayStart();
@@ -180,10 +190,13 @@ router.post('/listvicehq', isLoggedIn, async(req, res) => {
 
     const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
     let iCash = 0;
-    if ( dbuser != null )
+    let iChip = 0;
+    if ( dbuser != null ) {
         iCash = dbuser.iCash;
+        iChip = dbuser.iChip;
+    }
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iChip:iChip,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission, strID:dbuser.strID};
 
     const dateStart = ITime.getTodayStart();
@@ -204,10 +217,13 @@ router.post('/listadmin', isLoggedIn, async(req, res) => {
 
     const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
     let iCash = 0;
-    if ( dbuser != null )
+    let iChip = 0;
+    if ( dbuser != null ) {
         iCash = dbuser.iCash;
+        iChip = dbuser.iChip;
+    }
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iChip:iChip,
         iRootClass:req.user.iClass, iPermission: req.user.iPermission, strID: dbuser.strID};
 
     const dateStart = ITime.getTodayStart();
@@ -227,10 +243,13 @@ router.post('/listproadmin', isLoggedIn, async(req, res) => {
     console.log(req.body);
     const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
     let iCash = 0;
-    if ( dbuser != null )
+    let iChip = 0;
+    if ( dbuser != null ) {
         iCash = dbuser.iCash;
+        iChip = dbuser.iChip;
+    }
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iChip:iChip,
         fBaccaratR: dbuser.fBaccaratR, fSlotR: dbuser.fSlotR, fUnderOverR: dbuser.fUnderOverR, fPBR: dbuser.fPBR, fPBSingleR: dbuser.fPBSingleR, fPBDoubleR: dbuser.fPBDoubleR, fPBTripleR: dbuser.fPBTripleR,
         iRootClass:req.user.iClass, iPermission: req.user.iPermission, strID:dbuser.strID};
 
@@ -251,10 +270,13 @@ router.post('/listviceadmin', isLoggedIn, async(req, res) => {
     console.log(req.body);
     const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
     let iCash = 0;
-    if ( dbuser != null )
+    let iChip = 0;
+    if ( dbuser != null ) {
         iCash = dbuser.iCash;
+        iChip = dbuser.iChip;
+    }
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iChip:iChip,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission, strID:dbuser.strID};
 
     const dateStart = ITime.getTodayStart();
@@ -274,10 +296,13 @@ router.post('/listagent', isLoggedIn, async(req, res) => {
     console.log(req.body);
     const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
     let iCash = 0;
-    if ( dbuser != null )
+    let iChip = 0;
+    if ( dbuser != null ) {
         iCash = dbuser.iCash;
+        iChip = dbuser.iChip;
+    }
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iChip:iChip,
         fBaccaratR: dbuser.fBaccaratR, fSlotR: dbuser.fSlotR, fUnderOverR: dbuser.fUnderOverR, fPBR: dbuser.fPBR, fPBSingleR: dbuser.fPBSingleR, fPBDoubleR: dbuser.fPBDoubleR, fPBTripleR: dbuser.fPBTripleR,
         iRootClass: req.user.iClass, iPermission: req.user.iPermission, strID: dbuser.strID};
 
@@ -299,10 +324,13 @@ router.post('/listshop', isLoggedIn, async(req, res) => {
 
     const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
     let iCash = 0;
-    if ( dbuser != null )
+    let iChip = 0;
+    if ( dbuser != null ) {
         iCash = dbuser.iCash;
+        iChip = dbuser.iChip;
+    }
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iChip:iChip,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission, strID:dbuser.strID};
 
     const dateStart = ITime.getTodayStart();
@@ -331,10 +359,13 @@ router.post('/settingodds', isLoggedIn, async(req, res) => {
 
     const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
     let iCash = 0;
-    if ( dbuser != null )
+    let iChip = 0;
+    if ( dbuser != null ) {
         iCash = dbuser.iCash;
+        iChip = dbuser.iChip;
+    }
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iChip:iChip,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission,
         fSlotR: dbuser.fSlotR, fBaccaratR: dbuser.fBaccaratR, fUnderOverR: dbuser.fUnderOverR,
         fPBR:dbuser.fPBR, fPBSingleR:dbuser.fPBSingleR, fPBDoubleR:dbuser.fPBDoubleR, fPBTripleR:dbuser.fPBTripleR};
@@ -348,10 +379,13 @@ router.post('/listrealtimeuser', isLoggedIn, async(req, res) => {
     console.log(req.body);
     const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
     let iCash = 0;
-    if ( dbuser != null )
+    let iChip = 0;
+    if ( dbuser != null ) {
         iCash = dbuser.iCash;
+        iChip = dbuser.iChip;
+    }
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iChip:iChip,
         iRootClass:req.user.iClass, iPermission: req.user.iPermission, strID: dbuser.strID};
 
     const agentinfo = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
@@ -792,10 +826,13 @@ router.post('/listtodayregist', isLoggedIn, async(req, res) => {
     console.log(req.body);
     const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
     let iCash = 0;
-    if ( dbuser != null )
+    let iChip = 0;
+    if ( dbuser != null ) {
         iCash = dbuser.iCash;
+        iChip = dbuser.iChip;
+    }
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iChip:iChip,
         iRootClass: req.user.iClass, iPermission: req.user.iPermission, strID:dbuser.strID};
 
     const strTimeStart = ITime.getTodayStart();

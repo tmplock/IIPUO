@@ -22,10 +22,13 @@ router.get('/calculation', isLoggedIn, async(req, res) => {
 
     const dbuser = await db.Users.findOne({where:{strNickname:req.user.strNickname}});
     let iCash = 0;
-    if ( dbuser != null )
+    let iChip = 0;
+    if ( dbuser != null ) {
         iCash = dbuser.iCash;
+        iChip = dbuser.iChip;
+    }
 
-    const user = {strNickname:dbuser.strNickname, strGroupID:req.user.strGroupID, iClass:parseInt(req.user.iClass), iCash:iCash,
+    const user = {strNickname:dbuser.strNickname, strGroupID:req.user.strGroupID, iClass:parseInt(req.user.iClass), iCash:iCash, iChip:iChip,
         iRootClass: req.user.iClass, iPermission: req.user.iPermission, strID: dbuser.strID};
 
     // 보기 권한만 있고 연결 유저 아이디가 있는 경우
@@ -53,10 +56,13 @@ router.post('/calculation', isLoggedIn, async(req, res) => {
     console.log(req.body);
     const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
     let iCash = 0;
-    if ( dbuser != null )
+    let iChip = 0;
+    if ( dbuser != null ) {
         iCash = dbuser.iCash;
+        iChip = dbuser.iChip;
+    }
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iChip:iChip,
         iRootClass: req.user.iClass, iPermission: req.user.iPermission, strID: dbuser.strID};
 
     // 보기 권한만 있고 연결 유저 아이디가 있는 경우
@@ -84,13 +90,15 @@ router.post('/settle', isLoggedIn, async(req, res) => {
     console.log(req.body);
     const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
     let iCash = 0;
+    let iChip = 0;
     let strID = '';
     if ( dbuser != null ) {
         iCash = dbuser.iCash;
+        iChip = dbuser.iChip;
         strID = dbuser.strID;
     }
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, strID:strID,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iChip:iChip, strID:strID,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission};
 
     const agentinfo = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
@@ -582,13 +590,15 @@ router.post('/settle_all', isLoggedIn, async(req, res) => {
     console.log(req.body);
     const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
     let iCash = 0;
+    let iChip = 0;
     let strID = '';
     if ( dbuser != null ) {
         iCash = dbuser.iCash;
+        iChip = dbuser.iChip;
         strID = dbuser.strID;
     }
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, strID:strID,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iChip:iChip, strID:strID,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission};
 
     const agentinfo = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
@@ -1005,13 +1015,15 @@ router.post('/settle_credits', isLoggedIn, async(req, res) => {
     console.log(req.body);
     const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
     let iCash = 0;
+    let iChip = 0;
     let strID = '';
     if ( dbuser != null ) {
         iCash = dbuser.iCash;
+        iChip = dbuser.iChip;
         strID = dbuser.strID;
     }
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, strID:strID,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iChip:iChip, strID:strID,
         iRootClass: req.user.iClass, iPermission: req.user.iPermission};
 
     const agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
@@ -1028,11 +1040,13 @@ router.post('/credits_history', isLoggedIn, async(req, res) => {
     console.log(req.body);
     const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
     let iCash = 0;
+    let iChip = 0;
     if ( dbuser != null ) {
         iCash = dbuser.iCash;
+        iChip = dbuser.iChip;
     }
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iChip:iChip,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission, strID:dbuser.strID};
 
     const agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);

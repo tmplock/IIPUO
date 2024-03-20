@@ -31,10 +31,13 @@ router.get('/userlist', isLoggedIn, async(req, res) => {
     console.log(req.user);
     const dbuser = await db.Users.findOne({where:{strNickname:req.user.strNickname}});
     let iCash = 0;
-    if ( dbuser != null )
+    let iChip = 0;
+    if ( dbuser != null ) {
         iCash = dbuser.iCash;
+        iChip = dbuser.iChip;
+    }
 
-    const user = {strNickname:req.user.strNickname, strGroupID:req.user.strGroupID, iClass:parseInt(req.user.iClass), iCash:iCash,
+    const user = {strNickname:req.user.strNickname, strGroupID:req.user.strGroupID, iClass:parseInt(req.user.iClass), iCash:iCash, iChip:iChip,
         iRootClass: req.user.iClass, iPermission: req.user.iPermission, strID: dbuser.strID};
 
     const strTimeStart = ITime.getTodayStart();
@@ -78,10 +81,13 @@ router.post('/userlist', isLoggedIn, async(req, res) => {
     console.log(req.body);
     const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
     let iCash = 0;
-    if ( dbuser != null )
+    let iChip = 0;
+    if ( dbuser != null ) {
         iCash = dbuser.iCash;
+        iChip = dbuser.iChip;
+    }
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iChip:iChip,
         iRootClass: req.user.iClass, iPermission: req.user.iPermission, strID: dbuser.strID};
 
     const strTimeStart = ITime.getTodayStart();
@@ -120,10 +126,13 @@ router.post('/realtimeuserlist', isLoggedIn, async(req, res) => {
     console.log(req.body);
     const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
     let iCash = 0;
-    if ( dbuser != null )
+    let iChip = 0;
+    if ( dbuser != null ) {
         iCash = dbuser.iCash;
+        iChip = dbuser.iChip;
+    }
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iChip:iChip,
                         iRootClass: req.user.iClass, iPermission: req.user.iPermission};
 
     const agentinfo = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);

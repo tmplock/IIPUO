@@ -24,7 +24,7 @@ const {DATETIME} = require("mysql/lib/protocol/constants/types");
 router.post('/list_contact_receive', isLoggedIn, async(req, res) => {
     const user = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
     let iocount = await IInout.GetProcessing(user.strGroupID, user.strNickname, user.iClass);
-    let agent = {strNickname:user.strNickname, iClass:user.iClass, strGroupID:user.strGroupID, iCash:user.iCash, iSettle:user.iSettle, iRolling:user.iRolling,
+    let agent = {strNickname:user.strNickname, iClass:user.iClass, strGroupID:user.strGroupID, iCash:user.iCash, iChip:user.iChip, iSettle:user.iSettle, iRolling:user.iRolling,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission};
     res.render('manage_contact/list_contact_receive', {iLayout:0, iHeaderFocus:7, user:agent, agent:agent, iocount:iocount, list:[], page:1});
 });
@@ -99,7 +99,7 @@ router.post('/request_contact_select_remove', isLoggedIn, async(req, res) => {
 router.post('/list_contact_send', isLoggedIn, async(req, res) => {
     const user = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
     let iocount = await IInout.GetProcessing(user.strGroupID, user.strNickname, user.iClass);
-    let agent = {strNickname:user.strNickname, iClass:user.iClass, strGroupID:user.strGroupID, iCash:user.iCash, iSettle:user.iSettle, iRolling:user.iRolling,
+    let agent = {strNickname:user.strNickname, iClass:user.iClass, strGroupID:user.strGroupID, iCash:user.iCash, iChip:user.iChip, iSettle:user.iSettle, iRolling:user.iRolling,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission};
     res.render('manage_contact/list_contact_send', {iLayout:0, iHeaderFocus:7, user:agent, agent:agent, iocount:iocount, list:[], page:1});
 });
@@ -157,7 +157,7 @@ router.post('/request_list_contact_send', isLoggedIn, async(req, res) => {
 router.post('/list_charge_request', isLoggedIn, async(req, res) => {
     const user = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
     let iocount = await IInout.GetProcessing(user.strGroupID, user.strNickname, req.user.iClass);
-    let agent = {strNickname:user.strNickname, iClass:user.iClass, strGroupID:user.strGroupID, iCash:user.iCash, iSettle:user.iSettle, iRolling:user.iRolling,
+    let agent = {strNickname:user.strNickname, iClass:user.iClass, strGroupID:user.strGroupID, iCash:user.iCash, iChip:user.iChip, iSettle:user.iSettle, iRolling:user.iRolling,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission};
     res.render('manage_contact/list_charge_request', {iLayout:0, iHeaderFocus:7, user:agent, agent:agent, iocount:iocount, list:[], page:1});
 });

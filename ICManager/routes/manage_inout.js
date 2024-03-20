@@ -208,10 +208,13 @@ router.post('/charge', isLoggedIn, async(req, res) => {
     console.log(req.body);
     const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
     let iCash = 0;
-    if ( dbuser != null )
+    let iChip = 0;
+    if ( dbuser != null ) {
         iCash = dbuser.iCash;
+        iChip = dbuser.iChip;
+    }
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, strOptionCode:dbuser.strOptionCode,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iChip:iChip, strOptionCode:dbuser.strOptionCode,
         iRootClass: req.user.iClass, iPermission: req.user.iPermission};
 
     const iLimit = 20;
@@ -294,11 +297,14 @@ router.post('/exchange', isLoggedIn, async(req, res) => {
     console.log(req.body);
     const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
     let iCash = 0;
-    if ( dbuser != null )
+    let iChip = 0;
+    if ( dbuser != null ) {
         iCash = dbuser.iCash;
+        iChip = dbuser.iChip;
+    }
 
     let strOptionCode = dbuser.strOptionCode ?? '11000000';
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, strOptionCode:strOptionCode,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iChip:iChip, strOptionCode:strOptionCode,
         iRootClass: req.user.iClass, iPermission: req.user.iPermission};
 
     let iLimit = 20;

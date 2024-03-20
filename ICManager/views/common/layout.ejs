@@ -580,8 +580,13 @@
                         <% } %>
                     <% } %>
                     <li>
-                        <p style="margin-top:-15px; margin-bottom:-16px; font-weight:medium; color:rgb(255, 251, 0);font-size:17px;font-family:'Spoqa Han Sans Neo', 'sans-serif';"><%=__('MyCash')%> <span style="color:white;" id="MainLayoutMyCash"><%=parseInt(user.iCash).toLocaleString()%></span></p>
+                        <p style="margin-top:-15px; margin-bottom:-16px; font-weight:medium; color:rgb(255, 251, 0);font-size:17px;font-family:'Spoqa Han Sans Neo', 'sans-serif';"><%=__('MyCash')%> <span style="color:white;" id="MainLayoutMyCash"><%=parseInt(user.iCash).toLocaleString()%></span></p><br>
                     </li>
+                    <% if (parseInt(user.iClass) != 1 && parseInt(user.iClass) <= 3) { %>
+                    <li>
+                        <p style="margin-top:-15px; margin-bottom:-16px; font-weight:medium; color:rgb(255, 251, 0);font-size:17px;font-family:'Spoqa Han Sans Neo', 'sans-serif';">게임머니 <span style="color:white;" id="MainLayoutMyChip"><%=parseInt(user.iChip ?? 0).toLocaleString()%></span></p>
+                    </li>
+                    <%}%>
                 </ul>
             </nav>
         </header>

@@ -215,7 +215,7 @@ router.post('/changemoney', isLoggedIn, async(req, res) => {
     const user = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
     console.log(`######################################################################## ChangeMoney`);
     console.log(user);
-    let agent = {strNickname:user.strNickname, iClass:user.iClass, strGroupID:user.strGroupID, iCash:user.iCash, iSettle:user.iSettle, iRolling:user.iRolling, iSettleAcc:user.iSettleAcc,
+    let agent = {strNickname:user.strNickname, iClass:user.iClass, strGroupID:user.strGroupID, iCash:user.iCash, iChip:user.iChip, iSettle:user.iSettle, iRolling:user.iRolling, iSettleAcc:user.iSettleAcc,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission, iRootNickname:req.user.strNickname};
     res.render('manage_user/popup_changemoney', {iLayout:1, iHeaderFocus:0, agent:agent});
 

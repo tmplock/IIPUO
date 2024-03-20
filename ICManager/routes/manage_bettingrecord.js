@@ -109,10 +109,14 @@ router.post('/casino', isLoggedIn, async(req, res) => {
 
     const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
     let iCash = 0;
-    if ( dbuser != null )
+    let iChip = 0;
+    if ( dbuser != null ) {
         iCash = dbuser.iCash;
+        iChip = dbuser.iChip;
+    }
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash,
+
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iChip:iChip,
         iRootClass:req.user.iClass, iPermission: req.user.iPermission, strID: dbuser.strID};
     let iocount = await IInout.GetProcessing(user.strGroupID, user.strNickname, dbuser.iClass);
     res.render('manage_bettingrecord/casino', {iLayout:0, iHeaderFocus:3, iSubHeaderFocus:0, user:user, iocount:iocount});
@@ -122,10 +126,13 @@ router.post('/slot', isLoggedIn, async(req, res) => {
 
     const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
     let iCash = 0;
-    if ( dbuser != null )
+    let iChip = 0;
+    if ( dbuser != null ) {
         iCash = dbuser.iCash;
+        iChip = dbuser.iChip;
+    }
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iChip:iChip,
         iRootClass:req.user.iClass, iPermission: req.user.iPermission, strID: dbuser.strID};
     let iocount = await IInout.GetProcessing(user.strGroupID, user.strNickname, dbuser.iClass);
     res.render('manage_bettingrecord/slot', {iLayout:0, iHeaderFocus:3, iSubHeaderFocus:1, user:user, iocount:iocount});
@@ -137,10 +144,13 @@ router.post('/vivo', isLoggedIn, async(req, res) => {
 
     const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
     let iCash = 0;
-    if ( dbuser != null )
+    let iChip = 0;
+    if ( dbuser != null ) {
         iCash = dbuser.iCash;
+        iChip = dbuser.iChip;
+    }
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iChip:iChip,
         iRootClass:req.user.iClass, iPermission: req.user.iPermission, strID: dbuser.strID};
     let iocount = await IInout.GetProcessing(user.strGroupID, user.strNickname, dbuser.iClass);
     res.render('manage_bettingrecord/vivo', {iLayout:0, iHeaderFocus:3, iSubHeaderFocus:2, user:user, iocount:iocount});
@@ -152,10 +162,13 @@ router.post('/pragmatic', isLoggedIn, async(req, res) => {
 
     const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
     let iCash = 0;
-    if ( dbuser != null )
+    let iChip = 0;
+    if ( dbuser != null ) {
         iCash = dbuser.iCash;
+        iChip = dbuser.iChip;
+    }
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iChip:iChip,
         iRootClass:req.user.iClass, iPermission: req.user.iPermission, strID: dbuser.strID};
     let iocount = await IInout.GetProcessing(user.strGroupID, user.strNickname, dbuser.iClass);
     res.render('manage_bettingrecord/pragmatic', {iLayout:0, iHeaderFocus:3, iSubHeaderFocus:3, user:user, iocount:iocount});
@@ -167,10 +180,13 @@ router.post('/powerball', isLoggedIn, async(req, res) => {
 
     const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
     let iCash = 0;
-    if ( dbuser != null )
+    let iChip = 0;
+    if ( dbuser != null ) {
         iCash = dbuser.iCash;
+        iChip = dbuser.iChip;
+    }
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iChip:iChip,
         iRootClass:req.user.iClass, iPermission: req.user.iPermission, strID: dbuser.strID};
     let iocount = await IInout.GetProcessing(user.strGroupID, user.strNickname, dbuser.iClass);
     res.render('manage_bettingrecord/powerball', {iLayout:0, iHeaderFocus:3, iSubHeaderFocus:4, user:user, iocount:iocount});
@@ -182,10 +198,13 @@ router.post('/izugi', isLoggedIn, async(req, res) => {
 
     const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
     let iCash = 0;
-    if ( dbuser != null )
+    let iChip = 0;
+    if ( dbuser != null ) {
         iCash = dbuser.iCash;
+        iChip = dbuser.iChip;
+    }
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iChip:iChip,
         iRootClass:req.user.iClass, iPermission: req.user.iPermission, strID: dbuser.strID};
     let iocount = await IInout.GetProcessing(user.strGroupID, user.strNickname, dbuser.iClass);
     res.render('manage_bettingrecord/izugi', {iLayout:0, iHeaderFocus:3, iSubHeaderFocus:5, user:user, iocount:iocount});
@@ -197,10 +216,13 @@ router.post('/habanero', isLoggedIn, async(req, res) => {
 
     const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
     let iCash = 0;
-    if ( dbuser != null )
+    let iChip = 0;
+    if ( dbuser != null ) {
         iCash = dbuser.iCash;
+        iChip = dbuser.iChip;
+    }
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iChip:iChip,
         iRootClass:req.user.iClass, iPermission: req.user.iPermission, strID: dbuser.strID};
     let iocount = await IInout.GetProcessing(user.strGroupID, user.strNickname, dbuser.iClass);
     res.render('manage_bettingrecord/habanero', {iLayout:0, iHeaderFocus:3, iSubHeaderFocus:6, user:user, iocount:iocount});
@@ -212,10 +234,12 @@ router.post('/world', isLoggedIn, async(req, res) => {
 
     const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
     let iCash = 0;
-    if ( dbuser != null )
+    let iChip = 0;
+    if ( dbuser != null ) {
         iCash = dbuser.iCash;
-
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash,
+        iChip = dbuser.iChip;
+    }
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iChip:iChip,
         iRootClass:req.user.iClass, iPermission: req.user.iPermission, strID: dbuser.strID};
     let iocount = await IInout.GetProcessing(user.strGroupID, user.strNickname, dbuser.iClass);
     res.render('manage_bettingrecord/world', {iLayout:0, iHeaderFocus:3, iSubHeaderFocus:7, user:user, iocount:iocount});
@@ -496,10 +520,13 @@ router.post('/pending', isLoggedIn, async(req, res) => {
 
     const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
     let iCash = 0;
-    if ( dbuser != null )
+    let iChip = 0;
+    if ( dbuser != null ) {
         iCash = dbuser.iCash;
+        iChip = dbuser.iChip;
+    }
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iChip:iChip,
         iRootClass:req.user.iClass, iPermission: req.user.iPermission, strID: dbuser.strID};
     let iocount = await IInout.GetProcessing(user.strGroupID, user.strNickname, dbuser.iClass);
     res.render('manage_bettingrecord/pending', {iLayout:0, iHeaderFocus:3, iSubHeaderFocus:8, user:user, iocount:iocount});

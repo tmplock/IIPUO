@@ -64,6 +64,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.DOUBLE(17,4),
             default: 0,
         },
+        // 게임머니 : 충전시 충전, 차감은 실제 게임을 진행시 차감(윈로스 차감)
+        iChip: {
+            type: DataTypes.DOUBLE(17,4),
+        },
         iLoan: {
             type: DataTypes.INTEGER,
             default: 0,

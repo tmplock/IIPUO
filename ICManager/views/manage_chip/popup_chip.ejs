@@ -40,23 +40,13 @@
 				<% } else if ( agent.iClass == 7 ) { %>
 					<span style="margin-left:10px;">[<%=__('Shop')%>]<span style="color:#f56868;"><%=agent.strNickname%></span></span>
 				<% } %>
-
-				<% if ( agent.iClass == 4 ) { %>
-					<span style="float:right; margin-left:10px;">죽장이월 : <span id="settleacc" style="color:#ffffff;"></span></span>
-				<% } %>
-				<% if ( agent.iClass <= 5 ) { %>
-					<span style="float:right; margin-left:10px;"><%=__('Settle')%> : <span id="settle" style="color:#f56868;"></span></span>
-				<% } %>
-				<% if ( agent.iClass <= 7 ) { %>
-					<span style="float:right; margin-left:10px;"><%=__('Rolling')%> : <span id="rolling" style="color:#7fbe18;"></span></span>
-				<% } %>
 				<span style="float:right; margin-left:10px;"><%=__('Cash')%> : <span id="cash" style="color:#ffffff;"></span></span>
 			</h3>
 		</div>
 
 		<div class="write">
 
-			<% if ( agent.iClass != 3 && agent.iPermission != 100 ) { %>
+			<% if ( agent.iPermission != 100 ) { %>
 			<table style="font-size:15px;background-color:#092E13;">
 				<caption><%=__('Partner')%> <%=__('Modify')%></caption>
 				<colgroup>
@@ -108,41 +98,8 @@
 				</tr>
 			
 				<tr style="background-color:#a4aaa7;">
-					<td colspan="3">
-						<%=__('Modify')%><%=__('Money')%> : 
-						<input type="number" style="width:20%;" name="chg_mile" required="yes" message="조정금액" is_num = "yes" value="" id="GTMoney"> <%=__('Currency')%>
-							&nbsp; <a class="btn_gray" href="javascript:OnClickProcess();"><%=__('OK')%></a>
-					</td>
-				</tr>
-			
-				<tr style="background-color:#a4aaa7;">
 					<td colspan="4" style="height:15px;background-color:#d8c8b2;"></td>
 				</tr>
-			
-				<% if (agent.iClass > 3) { %>
-					<% if ( agent.iClass <= 5 ) { %>
-						<tr style="background-color:#a4aaa7;">
-							<th scope="row" style="font-size:18px;color:red;"><%=__('Rolling')%><%=__('Exchange')%></th>
-							<td>
-								<input type="number" id="translate_rolling" value="">
-								<a class="btn_gray" href="javascript:OnClickTranslate('ROLLING');"><%=__('Exchange')%></a>
-							</td>
-							<th scope="row" style="font-size:18px;color:red;"><%=__('Settle')%><%=__('Exchange')%></th>
-							<td>
-								<input type="number" id="translate_settle" value="">
-								<a class="btn_gray" href="javascript:OnClickTranslate('SETTLE');"><%=__('Exchange')%></a>
-							</td>
-						</tr>
-					<% } else { %>
-						<tr style="background-color:#a4aaa7;">
-							<th scope="row" style="font-size:18px;color:red;"><%=__('Rolling')%><%=__('Exchange')%></th>
-							<td colspan="3">
-								<input type="number" id="translate_rolling" value="">
-								<a class="btn_gray" href="javascript:OnClickTranslate('ROLLING');"><%=__('Exchange')%></a>
-							</td>
-						</tr>
-					<% } %>
-				<%}%>
 			</table>
 			<%}%>
 
@@ -166,7 +123,6 @@
 							<p style="background-repeat:no-repeat; background-position:left center; font-size:15px; color:#454545; padding-left:22px;color:blue;"><%=__('RecordSend')%></p>
 							
 							<div id="adjust_list_cash">
-								<!-- 캐시 히스토리 영역 -->
 								<table class="search_list">
 									<thead>
 										<tr>
@@ -177,7 +133,7 @@
 											<th width="25%" style="font-size:15px;"><%=__('Date')%></th>
 										</tr>
 									</thead>
-									<tbody id="gtrecord_cash">
+									<tbody id="chip_send">
 										<tr>
 											<td colspan="20" height="40"><strong><%=__('AlertNone')%></strong></td>
 										</tr>
@@ -194,7 +150,6 @@
 							<p style="background-repeat:no-repeat; background-position:left center; font-size:15px; color:#454545; padding-left:22px;color:red;"><%=__('RecordReceive')%></p>
 						
 							<div id="adjust_list_point">
-								<!-- 로링비 히스토리 영역 -->
 								<table class="search_list">
 									<thead>
 										<tr>
@@ -205,14 +160,13 @@
 											<th width="25%" style="font-size:15px;"><%=__('Date')%></th>
 										</tr>
 									</thead>
-									<tbody id="gtrecord_rolling">
+									<tbody id="chip_receive">
 										<tr>
 											<td colspan="20" height="40"><strong><%=__('AlertNone')%></strong></td>
 										</tr>
 									</tbody>
 								</table>
 								<div class="pagination mt0">
-									<a href="javascript:get_data('inner_partner_list2.php', 'inner_content', 's_sido=13&s_gugun=parent_level=4&s_date=&e_date=&s_cate=&pageNo=1');" class="on" style="color:#ffb579;">1</a>
 								</div>
 	
 							</div>
@@ -229,7 +183,6 @@
 	<script type="text/javascript" src="js/pagination.js"></script>
 	<script type="text/javascript">
 		let agent = JSON.parse('<%-JSON.stringify(agent)%>');
-		let eGTType = 'GIVE';
 		let iTargetAgentClass = 5;
 
 		const strNoRecord = '<%=__("NoRecord")%>';
@@ -251,18 +204,12 @@
 			}
 			$('#datepicker2').val(GetCurrentDate());
 
-			$('#cash').text(GetNumber(agent.iCash, '0'));
-			$('#rolling').text(GetNumber(agent.iRolling, '0'));
-			$('#settle').text(GetNumber(agent.iSettle, '0'));
-			$('#settleacc').text(GetNumberSign(agent.iSettleAcc, '0'));
-
 			OnClickSearch();
 		});
 
+		// 지급 구분 (지급, 차감)
 		let OnClickGTType = (type) => 
 		{
-			eGTType = type;
-
 			$('#agent_list').empty();
 			$('#at_vadmin').attr('checked', false);
 			$('#at_agent').attr('checked', false);
@@ -272,6 +219,7 @@
 			$('#at_vicehq').attr('checked', false);
 		}
 
+		// 지급 분류 선택(총본, 본사)
 		let OnClickAgentType = (type) => 
 		{
 			if ( type == 'VHQ' )
@@ -324,12 +272,13 @@
 			}
 		}
 
+		// 파트너 목록
 		let RequestTargetClassAgentList = (strNickname, strGroupID, iClass, iTargetClass) => {
 			$.ajax({
 				type:'post',
 				url: "/manage_user_popup/request_targetclassagentlist",
 				context: document.body,
-				data:{eType:eGTType, iTargetClass:iTargetClass, strGroupID:strGroupID, iClass:iClass, strNickname:strNickname},
+				data:{iTargetClass:iTargetClass, strGroupID:strGroupID, iClass:iClass, strNickname:strNickname},
 				success: (obj) => {
 					$('#agent_list').empty();
 					for ( let i in obj )
@@ -343,80 +292,21 @@
 			});
 		}
 
-		let OnClickProcess = () => {
-
-			let strTarget = $('#agent_list').val();
-			let iMoney = $('#GTMoney').val();
-
-			if ( strTarget == null || strTarget == '' || iMoney == null || iMoney == '' || iMoney == 0)
-			{
-				alert(strAlertIncorrectInputValue);
-				return;
-			}
-
-			let strConfirm = strConfirmGive;
-			let strGTType = strGive;
-			if ( eGTType == 'TAKE' )
-			{
-				strGTType = strTake;
-				strConfirm = strConfirmTake;
-			}
-
-			if ( confirm(strConfirm) )
-			{
-				$.ajax({
-					type:'post',
-					url: "/manage_user_popup/request_gt",
-					context: document.body,
-					data:{strTo:strTarget, strFrom:agent.strNickname, iAmount:iMoney, eType:eGTType},
-
-					success: (obj) => {
-
-						if ( obj.result == 'OK' )
-						{
-							RequestGTRecord('TO');
-							RequestGTRecord('FROM');
-
-							$('#cash').text(GetNumber(parseInt(obj.cash)));
-							$('#rolling').text(GetNumber(parseInt(obj.rolling)));
-							$('#settle').text(GetNumber(parseInt(obj.settle)));
-
-							window.opener.location.reload(true);
-						}
-						else {
-							if ( obj.reason == 'NOTENOUGH' )
-							{
-								alert(strAlertErrorNotEnoughMoney);
-							}
-							else
-							{
-								alert(strAlertComplete);		
-								window.opener.location.reload(true);						
-							}
-						}
-						location.reload();
-					},
-					error:function(request,status,error){
-						alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
-					}
-				});
-			}
-		}
-
-		let RequestGTRecord = (eType, strSearch) => {
+		// 보낸 내역, 받은 내역 조회
+		let RequestChipRecord = (eType, strSearch) => {
 
 			let dateStart = $('#datepicker1').val();
 			let dateEnd = $('#datepicker2').val();
 
 			$.ajax({
 				type:'post',
-				url: "/manage_user_popup/request_gtrecord",
+				url: "/manage_chip/request_gtrecord",
 				context: document.body,
 				data:{strNickname:agent.strNickname, eType:eType, dateStart:dateStart, dateEnd:dateEnd, strSearch:strSearch, iClass: agent.iClass},
 
 				success: (list) => {
 					console.log(list);
-					UpdateGTRecord(eType, list);
+					SetChipList(eType, list);
 
 					$('#pagination').empty();
 					$('#pagination').append(getPagination(iLimit, obj.totalCount, iCurrentPage));
@@ -455,10 +345,11 @@
 				return "#ff6868";
 		}
 
-		let UpdateGTRecord = (eType, list) => {
-			let parent_id = '#gtrecord_cash';
+		// 보낸, 받은 내역 목록 및 총합
+		let SetChipList = (eType, list) => {
+			let parent_id = '#chip_send';
 			if ( eType == "FROM")
-				parent_id = '#gtrecord_rolling';
+				parent_id = '#chip_receive';
 			$(parent_id).empty();
 			if ( list.length == 0 ) 
 			{
@@ -498,7 +389,7 @@
 					$(parent_id).append(tag);
 				}
 
-				let total = parseInt(iTotalGive) + parseInt(iTotalTake);
+				let total = iTotalGive + iTotalTake;
 
 				let finaltag = `
 					<tr>
@@ -512,82 +403,20 @@
 			}
 		}
 
-		let OnClickTranslate = (eType) => {
-
-			let iSettle = $('#translate_settle').val();
-			let iRolling = $('#translate_rolling').val();
-			let strType = '';
-			let iMoney = 0;
-
-			if ( eType == 'SETTLE' )
-			{
-				strType = '죽장';
-				if ( iSettle <= agent.iSettle )
-					iMoney = iSettle;
-			}
-			else if ( eType == 'ROLLING' )
-			{
-				strType = '롤링';
-				if ( iRolling <= agent.iRolling )
-					iMoney = iRolling;
-			}
-
-			if ( iMoney == '' || iMoney == 0 )
-			{
-				alert(strAlertIncorrectInputValue);
-				return;
-			}
-
-			if ( confirm(strConfirmExchange) )
-			{
-				$.ajax({
-					type:'post',
-					url: "/manage_user_popup/request_gt",
-					context: document.body,
-					data:{strTo:agent.strNickname, strFrom:agent.strNickname, iAmount:iMoney, eType:eType},
-					success: (obj) => {
-						if ( obj.result == 'OK' )
-						{
-							RequestGTRecord('TO', '');
-							RequestGTRecord('FROM', '');
-							$('#cash').text(GetNumber(parseInt(obj.cash)));
-							$('#rolling').text(GetNumber(parseInt(obj.rolling)));
-							$('#settle').text(GetNumber(parseInt(obj.settle)));
-							location.reload();
-						}
-						else {
-							if ( obj.reason == 'NOTENOUGH')
-							{
-								alert(strAlertErrorNotEnoughMoney);
-							}
-							else
-								alert(strAlertError);
-						}
-					},
-					error:function(request,status,error){
-						alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
-					}
-				});
-			}
-		}
-
 		let OnClickSearch = () => {
 			let strNickname = $('#strNickname').val();
 			if ( strNickname == undefined )
 				strNickname = '';
-			RequestGTRecord('TO', strNickname);
-			RequestGTRecord('FROM', strNickname);
+			RequestChipRecord('TO', strNickname);
+			RequestChipRecord('FROM', strNickname);
 		}
 
 		let OnClickSearchBy = () => {
 			let strNickname = $('#strNickname').val();
-			RequestGTRecord('TO', strNickname);
-			RequestGTRecord('FROM', strNickname);
+			RequestChipRecord('TO', strNickname);
+			RequestChipRecord('FROM', strNickname);
 		}
 
-		let OnClickSearchNickname = () => {
-			RequestAgentList(EAgent.eProAdmin, user.strGroupID, user.iClass);
-		}
 	</script>
 </body>
 </html>

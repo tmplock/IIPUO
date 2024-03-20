@@ -323,11 +323,105 @@ router.post('/request_targetclassagentlist', isLoggedIn, async(req, res) => {
     }
 })
 
+let RequestChip = async (strTo, strFrom, iAmout, eType) => {
+
+    let to = await db.Users.findOne({where:{strNickname:strTo}});
+    let from = await db.Users.findOne({where:{strNickname:strFrom}});
+
+    const cAmount = parseInt(iAmount ?? 0);
+
+    if ( eType == 'GIVE' )
+    {
+        if ( to != null && from != null )
+        {
+            console.log(`FROM : ${from.iChip}, TO : ${to.iChip}`);
+
+            if ( from.iCash >= cAmount || from.iClass == IAgent.EAgent.eHQ)
+            {
+                const iBeforeChipTo = parseInt(to.iChip);
+                const iAfterChipTo = iBeforeChipTo + cAmount;
+                await to.update({iChip:iAfterChipTo});
+
+                const iBeforeChipFrom = parseInt(from.iChip);
+                const iAfterChipFrom = iBeforeChipFrom - cAmount;
+                if ( from.iClass != IAgent.EAgent.eHQ ) {
+                    await from.update({iChip:iAfterChipFrom});
+                }
+
+                await db.Chips.create({
+                    eType:'GIVE',
+                    strTo:strTo,
+                    strFrom:strFrom,
+                    iAmount:cAmount,
+                    iBeforeAmountTo:iBeforeChipTo,
+                    iAfterAmountTo:iAfterChipTo,
+                    iBeforeAmountFrom:iBeforeChipFrom,
+                    iAfterAmountFrom:iAfterChipFrom,
+                    iClassTo: to.iClass,
+                    iClassFrom: from.iClass,
+                });
+                return  true;
+            }
+            else {
+                return false;
+            }
+        }
+    }
+    else if ( eType == 'TAKE' )
+    {
+        if ( to != null && from != null )
+        {
+            console.log(`FROM : ${from.iChip}, TO : ${to.iChip}`);
+
+            if ( to.iChip >= cAmount )
+            {
+                const iBeforeChipTo = parseInt(to.iChip);
+                const iAfterChipTo = iBeforeChipTo-cAmount;
+                await to.update({iChip:iAfterChipTo});
+
+                const iBeforeChipFrom = parseInt(from.iChip);
+                const iAfterChipFrom = iBeforeChipFrom + cAmount;
+                if ( from.iClass != IAgent.EAgent.eHQ ) {
+                    await from.update({iChip:iAfterChipFrom});
+                }
+
+                await db.Chips.create({
+                    eType:'TAKE',
+                    strTo:strTo,
+                    strFrom:strFrom,
+                    iAmount:iAmout,
+                    iBeforeAmountTo:iBeforeChipTo,
+                    iAfterAmountTo:iAfterChipTo,
+                    iBeforeAmountFrom:iBeforeChipFrom,
+                    iAfterAmountFrom:iAfterChipFrom,
+                    iClassTo: to.iClass,
+                    iClassFrom: from.iClass,
+                });
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+    }
+    else
+    {
+        return false;
+    }
+}
+
 router.post('/request_gt', isLoggedIn, async(req, res) => {
     console.log(req.body);
 
     if ( req.body.eType == 'GIVE' )
     {
+        let iResult = await RequestChip(req.body.strTo, req.body.strFrom, parseInt(req.body.iAmount), 'GIVE');
+        if (iResult === false)
+        {
+            res.send({result:'FAIL', reason:'NOTENOUGH'});
+            return;
+        }
+
         let to = await db.Users.findOne({where:{strNickname:req.body.strTo}});
         let from = await db.Users.findOne({where:{strNickname:req.body.strFrom}});
 
@@ -380,6 +474,13 @@ router.post('/request_gt', isLoggedIn, async(req, res) => {
     }
     else if ( req.body.eType == 'TAKE' )
     {
+        let iResult = await RequestChip(req.body.strTo, req.body.strFrom, parseInt(req.body.iAmount), 'TAKE');
+        if (iResult === false)
+        {
+            res.send({result:'FAIL', reason:'NOTENOUGH'});
+            return;
+        }
+
         let to = await db.Users.findOne({where:{strNickname:req.body.strTo}});
         let from = await db.Users.findOne({where:{strNickname:req.body.strFrom}});
 
@@ -598,6 +699,11 @@ router.post('/request_gtrecord', isLoggedIn, async(req, res) => {
     }
     if ( req.body.eType == 'TO')
     {
+        // 본사는 보낸내역 불필요
+        if (iClass == 3) {
+            res.send([]);
+            return;
+        }
         if ( req.body.strSearch == '' )
         {
             const list = await db.GTs.findAll({where:{

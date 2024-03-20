@@ -2,7 +2,7 @@ const moment = require('moment');
 
 module.exports = (sequelize, DataTypes) => {
 
-    const GTs = sequelize.define("GTs", {
+    const Chips = sequelize.define("Chips", {
         id: {
             allowNull: false,
             autoIncrement: true,
@@ -25,9 +25,8 @@ module.exports = (sequelize, DataTypes) => {
             type:DataTypes.STRING,
         },
         eType: {
-            type:DataTypes.ENUM('GIVE', 'TAKE', 'ROLLING', 'SETTLE', 'GETSETTLE'),
+            type:DataTypes.ENUM('GIVE', 'TAKE'),
         },
-        // 롤링전환은 롤링 금액으로, 기타는 캐쉬 금액
         iBeforeAmountTo: {
             type: DataTypes.DOUBLE(17,2),
         },
@@ -37,7 +36,6 @@ module.exports = (sequelize, DataTypes) => {
         iAmount: {
             type: DataTypes.DOUBLE(17,2),
         },
-        // 캐쉬값
         iAfterAmountTo: {
             type: DataTypes.DOUBLE(17,2),
         },
@@ -58,5 +56,5 @@ module.exports = (sequelize, DataTypes) => {
         },
     });
 
-    return GTs;
+    return Chips;
 };

@@ -207,6 +207,7 @@ app.post('/init', async (req, res) => {
     {
         await users[i].update({
             iCash:0,
+            iChip:0,
             iLoan:0,
             iRolling:0,
             iSettle:0,

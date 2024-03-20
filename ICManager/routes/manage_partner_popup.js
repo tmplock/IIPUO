@@ -498,6 +498,7 @@ router.post('/request_register', isLoggedIn, async(req, res) => {
             strGroupID:strGroupID,
             iParentID:req.body.iParentID,
             iCash:0,
+            iChip:0,
             iLoan:0,
             iRolling:0,
             iSettle:0,

@@ -67,6 +67,7 @@ module.exports = (sequelize, DataTypes) => {
         // 게임머니 : 충전시 충전, 차감은 실제 게임을 진행시 차감(윈로스 차감)
         iChip: {
             type: DataTypes.DOUBLE(17,4),
+            default: 0,
         },
         iLoan: {
             type: DataTypes.INTEGER,
@@ -76,7 +77,7 @@ module.exports = (sequelize, DataTypes) => {
         iRolling: {
             type: DataTypes.INTEGER,
             default: 0,
-            },
+        },
         // 죽장(시스템상으로 지급하는 금액, 죽장전환을 통해 캐시로 변경 가능)
         iSettle: {
             type: DataTypes.INTEGER,

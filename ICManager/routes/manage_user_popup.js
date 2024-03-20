@@ -323,7 +323,7 @@ router.post('/request_targetclassagentlist', isLoggedIn, async(req, res) => {
     }
 })
 
-let RequestChip = async (strTo, strFrom, iAmout, eType) => {
+let RequestChip = async (strTo, strFrom, iAmount, eType) => {
 
     let to = await db.Users.findOne({where:{strNickname:strTo}});
     let from = await db.Users.findOne({where:{strNickname:strFrom}});
@@ -336,13 +336,13 @@ let RequestChip = async (strTo, strFrom, iAmout, eType) => {
         {
             console.log(`FROM : ${from.iChip}, TO : ${to.iChip}`);
 
-            if ( from.iCash >= cAmount || from.iClass == IAgent.EAgent.eHQ)
+            if ( from.iChip >= cAmount || from.iClass == IAgent.EAgent.eHQ)
             {
-                const iBeforeChipTo = parseInt(to.iChip);
+                const iBeforeChipTo = parseInt(to.iChip ?? 0);
                 const iAfterChipTo = iBeforeChipTo + cAmount;
                 await to.update({iChip:iAfterChipTo});
 
-                const iBeforeChipFrom = parseInt(from.iChip);
+                const iBeforeChipFrom = parseInt(from.iChip ?? 0);
                 const iAfterChipFrom = iBeforeChipFrom - cAmount;
                 if ( from.iClass != IAgent.EAgent.eHQ ) {
                     await from.update({iChip:iAfterChipFrom});
@@ -375,11 +375,11 @@ let RequestChip = async (strTo, strFrom, iAmout, eType) => {
 
             if ( to.iChip >= cAmount )
             {
-                const iBeforeChipTo = parseInt(to.iChip);
+                const iBeforeChipTo = parseInt(to.iChip ?? 0);
                 const iAfterChipTo = iBeforeChipTo-cAmount;
                 await to.update({iChip:iAfterChipTo});
 
-                const iBeforeChipFrom = parseInt(from.iChip);
+                const iBeforeChipFrom = parseInt(from.iChip ?? 0);
                 const iAfterChipFrom = iBeforeChipFrom + cAmount;
                 if ( from.iClass != IAgent.EAgent.eHQ ) {
                     await from.update({iChip:iAfterChipFrom});
@@ -389,7 +389,7 @@ let RequestChip = async (strTo, strFrom, iAmout, eType) => {
                     eType:'TAKE',
                     strTo:strTo,
                     strFrom:strFrom,
-                    iAmount:iAmout,
+                    iAmount:cAmount,
                     iBeforeAmountTo:iBeforeChipTo,
                     iAfterAmountTo:iAfterChipTo,
                     iBeforeAmountFrom:iBeforeChipFrom,
@@ -415,12 +415,12 @@ router.post('/request_gt', isLoggedIn, async(req, res) => {
 
     if ( req.body.eType == 'GIVE' )
     {
-        let iResult = await RequestChip(req.body.strTo, req.body.strFrom, parseInt(req.body.iAmount), 'GIVE');
-        if (iResult === false)
-        {
-            res.send({result:'FAIL', reason:'NOTENOUGH'});
-            return;
-        }
+        // let iResult = await RequestChip(req.body.strTo, req.body.strFrom, parseInt(req.body.iAmount), 'GIVE');
+        // if (iResult === false)
+        // {
+        //     res.send({result:'FAIL', reason:'NOTENOUGH'});
+        //     return;
+        // }
 
         let to = await db.Users.findOne({where:{strNickname:req.body.strTo}});
         let from = await db.Users.findOne({where:{strNickname:req.body.strFrom}});
@@ -474,12 +474,12 @@ router.post('/request_gt', isLoggedIn, async(req, res) => {
     }
     else if ( req.body.eType == 'TAKE' )
     {
-        let iResult = await RequestChip(req.body.strTo, req.body.strFrom, parseInt(req.body.iAmount), 'TAKE');
-        if (iResult === false)
-        {
-            res.send({result:'FAIL', reason:'NOTENOUGH'});
-            return;
-        }
+        // let iResult = await RequestChip(req.body.strTo, req.body.strFrom, parseInt(req.body.iAmount), 'TAKE');
+        // if (iResult === false)
+        // {
+        //     res.send({result:'FAIL', reason:'NOTENOUGH'});
+        //     return;
+        // }
 
         let to = await db.Users.findOne({where:{strNickname:req.body.strTo}});
         let from = await db.Users.findOne({where:{strNickname:req.body.strFrom}});

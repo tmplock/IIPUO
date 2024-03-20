@@ -33,7 +33,7 @@ let CreateBet = async (strID, strNickname, strGroupID, iClass, iBalance, iGameCo
 exports.ProcessBet = async (strID, strNickname, strGroupID, iClass, iBalance, iGameCode, strVender, strGameID, strTableID, strRound, strUniqueID, strDetail, strResult, iTarget, iBet, strURL) => {
 
     console.log(`##### exports.ProcessBet : ${strID}`);
-    await db.Users.decrement({iCash:parseFloat(iBet)}, {where:{strID:strID}});
+    await db.Users.decrement({iCash:parseFloat(iBet), iChip:parseFloat(iBet)}, {where:{strID:strID}});
 
     let eType = 'BET';
     let eState = 'STANDBY';

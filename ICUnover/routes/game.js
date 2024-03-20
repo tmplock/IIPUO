@@ -227,7 +227,7 @@ router.post('/win', async (req, res) => {
     await IBettingManager.ProcessWin(user.strID, user.strNickname, user.strGroupID, user.iClass, user.iCash, req.body.iGameCode, req.body.strVender, req.body.strGameID,
         req.body.strTableID, req.body.strRoundID, req.body.strTransactionID, req.body.strDesc, '', 0, req.body.strAmount, cURL);
 
-    await db.Users.increment({iCash:parseFloat(req.body.strAmount)}, {where:{strID:user.strID}});
+    await db.Users.increment({iCash:parseFloat(req.body.strAmount), iChip:parseFloat(req.body.strAmount)}, {where:{strID:user.strID}});
 
     UpdateUserPageCash(req.body.strID, iCash);
 });

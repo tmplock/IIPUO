@@ -64,6 +64,11 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.DOUBLE(17,4),
             default: 0,
         },
+        // 게임머니
+        iChip: {
+            type: DataTypes.DOUBLE(17,4),
+            default: 0,
+        },
         iLoan: {
             type: DataTypes.INTEGER,
             default: 0,

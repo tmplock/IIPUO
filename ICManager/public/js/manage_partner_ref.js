@@ -786,11 +786,11 @@ function AddPartner(iRootClass, aObject, bDisableRolling, iPermission)
 
 	subtag += `
 		<td style="background-color:${color};"  class="parent_row_31">
-			<input type="text" style="width:50%;" name="bakara_over_31" id="fSettleBaccarat${aObject.strNickname}" required="no" message="바카라 죽장" value=${aObject.fSettleBaccarat} ${tagoption} disabled>%
+			<input type="text" style="width:50%;" name="bakara_over_31" id="fSettleBaccarat${aObject.strNickname}" required="no" message="바카라 죽장" value=${aObject.fSettleBaccarat ?? 0} ${tagoption} disabled>%
 		</td>
 	
 		<td style="background-color:${color};"  class="parent_row_31">
-			<input type="text" style="width:50%;" name="bakara_over_31" id="fSettleSlot${aObject.strNickname}" required="no" message="슬롯 죽장" value=${aObject.fSettleSlot} ${tagoption} disabled>%
+			<input type="text" style="width:50%;" name="bakara_over_31" id="fSettleSlot${aObject.strNickname}" required="no" message="슬롯 죽장" value=${aObject.fSettleSlot ?? 0} ${tagoption} disabled>%
 		</td>
 	`;
 

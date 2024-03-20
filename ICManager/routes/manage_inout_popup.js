@@ -214,15 +214,16 @@ router.post('/request_adjustoutput', isLoggedIn, async (req, res) => {
     if ( null != target )
     {
         let iCash = target.iCash - parseInt(req.body.iAmount);
+        let iChip = target.iChip - parseInt(req.body.iAmount);
 
-        console.log(`AdjustOutput : ${iCash}`);
+        console.log(`AdjustOutput : ${iCash} / ${iChip}`);
 
         if ( iCash >= 0 ) {
-            await target.update({iCash:iCash});
+            await target.update({iCash:iCash, iChip:iChip});
 
             console.log(`Pre Calculated`);
 
-            ISocket.AlertCashByNickname(req.body.strNickname, iCash);
+            ISocket.AlertCashAndChipByNickname(req.body.strNickname, iCash, iChip);
 
             // user cash update
             let objectAxios = {strNickname:target.strNickname, iAmount:target.iCash};

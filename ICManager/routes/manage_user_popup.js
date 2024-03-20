@@ -415,12 +415,12 @@ router.post('/request_gt', isLoggedIn, async(req, res) => {
 
     if ( req.body.eType == 'GIVE' )
     {
-        // let iResult = await RequestChip(req.body.strTo, req.body.strFrom, parseInt(req.body.iAmount), 'GIVE');
-        // if (iResult === false)
-        // {
-        //     res.send({result:'FAIL', reason:'NOTENOUGH'});
-        //     return;
-        // }
+        let iResult = await RequestChip(req.body.strTo, req.body.strFrom, parseInt(req.body.iAmount), 'GIVE');
+        if (iResult === false)
+        {
+            res.send({result:'FAIL', reason:'NOTENOUGH'});
+            return;
+        }
 
         let to = await db.Users.findOne({where:{strNickname:req.body.strTo}});
         let from = await db.Users.findOne({where:{strNickname:req.body.strFrom}});
@@ -474,12 +474,12 @@ router.post('/request_gt', isLoggedIn, async(req, res) => {
     }
     else if ( req.body.eType == 'TAKE' )
     {
-        // let iResult = await RequestChip(req.body.strTo, req.body.strFrom, parseInt(req.body.iAmount), 'TAKE');
-        // if (iResult === false)
-        // {
-        //     res.send({result:'FAIL', reason:'NOTENOUGH'});
-        //     return;
-        // }
+        let iResult = await RequestChip(req.body.strTo, req.body.strFrom, parseInt(req.body.iAmount), 'TAKE');
+        if (iResult === false)
+        {
+            res.send({result:'FAIL', reason:'NOTENOUGH'});
+            return;
+        }
 
         let to = await db.Users.findOne({where:{strNickname:req.body.strTo}});
         let from = await db.Users.findOne({where:{strNickname:req.body.strFrom}});

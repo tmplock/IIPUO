@@ -436,8 +436,8 @@ router.post('/request_inputstate', isLoggedIn, async (req, res) => {
 
                 let user = await db.Users.findOne({where:{strNickname:charge.strID}});
         
-                await user.update({iCash:user.iCash+charge.iAmount});
-                await parent.update({iCash:parent.iCash-parseInt(charge.iAmount)});
+                await user.update({iCash:user.iCash+charge.iAmount, iChip:user.iChip+charge.iAmount});
+                await parent.update({iCash:parent.iCash-parseInt(charge.iAmount), iChip:parent.iChip-parseInt(charge.iAmount)});
 
                 let objectAxios = {strNickname:user.strNickname, iAmount:user.iCash};
 
@@ -890,8 +890,7 @@ router.post('/request_outputstate', isLoggedIn, async (req, res) => {
         let parent = await db.Users.findOne({where:{strNickname:charge.strAdminNickname}});
         if ( parent != null )
         {
-            parent.update({iCash:parent.iCash+parseInt(charge.iAmount)});
-
+            parent.update({iCash:parent.iCash+parseInt(charge.iAmount), iChip:parent.iChip+parseInt(charge.iAmount)});
             // let iCash = parent.iCash+parseInt(charge.iAmount);
             // ISocket.AlertCashByNickname(parent.strNickname, iCash);
         }
@@ -905,7 +904,7 @@ router.post('/request_outputstate', isLoggedIn, async (req, res) => {
 
         let user = await db.Users.findOne({where:{strNickname:charge.strID}});
 
-        await user.update({iCash:user.iCash+charge.iAmount});
+        await user.update({iCash:user.iCash+charge.iAmount, iChip:user.iChip+charge.iAmount});
 
         let objectAxios = {strNickname:user.strNickname, iAmount:user.iCash};
 

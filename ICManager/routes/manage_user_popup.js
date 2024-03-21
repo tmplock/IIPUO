@@ -215,7 +215,7 @@ router.post('/changemoney', isLoggedIn, async(req, res) => {
     const user = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
     console.log(`######################################################################## ChangeMoney`);
     console.log(user);
-    let agent = {strNickname:user.strNickname, iClass:user.iClass, strGroupID:user.strGroupID, iCash:user.iCash, iChip:user.iChip, iSettle:user.iSettle, iRolling:user.iRolling, iSettleAcc:user.iSettleAcc,
+    let agent = {strNickname:user.strNickname, iClass:user.iClass, strGroupID:user.strGroupID, iCash:user.iCash, iSettle:user.iSettle, iRolling:user.iRolling, iSettleAcc:user.iSettleAcc,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission, iRootNickname:req.user.strNickname};
     res.render('manage_user/popup_changemoney', {iLayout:1, iHeaderFocus:0, agent:agent});
 
@@ -323,111 +323,11 @@ router.post('/request_targetclassagentlist', isLoggedIn, async(req, res) => {
     }
 })
 
-let RequestChip = async (strTo, strFrom, iAmount, eType) => {
-
-    let to = await db.Users.findOne({where:{strNickname:strTo}});
-    let from = await db.Users.findOne({where:{strNickname:strFrom}});
-
-    const cAmount = parseInt(iAmount ?? 0);
-
-    if ( eType == 'GIVE' || eType == 'ROLLING' || eType == 'SETTLE' )
-    {
-        if ( to != null && from != null )
-        {
-            console.log(`FROM : ${from.iChip}, TO : ${to.iChip}`);
-
-            if ( from.iChip >= cAmount || from.iClass == IAgent.EAgent.eHQ)
-            {
-                const iBeforeChipTo = parseInt(to.iChip ?? 0);
-                const iAfterChipTo = iBeforeChipTo + cAmount;
-                await to.update({iChip:iAfterChipTo});
-
-                const iBeforeChipFrom = parseInt(from.iChip ?? 0);
-                const iAfterChipFrom = iBeforeChipFrom - cAmount;
-                if ( from.iClass != IAgent.EAgent.eHQ ) {
-                    await from.update({iChip:iAfterChipFrom});
-                }
-
-                await db.Chips.create({
-                    eType:eType,
-                    strTo:strTo,
-                    strFrom:strFrom,
-                    iAmount:cAmount,
-                    iBeforeAmountTo:iBeforeChipTo,
-                    iAfterAmountTo:iAfterChipTo,
-                    iBeforeAmountFrom:iBeforeChipFrom,
-                    iAfterAmountFrom:iAfterChipFrom,
-                    iClassTo: to.iClass,
-                    iClassFrom: from.iClass,
-                });
-                return  true;
-            }
-            else {
-                return false;
-            }
-        }
-    }
-    else if ( eType == 'TAKE' )
-    {
-        if ( to != null && from != null )
-        {
-            console.log(`FROM : ${from.iChip}, TO : ${to.iChip}`);
-
-            // 출금 금액이 출금자의 보유 칩보다 클경우 보유하고 있는 칩에 대해서만 처리
-            let amount = cAmount;
-            if ( to.iChip < amount) {
-                amount = to.iChip;
-            }
-
-            if ( to.iChip >= amount )
-            {
-                const iBeforeChipTo = parseInt(to.iChip ?? 0);
-                const iAfterChipTo = iBeforeChipTo-amount;
-                await to.update({iChip:iAfterChipTo});
-
-                const iBeforeChipFrom = parseInt(from.iChip ?? 0);
-                const iAfterChipFrom = iBeforeChipFrom + amount;
-                if ( from.iClass != IAgent.EAgent.eHQ ) {
-                    await from.update({iChip:iAfterChipFrom});
-                }
-
-                await db.Chips.create({
-                    eType:'TAKE',
-                    strTo:strTo,
-                    strFrom:strFrom,
-                    iAmount:amount,
-                    iBeforeAmountTo:iBeforeChipTo,
-                    iAfterAmountTo:iAfterChipTo,
-                    iBeforeAmountFrom:iBeforeChipFrom,
-                    iAfterAmountFrom:iAfterChipFrom,
-                    iClassTo: to.iClass,
-                    iClassFrom: from.iClass,
-                });
-                return true;
-            }
-            else {
-                return false;
-            }
-        }
-    }
-    else
-    {
-        return false;
-    }
-}
-
 router.post('/request_gt', isLoggedIn, async(req, res) => {
     console.log(req.body);
 
     if ( req.body.eType == 'GIVE' )
     {
-        let iResult = await RequestChip(req.body.strTo, req.body.strFrom, parseInt(req.body.iAmount), 'GIVE');
-        if (iResult === false)
-        {
-            res.send({result:'FAIL', reason:'NOTENOUGH'});
-            return;
-        }
-
         let to = await db.Users.findOne({where:{strNickname:req.body.strTo}});
         let from = await db.Users.findOne({where:{strNickname:req.body.strFrom}});
 
@@ -480,13 +380,6 @@ router.post('/request_gt', isLoggedIn, async(req, res) => {
     }
     else if ( req.body.eType == 'TAKE' )
     {
-        let iResult = await RequestChip(req.body.strTo, req.body.strFrom, parseInt(req.body.iAmount), 'TAKE');
-        if (iResult === false)
-        {
-            res.send({result:'FAIL', reason:'NOTENOUGH'});
-            return;
-        }
-
         let to = await db.Users.findOne({where:{strNickname:req.body.strTo}});
         let from = await db.Users.findOne({where:{strNickname:req.body.strFrom}});
 
@@ -543,13 +436,6 @@ router.post('/request_gt', isLoggedIn, async(req, res) => {
     }
     else if ( req.body.eType == 'ROLLING')
     {
-        let iResult = await RequestChip(req.body.strTo, req.body.strFrom, parseInt(req.body.iAmount), 'ROLLING');
-        if (iResult === false)
-        {
-            res.send({result:'FAIL', reason:'NOTENOUGH'});
-            return;
-        }
-
         let to = await db.Users.findOne({where:{strNickname:req.body.strTo}});
         let strAdminNickname = (await IAgent.GetParentList(to.strGroupID, to.iClass)).strAdmin;
         let from = await db.Users.findOne({where:{strNickname:strAdminNickname}});
@@ -576,7 +462,7 @@ router.post('/request_gt', isLoggedIn, async(req, res) => {
 
             const iBeforeCashFrom = parseInt(from.iCash);
             const iAfterCashFrom = iBeforeCashFrom - cAmount;
-            await from.update({iCash:iAfterCashFrom});
+            await from.update({iCash:iAfterCashFrom, iRolling: from.iRolling + cAmount});
 
             // 롤링전환시에는 전환전 금액에 전환전 롤링값을 표시
             await db.GTs.create({
@@ -615,13 +501,6 @@ router.post('/request_gt', isLoggedIn, async(req, res) => {
     }
     else if ( req.body.eType == 'SETTLE' )
     {
-        let iResult = await RequestChip(req.body.strTo, req.body.strFrom, parseInt(req.body.iAmount), 'SETTLE');
-        if (iResult === false)
-        {
-            res.send({result:'FAIL', reason:'NOTENOUGH'});
-            return;
-        }
-
         let to = await db.Users.findOne({where:{strNickname:req.body.strTo}});
         let strAdminNickname = (await IAgent.GetParentList(to.strGroupID, to.iClass)).strAdmin;
         let from = await db.Users.findOne({where:{strNickname:strAdminNickname}});
@@ -662,7 +541,7 @@ router.post('/request_gt', isLoggedIn, async(req, res) => {
 
             const iBeforeCashFrom = parseInt(from.iCash);
             const iAfterCashFrom = iBeforeCashFrom - cAmount;
-            await from.update({iCash:iAfterCashFrom});
+            await from.update({iCash:iAfterCashFrom, iSettle: from.iSettle + cAmount});
 
             // 죽장전환시에는 전환전 금액에 전환전 죽장값을 표시
             await db.GTs.create({

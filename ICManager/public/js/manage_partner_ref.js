@@ -804,8 +804,8 @@ function AddPartner(iRootClass, aObject, bDisableRolling, iPermission)
 	else
 		subtag += `<td style="background-color:${color};"  class="parent_row_31"></td>`;
 
-	if ( aObject.iTotalMoney != 0 || aObject.iTotalChip != 0)
-		subtag += `<td style="background-color:${color};"  class="parent_row_31">${parseInt(aObject.iTotalMoney).toLocaleString()}<br>(${GetNumberSign(parseInt(aObject.iTotalChip), '0')})</td>`;
+	if ( aObject.iTotalMoney != 0 )
+		subtag += `<td style="background-color:${color};"  class="parent_row_31">${parseInt(aObject.iTotalMoney).toLocaleString()}</td>`;
 	else
 		subtag += `<td style="background-color:${color};"  class="parent_row_31"></td>`;
 
@@ -854,7 +854,7 @@ function AddPartner(iRootClass, aObject, bDisableRolling, iPermission)
 	}
 
 	if ( aObject.iMyMoney != 0 )
-		subtag += `<td style="background-color:${color};"  class="parent_row_31">${GetNumber(aObject.iMyMoney)}<br>(${GetNumberSign(aObject.iMyChip, '0')})</td>`;
+		subtag += `<td style="background-color:${color};"  class="parent_row_31">${GetNumber(aObject.iMyMoney)}</td>`;
 	else
 		subtag += `<td style="background-color:${color};"  class="parent_row_31"></td>`;
 
@@ -971,7 +971,6 @@ let SetAdminList = (iRootClass, strParentTag, aObject, iPermission) => {
 	let iInput = 0,
 		iOutput = 0,
 		iTotalMoney = 0,
-		iTotalChip = 0,
 		iRollingMoney = 0,
 		iTotal = 0,
 		iMyRollingMoney = 0,
@@ -995,7 +994,6 @@ let SetAdminList = (iRootClass, strParentTag, aObject, iPermission) => {
 		iInput += parseInt(aObject[i].iInput);
 		iOutput += parseInt(aObject[i].iOutput);
 		iTotalMoney += parseInt(aObject[i].iTotalMoney);
-		iTotalChip += parseInt(aObject[i].iTotalChip);
 		iRollingMoney += parseInt(aObject[i].iRollingMoney);
 		iTotal += parseInt(aObject[i].iTotal);
 
@@ -1095,7 +1093,7 @@ let AddAdmin = (iRootClass, aObject, iPermission) => {
 
 	subtag += `<td style="background-color:${color};"  class="parent_row_31">${GetNumber(aObject.iInput)}</td>`;
 	subtag += `<td style="background-color:${color};"  class="parent_row_31">${GetNumber(aObject.iOutput)}</td>`;
-	subtag += `<td style="background-color:${color};"  class="parent_row_31">${GetNumber(aObject.iTotalMoney)}<br>(${GetNumberSign(aObject.iTotalChip, '0')})</td>`;
+	subtag += `<td style="background-color:${color};"  class="parent_row_31">${GetNumber(aObject.iTotalMoney)}</td>`;
 	subtag += `<td style="background-color:${color};color:${GetColor(iWinLose)}"  class="parent_row_31">${GetNumber(iWinLose)}</td>`;
 	subtag += `<td style="background-color:${color};color:red;"  class="parent_row_31">${GetNumber(iRolling)}</td>`;
 	subtag += `<td style="background-color:${color};color:${GetColor(iTotal)}"  class="parent_row_31">${GetNumber(iTotal)}</td>`;
@@ -1104,7 +1102,7 @@ let AddAdmin = (iRootClass, aObject, iPermission) => {
 
 	subtag += `<td style="background-color:${color};color:red;"  class="parent_row_31">${GetNumber(aObject.iCurrentRollingTotal)}</td>`;
 	subtag += `<td style="background-color:${color};color:${GetInversedColor(aObject.iCurrentSettleTotal)};"  class="parent_row_31">${GetSettleNumber(aObject.iCurrentSettleTotal)}</td>`;
-	subtag += `<td style="background-color:${color};"  class="parent_row_31">${GetNumber(aObject.iMyMoney)}<br>(${GetNumberSign(aObject.iMyChip, '0')})</td>`;
+	subtag += `<td style="background-color:${color};"  class="parent_row_31">${GetNumber(aObject.iMyMoney)}</td>`;
 
 	if (iPermission != 100) {
 		if ( aObject.eState == 'NORMAL' )
@@ -1168,7 +1166,6 @@ function SetPartnerList(iRootClass, strParentTag, aObject, bDisableRolling, iPer
 	let iInput = 0,
 		iOutput = 0,
 		iTotalMoney = 0,
-		iTotalChip = 0,
 		iRollingMoney = 0,
 		iTotal = 0,
 		iMyRollingMoney = 0,
@@ -1192,7 +1189,6 @@ function SetPartnerList(iRootClass, strParentTag, aObject, bDisableRolling, iPer
 		iInput += parseInt(aObject[i].iInput);
 		iOutput += parseInt(aObject[i].iOutput);
 		iTotalMoney += parseInt(aObject[i].iTotalMoney);
-		iTotalChip += parseInt(aObject[i].iTotalChip);
 		iRollingMoney += (parseInt(aObject[i].iRollingMoney));
 		iTotal += parseInt(aObject[i].iTotal);
 		iMyRollingMoney += (parseInt(aObject[i].iMyRollingMoney)-parseInt(aObject[i].iRollingTranslate));
@@ -1238,7 +1234,6 @@ function SetPartnerList(iRootClass, strParentTag, aObject, bDisableRolling, iPer
 		iInput = 0,
 			iOutput = 0,
 			iTotalMoney = 0,
-			iTotalChip = 0,
 			iRollingMoney = 0,
 			iTotal = 0,
 			iMyRollingMoney = 0,
@@ -1259,7 +1254,6 @@ function SetPartnerList(iRootClass, strParentTag, aObject, bDisableRolling, iPer
 		iInput += parseInt(aTotalObject[i].iInput);
 		iOutput += parseInt(aTotalObject[i].iOutput);
 		iTotalMoney += parseInt(aTotalObject[i].iTotalMoney);
-		iTotalChip += parseInt(aTotalObject[i].iTotalChip);
 		iRollingMoney += (parseInt(aTotalObject[i].iRollingMoney));
 		iTotal += parseInt(aTotalObject[i].iTotal);
 		iMyRollingMoney += (parseInt(aTotalObject[i].iMyRollingMoney)-parseInt(aTotalObject[i].iRollingTranslate));
@@ -1287,7 +1281,7 @@ function SetPartnerList(iRootClass, strParentTag, aObject, bDisableRolling, iPer
 		<td colspan="11">${strTotal}</td>
 		<td>${GetNumber(iInput)}</td>
 		<td>${GetNumber(iOutput)}</td>
-		<td>${GetNumber(iTotalMoney)}<br>${GetNumberSign(iTotalChip, '0')}</td>
+		<td>${GetNumber(iTotalMoney)}</td>
 		${winloseTag}
 		<td><font color="${GetClassSettleColor(iRollingMoney, iRootClass)}">${GetNumber(iRollingMoney)}</font></td>
 		<td><font color="${GetClassColor(iTotal, iRootClass)}">${GetNumber(iTotal)}</font></td>

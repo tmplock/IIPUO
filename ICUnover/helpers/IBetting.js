@@ -745,7 +745,7 @@ exports.ProcessCreate = async (strAddress, iGameCode, strVender, strRound, strTa
         await db.Users.increment({iRolling:iRollingPAdmin}, {where:{strID:odds.strPAdminID}});
     }
     console.log('6업데이트##################################################');
-    await db.Users.decrement({iCash:parseFloat(iChips), iChip:parseFloat(iChips)}, {where:{strID:strID}});
+    await db.Users.decrement({iCash:parseFloat(iChips)}, {where:{strID:strID}});
 }
 
 exports.ProcessCreatePBWin = async (strAddress, iGameCode, strVender, strRound, strTableID, iTarget, iWin, iPreviousCash, iAfterCash, iTransactionID, strID, strGroupID, iClass, strNickname) => {
@@ -791,7 +791,7 @@ exports.ProcessCreatePBWin = async (strAddress, iGameCode, strVender, strRound, 
     }
     console.log('1업데이트##################################################');
     console.log(`${iWin}`);
-    await db.Users.increment({iCash:parseFloat(iWin), iChip:parseFloat(iWin)}, {where:{strID:strID}});
+    await db.Users.increment({iCash:parseFloat(iWin)}, {where:{strID:strID}});
 }
 
 exports.ProcessWinFromTransactionID = async (strAddress, iGameCode, strVender, strRound, strTableID, iTarget, iWin, iPreviousCash, iAfterCash, iTransactionID, strID, strGroupID, iClass, strNickname) => {
@@ -830,7 +830,7 @@ exports.ProcessWinFromTransactionID = async (strAddress, iGameCode, strVender, s
         );
     console.log('2업데이트##################################################');
     console.log(`${iWin}`);
-    await db.Users.increment({iCash:parseFloat(iWin), iChip:parseFloat(iWin)}, {where:{strID:strID}});
+    await db.Users.increment({iCash:parseFloat(iWin)}, {where:{strID:strID}});
 }
 
 // let ProcessUpdateWin = async (strAddress, iTransactionID, iWin, iGameCode, iTarget, strID) => {
@@ -868,14 +868,14 @@ exports.ProcessCancel = async (strAddress, iTransactionID, iGameCode, strID) => 
         {
             //user.iCash -= parseInt(listBets[i].iWin);
             console.log('5업데이트##################################################');
-            await db.Users.decrement({iCash:parseFloat(listBets[i].iWin), iChip:parseFloat(listBets[i].iWin)}, {where:{strID:listBets[i].strID}});
+            await db.Users.decrement({iCash:parseFloat(listBets[i].iWin)}, {where:{strID:listBets[i].strID}});
         }
         else
         {
             //user.iCash += parseInt(listBets[i].iBetting);
             console.log('3업데이트##################################################');
             console.log(`${listBets[i].iBetting}`);
-            await db.Users.increment({iCash:parseFloat(listBets[i].iBetting), iChip:parseFloat(listBets[i].iBetting)}, {where:{strID:listBets[i].strID}});
+            await db.Users.increment({iCash:parseFloat(listBets[i].iBetting)}, {where:{strID:listBets[i].strID}});
             await RollbackRolling(listBets[i], listBets[i].strID, listBets[i].iClass);
         }
     }

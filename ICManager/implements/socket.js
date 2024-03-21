@@ -108,22 +108,6 @@ let inline_AlertCashByNickname = (strNickname, iAmount) => {
 }
 exports.AlertCashByNickname = inline_AlertCashByNickname;
 
-let inline_AlertCashAndChipByNickname = (strNickname, iAmount, iChip) => {
-
-    console.log(`##### inline_AlertCashByNickname : `);
-
-    for ( let i in global.socket_list )
-    {
-        console.log(`##### AlertCashByNickname : ${strNickname}, Amount : ${iAmount}, socket_name : ${global.socket_list[i].strNickname}`);
-
-        if ( global.socket_list[i].strNickname == strNickname )
-        {
-            global.socket_list[i].emit('alert_cash_chip', iAmount, iChip);
-        }
-    }
-}
-exports.AlertCashAndChipByNickname = inline_AlertCashAndChipByNickname;
-
 let inline_RealtimeBetting = (iRoomNo, iChips, iTarget, strUserGroupID) => {
 
     for ( let i in global.socket_list )

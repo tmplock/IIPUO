@@ -356,13 +356,6 @@ let AlertCash = (iCash) => {
 
 }
 
-let AlertCashAndChip = (iCash, iChip) => {
-	console.log(`Alert ${iCash} ${iChip}`);
-
-	$('#MainLayoutMyCash').text(iCash.toLocaleString());
-	$('#MainLayoutMyChip').text(iChip.toLocaleString());
-}
-
 //let socket = io();
 
 socket.on('connect', ()=> {
@@ -423,13 +416,6 @@ socket.on('alert_cash', (iAmount) => {
 		AlertCash(iAmount);
 	}
 });
-
-socket.on('alert_cash_chip', (iAmount, iChip) => {
-	if ( user.iPermission != 100 ) {
-		AlertCashAndChip(iAmount, iChip);
-	}
-});
-
 
 socket.on('realtime_user', (numUser) => {
 	if (user.iClass <= 3) {

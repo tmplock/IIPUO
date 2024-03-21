@@ -406,7 +406,7 @@ router.post('/request_exchange', async (req, res) => {
         });
     
         const cAdminCash = parseInt(admin.iCash)-cAmount;
-        await admin.update({iCash:cAdminCash});        
+        await admin.update({iCash:cAdminCash, iRolling:parseInt(admin.iRolling)+cAmount});
     
         res.send({result:'OK'});
     }

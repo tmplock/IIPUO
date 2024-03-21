@@ -580,11 +580,13 @@
                         <% } %>
                     <% } %>
                     <li>
-                        <p style="margin-top:-15px; margin-bottom:-16px; font-weight:medium; color:rgb(255, 251, 0);font-size:17px;font-family:'Spoqa Han Sans Neo', 'sans-serif';"><%=__('MyCash')%> <span style="color:white;" id="MainLayoutMyCash"><%=parseInt(user.iCash).toLocaleString()%></span></p><br>
+                        <p style="margin-top:-15px; margin-bottom:-16px; font-weight:medium; color:rgb(255, 251, 0);font-size:17px;font-family:'Spoqa Han Sans Neo', 'sans-serif';"><%=__('MyCash')%><br><span style="color:white;" id="MainLayoutMyCash"><%=parseInt(user.iCash).toLocaleString()%></span></p>
                     </li>
-                    <li>
-                        <a href="#" id="manage_chip" onclick=""><p style="margin-top:-15px; margin-bottom:-16px; font-weight:medium; color:rgb(255, 251, 0);font-size:17px;font-family:'Spoqa Han Sans Neo', 'sans-serif';">게임머니 <span style="color:white;" id="MainLayoutMyChip"><%=parseInt(user.iChip ?? 0).toLocaleString()%></span></p></a>
-                    </li>
+                    <% if (parseInt(user.iClass) == 3) { %>
+                        <li>
+                            <p style="margin-top:-15px; margin-bottom:-16px; color:rgb(255, 251, 0);font-size:17px;">롤링/죽장전환<span style="color:white;" id="MainLayoutMyChip"><br><%=parseInt(user.iRolling ?? 0).toLocaleString()%>/<%=parseInt(user.iSettle ?? 0).toLocaleString()%></span></p>
+                        </li>
+                    <% } %>
                 </ul>
             </nav>
         </header>

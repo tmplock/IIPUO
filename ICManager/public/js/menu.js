@@ -179,3 +179,19 @@ $(document).on('click', "#manage_share", (event) => {
     $form.append(idx).append(page).append(category);
     $form.submit();
 })
+
+$(document).on('click', "#manage_chip", (event) => {
+    window.open('', 'popupChk_chip', 'width=1600, height=720, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
+    let $form = $('<form></form>');
+    $form.attr('action', '/manage_chip/popup_chip');
+    $form.attr('method', 'post');
+    $form.attr('target', 'popupChk_chip');
+    $form.appendTo('body');
+
+    let idx = $(`<input type="hidden" value="${user.strNickname}" name="strNickname">`);
+    let page = $(`<input type="hidden" value="${user.strGroupID}" name="strGroupID">`);
+    let category = $(`<input type="hidden" value=${parseInt(user.iClass)} name="iClass">`);
+
+    $form.append(idx).append(page).append(category);
+    $form.submit();
+})

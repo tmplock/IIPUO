@@ -1,8 +1,9 @@
-function getPagination(limit, totalCount, currentPage) {
+function getPagination(limit, totalCount, currentPage, key) {
     console.log(`getPagination=limit:${limit} totalCount:${totalCount} currentPage:${currentPage}`);
     let tag = ``;
     let iLimit = parseInt(limit);
     let totalPage = totalCount > iLimit ? parseInt(Math.ceil(totalCount / iLimit)) : 0;
+    let hasKey = key ?? '';
 
     let startPage = 1;
     if (currentPage > 10) {
@@ -16,22 +17,40 @@ function getPagination(limit, totalCount, currentPage) {
 
     // 이전버튼
     if (totalPage > 10 && startPage > 1) {
-        tag = `<a href="javascript:OnClickPage(${startPage-1});" class="prev"></a>`;
+        if (hasKey == '') {
+            tag = `<a href="javascript:OnClickPage(${startPage-1});" class="prev"></a>`;
+        } else {
+            tag = `<a href="javascript:OnClickPage(${startPage-1}, ${key});" class="prev"></a>`;
+        }
     }
 
     for (let i = startPage; i<=endPage; i++) {
         let subTag = ``;
-        if (i === currentPage) {
-            subTag =`<a href="javascript:OnClickPage(${i});" class="on">${i}</a>`;
+        if (hasKey == '') {
+            if (i === currentPage) {
+                subTag =`<a href="javascript:OnClickPage(${i});" class="on">${i}</a>`;
+            } else {
+                subTag = `<a href="javascript:OnClickPage(${i});">${i}</a>`;
+            }
         } else {
-            subTag = `<a href="javascript:OnClickPage(${i});">${i}</a>`;
+            if (i === currentPage) {
+                subTag =`<a href="javascript:OnClickPage(${i}, ${key});" class="on">${i}</a>`;
+            } else {
+                subTag = `<a href="javascript:OnClickPage(${i}, ${key});">${i}</a>`;
+            }
         }
+
         tag = `${tag}${subTag}`;
     }
 
     if (startPage + 10 < totalPage) {
-        let subTag = `<a href="javascript:OnClickPage(${endPage});" class="next"></a>`;
-        tag = `${tag}${subTag}`;
+        if (hasKey == '') {
+            let subTag = `<a href="javascript:OnClickPage(${endPage});" class="next"></a>`;
+            tag = `${tag}${subTag}`;
+        } else {
+            let subTag = `<a href="javascript:OnClickPage(${endPage}, ${key});" class="next"></a>`;
+            tag = `${tag}${subTag}`;
+        }
     }
 
     return tag;

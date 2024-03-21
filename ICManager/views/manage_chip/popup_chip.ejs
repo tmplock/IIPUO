@@ -22,87 +22,8 @@
 
 <body style="font-family:'Spoqa Han Sans Neo';">
 	<div class="content" style="position:relative; padding:0 10px 0 10px;">
-		
-		<div class="list_tit">
-			<h3 style="font-size:21px; color:yellow;font-weight:bold;margin-top:10px;">
-				<% if ( agent.iClass == 1 ) { %>
-					<span style="margin-left:10px;">[<%=__('HQ')%>]<span style="color:#f56868;"><%=agent.strNickname%></span></span>
-				<% } else if ( agent.iClass == 2 ) { %>
-					<span style="margin-left:10px;">[<%=__('ViceHQ')%>]<span style="color:#f56868;"><%=agent.strNickname%></span></span>
-				<% } else if ( agent.iClass == 3 ) { %>
-					<span style="margin-left:10px;">[<%=__('Admin')%>]<span style="color:#f56868;"><%=agent.strNickname%></span></span>
-				<% } else if ( agent.iClass == 4 ) { %>
-					<span style="margin-left:10px;">[<%=__('ProAdmin')%>]<span style="color:#f56868;"><%=agent.strNickname%></span></span>
-				<% } else if ( agent.iClass == 5 ) { %>
-					<span style="margin-left:10px;">[<%=__('ViceAdmin')%>]<span style="color:#f56868;"><%=agent.strNickname%></span></span>
-				<% } else if ( agent.iClass == 6 ) { %>
-					<span style="margin-left:10px;">[<%=__('Agent')%>]<span style="color:#f56868;"><%=agent.strNickname%></span></span>
-				<% } else if ( agent.iClass == 7 ) { %>
-					<span style="margin-left:10px;">[<%=__('Shop')%>]<span style="color:#f56868;"><%=agent.strNickname%></span></span>
-				<% } %>
-				<span style="float:right; margin-left:10px;"><%=__('Cash')%> : <span id="cash" style="color:#ffffff;"></span></span>
-			</h3>
-		</div>
 
 		<div class="write">
-
-			<% if ( agent.iPermission != 100 ) { %>
-			<table style="font-size:15px;background-color:#092E13;">
-				<caption><%=__('Partner')%> <%=__('Modify')%></caption>
-				<colgroup>
-					<col style="width:20%">
-					<col style="width:30%">
-					<col style="width:20%">
-					<col style="width:30%">
-				</colgroup>
-				
-				<tr style="background-color:#a4aaa7;"><td colspan="4" style="height:15px;background-color:#d8c8b2;"></td></tr>
-				
-				<tr style="background-color:#a4aaa7;">
-					<th scope="row" style="font-size:18px;color:blue;" rowspan="3"><%=__('Cash')%> <%=__('Modify')%></th>
-					<td colspan="3">
-						<%=__('Give')%><%=__('Token')%> : 
-						<input type="radio" name="mile_sect" required="yes" message="지급구분" value="A" id="mile_sect_cash_1" onclick="OnClickGTType('GIVE');" checked> 
-						<label for="mile_sect_cash_1" style="color:blue;font-size:15px;"><%=__('Give')%></label>  &nbsp;&nbsp;&nbsp;&nbsp; 
-						<input type="radio" name="mile_sect" required="yes" message="지급구분" value="M" id="mile_sect_cash_2" onclick="OnClickGTType('TAKE');"> 
-						<label for="mile_sect_cash_2" style="color:red;font-size:15px;"><%=__('Take')%></label> 
-					</td>
-				</tr>
-
-				<tr style="background-color:#a4aaa7;">
-					<td colspan="3">
-						<%=__('Give')%><%=__('Classification')%> : 
-						<% if ( agent.iClass == 1 ) { %>
-							<input type="radio" id="at_vicehq" name="pat_type" required="yes" message="지급분류" value="4" id="pat_type_1" onclick="OnClickAgentType('VHQ');"> 
-							<label style="color:black;font-size:15px;"><%=__('ViceHQ')%></label>  &nbsp;&nbsp;&nbsp;&nbsp; 
-						<% } if ( agent.iClass == 2 ) { %>
-							<input type="radio" id="at_admin" name="pat_type" required="yes" message="지급분류" value="4" id="pat_type_1" onclick="OnClickAgentType('ADMIN');"> 
-							<label style="color:black;font-size:15px;"><%=__('Admin')%></label>  &nbsp;&nbsp;&nbsp;&nbsp; 
-						<% } if ( agent.iClass <= 4 && agent.iClass != 2 && agent.iClass != 1) {%>
-							<input type="radio" id="at_vadmin" name="pat_type" required="yes" message="지급분류" value="4" id="pat_type_1" onclick="OnClickAgentType('VADMIN');"> 
-							<label style="color:black;font-size:15px;"><%=__('ViceAdmin')%></label>  &nbsp;&nbsp;&nbsp;&nbsp; 
-						<% } if ( agent.iClass <= 5 && agent.iClass != 2 && agent.iClass != 1) {%>
-							<input type="radio" id="at_agent" name="pat_type" required="yes" message="지급분류" value="4" id="pat_type_1" onclick="OnClickAgentType('AGENT');"> 
-							<label style="color:black;font-size:15px;"><%=__('Agent')%></label>  &nbsp;&nbsp;&nbsp;&nbsp; 
-						<% } if ( agent.iClass <= 6 && agent.iClass != 2 && agent.iClass != 1) { %> 
-							<input type="radio" id="at_shop" required="yes" message="지급분류" value="7" id="pat_type_2" onclick="OnClickAgentType('SHOP');"> 
-							<label style="color:black;font-size:15px;"><%=__('Shop')%></label> &nbsp;&nbsp;&nbsp;&nbsp; 
-						<% } if ( agent.iClass <= 7 && agent.iClass != 2 && agent.iClass != 1) {%>
-							<input type="radio" id="at_user" required="yes" message="지급분류" value="11" id="pat_type_3" onclick="OnClickAgentType('USER');"> 
-							<label style="color:black;font-size:15px;"><%=__('User')%></label>
-						<% } %>
-						<!-- <div id="patidx_cash_area" style="display:none;padding-top:10px;padding-left:10px;"></div> -->
-						<select style="margin-left:100px; width:100px;" id="agent_list">
-						</select>
-					</td>
-				</tr>
-			
-				<tr style="background-color:#a4aaa7;">
-					<td colspan="4" style="height:15px;background-color:#d8c8b2;"></td>
-				</tr>
-			</table>
-			<%}%>
-
 			<div style="background-color:#ffffff;text-align:right;padding-right:5px;padding-top:10px;padding-bottom:10px;" colspan="19">
 				<input style="width:100px;" type="text" id="datepicker1" class="datepicker"/>~
 				<input style="width:100px;" type="text" id="datepicker2" class="datepicker" />
@@ -139,7 +60,7 @@
 										</tr>
 									</tbody>
 								</table>
-								<div class="pagination mt0" id="pagination">
+								<div class="pagination mt0" id="paginationTO">
 								</div>
 							</div>
 						</td>
@@ -166,9 +87,8 @@
 										</tr>
 									</tbody>
 								</table>
-								<div class="pagination mt0">
+								<div class="pagination mt0" id="paginationFROM">
 								</div>
-	
 							</div>
 						</td>
 					</tr>
@@ -195,13 +115,13 @@
 		const strAlertErrorNotEnoughMoney = '<%=__("AlertErrorNotEnoughMoney")%>';
 		const strAlertComplete = '<%=__("AlertComplete")%>';
 
+		let iCurrentPageTO = 1;
+		let iCurrentPageFROM = 1;
+		let iLimit = 20;
+
 		$(document).ready(() => {
 			DatePicker();
-			if (parseInt(agent.iClass) == 1) {
-				$('#datepicker1').val(GetHalfYearStartDate());
-			} else {
-				$('#datepicker1').val(GetCurrentDate());
-			}
+			$('#datepicker1').val(GetCurrentDateBefore(30));
 			$('#datepicker2').val(GetCurrentDate());
 
 			OnClickSearch();
@@ -302,19 +222,42 @@
 				type:'post',
 				url: "/manage_chip/request_gtrecord",
 				context: document.body,
-				data:{strNickname:agent.strNickname, eType:eType, dateStart:dateStart, dateEnd:dateEnd, strSearch:strSearch, iClass: agent.iClass},
+				data:{strNickname:agent.strNickname, eType:eType, dateStart:dateStart, dateEnd:dateEnd, strSearch:strSearch, iClass: agent.iClass,
+				iLimit:iLimit, iPage:GetCurrentPage(eType)},
 
-				success: (list) => {
-					console.log(list);
-					SetChipList(eType, list);
+				success: (obj) => {
+					console.log(obj);
+					SetChipList(eType, obj.list);
 
-					$('#pagination').empty();
-					$('#pagination').append(getPagination(iLimit, obj.totalCount, iCurrentPage));
+					$(`#pagination${eType}`).empty();
+					$(`#pagination${eType}`).append(getPagination(iLimit, obj.totalCount, GetCurrentPage(eType), eType));
 				},
 				error:function(request,status,error){
 					alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
 				}
 			});
+		}
+
+		let OnClickPage = (iPage, eType) => {
+			if (iPage < 1) {
+				return;
+			}
+			if (eType == 'TO') {
+				iCurrentPageTO = iPage;
+				RequestList(iCurrentPageTO);
+			} else if (eType == 'FROM') {
+				iCurrentPageFROM = iPage;
+				RequestList(iCurrentPageFROM);
+			}
+		}
+
+		let GetCurrentPage = (eType) => {
+			if (eType == 'TO') {
+				return iCurrentPageTO;
+			} else if (eType == 'FROM') {
+				return iCurrentPageFROM;
+			}
+			return 1;
 		}
 
 		let GetGTType = (eType) => {

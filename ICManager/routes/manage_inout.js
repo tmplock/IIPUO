@@ -432,12 +432,20 @@ router.post('/request_inputstate', isLoggedIn, async (req, res) => {
         {
             if ( parent.iCash >= parseInt(charge.iAmount) )
             {
+                // Chip 체크 후 Chip 업데이트
+                let iResult = await RequestChip(charge.strID, charge.strAdminNickname, parseInt(charge.iAmount), 'GIVE');
+                if (iResult === false)
+                {
+                    res.send({result:'FAIL1', id:req.body.id, msg:'게임머니 부족'});
+                    return;
+                }
+
                 await charge.update({eState:"COMPLETE", completedAt:ITime.getCurrentDateFull(), strProcessNickname: req.user.strNickname, iProcessClass: req.user.iClass});
 
                 let user = await db.Users.findOne({where:{strNickname:charge.strID}});
         
-                await user.update({iCash:user.iCash+charge.iAmount, iChip:user.iChip+charge.iAmount});
-                await parent.update({iCash:parent.iCash-parseInt(charge.iAmount), iChip:parent.iChip-parseInt(charge.iAmount)});
+                await user.update({iCash:user.iCash+charge.iAmount});
+                await parent.update({iCash:parent.iCash-parseInt(charge.iAmount)});
 
                 let objectAxios = {strNickname:user.strNickname, iAmount:user.iCash};
 
@@ -484,104 +492,100 @@ router.post('/request_inputstate', isLoggedIn, async (req, res) => {
 
 });
 
-// router.post('/request_inputlist', isLoggedIn, async (req, res) => {
 
-//     console.log("****************************************************");
-//     console.log(req.body);
+let RequestChip = async (strTo, strFrom, iAmount, eType) => {
 
-//     if ( req.body.search == '' )
-//     {
-//         let charges = await db.Inouts.findAll({
+    let to = await db.Users.findOne({where:{strNickname:strTo}});
+    let from = await db.Users.findOne({where:{strNickname:strFrom}});
 
-//             attributes: [
-//                 [db.sequelize.fn('SUM', db.sequelize.col('iAmount')), 'iTotalAmount'],
-//                 [db.sequelize.fn('COUNT', db.sequelize.col('iAmount')), 'iTotalCount'],
-//             ],
-//             raw:true,
-    
-//             where: {
-//                 strID:{[Op.like]:'%'+req.body.search+'%'},
-//                 strGroupID:{[Op.like]:req.body.strGroupID+'%'},
-//                 //strID:req.body.search,
-//                 //createdAt:{
-//                 // updatedAt:{
-//                 //     [Op.gt]:req.body.s_date,
-//                 //     [Op.lte]:req.body.e_date
-//                 // },
-//                 createdAt:{
-//                     [Op.between]:[ req.body.s_date, require('moment')(req.body.e_date).add(1, 'days').format('YYYY-MM-DD')],
-//                 },
-//                 eState:'COMPLETE',
-//                 eType:'INPUT'
-//             }
-//         });
+    const cAmount = parseInt(iAmount ?? 0);
 
-//         for ( var i in charges )
-//         {
-//             console.log(charges[i]);
-//             console.log(charges[i].iTotalAmount);
-//         }
-//         //console.log(charges);
+    // 입금/지급 요청, 롤링, 죽장 전환
+    if ( eType == 'GIVE' || eType == 'ROLLING' || eType == 'SETTLE' )
+    {
+        if ( to != null && from != null )
+        {
+            console.log(`FROM : ${from.iChip}, TO : ${to.iChip}`);
 
-//         var object = {result:"OK"};
+            if ( from.iChip >= cAmount || from.iClass == IAgent.EAgent.eHQ)
+            {
+                const iBeforeChipTo = parseInt(to.iChip ?? 0);
+                const iAfterChipTo = iBeforeChipTo + cAmount;
+                await to.update({iChip:iAfterChipTo});
 
-//         object.t_amount = charges[0].iTotalAmount;
-//         object.t_count = charges[0].iTotalCount;
-//         if ( object.t_count == 0 )
-//         object.t_amount = 0;
+                const iBeforeChipFrom = parseInt(from.iChip ?? 0);
+                const iAfterChipFrom = iBeforeChipFrom - cAmount;
+                if ( from.iClass != IAgent.EAgent.eHQ ) {
+                    await from.update({iChip:iAfterChipFrom});
+                }
 
-//         object.s_date = req.body.s_date;
-//         object.e_date = req.body.e_date;
+                await db.Chips.create({
+                    eType:eType,
+                    strTo:strTo,
+                    strFrom:strFrom,
+                    iAmount:cAmount,
+                    iBeforeAmountTo:iBeforeChipTo,
+                    iAfterAmountTo:iAfterChipTo,
+                    iBeforeAmountFrom:iBeforeChipFrom,
+                    iAfterAmountFrom:iAfterChipFrom,
+                    iClassTo: to.iClass,
+                    iClassFrom: from.iClass,
+                });
+                return  true;
+            }
+            else {
+                return false;
+            }
+        }
+    }
+    else if ( eType == 'TAKE' )
+    {
+        if ( to != null && from != null )
+        {
+            console.log(`FROM : ${from.iChip}, TO : ${to.iChip}`);
 
-//         res.send(object);
-//     }
-//     else
-//     {
-//         let charges = await db.Inouts.findAll({
+            // 출금 금액이 출금자의 보유 칩보다 클경우 보유하고 있는 칩에 대해서만 처리
+            let amount = cAmount;
+            if ( to.iChip < amount) {
+                amount = to.iChip;
+            }
 
-//             attributes: [
-//                 [db.sequelize.fn('SUM', db.sequelize.col('iAmount')), 'iTotalAmount'],
-//                 [db.sequelize.fn('COUNT', db.sequelize.col('iAmount')), 'iTotalCount'],
-//             ],
-//             raw:true,
-    
-//             where: {
-//                 //strID:{[Op.like]:'%'+req.body.search+'%'},
-//                 strID:req.body.search,
-//                 //createdAt:{
-//                 // updatedAt:{
-//                 //     [Op.gt]:req.body.s_date,
-//                 //     [Op.lte]:req.body.e_date
-//                 // },
-//                 createdAt:{
-//                     [Op.between]:[ req.body.s_date, require('moment')(req.body.e_date).add(1, 'days').format('YYYY-MM-DD')],
-//                 },
-//                 eState:'COMPLETE',
-//                 eType:'INPUT'
-//             }
-//         });
+            if ( to.iChip >= amount )
+            {
+                const iBeforeChipTo = parseInt(to.iChip ?? 0);
+                const iAfterChipTo = iBeforeChipTo-amount;
+                await to.update({iChip:iAfterChipTo});
 
-//         for ( var i in charges )
-//         {
-//             console.log(charges[i]);
-//             console.log(charges[i].iTotalAmount);
-//         }
-//         //console.log(charges);
+                const iBeforeChipFrom = parseInt(from.iChip ?? 0);
+                const iAfterChipFrom = iBeforeChipFrom + amount;
+                if ( from.iClass != IAgent.EAgent.eHQ ) {
+                    await from.update({iChip:iAfterChipFrom});
+                }
 
-//         var object = {result:"OK"};
-
-//         object.t_amount = charges[0].iTotalAmount;
-//         object.t_count = charges[0].iTotalCount;
-//         if ( object.t_count == 0 )
-//         object.t_amount = 0;
-
-//         object.s_date = req.body.s_date;
-//         object.e_date = req.body.e_date;
-
-//         res.send(object);
-    
-//     }
-// });
+                await db.Chips.create({
+                    eType:'TAKE',
+                    strTo:strTo,
+                    strFrom:strFrom,
+                    iAmount:amount,
+                    iBeforeAmountTo:iBeforeChipTo,
+                    iAfterAmountTo:iAfterChipTo,
+                    iBeforeAmountFrom:iBeforeChipFrom,
+                    iAfterAmountFrom:iAfterChipFrom,
+                    iClassTo: to.iClass,
+                    iClassFrom: from.iClass,
+                });
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+    }
+    else
+    {
+        return false;
+    }
+}
 
 router.post('/request_inoutoverview', isLoggedIn, async (req, res) => {
 
@@ -809,59 +813,6 @@ router.post('/request_inouttotal', isLoggedIn, async (req, res) => {
 
 });
 
-
-//router.post('/search_daily', isLoggedIn, async (req, res) => {
-// router.post('/request_monthlyinputlist', isLoggedIn, async (req, res) => {    
-//     console.log(req.body);
-
-//     //let charges = await db.Charges.findAll({
-//     let charges = await db.Inouts.findAll({
-
-//         attributes: [
-//             //[db.sequelize.fn('DATE_FORMAT', db.sequelize.col('createdAt'), '%Y-%m-%d'), 'dates'],
-//             [db.sequelize.fn('DATE_FORMAT', db.sequelize.col('updatedAt'), '%Y-%m-%d'), 'dates'],
-//             [db.sequelize.fn('SUM', db.sequelize.col('iAmount')), 'iTotalAmount'],
-//             [db.sequelize.fn('COUNT', db.sequelize.col('iAmount')), 'iTotalCount'],
-//         ],
-//         group:'dates',
-//         raw:true,
-//         where: {
-//             strID:{[Op.like]:'%'+req.body.search+'%'},
-//             //createdAt:{
-//             updatedAt:{
-//                 [Op.gt]:req.body.s_date,
-//                 [Op.lte]:req.body.e_date
-//             },
-//             eState:'COMPLETE',
-//             eType:'INPUT'
-//         },
-//         order:[['updatedAt','DESC']]
-//     });
-
-//     console.log(`result length ${charges.length}`);
-
-//     for ( var i in charges )
-//     {
-//         console.log(charges[i]);
-//         console.log(charges[i].iTotalAmount);
-//     }
-//     // //console.log(charges);
-
-//     // var object = {result:"OK"};
-
-//     // object.t_amount = charges[0].iTotalAmount;
-//     // object.t_count = charges[0].iTotalCount;
-    
-//     // object.s_date = req.body.s_date;
-//     // object.e_date = req.body.e_date;
-
-//     // res.send(object);
-//     res.send(charges);
-
-// });
-
-
-//router.post('/updateexchangestate', isLoggedIn, async (req, res) => {
 router.post('/request_outputstate', isLoggedIn, async (req, res) => {
 
     console.log(`request_outputstate`);
@@ -883,14 +834,18 @@ router.post('/request_outputstate', isLoggedIn, async (req, res) => {
     {
         await charge.update({eState:"COMPLETE", completedAt:ITime.getCurrentDateFull(), strProcessNickname: req.user.strNickname, iProcessClass: req.user.iClass});
 
-        // let user = await db.Users.findOne({where:{strNickname:charge.strID}});
-
-        // await user.update({iCash:user.iCash-charge.iAmount});
+        // Chip 체크 후 Chip 업데이트
+        let iResult = await RequestChip(charge.strID, charge.strAdminNickname, parseInt(charge.iAmount), 'TAKE');
+        if (iResult === false)
+        {
+            res.send({result:'FAIL1', id:req.body.id, msg:''});
+            return;
+        }
 
         let parent = await db.Users.findOne({where:{strNickname:charge.strAdminNickname}});
         if ( parent != null )
         {
-            parent.update({iCash:parent.iCash+parseInt(charge.iAmount), iChip:parent.iChip+parseInt(charge.iAmount)});
+            parent.update({iCash:parent.iCash+parseInt(charge.iAmount)});
             // let iCash = parent.iCash+parseInt(charge.iAmount);
             // ISocket.AlertCashByNickname(parent.strNickname, iCash);
         }

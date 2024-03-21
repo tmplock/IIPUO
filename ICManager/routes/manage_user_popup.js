@@ -330,7 +330,7 @@ let RequestChip = async (strTo, strFrom, iAmount, eType) => {
 
     const cAmount = parseInt(iAmount ?? 0);
 
-    if ( eType == 'GIVE' || eType == 'ROLLING' )
+    if ( eType == 'GIVE' || eType == 'ROLLING' || eType == 'SETTLE' )
     {
         if ( to != null && from != null )
         {
@@ -615,6 +615,13 @@ router.post('/request_gt', isLoggedIn, async(req, res) => {
     }
     else if ( req.body.eType == 'SETTLE' )
     {
+        let iResult = await RequestChip(req.body.strTo, req.body.strFrom, parseInt(req.body.iAmount), 'SETTLE');
+        if (iResult === false)
+        {
+            res.send({result:'FAIL', reason:'NOTENOUGH'});
+            return;
+        }
+
         let to = await db.Users.findOne({where:{strNickname:req.body.strTo}});
         let strAdminNickname = (await IAgent.GetParentList(to.strGroupID, to.iClass)).strAdmin;
         let from = await db.Users.findOne({where:{strNickname:strAdminNickname}});

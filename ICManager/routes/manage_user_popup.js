@@ -373,14 +373,20 @@ let RequestChip = async (strTo, strFrom, iAmount, eType) => {
         {
             console.log(`FROM : ${from.iChip}, TO : ${to.iChip}`);
 
-            if ( to.iChip >= cAmount )
+            // 출금 금액이 출금자의 보유 칩보다 클경우 보유하고 있는 칩에 대해서만 처리
+            let amount = cAmount;
+            if ( to.iChip < amount) {
+                amount = to.iChip;
+            }
+
+            if ( to.iChip >= amount )
             {
                 const iBeforeChipTo = parseInt(to.iChip ?? 0);
-                const iAfterChipTo = iBeforeChipTo-cAmount;
+                const iAfterChipTo = iBeforeChipTo-amount;
                 await to.update({iChip:iAfterChipTo});
 
                 const iBeforeChipFrom = parseInt(from.iChip ?? 0);
-                const iAfterChipFrom = iBeforeChipFrom + cAmount;
+                const iAfterChipFrom = iBeforeChipFrom + amount;
                 if ( from.iClass != IAgent.EAgent.eHQ ) {
                     await from.update({iChip:iAfterChipFrom});
                 }
@@ -389,7 +395,7 @@ let RequestChip = async (strTo, strFrom, iAmount, eType) => {
                     eType:'TAKE',
                     strTo:strTo,
                     strFrom:strFrom,
-                    iAmount:cAmount,
+                    iAmount:amount,
                     iBeforeAmountTo:iBeforeChipTo,
                     iAfterAmountTo:iAfterChipTo,
                     iBeforeAmountFrom:iBeforeChipFrom,

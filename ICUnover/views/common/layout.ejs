@@ -43,83 +43,6 @@
                         </ul>
                     </div>
                 </div>
-                <!--board-->
-                <div class="board-container">
-                    <div class="board-wrap">
-                        <!--tab-->
-                        <div class="tabm">
-                            <span class="on" id="tab_day" onclick="showWithdrawStatus('day');">실시간 출금현황</span>
-                            <span id="tab_week" onclick="showWithdrawStatus('week');">출금 랭킹</span>
-                        </div>
-        
-                        <div class="list" id="area_day">
-                            <table id="day">
-                                <tbody>
-                                    <% for ( let i in listOutputRecent ) { %>
-                                        <tr>
-                                            <td>
-                                                <%=listOutputRecent[i].strID.substring(0,1)%>
-                                                <% for ( let j = 0; j < listOutputRecent[i].strID.length-1; ++ j ) { %>
-                                                    *
-                                                <% } %>
-                                            </td>
-                                            <td class="font13" style="color:orange"><%=listOutputRecent[i].iAmount.toLocaleString()%></td>
-                                        </tr>                    
-                                    <% } %>
-                                </tbody>
-                            </table>
-                        </div>
-        
-                        <div class="list" id="area_week" style="display: none;">
-                            <table id="week">
-                                <tbody>
-                                    <% for ( let i in listOutputRank ) { %>
-                                        <tr>
-                                            <td>
-                                                <%=listOutputRank[i].strID.substring(0,1)%>
-                                                <% for ( let j = 0; j < listOutputRecent[i].strID.length-1; ++ j ) { %>
-                                                    *
-                                                <% } %>
-                                            </td>
-                                            <td class="font13"><%=listOutputRank[i].iAmount.toLocaleString()%></td>
-                                        </tr>                    
-                                    <% } %>
-                                </tbody>
-                            </table>
-                        </div>
-        
-        
-                    </div>
-                </div>
-                <!--board-->
-                <!--menu-->
-                <div class="customer-container">
-                    <div class="customer-text-wrap">
-                        <h2>UNOVER CASINO</h2>
-                        <p>CUSTOMER  CENTER</p>
-                        <p class="p-num">008-888-009090</p>
-                    </div>
-                </div>
-                <div class="f-help">
-                    <a href="/etc/remote.html">
-                        <icon>
-                            <span class="ico-01"></span>
-                            <p>원격지원</p>
-                        </icon>
-                    </a>
-                    <a href="/gameinfo/game_down.html">
-                        <icon>
-                            <span class="ico-02"></span>
-                            <p>다운로드</p>
-                        </icon>
-                    </a>
-                    <a href="/etc/partner.html">
-                        <icon>
-                            <span class="ico-03"></span>
-                            <p>파트너모집</p>
-                        </icon>
-                    </a>
-                </div>
             </div>
             <div class="right-container">
                 <div class="contents">
@@ -199,7 +122,7 @@
                                     <h1>게임 설명</h1>
                                     <span>
                                         <ul>
-                                            <li><a href="/desc?id=00">언오버</a></li>
+<!--                                            <li><a href="/desc?id=00">언오버</a></li>-->
                                             <li><a href="/desc?id=01">바카라</a></li>
                                             <li><a href="/desc?id=02">블랙잭</a></li>
                                             <li><a href="/desc?id=03">룰렛</a></li>

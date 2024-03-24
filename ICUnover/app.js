@@ -152,12 +152,13 @@ db.sequelize.sync();
 
 app.use('/account', require('./routes/account'));
 app.use('/desc', require('./routes/desc'));
-app.use('/powerball', require('./routes/powerball'));
+// app.use('/powerball', require('./routes/powerball'));
 // app.use('/mobile', require('./routes/mobile'));
 app.use('/game', require('./routes/game'));
 app.use('/letter', require('./routes/letter'));
 app.use('/inout', require('./routes/inout'));
 app.use('/board', require('./routes/board'));
+app.use('/faq', require('./routes/faq'));
 //app.use('/cron', require('./cron'));
 
 //const cron = require('./cron');
@@ -244,7 +245,13 @@ app.get('/', async (req, res) => {
         limit:4,
     });
 
-    res.render('index', {iLayout:0, bLogin:bLogin, user:req.user, messages:req.flash('error')[0], listOutputRecent:objectOutput.listOutputRecent, listOutputRank:objectOutput.listOutputRank, listAnnouncement:listAnnouncement});
+    const listFaq= await db.Faqs.findAll({
+        where:{eState:'ENABLE'},
+        order:[['createdAt','DESC']],
+        limit:4,
+    });
+
+    res.render('index', {iLayout:0, bLogin:bLogin, user:req.user, messages:req.flash('error')[0], listOutputRecent:objectOutput.listOutputRecent, listOutputRank:objectOutput.listOutputRank, listAnnouncement:listAnnouncement, listFaq:listFaq});
 });
 
 

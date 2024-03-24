@@ -14,9 +14,6 @@
             autoControls: true,pager:true,});
     });
 
-    // const listAnnouncement = JSON.parse('<%-JSON.stringify(listAnnouncement)%>');
-    // console.log(listAnnouncement);
-
     var GoGame = (strGame, strGameKey) => {
         // if ( strGame == 'LIVE_VIVO' || strGame == 'LIVE_WORLD' )
         if ( strGame == 'LIVE_WORLD' )
@@ -185,26 +182,12 @@
             </ul>
         </div>
     </div>
-    <!--powerball_banner-->
-    <div class="slot-wrap">
-        <div class="slot-list">
-            <div class="m-slot-list">
-                <div class="slot-mimg"><a href="powerball" target="_blank"><img src="/img/powerball_img.jpg"></a></div>
-            </div> 
-            <!--<div class="slot-btn">
-                <button type="button" onclick="GoPowerball();">게임플레이</button>
-                <button type="button" onclick="location.href='/exchange/deposit.html'">입금신청</button>
-                <button type="button" onclick="location.href='/exchange/virtual.html'">체험머니</button>
-            </div>-->
-        </div>
-    </div>
-    <!--powerball_banner-->
     
     <!--게시판-->
     <div class="board-wrap">
         <div class="board-list">
             <div class="list-b">
-                <h1 onclick="location.href='/board/notice/list.html'" style="cursor: hand;cursor: pointer;"><span>UNOVER</span><span>공지사항</span></h1>
+                <h1 onclick="location.href='/board/list'" style="cursor: hand;cursor: pointer;"><span>UNOVER</span><span>공지사항</span></h1>
                 <table id="main_notice">
                     <colgroup>
                         <col class="col01">
@@ -225,123 +208,26 @@
         </div>
         <div class="board-list">
             <div class="list-b">
-                <h1 onclick="location.href='/board/faq/list.html'" style="cursor: hand;cursor: pointer;"><span>UNOVER</span><span>FAQ</span></h1>
-                    <table id="main_faq"><colgroup>
-                        <col style="width:60%">
-                        <col style="width:20%">
-                    </colgroup>
-                    
-                    <!--  공지사항 반복되는 리스트 시작  (리스트는 9개까지만 넣어주세여)  -->
-                    
-                    
-                    <!-- 공지사항 반복 리스트 시작 (리스트는 5개까지만)-->
-                    
-                    <tbody><tr>
-                        <td><a href="/board/faq/view.html">- 입금시 수표로 입금이 되나요?</a></td>
-                        <td>2021-04-01</td>
-                    </tr>
-                    
-                    <!-- 공지사항 반복 리스트 끝 -->
-                    
-                    
-                    
-                    <!-- 공지사항 반복 리스트 시작 (리스트는 5개까지만)-->
-                    
-                    <tr>
-                        <td><a href="/board/faq/view.html">- 입금시 신용카드결재도 가능한가요?</a></td>
-                        <td>2021-04-01</td>
-                    </tr>
-                    
-                    <!-- 공지사항 반복 리스트 끝 -->
-                    
-                    
-                    
-                    <!-- 공지사항 반복 리스트 시작 (리스트는 5개까지만)-->
-                    
-                    <tr>
-                        <td><a href="/board/faq/view.html">- 입금신청을 했는데 SMS로 계좌정보를 못...</a></td>
-                        <td>2021-04-01</td>
-                    </tr>
-                    
-                    <!-- 공지사항 반복 리스트 끝 -->
-                    
-                    
-                    
-                    <!-- 공지사항 반복 리스트 시작 (리스트는 5개까지만)-->
-                    
-                    <tr>
-                        <td><a href="/board/faq/view.html">- 입금신청하고 입금까지 완료했는데 게임...</a></td>
-                        <td>2021-04-01</td>
-                    </tr>
-                    
-                    <!-- 공지사항 반복 리스트 끝 -->
-                    
-                    <!--  공지사항 반복되는 리스트 끝  --></tbody></table>
-            </div>
-        </div>
-        <div class="board-list">
-            <div class="list-b" style="margin-right:0;">
-                <h1 onclick="location.href='/board/event/list.html'" style="cursor: hand;cursor: pointer;"><span>UNOVER</span><span>이벤트</span></h1>
-                <table id="main_event"><colgroup>
-                    <col style="width:60%">
-                    <col style="width:20%">
-                </colgroup>
-                <!--  공지사항 반복되는 리스트 시작  (리스트는 9개까지만 넣어주세여)  -->
-                
-                
-                <!-- 공지사항 반복 리스트 시작 (리스트는 5개까지만)-->
-                
-                <tbody><tr>
-                    <td><a href="/board/event/view.html">- ◈ FREE every day 이벤트 ◈(시행...</a></td>
-                    <td>2022-04-25</td>
-                </tr>
-                
-                <!-- 공지사항 반복 리스트 끝 -->
-                
-                
-                
-                <!-- 공지사항 반복 리스트 시작 (리스트는 5개까지만)-->
-                
-                <tr>
-                    <td><a href="/board/event/view.html">- 【 P2P 입출금 시스템 사전 등록안내...</a></td>
-                    <td>2022-04-15</td>
-                </tr>
-                
-                <!-- 공지사항 반복 리스트 끝 -->
-                
-                
-                
-                <!-- 공지사항 반복 리스트 시작 (리스트는 5개까지만)-->
-                
-                <tr>
-                    <td><a href="/board/event/view.html">- ◈ 설 EVENT ◈(종료)</a></td>
-                    <td>2023-01-17</td>
-                </tr>
-                
-                <!-- 공지사항 반복 리스트 끝 -->
-                
-                
-                
-                <!-- 공지사항 반복 리스트 시작 (리스트는 5개까지만)-->
-                
-                <tr>
-                    <td><a href="/board/bview/E?gubun=&amp;page=1&amp;num=174">- ◈ 크리스마스 연말연시 EVENT ◈(종...</a></td>
-                    <td>2022-12-21</td>
-                </tr>
-                
-                <!-- 공지사항 반복 리스트 끝 -->
-                
-                <!--  공지사항 반복되는 리스트 끝  --></tbody></table>
+                <h1 onclick="location.href='/faq/list'" style="cursor: hand;cursor: pointer;"><span>UNOVER</span><span>FAQ</span></h1>
+                    <table id="main_faq">
+                        <colgroup>
+                            <col style="width:60%">
+                            <col style="width:20%">
+                        </colgroup>
+                        <tbody>
+                        <% for ( let i in listFaq ) { %>
+                            <tr>
+                                <% const address = `/faq/get?id=${listFaq[i].id}`;%>
+                                <td><a href="<%=address%>">- <%=listFaq[i].strSubject%></a></td>
+                                <td><%=listFaq[i].createdAt%></td>
+                            </tr>
+                        <% } %>
+                        </tbody>
+                    </table>
             </div>
         </div>
     </div>
-    <div class="m-customer-container">
-            <div class="m-customer-text-wrap">
-                <h2>UNOVER GAME</h2>
-                <p>CUSTOMER CENTER</p>
-                <p class="p-num">008-888-009090</p>
-            </div>
-    </div>
+</div>
 
 <!--pop 배너영역-->
 <div id="login_notice" class="pop_main" style="display:none;z-index:9999;">
@@ -360,8 +246,6 @@
                 <span onclick="$('#login_notice').hide();" style="cursor:hand;cursor:pointer">닫기 X</span></span>
         </div>
     </div>
-
-
 </div>
 
 <div id="main_pop_notice_new1" class="pop_main" style="display:none;z-index:9990;">
@@ -567,9 +451,3 @@
     });
 
 </script><!-- 여기서 부터 카피라이트 부분입니다. -->
-
-<script>
-
-    
-
-</script>

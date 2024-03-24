@@ -39,6 +39,7 @@ db.Letters = require('./models/letter')(sequelize, Sequelize);
 db.SettleRecords = require('./models/settle_record')(sequelize, Sequelize);
 db.Sessions = require('./models/session')(sequelize, Sequelize);
 db.Announcements = require('./models/announcement')(sequelize, Sequelize);
+db.Faqs = require('./models/faq')(sequelize, Sequelize);
 db.BankRecords = require('./models/bank_record')(sequelize, Sequelize);
 db.BuildBets = require('./models/buildbet')(sequelize, Sequelize);
 

@@ -111,6 +111,8 @@ exports.GetParentList = async (strGroupID, iClass) => {
 }
 
 exports.GetOutputRecords = async () => {
+    return {listOutputRecent:[], listOutputRank:[]};
+
     const listOutputRecent = await db.Inouts.findAll({
         limit:5,
         where:{

@@ -1,0 +1,41 @@
+
+<div class="container">
+    <div class="sub-wrap">
+        <div class="subscr" style="background: none; border: none;">
+            <div class="subtitle">
+                <h1>
+                    FAQ
+                </h1>
+                <span>
+                    언오버 카지노 FAQ
+                    입니다.</span>
+            </div>
+            <table>
+                <tr style="background: #191919;">
+                    <th style="text-align: left; height:70px; font-weight: 500; font-size:17px; padding-left: 20px;"><%=obj.strSubject%></th>
+                    <th style="text-align: right; padding-right: 20px;">2022-04-25 11:40:51</th>
+                </tr>
+
+            </table>
+            <table>
+                <thead>
+                </thead>
+                <tr>
+                    <td>
+                        <textarea name="comment" id="comment" style="height:500px;width:98%;text-align:center;font-weight:300; font-size:15px;" disabled><%=obj.strContents%></textarea>
+                    </td>
+                </tr>
+            </table>
+            <div class="btn_area">
+                <button type="button" onclick="location.href='/faq/list'">목록</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+
+    const obj = JSON.parse('<%-JSON.stringify(obj)%>');
+    console.log(obj);
+</script>

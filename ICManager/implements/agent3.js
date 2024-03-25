@@ -25,16 +25,30 @@ let inline_GetPopupAgentInfo = async (strGroupID, iClass, strNickname) => {
 
     console.log(`############################# 2inline_GetPopupAgentInfo ${strGroupID}, ${strNickname}, ${iClass}`);
 
-    const [users] = await db.sequelize.query(
-        `
+    if (iClass > 3) {
+        const [users] = await db.sequelize.query(
+            `
         SELECT              
         *
         FROM Users
         WHERE strNickname='${strNickname}';
         `
-    );
+        );
+        return users[0];
+    } else {
+        const [users] = await db.sequelize.query(
+            `
+        SELECT              
+        u.*,
+        0 AS iRolling,
+        0 AS iSettle
+        FROM Users u
+        WHERE u.strNickname='${strNickname}';
+        `
+        );
+        return users[0];
+    }
 
-    return users[0];
 
     switch ( iClass )
     {

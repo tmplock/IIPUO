@@ -74,7 +74,7 @@
     let strNickname = user.strNickname;
     let fShareR = user.fShareR;
 
-    checkBlockNum(`#fShare`);
+    checkBlockNum(`#fShareR`);
 
     $('#nickname').val(strNickname);
     $('#fShareR').val(fShareR);
@@ -82,8 +82,7 @@
     let UpdateShareUser = () => {
 
         const strNickname = $('#nickname').val();
-        const fShareB = $('#fShareB').val();
-        const fShareS = $('#fShareS').val();
+        const fShareR = $('#fShareR').val();
 
         $.ajax(
             {

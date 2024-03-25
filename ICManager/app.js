@@ -112,6 +112,7 @@ app.use('/manage_setting_popup', require('./routes/manage_setting_popup'));
 app.use('/manage_calculation', require('./routes/manage_calculation'));
 app.use('/manage_share', require('./routes/manage_share'));
 app.use('/manage_chip', require('./routes/manage_chip'));
+app.use('/test', require('./routes/test'));
 
 app.use((req, res, next) => {
     req.io = io;
@@ -176,48 +177,7 @@ app.get('/', (req, res) => {
         res.redirect('/account/login');
 });
 
-app.post('/init', async (req, res) => {
 
-    await db.GTs.destroy({where:{}, truncate:true});
-    await db.Inouts.destroy({where:{}, truncate:true});
-    await db.SettleRecords.destroy({where:{}, truncate:true});
-    await db.ChargeRequest.destroy({where:{}, truncate:true});
-    await db.CreditRecords.destroy({where:{}, truncate:true});
-    await db.Letters.destroy({where:{}, truncate:true});
-    await db.ContactLetter.destroy({where:{}, truncate:true});
-    await db.ShareRecords.destroy({where:{}, truncate:true});
-    await db.ShareCreditRecords.destroy({where:{}, truncate:true});
-    await db.DataLogs.destroy({where:{}, truncate:true});
-    await db.DailyBettingRecords.destroy({where: {}, truncate:true});
-    await db.DailyRecords.destroy({where: {}, truncate:true});
-    await db.RecordBets.destroy({where:{}, truncate:true});
-    await db.RecordDailyOverviews.destroy({where:{}, truncate:true});
-    let shares = await db.ShareUsers.findAll();
-    for ( let i in shares )
-    {
-        await shares[i].update({
-            iShare: 0,
-            iShareAccBefore: 0,
-            iCreditBefore: 0,
-            iCreditAfter: 0,
-        });
-    }
-
-    let users = await db.Users.findAll();
-    for ( let i in users )
-    {
-        await users[i].update({
-            iCash:0,
-            iLoan:0,
-            iRolling:0,
-            iSettle:0,
-            iSettleAcc:0,
-            iSettleAccBefore:0,
-        });
-    }
-
-    res.send({string:'OK'});
-})
 
 
 // app.post('/announcement_write',async (req, res) => {

@@ -1184,61 +1184,6 @@ let GetViceAdmins = async (strGroupID) => {
     return list;
 };
 
-/**
- * TODO: 추후 삭제
- * 테스트 초기화
- */
-router.post('/testinit', async (req, res) => {
-
-    await db.SettleRecords.destroy({where:{}, truncate:true});
-
-    let users = await db.Users.findAll();
-    for ( let i in users )
-    {
-        await users[i].update({
-            iSettle:0,
-            iSettleAcc:0,
-            iSettleAccBefore:0,
-        });
-    }
-
-    let shares = await db.ShareUsers.findAll();
-    for ( let i in shares )
-    {
-        await shares[i].update({
-            iShare: 0,
-            iShareAccBefore: 0,
-            iCreditBefore:0,
-            iCreditAfter:0
-        });
-    }
-
-    await db.GTs.destroy({where:{}, truncate:true});
-    await db.CreditRecords.destroy({where:{}, truncate:true});
-    await db.ShareRecords.destroy({where:{}, truncate:true});
-    await db.ShareCreditRecords.destroy({where:{}, truncate:true});
-    await db.ChargeRequest.destroy({where: {}, truncate:true});
-    await db.SettleRecords.destroy({where: {}, truncate: true});
-    // await db.BettingRecords.destroy({where:{}, truncate:true});
-    // await db.RecordBets.destroy({where:{}, truncate:true});
-    // await db.DailyBettingRecords.destroy({where:{}, truncate:true});
-
-
-    res.send({result:'OK'});
-});
-
-router.post('/testinitcurrent', async (req, res) => {
-
-    await db.SettleRecords.destroy({where:{
-            strQuater: req.body.strQuater
-        }, truncate:true});
-
-    await db.ShareRecords.destroy({where:{
-            strQuater: req.body.strQuater
-        }, truncate:true});
-    res.send({result:'OK'});
-});
-
 router.post('/request_credit_apply', async (req, res) => {
 
     console.log(`request_credit_apply`);

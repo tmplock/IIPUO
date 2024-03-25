@@ -200,6 +200,7 @@
 <script type="text/javascript" src="js/manage_user_menu.js"></script>
 <script type="text/javascript" src="js/pagination.js"></script>
 <script type="text/javascript" src="js/socket.js"></script>
+<script type="text/javascript" src="js/test.js"></script>
 <script>
 	let user = JSON.parse('<%-JSON.stringify(user)%>');
 	let overview = JSON.parse('<%-JSON.stringify(overview)%>');
@@ -276,8 +277,8 @@
 
 		SetOverview(overview, '#overview', true, '', '');
 		SetOverviewShare(overviewShare, overview, '#overview_share');
-
-		SetTestTag(true);
+		//TESTCODE
+		TestTagSettle('testSettle');
 	});
 
 	let Request1stHalf = () => {
@@ -459,9 +460,10 @@
 		if ( bClear == true )
 			$(strParentTag).empty();
 
-		let iInput = parseInt(aObject.iInput);
-		let iTransMoney = parseInt(aObject.iRollingTranslate)+parseInt(aObject.iSettleTranslate);
-		let iOutput = parseInt(aObject.iOutput);
+		const iInput = parseInt(aObject.iInput ?? 0);
+		const iOutput = parseInt(aObject.iOutput ?? 0);
+		const cal = iInput - iOutput;
+
 		let iTotalMoney = parseInt(aObject.iTotalMoney);
 		let iTotalSum = parseInt(aObject.iTotal)  + parseInt(aObject.iTotalUnover) + parseInt(aObject.iTotalSlot) + parseInt(aObject.iTotalPB);
 		// 대본사 이하는 본인의 죽장만 표시(본사는 본인 이하의 죽장 모두 합산)
@@ -527,8 +529,9 @@
 						<tr>
 							<th width="5%" rowspan="2"></th>
 							<th width="10%" rowspan="2">입금</th>
-							<th width="10%" rowspan="2">전환 머니</th>
 							<th width="10%" rowspan="2">출금 </th>
+							<th width="10%" rowspan="2">차액</th>
+
 							<th width="10%" rowspan="2">보유 머니</th>
 							<th width="10%" rowspan="2">합계</th>
 							<th width="5%" rowspan="2"></th>
@@ -542,8 +545,8 @@
 						<tr>
 							<td><a style="font-weight:100;"></a></td>
 							<td><a style="font-weight:100;"></a>${GetNumber(iInput)}</td>
-							<td><a style="font-weight:100;"></a>${GetNumber(iTransMoney)}</td>
 							<td><a style="font-weight:100;"></a>${GetNumber(iOutput)}</td>
+							<td><a style="font-weight:100;"></a>${GetNumberSign(cal)}</td>
 							<td><a style="font-weight:100;"></a>${GetNumber(iTotalMoney)}</td>
 							<td><a style="font-weight:100; color:${GetColor(iTotalSum)};">${GetNumber(iTotalSum)}</a></td>
 							<td><a style="font-weight:100;"></a></td>
@@ -1488,41 +1491,4 @@
 		iCurrentPage = iPage;
 		RequestList(user.strGroupID, strQuater, dateQuaterStart, dateQuaterEnd, iViewClass);
 	}
-
-	let SetTestTag = (enable) => {
-		$(`#testSettle`).empty();
-		if (enable) {
-			let month = 11;
-			$(`#testSettle`).append(
-					`
-						<button id="button_quater" class="btn_blue" data-menu="2" style="border:1px solid rgb(95, 93, 93);width:150px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="RequestTestInitSettle();">죽장 전체 초기화(T)</button>
-				`
-			);
-		}
-	}
-
-	let RequestTestInitSettle = () => {
-		if (confirm('전체 죽장 초기화합니다')) {
-			$.ajax({
-				type:'post',
-				url: "/manage_calculation/testinit",
-				context: document.body,
-
-				success: (obj) => {
-					if ( obj.result == 'OK' )
-					{
-						alert('완료');
-						location.reload();
-					}
-				},
-				error:function(request,status,error){
-					alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
-				}
-
-
-
-			});
-		}
-	}
-
 </script>

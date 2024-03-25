@@ -121,7 +121,8 @@ router.post('/request_replyletter', async (req, res) => {
     if (letter.iClassFrom >= 6) {
         // letter_reply
         let objectAxios = {strNickname:letter.strFrom, strID:letter.strFromID};
-        const cAddress = `${global.strUserPageAddress}/letter/letter_reply`;
+        let user = await db.Users.findOne({where:{strNickname:letter.strFrom}});
+        const cAddress = `${user.strURL}/letter/letter_reply`;
         axios.post(cAddress, objectAxios)
             .then((response)=> {
                 console.log(`Axios Success to ${cAddress}`);
@@ -341,7 +342,7 @@ router.post('/request_writeletter_partner', async (req, res) => {
     if (toUser.iClass >= 6) {
         // letter_reply
         let objectAxios = {strNickname:toUser.strNickname, strID:toUser.strID};
-        const cAddress = `${global.strUserPageAddress}/letter/letter_admin`;
+        const cAddress = `${toUser.strURL}/letter/letter_admin`;
         axios.post(cAddress, objectAxios)
             .then((response)=> {
                 console.log(`Axios Success to ${cAddress}`);

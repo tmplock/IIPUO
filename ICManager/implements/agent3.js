@@ -914,8 +914,8 @@ var inline_GetComputedAgentList = async (strGroupID, iClass, dateStart, dateEnd,
             IFNULL((SELECT COUNT(*) FROM Users WHERE strGroupID LIKE CONCAT(t2.strGroupID,'%') AND iClass=${EAgent.eAgent}),0) as iNumAgents,
             IFNULL((SELECT COUNT(*) FROM Users WHERE strGroupID LIKE CONCAT(t2.strGroupID,'%') AND iClass=${EAgent.eShop}),0) as iNumShops,
             IFNULL((SELECT COUNT(*) FROM Users WHERE strGroupID LIKE CONCAT(t2.strGroupID,'%') AND iClass=${EAgent.eUser}),0) as iNumUsers,
-            IFNULL((SELECT SUM(iCash) FROM Users WHERE strGroupID LIKE CONCAT(t2.strGroupID,'%')),0) as iTotalMoney,
-            IFNULL((SELECT sum(iRolling) FROM Users WHERE strGroupID LIKE CONCAT(t2.strGroupID,'%')), 0) AS iCurrentRollingTotal
+            IFNULL((SELECT SUM(iCash) FROM Users WHERE strGroupID LIKE CONCAT(t2.strGroupID,'%') AND iClass > 3),0) as iTotalMoney,
+            IFNULL((SELECT sum(iRolling) FROM Users WHERE strGroupID LIKE CONCAT(t2.strGroupID,'%') AND iClass > 3), 0) AS iCurrentRollingTotal
         `;
     }
     else if ( iClass == EAgent.eAdmin )
@@ -927,7 +927,7 @@ var inline_GetComputedAgentList = async (strGroupID, iClass, dateStart, dateEnd,
             IFNULL((SELECT COUNT(*) FROM Users WHERE strGroupID LIKE CONCAT(t2.strGroupID,'%') AND iClass=${EAgent.eShop}),0) as iNumShops,
             IFNULL((SELECT COUNT(*) FROM Users WHERE strGroupID LIKE CONCAT(t2.strGroupID,'%') AND iClass=${EAgent.eUser}),0) as iNumUsers,
             IFNULL((SELECT SUM(iCash) FROM Users WHERE strGroupID LIKE CONCAT(t2.strGroupID,'%') AND iClass > 3),0) as iTotalMoney,
-            IFNULL((SELECT sum(iRolling) FROM Users WHERE strGroupID LIKE CONCAT(t2.strGroupID,'%')), 0) AS iCurrentRollingTotal
+            IFNULL((SELECT sum(iRolling) FROM Users WHERE strGroupID LIKE CONCAT(t2.strGroupID,'%') AND iClass > 3), 0) AS iCurrentRollingTotal
         `;
     }
     else if ( iClass == EAgent.eProAdmin )
@@ -938,7 +938,7 @@ var inline_GetComputedAgentList = async (strGroupID, iClass, dateStart, dateEnd,
             IFNULL((SELECT COUNT(*) FROM Users WHERE strGroupID LIKE CONCAT(t2.strGroupID,'%') AND iClass=${EAgent.eShop}),0) as iNumShops,
             IFNULL((SELECT COUNT(*) FROM Users WHERE strGroupID LIKE CONCAT(t2.strGroupID,'%') AND iClass=${EAgent.eUser}),0) as iNumUsers,
             IFNULL((SELECT SUM(iCash) FROM Users WHERE strGroupID LIKE CONCAT(t2.strGroupID,'%') AND iClass > 3),0) as iTotalMoney,
-            IFNULL((SELECT sum(iRolling) FROM Users WHERE t2.strID = strID), 0) AS iCurrentRollingTotal
+            IFNULL((SELECT sum(iRolling) FROM Users WHERE t2.strID = strID AND iClass > 3), 0) AS iCurrentRollingTotal
             
         `;
     }
@@ -950,7 +950,7 @@ var inline_GetComputedAgentList = async (strGroupID, iClass, dateStart, dateEnd,
             IFNULL((SELECT COUNT(*) FROM Users WHERE strGroupID LIKE CONCAT(t2.strGroupID,'%') AND iClass=${EAgent.eShop}),0) as iNumShops,
             IFNULL((SELECT COUNT(*) FROM Users WHERE strGroupID LIKE CONCAT(t2.strGroupID,'%') AND iClass=${EAgent.eUser}),0) as iNumUsers,
             IFNULL((SELECT SUM(iCash) FROM Users WHERE strGroupID LIKE CONCAT(t2.strGroupID,'%') AND iClass > 3),0) as iTotalMoney,
-            IFNULL((SELECT sum(iRolling) FROM Users WHERE strGroupID LIKE CONCAT(t2.strGroupID,'%')), 0) AS iCurrentRollingTotal
+            IFNULL((SELECT sum(iRolling) FROM Users WHERE strGroupID LIKE CONCAT(t2.strGroupID,'%') AND iClass > 3), 0) AS iCurrentRollingTotal
         `;
     }
     else if ( iClass == EAgent.eAgent )
@@ -961,7 +961,7 @@ var inline_GetComputedAgentList = async (strGroupID, iClass, dateStart, dateEnd,
             IFNULL((SELECT COUNT(*) FROM Users WHERE strGroupID LIKE CONCAT(t2.strGroupID,'%') AND iClass=${EAgent.eShop}),0) as iNumShops,
             IFNULL((SELECT COUNT(*) FROM Users WHERE strGroupID LIKE CONCAT(t2.strGroupID,'%') AND iClass=${EAgent.eUser}),0) as iNumUsers,
             IFNULL((SELECT SUM(iCash) FROM Users WHERE strGroupID LIKE CONCAT(t2.strGroupID,'%') AND iClass > 3),0) as iTotalMoney,
-            IFNULL((SELECT sum(iRolling) FROM Users WHERE strGroupID LIKE CONCAT(t2.strGroupID,'%')), 0) AS iCurrentRollingTotal    
+            IFNULL((SELECT sum(iRolling) FROM Users WHERE strGroupID LIKE CONCAT(t2.strGroupID,'%') AND iClass > 3), 0) AS iCurrentRollingTotal    
         `;
     }
     else if ( iClass == EAgent.eShop )
@@ -972,7 +972,7 @@ var inline_GetComputedAgentList = async (strGroupID, iClass, dateStart, dateEnd,
             0 as iNumShops,
             IFNULL((SELECT COUNT(*) FROM Users WHERE strGroupID LIKE CONCAT(t2.strGroupID,'%') AND iClass=${EAgent.eUser}),0) as iNumUsers,
             IFNULL((SELECT SUM(iCash) FROM Users WHERE strGroupID LIKE CONCAT(t2.strGroupID,'%') AND iClass > 3),0) as iTotalMoney,
-            IFNULL((SELECT sum(iRolling) FROM Users WHERE strGroupID LIKE CONCAT(t2.strGroupID,'%')), 0) AS iCurrentRollingTotal
+            IFNULL((SELECT sum(iRolling) FROM Users WHERE strGroupID LIKE CONCAT(t2.strGroupID,'%') AND iClass > 3), 0) AS iCurrentRollingTotal
         `;
     }
     else if ( iClass == EAgent.eUser )
@@ -982,7 +982,7 @@ var inline_GetComputedAgentList = async (strGroupID, iClass, dateStart, dateEnd,
             0 as iNumAgents,
             0 as iNumShops,
             0 as iNumUsers,
-            IFNULL((SELECT sum(iRolling) FROM Users WHERE strGroupID LIKE CONCAT(t2.strGroupID,'%')), 0) AS iCurrentRollingTotal
+            IFNULL((SELECT sum(iRolling) FROM Users WHERE strGroupID LIKE CONCAT(t2.strGroupID,'%') AND iClass > 3), 0) AS iCurrentRollingTotal
         `;
     }
 

@@ -206,26 +206,26 @@
                 </table>
             </div>
         </div>
-<!--        <div class="board-list">-->
-<!--            <div class="list-b">-->
-<!--                <h1 onclick="location.href='/faq/list'" style="cursor: hand;cursor: pointer;"><span>UNOVER</span><span>FAQ</span></h1>-->
-<!--                    <table id="main_faq">-->
-<!--                        <colgroup>-->
-<!--                            <col style="width:60%">-->
-<!--                            <col style="width:20%">-->
-<!--                        </colgroup>-->
-<!--                        <tbody>-->
-<!--                        <% for ( let i in listFaq ) { %>-->
-<!--                            <tr>-->
-<!--                                <% const address = `/faq/get?id=${listFaq[i].id}`;%>-->
-<!--                                <td><a href="<%=address%>">- <%=listFaq[i].strSubject%></a></td>-->
-<!--                                <td><%=listFaq[i].createdAt%></td>-->
-<!--                            </tr>-->
-<!--                        <% } %>-->
-<!--                        </tbody>-->
-<!--                    </table>-->
-<!--            </div>-->
-<!--        </div>-->
+        <div class="board-list">
+            <div class="list-b">
+                <h1 onclick="location.href='/faq/list'" style="cursor: hand;cursor: pointer;"><span>UNOVER</span><span>FAQ</span></h1>
+                    <table id="main_faq">
+                        <colgroup>
+                            <col style="width:60%">
+                            <col style="width:20%">
+                        </colgroup>
+                        <tbody>
+                        <% for ( let i in listFaq ) { %>
+                            <tr>
+                                <% const address = `/faq/get?id=${listFaq[i].id}`;%>
+                                <td><a href="<%=address%>">- <%=listFaq[i].strSubject%></a></td>
+                                <td><%=listFaq[i].createdAt%></td>
+                            </tr>
+                        <% } %>
+                        </tbody>
+                    </table>
+            </div>
+        </div>
     </div>
 </div>
 

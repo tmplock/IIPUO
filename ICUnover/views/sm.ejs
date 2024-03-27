@@ -35,11 +35,13 @@
 	</div>
 
 	<script>
-		var listGames = JSON.parse('<%-JSON.stringify(listGames)%>');
-		if (listGames.length == 0) {
-			alert('해당 게임은 점검중입니다.');
-			window.close();
-		}
+		$(document).ready(() => {
+			let count = parseInt('<%=count%>');
+			if (count === 0) {
+				alert('해당 게임은 점검중입니다.');
+				window.close();
+			}
+		});
 
 		let GoGame = (strGame, symbol) => {
 

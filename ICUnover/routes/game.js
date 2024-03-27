@@ -68,8 +68,8 @@ router.post('/sm', async (req, res) => {
             newListGames.push(listGames[i]);
         }
     }
-
-    res.render('sm', {iLayout:1, strVender:req.body.strGame, listGames:newListGames, data: res_axios.data});
+    let count = parseInt(newListGames.length);
+    res.render('sm', {iLayout:1, strVender:req.body.strGame, listGames:newListGames, data: res_axios.data, count:count});
 })
 
 router.post('/', async (req, res) => {

@@ -82,7 +82,7 @@ exports.ProcessWin = async (strID, strNickname, strGroupID, iClass, iBalance, iG
         
                     if ( bet.iBet == iWin )
                     {
-                        await db.RecordBets.update({iWin:iWin, strDetail:JSON.stringify(listFinal), strResult:JSON.stringify(listCards), eType:'CANCEL_BET', eState:'COMPLETE'}, {where:{id:bet.id}});
+                        await db.RecordBets.update({iWin:iWin, strDetail:JSON.stringify(listFinal), strResult:JSON.stringify(listCards), eType:'CANCEL_BET', eState:'STANDBY'}, {where:{id:bet.id}});
                     }
                     else
                     {
@@ -98,14 +98,14 @@ exports.ProcessWin = async (strID, strNickname, strGroupID, iClass, iBalance, iG
                     {
                         if ( bet.iBet == iWin )
                         {
-                            await db.RecordBets.update({iWin:iWin, strUniqueID:strUniqueID, eType:'CANCEL_BET', eState:'COMPLETE'}, {where:{id:bet.id}});
+                            await db.RecordBets.update({iWin:iWin, strUniqueID:strUniqueID, eType:'CANCEL_BET', eState:'STANDBY'}, {where:{id:bet.id}});
                         }
                         else
                             await db.RecordBets.update({iWin:iWin, strUniqueID:strUniqueID, eType:'RD', eState:'STANDBY'}, {where:{id:bet.id}});
                     }
                     else
                     {
-                        await db.RecordBets.update({iWin:iWin, eType:'WIN', eState:'COMPLETE'}, {where:{id:bet.id}});
+                        await db.RecordBets.update({iWin:iWin, eType:'WIN', eState:'STANDBY'}, {where:{id:bet.id}});
                     }
                 }
                 break;
@@ -114,10 +114,10 @@ exports.ProcessWin = async (strID, strNickname, strGroupID, iClass, iBalance, iG
                     if ( bet.iBet == iWin )
                     {
                         //  TIE WIN
-                        await db.RecordBets.update({iWin:iWin, eType:'CANCEL_BET', eState:'COMPLETE'}, {where:{id:bet.id}});
+                        await db.RecordBets.update({iWin:iWin, eType:'CANCEL_BET', eState:'STANDBY'}, {where:{id:bet.id}});
                     }
                     else
-                        await db.RecordBets.update({iWin:iWin, eType:'WIN', eState:'COMPLETE'}, {where:{id:bet.id}});
+                        await db.RecordBets.update({iWin:iWin, eType:'WIN', eState:'STANDBY'}, {where:{id:bet.id}});
                 }
                 break;
         }

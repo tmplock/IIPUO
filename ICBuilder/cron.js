@@ -66,6 +66,8 @@ let lProcessID = -1;
     console.log(`##### listBetDB.length = ${listBetDB.length}`);
 
     let listOdds = await ODDS.FullCalculteOdds(listBetDB);
+    // Slot
+
 
     //  ##### VIVO
     const listVivoDB = GetDBListFromVender(listBetDB, 'VIVO');
@@ -111,6 +113,8 @@ let lProcessID = -1;
     const listCancelWin = GetDBListFromType(listBetDB, 'CANCEL_WIN');
     console.log(`##### CANCEL : Length : ${listCancelWin.length}`);
     Processor.ProcessCancel('WIN', listCancelWin, listOverview, listOdds, listUpdateDB);
+
+    // SLOT
 
     //  ##### OVERVIEW
     console.log(`##### UPDATE OVERVIEW : Length : ${listOverview.length}`);

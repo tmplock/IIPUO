@@ -190,31 +190,36 @@ let GetSettingSectionColor = (iSection, iCurrent) => {
 let SetBettingRecordHeader = (iSection, iClass) => {
     let padding_right = '500px;';
     let subTag = ``;
-    if (iClass <= 2) {
-        subTag = `
-            <li style="padding-right: 20px;" class=${GetBettingRecordSectionClass(iSection, 2)}>
-                <a href="#" style="color:${GetSettingSectionColor(iSection, 2)}; font-size: 15px;" id="bettingrecord_vivo">비보</a>
-            </li>
-            <li style="padding-right: 20px;" class=${GetBettingRecordSectionClass(iSection, 3)}>
-                <a href="#" style="color:${GetSettingSectionColor(iSection, 3)}; font-size: 15px;" id="bettingrecord_pragmatic">프라그매틱</a>
-            </li>
-            <li style="padding-right: 20px;" class=${GetBettingRecordSectionClass(iSection, 5)}>
-                <a href="#" style="color:${GetSettingSectionColor(iSection, 5)}; font-size: 15px;" id="bettingrecord_izugi">이주기</a>
-            </li>
-            
-            <li style="padding-right: 20px;" class=${GetBettingRecordSectionClass(iSection, 6)}>
-                <a href="#" style="color:${GetSettingSectionColor(iSection, 6)}; font-size: 15px;" id="bettingrecord_habanero">하바네로</a>
-            </li>
-            
-            <li style="padding-right: 20px;" class=${GetBettingRecordSectionClass(iSection, 7)}>
-                <a href="#" style="color:${GetSettingSectionColor(iSection, 7)}; font-size: 15px;" id="bettingrecord_world">월드</a>
-            </li>
-            
-            <li style="padding-right: 20px;" class=${GetBettingRecordSectionClass(iSection, 8)}>
-                <a href="#" style="color:${GetSettingSectionColor(iSection, 8)}; font-size: 15px;" id="bettingrecord_pending">처리대기</a>
-            </li>
-        `;
-    }
+    // if (iClass <= 2) {
+    //     subTag = `
+    //         <li style="padding-right: 20px;" class=${GetBettingRecordSectionClass(iSection, 2)}>
+    //             <a href="#" style="color:${GetSettingSectionColor(iSection, 2)}; font-size: 15px;" id="bettingrecord_vivo">비보</a>
+    //         </li>
+    //         <li style="padding-right: 20px;" class=${GetBettingRecordSectionClass(iSection, 3)}>
+    //             <a href="#" style="color:${GetSettingSectionColor(iSection, 3)}; font-size: 15px;" id="bettingrecord_pragmatic">프라그매틱</a>
+    //         </li>
+    //         <li style="padding-right: 20px;" class=${GetBettingRecordSectionClass(iSection, 5)}>
+    //             <a href="#" style="color:${GetSettingSectionColor(iSection, 5)}; font-size: 15px;" id="bettingrecord_izugi">이주기</a>
+    //         </li>
+    //
+    //         <li style="padding-right: 20px;" class=${GetBettingRecordSectionClass(iSection, 6)}>
+    //             <a href="#" style="color:${GetSettingSectionColor(iSection, 6)}; font-size: 15px;" id="bettingrecord_habanero">하바네로</a>
+    //         </li>
+    //
+    //         <li style="padding-right: 20px;" class=${GetBettingRecordSectionClass(iSection, 7)}>
+    //             <a href="#" style="color:${GetSettingSectionColor(iSection, 7)}; font-size: 15px;" id="bettingrecord_world">월드</a>
+    //         </li>
+    //
+    //         <li style="padding-right: 20px;" class=${GetBettingRecordSectionClass(iSection, 8)}>
+    //             <a href="#" style="color:${GetSettingSectionColor(iSection, 8)}; font-size: 15px;" id="bettingrecord_pending">처리대기</a>
+    //         </li>
+    //     `;
+    // }
+    subTag = `
+        <li style="padding-right: 20px;" class=${GetBettingRecordSectionClass(iSection, 8)}>
+            <a href="#" style="color:${GetSettingSectionColor(iSection, 8)}; font-size: 15px;" id="bettingrecord_pending">처리대기</a>
+        </li>
+    `;
 
     let subTag3 = `
         <li style="padding-right: ${padding_right};" class=${GetBettingRecordSectionClass(iSection, 4)}>

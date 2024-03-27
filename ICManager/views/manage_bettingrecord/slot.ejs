@@ -42,8 +42,6 @@
                             <col style="width:7%;">
                             <col style="width:7%;">
                             <col style="width:5%;">
-                            <col style="width:5%;">
-                            <col style="width:5%;">
                             <col style="width:7%;">
                             <col style="width:7%;">
                             <col style="width:7%;">
@@ -59,7 +57,7 @@
                             <th scope="col"><%=__('Round')%></th>
                             <th scope="col"><%=__('Nickname')%></th>
                             <th scope="col"><%=__('BettingOriginCash')%></th>
-                            <th scope="col" colspan="3"><%=__('BettingAccount')%></th>
+                            <th scope="col">베팅 금액</th>
                             <th scope="col">베팅후 금액</th>
                             <th scope="col">당첨 금액</th>
                             <th scope="col">당첨후 금액</th>
@@ -128,7 +126,7 @@
                 if ( obj.result == 'OK' )
                 {
                     const total = obj.totalCount ?? 0;
-                    SetBettingList(obj.data, getNo(iLimit, total, iCurrentPage, 0));
+                    SetSlotBettingList(obj.data, getNo(iLimit, total, iCurrentPage, 0));
 
                     $('#pagination').empty();
                     $('#pagination').append(getPagination(iLimit, obj.totalCount, iCurrentPage));

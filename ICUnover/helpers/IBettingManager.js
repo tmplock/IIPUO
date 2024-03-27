@@ -105,7 +105,7 @@ exports.ProcessWin = async (strID, strNickname, strGroupID, iClass, iBalance, iG
                     }
                     else
                     {
-                        await db.RecordBets.update({iWin:iWin, eType:'WIN', eState:'COMPLETE'}, {where:{id:bet.id}});
+                        await db.RecordBets.update({iWin:iWin, eType:'WIN', eState:'STANDBY'}, {where:{id:bet.id}});
                     }
                 }
                 break;
@@ -117,7 +117,7 @@ exports.ProcessWin = async (strID, strNickname, strGroupID, iClass, iBalance, iG
                         await db.RecordBets.update({iWin:iWin, eType:'CANCEL_BET', eState:'COMPLETE'}, {where:{id:bet.id}});
                     }
                     else
-                        await db.RecordBets.update({iWin:iWin, eType:'WIN', eState:'COMPLETE'}, {where:{id:bet.id}});
+                        await db.RecordBets.update({iWin:iWin, eType:'WIN', eState:'STANDBY'}, {where:{id:bet.id}});
                 }
                 break;
         }

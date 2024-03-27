@@ -1,0 +1,186 @@
+<div class="sub_wrap">
+    <div class="container clearfix">
+        <div class="content" style="position:relative; padding:0 10px 0 10px;">
+            <ul class="list_tab" style="margin-bottom:10px;width:75%;z-index:10000;" id="setting_header">
+            </ul>
+        </div>
+    
+        <div class="list">
+            <div class="search_wrap">
+                <div class="list_tit" style="margin-top:20px;">
+                    <h3>FAQ
+                    </h3>
+                    <% if (user.iClass <= 3 && user.iPermission != 100) { %>
+                        <button class="btn_add" type="button" onclick="OnClickWritingFaq();"><%=__('Write')%></span></button>
+                    <% } %>
+                </div>
+                    
+                <table class="search_list">
+                    <thead>
+                        <tr>
+                            <th width="5%"><%=__('Type')%></th>
+                            <th width="10%"><%=__('Enable')%></th>
+                            <th width="20%"><%=__('Subject')%></th>
+                            <th width="50%"><%=__('Contents')%></th>
+                            <th width="10%"><%=__('DateWrite')%></th>
+                            <% if (user.iClass <= 3 && user.iPermission != 100) { %>
+                                <th width="5%"><%=__('Menu')%></th>
+                            <% } %>
+                        </tr>
+                    </thead>
+                    <tbody id="faq_list">
+                    </tbody>
+                </table>
+            </div>	
+        </div>
+    </div>
+</div>
+</div>
+
+<script type="text/javascript" src="js/enum.js"></script>
+<script type="text/javascript" src="js/time.js"></script>
+<script type="text/javascript" src="js/manage_setting_menu.js"></script>
+<script type="text/javascript" src="js/manage_setting_ref.js"></script>
+<script type="text/javascript" src="js/socket.js"></script>
+<script>
+    let user = JSON.parse('<%-JSON.stringify(user)%>');
+
+    let iocount = JSON.parse('<%-JSON.stringify(iocount)%>');
+    Alert(iocount, "<%=__('RequestInput')%>", "<%=__('RequestOutput')%>","<%=__('LetterSend')%>");
+
+    SetSettingHeader(2, user.iClass);
+
+    let RequestList = () => {
+
+        $.ajax({
+            url:"/manage_faq/request_list",
+            type:"POST",
+            context: document.body,
+            success: function (obj) {
+
+                console.log(obj);
+                $('#faq_list').empty();
+
+                let faqs = obj.list;
+
+                for ( let i in faqs )
+                {
+
+                    let tagSOTitle = `${strEnable}`;
+                    let tagSO = 
+                    `
+                    <option value="ENABLE" selected>${strEnable}</option>
+                    <option value="DISABLE">${strDisable}</option>
+                    `;
+                    if ( anns[i].eState == 'DISABLE')
+                    {
+                        tagSO = 
+                        `
+                            <option value="ENABLE">${strEnable}</option>
+                            <option value="DISABLE" selected>${strDisable}</option>
+                        `;
+                        tagSOTitle = `${strDisable}`;
+                    }
+
+
+                    let tag = 
+                    `
+                    <tr height="30">
+                        <td>${faqs[i].id}</td>
+                        <% if ( parseInt(user.iClass) < 3 && user.iPermission != 100 ) { %>
+                            <td>
+                                <select style="vertical-align:middle;width:100%;" id="ann_state${faqs[i].id}" onchange="OnAnnChangeState('${faqs[i].id}');">
+                                    ${tagSO}
+                                </select>
+                            </td>
+                        <% } else { %>
+                            <td>
+                                ${tagSOTitle}
+                            </td>
+                        <% } %>
+                        <td><a style="color:blue;" href="javascript:ReadFaq('${faqs[i].id}');">${faqs[i].strSubject}</a></td>
+                        <td><a style="color:blue;" href="javascript:ReadFaq('${faqs[i].id}');">${faqs[i].strContents}</a></td>
+                        <td>${faqs[i].createdAt}</td>
+                        <% if ( parseInt(user.iClass) < 3 && user.iPermission != 100 ) { %>
+                            <td><a class="btn_red" href="javascript:RemoveFaq('${faqs[i].id}', '${faqs[i].strSubject}');">${strRemove}</a></td>
+                        <% } %>
+                    </tr>
+                    `;
+                    $('#faq_list').append(tag);
+                }
+            }
+        });
+    }
+
+    RequestList();
+
+
+    let OnClickWritingFaq = () => {
+        window.open('', 'WriteFaq', 'width=1024, height=512, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
+
+        var $form = $('<form></form>');
+        $form.attr('action', '/manage_faq/popup_write');
+        $form.attr('method', 'post');
+        $form.attr('target', 'WriteLetter');
+        $form.appendTo('body');
+
+        var idx = $(`<input type="hidden" value="${user.strNickname}" name="strNickname">`);
+        var page = $(`<input type="hidden" value="${user.strGroupID}" name="strGroupID">`);
+        var category = $(`<input type="hidden" value=${parseInt(user.iClass)} name="iClass">`);
+        var iPermission = $(`<input type="hidden" value=${parseInt(user.iPermission)} name="iPermission">`);
+
+        $form.append(idx).append(page).append(category).append(iPermission);
+        $form.submit();
+    }
+
+    let RemoveFaq = (id, strSubject) => {
+
+        if ( confirm(`${strSubject} ${strConfirmRemove}`))
+        {
+            $.ajax({
+                url:"/manage_faq/request_remove",
+                type:"POST",
+                context: document.body,
+                data: {
+                    id:id
+                },
+                success: function (obj) {
+
+                    if( obj.result == 'OK' )
+                    {
+                        alert(strAlertComplete);
+                        location.reload();
+                    }
+                    else
+                    {
+                        alert(<%=obj.msg%>);
+                    }
+                }
+            });
+
+        }
+    }
+
+    let ReadFaq = (id) => {
+
+        console.log(`ReadFaq : ${id}`);
+
+        window.open('', 'ReadFaq', 'width=1024, height=512, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
+
+        var $form = $('<form></form>');
+        $form.attr('action', '/manage_faq/view');
+        $form.attr('method', 'post');
+        $form.attr('target', 'ReadFaq');
+        $form.appendTo('body');
+
+        var idx = $(`<input type="hidden" value="${user.strNickname}" name="strNickname">`);
+        var page = $(`<input type="hidden" value="${user.strGroupID}" name="strGroupID">`);
+        var category = $(`<input type="hidden" value='${parseInt(user.iClass)}' name="iClass">`);
+        var iPermission = $(`<input type="hidden" value=${parseInt(user.iPermission)} name="iPermission">`);
+        let dbid = $(`<input type="hidden" value='${parseInt(id)}' name="id">`);
+
+        $form.append(idx).append(page).append(category).append(iPermission).append(dbid);
+        $form.submit();
+    }
+
+</script>

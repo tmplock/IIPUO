@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="format-detection" content="telephone=no">
+<meta name="Keywords" content="">
+<meta name="Description" content="">
+<meta http-equiv="Expires" content="Mon, 06 Jan 1990 00:00:01 GMT">
+<meta http-equiv="Expires" content="-1">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Cache-Control" content="no-cache">
+<meta http-equiv="X-UA-Compatible" content="requiresActiveX=true" >
+<title>Setting</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script type="text/javascript" src="../js/jquery.bxslider.min.js"></script>
+<script type="text/javascript" src="../js/placeholders.js"></script>
+<script type="text/javascript" src="../js/layout.js"></script>
+<script type="text/javascript" src="../js/common_js.js"></script>
+<link rel="stylesheet" type="text/css" href="../css/general.css"/>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css" type="text/css" /> 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>  
+<script src="https://code.jquery.com/ui/1.8.18/jquery-ui.min.js"></script>  
+</head>
+
+<body>
+    <div id="wrap" class="skin_type01">
+        <div class="list_tit">
+            <h3><%=__('Announcement')%> <%=__('Read')%></h3>
+        </div>
+
+        <div class="write">
+            <table id="read_letter">
+                <tr>
+                    <td width="100%" valign="top">		
+                        <table class="t_view">
+                            <colgroup>
+                                <col width="25%" /><col  />
+                            </colgroup>
+                            <tr id="mail_select_txt1">
+                                <th><%=__('Subject')%></th>
+                                <td>
+                                    <input type="text" name="s_keyword" id="strSubject" style="vertical-align:middle;width:100%;" value="<%=contents.strSubject%>">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th><%=__('Contents')%></th>
+                                <td>
+                                    <textarea name="content11" id="strContents" style="width:100%;height:250px;" required="yes"  message=""><%=contents.strContents%></textarea>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+        
+                </tr>
+            </table>
+            
+            <div class="align_c margin_t20">
+                <a href="javascript:Close();" class="btn_blue"><%=__('Close')%></a>
+
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="js/manage_setting_ref.js"></script>
+    <script>
+        let user = JSON.parse('<%-JSON.stringify(user)%>');
+
+        let Close = () => {
+            self.close();
+        }
+
+    </script>
+</body>
+</html>

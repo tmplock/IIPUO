@@ -41,6 +41,7 @@
                 <p class="txt"><%=__('ManagerLoginDesc1')%><br><%=__('ManagerLoginDesc2')%></p>
                 <form name="frm" method="post" action="/account/login">
                     <input type="hidden" name="reurl_go" value="">
+                    <input type="hidden" name="strURL" value="">
                     <fieldset>
                         <legend><%=__('ID')%>, <%=__('Password')%></legend>
                         <div class="input_id">
@@ -64,6 +65,8 @@
 
     
     <script type="text/javascript">
+        document.getElementById("strID").value = document.location.href
+
         localStorage.clear();
         // 캐시 날리기
         caches.keys().then(function(keyList) {

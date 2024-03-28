@@ -62,9 +62,19 @@ exports.ProcessBet = async (strID, strNickname, strGroupID, iClass, iBalance, iG
 
 exports.ProcessWin = async (strID, strNickname, strGroupID, iClass, iBalance, iGameCode, strVender, strGameID, strTableID, strRound, strUniqueID, strDetail, strResult, iTarget, iWin, strURL) => {
 
+    if ( iGameCode == 200 ) // When win event occured from slot
+    {
+        let eState = 'STANDBY';
+        await CreateBet(strID, strNickname, strGroupID, iClass, iBalance, iGameCode, strVender, strGameID, strTableID, strRound, strUniqueID, strDetail, strResult, iTarget, 0, iWin, 'WIN', eState, strURL);
+
+        return;
+    }
+
     let bet = await db.RecordBets.findOne({where:{strID:strID, strRound:strRound, strVender:strVender}});
     if ( bet != null )
     {
+        //const cResultWin = parseInt(bet.iWin) + parseInt(iWin);
+
         switch ( strVender )
         {
             case 'VIVO':

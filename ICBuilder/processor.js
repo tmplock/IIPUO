@@ -246,7 +246,7 @@ exports.ProcessWin = (listDB, listOverview, listOdds, listUpdateDB) => {
         if ( cOdd == null )
             continue;
 
-        let objectReturn = ODDS.ProcessRollingWin(odds, cData.iGameCode, cData.iWin, strDate);
+        let objectReturn = ODDS.ProcessRollingWin(cOdd, cData.iGameCode, cData.iWin, strDate);
         let listCurrentOverview = objectReturn.listFinal;
         //let objectBetRolling = objectReturn.objectBet;
 

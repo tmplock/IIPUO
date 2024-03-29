@@ -64,9 +64,12 @@ exports.ProcessWin = async (strID, strNickname, strGroupID, iClass, iBalance, iG
 
     if ( iGameCode == 200 ) // When win event occured from slot
     {
-        let eState = 'STANDBY';
-        await CreateBet(strID, strNickname, strGroupID, iClass, iBalance, iGameCode, strVender, strGameID, strTableID, strRound, strUniqueID, strDetail, strResult, iTarget, 0, iWin, eState, 'WIN', strURL);
+        if (iWin > 0)
+        {
+            let eState = 'STANDBY';
+            await CreateBet(strID, strNickname, strGroupID, iClass, iBalance, iGameCode, strVender, strGameID, strTableID, strRound, strUniqueID, strDetail, strResult, iTarget, 0, iWin, eState, 'WIN', strURL);
 
+        }
         return;
     }
 

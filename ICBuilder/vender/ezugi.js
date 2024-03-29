@@ -61,6 +61,7 @@ exports.GetRangeRD = async (dateStart, dateEnd) => {
     //const strParams = `DataSet=per_round_report&APIID=${IAccount.cAPIID}&APIUser=${IAccount.cAPIUSER}&OperatorID=${IAccount.cOperatorID}&RoundID=${strRoundID}&StartTime=${strStartTime}&EndTime=${strEndTime}&TableID=${strTableID}&UID=${strUID}&RequestToken=${data}`;
     const strParams = `DataSet=per_round_report&APIID=${IAccount.cAPIID}&APIUser=${IAccount.cAPIUSER}&OperatorID=${IAccount.cOperatorID}&StartTime=${strStartTime}&EndTime=${strEndTime}&RequestToken=${data}`;
     console.log(data);
+    console.log(strParams);
 
     try {
         const response = await axios.post(IAccount.cBOAddress,

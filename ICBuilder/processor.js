@@ -58,7 +58,7 @@ exports.ProcessEzugi = async (listDB, listOverview, listOdds, listUpdateDB) => {
     if ( listDB.length <= 0 )
         return;
 
-    const res = await RDEzugi.GetRangeRD(listDB[0].updatedAt, listDB[listDB.length-1].updatedAt);
+    const res = await RDEzugi.GetRangeRD(listDB[0].createdAt, listDB[listDB.length-1].createdAt);
     if (res == null)
     {
         // return;

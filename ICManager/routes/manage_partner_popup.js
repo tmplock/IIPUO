@@ -341,6 +341,84 @@ router.post('/registeragent', isLoggedIn, async(req, res) => {
 
 })
 
+router.post('/registeragent_view', isLoggedIn, async(req, res) => {
+    console.log(req.body);
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:req.body.iClass, iAgentClass:req.body.iAgentClass,
+        iRootClass:req.user.iClass, iPermission:req.user.iPermission};
+    let list = await db.Users.findAll({
+        where: {
+            iClass:req.body.iAgentClass,
+            strGroupID:{
+                [Op.like]:req.body.strGroupID+'%'
+            },
+            iPermission: {
+                [Op.notIn]: [100]
+            },
+        }
+    });
+    res.render('manage_partner/popup_registeragent_view', {iLayout:1, agent:user, list:list});
+});
+
+router.post('/request_register_view', isLoggedIn, async(req, res) => {
+    console.log(req.body);
+    try {
+        let iRelUserID = req.body.iRelUserID;
+        let user = await db.Users.findOne({
+            where: {
+                id: iRelUserID,
+            }
+        });
+
+        await db.Users.create({
+            strID:req.body.strID,
+            strPassword:req.body.strPassword,
+            strNickname:req.body.strNickname,
+            strMobile:'',
+            strBankname:'',
+            strBankAccount:'',
+            strBankOwner:'',
+            strBankPassword:'',
+            strOutputPassowrd:'',
+            iClass:user.iClass,
+            strGroupID:user.strGroupID,
+            iParentID:user.iParentID,
+            iCash:0,
+            iLoan:0,
+            iRolling:0,
+            iSettle:0,
+            iSettleAcc:0,
+            fBaccaratR:user.fBaccaratR,
+            fSlotR:user.fSlotR,
+            fUnderOverR:user.fUnderOverR,
+            fPBR:user.fPBR,
+            fPBSingleR:user.fPBSingleR,
+            fPBDoubleR:user.fPBDoubleR,
+            fPBTripleR:user.fPBTripleR,
+            fSettleSlot:user.fSettleBaccarat,
+            fSettleBaccarat:user.fSettleSlot,
+            fSettlePBA:user.fSettlePBA,
+            fSettlePBB:user.fSettlePBB,
+            eState:'BLOCK',
+            //strOptionCode:'00000000',
+            strOptionCode:user.strOptionCode,
+            strPBOptionCode:user.strPBOptionCode,
+            iPBLimit:user.iPBLimit,
+            iPBSingleLimit:user.iPBSingleLimit,
+            iPBDoubleLimit:user.iPBDoubleLimit,
+            iPBTripleLimit:user.iPBTripleLimit,
+            strSettleMemo:'',
+            iNumLoginFailed: 0,
+            iPermission:100,
+            iRelUserID:iRelUserID,
+        });
+        res.send({result:'OK', string:'에이전트(보기용) 생성을 완료 하였습니다.'});
+    } catch (err) {
+        res.send({result:'FAIL', string:`에이전트(보기용) 생성을 실패했습니다.(${err})`});
+    }
+});
+
+
+
 router.post('/request_parentenablelist', isLoggedIn, async(req, res) => {
     console.log(req.body);
 

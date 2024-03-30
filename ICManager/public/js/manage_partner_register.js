@@ -22,6 +22,30 @@ $(document).on('click', '#register_agent', (event) => {
     $form.submit();
 })
 
+$(document).on('click', '#register_agent_view', (event) => {
+
+    let eAgentType = $(event.target).attr('iAgentClass');
+
+    console.log(user);
+
+    window.open('', 'popupRegister', 'width=1280, height=420, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
+
+    var $form = $('<form></form>');
+    $form.attr('action', '/manage_partner_popup/registeragent_view');
+    $form.attr('method', 'post');
+    $form.attr('target', 'popupRegister');
+    $form.appendTo('body');
+
+    var strNickname = $(`<input type="hidden" value="${user.strNickname}" name="strNickname">`);
+    var strGroupID = $(`<input type="hidden" value="${user.strGroupID}" name="strGroupID">`);
+    var iClass = $(`<input type="hidden" value=${parseInt(user.iClass)} name="iClass">`);
+    var iPermission = $(`<input type="hidden" value=${parseInt(user.iPermission)} name="iPermission">`);
+    let iAgentClass = $(`<input type="hidden" value=${eAgentType} name="iAgentClass">`);
+
+    $form.append(strNickname).append(strGroupID).append(iClass).append(iPermission).append(iAgentClass);
+    $form.submit();
+})
+
 
 // $(document).on('click', '#partner_adjust', (event) => {
 

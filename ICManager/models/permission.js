@@ -12,6 +12,13 @@ module.exports = (sequelize, DataTypes) => {
         strURL: {
             type: DataTypes.STRING,
         },
+        strViewURL: {
+            type: DataTypes.STRING,
+        },
+        // 파트너를 별도 URL로 구분하기 위한 코드
+        strLoginCode: {
+            type: DataTypes.STRING,
+        },
         eState: {
             type:DataTypes.ENUM('NORMAL', 'BLOCK'),
         },

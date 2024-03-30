@@ -48,15 +48,15 @@ module.exports = () => {
                 }
 
                 // 접근 권한 체크
-                // let permission = await db.Permissions.findOne({where: {strGroupID: user.strGroupID, iClass:user.iClass}});
-                // if (permission == null) {
-                //     console.log(`Access Not User`);
-                //     return done(null, false, { message: '접근 권한이 없는 아이디 입니다.' });
-                // }
-                // if (!req.headers.origin.startsWith(permission.strURL)) {
-                //     console.log(`Access Not User`);
-                //     return done(null, false, { message: '접근 권한이 없는 아이디 입니다.' });
-                // }
+                let permission = await db.Permissions.findOne({where: {strGroupID: user.strGroupID, iClass:user.iClass}});
+                if (permission == null) {
+                    console.log(`Access Not User`);
+                    return done(null, false, { message: '접근 권한이 없는 아이디 입니다.' });
+                }
+                if (!req.headers.origin.startsWith(permission.strURL)) {
+                    console.log(`Access Not User`);
+                    return done(null, false, { message: '접근 권한이 없는 아이디 입니다.' });
+                }
 
                 if ( user.eState != 'NORMAL' )
                 {

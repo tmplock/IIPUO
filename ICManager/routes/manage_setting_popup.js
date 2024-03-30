@@ -292,7 +292,7 @@ router.post('/request_writeletter', async (req, res) => {
         axios.post(`${user.strURL}/AlertLetter`, objectAxios)
         // axios.post('https://ppuolive.com/AlertLetter', objectAxios)
         .then((response)=> {
-            console.log(`Axios Success /AlertLetter : ${arrayObject[i].strNickname} : ${global.strUserPageAddress}`);
+            console.log(`Axios Success /AlertLetter : ${arrayObject[i].strNickname} : ${user.strURL}`);
         })
         .catch((error)=> {
             console.log('axios Error /AlertLetter');

@@ -48,7 +48,9 @@ module.exports = () => {
                 }
 
                 // 접근 권한 체크
-                let permission = await db.Permissions.findOne({where: {iClass:user.iClass}});
+                let code = user.strLoginCode ?? '';
+
+                let permission = code == '' ? await db.Permissions.findOne({where: {iClass:user.iClass}}) : await db.Permissions.findOne({where: {iClass:user.iClass, strLoginCode:code}});
                 if (permission == null) {
                     console.log(`Access Not User`);
                     return done(null, false, { message: '접근 권한이 없는 아이디 입니다.' });

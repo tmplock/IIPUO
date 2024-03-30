@@ -182,6 +182,10 @@ module.exports = (sequelize, DataTypes) => {
         strURL: {
             type: DataTypes.STRING,
         },
+        // 파트너를 별도 URL로 구분하기 위한 코드
+        strLoginCode: {
+            type: DataTypes.STRING,
+        },
         // 지분자들이 원본데이터 조회를 위한 User Id
         iRelUserID: {
             type:DataTypes.INTEGER

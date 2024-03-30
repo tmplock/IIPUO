@@ -12,6 +12,9 @@ module.exports = (sequelize, DataTypes) => {
         strURL: {
             type: DataTypes.STRING,
         },
+        strViewURL: {
+            type: DataTypes.STRING,
+        },
         eState: {
             type:DataTypes.ENUM('NORMAL', 'BLOCK'),
         },

@@ -1614,6 +1614,14 @@ var inline_GetUserInfo = async (strNickname) => {
     let strOptionCode = '';
     let strIDRel = '' // 연결된 strID
 
+    let fBaccaratR = 0;
+    let fSlotR = 0;
+    let fUnderOverR = 0;
+    let fPBR = 0;
+    let fPBSingleR = 0;
+    let fPBDoubleR = 0;
+    let fPBTripleR = 0;
+
     let dbuser = await db.Users.findOne({where:{strNickname:strNickname}});
     if (dbuser != null) {
         strID = dbuser.strID;
@@ -1633,6 +1641,7 @@ var inline_GetUserInfo = async (strNickname) => {
         }
     }
 
-    return {iCash:iCash, iRolling: iRolling, iSettle:iSettle, strID:strID, strNickname:strNickname, iClass:iClass, strGroupID:strGroupID, strOptionCode:strOptionCode, strIDRel: strIDRel};
+    return {iCash:iCash, iRolling: iRolling, iSettle:iSettle, strID:strID, strNickname:strNickname, iClass:iClass, strGroupID:strGroupID, strOptionCode:strOptionCode, strIDRel: strIDRel,
+        fBaccaratR: fBaccaratR, fSlotR: fSlotR, fUnderOverR: fUnderOverR, fPBR: fPBR, fPBSingleR: fPBSingleR, fPBDoubleR: fPBDoubleR, fPBTripleR: fPBTripleR};
 }
 exports.GetUserInfo = inline_GetUserInfo;

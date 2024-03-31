@@ -34,7 +34,7 @@ const {isLoggedIn, isNotLoggedIn} = require('./middleware');
 
 router.get('/default', isLoggedIn, async(req, res) => {
 
-    const dbuser = await db.Users.findOne({where:{strNickname:req.user.strNickname}});
+    const dbuser = await IAgent.GetUserInfo(req.user.strNickname);
     let iCash = 0;
     let iRolling = 0;
     let iSettle = 0;
@@ -116,17 +116,9 @@ router.post('/realtime', isLoggedIn, async(req, res) => {
 
     console.log(req.body);
 
-    const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
-    let iCash = 0;
-    let iRolling = 0;
-    let iSettle = 0;
-    if ( dbuser != null ) {
-        iCash = dbuser.iCash;
-        iRolling = dbuser.iRolling;
-        iSettle = dbuser.iSettle;
-    }
+    const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iRolling:iRolling, iSettle:iSettle,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission};
 
     const dateStart = ITime.getTodayStart();
@@ -166,17 +158,9 @@ router.post('/record', isLoggedIn, async(req, res) => {
 
     console.log(req.body);
 
-    const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
-    let iCash = 0;
-    let iRolling = 0;
-    let iSettle = 0;
-    if ( dbuser != null ) {
-        iCash = dbuser.iCash;
-        iRolling = dbuser.iRolling;
-        iSettle = dbuser.iSettle;
-    }
+    const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iRolling:iRolling, iSettle:iSettle,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission, strID:dbuser.strID};
 
     const dateStart = ITime.getTodayStart();
@@ -193,17 +177,9 @@ router.post('/listvicehq', isLoggedIn, async(req, res) => {
 
     console.log(req.body);
 
-    const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
-    let iCash = 0;
-    let iRolling = 0;
-    let iSettle = 0;
-    if ( dbuser != null ) {
-        iCash = dbuser.iCash;
-        iRolling = dbuser.iRolling;
-        iSettle = dbuser.iSettle;
-    }
+    const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iRolling:iRolling, iSettle:iSettle,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission, strID:dbuser.strID};
 
     const dateStart = ITime.getTodayStart();
@@ -222,17 +198,9 @@ router.post('/listadmin', isLoggedIn, async(req, res) => {
 
     console.log(req.body);
 
-    const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
-    let iCash = 0;
-    let iRolling = 0;
-    let iSettle = 0;
-    if ( dbuser != null ) {
-        iCash = dbuser.iCash;
-        iRolling = dbuser.iRolling;
-        iSettle = dbuser.iSettle;
-    }
+    const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iRolling:iRolling, iSettle:iSettle,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle,
         iRootClass:req.user.iClass, iPermission: req.user.iPermission, strID: dbuser.strID};
 
     const dateStart = ITime.getTodayStart();
@@ -250,17 +218,9 @@ router.post('/listadmin', isLoggedIn, async(req, res) => {
 router.post('/listproadmin', isLoggedIn, async(req, res) => {
 
     console.log(req.body);
-    const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
-    let iCash = 0;
-    let iRolling = 0;
-    let iSettle = 0;
-    if ( dbuser != null ) {
-        iCash = dbuser.iCash;
-        iRolling = dbuser.iRolling;
-        iSettle = dbuser.iSettle;
-    }
+    const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iRolling:iRolling, iSettle:iSettle,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle,
         fBaccaratR: dbuser.fBaccaratR, fSlotR: dbuser.fSlotR, fUnderOverR: dbuser.fUnderOverR, fPBR: dbuser.fPBR, fPBSingleR: dbuser.fPBSingleR, fPBDoubleR: dbuser.fPBDoubleR, fPBTripleR: dbuser.fPBTripleR,
         iRootClass:req.user.iClass, iPermission: req.user.iPermission, strID:dbuser.strID};
 
@@ -279,17 +239,9 @@ router.post('/listproadmin', isLoggedIn, async(req, res) => {
 router.post('/listviceadmin', isLoggedIn, async(req, res) => {
 
     console.log(req.body);
-    const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
-    let iCash = 0;
-    let iRolling = 0;
-    let iSettle = 0;
-    if ( dbuser != null ) {
-        iCash = dbuser.iCash;
-        iRolling = dbuser.iRolling;
-        iSettle = dbuser.iSettle;
-    }
+    const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iRolling:iRolling, iSettle:iSettle,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission, strID:dbuser.strID};
 
     const dateStart = ITime.getTodayStart();
@@ -307,17 +259,9 @@ router.post('/listviceadmin', isLoggedIn, async(req, res) => {
 router.post('/listagent', isLoggedIn, async(req, res) => {
 
     console.log(req.body);
-    const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
-    let iCash = 0;
-    let iRolling = 0;
-    let iSettle = 0;
-    if ( dbuser != null ) {
-        iCash = dbuser.iCash;
-        iRolling = dbuser.iRolling;
-        iSettle = dbuser.iSettle;
-    }
+    const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iRolling:iRolling, iSettle:iSettle,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle,
         fBaccaratR: dbuser.fBaccaratR, fSlotR: dbuser.fSlotR, fUnderOverR: dbuser.fUnderOverR, fPBR: dbuser.fPBR, fPBSingleR: dbuser.fPBSingleR, fPBDoubleR: dbuser.fPBDoubleR, fPBTripleR: dbuser.fPBTripleR,
         iRootClass: req.user.iClass, iPermission: req.user.iPermission, strID: dbuser.strID};
 
@@ -337,17 +281,9 @@ router.post('/listshop', isLoggedIn, async(req, res) => {
 
     console.log(req.body);
 
-    const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
-    let iCash = 0;
-    let iRolling = 0;
-    let iSettle = 0;
-    if ( dbuser != null ) {
-        iCash = dbuser.iCash;
-        iRolling = dbuser.iRolling;
-        iSettle = dbuser.iSettle;
-    }
+    const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iRolling:iRolling, iSettle:iSettle,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission, strID:dbuser.strID};
 
     const dateStart = ITime.getTodayStart();
@@ -374,17 +310,9 @@ router.post('/settingodds', isLoggedIn, async(req, res) => {
         return;
     }
 
-    const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
-    let iCash = 0;
-    let iRolling = 0;
-    let iSettle = 0;
-    if ( dbuser != null ) {
-        iCash = dbuser.iCash;
-        iRolling = dbuser.iRolling;
-        iSettle = dbuser.iSettle;
-    }
+    const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iRolling:iRolling, iSettle:iSettle,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission,
         fSlotR: dbuser.fSlotR, fBaccaratR: dbuser.fBaccaratR, fUnderOverR: dbuser.fUnderOverR,
         fPBR:dbuser.fPBR, fPBSingleR:dbuser.fPBSingleR, fPBDoubleR:dbuser.fPBDoubleR, fPBTripleR:dbuser.fPBTripleR};
@@ -396,17 +324,9 @@ router.post('/settingodds', isLoggedIn, async(req, res) => {
 router.post('/listrealtimeuser', isLoggedIn, async(req, res) => {
 
     console.log(req.body);
-    const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
-    let iCash = 0;
-    let iRolling = 0;
-    let iSettle = 0;
-    if ( dbuser != null ) {
-        iCash = dbuser.iCash;
-        iRolling = dbuser.iRolling;
-        iSettle = dbuser.iSettle;
-    }
+    const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iRolling:iRolling, iSettle:iSettle,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle,
         iRootClass:req.user.iClass, iPermission: req.user.iPermission, strID: dbuser.strID};
 
     const agentinfo = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
@@ -843,17 +763,9 @@ router.post('/realtimebettingend', async (req, res) => {
  */
 router.post('/listtodayregist', isLoggedIn, async(req, res) => {
     console.log(req.body);
-    const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
-    let iCash = 0;
-    let iRolling = 0;
-    let iSettle = 0;
-    if ( dbuser != null ) {
-        iCash = dbuser.iCash;
-        iRolling = dbuser.iRolling;
-        iSettle = dbuser.iSettle;
-    }
+    const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iRolling:iRolling, iSettle:iSettle,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle,
         iRootClass: req.user.iClass, iPermission: req.user.iPermission, strID:dbuser.strID};
 
     const strTimeStart = ITime.getTodayStart();

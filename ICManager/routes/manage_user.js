@@ -240,7 +240,7 @@ router.post('/request_realtimeuserlist', isLoggedIn, async ( req, res ) => {
         }
     }
 
-    res.send({userlist:result});
+    res.send({userlist:result, iPermission: req.user.iPermission, iClass: req.user.iClass});
 });
 
 router.post('/request_removeuser', async (req, res) => {

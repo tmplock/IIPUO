@@ -150,7 +150,7 @@
 
     Alert(iocount, "<%=__('RequestInput')%>", "<%=__('RequestOutput')%>","<%=__('LetterSend')%>");
 
-    let SetUserList = (userlist) => {
+    let SetUserList = (userlist, iClass, iPermission) => {
 
         console.log(userlist);
 
@@ -173,7 +173,7 @@
 
             let tagState = ``;
 
-            if (uesr.iClass <= 3) {
+            if (iClass <= 3 && iPermission != 100) {
                 tagState = `<td class="parent_row_31">
                     <select style="vertical-align:middle;width:100%; background-color:${strColor}; color:white;" id="partner_agentstatus_${userlist[i].strNickname}" onchange="OnChangeStatus('${userlist[i].strNickname}');">
                     <option value="NORMAL" selected>${strNormal}</option>
@@ -320,7 +320,7 @@
 
                 console.log(obj.userlist);
                 
-                SetUserList(obj.userlist);
+                SetUserList(obj.userlist, obj.iClass, obj.iPermission);
 
             },
             error:function(request,status,error){

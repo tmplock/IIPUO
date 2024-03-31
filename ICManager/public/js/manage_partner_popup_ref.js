@@ -167,7 +167,7 @@ let RequestUserListOnPopup = (iTargetClass, strGroupID, iClass, iPermission, str
 
                 let tagState = '';
 
-                if ((parseInt(iRootClass) <= 3 && iPermission != 100) || parseInt(iRootClass) == 3) {
+                if (parseInt(iRootClass) <= 3 && iPermission != 100) {
                     tagState = `<td class="parent_row_31" style='background-color:${bgcolor};'>
                         <select style="vertical-align:middle;width:100%; background-color:${strColor}; color:white;" id="partner_agentstatus_${obj.strNickname}" onchange="OnChangeStatus('${obj.strNickname}');">
                         <option value="NOTICE">${strNotice}</option>
@@ -208,7 +208,7 @@ let RequestUserListOnPopup = (iTargetClass, strGroupID, iClass, iPermission, str
                 }
 
                 let letter = ``;
-                if ((parseInt(iRootClass) <= 3 && iPermission != 100) || parseInt(iRootClass) == 3) {
+                if (parseInt(iRootClass) <= 3 && iPermission != 100) {
                     letter = `<td style='background-color:${bgcolor};'><a href="javascript:OnClickWritingLetter('${obj.strNickname}');" class="btn_green">${strLetter}</a></td>`;
                 }
 
@@ -232,10 +232,12 @@ let RequestUserListOnPopup = (iTargetClass, strGroupID, iClass, iPermission, str
                 $('#agent_list').append(tag);
             }
 
-            let stateTag = '';
-            if ((parseInt(iRootClass) <= 3 && iPermission != 100) || parseInt(iRootClass) == 3) {
-                stateTag = '<td></td>>';
+            let letter = ``;
+            if (parseInt(iRootClass) <= 3 && iPermission != 100) {
+                letter = '<td></td>>';
             }
+
+            let tagState = '<td></td>>';
 
             let total_tag = `
                 <tr style="font-weight: bold">
@@ -250,7 +252,8 @@ let RequestUserListOnPopup = (iTargetClass, strGroupID, iClass, iPermission, str
                     <td></td>
                     <td></td>
                     <td></td>
-                    ${stateTag}
+                    ${letter} 
+                    ${tagState}
                 </tr>`;
 
             $('#agent_list').append(total_tag);

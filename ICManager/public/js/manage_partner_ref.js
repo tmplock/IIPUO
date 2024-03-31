@@ -870,7 +870,7 @@ function AddPartner(iRootClass, aObject, bDisableRolling, iPermission)
 	}
 
 	let tagState = '';
-	if ( (iRootClass <= 3 && iPermission != 100) || iRootClass == 3 )
+	if (iRootClass <= 3 && iPermission != 100)
 	{
 
 		if ( aObject.eState == 'NORMAL' )

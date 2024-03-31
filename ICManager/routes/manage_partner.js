@@ -439,15 +439,13 @@ router.post('/request_agentstate', isLoggedIn, async(req, res) => {
     console.log(`/request_agentstate : `);
     console.log(req.body);
 
-    //var va_list = await IAgent.GetComputedAgentList(req.body.strGroupID, parseInt(req.body.iClass)+1, false);
-
-    // let list = await IAgent.GetComputedAgentList(req.body.strGroupID, parseInt(req.body.iClass)+1, req.body.dateStart, req.body.dateEnd);
-
-
-    // res.send(list);
     let agent = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
     if ( agent != null )
     {
+        if (agent.iPermission == 100) {
+            res.send('FAIL');
+            return;
+        }
         if (req.body.eState == 'NORMAL') {
             await agent.update({eState:req.body.eState, iNumLoginFailed: 0});
         } else {

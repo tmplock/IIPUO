@@ -24,6 +24,9 @@ router.get('/calculation', isLoggedIn, async(req, res) => {
 
     const user = {strNickname:dbuser.strNickname, strGroupID:req.user.strGroupID, iClass:parseInt(req.user.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle,
         iRootClass: req.user.iClass, iPermission: req.user.iPermission, strID: dbuser.strID};
+    if (req.user.iPermission == 100) {
+        user.strID = dbuser.strIDRel;
+    }
 
     const agentinfo = await IAgent.GetPopupAgentInfo(req.user.strGroupID, parseInt(req.user.iClass), req.user.strNickname);
 
@@ -46,6 +49,9 @@ router.post('/calculation', isLoggedIn, async(req, res) => {
 
     const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle,
         iRootClass: req.user.iClass, iPermission: req.user.iPermission, strID: dbuser.strID};
+    if (req.user.iPermission == 100) {
+        user.strID = dbuser.strIDRel;
+    }
 
     const agentinfo = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
 

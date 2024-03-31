@@ -398,7 +398,7 @@ router.post('/request_register_view', isLoggedIn, async(req, res) => {
             fSettleBaccarat:user.fSettleSlot,
             fSettlePBA:user.fSettlePBA,
             fSettlePBB:user.fSettlePBB,
-            eState:'BLOCK',
+            eState:'NORMAL',
             //strOptionCode:'00000000',
             strOptionCode:user.strOptionCode,
             strPBOptionCode:user.strPBOptionCode,

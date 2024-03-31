@@ -1613,6 +1613,7 @@ var inline_GetUserInfo = async (strNickname) => {
     let iSettle = 0;
     let strOptionCode = '';
     let strIDRel = '' // 연결된 strID
+    let iSettleAcc = 0;
 
     let fBaccaratR = 0;
     let fSlotR = 0;
@@ -1638,10 +1639,19 @@ var inline_GetUserInfo = async (strNickname) => {
             iClass = dbuser.iClass;
             strGroupID = dbuser.strGroupID;
             strOptionCode = dbuser.strOptionCode;
+            iSettleAcc = dbuser.iSettleAcc;
+
+            fBaccaratR = dbuser.fBaccaratR;
+            fSlotR = dbuser.fSlotR;
+            fUnderOverR = dbuser.fUnderOverR;
+            fPBR = dbuser.fPBR;
+            fPBSingleR = dbuser.fPBSingleR;
+            fPBDoubleR = dbuser.fPBDoubleR;
+            fPBTripleR = dbuser.fPBTripleR;
         }
     }
 
-    return {iCash:iCash, iRolling: iRolling, iSettle:iSettle, strID:strID, strNickname:strNickname, iClass:iClass, strGroupID:strGroupID, strOptionCode:strOptionCode, strIDRel: strIDRel,
+    return {iCash:iCash, iRolling: iRolling, iSettle:iSettle, strID:strID, strNickname:strNickname, iClass:iClass, strGroupID:strGroupID, strOptionCode:strOptionCode, strIDRel: strIDRel, iSettleAcc: iSettleAcc,
         fBaccaratR: fBaccaratR, fSlotR: fSlotR, fUnderOverR: fUnderOverR, fPBR: fPBR, fPBSingleR: fPBSingleR, fPBDoubleR: fPBDoubleR, fPBTripleR: fPBTripleR};
 }
 exports.GetUserInfo = inline_GetUserInfo;

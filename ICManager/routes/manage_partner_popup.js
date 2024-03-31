@@ -483,7 +483,20 @@ router.post('/request_register_view', isLoggedIn, async(req, res) => {
     }
 });
 
+router.post('/request_removeagent_view', async (req, res) => {
 
+    console.log(`/request_removeagent_view`);
+    console.log(req.body);
+
+    let strID = req.body.strID;
+    let target = await db.Users.findOne({where:{strID:strID, iPermission:100}});
+    if (target == null) {
+        res.send({result:'ERROR'});
+        return;
+    }
+    await db.Users.destroy({where:{strID:strID}});
+    res.send({result:'OK'});
+});
 
 router.post('/request_parentenablelist', isLoggedIn, async(req, res) => {
     console.log(req.body);

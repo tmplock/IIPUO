@@ -3,7 +3,9 @@
 		<p style="background-repeat:no-repeat; background-position:left center; font-size:20px; color:#454545; padding-left:22px;margin-top:10px;height:30px;margin-bottom:5px;">
 			보는 파트너 목록
 		</p>
-		<a href="#" class="btn_blue" onclick="OnClickAdd();" > 등록하기 </a>
+		<div style="text-align: right; margin-right: 5px;">
+			<a href="#" class="btn_blue" onclick="OnClickAdd();" > 등록하기 </a>
+		</div>
 		<div class="list">
 			<div class="search_wrap" id="div_realtimebet">
 				<table class="search_list">
@@ -15,6 +17,7 @@
 						<col style="width:20%">
 						<col style="width:10%">
 						<col style="width:10%">
+						<col style="width:10%">
 					</colgroup>
 					<thead>
 					<tr>
@@ -23,6 +26,7 @@
 						<th scope="col">닉네임</th>
 						<th scope="col">아이디</th>
 						<th scope="col">상태</th>
+						<th scope="col">삭제</th>
 						<th scope="col">비고</th>
 					</tr>
 					</thead>
@@ -41,6 +45,7 @@
 <script type="text/javascript" src="js/common_menu.js"></script>
 <script type="text/javascript" src="js/manage_partner_popup_ref.js"></script>
 <script type="text/javascript" src="js/manage_partner_ref.js"></script>
+<script type="text/javascript" src="js/manage_partner_menu.js"></script>
 <script type="text/javascript" src="js/manage_setting_ref.js"></script>
 <script type="text/javascript">
 	let agent = JSON.parse('<%-JSON.stringify(agent)%>');
@@ -61,6 +66,7 @@
 				let eState = aObject.eState ?? '';
 				let tagState = '';
 
+				// 상태
 				let strColor = 'rgb(0, 126, 199)';
 				let bgcolor = 'white';
 
@@ -106,6 +112,12 @@
                         </td>`
 				}
 
+				// 삭제
+				let tagDel = `
+					<td class="parent_row_31">
+						<a href="#" class="btn_red" onclick="OnClickDel('${strID}')">${strRemove}</a>
+					</td>
+				`;
 
 
 				$('#list_agents').append(`
@@ -115,6 +127,7 @@
                         <td id='strNickname_${strNickname}'>${strNickname}</td>
 						<td><a href="#" onclick="OnClickID('${strID}')" style="color:blue;">${strID}</a></td>
 						${tagState}
+						${tagDel}
 						<td></td>
                     </tr>
                 `);
@@ -128,6 +141,7 @@
                         <td></td>
                         <td></td>
                         <td></td>
+						<td></td>
                         <td></td>
                     </tr>
             `);
@@ -185,5 +199,31 @@
 
 		$form.append(idx).append(page).append(category).append(iPermission).append(iAgentClass);
 		$form.submit();
+	}
+
+	let OnClickDel = (strID) => {
+		if (confirm('삭제 하시겠습니까?')) {
+			$.ajax({
+				url:'/manage_partner_popup/request_removeagent_view',
+				type:"POST",
+				data: {
+					strID:strID,
+				},
+				dataType: "json",
+				success: function (data) {
+
+					if ( data.result == 'OK' )
+					{
+						alert(strAlertComplete);
+						location.reload();
+					}
+					else
+					{
+						alert(strAlertCantRemove);
+					}
+					console.log(data);
+				}
+			});
+		}
 	}
 </script>

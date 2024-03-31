@@ -763,12 +763,12 @@ router.post('/listtodayregist', isLoggedIn, async(req, res) => {
     const strTimeStart = ITime.getTodayStart();
     const strTimeEnd = ITime.getTodayEnd();
 
-    let result = await IAgent.GetUserList(strTimeStart, strTimeEnd, user.strGroupID);
+    let result = await IAgent.GetUserList(strTimeStart, strTimeEnd, user.strGroupID, '', true);
     // TODO: iClass에 따라 조정 필요
-    let listShops = await IAgent.GetShopList(strTimeStart, strTimeEnd, user.strGroupID);
-    let listAgents = await IAgent.GetAgentList(strTimeStart, strTimeEnd, user.strGroupID);
-    let listViceAdmins = await IAgent.GetViceAdminList(strTimeStart, strTimeEnd, user.strGroupID);
-    let listProAdmins = await  IAgent.GetProAdminList(strTimeStart, strTimeEnd, user.strGroupID);
+    let listShops = await IAgent.GetShopList(strTimeStart, strTimeEnd, user.strGroupID, '', true);
+    let listAgents = await IAgent.GetAgentList(strTimeStart, strTimeEnd, user.strGroupID, '', true);
+    let listViceAdmins = await IAgent.GetViceAdminList(strTimeStart, strTimeEnd, user.strGroupID, '', true);
+    let listProAdmins = await  IAgent.GetProAdminList(strTimeStart, strTimeEnd, user.strGroupID, '', true);
 
     let total = {iTotalCash:0};
 
@@ -796,12 +796,12 @@ router.post('/request_todayregistlist', isLoggedIn, async ( req, res ) => {
     const strTimeStart = ITime.getTodayStart();
     const strTimeEnd = ITime.getTodayEnd();
 
-    let result = await IAgent.GetUserList(strTimeStart, strTimeEnd, req.body.strGroupID, req.body.strSearchNickname);
+    let result = await IAgent.GetUserList(strTimeStart, strTimeEnd, req.body.strGroupID, req.body.strSearchNickname, true);
     // TODO: iClass에 따라 조정 필요
-    let listShops = await IAgent.GetShopList(strTimeStart, strTimeEnd, req.body.strGroupID, req.body.strSearchNickname);
-    let listAgents = await IAgent.GetAgentList(strTimeStart, strTimeEnd, req.body.strGroupID, req.body.strSearchNickname);
-    let listViceAdmins = await IAgent.GetViceAdminList(strTimeStart, strTimeEnd, req.body.strGroupID, req.body.strSearchNickname);
-    let listProAdmins = await IAgent.GetProAdminList(strTimeStart, strTimeEnd, req.body.strGroupID, req.body.strSearchNickname);
+    let listShops = await IAgent.GetShopList(strTimeStart, strTimeEnd, req.body.strGroupID, req.body.strSearchNickname, true);
+    let listAgents = await IAgent.GetAgentList(strTimeStart, strTimeEnd, req.body.strGroupID, req.body.strSearchNickname, true);
+    let listViceAdmins = await IAgent.GetViceAdminList(strTimeStart, strTimeEnd, req.body.strGroupID, req.body.strSearchNickname, true);
+    let listProAdmins = await IAgent.GetProAdminList(strTimeStart, strTimeEnd, req.body.strGroupID, req.body.strSearchNickname, true);
 
     res.send({userlist:result, shoplist:listShops, agentlist:listAgents, vadminlist:listViceAdmins, proadminlist: listProAdmins, iRootClass: req.user.iClass});
 });

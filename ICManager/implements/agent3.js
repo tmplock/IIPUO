@@ -1177,11 +1177,16 @@ var inline_CalculateRealtimeBettingRecord = async (iGameCode, strGroupID) =>
 exports.CalculateRealtimeBettingRecord = inline_CalculateRealtimeBettingRecord;
 
 
-exports.GetUserList = async (strTimeStart, strTimeEnd, strGroupID, strSearchNickname) => {
+exports.GetUserList = async (strTimeStart, strTimeEnd, strGroupID, strSearchNickname, bOnToday) => {
 
     let tagSearch = '';
     if ( strSearchNickname != undefined && strSearchNickname != '' )
         tagSearch = `AND t6.strNickname='${strSearchNickname}'`;
+
+    let isOnToday = bOnToday ?? false;
+    if (isOnToday == true) {
+        tagSearch = `${tagSearch} AND DATE(t6.createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'`;
+    }
 
     const [result] = await db.sequelize.query(
         `
@@ -1218,17 +1223,22 @@ exports.GetUserList = async (strTimeStart, strTimeEnd, strGroupID, strSearchNick
                     where DATE(createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'
                     GROUP BY strID) dailyBetting
                 ON t6.strID = dailyBetting.strID
-        WHERE t6.iClass=${EAgent.eUser} AND t6.strGroupID LIKE CONCAT('${strGroupID}', '%')${tagSearch};
+        WHERE t6.iClass=${EAgent.eUser} AND t6.strGroupID LIKE CONCAT('${strGroupID}', '%') ${tagSearch};
         `
     );
     return result;
 }
 
-exports.GetShopList = async (strTimeStart, strTimeEnd, strGroupID, strSearchNickname) => {
+exports.GetShopList = async (strTimeStart, strTimeEnd, strGroupID, strSearchNickname, bOnToday) => {
 
     let tagSearch = '';
     if ( strSearchNickname != undefined && strSearchNickname != '' )
         tagSearch = `AND t5.strNickname='${strSearchNickname}'`;
+
+    let isOnToday = bOnToday ?? false;
+    if (isOnToday == true) {
+        tagSearch = `${tagSearch} AND DATE(t5.createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'`;
+    }
 
     const [result] = await db.sequelize.query(
         `
@@ -1259,17 +1269,22 @@ exports.GetShopList = async (strTimeStart, strTimeEnd, strGroupID, strSearchNick
                     AND eType = 'OUTPUT'
                     GROUP BY strID) exchanges
                 ON t5.strNickname = exchanges.strID
-        WHERE t5.iClass=${EAgent.eShop} AND t5.strGroupID LIKE CONCAT('${strGroupID}', '%')${tagSearch};
+        WHERE t5.iClass=${EAgent.eShop} AND t5.strGroupID LIKE CONCAT('${strGroupID}', '%') ${tagSearch};
         `
     );
     return result;
 }
 
-exports.GetAgentList = async (strTimeStart, strTimeEnd, strGroupID, strSearchNickname) => {
+exports.GetAgentList = async (strTimeStart, strTimeEnd, strGroupID, strSearchNickname, bOnToday) => {
 
     let tagSearch = '';
     if ( strSearchNickname != undefined && strSearchNickname != '' )
         tagSearch = `AND t4.strNickname='${strSearchNickname}'`;
+
+    let isOnToday = bOnToday ?? false;
+    if (isOnToday == true) {
+        tagSearch = `${tagSearch} AND DATE(t4.createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'`;
+    }
 
     const [result] = await db.sequelize.query(
         `
@@ -1299,17 +1314,22 @@ exports.GetAgentList = async (strTimeStart, strTimeEnd, strGroupID, strSearchNic
                     AND eType = 'OUTPUT'
                     GROUP BY strID) exchanges
                 ON t4.strNickname = exchanges.strID
-        WHERE t4.iClass=${EAgent.eAgent} AND t4.strGroupID LIKE CONCAT('${strGroupID}', '%')${tagSearch};
+        WHERE t4.iClass=${EAgent.eAgent} AND t4.strGroupID LIKE CONCAT('${strGroupID}', '%') ${tagSearch};
         `
     );
     return result;
 }
 
-exports.GetViceAdminList = async (strTimeStart, strTimeEnd, strGroupID, strSearchNickname) => {
+exports.GetViceAdminList = async (strTimeStart, strTimeEnd, strGroupID, strSearchNickname, bOnToday) => {
 
     let tagSearch = '';
     if ( strSearchNickname != undefined && strSearchNickname != '' )
         tagSearch = `AND t3.strNickname='${strSearchNickname}'`;
+
+    let isOnToday = bOnToday ?? false;
+    if (isOnToday == true) {
+        tagSearch = `${tagSearch} AND DATE(t3.createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'`;
+    }
 
     const [result] = await db.sequelize.query(
         `
@@ -1338,17 +1358,22 @@ exports.GetViceAdminList = async (strTimeStart, strTimeEnd, strGroupID, strSearc
                     AND eType = 'OUTPUT'
                     GROUP BY strID) exchanges
                 ON t3.strNickname = exchanges.strID
-        WHERE t3.iClass=${EAgent.eViceAdmin} AND t3.strGroupID LIKE CONCAT('${strGroupID}', '%')${tagSearch};
+        WHERE t3.iClass=${EAgent.eViceAdmin} AND t3.strGroupID LIKE CONCAT('${strGroupID}', '%') ${tagSearch};
         `
     );
     return result;
 }
 
-exports.GetProAdminList = async (strTimeStart, strTimeEnd, strGroupID, strSearchNickname) => {
+exports.GetProAdminList = async (strTimeStart, strTimeEnd, strGroupID, strSearchNickname, bOnToday) => {
 
     let tagSearch = '';
     if ( strSearchNickname != undefined && strSearchNickname != '' )
         tagSearch = `AND t3.strNickname='${strSearchNickname}'`;
+
+    let isOnToday = bOnToday ?? false;
+    if (isOnToday == true) {
+        tagSearch = `${tagSearch} AND DATE(t3.createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'`;
+    }
 
     const [result] = await db.sequelize.query(
         `
@@ -1377,7 +1402,7 @@ exports.GetProAdminList = async (strTimeStart, strTimeEnd, strGroupID, strSearch
                     AND eType = 'OUTPUT'
                     GROUP BY strID) exchanges
                 ON t3.strNickname = exchanges.strID
-        WHERE t3.iClass=${EAgent.eProAdmin} AND t3.strGroupID LIKE CONCAT('${strGroupID}', '%')${tagSearch};
+        WHERE t3.iClass=${EAgent.eProAdmin} AND t3.strGroupID LIKE CONCAT('${strGroupID}', '%') ${tagSearch};
         `
     );
     return result;

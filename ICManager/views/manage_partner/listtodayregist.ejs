@@ -223,16 +223,15 @@
             if ( userlist[i].iClass != 8 )
                 strClassTag = `<td style='background-color:${bgcolor};'><a href="#" onclick="OnClickNickname('${userlist[i].strNickname}')" style="color:blue;">${userlist[i].strNickname}</a></td>`;
 
+            let letter = ``;
             let strDeleteTag = '';
             if (user.iRootClass <= 3 && user.iPermission != 100) {
+                letter = `<td id="btn_84" style='background-color:${bgcolor};'><a href="javascript:OnClickWritingLetter('${userlist[i].strNickname}');" class="btn_green">${strLetter}</a></td>`;
                 strDeleteTag = `<td id="btn_84" style='background-color:${bgcolor};'>
                                     <a href="javascript:OnClickRemove('${userlist[i].strNickname}', '${userlist[i].strGroupID}', '${userlist[i].iClass}');" class="btn_red">${strRemove}</a>
                                 </td>`;
             }
-            let letter = ``;
-            if (user.iRootClass <= 3 && user.iPermission != 100) {
-                letter = `<a href="javascript:OnClickWritingLetter('${userlist[i].strNickname}');" class="btn_green">${strLetter}</a>`;
-            }
+
             let inoutTag = ``;
             if (user.iRootClass <= 3 && user.iPermission != 100) {
                 inoutTag = `<td style="background-color:${bgcolor};">

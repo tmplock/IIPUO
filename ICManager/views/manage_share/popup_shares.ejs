@@ -186,7 +186,11 @@
                 $('#list_agents').append(`
                     <tr class="Share" id=${aObject.strNickname}>
                         <td id='agent_${strNickname}'>${parentNickname}</td>
-                        <td id='strNickname_${strNickname}'><a style="color:blue;" href='#' onclick="OnClickNickname('${strNickname}')";>${strNickname}</a></td>
+                        <% if (user.iPermission != 100) { %>
+                            <td id='strNickname_${strNickname}'><a style="color:blue;" href='#' onclick="OnClickNickname('${strNickname}')";>${strNickname}</a></td>
+                        <% } else { %>
+                            <td id='strNickname_${strNickname}'>${strNickname}</td>
+                        <% } %>
                         <td id='iShareOrgin_${strNickname}' style="font-size: 12px; padding: 10px; line-height: 1.5;">
                             <label id='iShareOrgin_${strNickname}' for="mile_sect_cash_2" style="font-size:12px;">${GetNumberSign(iShareOrgin, '0')}</label>
                         </td>

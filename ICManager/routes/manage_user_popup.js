@@ -212,7 +212,7 @@ router.post('/translate', isLoggedIn, async(req, res) => {
 
 router.post('/changemoney', isLoggedIn, async(req, res) => {
     console.log(req.body);
-    const user = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
+    const user = await IAgent.GetUserInfo(req.body.strNickname);
     console.log(`######################################################################## ChangeMoney`);
     console.log(user);
     let agent = {strNickname:user.strNickname, iClass:user.iClass, strGroupID:user.strGroupID, iCash:user.iCash, iSettle:user.iSettle, iRolling:user.iRolling, iSettleAcc:user.iSettleAcc,

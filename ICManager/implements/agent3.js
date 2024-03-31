@@ -1623,11 +1623,15 @@ var inline_GetUserInfo = async (strNickname) => {
     let fPBDoubleR = 0;
     let fPBTripleR = 0;
 
+    let iRelUserID = 0;
+
     let dbuser = await db.Users.findOne({where:{strNickname:strNickname}});
     if (dbuser != null) {
         strID = dbuser.strID;
+
         // 연결된 이용자 정보
-        if (dbuser.iRelUserID != 0) {
+        iRelUserID = dbuser.iRelUserID ?? 0;
+        if (iRelUserID != 0) {
             dbuser = await db.Users.findOne({where: {id: dbuser.iRelUserID}});
             strIDRel = dbuser.strID;
         }

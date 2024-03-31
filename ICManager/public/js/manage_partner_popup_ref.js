@@ -251,7 +251,6 @@ let RequestUserListOnPopup = (iTargetClass, strGroupID, iClass, iPermission, str
                     <td></td>
                     <td></td>
                     <td></td>
-                    <td></td>
                     ${letter} 
                     ${tagState}
                 </tr>`;

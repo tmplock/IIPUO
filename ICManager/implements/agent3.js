@@ -11,6 +11,7 @@ module.exports.EAgent = EAgent;
 
 const { QueryTypes } = require('sequelize');
 const moment = require("moment/moment");
+const {debug} = require("nodemon/lib/utils");
 
 const GameCodeList = [0, 100, 200, 300];
 
@@ -1191,7 +1192,7 @@ exports.GetUserList = async (strTimeStart, strTimeEnd, strGroupID, strSearchNick
     const [result] = await db.sequelize.query(
         `
         SELECT t1.strNickname AS lev1, t2.strNickname as lev2, t3.strNickname as lev3, t4.strNickname as lev4, t5.strNickname as lev5, t6.strNickname as lev6, t6.iClass, t6.strID, t6.strNickname,
-        t6.iCash, t6.iClass, t6.strGroupID, t6.eState, t6.createdAt, t6.loginedAt, t6.strIP,
+        t6.iCash, t6.iClass, t6.strGroupID, t6.eState, DATE_FORMAT(t6.createdAt,'%Y-%m-%d %H:%i:%S') AS createdAt, DATE_FORMAT(t6.loginedAt,'%Y-%m-%d %H:%i:%S') AS loginedAt, t6.strIP,
         IFNULL(charges.iInput,0) AS iInput, 
         IFNULL(exchanges.iOutput,0) AS iOutput, 
         IFNULL(dailyBetting.iMyRollingMoney,0) AS iMyRollingMoney, 
@@ -1243,7 +1244,7 @@ exports.GetShopList = async (strTimeStart, strTimeEnd, strGroupID, strSearchNick
     const [result] = await db.sequelize.query(
         `
         SELECT t1.strNickname AS lev1, t2.strNickname as lev2, t3.strNickname as lev3, t4.strNickname as lev4, t5.strNickname as lev5, t5.strNickname as lev6, t5.iClass, t5.strID, t5.strNickname,
-        t5.iCash, t5.iClass, t5.strGroupID, t5.eState, t5.createdAt, t5.loginedAt, t5.strIP,
+        t5.iCash, t5.iClass, t5.strGroupID, t5.eState, DATE_FORMAT(t5.createdAt,'%Y-%m-%d %H:%i:%S') AS createdAt, DATE_FORMAT(t5.loginedAt,'%Y-%m-%d %H:%i:%S') AS loginedAt, t5.strIP,
         IFNULL(charges.iInput,0) AS iInput, 
         IFNULL(exchanges.iOutput,0) AS iOutput,
         IFNULL((SELECT sum(iRollingB + iRollingUO + iRollingS + iRollingPBA + iRollingPBB) FROM RecordDailyOverviews WHERE strID = t5.strID AND date(strDate) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'),0) as iMyRollingMoney,
@@ -1289,7 +1290,7 @@ exports.GetAgentList = async (strTimeStart, strTimeEnd, strGroupID, strSearchNic
     const [result] = await db.sequelize.query(
         `
         SELECT t1.strNickname AS lev1, t2.strNickname as lev2, t3.strNickname as lev3, t4.strNickname as lev4, t4.strNickname as lev5, t4.strNickname as lev6, t4.iClass, t4.strID, t4.strNickname,
-        t4.iCash, t4.iClass, t4.strGroupID, t4.eState, t4.createdAt, t4.loginedAt, t4.strIP,
+        t4.iCash, t4.iClass, t4.strGroupID, t4.eState, DATE_FORMAT(t4.createdAt,'%Y-%m-%d %H:%i:%S') AS createdAt, DATE_FORMAT(t4.loginedAt,'%Y-%m-%d %H:%i:%S') AS loginedAt, t4.strIP,
         IFNULL(charges.iInput,0) AS iInput, 
         IFNULL(exchanges.iOutput,0) AS iOutput, 
         IFNULL((SELECT sum(iRollingB + iRollingUO + iRollingS + iRollingPBA + iRollingPBB) FROM RecordDailyOverviews WHERE strID = t4.strID AND date(strDate) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'),0) as iMyRollingMoney,
@@ -1334,7 +1335,7 @@ exports.GetViceAdminList = async (strTimeStart, strTimeEnd, strGroupID, strSearc
     const [result] = await db.sequelize.query(
         `
         SELECT t1.strNickname AS lev1, t2.strNickname as lev2, t3.strNickname as lev3, t3.strNickname as lev4, t3.strNickname as lev5, t3.strNickname as lev6, t3.iClass, t3.strID, t3.strNickname,
-        t3.iCash, t3.iClass, t3.strGroupID, t3.eState, t3.createdAt, t3.loginedAt, t3.strIP,
+        t3.iCash, t3.iClass, t3.strGroupID, t3.eState, DATE_FORMAT(t3.createdAt,'%Y-%m-%d %H:%i:%S') AS createdAt, DATE_FORMAT(t3.loginedAt,'%Y-%m-%d %H:%i:%S') AS loginedAt, t3.strIP,
         IFNULL(charges.iInput,0) AS iInput, 
         IFNULL(exchanges.iOutput,0) AS iOutput, 
         IFNULL((SELECT sum(iRollingB + iRollingUO + iRollingS + iRollingPBA + iRollingPBB) FROM RecordDailyOverviews WHERE strID = t3.strID AND date(strDate) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'),0) as iMyRollingMoney,
@@ -1378,7 +1379,7 @@ exports.GetProAdminList = async (strTimeStart, strTimeEnd, strGroupID, strSearch
     const [result] = await db.sequelize.query(
         `
         SELECT t1.strNickname AS lev1, t2.strNickname as lev2, t3.strNickname as lev3, t3.strNickname as lev4, t3.strNickname as lev5, t3.strNickname as lev6, t3.iClass, t3.strID, t3.strNickname,
-        t3.iCash, t3.iClass, t3.strGroupID, t3.eState, t3.createdAt, t3.loginedAt, t3.strIP,
+        t3.iCash, t3.iClass, t3.strGroupID, t3.eState, DATE_FORMAT(t3.createdAt,'%Y-%m-%d %H:%i:%S') AS createdAt, DATE_FORMAT(t3.loginedAt,'%Y-%m-%d %H:%i:%S') AS loginedAt, t3.strIP,
         0 AS iInput,
         0 AS iOutput,
         IFNULL((SELECT sum(iRollingB + iRollingUO + iRollingS + iRollingPBA + iRollingPBB) FROM RecordDailyOverviews WHERE strID = t3.strID AND date(strDate) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'),0) as iMyRollingMoney,
@@ -1638,6 +1639,7 @@ var inline_GetUserInfo = async (strNickname) => {
     let iSettle = 0;
     let strOptionCode = '';
     let strIDRel = '' // 연결된 strID
+    let strNicknameRel = '' // 연결된 strNickname
     let iSettleAcc = 0;
 
     let fBaccaratR = 0;
@@ -1650,15 +1652,18 @@ var inline_GetUserInfo = async (strNickname) => {
 
     let iRelUserID = 0;
 
+    let iPermission = 0;
+
     let dbuser = await db.Users.findOne({where:{strNickname:strNickname}});
     if (dbuser != null) {
         strID = dbuser.strID;
-
+        iPermission = dbuser.iPermission;
         // 연결된 이용자 정보
         iRelUserID = dbuser.iRelUserID ?? 0;
         if (iRelUserID != 0) {
             dbuser = await db.Users.findOne({where: {id: dbuser.iRelUserID}});
             strIDRel = dbuser.strID;
+            strNicknameRel = dbuser.strNickname;
         }
 
         if ( dbuser != null ) {
@@ -1680,7 +1685,8 @@ var inline_GetUserInfo = async (strNickname) => {
         }
     }
 
-    return {iCash:iCash, iRolling: iRolling, iSettle:iSettle, strID:strID, strNickname:strNickname, iClass:iClass, strGroupID:strGroupID, strOptionCode:strOptionCode, strIDRel: strIDRel, iSettleAcc: iSettleAcc,
+    return {iCash:iCash, iRolling: iRolling, iSettle:iSettle, strID:strID, strNickname:strNickname, iClass:iClass, strGroupID:strGroupID, strOptionCode:strOptionCode, iSettleAcc: iSettleAcc,
+        strIDRel: strIDRel, strNicknameRel: strNicknameRel, iPermission:iPermission,
         fBaccaratR: fBaccaratR, fSlotR: fSlotR, fUnderOverR: fUnderOverR, fPBR: fPBR, fPBSingleR: fPBSingleR, fPBDoubleR: fPBDoubleR, fPBTripleR: fPBTripleR};
 }
 exports.GetUserInfo = inline_GetUserInfo;

@@ -39,7 +39,7 @@ router.post('/letterlistsend', isLoggedIn, async(req, res) => {
     const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling: dbuser.iRolling, iSettle:dbuser.iSettle,
         iRootClass: req.user.iClass, iPermission:req.user.iPermission};
 
-    if (user.iPermission == 100) {
+    if (dbuser.iPermission == 100) {
         user.strID = dbuser.strIDRel;
     }
 

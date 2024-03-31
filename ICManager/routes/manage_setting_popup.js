@@ -308,12 +308,12 @@ router.post('/request_writeletter_partner', async (req, res) => {
     console.log(`################################################## /manage_setting_popup/request_writeletter_partner`);
     console.log(req.body);
 
-    const fromUser = await db.Users.findOne({where:{strNickname:req.body.strFrom}});
-    if (fromUser.iPermission == 100 && fromUser.iRelUserID != null) {
-        const relUser = await db.Users.findOne({where: {id: fromUser.iRelUserID}});
-        fromUser.strID = relUser.strID;
-        fromUser.strNickname = relUser.strNickname;
+    const fromUser = await IAgent.GetUserInfo(req.body.strFrom);
+    if (fromUser.iPermission == 100) {
+        fromUser.strID = fromUser.strIDRel;
+        fromUser.strNickname = fromUser.strNicknameRel;
     }
+
     const toUser = await db.Users.findOne({where:{strNickname:req.body.receivers}});
 
     const parents = await IAgent.GetParentList(fromUser.strGroupID, fromUser.iClass);
@@ -389,10 +389,9 @@ router.post('/request_letterrecord', async (req, res) => {
         listState.push(req.body.eState);
 
     let strNickname = req.body.strNickname;
-    const user = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
-    if (user.iRelUserID != null) {
-        const relUser = await db.Users.findOne({where:{id: user.iRelUserID}});
-        strNickname = relUser.strNickname;
+    const user = await IAgent.GetUserInfo(req.body.strNickname);
+    if (user.iPermission == 100) {
+        strNickname = user.strNicknameRel;
     }
 
     let totalCount = 0;
@@ -478,9 +477,9 @@ router.post('/request_letterlist', async (req, res) => {
         listState.push(req.body.eState);
 
     let strNickname = req.body.strNickname;
-    const user = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
-    if (user.iRelUserID != null) {
-        strNickname = user.strNickname;
+    const user = await IAgent.GetUserInfo(req.body.strNickname);
+    if (user.iPermission == 100) {
+        strNickname = user.strNicknameRel;
     }
 
     let totalCount = 0;

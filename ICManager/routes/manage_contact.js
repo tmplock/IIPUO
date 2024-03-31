@@ -14,7 +14,7 @@ const db = require('../models');
 const ITime = require('../utils/time');
 const ISocket = require('../implements/socket');
 
-const {Op}= require('sequelize');
+const {Op, where}= require('sequelize');
 
 const IAgent = require('../implements/agent3');
 const {isLoggedIn, isNotLoggedIn} = require('./middleware');
@@ -107,9 +107,8 @@ router.post('/list_contact_send', isLoggedIn, async(req, res) => {
 router.post('/request_list_contact_send', isLoggedIn, async(req, res) => {
     let strTimeStart = req.body.dateStart;
     let strTimeEnd = req.body.dateEnd;
-    let strKeyword = req.body.strKeyword;
+    let strKeyword = req.body.strKeyword ?? '';
     let eRead = req.body.eRead;
-    let strTo = req.body.strNickname;
 
     let listRead = [];
     if ( eRead == 'ALL')
@@ -122,28 +121,53 @@ router.post('/request_list_contact_send', isLoggedIn, async(req, res) => {
     else
         listRead.push(req.body.eRead);
 
-    let totalCount = await db.ContactLetter.count({
-        where:{
-            createdAt:{
-                [Op.between]:[ strTimeStart, require('moment')(strTimeEnd).add(1, 'days').format('YYYY-MM-DD')],
-            },
-            strTo:{[Op.like]:'%'+strKeyword+'%'},
-            strFrom:req.body.strNickname,
-            eRead:{[Op.or]:listRead}
-        },
-    });
+
+    let user = await db.Users.findOne({where: {
+        strNickname : req.body.strNickname,
+    }});
+    let parent = await db.Users.findOne({where: {
+        id: user.iParentID
+    }});
 
     let iLimit = parseInt(req.body.iLimit);
     let iPage = parseInt(req.body.iPage);
     let iOffset = (iPage-1) * iLimit;
 
-    let list = await db.ContactLetter.findAll({
+    let totalCount = strKeyword == '' ? await db.ContactLetter.count({
+        where:{
+            createdAt:{
+                [Op.between]:[ strTimeStart, require('moment')(strTimeEnd).add(1, 'days').format('YYYY-MM-DD')],
+            },
+            strTo:parent.strNickname,
+            eRead:{[Op.or]:listRead}
+        },
+    }) : await db.ContactLetter.count({
         where:{
             createdAt:{
                 [Op.between]:[ strTimeStart, require('moment')(strTimeEnd).add(1, 'days').format('YYYY-MM-DD')],
             },
             strTo:{[Op.like]:'%'+strKeyword+'%'},
-            strFrom:req.body.strNickname,
+            eRead:{[Op.or]:listRead}
+        },
+    });
+
+    let list = strKeyword == '' ? await db.ContactLetter.findAll({
+        where:{
+            createdAt:{
+                [Op.between]:[ strTimeStart, require('moment')(strTimeEnd).add(1, 'days').format('YYYY-MM-DD')],
+            },
+            strTo:parent.strNickname,
+            eRead:{[Op.or]:listRead}
+        },
+        limit:iLimit,
+        offset:iOffset,
+        order:[['createdAt','DESC']]
+    }) : await db.ContactLetter.findAll({
+        where:{
+            createdAt:{
+                [Op.between]:[ strTimeStart, require('moment')(strTimeEnd).add(1, 'days').format('YYYY-MM-DD')],
+            },
+            strTo:{[Op.like]:'%'+strKeyword+'%'},
             eRead:{[Op.or]:listRead}
         },
         limit:iLimit,

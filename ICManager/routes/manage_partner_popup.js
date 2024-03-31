@@ -1314,17 +1314,10 @@ const logMessage = (source, data) => {
 router.post('/credits', isLoggedIn, async (req, res) => {
     console.log(req.body);
 
-    const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
-    let iCash = 0;
-    let iRolling = 0;
-    let iSettle = 0;
-    if ( dbuser != null ) {
-        iCash = dbuser.iCash;
-        iRolling = dbuser.iRolling;
-        iSettle = dbuser.iSettle;
-    }
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iRolling:iRolling, iSettle:iSettle,
-        strID:strID, iRootClass:req.user.iClass, iPermission:req.user.iPermission};
+    const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
+
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle,
+        strID:dbuser.strID, iRootClass:req.user.iClass, iPermission:req.user.iPermission};
 
     const agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
     agent.iRootClass = req.user.iClass;
@@ -1333,7 +1326,7 @@ router.post('/credits', isLoggedIn, async (req, res) => {
     let strParent = await IAgent.GetParentNickname(req.body.strNickname);
     let list = await db.CreditRecords.findAll({
         where:{
-            strID: strID,
+            strID: dbuser.strID,
         },
         order:[['createdAt','DESC']]
     });
@@ -1359,18 +1352,10 @@ router.post('/popup_credits', isLoggedIn, async (req, res) => {
 router.post('/popup_credits_history', isLoggedIn, async(req, res) => {
 
     console.log(req.body);
-    const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
-    let iCash = 0;
-    let iRolling = 0;
-    let iSettle = 0;
-    if ( dbuser != null ) {
-        iCash = dbuser.iCash;
-        iRolling = dbuser.iRolling;
-        iSettle = dbuser.iSettle;
-    }
+    const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iRolling:iRolling, iSettle:iSettle,
-        strID:strID, iRootClass:req.user.iClass, iPermission:req.user.iPermission};
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle,
+        strID:dbuser.strID, iRootClass:req.user.iClass, iPermission:req.user.iPermission};
 
     const agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
     agent.iRootClass = req.user.iClass;
@@ -1397,18 +1382,10 @@ router.post('/popup_credits', isLoggedIn, async (req, res) => {
     let strParent = await IAgent.GetParentNickname(req.body.strNickname);
     let strParentGroupID = await IAgent.GetParentGroupID(req.body.strNickname);
 
-    const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
-    let iCash = 0;
-    let iRolling = 0;
-    let iSettle = 0;
-    if ( dbuser != null ) {
-        iCash = dbuser.iCash;
-        iRolling = dbuser.iRolling;
-        iSettle = dbuser.iSettle;
-    }
+    const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iRolling:iRolling, iSettle:iSettle,
-        strID:strID, iRootClass:req.user.iClass, iPermission:req.user.iPermission};
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle,
+        strID:dbuser.strID, iRootClass:req.user.iClass, iPermission:req.user.iPermission};
 
     const agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
 

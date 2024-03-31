@@ -1040,7 +1040,7 @@
 		subtag += `<input type='hidden' id='rolling_${aObject.strNickname}' value='${aObject.iRollingMoney}'/>`;
 
 		// 죽장 적립(입력창)
-		if ( isShowSettleAcc )
+		if ( isShowSettleAcc && user.iPermission != 100 )
 		{
 			subtag += `
 				<td style="background-color:${color};" class="parent_row_31">

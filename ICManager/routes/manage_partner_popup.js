@@ -341,6 +341,23 @@ router.post('/registeragent', isLoggedIn, async(req, res) => {
 
 })
 
+router.post('/popup_listadmin_view', isLoggedIn, async(req, res) => {
+    console.log(req.body);
+
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:req.body.iClass, iAgentClass:req.body.iAgentClass,
+        iRootClass:req.user.iClass, iPermission:req.user.iPermission};
+
+    let list = await db.sequelize.query(
+        `
+        SELECT u.strNickname AS strRelNickname, u3.strNickname, u3.strID, u3.eState, u3.strGroupID, u3.iPermission, u3.iClass
+        FROM Users AS u3
+        LEFT JOIN Users u ON u.id = u3.iRelUserID
+        WHERE u3.iClass = 3 AND u3.iPermission = 100 AND u3.strGroupID LIKE '${req.body.strGroupID+'%'}' 
+        `
+    );
+    res.render('manage_partner/popup_listadmin_view', {iLayout:7, iHeaderFocus:0, agent:user, list:list[0], strParent: user.strNickname});
+});
+
 router.post('/registeragent_view', isLoggedIn, async(req, res) => {
     console.log(req.body);
     const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:req.body.iClass, iAgentClass:req.body.iAgentClass,
@@ -356,62 +373,111 @@ router.post('/registeragent_view', isLoggedIn, async(req, res) => {
             },
         }
     });
+
+    res.render('manage_partner/popup_registeragent_view', {iLayout:1, agent:user, list:list, iAgentClass:user.iAgentClass});
+});
+
+
+router.post('/readagent_view', isLoggedIn, async(req, res) => {
+    console.log(req.body);
+    let strID = req.body.strID;
+    let dbUser = await db.Users.findOne({
+        where: {
+            strID: strID,
+        }
+    });
+    const user = {strNickname:dbUser.strNickname, strID:dbUser.strID, strPassword:dbUser.strPassword, strGroupID:dbUser.strGroupID, iClass:dbUser.iClass, iAgentClass:dbUser.iClass,
+        iRootClass:req.user.iClass, iPermission:dbUser.iPermission, iRelUserID: dbUser.iRelUserID};
+
+    let list = await db.Users.findAll({
+        where: {
+            iClass:user.iClass,
+            strGroupID:{
+                [Op.like]:user.strGroupID+'%'
+            },
+            iPermission: {
+                [Op.notIn]: [100]
+            },
+        }
+    });
+
     res.render('manage_partner/popup_registeragent_view', {iLayout:1, agent:user, list:list});
 });
 
 router.post('/request_register_view', isLoggedIn, async(req, res) => {
     console.log(req.body);
     try {
-        let iRelUserID = req.body.iRelUserID;
+        // 신규 여부 확인
         let user = await db.Users.findOne({
             where: {
-                id: iRelUserID,
+                strID: req.body.strID
             }
         });
 
-        await db.Users.create({
-            strID:req.body.strID,
-            strPassword:req.body.strPassword,
-            strNickname:req.body.strNickname,
-            strMobile:'',
-            strBankname:'',
-            strBankAccount:'',
-            strBankOwner:'',
-            strBankPassword:'',
-            strOutputPassowrd:'',
-            iClass:user.iClass,
-            strGroupID:user.strGroupID,
-            iParentID:user.iParentID,
-            iCash:0,
-            iLoan:0,
-            iRolling:0,
-            iSettle:0,
-            iSettleAcc:0,
-            fBaccaratR:user.fBaccaratR,
-            fSlotR:user.fSlotR,
-            fUnderOverR:user.fUnderOverR,
-            fPBR:user.fPBR,
-            fPBSingleR:user.fPBSingleR,
-            fPBDoubleR:user.fPBDoubleR,
-            fPBTripleR:user.fPBTripleR,
-            fSettleSlot:user.fSettleBaccarat,
-            fSettleBaccarat:user.fSettleSlot,
-            fSettlePBA:user.fSettlePBA,
-            fSettlePBB:user.fSettlePBB,
-            eState:'NORMAL',
-            //strOptionCode:'00000000',
-            strOptionCode:user.strOptionCode,
-            strPBOptionCode:user.strPBOptionCode,
-            iPBLimit:user.iPBLimit,
-            iPBSingleLimit:user.iPBSingleLimit,
-            iPBDoubleLimit:user.iPBDoubleLimit,
-            iPBTripleLimit:user.iPBTripleLimit,
-            strSettleMemo:'',
-            iNumLoginFailed: 0,
-            iPermission:100,
-            iRelUserID:iRelUserID,
-        });
-        res.send({result:'OK', string:'에이전트(보기용) 생성을 완료 하였습니다.'});
+        // 업데이트
+        if (user != null) {
+            await user.update({
+                strID:req.body.strID,
+                strPassword:req.body.strPassword,
+                strNickname:req.body.strNickname,
+            });
+            res.send({result:'OK', string:'에이전트(보기용) 수정 되었습니다.'});
+            return;
+        }
+
+        // 신규 등록
+        if (user == null) {
+            let iRelUserID = req.body.iRelUserID;
+            user = await db.Users.findOne({
+                where: {
+                    id: iRelUserID,
+                }
+            });
+
+            await db.Users.create({
+                strID:req.body.strID,
+                strPassword:req.body.strPassword,
+                strNickname:req.body.strNickname,
+                strMobile:'',
+                strBankname:'',
+                strBankAccount:'',
+                strBankOwner:'',
+                strBankPassword:'',
+                strOutputPassowrd:'',
+                iClass:user.iClass,
+                strGroupID:user.strGroupID,
+                iParentID:user.iParentID,
+                iCash:0,
+                iLoan:0,
+                iRolling:0,
+                iSettle:0,
+                iSettleAcc:0,
+                fBaccaratR:user.fBaccaratR,
+                fSlotR:user.fSlotR,
+                fUnderOverR:user.fUnderOverR,
+                fPBR:user.fPBR,
+                fPBSingleR:user.fPBSingleR,
+                fPBDoubleR:user.fPBDoubleR,
+                fPBTripleR:user.fPBTripleR,
+                fSettleSlot:user.fSettleBaccarat,
+                fSettleBaccarat:user.fSettleSlot,
+                fSettlePBA:user.fSettlePBA,
+                fSettlePBB:user.fSettlePBB,
+                eState:'BLOCK',
+                //strOptionCode:'00000000',
+                strOptionCode:user.strOptionCode,
+                strPBOptionCode:user.strPBOptionCode,
+                iPBLimit:user.iPBLimit,
+                iPBSingleLimit:user.iPBSingleLimit,
+                iPBDoubleLimit:user.iPBDoubleLimit,
+                iPBTripleLimit:user.iPBTripleLimit,
+                strSettleMemo:'',
+                iNumLoginFailed: 0,
+                iPermission:100,
+                iRelUserID:iRelUserID,
+            });
+            res.send({result:'OK', string:'에이전트(보기용) 생성을 완료 하였습니다.'});
+        }
     } catch (err) {
         res.send({result:'FAIL', string:`에이전트(보기용) 생성을 실패했습니다.(${err})`});
     }

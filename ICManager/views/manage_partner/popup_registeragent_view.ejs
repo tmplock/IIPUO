@@ -116,6 +116,7 @@
 		const agent = JSON.parse('<%-JSON.stringify(agent)%>');
 		const list = JSON.parse('<%-JSON.stringify(list)%>');
 		let selectPartner = null;
+		let iRelUserID = agent.iRelUserID ?? 0;
 
 		const strAlertComplete = '<%=__("AlertComplete")%>';
 		const strAlertEnableToUse = '<%=__("AlertEnableToUse")%>';
@@ -128,8 +129,6 @@
 
 		const caAgentType = ['', '<%=__("HQ")%>', '<%=__("ViceHQ")%>', '<%=__("Admin")%>', '<%=__("ProAdmin")%>', '<%=__("ViceAdmin")%>', '<%=__("Agent")%>', '<%=__("Shop")%>', '<%=__("User")%>'];
 
-		$('#registeragent_title').append(`<a style="font-weight:regular;color:yellow;font-size:25px;font-family:'Spoqa Han Sans Neo', 'sans-serif';">${caAgentType[parseInt(agent.iAgentClass)]} ${"<%=__('Register')%>"}</a>`);
-
 		checkBlockCharNickname(`#strNickname`);
 		checkBlockCharNickname(`#strID`);
 		checkBlockCharNickname(`#strPassword`);
@@ -140,8 +139,29 @@
 			let tag = `<option value="${list[i].strNickname}">${list[i].strNickname}</option>`;
 			$('#partner_list').append(tag);
 		}
+
+		if (iRelUserID == 0) {
+			$('#registeragent_title').append(`<a style="font-weight:regular;color:yellow;font-size:25px;font-family:'Spoqa Han Sans Neo', 'sans-serif';">${caAgentType[parseInt(agent.iAgentClass)]} ${"<%=__('Register')%>"}</a>`);
+		} else {
+			$('#registeragent_title').append(`<a style="font-weight:regular;color:yellow;font-size:25px;font-family:'Spoqa Han Sans Neo', 'sans-serif';">${caAgentType[parseInt(agent.iAgentClass)]} 보기</a>`);
+			$('#strNickname').val(agent.strNickname);
+			$('#strID').val(agent.strID);
+			$('#strPassword').val(agent.strPassword);
+			$('#strPasswordConfirm').val(agent.strPassword);
+		}
+
 		if (list.length > 0) {
-			selectPartner = list[0];
+			if (iRelUserID == 0) {
+				selectPartner = list[0];
+			} else {
+				for (let i in list) {
+					if (list[i].id == iRelUserID) {
+						selectPartner = list[i];
+						$('#partner_list').val(selectPartner.strNickname);
+						break;
+					}
+				}
+			}
 		}
 
 		let OnChangePartner = () => {
@@ -155,23 +175,36 @@
 		}
 
 		let OnClickSubmit = () => {
-			if ( false == bCheckID )
-			{
-				alert(strAlertNeedToDuplicationCheckID);
-				return;
-			}
-
-			if ( false == bCheckNickname )
-			{
-				alert(strAlertNeedToDuplicationCheckNickname);
-				return;
-			}
-
 			const iRelUserID = selectPartner.id;
 			const strPassword = $('#strPassword').val();
 			const strPasswordConfirm = $('#strPasswordConfirm').val();
 			const strID = $('#strID').val();
 			const strNickname = $('#strNickname').val();
+
+			if (iRelUserID == 0) {
+				if ( false == bCheckID )
+				{
+					alert(strAlertNeedToDuplicationCheckID);
+					return;
+				}
+
+				if ( false == bCheckNickname )
+				{
+					alert(strAlertNeedToDuplicationCheckNickname);
+					return;
+				}
+			} else {
+				if (strID != agent.strID && false == bCheckID) {
+					alert(strAlertNeedToDuplicationCheckID);
+					return;
+				}
+
+				if ( strNickname != agent.strNickname && false == bCheckNickname )
+				{
+					alert(strAlertNeedToDuplicationCheckNickname);
+					return;
+				}
+			}
 
 			if( strPassword == '' || strPassword == undefined || strPassword == null || strPasswordConfirm == '' || strPasswordConfirm == undefined || strPasswordConfirm == null ){
 				alert(strAlertDifferentPasswordAndConfirm);
@@ -203,6 +236,9 @@
 							if ( obj.result == 'OK' ) {
 								bCheckID = true;
 								alert(strAlertComplete);
+								if (window.opener != null && !window.opener.closed) {
+									window.opener.location.reload();
+								}
 								window.close();
 							}
 							else {

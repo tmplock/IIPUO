@@ -26,26 +26,23 @@ $(document).on('click', '#register_agent_view', (event) => {
 
     let eAgentType = $(event.target).attr('iAgentClass');
 
-    console.log(user);
-
-    window.open('', 'popupRegister', 'width=1280, height=420, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
-
-    var $form = $('<form></form>');
-    $form.attr('action', '/manage_partner_popup/registeragent_view');
+    window.open('', 'popupChkListAdminView', 'width=1000, height=600, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
+    let $form = $('<form></form>');
+    $form.attr('action', '/manage_partner_popup/popup_listadmin_view');
     $form.attr('method', 'post');
-    $form.attr('target', 'popupRegister');
+    $form.attr('target', 'popupChkListAdminView');
     $form.appendTo('body');
 
-    var strNickname = $(`<input type="hidden" value="${user.strNickname}" name="strNickname">`);
-    var strGroupID = $(`<input type="hidden" value="${user.strGroupID}" name="strGroupID">`);
-    var iClass = $(`<input type="hidden" value=${parseInt(user.iClass)} name="iClass">`);
+    let id = $(`<input type="hidden" value="${user.strID}" name="strID">`);
+    let idx = $(`<input type="hidden" value="${user.strNickname}" name="strNickname">`);
+    let page = $(`<input type="hidden" value="${user.strGroupID}" name="strGroupID">`);
+    let category = $(`<input type="hidden" value=${parseInt(user.iClass)} name="iClass">`);
     var iPermission = $(`<input type="hidden" value=${parseInt(user.iPermission)} name="iPermission">`);
     let iAgentClass = $(`<input type="hidden" value=${eAgentType} name="iAgentClass">`);
 
-    $form.append(strNickname).append(strGroupID).append(iClass).append(iPermission).append(iAgentClass);
+    $form.append(id).append(idx).append(page).append(category).append(iPermission).append(iAgentClass);
     $form.submit();
 })
-
 
 // $(document).on('click', '#partner_adjust', (event) => {
 

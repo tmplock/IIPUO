@@ -442,7 +442,7 @@ router.post('/request_agentstate', isLoggedIn, async(req, res) => {
     let agent = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
     if ( agent != null )
     {
-        if (agent.iPermission == 100) {
+        if (req.user.iPermission == 100) {
             res.send('FAIL');
             return;
         }

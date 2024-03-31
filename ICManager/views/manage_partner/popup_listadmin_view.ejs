@@ -1,0 +1,189 @@
+<div class="search_wrap">
+	<div class="container clearfix">
+		<p style="background-repeat:no-repeat; background-position:left center; font-size:20px; color:#454545; padding-left:22px;margin-top:10px;height:30px;margin-bottom:5px;">
+			보는 파트너 목록
+		</p>
+		<a href="#" class="btn_blue" onclick="OnClickAdd();" > 등록하기 </a>
+		<div class="list">
+			<div class="search_wrap" id="div_realtimebet">
+				<table class="search_list">
+					<caption><%=__('SearchResult')%></caption>
+					<colgroup>
+						<col style="width:5%">
+						<col style="width:20%">
+						<col style="width:20%">
+						<col style="width:20%">
+						<col style="width:10%">
+						<col style="width:10%">
+					</colgroup>
+					<thead>
+					<tr>
+						<th scope="col">순번</th>
+						<th scope="col">본사</th>
+						<th scope="col">닉네임</th>
+						<th scope="col">아이디</th>
+						<th scope="col">상태</th>
+						<th scope="col">비고</th>
+					</tr>
+					</thead>
+					<tbody id="list_agents">
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+</div>
+<script type="text/javascript" src="js/constants.js"></script>
+<script type="text/javascript" src="js/enum.js"></script>
+<script type="text/javascript" src="js/time.js"></script>
+<script type="text/javascript" src="js/util.js"></script>
+<script type="text/javascript" src="js/common_menu.js"></script>
+<script type="text/javascript" src="js/manage_partner_popup_ref.js"></script>
+<script type="text/javascript" src="js/manage_partner_ref.js"></script>
+<script type="text/javascript" src="js/manage_setting_ref.js"></script>
+<script type="text/javascript">
+	let agent = JSON.parse('<%-JSON.stringify(agent)%>');
+	let list = JSON.parse('<%-JSON.stringify(list)%>');
+
+	$(document).ready( ()=> {
+		SetList(list, false);
+	});
+
+	let SetList = (list) => {
+		$("#list_agents").empty();
+		if (list.length > 0) {
+			for (let i = 0; i<list.length; i++) {
+				let aObject = list[i];
+				let strRelNickname = aObject.strRelNickname ?? '';
+				let strNickname = aObject.strNickname ?? '';
+				let strID = aObject.strID ?? '';
+				let eState = aObject.eState ?? '';
+				let tagState = '';
+
+				let strColor = 'rgb(0, 126, 199)';
+				let bgcolor = 'white';
+
+				if ( eState == 'BLOCK' )
+				{
+					strColor = 'rgb(207, 61, 4)';
+					bgcolor = '#fcd7e6';
+				}
+				else if ( eState == 'NOTICE')
+				{
+					strColor = 'rgb(207, 100, 4)';
+					bgcolor = '#faecd9';
+				}
+
+				tagState = `<td class="parent_row_31" style='background-color:${bgcolor};'>
+                        <select style="vertical-align:middle;width:100%; background-color:${strColor}; color:white;" id="partner_agentstatus_${strNickname}" onchange="OnChangeStatus('${strNickname}');">
+                        <option value="NOTICE">${strNotice}</option>
+                        <option value="NORMAL" selected>${strNormal}</option>
+                        <option value="BLOCK">${strBlock}</option>
+                        </select>
+                        </td>`;
+
+				if ( eState == 'BLOCK') {
+
+					console.log('BLOCK');
+					tagState = `<td class="parent_row_31" style='background-color:${bgcolor};'>
+                        <select style="vertical-align:middle;width:100%; background-color:${strColor}; color:white;" id="partner_agentstatus_${strNickname}" onchange="OnChangeStatus('${strNickname}');">
+                        <option value="NORMAL">${strNormal}</option>
+                        <option value="NOTICE">${strNotice}</option>
+                        <option value="BLOCK" selected>${strBlock}</option>
+                        </select>
+                        </td>`
+				}
+				else if ( eState == 'NOTICE' )
+				{
+					console.log('NOTICE');
+					tagState = `<td class="parent_row_31" style='background-color:${bgcolor};'>
+                        <select style="vertical-align:middle;width:100%; background-color:${strColor}; color:white;" id="partner_agentstatus_${strNickname}" onchange="OnChangeStatus('${strNickname}');">
+                        <option value="NORMAL">${strNormal}</option>
+                        <option value="NOTICE" selected>${strNotice}</option>
+                        <option value="BLOCK">${strBlock}</option>
+                        </select>
+                        </td>`
+				}
+
+
+
+				$('#list_agents').append(`
+                    <tr id=${aObject.strNickname}>
+                        <td>${i+1}</td>
+                        <td id='agent_${strRelNickname}'>${strRelNickname}</td>
+                        <td id='strNickname_${strNickname}'>${strNickname}</td>
+						<td><a href="#" onclick="OnClickID('${strID}')" style="color:blue;">${strID}</a></td>
+						${tagState}
+						<td></td>
+                    </tr>
+                `);
+			}
+		} else {
+			console.log('else');
+			$('#list_agents').append(`
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+            `);
+		}
+	}
+
+	let GetUser = (strID) => {
+		for (let i in list) {
+			if (list[i].strID == strID) {
+				return list[i];
+			}
+		}
+		return null;
+	}
+
+	let OnClickID = (strID) => {
+		let user = GetUser(strID);
+
+		var scLeft = window.screenLeft + 50;
+		var scTop = window.screenTop + 50;
+		window.open('', 'popupChkSub', `width=1280, height=720, top=${scTop}, left=${scLeft}, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no`);
+
+		var $form = $('<form></form>');
+		$form.attr('action', '/manage_partner_popup/readagent_view');
+		$form.attr('method', 'post');
+		$form.attr('target', 'popupChkSub');
+		$form.appendTo('body');
+
+		var idx = $(`<input type="hidden" value="${user.strNickname}" name="strNickname">`);
+		var page = $(`<input type="hidden" value="${user.strGroupID}" name="strGroupID">`);
+		var category = $(`<input type="hidden" value=${parseInt(user.iClass)} name="iClass">`);
+		var iPermission = $(`<input type="hidden" value=${parseInt(user.iPermission)} name="iPermission">`);
+		var strID2 = $(`<input type="hidden" value=${user.strID} name="strID">`);
+
+		$form.append(idx).append(page).append(category).append(iPermission).append(strID2);
+		$form.submit();
+	}
+
+	let OnClickAdd = () => {
+		var scLeft = window.screenLeft + 50;
+		var scTop = window.screenTop + 50;
+		window.open('', 'popupChkSub', `width=1280, height=720, top=${scTop}, left=${scLeft}, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no`);
+
+		var $form = $('<form></form>');
+		$form.attr('action', '/manage_partner_popup/registeragent_view');
+		$form.attr('method', 'post');
+		$form.attr('target', 'popupChkSub');
+		$form.appendTo('body');
+
+		var idx = $(`<input type="hidden" value="${agent.strNickname}" name="strNickname">`);
+		var page = $(`<input type="hidden" value="${agent.strGroupID}" name="strGroupID">`);
+		var category = $(`<input type="hidden" value=${parseInt(agent.iClass)} name="iClass">`);
+		var iPermission = $(`<input type="hidden" value=${parseInt(agent.iPermission)} name="iPermission">`);
+		var iAgentClass = $(`<input type="hidden" value=${parseInt(agent.iAgentClass)} name="iAgentClass">`);
+
+		$form.append(idx).append(page).append(category).append(iPermission).append(iAgentClass);
+		$form.submit();
+	}
+</script>

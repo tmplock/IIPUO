@@ -30,14 +30,15 @@ let inline_GetProcessing = async (strGroupID, strNickname, iClass) => {
         return {input:input, output:output, letter:letter, charge:charge, contact:contact, letterreply: letterreply, contactreply:contactreply};
     }
 
-    if (strNickname != undefined && strNickname != null && strNickname.length > 0) {
+    let strNickname2 = strNickname ?? '';
+    if (strNickname2 != undefined && strNickname2 != null && strNickname2.length > 0) {
         const input = await inline_GetProcessingInput(strGroupID, iClass);
         const output = await inline_GetProcessingOutput(strGroupID);
-        const charge = await inline_GetProcessingCharge(strNickname);
-        const letter = await inline_GetProcessingLetter(strNickname, 'UNREAD');
-        const contact = await inline_GetProcessingContact(strNickname, 'UNREAD'); // 받은쪽지
-        const letterreply = await inline_GetProcessingLetterReply(strNickname, 'REPLY'); // 보낸쪽지
-        const contactreply = await inline_GetProcessingContactReply(strNickname, 'REPLY'); // 보낸쪽지
+        const charge = await inline_GetProcessingCharge(strNickname2);
+        const letter = await inline_GetProcessingLetter(strNickname2, 'UNREAD');
+        const contact = await inline_GetProcessingContact(strNickname2, 'UNREAD'); // 받은쪽지
+        const letterreply = await inline_GetProcessingLetterReply(strNickname2, 'REPLY'); // 보낸쪽지
+        const contactreply = await inline_GetProcessingContactReply(strNickname2, 'REPLY'); // 보낸쪽지
         return {input:input, output:output, letter:letter, charge:charge, contact:contact, letterreply: letterreply, contactreply:contactreply};
     } else {
         return {};
@@ -47,17 +48,21 @@ exports.GetProcessing = inline_GetProcessing;
 
 
 let inline_GetProcessingInput = async (strGroupID, iClass) => {
-    
-    const result = await db.Inouts.findAll({where:{
-        strGroupID:{[Op.like]:strGroupID+'%'},
-        eType:'INPUT',
-        iClass: {
-            [Op.gt]:parseInt(iClass)
-        },
-        eState:'REQUEST',
-    }});
+    try {
+        const result = await db.Inouts.findAll({where:{
+                strGroupID:{[Op.like]:strGroupID+'%'},
+                eType:'INPUT',
+                iClass: {
+                    [Op.gt]:parseInt(iClass)
+                },
+                eState:'REQUEST',
+            }});
+        return result.length;
+    } catch (err) {
+        console.log(err);
+    }
+    return [];
 
-    return result.length;
 }
 exports.GetProcessingInput = inline_GetProcessingInput;
 

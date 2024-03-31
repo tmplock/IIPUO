@@ -1607,13 +1607,15 @@ exports.GetChildNicknameList = inline_GetChildNicknameList;
 var inline_GetUserInfo = async (strNickname) => {
     let strID = '';
     let iClass = '';
+    let strGroupID = '';
     let iCash = 0;
     let iRolling = 0;
     let iSettle = 0;
+    let strIDOfView = ''; // 보는용도의 ID
 
     let dbuser = await db.Users.findOne({where:{strNickname:strNickname}});
-    strID = dbuser.strID;
-    iClass = dbuser.iClass;
+    strIDOfView = dbuser.strID;
+
 
     if (dbuser.iRelUserID != 0) {
         dbuser = await db.Users.findOne({where: {id: dbuser.iRelUserID}});
@@ -1622,7 +1624,10 @@ var inline_GetUserInfo = async (strNickname) => {
         iCash = dbuser.iCash;
         iRolling = dbuser.iRolling;
         iSettle = dbuser.iSettle;
+        strID = dbuser.strID;
+        iClass = dbuser.iClass;
+        strGroupID = dbuser.strGroupID;
     }
-    return {iCash:iCash, iRolling: iRolling, iSettle:iSettle, strID:strID, iClass:iClass};
+    return {iCash:iCash, iRolling: iRolling, iSettle:iSettle, strID:strID, iClass:iClass, strGroupID:strGroupID, strIDOfView: strIDOfView};
 }
 exports.GetUserInfo = inline_GetUserInfo;

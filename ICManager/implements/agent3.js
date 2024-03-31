@@ -1603,3 +1603,26 @@ var inline_GetChildNicknameList = async (strGroupID, iClass) => {
     return list;
 }
 exports.GetChildNicknameList = inline_GetChildNicknameList;
+
+var inline_GetUserInfo = async (strNickname) => {
+    let strID = '';
+    let iClass = '';
+    let iCash = 0;
+    let iRolling = 0;
+    let iSettle = 0;
+
+    let dbuser = await db.Users.findOne({where:{strNickname:strNickname}});
+    strID = dbuser.strID;
+    iClass = dbuser.iClass;
+
+    if (dbuser.iRelUserID != 0) {
+        dbuser = await db.Users.findOne({where: {id: dbuser.iRelUserID}});
+    }
+    if ( dbuser != null ) {
+        iCash = dbuser.iCash;
+        iRolling = dbuser.iRolling;
+        iSettle = dbuser.iSettle;
+    }
+    return {iCash:iCash, iRolling: iRolling, iSettle:iSettle, strID:strID, iClass:iClass};
+}
+exports.GetUserInfo = inline_GetUserInfo;

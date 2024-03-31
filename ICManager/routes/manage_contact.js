@@ -22,7 +22,7 @@ const IInout = require("../implements/inout");
 const {DATETIME} = require("mysql/lib/protocol/constants/types");
 
 router.post('/list_contact_receive', isLoggedIn, async(req, res) => {
-    const user = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
+    const user = await IAgent.GetUserInfo(req.body.strNickname);
     let iocount = await IInout.GetProcessing(user.strGroupID, user.strNickname, user.iClass);
     let agent = {strNickname:user.strNickname, iClass:user.iClass, strGroupID:user.strGroupID, iCash:user.iCash, iSettle:user.iSettle, iRolling:user.iRolling,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission};
@@ -97,7 +97,7 @@ router.post('/request_contact_select_remove', isLoggedIn, async(req, res) => {
     }
 });
 router.post('/list_contact_send', isLoggedIn, async(req, res) => {
-    const user = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
+    const user = await IAgent.GetUserInfo(req.body.strNickname);
     let iocount = await IInout.GetProcessing(user.strGroupID, user.strNickname, user.iClass);
     let agent = {strNickname:user.strNickname, iClass:user.iClass, strGroupID:user.strGroupID, iCash:user.iCash, iSettle:user.iSettle, iRolling:user.iRolling,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission};
@@ -155,7 +155,7 @@ router.post('/request_list_contact_send', isLoggedIn, async(req, res) => {
     res.send({result: 'OK', list:list, totalCount: totalCount, iocount:iocount});
 });
 router.post('/list_charge_request', isLoggedIn, async(req, res) => {
-    const user = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
+    const user = await IAgent.GetUserInfo(req.body.strNickname);
     let iocount = await IInout.GetProcessing(user.strGroupID, user.strNickname, req.user.iClass);
     let agent = {strNickname:user.strNickname, iClass:user.iClass, strGroupID:user.strGroupID, iCash:user.iCash, iSettle:user.iSettle, iRolling:user.iRolling,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission};

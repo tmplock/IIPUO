@@ -1611,23 +1611,28 @@ var inline_GetUserInfo = async (strNickname) => {
     let iCash = 0;
     let iRolling = 0;
     let iSettle = 0;
-    let strIDOfView = ''; // 보는용도의 ID
+    let strOptionCode = '';
+    let strIDRel = '' // 연결된 strID
 
     let dbuser = await db.Users.findOne({where:{strNickname:strNickname}});
-    strIDOfView = dbuser.strID;
-
-
-    if (dbuser.iRelUserID != 0) {
-        dbuser = await db.Users.findOne({where: {id: dbuser.iRelUserID}});
-    }
-    if ( dbuser != null ) {
-        iCash = dbuser.iCash;
-        iRolling = dbuser.iRolling;
-        iSettle = dbuser.iSettle;
+    if (dbuser != null) {
         strID = dbuser.strID;
-        iClass = dbuser.iClass;
-        strGroupID = dbuser.strGroupID;
+        // 연결된 이용자 정보
+        if (dbuser.iRelUserID != 0) {
+            dbuser = await db.Users.findOne({where: {id: dbuser.iRelUserID}});
+            strIDRel = dbuser.strID;
+        }
+
+        if ( dbuser != null ) {
+            iCash = dbuser.iCash;
+            iRolling = dbuser.iRolling;
+            iSettle = dbuser.iSettle;
+            iClass = dbuser.iClass;
+            strGroupID = dbuser.strGroupID;
+            strOptionCode = dbuser.strOptionCode;
+        }
     }
-    return {iCash:iCash, iRolling: iRolling, iSettle:iSettle, strID:strID, iClass:iClass, strGroupID:strGroupID, strIDOfView: strIDOfView};
+
+    return {iCash:iCash, iRolling: iRolling, iSettle:iSettle, strID:strID, strNickname:strNickname, iClass:iClass, strGroupID:strGroupID, strOptionCode:strOptionCode, strIDRel: strIDRel};
 }
 exports.GetUserInfo = inline_GetUserInfo;

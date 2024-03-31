@@ -206,17 +206,9 @@ router.post('/request_searchby', isLoggedIn, async(req, res) => {
 router.post('/charge', isLoggedIn, async(req, res) => {
 
     console.log(req.body);
-    const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
-    let iCash = 0;
-    let iRolling = 0;
-    let iSettle = 0;
-    if ( dbuser != null ) {
-        iCash = dbuser.iCash;
-        iRolling = dbuser.iRolling;
-        iSettle = dbuser.iSettle;
-    }
+    const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iRolling:iRolling, iSettle:iSettle, strOptionCode:dbuser.strOptionCode,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle, strOptionCode:dbuser.strOptionCode,
         iRootClass: req.user.iClass, iPermission: req.user.iPermission};
 
     const iLimit = 20;
@@ -297,18 +289,10 @@ router.post('/charge', isLoggedIn, async(req, res) => {
 router.post('/exchange', isLoggedIn, async(req, res) => {
 
     console.log(req.body);
-    const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
-    let iCash = 0;
-    let iRolling = 0;
-    let iSettle = 0;
-    if ( dbuser != null ) {
-        iCash = dbuser.iCash;
-        iRolling = dbuser.iRolling;
-        iSettle = dbuser.iSettle;
-    }
+    const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
 
     let strOptionCode = dbuser.strOptionCode ?? '11000000';
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iRolling:iRolling, iSettle:iSettle, strOptionCode:strOptionCode,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle, strOptionCode:strOptionCode,
         iRootClass: req.user.iClass, iPermission: req.user.iPermission};
 
     let iLimit = 20;

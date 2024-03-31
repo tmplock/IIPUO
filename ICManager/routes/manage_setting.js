@@ -12,25 +12,18 @@ router.use(express.static(path.join(__dirname, '../', 'objects')));
 const db = require('../models');
 //const db = require('../db');
 const IInout = require('../implements/inout');
+const IAgent = require('../implements/agent3');
 const {Op}= require('sequelize');
 const {isLoggedIn, isNotLoggedIn} = require('./middleware');
 
 router.get('/letterlistreceive', isLoggedIn, async(req, res) => {
-    const dbuser = await db.Users.findOne({where:{strNickname:req.user.strNickname}});
-    let iCash = 0;
-    let iRolling = 0;
-    let iSettle = 0;
-    if ( dbuser != null ) {
-        iCash = dbuser.iCash;
-        iRolling = dbuser.iRolling;
-        iSettle = dbuser.iSettle;
-    }
+    const dbuser = await IAgent.GetUserInfo(req.user.strNickname);
 
-    const user = {strNickname:req.user.strNickname, strGroupID:req.user.strGroupID, iClass:parseInt(req.user.iClass), iCash:iCash, iRolling:iRolling, iSettle:iSettle,
+    const user = {strNickname:req.user.strNickname, strGroupID:req.user.strGroupID, iClass:parseInt(req.user.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission};
-    if (dbuser.iPermission == 100 && dbuser.iRelUserID != null) {
-        const relUser = await db.Users.findOne({where:{id: dbuser.iRelUserID}});
-        user.strID = relUser.strID;
+
+    if (user.iPermission == 100) {
+        user.strID = dbuser.strIDRel;
     }
 
     let iocount = await IInout.GetProcessing(dbuser.strGroupID, dbuser.strNickname, dbuser.iClass);
@@ -41,22 +34,13 @@ router.get('/letterlistreceive', isLoggedIn, async(req, res) => {
 router.post('/letterlistsend', isLoggedIn, async(req, res) => {
 
     console.log(req.body);
-    const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
-    let iCash = 0;
-    let iRolling = 0;
-    let iSettle = 0;
-    if ( dbuser != null ) {
-        iCash = dbuser.iCash;
-        iRolling = dbuser.iRolling;
-        iSettle = dbuser.iSettle;
-    }
+    const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iRolling: iRolling, iSettle:iSettle,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling: dbuser.iRolling, iSettle:dbuser.iSettle,
         iRootClass: req.user.iClass, iPermission:req.user.iPermission};
 
-    if (dbuser.iPermission == 100 && dbuser.iRelUserID != null) {
-        const relUser = await db.Users.findOne({where:{id: dbuser.iRelUserID}});
-        user.strID = relUser.strID;
+    if (user.iPermission == 100) {
+        user.strID = dbuser.strIDRel;
     }
 
     let iocount = await IInout.GetProcessing(req.body.strGroupID, req.body.strNickname, dbuser.iClass);
@@ -66,22 +50,13 @@ router.post('/letterlistsend', isLoggedIn, async(req, res) => {
 router.post('/letterlistreceive', isLoggedIn, async(req, res) => {
 
     console.log(req.body);
-    const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
-    let iCash = 0;
-    let iRolling = 0;
-    let iSettle = 0;
-    if ( dbuser != null ) {
-        iCash = dbuser.iCash;
-        iRolling = dbuser.iRolling;
-        iSettle = dbuser.iSettle;
-    }
+    const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iRolling:iRolling, iSettle:iSettle,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission};
 
-    if (dbuser.iPermission == 100 && dbuser.iRelUserID != null) {
-        const relUser = await db.Users.findOne({where:{id: dbuser.iRelUserID}});
-        user.strID = relUser.strID;
+    if (dbuser.iPermission == 100) {
+        user.strID = dbuser.strIDRel;
     }
 
     let iocount = await IInout.GetProcessing(dbuser.strGroupID, dbuser.strNickname, dbuser.iClass);
@@ -92,22 +67,13 @@ router.post('/letterlistreceive', isLoggedIn, async(req, res) => {
 router.post('/announcement', isLoggedIn, async(req, res) => {
 
     console.log(req.body);
-    const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
-    let iCash = 0;
-    let iRolling = 0;
-    let iSettle = 0;
-    if ( dbuser != null ) {
-        iCash = dbuser.iCash;
-        iRolling = dbuser.iRolling;
-        iSettle = dbuser.iSettle;
-    }
+    const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iRolling:iRolling, iSettle:iSettle,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission};
 
-    if (dbuser.iPermission == 100 && dbuser.iRelUserID != null) {
-        const relUser = await db.Users.findOne({where:{id: dbuser.iRelUserID}});
-        user.strID = relUser.strID;
+    if (dbuser.iPermission == 100) {
+        user.strID = dbuser.strIDRel;
     }
 
     let iocount = await IInout.GetProcessing(user.strGroupID, user.strNickname, dbuser.iClass);
@@ -118,17 +84,9 @@ router.post('/announcement', isLoggedIn, async(req, res) => {
 router.post('/popup', isLoggedIn, async(req, res) => {
 
     console.log(req.body);
-    const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
-    let iCash = 0;
-    let iRolling = 0;
-    let iSettle = 0;
-    if ( dbuser != null ) {
-        iCash = dbuser.iCash;
-        iRolling = dbuser.iRolling;
-        iSettle = dbuser.iSettle;
-    }
+    const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iRolling:iRolling, iSettle:iSettle,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission};
     let iocount = await IInout.GetProcessing(user.strGroupID, user.strNickname, dbuser.iClass);
 

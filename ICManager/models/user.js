@@ -179,6 +179,9 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             default: 0,
         },
+        iLoginMax: {
+            type: DataTypes.INTEGER,
+        },
         strURL: {
             type: DataTypes.STRING,
         },

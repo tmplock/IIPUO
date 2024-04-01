@@ -511,3 +511,8 @@ socket.on("realtime_gameround", (game) => {
 		UpdateRoom();
 	}
 });
+
+socket.on('UserLogout', () => {
+	alert('중복로그인으로 인한 로그아웃이 되었습니다');
+	window.location.href='/account/logout';
+})

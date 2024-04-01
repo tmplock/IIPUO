@@ -433,6 +433,12 @@ router.post('/request_register_view', isLoggedIn, async(req, res) => {
                     id: iRelUserID,
                 }
             });
+            let iLoginMax = 1;
+            if (parseInt(user.iClass) == 2) {
+                iLoginMax = 10;
+            } else if (parseInt(user.iClass) == 3) {
+                iLoginMax = 2;
+            }
 
             await db.Users.create({
                 strID:req.body.strID,
@@ -475,6 +481,7 @@ router.post('/request_register_view', isLoggedIn, async(req, res) => {
                 iNumLoginFailed: 0,
                 iPermission:100,
                 iRelUserID:iRelUserID,
+                iLoginMax:iLoginMax,
             });
             res.send({result:'OK', string:'에이전트(보기용) 생성을 완료 하였습니다.'});
         }
@@ -641,6 +648,14 @@ router.post('/request_register', isLoggedIn, async(req, res) => {
             // }
         }
 
+        let iLoginMax = 1;
+        let iClass = parseInt(req.body.iParentClass)+1;
+        if (iClass == 2) {
+            iLoginMax = 3;
+        } else if (iClass == 3) {
+            iLoginMax = 1;
+        }
+
         await db.Users.create({
             strID:req.body.strID,
             strPassword:req.body.strPassword,
@@ -681,6 +696,7 @@ router.post('/request_register', isLoggedIn, async(req, res) => {
             strSettleMemo:'',
             iNumLoginFailed: 0,
             iPermission:0,
+            iLoginMax:iLoginMax
         });
         //
         // // 신규등록 알림 업데이트

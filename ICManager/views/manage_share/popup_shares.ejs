@@ -2,9 +2,6 @@
     <div class="container clearfix">
         <p style="background-repeat:no-repeat; background-position:left center; font-size:20px; color:#454545; padding-left:22px;margin-top:10px;height:30px;margin-bottom:5px;">
             지분자 목록
-            <% if (user.iPermission != 100) { %>
-                <button id="button_share_regist" class="menu1" data-menu="2" style="border:1px solid rgb(95, 93, 93);width:80px;height:25px;text-align:center;color:white" onclick="OnClickRegisterShare('<%=user.strNickname%>', '<%=user.strGroupID%>', '<%=user.iClass%>');">지분자등록</button>
-            <% } %>
         </p>
         <div id="share_buttons">
         </div>
@@ -25,6 +22,9 @@
             </select>월
             <button id="button_quater1" class="menu1" data-menu="2" style="border:1px solid rgb(95, 93, 93);width:170px;height:25px;text-align:center;color:white" onclick="Request1stHalf();"><%=__('Half1')%></button>
             <button id="button_quater2" class="menu1" data-menu="3" style="border:1px solid rgb(95, 93, 93);width:170px;height:25px;text-align:center;color:white" onclick="Request2ndHalf();"><%=__('Half2')%></button>
+            <% if (user.iPermission != 100) { %>
+                <button id="button_share_regist" class="button_blue" data-menu="2" style="border:1px solid rgb(95, 93, 93);width:130px;height:25px;text-align:center;color:white" onclick="OnClickRegisterShare('<%=user.strNickname%>', '<%=user.strGroupID%>', '<%=user.iClass%>');">지분자등록</button>
+            <% } %>
             <div id="testSettle" style="background-color:#ffffff;text-align:right;padding-right:5px;padding-top:0px;padding-bottom:0px;" colspan="19">
             </div>
         </div>

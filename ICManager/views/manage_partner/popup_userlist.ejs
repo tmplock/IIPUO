@@ -125,7 +125,7 @@
 		bToggleRecord = true;
 		$("#button_toggle_record").text("닫기");
 
-		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, '', agent.strID);
+		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
 		RequestUserListOnPopup(EAgent.eUser, agent.strGroupID, agent.iRootClass, agent.iPermission, agent.strID);
 		RequestBettingRecord(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
 	}
@@ -161,7 +161,7 @@
 		bToggleRecord = true;
 		$("#button_toggle_record").text("닫기");
 
-		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, '', agent.strID);
+		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
 		RequestUserListOnPopup(EAgent.eUser, agent.strGroupID, agent.iClass, agent.iPermission);
 		RequestBettingRecord(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
 	}
@@ -175,7 +175,7 @@
 		bToggleRecord = true;
         $("#button_toggle_record").text("닫기");
 
-		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, '', agent.strID);
+		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
 		RequestUserListOnPopup(EAgent.eUser, agent.strGroupID, agent.iClass, agent.iPermission);
 		RequestBettingRecord(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
 	}
@@ -186,7 +186,7 @@
 		bToggleRecord = true;
         $("#button_toggle_record").text("닫기");
 
-		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, '', agent.strID);
+		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
 		RequestUserListOnPopup(EAgent.eUser, strGroupID, iClass, iPermission);
 		RequestBettingRecord(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
 	}

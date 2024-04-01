@@ -238,7 +238,7 @@
 		$("#button_toggle_record").text("닫기");
 		RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
 
-		RequestOverview(cTClass, user.strGroupID, user.iClass, user.iPermission, '', user.strID);
+		RequestOverview(cTClass, user.strGroupID, user.iClass, user.iPermission, user.strNickname, user.strID);
 		RequestAdminList(EAgent.eAdmin, user.strGroupID, user.iClass, user.iPermission);
 	}
 
@@ -251,7 +251,7 @@
 		$("#button_toggle_record").text("닫기");
 		RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
 
-		RequestOverview(cTClass, user.strGroupID, user.iClass, user.iPermission, '', user.strID);
+		RequestOverview(cTClass, user.strGroupID, user.iClass, user.iPermission, user.strNickname, user.strID);
 		RequestAdminList(EAgent.eAdmin, user.strGroupID, user.iClass, user.iPermission);
 	}
 
@@ -261,7 +261,7 @@
 		$("#button_toggle_record").text("닫기");
 
 		RequestBettingRecord(cTClass, strGroupID, iClass, user.strID);
-		RequestOverview(cTClass, strGroupID, iClass, iPermission, '', user.strID);
+		RequestOverview(cTClass, strGroupID, iClass, iPermission, user.strNickname, user.strID);
 		RequestAdminList(iTargetClass, strGroupID, iClass, user.iPermission);
 	}
 

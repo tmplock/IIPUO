@@ -1570,7 +1570,7 @@ let inline_GetPopupShareInfo = async (strID, strGroupID) => {
         return null;
 
     const list = await db.sequelize.query(`
-        SELECT u.strNickname AS parentNickname, su.strNickname AS strNickname, su.strID AS strID, 
+        SELECT u.strNickname AS parentNickname, su.strNickname AS strNickname, su.strID AS strID, su.strGroupID AS strGroupID,  
         su.fShareR AS fShareR, 
         0 AS iShare,
         0 AS iShareAccBefore,       

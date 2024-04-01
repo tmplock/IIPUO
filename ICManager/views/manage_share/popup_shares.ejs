@@ -220,7 +220,7 @@
                                 <label for="mile_sect_cash_2" style="color:blue;font-size:15px;">적립</label>
                                 <input style='width:30%;' type='number' id="iIncrease_${strNickname}" value=''>&nbsp;&nbsp;
                                 메모 : <input style='width:30%;' type='text' id="sharememo_${strNickname}" value=''>
-                                <button style='color:white;' class='menu4' onclick='OnClickShareApply("${aObject.strID}", "${strNickname}");'>적용</button>
+                                <button style='color:white;' class='menu4' onclick='OnClickShareApply("${aObject.strID}", "${aObject.strNickname}", "${aObject.strGroupID}");'>적용</button>
                             </td>
                         <% } else { %>
                             <td>
@@ -397,7 +397,7 @@
         });
     }
 
-    let OnClickShareApply = (strID, strNickname) => {
+    let OnClickShareApply = (strID, strNickname, strGroupID) => {
         let type = $(`input[name="${strID}_mile_sect"]:checked`).val();
         let iIncrease = $(`#iIncrease_${strNickname}`).val();
         iIncrease = parseInt(iIncrease);
@@ -424,8 +424,8 @@
             type:"POST",
             data: {
                 strNickname: strNickname,
-                strID: user.strID,
-                strGroupID: user.strGroupID,
+                strID: strID,
+                strGroupID: strGroupID,
                 iIncrease: iIncrease,
                 writer: user.strNickname,
                 strMemo: strMemo,

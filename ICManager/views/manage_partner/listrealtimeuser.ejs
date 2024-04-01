@@ -146,10 +146,10 @@
         SetPartnerHeader(8, user.iClass);
 
         if ( user.iClass <= 3 ) {
-            RequestOverviewToday(cTClass, user.strGroupID, user.iClass, '', user.strID);
+            RequestOverviewToday(cTClass, user.strGroupID, user.iClass, user.strNickname, user.strID);
 
             setInterval(async () => {
-                RequestOverviewToday(cTClass, user.strGroupID, user.iClass, '', user.strID);
+                RequestOverviewToday(cTClass, user.strGroupID, user.iClass, user.strNickname, user.strID);
             }, 10000);
         }
         RequestUserList(user.strGroupID, user.iClass);

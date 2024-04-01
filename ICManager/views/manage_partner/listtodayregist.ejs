@@ -240,7 +240,10 @@
                                 <a style="border: 1px solid green;display:inline-block;font-weight:bold;border-radius:4px;background-color:red;width:30px;color:white;" href="#" id="partner_adjustoutput" strnickname="${userlist[i].strNickname}" strgroupid="${userlist[i].strGroupID}" iclass="${userlist[i].iClass}">출금</a>
                             </td>`;
             }
-            let class4 = userlist[i].iClass >= 4 ? `${userlist[i].lev2}` : '';
+            let class4 = userlist[i].iClass > 4 ? `${userlist[i].lev2}` : '';
+            if (userlist[i].iClass == 4) {
+                class4 = userlist[i].lev3;
+            }
             let class5 = userlist[i].iClass >= 5 ? `${userlist[i].lev3}` : '';
             let class6 = userlist[i].iClass >= 6 ? `${userlist[i].lev4}` : '';
             let class7 = userlist[i].iClass >= 7 ? `${userlist[i].lev5}` : '';

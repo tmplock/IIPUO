@@ -445,7 +445,9 @@ router.post('/request_overview', isLoggedIn, async(req, res) => {
 
     console.log('request_overview : ');
     console.log(req.body);
-    const overview = await IAgent.CalculateBettingRecord(req.body.strGroupID, parseInt(req.body.iTargetClass), req.body.dateStart, req.body.dateEnd, '', req.body.strID);
+    let user = await IAgent.GetUserInfo(req.body.strNickname);
+    let strID = user.iPermission == 100 ? user.strIDRel : user.strID;
+    const overview = await IAgent.CalculateBettingRecord(req.body.strGroupID, parseInt(req.body.iTargetClass), req.body.dateStart, req.body.dateEnd, '', strID);
 
     let data = {overview:overview, iRootClass:req.user.iClass}
 
@@ -459,7 +461,9 @@ router.post('/request_overview_self', isLoggedIn, async(req, res) => {
 
     console.log('request_overview : ');
     console.log(req.body);
-    const overview = await IAgent.CalculateSelfBettingRecord(req.body.strGroupID, parseInt(req.body.iTargetClass), req.body.dateStart, req.body.dateEnd, '', req.body.strID);
+    let user = await IAgent.GetUserInfo(req.body.strNickname);
+    let strID = user.iPermission == 100 ? user.strIDRel : user.strID;
+    const overview = await IAgent.CalculateSelfBettingRecord(req.body.strGroupID, parseInt(req.body.iTargetClass), req.body.dateStart, req.body.dateEnd, '', strID);
 
     let data = {overview:overview, iRootClass:req.user.iClass}
 

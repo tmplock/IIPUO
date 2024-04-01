@@ -708,12 +708,31 @@ router.post('/request_outputstate', isLoggedIn, async (req, res) => {
 
     console.log(charge);
 
-    if ( charge == null )
+    if ( charge == null ) {
         res.send({result:"FAIL"});
+        return;
+    }
+
+    if ( req.body.type == 0 && charge.eState != 'REQUEST' )
+    {
+        res.send({result:"ERROR"});
+        return;
+    }
+    if ( req.body.type == 1 && charge.eState != 'STANDBY' )
+    {
+        res.send({result:"ERROR"});
+        return;
+    }
+    if ( req.body.type == 2 && (charge.eState == 'CANCEL' || charge.eState == 'COMPLETE') )
+    {
+        res.send({result:'ERROR'});
+        return;
+    }
 
     if ( req.body.type == 0 )   // request
     {
         await charge.update({eState:"STANDBY"});
+        res.send({result:"OK", id:req.body.id});
     }
     else if ( req.body.type == 1 )  // standby
     {
@@ -722,13 +741,13 @@ router.post('/request_outputstate', isLoggedIn, async (req, res) => {
         let parent = await db.Users.findOne({where:{strNickname:charge.strAdminNickname}});
         if ( parent != null )
         {
-            parent.update({iCash:parent.iCash+parseInt(charge.iAmount)});
-            // let iCash = parent.iCash+parseInt(charge.iAmount);
-            // ISocket.AlertCashByNickname(parent.strNickname, iCash);
+            await parent.update({iCash:parent.iCash+parseInt(charge.iAmount)});
+            res.send({result:"OK", id:req.body.id});
         }
-
-        // await user.update({iCash:user.iCash-charge.iAmount});
-
+        else
+        {
+            res.send({result:"FAIL1", id:req.body.id});
+        }
     }
     else if ( req.body.type == 2 )  // cancel
     {
@@ -753,10 +772,8 @@ router.post('/request_outputstate', isLoggedIn, async (req, res) => {
             console.log('axios Error /UpdateCoin');
             //console.log(error);
         });
+        res.send({result:"OK", id:req.body.id});
     }
-
-    res.send({result:"OK", id:req.body.id});
-
 });
 
 

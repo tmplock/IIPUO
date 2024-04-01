@@ -27,8 +27,13 @@ $(document).on('click', '#register_agent_view', (event) => {
     let eAgentType = $(event.target).attr('iAgentClass');
 
     window.open('', 'popupChkListAdminView', 'width=1000, height=600, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
+
     let $form = $('<form></form>');
-    $form.attr('action', '/manage_partner_popup/popup_listadmin_view');
+    if (eAgentType == 2) {
+        $form.attr('action', '/manage_partner_popup/popup_listvice_view');
+    } else if (eAgentType == 3) {
+        $form.attr('action', '/manage_partner_popup/popup_listadmin_view');
+    }
     $form.attr('method', 'post');
     $form.attr('target', 'popupChkListAdminView');
     $form.appendTo('body');

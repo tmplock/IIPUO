@@ -343,6 +343,10 @@ router.post('/registeragent', isLoggedIn, async(req, res) => {
 
 router.post('/popup_listadmin_view', isLoggedIn, async(req, res) => {
     console.log(req.body);
+    if (req.user.iClass > 2) {
+        res.send({result:'FAIL', msg: '허가되지 않은 사용자입니다'});
+        return;
+    }
 
     const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:req.body.iClass, iAgentClass:req.body.iAgentClass,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission};
@@ -356,6 +360,29 @@ router.post('/popup_listadmin_view', isLoggedIn, async(req, res) => {
         `
     );
     res.render('manage_partner/popup_listadmin_view', {iLayout:7, iHeaderFocus:0, agent:user, list:list[0], strParent: user.strNickname});
+});
+
+
+router.post('/popup_listvice_view', isLoggedIn, async(req, res) => {
+    console.log(req.body);
+
+    if (req.user.iClass > 1) {
+        res.send({result:'FAIL', msg: '허가되지 않은 사용자입니다'});
+        return;
+    }
+
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:req.body.iClass, iAgentClass:req.body.iAgentClass,
+        iRootClass:req.user.iClass, iPermission:req.user.iPermission};
+
+    let list = await db.sequelize.query(
+        `
+        SELECT u.strNickname AS strRelNickname, u3.strNickname, u3.strID, u3.eState, u3.strGroupID, u3.iPermission, u3.iClass
+        FROM Users AS u3
+        LEFT JOIN Users u ON u.id = u3.iRelUserID
+        WHERE u3.iClass = 2 AND u3.iPermission = 100 AND u3.strGroupID LIKE '${req.body.strGroupID+'%'}' 
+        `
+    );
+    res.render('manage_partner/popup_listvice_view', {iLayout:7, iHeaderFocus:0, agent:user, list:list[0], strParent: user.strNickname});
 });
 
 router.post('/registeragent_view', isLoggedIn, async(req, res) => {

@@ -282,6 +282,7 @@ router.post('/request_writeletter', async (req, res) => {
             strContents:req.body.contents,
             iClassTo:req.body.iClass,
             iClassFrom:req.user.iClass,
+            strWriter:req.user.strNickname
         });
 
         let objectAxios = {strNickname:arrayObject[i].strNickname, strID:arrayObject[i].strID, strContents:req.body.contents};
@@ -337,6 +338,7 @@ router.post('/request_writeletter_partner', async (req, res) => {
         strAnswers:'',
         iClassTo:toUser.iClass,
         iClassFrom:req.user.iClass,
+        strWriter:req.user.strNickname
     });
 
     if (toUser.iClass >= 6) {
@@ -388,32 +390,47 @@ router.post('/request_letterrecord', async (req, res) => {
     else
         listState.push(req.body.eState);
 
-    let strNickname = req.body.strNickname;
+    let strKeyword = req.body.strKeyword ?? '';
+
     const user = await IAgent.GetUserInfo(req.body.strNickname);
-    if (user.iPermission == 100) {
-        strNickname = user.strNicknameRel;
-    }
+    let strFrom = user.iPermission == 100 ? user.strNicknameRel : user.strNickname;
 
     let totalCount = 0;
     if (req.body.iClass == 2) {
-        totalCount = await db.Letters.count({
+        totalCount = strKeyword == '' ? await db.Letters.count({
             where:{
                 createdAt:{
                     [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
                 },
-                strFrom:strNickname,
-                strTo:{[Op.like]:'%'+req.body.strKeyword+'%'},
+                strFrom:strFrom,
+                eRead:{[Op.or]:listState},
+            },
+        }) : await db.Letters.count({
+            where:{
+                createdAt:{
+                    [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
+                },
+                strFrom:strFrom,
+                strTo:{[Op.like]:'%'+strKeyword+'%'},
                 eRead:{[Op.or]:listState},
             },
         });
     } else {
-        totalCount = await db.Letters.count({
+        totalCount = strKeyword == '' ? await db.Letters.count({
             where:{
                 createdAt:{
                     [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
                 },
-                strFrom:strNickname,
-                strTo:{[Op.like]:'%'+req.body.strKeyword+'%'},
+                strFrom:strFrom,
+                eRead:{[Op.or]:listState},
+            },
+        }) : await db.Letters.count({
+            where:{
+                createdAt:{
+                    [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
+                },
+                strFrom:strFrom,
+                strTo:{[Op.like]:'%'+strKeyword+'%'},
                 eRead:{[Op.or]:listState},
             },
         });
@@ -425,13 +442,24 @@ router.post('/request_letterrecord', async (req, res) => {
 
     let letters = [];
     if (req.body.iClass == 2) {
-        letters = await db.Letters.findAll({
+        letters = strKeyword == '' ? await db.Letters.findAll({
             where:{
                 createdAt:{
                     [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
                 },
-                strFrom:strNickname,
-                strTo:{[Op.like]:'%'+req.body.strKeyword+'%'},
+                strFrom:strFrom,
+                eRead:{[Op.or]:listState},
+            },
+            limit:iLimit,
+            offset:iOffset,
+            order:[['createdAt','DESC']]
+        }) :  await db.Letters.findAll({
+            where:{
+                createdAt:{
+                    [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
+                },
+                strFrom:strFrom,
+                strTo:{[Op.like]:'%'+strKeyword+'%'},
                 eRead:{[Op.or]:listState},
             },
             limit:iLimit,
@@ -439,13 +467,24 @@ router.post('/request_letterrecord', async (req, res) => {
             order:[['createdAt','DESC']]
         });
     } else {
-        letters = await db.Letters.findAll({
+        letters = strKeyword == '' ? await db.Letters.findAll({
             where:{
                 createdAt:{
                     [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
                 },
-                strFrom:strNickname,
-                strTo:{[Op.like]:'%'+req.body.strKeyword+'%'},
+                strFrom:strFrom,
+                eRead:{[Op.or]:listState},
+            },
+            limit:iLimit,
+            offset:iOffset,
+            order:[['createdAt','DESC']]
+        }) : await db.Letters.findAll({
+            where:{
+                createdAt:{
+                    [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
+                },
+                strFrom:strFrom,
+                strTo:{[Op.like]:'%'+strKeyword+'%'},
                 eRead:{[Op.or]:listState},
             },
             limit:iLimit,
@@ -476,15 +515,14 @@ router.post('/request_letterlist', async (req, res) => {
     else
         listState.push(req.body.eState);
 
-    let strNickname = req.body.strNickname;
+    let strKeyword = req.body.strKeyword ?? '';
+
     const user = await IAgent.GetUserInfo(req.body.strNickname);
-    if (user.iPermission == 100) {
-        strNickname = user.strNicknameRel;
-    }
+    let strTo = user.iPermission == 100 ? user.strNicknameRel : user.strNickname;
 
     let totalCount = 0;
     if (req.body.iClass == 2) {
-        totalCount = await db.Letters.count({
+        totalCount = strKeyword == '' ? await db.Letters.count({
             where:{
                 createdAt:{
                     [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
@@ -492,20 +530,42 @@ router.post('/request_letterlist', async (req, res) => {
                 strGroupID: {
                     [Op.like]: req.body.strGroupID+'%'
                 },
+                strTo:strTo,
                 iClassTo: {[Op.in]:[3,2]},
                 iClassFrom: {[Op.notIn]:[2]}, // 총본이 보낸것은 제외
-                strFrom:{[Op.like]:'%'+req.body.strKeyword+'%'},
                 eRead:{[Op.or]:listState}
             },
-        });
-    } else {
-        totalCount = await db.Letters.count({
+        }) : await db.Letters.count({
             where:{
                 createdAt:{
                     [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
                 },
-                strTo:strNickname,
-                strFrom:{[Op.like]:'%'+req.body.strKeyword+'%'},
+                strGroupID: {
+                    [Op.like]: req.body.strGroupID+'%'
+                },
+                strTo:strTo,
+                iClassTo: {[Op.in]:[3,2]},
+                iClassFrom: {[Op.notIn]:[2]}, // 총본이 보낸것은 제외
+                strFrom:{[Op.like]:'%'+strKeyword+'%'},
+                eRead:{[Op.or]:listState}
+            },
+        });
+    } else {
+        totalCount = strKeyword == '' ? await db.Letters.count({
+            where:{
+                createdAt:{
+                    [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
+                },
+                strTo:strTo,
+                eRead:{[Op.or]:listState}
+            },
+        }) :  await db.Letters.count({
+            where:{
+                createdAt:{
+                    [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
+                },
+                strTo:strTo,
+                strFrom:{[Op.like]:'%'+strKeyword+'%'},
                 eRead:{[Op.or]:listState}
             },
         });
@@ -517,7 +577,7 @@ router.post('/request_letterlist', async (req, res) => {
 
     let letters = [];
     if (req.body.iClass == 2) {
-        letters = await db.Letters.findAll({
+        letters = strKeyword == '' ? await db.Letters.findAll({
             where:{
                 createdAt:{
                     [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
@@ -525,9 +585,26 @@ router.post('/request_letterlist', async (req, res) => {
                 strGroupID: {
                     [Op.like]: req.body.strGroupID+'%'
                 },
+                strTo: strTo,
                 iClassTo: {[Op.in]:[3,2]},
                 iClassFrom: {[Op.notIn]:[2]}, // 총본이 보낸것은 제외
-                strFrom:{[Op.like]:'%'+req.body.strKeyword+'%'},
+                eRead:{[Op.or]:listState}
+            },
+            limit:iLimit,
+            offset:iOffset,
+            order:[['createdAt','DESC']]
+        }) : await db.Letters.findAll({
+            where:{
+                createdAt:{
+                    [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
+                },
+                strGroupID: {
+                    [Op.like]: req.body.strGroupID+'%'
+                },
+                strTo: strTo,
+                iClassTo: {[Op.in]:[3,2]},
+                iClassFrom: {[Op.notIn]:[2]}, // 총본이 보낸것은 제외
+                strFrom:{[Op.like]:'%'+strKeyword+'%'},
                 eRead:{[Op.or]:listState}
             },
             limit:iLimit,
@@ -535,13 +612,24 @@ router.post('/request_letterlist', async (req, res) => {
             order:[['createdAt','DESC']]
         });
     } else {
-        letters = await db.Letters.findAll({
+        letters = strKeyword == '' ? await db.Letters.findAll({
             where:{
                 createdAt:{
                     [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
                 },
-                strTo:strNickname,
-                strFrom:{[Op.like]:'%'+req.body.strKeyword+'%'},
+                strTo: strTo,
+                eRead:{[Op.or]:listState}
+            },
+            limit:iLimit,
+            offset:iOffset,
+            order:[['createdAt','DESC']]
+        }) :  await db.Letters.findAll({
+            where:{
+                createdAt:{
+                    [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
+                },
+                strTo: strTo,
+                strFrom:{[Op.like]:'%'+strKeyword+'%'},
                 eRead:{[Op.or]:listState}
             },
             limit:iLimit,

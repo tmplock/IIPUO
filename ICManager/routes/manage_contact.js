@@ -46,12 +46,8 @@ router.post('/request_list_contact_receive', isLoggedIn, async(req, res) => {
     else
         listRead.push(req.body.eRead);
 
-    let user = await db.Users.findOne({where: {
-            strNickname : req.body.strNickname,
-        }});
-    let parent = await db.Users.findOne({where: {
-            id: user.iParentID
-        }});
+    let user = await IAgent.GetUserInfo(req.body.strNickname);
+    let strTo = user.iPermission == 100 ? user.strNicknameRel : user.strNickname;
 
     let iLimit = parseInt(req.body.iLimit);
     let iPage = parseInt(req.body.iPage);
@@ -62,7 +58,7 @@ router.post('/request_list_contact_receive', isLoggedIn, async(req, res) => {
             createdAt:{
                 [Op.between]:[ strTimeStart, require('moment')(strTimeEnd).add(1, 'days').format('YYYY-MM-DD')],
             },
-            strFrom: parent.strNickname,
+            strTo: strTo,
             eRead:{[Op.or]:listRead}
         },
     }) : await db.ContactLetter.count({
@@ -70,7 +66,7 @@ router.post('/request_list_contact_receive', isLoggedIn, async(req, res) => {
             createdAt:{
                 [Op.between]:[ strTimeStart, require('moment')(strTimeEnd).add(1, 'days').format('YYYY-MM-DD')],
             },
-            strTo:strTo,
+            strTo: strTo,
             strFrom:{[Op.like]:'%'+strKeyword+'%'},
             eRead:{[Op.or]:listRead}
         },
@@ -81,7 +77,7 @@ router.post('/request_list_contact_receive', isLoggedIn, async(req, res) => {
             createdAt:{
                 [Op.between]:[ strTimeStart, require('moment')(strTimeEnd).add(1, 'days').format('YYYY-MM-DD')],
             },
-            strFrom: parent.strNickname,
+            strTo: strTo,
             eRead:{[Op.or]:listRead}
         },
         limit:iLimit,
@@ -92,7 +88,7 @@ router.post('/request_list_contact_receive', isLoggedIn, async(req, res) => {
             createdAt:{
                 [Op.between]:[ strTimeStart, require('moment')(strTimeEnd).add(1, 'days').format('YYYY-MM-DD')],
             },
-            strTo:strTo,
+            strTo: strTo,
             strFrom:{[Op.like]:'%'+strKeyword+'%'},
             eRead:{[Op.or]:listRead}
         },
@@ -147,12 +143,8 @@ router.post('/request_list_contact_send', isLoggedIn, async(req, res) => {
         listRead.push(req.body.eRead);
 
 
-    let user = await db.Users.findOne({where: {
-        strNickname : req.body.strNickname,
-    }});
-    let parent = await db.Users.findOne({where: {
-        id: user.iParentID
-    }});
+    let user = await IAgent.GetUserInfo(req.body.strNickname);
+    let strFrom = user.iPermission == 100 ? user.strNicknameRel : user.strNickname;
 
     let iLimit = parseInt(req.body.iLimit);
     let iPage = parseInt(req.body.iPage);
@@ -163,7 +155,7 @@ router.post('/request_list_contact_send', isLoggedIn, async(req, res) => {
             createdAt:{
                 [Op.between]:[ strTimeStart, require('moment')(strTimeEnd).add(1, 'days').format('YYYY-MM-DD')],
             },
-            strTo:parent.strNickname,
+            strFrom:strFrom,
             eRead:{[Op.or]:listRead}
         },
     }) : await db.ContactLetter.count({
@@ -171,8 +163,8 @@ router.post('/request_list_contact_send', isLoggedIn, async(req, res) => {
             createdAt:{
                 [Op.between]:[ strTimeStart, require('moment')(strTimeEnd).add(1, 'days').format('YYYY-MM-DD')],
             },
-            strTo:parent.strNickname,
-            // strTo:{[Op.like]:'%'+strKeyword+'%'},
+            strFrom:strFrom,
+            strTo:{[Op.like]:'%'+strKeyword+'%'},
             eRead:{[Op.or]:listRead}
         },
     });
@@ -182,7 +174,7 @@ router.post('/request_list_contact_send', isLoggedIn, async(req, res) => {
             createdAt:{
                 [Op.between]:[ strTimeStart, require('moment')(strTimeEnd).add(1, 'days').format('YYYY-MM-DD')],
             },
-            strTo:parent.strNickname,
+            strFrom:strFrom,
             eRead:{[Op.or]:listRead}
         },
         limit:iLimit,
@@ -193,8 +185,8 @@ router.post('/request_list_contact_send', isLoggedIn, async(req, res) => {
             createdAt:{
                 [Op.between]:[ strTimeStart, require('moment')(strTimeEnd).add(1, 'days').format('YYYY-MM-DD')],
             },
-            strTo:parent.strNickname,
-            // strTo:{[Op.like]:'%'+strKeyword+'%'},
+            strFrom:strFrom,
+            strTo:{[Op.like]:'%'+strKeyword+'%'},
             eRead:{[Op.or]:listRead}
         },
         limit:iLimit,
@@ -238,7 +230,8 @@ router.post('/request_writecontact', async(req, res) => {
         strSubject:req.body.strSubject,
         strContents:req.body.strContents,
         eRead:'UNREAD',
-        eState:'WAIT'
+        eState:'WAIT',
+        strWriter:req.user.strNickname,
     });
 
     ISocket.AlertByNickname(req.body.strTo, 'alert_contact');
@@ -317,7 +310,7 @@ router.post('/request_charge_request', async(req, res) => {
         // iPreviousCash:req.body.iPreviousCash,
         iAmount:req.body.iAmount,
         strMemo:req.body.strMemo,
-        eState:'REQUEST'
+        eState:'REQUEST',
     });
 
     ISocket.AlertByNickname(req.body.strTo, 'alert_charge');

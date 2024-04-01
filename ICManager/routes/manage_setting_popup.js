@@ -530,7 +530,6 @@ router.post('/request_letterlist', async (req, res) => {
                 strGroupID: {
                     [Op.like]: req.body.strGroupID+'%'
                 },
-                strTo:strTo,
                 iClassTo: {[Op.in]:[3,2]},
                 iClassFrom: {[Op.notIn]:[2]}, // 총본이 보낸것은 제외
                 eRead:{[Op.or]:listState}
@@ -543,7 +542,6 @@ router.post('/request_letterlist', async (req, res) => {
                 strGroupID: {
                     [Op.like]: req.body.strGroupID+'%'
                 },
-                strTo:strTo,
                 iClassTo: {[Op.in]:[3,2]},
                 iClassFrom: {[Op.notIn]:[2]}, // 총본이 보낸것은 제외
                 strFrom:{[Op.like]:'%'+strKeyword+'%'},
@@ -585,7 +583,6 @@ router.post('/request_letterlist', async (req, res) => {
                 strGroupID: {
                     [Op.like]: req.body.strGroupID+'%'
                 },
-                strTo: strTo,
                 iClassTo: {[Op.in]:[3,2]},
                 iClassFrom: {[Op.notIn]:[2]}, // 총본이 보낸것은 제외
                 eRead:{[Op.or]:listState}
@@ -601,7 +598,6 @@ router.post('/request_letterlist', async (req, res) => {
                 strGroupID: {
                     [Op.like]: req.body.strGroupID+'%'
                 },
-                strTo: strTo,
                 iClassTo: {[Op.in]:[3,2]},
                 iClassFrom: {[Op.notIn]:[2]}, // 총본이 보낸것은 제외
                 strFrom:{[Op.like]:'%'+strKeyword+'%'},

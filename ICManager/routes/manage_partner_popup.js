@@ -727,85 +727,12 @@ router.post('/request_register', isLoggedIn, async(req, res) => {
             iPermission:0,
             iLoginMax:iLoginMax
         });
-        //
-        // // 신규등록 알림 업데이트
-        // const date = ITime.getCurrentDate();
-        // for ( let i in global.socket_list )
-        // {
-        //     const parentClass = parseInt(req.body.iParentClass);
-        //     const groupID = global.socket_list[i].strGroupID;
-        //     const iClass = global.socket_list[i].iClass;
-        //     // 노티는 등록자보다 상위에 있는 파트너에게만 노티
-        //     if ((iClass == 2 || iClass == 3) && iClass <= parentClass) {
-        //         // 해당되는 소켓
-        //         if (strGroupID.indexOf(groupID) != -1) {
-        //             const numPartner = await db.Users.count({
-        //                 where:{
-        //                     createdAt:{
-        //                         [Op.between]:[ date, require('moment')(date).add(1, 'days').format('YYYY-MM-DD')],
-        //                     },
-        //                     strGroupID: {
-        //                         [Op.like]: strGroupID+'%'
-        //                     },
-        //                     iClass: {
-        //                         [Op.lte]: parseInt(req.body.iParentClass)+1
-        //                     }
-        //                 },
-        //             });
-        //
-        //             const numUser = await db.Users.count({
-        //                 where:{
-        //                     createdAt:{
-        //                         [Op.between]:[ date, require('moment')(date).add(1, 'days').format('YYYY-MM-DD')],
-        //                     },
-        //                     strGroupID: {
-        //                         [Op.like]: strGroupID+'%'
-        //                     },
-        //                     iClass: 8
-        //                 },
-        //             });
-        //
-        //             global.socket_list[i].emit('register_user', numPartner, numUser);
-        //         }
-        //     }
-        // }
-
         res.send({result:'OK', string:'에이전트 생성을 완료 하였습니다.'});
     } catch (err) {
         res.send({result:'FAIL', string:`에이전트 생성을 실패했습니다.(${err})`});
     }
-
-
-    // let children = await db.Users.findAll({where:{
-    //     strGroupID:{
-    //         [Op.like]:req.body.strParentGroupID+'%'
-    //     },
-    //     iClass:parseInt(req.body.iParentClass)+1
-    // }});
-
-    // let group = '';
-    // if ( children == null )
-    //     group = '00';
-    // else
-    //     group = '0'+(parseInt(children.length)+1);
-
-    // let strGroupID = req.body.strParentGroupID + group;
-    //     console.log(`strGroupID is ${strGroupID}`);
 });
-// router.post('/user_modify', isLoggedIn, async(req, res) => {
-//     console.log(req.body);
-//     if(){}
-//     await db.Users.update({})
-//     await db.Users.update({
-//         strNickname:req.body.strPassword,
-//         strMobile:strMobileNo,
-//         strBankAccount:req.body.strAccountNumber,
-//         strPassword:req.body.strPassword,
-//         strBankname:req.body.strBankName,
-//         strBankOwner:req.body.strAccountOwner,
-//     })
 
-// });
 router.post('/request_agentlist', isLoggedIn, async (req, res) => {
 
     console.log(req.body);
@@ -1067,13 +994,122 @@ router.post('/request_agentinfo_modify',isLoggedIn, async (req, res) => {
     if ( null != user )
     {
         let bUpdate = true;
-        if ( req.body.strOriginNickname != req.body.strNickname )
+
+        let listShare = [];
+        let listLog = [];
+        let listContactTo = [];
+        let listContactFrom = [];
+        let listLetterTo = [];
+        let listLetterFrom = [];
+        let listInout = [];
+        let listSettle = [];
+        let listDaily = [];
+        let listRecordBet = [];
+        let listGtTo = [];
+        let listGtFrom = [];
+        let listHistory = [];
+        if ( user.strNickname != req.body.strNickname || user.strID != req.body.strID )
         {
+            if (user.iClass <= 3 && user.iPermission != 100) {
+                res.send({result:'ERROR', code:'Impossible'});
+                return;
+            }
             let targetuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
             if ( null != targetuser )
             {
-                bUpdate = false;
-                strErrorCode = 'UnknownUser';
+                res.send({result:'ERROR', code:'UnknownUser'});
+                return;
+            }
+
+            const maxCount = 50;
+            let count = 0;
+            // 지분자 정보 확인
+            listShare = await db.ShareUsers.findAll({where: {strID: user.strID}});
+            count += listShare.length;
+            if (count > maxCount) {
+                res.send({result:'ERROR', code:'Impossible'});
+                return;
+            }
+            // 로그
+            listLog = await db.DataLogs.findAll({where: {strID: user.strID}});
+            count += listLog.length;
+            if (count > maxCount) {
+                res.send({result:'ERROR', code:'Impossible'});
+                return;
+            }
+            // 관리자 문의
+            listContactTo = await db.ContactLetter.findAll({where: {strTo: user.strNickname}});
+            count += listContactTo.length;
+            if (count > maxCount) {
+                res.send({result:'ERROR', code:'Impossible'});
+                return;
+            }
+            listContactFrom = await db.ContactLetter.findAll({where: {strFrom: user.strNickname}});
+            count += listContactFrom.length;
+            if (count > maxCount) {
+                res.send({result:'ERROR', code:'Impossible'});
+                return;
+            }
+            // 쪽지
+            listLetterTo = await db.Letters.findAll({where: {strTo: user.strNickname}});
+            count += listLetterTo.length;
+            if (count > maxCount) {
+                res.send({result:'ERROR', code:'Impossible'});
+                return;
+            }
+            listLetterFrom = await db.Letters.findAll({where: {strFrom: user.strNickname}});
+            count += listLetterFrom.length;
+            if (count > maxCount) {
+                res.send({result:'ERROR', code:'Impossible'});
+                return;
+            }
+            // 입출금
+            listInout = await db.Inouts.findAll({where: {strID: user.strNickname}});
+            count += listInout.length;
+            if (count > maxCount) {
+                res.send({result:'ERROR', code:'Impossible'});
+                return;
+            }
+            // 죽장
+            listSettle = await db.SettleRecords.findAll({where: {strNickname: user.strID}});
+            count += listSettle.length;
+            if (count > maxCount) {
+                res.send({result:'ERROR', code:'Impossible'});
+                return;
+            }
+            // 레코드 데일리
+            listDaily = await db.RecordDailyOverviews.findAll({where: {strID: user.strID}});
+            count += listDaily.length;
+            if (count > maxCount) {
+                res.send({result:'ERROR', code:'Impossible'});
+                return;
+            }
+            // 배팅 레코드
+            listRecordBet = await db.RecordBets.findAll({where: {strID: user.strID}});
+            count += listRecordBet.length;
+            if (count > maxCount) {
+                res.send({result:'ERROR', code:'Impossible'});
+                return;
+            }
+            // 전환
+            listGtTo = await db.GTs.findAll({where: {strTo: user.strID}});
+            count += listGtTo.length;
+            if (count > maxCount) {
+                res.send({result:'ERROR', code:'Impossible'});
+                return;
+            }
+            listGtFrom = await db.GTs.findAll({where: {strFrom: user.strID}});
+            count += listGtFrom.length;
+            if (count > maxCount) {
+                res.send({result:'ERROR', code:'Impossible'});
+                return;
+            }
+            // 가불히스토리
+            listHistory = await db.CreditRecords.findAll({where: {strID: user.strID}});
+            count += listHistory.length;
+            if (count > maxCount) {
+                res.send({result:'ERROR', code:'Impossible'});
+                return;
             }
         }
 
@@ -1093,23 +1129,6 @@ router.post('/request_agentinfo_modify',isLoggedIn, async (req, res) => {
                     bUpdate = false;
                     strErrorCode = 'GreaterThanParent';
                 }
-
-                // 배팅금액은 본사가 자유롭게 조정 가능함
-                // if ( parseInt(parent.iClass) > 3 )
-                // {
-                //     if ( parent.iPBLimit < req.body.iPBLimit ||
-                //         parent.iPBSingleLimit < req.body.iPBSingleLimit ||
-                //         parent.iPBDoubleLimit < req.body.iPBDoubleLimit ||
-                //         parent.iPBTripleLimit < req.body.iPBTripleLimit
-                //        )
-                //     {
-                //         console.log(`########## ModifyAgentInfo : Error Parent`);
-                //         bUpdate = false;
-                //         strErrorCode = 'GreaterThanParent';
-                //         res.send({result:'ERROR', code:strErrorCode});
-                //         return;
-                //     }
-                // }
             }
         }
 
@@ -1126,10 +1145,6 @@ router.post('/request_agentinfo_modify',isLoggedIn, async (req, res) => {
             });
             for ( let i in children )
             {
-                // 대본사는 부본사 값 무시(대본사와 부본사는 동일하게 설정됨)
-                if (user.iClass == 4 && children[i].iClass == 5) {
-                    continue;
-                }
                 let child = children[i];
                 if ( 
                     child.fSlotR > req.body.fSlotR ||
@@ -1253,23 +1268,49 @@ router.post('/request_agentinfo_modify',isLoggedIn, async (req, res) => {
                         },
                     }
                 });
-
-                // for ( let i in children )
-                // {
-                //     await children[i].update({
-                //         iPBLimit:req.body.iPBLimit,
-                //         iPBSingleLimit:req.body.iPBSingleLimit,
-                //         iPBDoubleLimit:req.body.iPBDoubleLimit,
-                //         iPBTripleLimit:req.body.iPBTripleLimit,
-                //         strPBOptionCode:req.body.strPBOptionCode,
-                //     });
-                // }
             }
 
-            if ( req.body.strNickname != req.body.strOriginNickname && bUpdate == true )
+            if ( (req.body.strNickname != user.strNickname || req.body.strID != user.strID) && bUpdate == true )
             {
-                await db.RecordBets.update({strNickname:req.body.strNickname}, {where: {strNickname:req.body.strOriginNickname}});
-                await db.Inouts.update({strID:req.body.strNickname}, {where:{strID:req.body.strOriginNickname}});
+                if (listShare.length > 0) {
+                    await db.ShareUsers.update({strID: req.body.strID}, {where: {strID: user.strID}});
+                }
+                if (listLog.length > 0) {
+                    await db.DataLogs.update({strNickname:req.body.strNickname, strID:req.body.strID}, {where: {strID: user.strID}});
+                }
+                if (listContactTo.length > 0) {
+                    await db.ContactLetter.update({strTo:req.body.strNickname}, {where: {strTo: user.strNickname}});
+                }
+                if (listContactFrom.length > 0) {
+                    await db.ContactLetter.update({strFrom:req.body.strNickname}, {where: {strFrom: user.strNickname}});
+                }
+                if (listLetterTo.length > 0) {
+                    await db.Letters.update({strTo:req.body.strNickname, strToID: req.body.strID}, {where: {strTo: user.strNickname}});
+                }
+                if (listLetterFrom.length > 0) {
+                    await db.Letters.update({strFrom:req.body.strNickname, strFromID: req.body.strID}, {where: {strFrom: user.strNickname}});
+                }
+                if (listInout.length > 0) {
+                    await db.Inouts.update({strID: req.body.strNickname, strName: req.body.strNickname}, {where: {strID: user.strNickname}});
+                }
+                if (listSettle.length > 0) {
+                    await db.SettleRecords.update({strNickname: req.body.strNickname, strID:req.body.strID}, {where: {strID: user.strID}});
+                }
+                if (listDaily.length > 0) {
+                    await db.RecordDailyOverviews.update({strID: req.body.strID}, {where: {strID: user.strID}});
+                }
+                if (listRecordBet.length > 0) {
+                    await db.RecordBets.update({strID: req.body.strID, strNickname: req.body.strNickname}, {where: {strID: user.strID}});
+                }
+                if (listGtTo.length > 0) {
+                    await db.GTs.update({strTo:req.body.strID}, {where: {strTo: user.strID}});
+                }
+                if (listGtFrom.length > 0) {
+                    await db.GTs.update({strFrom:req.body.strID}, {where: {strFrom: user.strID}});
+                }
+                if (listHistory.length > 0) {
+                    await db.CreditRecords.update({strID: req.body.strID, strNickname:req.body.strNickname}, {where: {strID: user.strID}});
+                }
             }
 
             res.send({result:'OK'});

@@ -14,7 +14,7 @@ const db = require('../models');
 const ITime = require('../utils/time');
 const ISocket = require('../implements/socket');
 
-const {Op}= require('sequelize');
+const {Op, where}= require('sequelize');
 
 const IAgent = require('../implements/agent3');
 const {isLoggedIn, isNotLoggedIn} = require('./middleware');
@@ -22,7 +22,7 @@ const IInout = require("../implements/inout");
 const {DATETIME} = require("mysql/lib/protocol/constants/types");
 
 router.post('/list_contact_receive', isLoggedIn, async(req, res) => {
-    const user = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
+    const user = await IAgent.GetUserInfo(req.body.strNickname);
     let iocount = await IInout.GetProcessing(user.strGroupID, user.strNickname, user.iClass);
     let agent = {strNickname:user.strNickname, iClass:user.iClass, strGroupID:user.strGroupID, iCash:user.iCash, iSettle:user.iSettle, iRolling:user.iRolling,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission};
@@ -32,9 +32,8 @@ router.post('/list_contact_receive', isLoggedIn, async(req, res) => {
 router.post('/request_list_contact_receive', isLoggedIn, async(req, res) => {
     let strTimeStart = req.body.dateStart;
     let strTimeEnd = req.body.dateEnd;
-    let strKeyword = req.body.strKeyword;
+    let strKeyword = req.body.strKeyword ?? '';
     let eRead = req.body.eRead;
-    let strTo = req.body.strNickname;
 
     let listRead = [];
     if ( eRead == 'ALL')
@@ -47,27 +46,49 @@ router.post('/request_list_contact_receive', isLoggedIn, async(req, res) => {
     else
         listRead.push(req.body.eRead);
 
-    let totalCount = await db.ContactLetter.count({
-        where:{
-            createdAt:{
-                [Op.between]:[ strTimeStart, require('moment')(strTimeEnd).add(1, 'days').format('YYYY-MM-DD')],
-            },
-            strTo:strTo,
-            strFrom:{[Op.like]:'%'+strKeyword+'%'},
-            eRead:{[Op.or]:listRead}
-        },
-    });
+    let user = await IAgent.GetUserInfo(req.body.strNickname);
+    let strTo = user.iPermission == 100 ? user.strNicknameRel : user.strNickname;
 
     let iLimit = parseInt(req.body.iLimit);
     let iPage = parseInt(req.body.iPage);
     let iOffset = (iPage-1) * iLimit;
 
-    let list = await db.ContactLetter.findAll({
+    let totalCount = strKeyword == '' ? await db.ContactLetter.count({
         where:{
             createdAt:{
                 [Op.between]:[ strTimeStart, require('moment')(strTimeEnd).add(1, 'days').format('YYYY-MM-DD')],
             },
-            strTo:strTo,
+            strTo: strTo,
+            eRead:{[Op.or]:listRead}
+        },
+    }) : await db.ContactLetter.count({
+        where:{
+            createdAt:{
+                [Op.between]:[ strTimeStart, require('moment')(strTimeEnd).add(1, 'days').format('YYYY-MM-DD')],
+            },
+            strTo: strTo,
+            strFrom:{[Op.like]:'%'+strKeyword+'%'},
+            eRead:{[Op.or]:listRead}
+        },
+    });
+
+    let list = strKeyword == '' ? await db.ContactLetter.findAll({
+        where:{
+            createdAt:{
+                [Op.between]:[ strTimeStart, require('moment')(strTimeEnd).add(1, 'days').format('YYYY-MM-DD')],
+            },
+            strTo: strTo,
+            eRead:{[Op.or]:listRead}
+        },
+        limit:iLimit,
+        offset:iOffset,
+        order:[['createdAt','DESC']]
+    }) : await db.ContactLetter.findAll({
+        where:{
+            createdAt:{
+                [Op.between]:[ strTimeStart, require('moment')(strTimeEnd).add(1, 'days').format('YYYY-MM-DD')],
+            },
+            strTo: strTo,
             strFrom:{[Op.like]:'%'+strKeyword+'%'},
             eRead:{[Op.or]:listRead}
         },
@@ -97,7 +118,7 @@ router.post('/request_contact_select_remove', isLoggedIn, async(req, res) => {
     }
 });
 router.post('/list_contact_send', isLoggedIn, async(req, res) => {
-    const user = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
+    const user = await IAgent.GetUserInfo(req.body.strNickname);
     let iocount = await IInout.GetProcessing(user.strGroupID, user.strNickname, user.iClass);
     let agent = {strNickname:user.strNickname, iClass:user.iClass, strGroupID:user.strGroupID, iCash:user.iCash, iSettle:user.iSettle, iRolling:user.iRolling,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission};
@@ -107,9 +128,8 @@ router.post('/list_contact_send', isLoggedIn, async(req, res) => {
 router.post('/request_list_contact_send', isLoggedIn, async(req, res) => {
     let strTimeStart = req.body.dateStart;
     let strTimeEnd = req.body.dateEnd;
-    let strKeyword = req.body.strKeyword;
+    let strKeyword = req.body.strKeyword ?? '';
     let eRead = req.body.eRead;
-    let strTo = req.body.strNickname;
 
     let listRead = [];
     if ( eRead == 'ALL')
@@ -122,28 +142,51 @@ router.post('/request_list_contact_send', isLoggedIn, async(req, res) => {
     else
         listRead.push(req.body.eRead);
 
-    let totalCount = await db.ContactLetter.count({
-        where:{
-            createdAt:{
-                [Op.between]:[ strTimeStart, require('moment')(strTimeEnd).add(1, 'days').format('YYYY-MM-DD')],
-            },
-            strTo:{[Op.like]:'%'+strKeyword+'%'},
-            strFrom:req.body.strNickname,
-            eRead:{[Op.or]:listRead}
-        },
-    });
+
+    let user = await IAgent.GetUserInfo(req.body.strNickname);
+    let strFrom = user.iPermission == 100 ? user.strNicknameRel : user.strNickname;
 
     let iLimit = parseInt(req.body.iLimit);
     let iPage = parseInt(req.body.iPage);
     let iOffset = (iPage-1) * iLimit;
 
-    let list = await db.ContactLetter.findAll({
+    let totalCount = strKeyword == '' ? await db.ContactLetter.count({
         where:{
             createdAt:{
                 [Op.between]:[ strTimeStart, require('moment')(strTimeEnd).add(1, 'days').format('YYYY-MM-DD')],
             },
+            strFrom:strFrom,
+            eRead:{[Op.or]:listRead}
+        },
+    }) : await db.ContactLetter.count({
+        where:{
+            createdAt:{
+                [Op.between]:[ strTimeStart, require('moment')(strTimeEnd).add(1, 'days').format('YYYY-MM-DD')],
+            },
+            strFrom:strFrom,
             strTo:{[Op.like]:'%'+strKeyword+'%'},
-            strFrom:req.body.strNickname,
+            eRead:{[Op.or]:listRead}
+        },
+    });
+
+    let list = strKeyword == '' ? await db.ContactLetter.findAll({
+        where:{
+            createdAt:{
+                [Op.between]:[ strTimeStart, require('moment')(strTimeEnd).add(1, 'days').format('YYYY-MM-DD')],
+            },
+            strFrom:strFrom,
+            eRead:{[Op.or]:listRead}
+        },
+        limit:iLimit,
+        offset:iOffset,
+        order:[['createdAt','DESC']]
+    }) : await db.ContactLetter.findAll({
+        where:{
+            createdAt:{
+                [Op.between]:[ strTimeStart, require('moment')(strTimeEnd).add(1, 'days').format('YYYY-MM-DD')],
+            },
+            strFrom:strFrom,
+            strTo:{[Op.like]:'%'+strKeyword+'%'},
             eRead:{[Op.or]:listRead}
         },
         limit:iLimit,
@@ -155,7 +198,7 @@ router.post('/request_list_contact_send', isLoggedIn, async(req, res) => {
     res.send({result: 'OK', list:list, totalCount: totalCount, iocount:iocount});
 });
 router.post('/list_charge_request', isLoggedIn, async(req, res) => {
-    const user = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
+    const user = await IAgent.GetUserInfo(req.body.strNickname);
     let iocount = await IInout.GetProcessing(user.strGroupID, user.strNickname, req.user.iClass);
     let agent = {strNickname:user.strNickname, iClass:user.iClass, strGroupID:user.strGroupID, iCash:user.iCash, iSettle:user.iSettle, iRolling:user.iRolling,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission};
@@ -180,14 +223,18 @@ router.post('/popup_write_contact', async(req, res) => {
 });
 
 router.post('/request_writecontact', async(req, res) => {
+    let user = await IAgent.GetUserInfo(req.body.strFrom);
+    let strNickname = user.iPermission == 100 ? user.strNicknameRel : user.strNickname;
+
     await db.ContactLetter.create({
         strTo:req.body.strTo,
-        strFrom:req.body.strFrom,
-        strGroupID:req.body.strGroupID,
+        strFrom:strNickname,
+        strGroupID:user.strGroupID,
         strSubject:req.body.strSubject,
         strContents:req.body.strContents,
         eRead:'UNREAD',
-        eState:'WAIT'
+        eState:'WAIT',
+        strWriter:req.user.strNickname,
     });
 
     ISocket.AlertByNickname(req.body.strTo, 'alert_contact');
@@ -224,6 +271,9 @@ router.post('/popup_read_contact', async(req, res) => {
     const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:req.body.iClass,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission};
     let obj = await db.ContactLetter.findByPk(req.body.id);
+    let dbuser = await IAgent.GetUserInfo(req.body.strNickname);
+    let strNickname = dbuser.iPermission == 100 ? dbuser.strNicknameRel : dbuser.strNickname;
+    user.strNickname = strNickname;
 
     if (user.iPermission != 100) {
         if (obj.eRead == 'UNREAD') {
@@ -248,6 +298,10 @@ router.post('/popup_read_contact', async(req, res) => {
     res.render('manage_contact/popup_read_contact', {iLayout:1, iHeaderFocus:1, user:user, letter:obj.toJSON()});
 });
 
+
+/**
+ * 미사용 api
+ */
 router.post('/popup_charge_request', async(req, res) => {
     console.log(req.body);
     const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:req.body.iClass,
@@ -266,7 +320,7 @@ router.post('/request_charge_request', async(req, res) => {
         // iPreviousCash:req.body.iPreviousCash,
         iAmount:req.body.iAmount,
         strMemo:req.body.strMemo,
-        eState:'REQUEST'
+        eState:'REQUEST',
     });
 
     ISocket.AlertByNickname(req.body.strTo, 'alert_charge');

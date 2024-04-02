@@ -309,8 +309,8 @@ exports.GetSettleClass = async (strGroupID, iClass, strQuater, dateStart, dateEn
     if (iClass == 4) {
         let list = await db.sequelize.query(`
             SELECT
-                t3.strID AS strAdminID, t3.strNickname AS strAdminNickname,
-                t4.strID, t4.strNickname, t4.strGroupID, t4.iClass,
+                t3.strID AS strAdminID, t3.strNickname AS strAdminNickname, 
+                t4.strID, t4.strNickname, t4.strGroupID, t4.iClass, t4.strSettleMemo,
                 t4.fBaccaratR, t4.fSlotR, t4.fUnderOverR, t4.fPBR, t4.fPBSingleR, t4.fPBDoubleR, t4.fPBTripleR,
                 t4.fSettleBaccarat, t4.fSettleSlot, t4.fSettlePBA, t4.fSettlePBB,
                 t4.iSettleAcc AS iSettleAccUser, t4.iCash as iMyMoney,
@@ -370,7 +370,7 @@ exports.GetSettleClass = async (strGroupID, iClass, strQuater, dateStart, dateEn
         let list = await db.sequelize.query(`
             SELECT
                 t3.strID AS strAdminID, t3.strNickname AS strAdminNickname,
-                t5.strID, t5.strNickname, t5.strGroupID, t5.iClass,
+                t5.strID, t5.strNickname, t5.strGroupID, t5.iClass, t5.strSettleMemo,
                 t5.fBaccaratR, t5.fSlotR, t5.fUnderOverR, t5.fPBR, t5.fPBSingleR, t5.fPBDoubleR, t5.fPBTripleR,
                 t5.fSettleBaccarat, t5.fSettleSlot, t5.fSettlePBA, t5.fSettlePBB,
                 t5.iSettleAcc AS iSettleAccUser, t5.iCash as iMyMoney,

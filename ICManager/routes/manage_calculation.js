@@ -20,24 +20,12 @@ const {isLoggedIn, isNotLoggedIn} = require('./middleware');
 
 router.get('/calculation', isLoggedIn, async(req, res) => {
 
-    const dbuser = await db.Users.findOne({where:{strNickname:req.user.strNickname}});
-    let iCash = 0;
-    let iRolling = 0;
-    let iSettle = 0;
-    if ( dbuser != null ) {
-        iCash = dbuser.iCash;
-        iRolling = dbuser.iRolling;
-        iSettle = dbuser.iSettle;
-    }
+    const dbuser = await IAgent.GetUserInfo(req.user.strNickname);
 
-    const user = {strNickname:dbuser.strNickname, strGroupID:req.user.strGroupID, iClass:parseInt(req.user.iClass), iCash:iCash, iRolling:iRolling, iSettle:iSettle,
+    const user = {strNickname:dbuser.strNickname, strGroupID:req.user.strGroupID, iClass:parseInt(req.user.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle,
         iRootClass: req.user.iClass, iPermission: req.user.iPermission, strID: dbuser.strID};
-
-    // 보기 권한만 있고 연결 유저 아이디가 있는 경우
-    if ( dbuser.iPermission == 100 && dbuser.iRelUserID != null ) {
-        const relUser = await db.Users.findOne({where:{id: dbuser.iRelUserID}});
-        user.strID = relUser.strID;
-        // user.strNickname = relUser.strNickname;
+    if (req.user.iPermission == 100) {
+        user.strID = dbuser.strIDRel;
     }
 
     const agentinfo = await IAgent.GetPopupAgentInfo(req.user.strGroupID, parseInt(req.user.iClass), req.user.strNickname);
@@ -56,24 +44,13 @@ router.get('/calculation', isLoggedIn, async(req, res) => {
 router.post('/calculation', isLoggedIn, async(req, res) => {
 
     console.log(req.body);
-    const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
-    let iCash = 0;
-    let iRolling = 0;
-    let iSettle = 0;
-    if ( dbuser != null ) {
-        iCash = dbuser.iCash;
-        iRolling = dbuser.iRolling;
-        iSettle = dbuser.iSettle;
-    }
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iRolling:iRolling, iSettle:iSettle,
+    const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
+
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle,
         iRootClass: req.user.iClass, iPermission: req.user.iPermission, strID: dbuser.strID};
-
-    // 보기 권한만 있고 연결 유저 아이디가 있는 경우
-    if ( req.user.iPermission == 100 && dbuser.iRelUserID != null ) {
-        const relUser = await db.Users.findOne({where:{id: dbuser.iRelUserID}});
-        user.strID = relUser.strID;
-        // user.strNickname = relUser.strNickname;
+    if (req.user.iPermission == 100) {
+        user.strID = dbuser.strIDRel;
     }
 
     const agentinfo = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
@@ -92,20 +69,10 @@ router.post('/calculation', isLoggedIn, async(req, res) => {
 router.post('/settle', isLoggedIn, async(req, res) => {
 
     console.log(req.body);
-    const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
-    let iCash = 0;
-    let iRolling = 0;
-    let iSettle = 0;
-    let strID = '';
-    if ( dbuser != null ) {
-        iCash = dbuser.iCash;
-        iRolling = dbuser.iRolling;
-        iSettle = dbuser.iSettle;
-        strID = dbuser.strID;
-    }
+    const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iRolling:iRolling, iSettle:iSettle,
-        strID:strID, iRootClass:req.user.iClass, iPermission:req.user.iPermission};
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle,
+        strID:dbuser.strID, iRootClass:req.user.iClass, iPermission:req.user.iPermission};
 
     const agentinfo = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
 
@@ -594,20 +561,10 @@ router.post('/request_applysettle_all', isLoggedIn, async (req, res) => {
 router.post('/settle_all', isLoggedIn, async(req, res) => {
 
     console.log(req.body);
-    const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
-    let iCash = 0;
-    let iRolling = 0;
-    let iSettle = 0;
-    let strID = '';
-    if ( dbuser != null ) {
-        iCash = dbuser.iCash;
-        iRolling = dbuser.iRolling;
-        iSettle = dbuser.iSettle;
-        strID = dbuser.strID;
-    }
 
+    const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iRolling:iRolling, iSettle:iSettle, strID:strID,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle, strID:dbuser.strID,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission};
 
     const agentinfo = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
@@ -989,7 +946,7 @@ router.post('/request_overview', isLoggedIn, async (req, res) => {
 router.post('/popup_proadmin_settle', isLoggedIn, async(req, res) => {
     console.log(req.body);
     let strParent = await IAgent.GetParentNickname(req.body.strNickname);
-    const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
+    const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
     const user = {strNickname:req.body.strNickname, strGroupID:dbuser.strGroupID, iClass:parseInt(dbuser.iClass), strID:dbuser.strID,
         iRootClass: req.user.iClass, iPermission: req.user.iPermission};
 
@@ -1003,7 +960,7 @@ router.post('/popup_proadmin_settle', isLoggedIn, async(req, res) => {
  */
 router.post('/request_proadmin_settle_list', isLoggedIn, async (req, res) => {
     console.log(req.body);
-    const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
+    const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
     const list = await db.sequelize.query(`
         SELECT u2.strNickname AS parentNickname, u2.strGroupID AS parentGroupID, u2.iClass AS parentClass,
                u.strNickname, u.strGroupID, u.strSettleMemo, u.strID, u.strGroupID, u.iClass,
@@ -1022,19 +979,9 @@ router.post('/request_proadmin_settle_list', isLoggedIn, async (req, res) => {
 router.post('/settle_credits', isLoggedIn, async(req, res) => {
 
     console.log(req.body);
-    const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
-    let iCash = 0;
-    let iRolling = 0;
-    let iSettle = 0;
-    let strID = '';
-    if ( dbuser != null ) {
-        iCash = dbuser.iCash;
-        iRolling = dbuser.iRolling;
-        iSettle = dbuser.iSettle;
-        strID = dbuser.strID;
-    }
+    const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iRolling:iRolling, iSettle:iSettle, strID:strID,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle, strID:dbuser.strID,
         iRootClass: req.user.iClass, iPermission: req.user.iPermission};
 
     const agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
@@ -1049,17 +996,9 @@ router.post('/settle_credits', isLoggedIn, async(req, res) => {
 router.post('/credits_history', isLoggedIn, async(req, res) => {
 
     console.log(req.body);
-    const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
-    let iCash = 0;
-    let iRolling = 0;
-    let iSettle = 0;
-    if ( dbuser != null ) {
-        iCash = dbuser.iCash;
-        iRolling = dbuser.iRolling;
-        iSettle = dbuser.iSettle;
-    }
+    const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iRolling:iRolling, iSettle:iSettle,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission, strID:dbuser.strID};
 
     const agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);

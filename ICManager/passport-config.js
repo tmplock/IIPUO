@@ -47,6 +47,27 @@ module.exports = () => {
                     return done(null, false, { message: '없는 사용자 아이디 입니다.' });
                 }
 
+                // TEST시에는 false로 설정
+                if (true) {
+                    // 접근 권한 체크
+                    let code = user.strLoginCode ?? '';
+
+                    let permission = code == '' ? await db.Permissions.findOne({where: {iClass:user.iClass}}) : await db.Permissions.findOne({where: {iClass:user.iClass, strLoginCode:code}});
+                    if (permission == null) {
+                        console.log(`Access Not User`);
+                        return done(null, false, { message: '접근 권한이 없는 아이디 입니다.' });
+                    }
+                    let strURL = permission.strURL;
+                    // 보기 전용 계정
+                    if (user.iPermission == 100) {
+                        strURL = permission.strViewURL;
+                    }
+                    if (!req.headers.origin.startsWith(strURL)) {
+                        console.log(`Access Not User`);
+                        return done(null, false, { message: '접근 권한이 없는 아이디 입니다.' });
+                    }
+                }
+
                 if ( user.eState != 'NORMAL' )
                 {
                     return done(null, false, { message: '접속이 제한된 계정입니다. 관리자에 문의 하세요.'});
@@ -74,6 +95,18 @@ module.exports = () => {
 
                 console.log(`Parameter : ${username}, ${password}, DB User : ${user.strNickname}`);
 
+                // 접속중인 소켓 카운트 체크하여 중복 로그인 처리하기
+                let max = user.iLoginMax ?? 1;
+                let list = [];
+                for (let i in socket_list) {
+                    if (socket_list[i].strNickname === user.strNickname) {
+                        list.push(socket_list[i]);
+                    }
+                }
+                list = list.reverse();
+                for (let i = 0; i <= list.length - max; i++) {
+                    list[i].emit('UserLogout');
+                }
                 await db.Users.update({loginedAt : db.sequelize.literal('CURRENT_TIMESTAMP'), iNumLoginFailed:0}, { where: { strID: username } });
 
                 return done(null, user);

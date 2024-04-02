@@ -45,7 +45,7 @@
                 //window.open(data,strGame, 'popupGame', 'width=1920, height=1080, toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no');
 
                 if ( data == '' )
-                    alert('게임에 접속 할 수 없습니다.');
+                    alert('해당 게임은 점검중입니다.');
                 else
                     window.open(data, 'popupGame','height=' + screen.height + ',width=' + screen.width + 'fullscreen=yes');
             },
@@ -209,26 +209,26 @@
                 </table>
             </div>
         </div>
-<!--        <div class="board-list">-->
-<!--            <div class="list-b">-->
-<!--                <h1 onclick="location.href='/faq/list'" style="cursor: hand;cursor: pointer;"><span>UNOVER</span><span>FAQ</span></h1>-->
-<!--                    <table id="main_faq">-->
-<!--                        <colgroup>-->
-<!--                            <col style="width:60%">-->
-<!--                            <col style="width:20%">-->
-<!--                        </colgroup>-->
-<!--                        <tbody>-->
-<!--                        <% for ( let i in listFaq ) { %>-->
-<!--                            <tr>-->
-<!--                                <% const address = `/faq/get?id=${listFaq[i].id}`;%>-->
-<!--                                <td><a href="<%=address%>">- <%=listFaq[i].strSubject%></a></td>-->
-<!--                                <td><%=listFaq[i].createdAt%></td>-->
-<!--                            </tr>-->
-<!--                        <% } %>-->
-<!--                        </tbody>-->
-<!--                    </table>-->
-<!--            </div>-->
-<!--        </div>-->
+        <div class="board-list">
+            <div class="list-b">
+                <h1 onclick="location.href='/faq/list'" style="cursor: hand;cursor: pointer;"><span>UNOVER</span><span>FAQ</span></h1>
+                    <table id="main_faq">
+                        <colgroup>
+                            <col style="width:60%">
+                            <col style="width:20%">
+                        </colgroup>
+                        <tbody>
+                        <% for ( let i in listFaq ) { %>
+                            <tr>
+                                <% const address = `/faq/get?id=${listFaq[i].id}`;%>
+                                <td><a href="<%=address%>">- <%=listFaq[i].strSubject%></a></td>
+                                <td><%=listFaq[i].createdAt%></td>
+                            </tr>
+                        <% } %>
+                        </tbody>
+                    </table>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -318,7 +318,11 @@
         <table border="0" cellspacing="0" cellpadding="0">
             <tr>
                 <td align="center" bgcolor="#000000">
-                    <img src="/img/pop/e-event.jpg"  width="396">
+                    <!-- <img src="/img/pop/e-event.jpg"  width="396"> -->
+                    <video width="640" controls>
+                        <source src="/img/uo.mp4" type="video/mp4">
+
+                    </video>
                 </td>
             </tr>
         </table>
@@ -329,7 +333,7 @@
         line-height:25px; padding-left:20px;padding-top:5px; cursor:pointer;" >오늘하루 이창 열지않음<span><input type="checkbox" name="nomore" onclick="closePop('main_pop_notice_new20');"></span></span>
 
             <span class="close">
-                <span onclick="$('#main_pop_notice_new20').hide();" style="cursor:hand;cursor:pointer;line-height: 35px;">닫기 X</span>
+                <span onclick="$('#main_pop_notice_new20').hide();" style="cursor:hand;cursor:pointer;line-height: 35px;float:right; margin-right:10px;">닫기 X</span>
             </span>
         </div>
 

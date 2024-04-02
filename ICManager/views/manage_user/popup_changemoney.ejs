@@ -110,7 +110,7 @@
 				<tr style="background-color:#a4aaa7;">
 					<td colspan="3">
 						<%=__('Modify')%><%=__('Money')%> : 
-						<input type="number" style="width:20%;" name="chg_mile" required="yes" message="조정금액" is_num = "yes" value="" id="GTMoney"> <%=__('Currency')%>
+						<input type="number" min="0" style="width:20%;" name="chg_mile" required="yes" message="조정금액" is_num = "yes" value="" id="GTMoney"> <%=__('Currency')%>
 							&nbsp; <a class="btn_gray" href="javascript:OnClickProcess();"><%=__('OK')%></a>
 					</td>
 				</tr>
@@ -124,12 +124,12 @@
 						<tr style="background-color:#a4aaa7;">
 							<th scope="row" style="font-size:18px;color:red;"><%=__('Rolling')%><%=__('Exchange')%></th>
 							<td>
-								<input type="number" id="translate_rolling" value="">
+								<input type="number" min="0" id="translate_rolling" value="">
 								<a class="btn_gray" href="javascript:OnClickTranslate('ROLLING');"><%=__('Exchange')%></a>
 							</td>
 							<th scope="row" style="font-size:18px;color:red;"><%=__('Settle')%><%=__('Exchange')%></th>
 							<td>
-								<input type="number" id="translate_settle" value="">
+								<input type="number" min="0" id="translate_settle" value="">
 								<a class="btn_gray" href="javascript:OnClickTranslate('SETTLE');"><%=__('Exchange')%></a>
 							</td>
 						</tr>
@@ -137,7 +137,7 @@
 						<tr style="background-color:#a4aaa7;">
 							<th scope="row" style="font-size:18px;color:red;"><%=__('Rolling')%><%=__('Exchange')%></th>
 							<td colspan="3">
-								<input type="number" id="translate_rolling" value="">
+								<input type="number" min="0" id="translate_rolling" value="">
 								<a class="btn_gray" href="javascript:OnClickTranslate('ROLLING');"><%=__('Exchange')%></a>
 							</td>
 						</tr>
@@ -256,6 +256,10 @@
 			$('#settle').text(GetNumber(agent.iSettle, '0'));
 			$('#settleacc').text(GetNumberSign(agent.iSettleAcc, '0'));
 
+			checkBlockNum(`#translate_rolling`);
+			checkBlockNum(`#translate_settle`);
+			checkBlockNum(`#GTMoney`);
+
 			OnClickSearch();
 		});
 
@@ -347,8 +351,9 @@
 
 			let strTarget = $('#agent_list').val();
 			let iMoney = $('#GTMoney').val();
+			iMoney = parseInt(iMoney);
 
-			if ( strTarget == null || strTarget == '' || iMoney == null || iMoney == '' || iMoney == 0)
+			if ( strTarget == null || strTarget == '' || iMoney == null || iMoney == '' || iMoney < 0)
 			{
 				alert(strAlertIncorrectInputValue);
 				return;
@@ -515,24 +520,26 @@
 		let OnClickTranslate = (eType) => {
 
 			let iSettle = $('#translate_settle').val();
+			iSettle = parseInt(iSettle);
 			let iRolling = $('#translate_rolling').val();
+			iRolling = parseInt(iRolling);
 			let strType = '';
 			let iMoney = 0;
 
 			if ( eType == 'SETTLE' )
 			{
 				strType = '죽장';
-				if ( iSettle <= agent.iSettle )
+				if ( iSettle > 0 && iSettle <= agent.iSettle )
 					iMoney = iSettle;
 			}
 			else if ( eType == 'ROLLING' )
 			{
 				strType = '롤링';
-				if ( iRolling <= agent.iRolling )
+				if ( iRolling > 0 && iRolling <= agent.iRolling )
 					iMoney = iRolling;
 			}
 
-			if ( iMoney == '' || iMoney == 0 )
+			if ( iMoney == '' || iMoney == 0 || iMoney < 0 )
 			{
 				alert(strAlertIncorrectInputValue);
 				return;

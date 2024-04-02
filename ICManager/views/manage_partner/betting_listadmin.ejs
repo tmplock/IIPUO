@@ -8,6 +8,7 @@
 					<a href="#" id="remove_db" iAgentClass="3" class="btn_red">데이터 삭제</a>
 					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 					<a href="#" id="register_agent" iAgentClass="3" class="btn_gray">본사등록</a>
+					<a href="#" id="register_agent_view" iAgentClass="3" class="btn_gray">본사등록(보기용)</a>
 				<% } %>
 			</ul>
 
@@ -237,7 +238,7 @@
 		$("#button_toggle_record").text("닫기");
 		RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
 
-		RequestOverview(cTClass, user.strGroupID, user.iClass, user.iPermission, '', user.strID);
+		RequestOverview(cTClass, user.strGroupID, user.iClass, user.iPermission, user.strNickname, user.strID);
 		RequestAdminList(EAgent.eAdmin, user.strGroupID, user.iClass, user.iPermission);
 	}
 
@@ -250,7 +251,7 @@
 		$("#button_toggle_record").text("닫기");
 		RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
 
-		RequestOverview(cTClass, user.strGroupID, user.iClass, user.iPermission, '', user.strID);
+		RequestOverview(cTClass, user.strGroupID, user.iClass, user.iPermission, user.strNickname, user.strID);
 		RequestAdminList(EAgent.eAdmin, user.strGroupID, user.iClass, user.iPermission);
 	}
 
@@ -260,7 +261,7 @@
 		$("#button_toggle_record").text("닫기");
 
 		RequestBettingRecord(cTClass, strGroupID, iClass, user.strID);
-		RequestOverview(cTClass, strGroupID, iClass, iPermission, '', user.strID);
+		RequestOverview(cTClass, strGroupID, iClass, iPermission, user.strNickname, user.strID);
 		RequestAdminList(iTargetClass, strGroupID, iClass, user.iPermission);
 	}
 

@@ -39,6 +39,9 @@ module.exports = (sequelize, DataTypes) => {
         eState: {
             type:DataTypes.ENUM('WAIT', 'REPLY', 'DELETE'),
         },
+        strWriter: {
+            type:DataTypes.STRING,
+        },
         completedAt: {
             type:DataTypes.DATE,
             get() {

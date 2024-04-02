@@ -111,11 +111,12 @@
         SetPartnerHeader(10, user.iClass);
 
         $('#userlist').empty();
+        let total0 = SetUserList(proadminlist, 4, user.iRootClass);
         let total1 = SetUserList(vadminlist, 5, user.iRootClass);
         let total2 = SetUserList(agentlist, 6, user.iRootClass);
         let total3 = SetUserList(shoplist, 7, user.iRootClass);
         let total4 = SetUserList(userlist, 8, user.iRootClass);
-        AddEndTag(total1, total2, total3, total4, user.iRootClass);
+        AddEndTag(total0, total1, total2, total3, total4, user.iRootClass);
     });
 
     let SetUserList = (userlist, iClass, iRootClass) => {
@@ -223,16 +224,15 @@
             if ( userlist[i].iClass != 8 )
                 strClassTag = `<td style='background-color:${bgcolor};'><a href="#" onclick="OnClickNickname('${userlist[i].strNickname}')" style="color:blue;">${userlist[i].strNickname}</a></td>`;
 
+            let letter = ``;
             let strDeleteTag = '';
             if (user.iRootClass <= 3 && user.iPermission != 100) {
+                letter = `<td id="btn_84" style='background-color:${bgcolor};'><a href="javascript:OnClickWritingLetter('${userlist[i].strNickname}');" class="btn_green">${strLetter}</a></td>`;
                 strDeleteTag = `<td id="btn_84" style='background-color:${bgcolor};'>
                                     <a href="javascript:OnClickRemove('${userlist[i].strNickname}', '${userlist[i].strGroupID}', '${userlist[i].iClass}');" class="btn_red">${strRemove}</a>
                                 </td>`;
             }
-            let letter = ``;
-            if (user.iRootClass <= 3 && user.iPermission != 100) {
-                letter = `<a href="javascript:OnClickWritingLetter('${userlist[i].strNickname}');" class="btn_green">${strLetter}</a>`;
-            }
+
             let inoutTag = ``;
             if (user.iRootClass <= 3 && user.iPermission != 100) {
                 inoutTag = `<td style="background-color:${bgcolor};">
@@ -240,7 +240,10 @@
                                 <a style="border: 1px solid green;display:inline-block;font-weight:bold;border-radius:4px;background-color:red;width:30px;color:white;" href="#" id="partner_adjustoutput" strnickname="${userlist[i].strNickname}" strgroupid="${userlist[i].strGroupID}" iclass="${userlist[i].iClass}">출금</a>
                             </td>`;
             }
-            let class4 = userlist[i].iClass >= 4 ? `${userlist[i].lev2}` : '';
+            let class4 = userlist[i].iClass > 4 ? `${userlist[i].lev2}` : '';
+            if (userlist[i].iClass == 4) {
+                class4 = userlist[i].lev3;
+            }
             let class5 = userlist[i].iClass >= 5 ? `${userlist[i].lev3}` : '';
             let class6 = userlist[i].iClass >= 6 ? `${userlist[i].lev4}` : '';
             let class7 = userlist[i].iClass >= 7 ? `${userlist[i].lev5}` : '';
@@ -304,14 +307,14 @@
         }
     }
 
-    let AddEndTag = (total1, total2, total3, total4, iRootClass) => {
+    let AddEndTag = (total0, total1, total2, total3, total4, iRootClass) => {
         let total = {
-            input:  total1.input + total2.input + total3.input + total4.input,
-            output: total1.output + total2.output + total3.output + total4.output,
-            cash:   total1.cash + total2.cash + total3.cash + total4.cash,
-            rolling:total1.rolling + total2.rolling + total3.rolling + total4.rolling,
-            total:  total1.total + total2.total + total3.total + total4.total,
-            totalRolling: total1.totalRolling + total2.totalRolling + total3.totalRolling + total4.totalRolling
+            input:  total0.input + total1.input + total2.input + total3.input + total4.input,
+            output: total0.output + total1.output + total2.output + total3.output + total4.output,
+            cash:   total0.cash + total1.cash + total2.cash + total3.cash + total4.cash,
+            rolling:total0.rolling + total1.rolling + total2.rolling + total3.rolling + total4.rolling,
+            total:  total0.total + total1.total + total2.total + total3.total + total4.total,
+            totalRolling: total0.totalRolling + total1.totalRolling + total2.totalRolling + total3.totalRolling + total4.totalRolling
         };
 
         let total_f = parseInt(total.total) - parseInt(total.rolling);
@@ -355,12 +358,13 @@
             success: (obj) => {
 
                 $('#userlist').empty();
+                let total = SetUserList(obj.proadminlist, 4, obj.iRootClass);
                 let total1 = SetUserList(obj.vadminlist, 5, obj.iRootClass);
                 let total2 = SetUserList(obj.agentlist, 6, obj.iRootClass);
                 let total3 = SetUserList(obj.shoplist, 7, obj.iRootClass);
                 let total4 = SetUserList(obj.userlist, 8, obj.iRootClass);
 
-                AddEndTag(total1, total2, total3, total4, obj.iRootClass);
+                AddEndTag(total, total1, total2, total3, total4, obj.iRootClass);
             },
             error:function(request,status,error){
                 alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);

@@ -212,7 +212,7 @@ router.post('/translate', isLoggedIn, async(req, res) => {
 
 router.post('/changemoney', isLoggedIn, async(req, res) => {
     console.log(req.body);
-    const user = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
+    const user = await IAgent.GetUserInfo(req.body.strNickname);
     console.log(`######################################################################## ChangeMoney`);
     console.log(user);
     let agent = {strNickname:user.strNickname, iClass:user.iClass, strGroupID:user.strGroupID, iCash:user.iCash, iSettle:user.iSettle, iRolling:user.iRolling, iSettleAcc:user.iSettleAcc,
@@ -332,6 +332,10 @@ router.post('/request_gt', isLoggedIn, async(req, res) => {
         let from = await db.Users.findOne({where:{strNickname:req.body.strFrom}});
 
         const cAmount = parseInt(req.body.iAmount);
+        if (cAmount < 0) {
+            res.send({result:'FAIL', reason:'NOTENOUGH'});
+            return;
+        }
 
         if ( to != null && from != null )
         {
@@ -589,6 +593,8 @@ router.post('/request_gtrecord', isLoggedIn, async(req, res) => {
     let strTimeStart = req.body.dateStart;
     let strTimeEnd = req.body.dateEnd;
     let iClass = parseInt(req.body.iClass);
+    let user = await IAgent.GetUserInfo(req.body.strNickname);
+    let strNickname = user.iPermission == 100 ? user.strNicknameRel : user.strNickname;
 
     let types = [];
     if (iClass != undefined)
@@ -606,7 +612,7 @@ router.post('/request_gtrecord', isLoggedIn, async(req, res) => {
         if ( req.body.strSearch == '' )
         {
             const list = await db.GTs.findAll({where:{
-                strFrom:req.body.strNickname,
+                strFrom:strNickname,
                 eType:{[Op.or]: types},
                 createdAt:{
                     [Op.between]:[ strTimeStart, require('moment')(strTimeEnd).add(1, 'days').format('YYYY-MM-DD')],
@@ -622,7 +628,7 @@ router.post('/request_gtrecord', isLoggedIn, async(req, res) => {
         else
         {
             const list = await db.GTs.findAll({where:{
-                strFrom:req.body.strNickname,
+                strFrom:strNickname,
                 strTo:{[Op.like]:'%'+req.body.strSearch+'%'},
                 eType:{[Op.or]: types},
                 createdAt:{
@@ -642,7 +648,7 @@ router.post('/request_gtrecord', isLoggedIn, async(req, res) => {
         if ( req.body.strSearch == '' )
         {
             const list = await db.GTs.findAll({where:{
-                strTo:req.body.strNickname,
+                strTo:strNickname,
                 eType:{[Op.or]: ['GETSETTLE', 'TAKE', 'GIVE']},
                 createdAt:{
                     [Op.between]:[ strTimeStart, require('moment')(strTimeEnd).add(1, 'days').format('YYYY-MM-DD')],
@@ -659,7 +665,7 @@ router.post('/request_gtrecord', isLoggedIn, async(req, res) => {
         else
         {
             const list = await db.GTs.findAll({where:{
-                strTo:req.body.strNickname,
+                strTo:strNickname,
                 strFrom:{[Op.like]:'%'+req.body.strSearch+'%'},
                 eType:{[Op.or]: ['GETSETTLE', 'TAKE']},
                 createdAt:{
@@ -684,18 +690,20 @@ router.post('/request_gtrecord_user', isLoggedIn, async(req, res) => {
     let strTimeStart = req.body.dateStart;
     let strTimeEnd = req.body.dateEnd;
     let list = [];
+    let user = await IAgent.GetUserInfo(req.body.strNickname);
+    let strNickname = user.iPermission == 100 ? user.strNicknameRel : user.strNickname;
     // 두개를 하나의 테이블로 UNION
     if ( req.body.strSearch == '' )
     {
         list = await db.sequelize.query(`
             SELECT g.*, DATE_FORMAT(g.createdAt,'%Y-%m-%d %H:%i:%S') AS createdAtFormat
             FROM GTs g
-            WHERE g.strFrom = '${req.body.strNickname} '
+            WHERE g.strFrom = '${strNickname} '
             AND date(g.createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'
             UNION
             SELECT g.*, DATE_FORMAT(g.createdAt,'%Y-%m-%d %H:%i:%S') AS createdAtFormat
             FROM GTs g
-            WHERE g.strTo = '${req.body.strNickname}' 
+            WHERE g.strTo = '${strNickname}' 
             AND date(g.createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'
             ORDER BY createdAt DESC
         `);
@@ -703,13 +711,13 @@ router.post('/request_gtrecord_user', isLoggedIn, async(req, res) => {
         list = await db.sequelize.query(`
             SELECT g.*, DATE_FORMAT(g.createdAt,'%Y-%m-%d %H:%i:%S') AS createdAtFormat
             FROM GTs g
-            WHERE g.strFrom = '${req.body.strNickname}' 
+            WHERE g.strFrom = '${strNickname}' 
             AND g.strTo LIKE CONCAT('${req.body.strSearch}', '%') 
             AND date(g.createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'
             UNION
             SELECT g.*, DATE_FORMAT(g.createdAt,'%Y-%m-%d %H:%i:%S') AS createdAtFormat
             FROM GTs g
-            WHERE g.strTo = '${req.body.strNickname}' 
+            WHERE g.strTo = '${strNickname}' 
             AND g.strFrom LIKE CONCAT('${req.body.strSearch}', '%')
             AND date(g.createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'
             ORDER BY createdAt DESC

@@ -58,7 +58,7 @@ exports.ProcessEzugi = async (listDB, listOverview, listOdds, listUpdateDB) => {
     if ( listDB.length <= 0 )
         return;
 
-    const res = await RDEzugi.GetRangeRD(listDB[0].updatedAt, listDB[listDB.length-1].updatedAt);
+    const res = await RDEzugi.GetRangeRD(listDB[0].createdAt, listDB[listDB.length-1].updatedAt);
     if (res == null)
     {
         // return;
@@ -246,7 +246,7 @@ exports.ProcessWin = (listDB, listOverview, listOdds, listUpdateDB) => {
         if ( cOdd == null )
             continue;
 
-        let objectReturn = ODDS.ProcessRollingWin(odds, cData.iGameCode, cData.iWin, strDate);
+        let objectReturn = ODDS.ProcessRollingWin(cOdd, cData.iGameCode, cData.iWin, strDate);
         let listCurrentOverview = objectReturn.listFinal;
         //let objectBetRolling = objectReturn.objectBet;
 

@@ -2,9 +2,6 @@
     <div class="container clearfix">
         <p style="background-repeat:no-repeat; background-position:left center; font-size:20px; color:#454545; padding-left:22px;margin-top:10px;height:30px;margin-bottom:5px;">
             지분자 목록
-            <% if (user.iPermission != 100) { %>
-                <button id="button_share_regist" class="menu1" data-menu="2" style="border:1px solid rgb(95, 93, 93);width:80px;height:25px;text-align:center;color:white" onclick="OnClickRegisterShare('<%=user.strNickname%>', '<%=user.strGroupID%>', '<%=user.iClass%>');">지분자등록</button>
-            <% } %>
         </p>
         <div id="share_buttons">
         </div>
@@ -25,6 +22,9 @@
             </select>월
             <button id="button_quater1" class="menu1" data-menu="2" style="border:1px solid rgb(95, 93, 93);width:170px;height:25px;text-align:center;color:white" onclick="Request1stHalf();"><%=__('Half1')%></button>
             <button id="button_quater2" class="menu1" data-menu="3" style="border:1px solid rgb(95, 93, 93);width:170px;height:25px;text-align:center;color:white" onclick="Request2ndHalf();"><%=__('Half2')%></button>
+            <% if (user.iPermission != 100) { %>
+                <button id="button_share_regist" class="button_blue" data-menu="2" style="border:1px solid rgb(95, 93, 93);width:130px;height:25px;text-align:center;color:white" onclick="OnClickRegisterShare('<%=user.strNickname%>', '<%=user.strGroupID%>', '<%=user.iClass%>');">지분자등록</button>
+            <% } %>
             <div id="testSettle" style="background-color:#ffffff;text-align:right;padding-right:5px;padding-top:0px;padding-bottom:0px;" colspan="19">
             </div>
         </div>
@@ -58,7 +58,7 @@
                         <th scope="col">지분율%</th>
                         <th scope="col">배당금</th>
                         <th scope="col">전월 이월 금액</th>
-                        <th scope="col" >입출전 금액</th>
+                        <th scope="col">입출전 금액</th>
                         <th scope="col">입출후 금액</th>
                         <th scope="col" >비고</th>
                     </tr>
@@ -186,7 +186,11 @@
                 $('#list_agents').append(`
                     <tr class="Share" id=${aObject.strNickname}>
                         <td id='agent_${strNickname}'>${parentNickname}</td>
-                        <td id='strNickname_${strNickname}'><a style="color:blue;" href='#' onclick="OnClickNickname('${strNickname}')";>${strNickname}</a></td>
+                        <% if (user.iPermission != 100) { %>
+                            <td id='strNickname_${strNickname}'><a style="color:blue;" href='#' onclick="OnClickNickname('${strNickname}')";>${strNickname}</a></td>
+                        <% } else { %>
+                            <td id='strNickname_${strNickname}'>${strNickname}</td>
+                        <% } %>
                         <td id='iShareOrgin_${strNickname}' style="font-size: 12px; padding: 10px; line-height: 1.5;">
                             <label id='iShareOrgin_${strNickname}' for="mile_sect_cash_2" style="font-size:12px;">${GetNumberSign(iShareOrgin, '0')}</label>
                         </td>
@@ -216,7 +220,7 @@
                                 <label for="mile_sect_cash_2" style="color:blue;font-size:15px;">적립</label>
                                 <input style='width:30%;' type='number' id="iIncrease_${strNickname}" value=''>&nbsp;&nbsp;
                                 메모 : <input style='width:30%;' type='text' id="sharememo_${strNickname}" value=''>
-                                <button style='color:white;' class='menu4' onclick='OnClickShareApply("${aObject.strID}", "${strNickname}");'>적용</button>
+                                <button style='color:white;' class='menu4' onclick='OnClickShareApply("${aObject.strID}", "${aObject.strNickname}", "${aObject.strGroupID}");'>적용</button>
                             </td>
                         <% } else { %>
                             <td>
@@ -273,6 +277,8 @@
             console.log('else');
             $('#list_agents').append(`
                     <tr>
+                        <td></td>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -391,7 +397,7 @@
         });
     }
 
-    let OnClickShareApply = (strID, strNickname) => {
+    let OnClickShareApply = (strID, strNickname, strGroupID) => {
         let type = $(`input[name="${strID}_mile_sect"]:checked`).val();
         let iIncrease = $(`#iIncrease_${strNickname}`).val();
         iIncrease = parseInt(iIncrease);
@@ -418,8 +424,8 @@
             type:"POST",
             data: {
                 strNickname: strNickname,
-                strID: user.strID,
-                strGroupID: user.strGroupID,
+                strID: strID,
+                strGroupID: strGroupID,
                 iIncrease: iIncrease,
                 writer: user.strNickname,
                 strMemo: strMemo,

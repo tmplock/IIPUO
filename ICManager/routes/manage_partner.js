@@ -34,17 +34,9 @@ const {isLoggedIn, isNotLoggedIn} = require('./middleware');
 
 router.get('/default', isLoggedIn, async(req, res) => {
 
-    const dbuser = await db.Users.findOne({where:{strNickname:req.user.strNickname}});
-    let iCash = 0;
-    let iRolling = 0;
-    let iSettle = 0;
-    if ( dbuser != null ) {
-        iCash = dbuser.iCash;
-        iRolling = dbuser.iRolling;
-        iSettle = dbuser.iSettle;
-    }
+    const dbuser = await IAgent.GetUserInfo(req.user.strNickname);
 
-    const user = {strNickname:req.user.strNickname, strGroupID:req.user.strGroupID, iClass:parseInt(req.user.iClass), iCash:iCash, iRolling: iRolling, iSettle: iSettle,
+    const user = {strNickname:req.user.strNickname, strGroupID:req.user.strGroupID, iClass:parseInt(req.user.iClass), iCash:dbuser.iCash, iRolling: dbuser.iRolling, iSettle: dbuser.iSettle,
         fBaccaratR: dbuser.fBaccaratR, fSlotR: dbuser.fSlotR, fUnderOverR: dbuser.fUnderOverR, fPBR: dbuser.fPBR, fPBSingleR: dbuser.fPBSingleR, fPBDoubleR: dbuser.fPBDoubleR, fPBTripleR: dbuser.fPBTripleR,
         iRootClass: req.user.iClass, iPermission: req.user.iPermission, strID: dbuser.strID};
 
@@ -116,17 +108,9 @@ router.post('/realtime', isLoggedIn, async(req, res) => {
 
     console.log(req.body);
 
-    const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
-    let iCash = 0;
-    let iRolling = 0;
-    let iSettle = 0;
-    if ( dbuser != null ) {
-        iCash = dbuser.iCash;
-        iRolling = dbuser.iRolling;
-        iSettle = dbuser.iSettle;
-    }
+    const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iRolling:iRolling, iSettle:iSettle,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission};
 
     const dateStart = ITime.getTodayStart();
@@ -166,17 +150,9 @@ router.post('/record', isLoggedIn, async(req, res) => {
 
     console.log(req.body);
 
-    const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
-    let iCash = 0;
-    let iRolling = 0;
-    let iSettle = 0;
-    if ( dbuser != null ) {
-        iCash = dbuser.iCash;
-        iRolling = dbuser.iRolling;
-        iSettle = dbuser.iSettle;
-    }
+    const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iRolling:iRolling, iSettle:iSettle,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission, strID:dbuser.strID};
 
     const dateStart = ITime.getTodayStart();
@@ -193,17 +169,9 @@ router.post('/listvicehq', isLoggedIn, async(req, res) => {
 
     console.log(req.body);
 
-    const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
-    let iCash = 0;
-    let iRolling = 0;
-    let iSettle = 0;
-    if ( dbuser != null ) {
-        iCash = dbuser.iCash;
-        iRolling = dbuser.iRolling;
-        iSettle = dbuser.iSettle;
-    }
+    const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iRolling:iRolling, iSettle:iSettle,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission, strID:dbuser.strID};
 
     const dateStart = ITime.getTodayStart();
@@ -222,24 +190,17 @@ router.post('/listadmin', isLoggedIn, async(req, res) => {
 
     console.log(req.body);
 
-    const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
-    let iCash = 0;
-    let iRolling = 0;
-    let iSettle = 0;
-    if ( dbuser != null ) {
-        iCash = dbuser.iCash;
-        iRolling = dbuser.iRolling;
-        iSettle = dbuser.iSettle;
-    }
+    const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
+    let strID = dbuser.iPermission == 100 ? dbuser.strIDRel : dbuser.strID;
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iRolling:iRolling, iSettle:iSettle,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle,
         iRootClass:req.user.iClass, iPermission: req.user.iPermission, strID: dbuser.strID};
 
     const dateStart = ITime.getTodayStart();
     const dateEnd = ITime.getTodayEnd();
 
     var agents = await IAgent.GetComputedAgentList(user.strGroupID, IAgent.EAgent.eAdmin, dateStart, dateEnd,  '', true);
-    var overview = await IAgent.CalculateBettingRecord(user.strGroupID, user.iClass, dateStart, dateEnd, '', dbuser.strID);
+    var overview = await IAgent.CalculateBettingRecord(user.strGroupID, user.iClass, dateStart, dateEnd, '', strID);
     var bobj = {overview:overview, agents:agents};
     const agentinfo = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
     let iocount = await IInout.GetProcessing(user.strGroupID, user.strNickname, dbuser.iClass);
@@ -250,17 +211,10 @@ router.post('/listadmin', isLoggedIn, async(req, res) => {
 router.post('/listproadmin', isLoggedIn, async(req, res) => {
 
     console.log(req.body);
-    const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
-    let iCash = 0;
-    let iRolling = 0;
-    let iSettle = 0;
-    if ( dbuser != null ) {
-        iCash = dbuser.iCash;
-        iRolling = dbuser.iRolling;
-        iSettle = dbuser.iSettle;
-    }
+    const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
+    let strID = dbuser.iPermission == 100 ? dbuser.strIDRel : dbuser.strID;
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iRolling:iRolling, iSettle:iSettle,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle,
         fBaccaratR: dbuser.fBaccaratR, fSlotR: dbuser.fSlotR, fUnderOverR: dbuser.fUnderOverR, fPBR: dbuser.fPBR, fPBSingleR: dbuser.fPBSingleR, fPBDoubleR: dbuser.fPBDoubleR, fPBTripleR: dbuser.fPBTripleR,
         iRootClass:req.user.iClass, iPermission: req.user.iPermission, strID:dbuser.strID};
 
@@ -268,7 +222,7 @@ router.post('/listproadmin', isLoggedIn, async(req, res) => {
     const dateEnd = ITime.getTodayEnd();
 
     var agents = await IAgent.GetComputedAgentList(user.strGroupID, IAgent.EAgent.eProAdmin, dateStart, dateEnd);
-    var overview = await IAgent.CalculateBettingRecord(user.strGroupID, user.iClass, dateStart, dateEnd, '', dbuser.strID);
+    var overview = await IAgent.CalculateBettingRecord(user.strGroupID, user.iClass, dateStart, dateEnd, '', strID);
     var bobj = {overview:overview, agents:agents};
     const agentinfo = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
     let iocount = await IInout.GetProcessing(user.strGroupID, user.strNickname, dbuser.iClass);
@@ -279,23 +233,16 @@ router.post('/listproadmin', isLoggedIn, async(req, res) => {
 router.post('/listviceadmin', isLoggedIn, async(req, res) => {
 
     console.log(req.body);
-    const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
-    let iCash = 0;
-    let iRolling = 0;
-    let iSettle = 0;
-    if ( dbuser != null ) {
-        iCash = dbuser.iCash;
-        iRolling = dbuser.iRolling;
-        iSettle = dbuser.iSettle;
-    }
+    const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
+    let strID = dbuser.iPermission == 100 ? dbuser.strIDRel : dbuser.strID;
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iRolling:iRolling, iSettle:iSettle,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission, strID:dbuser.strID};
 
     const dateStart = ITime.getTodayStart();
     const dateEnd = ITime.getTodayEnd();
 
-    var overview = await IAgent.CalculateBettingRecord(user.strGroupID, user.iClass, dateStart, dateEnd, '', dbuser.strID);
+    var overview = await IAgent.CalculateBettingRecord(user.strGroupID, user.iClass, dateStart, dateEnd, '', strID);
     var agents = await IAgent.GetComputedAgentList(user.strGroupID, IAgent.EAgent.eViceAdmin, dateStart, dateEnd);
     var bobj = {overview:overview, agents:agents};
     const agentinfo = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
@@ -307,17 +254,10 @@ router.post('/listviceadmin', isLoggedIn, async(req, res) => {
 router.post('/listagent', isLoggedIn, async(req, res) => {
 
     console.log(req.body);
-    const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
-    let iCash = 0;
-    let iRolling = 0;
-    let iSettle = 0;
-    if ( dbuser != null ) {
-        iCash = dbuser.iCash;
-        iRolling = dbuser.iRolling;
-        iSettle = dbuser.iSettle;
-    }
+    const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
+    let strID = dbuser.iPermission == 100 ? dbuser.strIDRel : dbuser.strID;
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iRolling:iRolling, iSettle:iSettle,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle,
         fBaccaratR: dbuser.fBaccaratR, fSlotR: dbuser.fSlotR, fUnderOverR: dbuser.fUnderOverR, fPBR: dbuser.fPBR, fPBSingleR: dbuser.fPBSingleR, fPBDoubleR: dbuser.fPBDoubleR, fPBTripleR: dbuser.fPBTripleR,
         iRootClass: req.user.iClass, iPermission: req.user.iPermission, strID: dbuser.strID};
 
@@ -325,7 +265,7 @@ router.post('/listagent', isLoggedIn, async(req, res) => {
     const dateEnd = ITime.getTodayEnd();
 
     var agents = await IAgent.GetComputedAgentList(user.strGroupID, IAgent.EAgent.eAgent, dateStart, dateEnd);
-    var overview = await IAgent.CalculateBettingRecord(user.strGroupID, user.iClass, dateStart, dateEnd, '', dbuser.strID);
+    var overview = await IAgent.CalculateBettingRecord(user.strGroupID, user.iClass, dateStart, dateEnd, '', strID);
     var bobj = {overview:overview, agents:agents};
     const agentinfo = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
     let iocount = await IInout.GetProcessing(user.strGroupID, user.strNickname, dbuser.iClass);
@@ -337,24 +277,17 @@ router.post('/listshop', isLoggedIn, async(req, res) => {
 
     console.log(req.body);
 
-    const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
-    let iCash = 0;
-    let iRolling = 0;
-    let iSettle = 0;
-    if ( dbuser != null ) {
-        iCash = dbuser.iCash;
-        iRolling = dbuser.iRolling;
-        iSettle = dbuser.iSettle;
-    }
+    const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
+    let strID = dbuser.iPermission == 100 ? dbuser.strIDRel : dbuser.strID;
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iRolling:iRolling, iSettle:iSettle,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission, strID:dbuser.strID};
 
     const dateStart = ITime.getTodayStart();
     const dateEnd = ITime.getTodayEnd();
 
     var agents = await IAgent.GetComputedAgentList(user.strGroupID, IAgent.EAgent.eShop, dateStart, dateEnd);
-    var overview = await IAgent.CalculateBettingRecord(user.strGroupID, user.iClass, dateStart, dateEnd, '', dbuser.strID);
+    var overview = await IAgent.CalculateBettingRecord(user.strGroupID, user.iClass, dateStart, dateEnd, '', strID);
     var bobj = {overview:overview, agents:agents};
     const agentinfo = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
     let iocount = await IInout.GetProcessing(user.strGroupID, user.strNickname, dbuser.iClass);
@@ -374,17 +307,9 @@ router.post('/settingodds', isLoggedIn, async(req, res) => {
         return;
     }
 
-    const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
-    let iCash = 0;
-    let iRolling = 0;
-    let iSettle = 0;
-    if ( dbuser != null ) {
-        iCash = dbuser.iCash;
-        iRolling = dbuser.iRolling;
-        iSettle = dbuser.iSettle;
-    }
+    const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iRolling:iRolling, iSettle:iSettle,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission,
         fSlotR: dbuser.fSlotR, fBaccaratR: dbuser.fBaccaratR, fUnderOverR: dbuser.fUnderOverR,
         fPBR:dbuser.fPBR, fPBSingleR:dbuser.fPBSingleR, fPBDoubleR:dbuser.fPBDoubleR, fPBTripleR:dbuser.fPBTripleR};
@@ -396,24 +321,17 @@ router.post('/settingodds', isLoggedIn, async(req, res) => {
 router.post('/listrealtimeuser', isLoggedIn, async(req, res) => {
 
     console.log(req.body);
-    const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
-    let iCash = 0;
-    let iRolling = 0;
-    let iSettle = 0;
-    if ( dbuser != null ) {
-        iCash = dbuser.iCash;
-        iRolling = dbuser.iRolling;
-        iSettle = dbuser.iSettle;
-    }
+    const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
+    let strID = dbuser.iPermission == 100 ? dbuser.strIDRel : dbuser.strID;
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iRolling:iRolling, iSettle:iSettle,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle,
         iRootClass:req.user.iClass, iPermission: req.user.iPermission, strID: dbuser.strID};
 
     const agentinfo = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
 
     const dateStart = ITime.getTodayStart();
     const dateEnd = ITime.getTodayEnd();
-    var overview = await IAgent.CalculateBettingRecord(user.strGroupID, user.iClass, dateStart, dateEnd, '', dbuser.strID);
+    var overview = await IAgent.CalculateBettingRecord(user.strGroupID, user.iClass, dateStart, dateEnd, '', strID);
     var bobj = {overview:overview};
     let iocount = await IInout.GetProcessing(user.strGroupID, user.strNickname, dbuser.iClass);
     res.render('manage_partner/listrealtimeuser', {iLayout:0, iHeaderFocus:0, user:user, data:bobj, agentinfo:agentinfo, iocount:iocount});
@@ -439,15 +357,13 @@ router.post('/request_agentstate', isLoggedIn, async(req, res) => {
     console.log(`/request_agentstate : `);
     console.log(req.body);
 
-    //var va_list = await IAgent.GetComputedAgentList(req.body.strGroupID, parseInt(req.body.iClass)+1, false);
-
-    // let list = await IAgent.GetComputedAgentList(req.body.strGroupID, parseInt(req.body.iClass)+1, req.body.dateStart, req.body.dateEnd);
-
-
-    // res.send(list);
     let agent = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
     if ( agent != null )
     {
+        if (req.user.iPermission == 100) {
+            res.send('FAIL');
+            return;
+        }
         if (req.body.eState == 'NORMAL') {
             await agent.update({eState:req.body.eState, iNumLoginFailed: 0});
         } else {
@@ -535,7 +451,9 @@ router.post('/request_overview', isLoggedIn, async(req, res) => {
 
     console.log('request_overview : ');
     console.log(req.body);
-    const overview = await IAgent.CalculateBettingRecord(req.body.strGroupID, parseInt(req.body.iTargetClass), req.body.dateStart, req.body.dateEnd, '', req.body.strID);
+    let user = await IAgent.GetUserInfo(req.body.strNickname);
+    let strID = user.iPermission == 100 ? user.strIDRel : user.strID;
+    const overview = await IAgent.CalculateBettingRecord(req.body.strGroupID, parseInt(req.body.iTargetClass), req.body.dateStart, req.body.dateEnd, '', strID);
 
     let data = {overview:overview, iRootClass:req.user.iClass}
 
@@ -549,7 +467,9 @@ router.post('/request_overview_self', isLoggedIn, async(req, res) => {
 
     console.log('request_overview : ');
     console.log(req.body);
-    const overview = await IAgent.CalculateSelfBettingRecord(req.body.strGroupID, parseInt(req.body.iTargetClass), req.body.dateStart, req.body.dateEnd, '', req.body.strID);
+    let user = await IAgent.GetUserInfo(req.body.strNickname);
+    let strID = user.iPermission == 100 ? user.strIDRel : user.strID;
+    const overview = await IAgent.CalculateSelfBettingRecord(req.body.strGroupID, parseInt(req.body.iTargetClass), req.body.dateStart, req.body.dateEnd, '', strID);
 
     let data = {overview:overview, iRootClass:req.user.iClass}
 
@@ -845,28 +765,20 @@ router.post('/realtimebettingend', async (req, res) => {
  */
 router.post('/listtodayregist', isLoggedIn, async(req, res) => {
     console.log(req.body);
-    const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
-    let iCash = 0;
-    let iRolling = 0;
-    let iSettle = 0;
-    if ( dbuser != null ) {
-        iCash = dbuser.iCash;
-        iRolling = dbuser.iRolling;
-        iSettle = dbuser.iSettle;
-    }
+    const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iRolling:iRolling, iSettle:iSettle,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle,
         iRootClass: req.user.iClass, iPermission: req.user.iPermission, strID:dbuser.strID};
 
     const strTimeStart = ITime.getTodayStart();
     const strTimeEnd = ITime.getTodayEnd();
 
-    let result = await IAgent.GetUserList(strTimeStart, strTimeEnd, user.strGroupID);
+    let result = await IAgent.GetUserList(strTimeStart, strTimeEnd, user.strGroupID, '', true);
     // TODO: iClass에 따라 조정 필요
-    let listShops = await IAgent.GetShopList(strTimeStart, strTimeEnd, user.strGroupID);
-    let listAgents = await IAgent.GetAgentList(strTimeStart, strTimeEnd, user.strGroupID);
-    let listViceAdmins = await IAgent.GetViceAdminList(strTimeStart, strTimeEnd, user.strGroupID);
-    let listProAdmins = await  IAgent.GetProAdminList(strTimeStart, strTimeEnd, user.strGroupID);
+    let listShops = await IAgent.GetShopList(strTimeStart, strTimeEnd, user.strGroupID, '', true);
+    let listAgents = await IAgent.GetAgentList(strTimeStart, strTimeEnd, user.strGroupID, '', true);
+    let listViceAdmins = await IAgent.GetViceAdminList(strTimeStart, strTimeEnd, user.strGroupID, '', true);
+    let listProAdmins = await  IAgent.GetProAdminList(strTimeStart, strTimeEnd, user.strGroupID, '', true);
 
     let total = {iTotalCash:0};
 
@@ -894,12 +806,12 @@ router.post('/request_todayregistlist', isLoggedIn, async ( req, res ) => {
     const strTimeStart = ITime.getTodayStart();
     const strTimeEnd = ITime.getTodayEnd();
 
-    let result = await IAgent.GetUserList(strTimeStart, strTimeEnd, req.body.strGroupID, req.body.strSearchNickname);
+    let result = await IAgent.GetUserList(strTimeStart, strTimeEnd, req.body.strGroupID, req.body.strSearchNickname, true);
     // TODO: iClass에 따라 조정 필요
-    let listShops = await IAgent.GetShopList(strTimeStart, strTimeEnd, req.body.strGroupID, req.body.strSearchNickname);
-    let listAgents = await IAgent.GetAgentList(strTimeStart, strTimeEnd, req.body.strGroupID, req.body.strSearchNickname);
-    let listViceAdmins = await IAgent.GetViceAdminList(strTimeStart, strTimeEnd, req.body.strGroupID, req.body.strSearchNickname);
-    let listProAdmins = await IAgent.GetProAdminList(strTimeStart, strTimeEnd, req.body.strGroupID, req.body.strSearchNickname);
+    let listShops = await IAgent.GetShopList(strTimeStart, strTimeEnd, req.body.strGroupID, req.body.strSearchNickname, true);
+    let listAgents = await IAgent.GetAgentList(strTimeStart, strTimeEnd, req.body.strGroupID, req.body.strSearchNickname, true);
+    let listViceAdmins = await IAgent.GetViceAdminList(strTimeStart, strTimeEnd, req.body.strGroupID, req.body.strSearchNickname, true);
+    let listProAdmins = await IAgent.GetProAdminList(strTimeStart, strTimeEnd, req.body.strGroupID, req.body.strSearchNickname, true);
 
     res.send({userlist:result, shoplist:listShops, agentlist:listAgents, vadminlist:listViceAdmins, proadminlist: listProAdmins, iRootClass: req.user.iClass});
 });

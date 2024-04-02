@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="format-detection" content="telephone=no">
+	<meta name="Keywords" content="">
+	<meta name="Description" content="">
+	<title>
+		<%=__('Partner')%>
+			<%=__('Register')%>
+	</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	<script type="text/javascript" src="../../js/jquery.bxslider.min.js"></script>
+	<script type="text/javascript" src="../../js/placeholders.js"></script>
+	<script type="text/javascript" src="../../js/layout.js"></script>
+	<script type="text/javascript" src="../../js/common_js.js"></script>
+	<link rel="stylesheet" type="text/css" href="../../css/general.css" />
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css" type="text/css" />
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+	<script src="https://code.jquery.com/ui/1.8.18/jquery-ui.min.js"></script>
+	<link href='//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css' rel='stylesheet' type='text/css'>
+</head>
+
+<body style="font-family:'Spoqa Han Sans Neo';">
+	<div class="content" style="position:relative; padding:0 10px 0 10px;">
+		<div class="list_tit" id="registeragent_title">
+		</div>
+		<div class="write">
+			<p style="background-repeat:no-repeat; background-position:left center; font-size:16px; color:#454545; padding-left:22px;">
+				파트너 정보
+			</p>
+
+			<table>
+				<caption>
+					<%=__('BoardWrite')%>
+						<%=__('Register')%>
+				</caption>
+				<colgroup>
+					<col style="width:15%;">
+					<col style="width:35%;">
+					<col style="width:15%;">
+					<col style="width:35%;">
+				</colgroup>
+				<tr>
+					<th scope="row">
+						<%=__('Partner')%>
+					</th>
+					<td colspan="3">
+						<select style="vertical-align:middle;width:20%;" id="partner_list"
+							onchange="OnChangePartner();">
+							<option value="">선택하세요</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row" style="background-color:lightsteelblue">
+						<%=__('Nickname')%>
+					</th>
+					<td style="background-color:lightsteelblue">
+						<input type="text" style="width:50%;" required="yes" id="strNickname" message="">&nbsp;<a
+							href="#" class="btn_red" id="check_nickname">
+							<%=__('Duplication')%>
+								<%=__('OK')%>
+						</a>
+					</td>
+					<th scope="row">
+						<%=__('ID')%>
+					</th>
+					<td>
+						<input type="text" style="width:50%;" required="yes" id="strID" message="" />&nbsp;<a href="#"
+																											  class="btn_red" id="check_id">
+							<%=__('Duplication')%>
+							<%=__('OK')%>
+						</a>
+						<div id="check_id"></div>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">
+						<%=__('Password')%>
+					</th>
+					<td>
+						<input type="text" maxlength="16" id="strPassword" required="yes" message=""
+							style="width:50%; ime-mode:disabled"> <span
+							style="display:inline-block; padding-top:4px;"></span>
+					</td>
+					<th scope="row">
+						<%=__('PasswordConfirm')%>
+					</th>
+					<td>
+						<input type="text" maxlength="16" id="strPasswordConfirm" required="yes" message=""
+							   style="width:50%; ime-mode:disabled">
+					</td>
+				</tr>
+				<tr>
+				</tr>
+			</table>
+
+			<div class="write_btn align_r mt35">
+				<button class="btn_modify" onclick="OnClickSubmit();">
+					<%=__('Save')%>
+				</button>
+				<a href="javascript:self.close();" class="btn_list">
+					<%=__('Close')%>
+				</a>
+
+			</div>
+		</div>
+	</div>
+
+	<script type="text/javascript" src="js/enum.js"></script>
+	<script type="text/javascript" src="js/manage_partner_popup_register.js"></script>
+	<script type="text/javascript">
+		const agent = JSON.parse('<%-JSON.stringify(agent)%>');
+		const list = JSON.parse('<%-JSON.stringify(list)%>');
+		let selectPartner = null;
+		let iRelUserID = agent.iRelUserID ?? 0;
+
+		const strAlertComplete = '<%=__("AlertComplete")%>';
+		const strAlertEnableToUse = '<%=__("AlertEnableToUse")%>';
+		const strAlertDisableToUse = '<%=__("AlertDisableToUse")%>';
+		const strAlertNeedToDuplicationCheckID = '<%=__("AlertNeedToDuplicationCheckID")%>';
+		const strAlertNeedToDuplicationCheckNickname = '<%=__("AlertNeedToDuplicationCheckNickname")%>';
+		const strAlertDifferentPasswordAndConfirm = '<%=__("AlertDifferentPasswordAndConfirm")%>';
+		const strAlertErrorRollingValue = '<%=__("AlertErrorRollingValue")%>';
+		const strAlertErrorSettleValue = '<%=__("AlertErrorSettleValue")%>';
+
+		const caAgentType = ['', '<%=__("HQ")%>', '<%=__("ViceHQ")%>', '<%=__("Admin")%>', '<%=__("ProAdmin")%>', '<%=__("ViceAdmin")%>', '<%=__("Agent")%>', '<%=__("Shop")%>', '<%=__("User")%>'];
+
+		checkBlockCharNickname(`#strNickname`);
+		checkBlockCharNickname(`#strID`);
+		checkBlockCharNickname(`#strPassword`);
+		checkBlockCharNickname(`#strPasswordConfirm`);
+
+		$('#partner_list').empty();
+		for ( let i in list ) {
+			let tag = `<option value="${list[i].strNickname}">${list[i].strNickname}</option>`;
+			$('#partner_list').append(tag);
+		}
+
+		if (iRelUserID == 0) {
+			$('#registeragent_title').append(`<a style="font-weight:regular;color:yellow;font-size:25px;font-family:'Spoqa Han Sans Neo', 'sans-serif';">${caAgentType[parseInt(agent.iAgentClass)]} ${"<%=__('Register')%>"}</a>`);
+		} else {
+			$('#registeragent_title').append(`<a style="font-weight:regular;color:yellow;font-size:25px;font-family:'Spoqa Han Sans Neo', 'sans-serif';">${caAgentType[parseInt(agent.iAgentClass)]} 보기</a>`);
+			$('#strNickname').val(agent.strNickname);
+			$('#strID').val(agent.strID);
+			$('#strPassword').val(agent.strPassword);
+			$('#strPasswordConfirm').val(agent.strPassword);
+		}
+
+		if (list.length > 0) {
+			if (iRelUserID == 0) {
+				selectPartner = list[0];
+			} else {
+				for (let i in list) {
+					if (list[i].id == iRelUserID) {
+						selectPartner = list[i];
+						$('#partner_list').val(selectPartner.strNickname);
+						break;
+					}
+				}
+			}
+		}
+
+		let OnChangePartner = () => {
+			const partner = $('#partner_list').val();
+			for ( let i in list ) {
+				if ( list[i].strNickname == partner ) {
+					selectPartner = list[i];
+					break;
+				}
+			}
+		}
+
+		let OnClickSubmit = () => {
+			const iRelUserID = selectPartner.id;
+			const strPassword = $('#strPassword').val();
+			const strPasswordConfirm = $('#strPasswordConfirm').val();
+			const strID = $('#strID').val();
+			const strNickname = $('#strNickname').val();
+
+			if (iRelUserID == 0) {
+				if ( false == bCheckID )
+				{
+					alert(strAlertNeedToDuplicationCheckID);
+					return;
+				}
+
+				if ( false == bCheckNickname )
+				{
+					alert(strAlertNeedToDuplicationCheckNickname);
+					return;
+				}
+			} else {
+				if (strID != agent.strID && false == bCheckID) {
+					alert(strAlertNeedToDuplicationCheckID);
+					return;
+				}
+
+				if ( strNickname != agent.strNickname && false == bCheckNickname )
+				{
+					alert(strAlertNeedToDuplicationCheckNickname);
+					return;
+				}
+			}
+
+			if( strPassword == '' || strPassword == undefined || strPassword == null || strPasswordConfirm == '' || strPasswordConfirm == undefined || strPasswordConfirm == null ){
+				alert(strAlertDifferentPasswordAndConfirm);
+				return;
+			}
+
+			if ( strPassword != strPasswordConfirm )
+			{
+				alert(strAlertDifferentPasswordAndConfirm);
+				return;
+			}
+
+			$.ajax(
+					{
+						type:'post',
+						url: "/manage_partner_popup/request_register_view",
+						context: document.body,
+						data:{
+							iRelUserID:iRelUserID,
+							strPassword: strPassword,
+							strPasswordConfirm: strPasswordConfirm,
+							strID: strID,
+							strNickname: strNickname,
+						},
+
+						success:function(obj) {
+
+							console.log(obj);
+							if ( obj.result == 'OK' ) {
+								bCheckID = true;
+								alert(strAlertComplete);
+								if (window.opener != null && !window.opener.closed) {
+									window.opener.location.reload();
+								}
+								window.close();
+							}
+							else {
+								bCheckID = false;
+								alert(strAlertDisableToUse);
+							}
+
+						},
+						error:function(request,status,error){
+							alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+						}
+					}
+			);
+		}
+	</script>
+
+
+</body>
+
+</html>

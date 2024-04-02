@@ -305,3 +305,21 @@ app.post('/AlertLetter', (req, res) => {
 
     res.send('OK');
 });
+
+app.post('/force_logout', (req, res) => {
+    console.log(`/force_logout`);
+    console.log(req.body);
+    console.log(socket_list);
+    for ( let i in socket_list )
+    {
+        console.log('1#####################');
+        console.log(socket_list[i]);
+        console.log('2#####################');
+        console.log(`${socket_list[i].strID} / ${req.body.strID}`);
+        if ( socket_list[i].strID == req.body.strID )
+        {
+            console.log(`일치 : ${socket_list[i].strID} / ${req.body.strID}`);
+            socket_list[i].emit('UserLogout');
+        }
+    }
+});

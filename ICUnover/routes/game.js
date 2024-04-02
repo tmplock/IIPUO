@@ -61,8 +61,15 @@ router.post('/sm', async (req, res) => {
 
     console.log(`QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ`);
     console.log(res_axios.data);
-
-    res.render('sm', {iLayout:1, strVender:req.body.strGame, listGames:res_axios.data.data, data: res_axios.data});
+    let listGames = res_axios.data.data;
+    let newListGames = [];
+    for (let i in listGames) {
+        if (listGames[i].type == 'slot') {
+            newListGames.push(listGames[i]);
+        }
+    }
+    let count = parseInt(newListGames.length);
+    res.render('sm', {iLayout:1, strVender:req.body.strGame, listGames:newListGames, data: res_axios.data, count:count});
 })
 
 router.post('/', async (req, res) => {

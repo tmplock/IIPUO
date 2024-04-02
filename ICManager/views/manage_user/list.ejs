@@ -183,7 +183,7 @@
             }
 
             let tagState = '';
-            if ((user.iRootClass <= 3 && user.iPermission != 100) || user.iRootClass == 3 ) {
+            if (user.iRootClass <= 3 && user.iPermission != 100) {
                 tagState = `<td class="parent_row_31" style='background-color:${bgcolor};'>
                             <select style="vertical-align:middle;width:100%; background-color:${strColor}; color:white;" id="partner_agentstatus_${userlist[i].strNickname}" onchange="OnChangeStatus('${userlist[i].strNickname}');">
                             <option value="NORMAL" selected>${strNormal}</option>

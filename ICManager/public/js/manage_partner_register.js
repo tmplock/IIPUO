@@ -22,6 +22,32 @@ $(document).on('click', '#register_agent', (event) => {
     $form.submit();
 })
 
+$(document).on('click', '#register_agent_view', (event) => {
+
+    let eAgentType = $(event.target).attr('iAgentClass');
+
+    window.open('', 'popupChkListAdminView', 'width=1000, height=600, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
+
+    let $form = $('<form></form>');
+    if (eAgentType == 2) {
+        $form.attr('action', '/manage_partner_popup/popup_listvice_view');
+    } else if (eAgentType == 3) {
+        $form.attr('action', '/manage_partner_popup/popup_listadmin_view');
+    }
+    $form.attr('method', 'post');
+    $form.attr('target', 'popupChkListAdminView');
+    $form.appendTo('body');
+
+    let id = $(`<input type="hidden" value="${user.strID}" name="strID">`);
+    let idx = $(`<input type="hidden" value="${user.strNickname}" name="strNickname">`);
+    let page = $(`<input type="hidden" value="${user.strGroupID}" name="strGroupID">`);
+    let category = $(`<input type="hidden" value=${parseInt(user.iClass)} name="iClass">`);
+    var iPermission = $(`<input type="hidden" value=${parseInt(user.iPermission)} name="iPermission">`);
+    let iAgentClass = $(`<input type="hidden" value=${eAgentType} name="iAgentClass">`);
+
+    $form.append(id).append(idx).append(page).append(category).append(iPermission).append(iAgentClass);
+    $form.submit();
+})
 
 // $(document).on('click', '#partner_adjust', (event) => {
 

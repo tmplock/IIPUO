@@ -6,6 +6,7 @@
 				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				<% if ( parseInt(user.iClass) == 1 && user.iPermission != 100) { %>
 					<a href="#" id="register_agent" iAgentClass="2" class="btn_gray"><%=__('ViceHQ')%><%=__('Register')%></a>
+					<a href="#" id="register_agent_view" iAgentClass="2" class="btn_gray"><%=__('ViceHQ')%><%=__('Register')%>(보기용)</a>
 					<a href="#" id="remove_db" iAgentClass="2" class="btn_red">데이터 삭제</a>
 				<% } %>
 			</ul>

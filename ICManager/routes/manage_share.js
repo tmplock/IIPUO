@@ -341,26 +341,14 @@ router.post('/request_share_credit_apply', isLoggedIn, async  (req, res) => {
 router.post('/popup_shares', isLoggedIn, async (req, res) => {
     let strParent = await IAgent.GetParentNickname(req.body.strNickname);
 
-    const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
-    let iCash = 0;
-    let iRolling = 0;
-    let iSettle = 0;
-    let strID = '';
-    let strGroupID = '';
-    if ( dbuser != null ) {
-        iCash = dbuser.iCash;
-        iRolling = dbuser.iRolling;
-        iSettle = dbuser.iSettle;
-        strID = dbuser.strID;
-        strGroupID = dbuser.strGroupID;
-    }
+    const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iRolling:iRolling, iSettle:iSettle, strID:strID,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle, strID:dbuser.strID,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission};
 
     const agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
 
-    let list = await IAgent.GetPopupShareInfo(strID, strGroupID);
+    let list = await IAgent.GetPopupShareInfo(dbuser.strID, dbuser.strGroupID);
 
     res.render('manage_share/popup_shares', {iLayout:6, iHeaderFocus:0, user:user, agent:agent, list:list, strParent:strParent});
 });

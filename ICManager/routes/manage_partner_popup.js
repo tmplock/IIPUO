@@ -197,6 +197,8 @@ router.post('/request_gtrecord_partner', isLoggedIn, async(req, res) => {
 
     let strTimeStart = req.body.dateStart;
     let strTimeEnd = req.body.dateEnd;
+    let user = await IAgent.GetUserInfo(req.body.strNickname);
+    let strNickname = user.iPermission == 100 ? user.strNicknameRel : user.strNickname;
     let list = [];
     // 두개를 하나의 테이블로 UNION
     if ( req.body.strSearch == '' )
@@ -204,12 +206,12 @@ router.post('/request_gtrecord_partner', isLoggedIn, async(req, res) => {
         list = await db.sequelize.query(`
             SELECT *, DATE_FORMAT(createdAt,'%Y-%m-%d %H:%i:%S') AS createdAtFormat 
             FROM GTs 
-            WHERE strFrom = '${req.body.strNickname}'
+            WHERE strFrom = '${strNickname}'
             AND date(createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'
             UNION
             SELECT *, DATE_FORMAT(createdAt,'%Y-%m-%d %H:%i:%S') AS createdAtFormat
             FROM GTs 
-            WHERE strTo = '${req.body.strNickname}' 
+            WHERE strTo = '${strNickname}' 
             AND date(createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'
             ORDER BY createdAt DESC
         `);
@@ -217,13 +219,13 @@ router.post('/request_gtrecord_partner', isLoggedIn, async(req, res) => {
         list = await db.sequelize.query(`
             SELECT *, DATE_FORMAT(createdAt,'%Y-%m-%d %H:%i:%S') AS createdAtFormat
             FROM GTs 
-            WHERE strFrom = '${req.body.strNickname}' 
+            WHERE strFrom = '${strNickname}' 
             AND strTo LIKE CONCAT('${req.body.strSearch}', '%') 
             AND date(createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'
             UNION
             SELECT *, DATE_FORMAT(createdAt,'%Y-%m-%d %H:%i:%S') AS createdAtFormat
             FROM GTs 
-            WHERE strTo = '${req.body.strNickname}' 
+            WHERE strTo = '${strNickname}' 
             AND strFrom LIKE CONCAT('${req.body.strSearch}', '%')
             AND date(createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'
             ORDER BY createdAt DESC
@@ -340,6 +342,197 @@ router.post('/registeragent', isLoggedIn, async(req, res) => {
     res.render('manage_partner/popup_registeragent', {iLayout:1, parent:user});
 
 })
+
+router.post('/popup_listadmin_view', isLoggedIn, async(req, res) => {
+    console.log(req.body);
+    if (req.user.iClass > 2) {
+        res.send({result:'FAIL', msg: '허가되지 않은 사용자입니다'});
+        return;
+    }
+
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:req.body.iClass, iAgentClass:req.body.iAgentClass,
+        iRootClass:req.user.iClass, iPermission:req.user.iPermission};
+
+    let list = await db.sequelize.query(
+        `
+        SELECT u.strNickname AS strRelNickname, u3.strNickname, u3.strID, u3.eState, u3.strGroupID, u3.iPermission, u3.iClass
+        FROM Users AS u3
+        LEFT JOIN Users u ON u.id = u3.iRelUserID
+        WHERE u3.iClass = 3 AND u3.iPermission = 100 AND u3.strGroupID LIKE '${req.body.strGroupID+'%'}' 
+        `
+    );
+    res.render('manage_partner/popup_listadmin_view', {iLayout:7, iHeaderFocus:0, agent:user, list:list[0], strParent: user.strNickname});
+});
+
+
+router.post('/popup_listvice_view', isLoggedIn, async(req, res) => {
+    console.log(req.body);
+
+    if (req.user.iClass > 1) {
+        res.send({result:'FAIL', msg: '허가되지 않은 사용자입니다'});
+        return;
+    }
+
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:req.body.iClass, iAgentClass:req.body.iAgentClass,
+        iRootClass:req.user.iClass, iPermission:req.user.iPermission};
+
+    let list = await db.sequelize.query(
+        `
+        SELECT u.strNickname AS strRelNickname, u3.strNickname, u3.strID, u3.eState, u3.strGroupID, u3.iPermission, u3.iClass
+        FROM Users AS u3
+        LEFT JOIN Users u ON u.id = u3.iRelUserID
+        WHERE u3.iClass = 2 AND u3.iPermission = 100 AND u3.strGroupID LIKE '${req.body.strGroupID+'%'}' 
+        `
+    );
+    res.render('manage_partner/popup_listvice_view', {iLayout:7, iHeaderFocus:0, agent:user, list:list[0], strParent: user.strNickname});
+});
+
+router.post('/registeragent_view', isLoggedIn, async(req, res) => {
+    console.log(req.body);
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:req.body.iClass, iAgentClass:req.body.iAgentClass,
+        iRootClass:req.user.iClass, iPermission:req.user.iPermission};
+    let list = await db.Users.findAll({
+        where: {
+            iClass:req.body.iAgentClass,
+            strGroupID:{
+                [Op.like]:req.body.strGroupID+'%'
+            },
+            iPermission: {
+                [Op.notIn]: [100]
+            },
+        }
+    });
+
+    res.render('manage_partner/popup_registeragent_view', {iLayout:1, agent:user, list:list, iAgentClass:user.iAgentClass});
+});
+
+
+router.post('/readagent_view', isLoggedIn, async(req, res) => {
+    console.log(req.body);
+    let strID = req.body.strID;
+    let dbUser = await db.Users.findOne({
+        where: {
+            strID: strID,
+        }
+    });
+    const user = {strNickname:dbUser.strNickname, strID:dbUser.strID, strPassword:dbUser.strPassword, strGroupID:dbUser.strGroupID, iClass:dbUser.iClass, iAgentClass:dbUser.iClass,
+        iRootClass:req.user.iClass, iPermission:dbUser.iPermission, iRelUserID: dbUser.iRelUserID};
+
+    let list = await db.Users.findAll({
+        where: {
+            iClass:user.iClass,
+            strGroupID:{
+                [Op.like]:user.strGroupID+'%'
+            },
+            iPermission: {
+                [Op.notIn]: [100]
+            },
+        }
+    });
+
+    res.render('manage_partner/popup_registeragent_view', {iLayout:1, agent:user, list:list});
+});
+
+router.post('/request_register_view', isLoggedIn, async(req, res) => {
+    console.log(req.body);
+    try {
+        // 신규 여부 확인
+        let user = await db.Users.findOne({
+            where: {
+                strID: req.body.strID
+            }
+        });
+
+        // 업데이트
+        if (user != null) {
+            await user.update({
+                strID:req.body.strID,
+                strPassword:req.body.strPassword,
+                strNickname:req.body.strNickname,
+            });
+            res.send({result:'OK', string:'에이전트(보기용) 수정 되었습니다.'});
+            return;
+        }
+
+        // 신규 등록
+        if (user == null) {
+            let iRelUserID = req.body.iRelUserID;
+            user = await db.Users.findOne({
+                where: {
+                    id: iRelUserID,
+                }
+            });
+            let iLoginMax = 1;
+            if (parseInt(user.iClass) == 2) {
+                iLoginMax = 10;
+            } else if (parseInt(user.iClass) == 3) {
+                iLoginMax = 2;
+            }
+
+            await db.Users.create({
+                strID:req.body.strID,
+                strPassword:req.body.strPassword,
+                strNickname:req.body.strNickname,
+                strMobile:'',
+                strBankname:'',
+                strBankAccount:'',
+                strBankOwner:'',
+                strBankPassword:'',
+                strOutputPassowrd:'',
+                iClass:user.iClass,
+                strGroupID:user.strGroupID,
+                iParentID:user.iParentID,
+                iCash:0,
+                iLoan:0,
+                iRolling:0,
+                iSettle:0,
+                iSettleAcc:0,
+                fBaccaratR:user.fBaccaratR,
+                fSlotR:user.fSlotR,
+                fUnderOverR:user.fUnderOverR,
+                fPBR:user.fPBR,
+                fPBSingleR:user.fPBSingleR,
+                fPBDoubleR:user.fPBDoubleR,
+                fPBTripleR:user.fPBTripleR,
+                fSettleSlot:user.fSettleBaccarat,
+                fSettleBaccarat:user.fSettleSlot,
+                fSettlePBA:user.fSettlePBA,
+                fSettlePBB:user.fSettlePBB,
+                eState:'BLOCK',
+                //strOptionCode:'00000000',
+                strOptionCode:user.strOptionCode,
+                strPBOptionCode:user.strPBOptionCode,
+                iPBLimit:user.iPBLimit,
+                iPBSingleLimit:user.iPBSingleLimit,
+                iPBDoubleLimit:user.iPBDoubleLimit,
+                iPBTripleLimit:user.iPBTripleLimit,
+                strSettleMemo:'',
+                iNumLoginFailed: 0,
+                iPermission:100,
+                iRelUserID:iRelUserID,
+                iLoginMax:iLoginMax,
+            });
+            res.send({result:'OK', string:'에이전트(보기용) 생성을 완료 하였습니다.'});
+        }
+    } catch (err) {
+        res.send({result:'FAIL', string:`에이전트(보기용) 생성을 실패했습니다.(${err})`});
+    }
+});
+
+router.post('/request_removeagent_view', async (req, res) => {
+
+    console.log(`/request_removeagent_view`);
+    console.log(req.body);
+
+    let strID = req.body.strID;
+    let target = await db.Users.findOne({where:{strID:strID, iPermission:100}});
+    if (target == null) {
+        res.send({result:'ERROR'});
+        return;
+    }
+    await db.Users.destroy({where:{strID:strID}});
+    res.send({result:'OK'});
+});
 
 router.post('/request_parentenablelist', isLoggedIn, async(req, res) => {
     console.log(req.body);
@@ -484,6 +677,14 @@ router.post('/request_register', isLoggedIn, async(req, res) => {
             // }
         }
 
+        let iLoginMax = 1;
+        let iClass = parseInt(req.body.iParentClass)+1;
+        if (iClass == 2) {
+            iLoginMax = 3;
+        } else if (iClass == 3) {
+            iLoginMax = 1;
+        }
+
         await db.Users.create({
             strID:req.body.strID,
             strPassword:req.body.strPassword,
@@ -524,6 +725,7 @@ router.post('/request_register', isLoggedIn, async(req, res) => {
             strSettleMemo:'',
             iNumLoginFailed: 0,
             iPermission:0,
+            iLoginMax:iLoginMax
         });
         //
         // // 신규등록 알림 업데이트
@@ -1157,17 +1359,10 @@ const logMessage = (source, data) => {
 router.post('/credits', isLoggedIn, async (req, res) => {
     console.log(req.body);
 
-    const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
-    let iCash = 0;
-    let iRolling = 0;
-    let iSettle = 0;
-    if ( dbuser != null ) {
-        iCash = dbuser.iCash;
-        iRolling = dbuser.iRolling;
-        iSettle = dbuser.iSettle;
-    }
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iRolling:iRolling, iSettle:iSettle,
-        strID:strID, iRootClass:req.user.iClass, iPermission:req.user.iPermission};
+    const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
+
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle,
+        strID:dbuser.strID, iRootClass:req.user.iClass, iPermission:req.user.iPermission};
 
     const agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
     agent.iRootClass = req.user.iClass;
@@ -1176,7 +1371,7 @@ router.post('/credits', isLoggedIn, async (req, res) => {
     let strParent = await IAgent.GetParentNickname(req.body.strNickname);
     let list = await db.CreditRecords.findAll({
         where:{
-            strID: strID,
+            strID: dbuser.strID,
         },
         order:[['createdAt','DESC']]
     });
@@ -1202,18 +1397,10 @@ router.post('/popup_credits', isLoggedIn, async (req, res) => {
 router.post('/popup_credits_history', isLoggedIn, async(req, res) => {
 
     console.log(req.body);
-    const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
-    let iCash = 0;
-    let iRolling = 0;
-    let iSettle = 0;
-    if ( dbuser != null ) {
-        iCash = dbuser.iCash;
-        iRolling = dbuser.iRolling;
-        iSettle = dbuser.iSettle;
-    }
+    const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iRolling:iRolling, iSettle:iSettle,
-        strID:strID, iRootClass:req.user.iClass, iPermission:req.user.iPermission};
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle,
+        strID:dbuser.strID, iRootClass:req.user.iClass, iPermission:req.user.iPermission};
 
     const agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
     agent.iRootClass = req.user.iClass;
@@ -1240,18 +1427,10 @@ router.post('/popup_credits', isLoggedIn, async (req, res) => {
     let strParent = await IAgent.GetParentNickname(req.body.strNickname);
     let strParentGroupID = await IAgent.GetParentGroupID(req.body.strNickname);
 
-    const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
-    let iCash = 0;
-    let iRolling = 0;
-    let iSettle = 0;
-    if ( dbuser != null ) {
-        iCash = dbuser.iCash;
-        iRolling = dbuser.iRolling;
-        iSettle = dbuser.iSettle;
-    }
+    const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iRolling:iRolling, iSettle:iSettle,
-        strID:strID, iRootClass:req.user.iClass, iPermission:req.user.iPermission};
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle,
+        strID:dbuser.strID, iRootClass:req.user.iClass, iPermission:req.user.iPermission};
 
     const agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
 

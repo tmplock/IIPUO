@@ -64,6 +64,9 @@ module.exports = (sequelize, DataTypes) => {
         strAnswers: {
             type: DataTypes.TEXT,
         },
+        strWriter: {
+            type:DataTypes.STRING,
+        },
         createdAt:{
             type:DataTypes.DATE,
             get() {

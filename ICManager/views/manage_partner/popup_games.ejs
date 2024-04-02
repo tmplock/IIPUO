@@ -88,7 +88,7 @@
 
 		$("#table_record_list").hide();
 
-		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, '', agent.strID);
+		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
 	});
 	
 	let OnClickTodayRecord = () => {
@@ -101,7 +101,7 @@
 		bToggleRecord = true;
 		$("#button_toggle_record").text("닫기");
 
-		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, '', agent.strID);
+		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
 		RequestBettingRecord(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
 	}
 
@@ -119,7 +119,7 @@
 				$('#datepicker2').val(GetMonthlyEndDate());
 			}
 
-			RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, '', agent.strID);
+			RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
 			RequestBettingRecord(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
 		}
 		else {
@@ -136,7 +136,7 @@
 		$('#datepicker1').val(GetMonthly1stStartDate());
 		$('#datepicker2').val(GetMonthly1stEndDate());
 
-		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, '', agent.strID);
+		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
 		RequestBettingRecord(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
 	}
 
@@ -148,7 +148,7 @@
 		$('#datepicker1').val(GetMonthly2ndStartDate());
 		$('#datepicker2').val(GetMonthly2ndEndDate());
 
-		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, '', agent.strID);
+		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
 		RequestBettingRecord(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
 	}
 
@@ -157,7 +157,7 @@
 		bToggleRecord = true;
 		$("#button_toggle_record").text(strClose);
 
-		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, '', agent.strID);
+		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
 		RequestBettingRecord(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
 	}
 

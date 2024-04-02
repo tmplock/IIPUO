@@ -265,6 +265,97 @@ let SetBettingList = (records, startIndex) => {
 }
 
 
+let SetSlotBettingList = (records, startIndex) => {
+    $('#betting_list').empty();
+
+    let iTotalBet = 0;
+    let iTotalWin = 0;
+
+    for ( let i in records )
+    {
+        console.log('records[i]');
+        console.log(records[i]);
+        let color = '#FFFFFF';
+        if ( records[i].iWin > 0 ) {
+            // color = '#d6f3c9';
+            color = '#E8FCDE';
+            // color = '#C8F5B4';
+        }
+        if ( records[i].iComplete == 2 )
+        {
+            color = `rgb(255, 150, 125);`;
+        }
+
+        let iBalance = parseInt(records[i].iBalance);
+        let iPreviousCash = iBalance;
+        let iBet = parseInt(records[i].iBet);
+        let iAfterCash = 0;
+        let iWin = parseInt(records[i].iWin);
+        let iResultCash = 0;
+
+        if ( iWin > 0 ) {
+            iAfterCash = iBalance - iBet;
+            iResultCash = iAfterCash + iWin;
+        } else {
+            iAfterCash = iBalance - iBet;
+        }
+
+        let tagDetail = '';
+        let iGameCode = parseInt(records[i].iGameCode);
+        let eState = records[i].eState;
+        let updatedAt = '';
+        if (iGameCode == 0 || iGameCode == 100) {
+            if (eState == 'COMPLETE') {
+                updatedAt = records[i].updatedAt;
+            } else if (eState == 'PENDING') {
+                tagDetail =  `<a style="color:blue;">PENDING</a>`;
+            } else if (eState == 'ERROR') {
+                tagDetail =  `<a style="color:#e7af16;" href="#">ERROR</a>`;
+            }
+        }
+
+        let tag =
+            `
+                <tr>
+                    <td style="background-color:${color};">${parseInt(startIndex)-i}</td>
+                    <td style="background-color:${color};">${records[i].strVender}</td>
+                    <td style="background-color:${color};">${records[i].strTableID}</td>
+                    <td style="background-color:${color};">${records[i].strRound}</td>
+                    <td style="background-color:${color};"><a style="color:blue;" onclick="OnClickNickname('${records[i].strNickname}')" href="#">${GetClassNickName(records[i].iClass, records[i].strNickname)}</a></td>
+                    <td style="background-color:${color};">${GetNumber(iPreviousCash)}</td>
+                    <td style="background-color:${color};">${GetNumber(iBet)}</td>
+                    <td style="background-color:${color};">${GetNumber(iAfterCash)}</td>
+                    <td style="background-color:${color};color:red;">${GetNumber(iWin)}</td>
+                    <td style="background-color:${color};color:black;">${GetNumber(iResultCash)}</td>
+                    <td style="background-color:${color};">${records[i].createdAt}</td>
+                    <td style="background-color:${color};">${updatedAt}</td>
+                    <td style="background-color:${color};">${tagDetail}</td>
+                </tr>											
+            `;
+        $('#betting_list').append(tag);
+
+        iTotalBet += iBet;
+        iTotalWin += iWin;
+    }
+
+    let tagEnd = `
+        <tr style="font-weight: bold;">
+            <td colspan="5" style="font-weight: bold;">${strTotal}</td>
+            <td style="color:blue;"></td>            
+            <td style="color:blue;">${GetNumber(iTotalBet)}</td>
+            <td></td>
+            <td style="color:red;">${GetNumber(iTotalWin)}</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td style="color:${GetColor(iTotalBet-iTotalWin)};">${strTotal} : ${GetNumber(iTotalBet-iTotalWin)}</td>
+        </tr>											
+    `;
+    $('#betting_list').append(tagEnd);
+
+}
+
+
 let GetBettingTarget = (iGameCode, iTarget, color) => {
 
     const colorBlue = '#52acff';

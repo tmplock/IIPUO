@@ -223,12 +223,12 @@
                     }
 
                     let strSubject = list[i].strSubject.replace(/(<br>)/g,' ');
-
+                    let strFrom = list[i].strFrom;
                     let tag = `
                     <tr height="30">
                         <td><input type="checkbox" id="chk" class="chkGrp" value="${list[i].id}"></td>
                         <td>${iIndex}</td>
-						<td>${list[i].strFrom}</td>
+						<td>${strFrom}</td>
 						<td><a style="text-align:left;padding-left:10px;color:${color};" href="#" onclick="OnClickRead('${list[i].id}', '${list[i].eRead}');"}">${strSubject}</a></td>
                         <td style="color: ${color2};">${eRead}</td>
                         <td>${list[i].createdAt}</td>

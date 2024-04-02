@@ -97,7 +97,7 @@
         bToggleRecord = true;
         $("#button_toggle_record").text("<%=__('Close')%>");
         RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
-        RequestOverview(cTClass, user.strGroupID, user.iClass, user.iPermission, '', user.strID);
+        RequestOverview(cTClass, user.strGroupID, user.iClass, user.iPermission, user.strNickname, user.strID);
     }
 
     function OnClickMonthlyRecord()
@@ -114,7 +114,7 @@
                 $('#datepicker2').val(GetMonthlyEndDate());
             }
             RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
-            RequestOverview(cTClass, user.strGroupID, user.iClass, user.iPermission, '', user.strID);
+            RequestOverview(cTClass, user.strGroupID, user.iClass, user.iPermission, user.strNickname, user.strID);
         }
         else {
             $("#table_record_list").hide();
@@ -133,7 +133,7 @@
         $("#button_toggle_record").text("<%=__('Close')%>");
 
         RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
-        RequestOverview(user.iClass, user.strGroupID, user.iClass, user.iPermission, '', user.strID);
+        RequestOverview(user.iClass, user.strGroupID, user.iClass, user.iPermission, user.strNickname, user.strID);
     }
 
     let OnClickMonthly2ndRecord = () => {
@@ -144,7 +144,7 @@
         bToggleRecord = true;
         $("#button_toggle_record").text("<%=__('Close')%>");
         RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
-        RequestOverview(user.iClass, user.strGroupID, user.iClass, user.iPermission, '', user.strID);
+        RequestOverview(user.iClass, user.strGroupID, user.iClass, user.iPermission, user.strNickname, user.strID);
     }
 
     let OnClickSearch = (iTargetClass, strGroupID, iClass) => {
@@ -153,7 +153,7 @@
         $("#button_toggle_record").text("<%=__('Close')%>");
 
         RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
-        RequestOverview(user.iClass, user.strGroupID, user.iClass, user.iPermission, '', user.strID);
+        RequestOverview(user.iClass, user.strGroupID, user.iClass, user.iPermission, user.strNickname, user.strID);
     }
 
     let OnClickSearchNickname = () => {

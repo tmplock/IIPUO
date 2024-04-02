@@ -206,17 +206,9 @@ router.post('/request_searchby', isLoggedIn, async(req, res) => {
 router.post('/charge', isLoggedIn, async(req, res) => {
 
     console.log(req.body);
-    const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
-    let iCash = 0;
-    let iRolling = 0;
-    let iSettle = 0;
-    if ( dbuser != null ) {
-        iCash = dbuser.iCash;
-        iRolling = dbuser.iRolling;
-        iSettle = dbuser.iSettle;
-    }
+    const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iRolling:iRolling, iSettle:iSettle, strOptionCode:dbuser.strOptionCode,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle, strOptionCode:dbuser.strOptionCode,
         iRootClass: req.user.iClass, iPermission: req.user.iPermission};
 
     const iLimit = 20;
@@ -297,18 +289,10 @@ router.post('/charge', isLoggedIn, async(req, res) => {
 router.post('/exchange', isLoggedIn, async(req, res) => {
 
     console.log(req.body);
-    const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
-    let iCash = 0;
-    let iRolling = 0;
-    let iSettle = 0;
-    if ( dbuser != null ) {
-        iCash = dbuser.iCash;
-        iRolling = dbuser.iRolling;
-        iSettle = dbuser.iSettle;
-    }
+    const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
 
     let strOptionCode = dbuser.strOptionCode ?? '11000000';
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:iCash, iRolling:iRolling, iSettle:iSettle, strOptionCode:strOptionCode,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle, strOptionCode:strOptionCode,
         iRootClass: req.user.iClass, iPermission: req.user.iPermission};
 
     let iLimit = 20;
@@ -724,12 +708,31 @@ router.post('/request_outputstate', isLoggedIn, async (req, res) => {
 
     console.log(charge);
 
-    if ( charge == null )
+    if ( charge == null ) {
         res.send({result:"FAIL"});
+        return;
+    }
+
+    if ( req.body.type == 0 && charge.eState != 'REQUEST' )
+    {
+        res.send({result:"ERROR"});
+        return;
+    }
+    if ( req.body.type == 1 && charge.eState != 'STANDBY' )
+    {
+        res.send({result:"ERROR"});
+        return;
+    }
+    if ( req.body.type == 2 && (charge.eState == 'CANCEL' || charge.eState == 'COMPLETE') )
+    {
+        res.send({result:'ERROR'});
+        return;
+    }
 
     if ( req.body.type == 0 )   // request
     {
         await charge.update({eState:"STANDBY"});
+        res.send({result:"OK", id:req.body.id});
     }
     else if ( req.body.type == 1 )  // standby
     {
@@ -738,13 +741,13 @@ router.post('/request_outputstate', isLoggedIn, async (req, res) => {
         let parent = await db.Users.findOne({where:{strNickname:charge.strAdminNickname}});
         if ( parent != null )
         {
-            parent.update({iCash:parent.iCash+parseInt(charge.iAmount)});
-            // let iCash = parent.iCash+parseInt(charge.iAmount);
-            // ISocket.AlertCashByNickname(parent.strNickname, iCash);
+            await parent.update({iCash:parent.iCash+parseInt(charge.iAmount)});
+            res.send({result:"OK", id:req.body.id});
         }
-
-        // await user.update({iCash:user.iCash-charge.iAmount});
-
+        else
+        {
+            res.send({result:"FAIL1", id:req.body.id});
+        }
     }
     else if ( req.body.type == 2 )  // cancel
     {
@@ -769,10 +772,8 @@ router.post('/request_outputstate', isLoggedIn, async (req, res) => {
             console.log('axios Error /UpdateCoin');
             //console.log(error);
         });
+        res.send({result:"OK", id:req.body.id});
     }
-
-    res.send({result:"OK", id:req.body.id});
-
 });
 
 

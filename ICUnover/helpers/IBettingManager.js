@@ -62,9 +62,22 @@ exports.ProcessBet = async (strID, strNickname, strGroupID, iClass, iBalance, iG
 
 exports.ProcessWin = async (strID, strNickname, strGroupID, iClass, iBalance, iGameCode, strVender, strGameID, strTableID, strRound, strUniqueID, strDetail, strResult, iTarget, iWin, strURL) => {
 
+    if ( iGameCode == 200 ) // When win event occured from slot
+    {
+        if (iWin > 0)
+        {
+            let eState = 'STANDBY';
+            await CreateBet(strID, strNickname, strGroupID, iClass, iBalance, iGameCode, strVender, strGameID, strTableID, strRound, strUniqueID, strDetail, strResult, iTarget, 0, iWin, eState, 'WIN', strURL);
+
+        }
+        return;
+    }
+
     let bet = await db.RecordBets.findOne({where:{strID:strID, strRound:strRound, strVender:strVender}});
     if ( bet != null )
     {
+        //const cResultWin = parseInt(bet.iWin) + parseInt(iWin);
+
         switch ( strVender )
         {
             case 'VIVO':
@@ -98,14 +111,14 @@ exports.ProcessWin = async (strID, strNickname, strGroupID, iClass, iBalance, iG
                     {
                         if ( bet.iBet == iWin )
                         {
-                            await db.RecordBets.update({iWin:iWin, strUniqueID:strUniqueID, eType:'CANCEL_BET', eState:'COMPLETE'}, {where:{id:bet.id}});
+                            await db.RecordBets.update({iWin:iWin, strUniqueID:strUniqueID, eType:'CANCEL_BET', eState:'STANDBY'}, {where:{id:bet.id}});
                         }
                         else
                             await db.RecordBets.update({iWin:iWin, strUniqueID:strUniqueID, eType:'RD', eState:'STANDBY'}, {where:{id:bet.id}});
                     }
                     else
                     {
-                        await db.RecordBets.update({iWin:iWin, eType:'WIN', eState:'COMPLETE'}, {where:{id:bet.id}});
+                        await db.RecordBets.update({iWin:iWin, eType:'WIN', eState:'STANDBY'}, {where:{id:bet.id}});
                     }
                 }
                 break;
@@ -114,10 +127,10 @@ exports.ProcessWin = async (strID, strNickname, strGroupID, iClass, iBalance, iG
                     if ( bet.iBet == iWin )
                     {
                         //  TIE WIN
-                        await db.RecordBets.update({iWin:iWin, eType:'CANCEL_BET', eState:'COMPLETE'}, {where:{id:bet.id}});
+                        await db.RecordBets.update({iWin:iWin, eType:'CANCEL_BET', eState:'STANDBY'}, {where:{id:bet.id}});
                     }
                     else
-                        await db.RecordBets.update({iWin:iWin, eType:'WIN', eState:'COMPLETE'}, {where:{id:bet.id}});
+                        await db.RecordBets.update({iWin:iWin, eType:'WIN', eState:'STANDBY'}, {where:{id:bet.id}});
                 }
                 break;
         }
@@ -125,7 +138,7 @@ exports.ProcessWin = async (strID, strNickname, strGroupID, iClass, iBalance, iG
     else
     {
         let eState = 'STANDBY';
-        await CreateBet(strID, strNickname, strGroupID, iClass, iBalance, iGameCode, strVender, strGameID, strTableID, strRound, strUniqueID, strDetail, strResult, iTarget, 0, iWin, 'WIN', eState, strURL);
+        await CreateBet(strID, strNickname, strGroupID, iClass, iBalance, iGameCode, strVender, strGameID, strTableID, strRound, strUniqueID, strDetail, strResult, iTarget, 0, iWin, eState, 'WIN', strURL);
     }
 }
 

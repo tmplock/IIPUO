@@ -35,29 +35,13 @@
 	</div>
 
 	<script>
-
-		// var listGames = JSON.parse('<%-JSON.stringify(listGames)%>');
-        // console.log(listGames);
-		// var data = JSON.parse('<%-JSON.stringify(listGames)%>');
-        // console.log(data);
-
-		// $(document).ready(() => {
-		// 	if (data.result === 'OK') {
-		// 		for (let i=0; i<listGames.length; i++) {
-		// 			$('#listGames').append(`<li>
-		// 				<img class="gameimg" id="${listGames[i].id}" src="${listGames[i].thumbnail}" alt="${listGames[i].title}" style="width:220px;height:220px;">
-		// 				<p class="title"><a class="gameimg" id="${listGames[i].id}" style="font-size:20px;">${listGames[i].title}</a></p>
-		// 			</li>`);
-		// 		}
-		// 		// $(document).on('click', '.gameimg', (e) => {
-		// 		// 	console.log(`${$(e.currentTarget).attr('id')}`);
-		// 		// 	GoGame(this.strVender, $(e.currentTarget).attr('id'));
-		// 		// })
-		// 	} else {
-		// 		alert(data.error);
-		// 	}
-		// });
-
+		$(document).ready(() => {
+			let count = parseInt('<%=count%>');
+			if (count === 0) {
+				alert('해당 게임은 점검중입니다.');
+				window.close();
+			}
+		});
 
 		let GoGame = (strGame, symbol) => {
 

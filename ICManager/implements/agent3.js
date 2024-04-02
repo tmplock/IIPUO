@@ -11,6 +11,7 @@ module.exports.EAgent = EAgent;
 
 const { QueryTypes } = require('sequelize');
 const moment = require("moment/moment");
+const {debug} = require("nodemon/lib/utils");
 
 const GameCodeList = [0, 100, 200, 300];
 
@@ -1177,16 +1178,21 @@ var inline_CalculateRealtimeBettingRecord = async (iGameCode, strGroupID) =>
 exports.CalculateRealtimeBettingRecord = inline_CalculateRealtimeBettingRecord;
 
 
-exports.GetUserList = async (strTimeStart, strTimeEnd, strGroupID, strSearchNickname) => {
+exports.GetUserList = async (strTimeStart, strTimeEnd, strGroupID, strSearchNickname, bOnToday) => {
 
     let tagSearch = '';
     if ( strSearchNickname != undefined && strSearchNickname != '' )
         tagSearch = `AND t6.strNickname='${strSearchNickname}'`;
 
+    let isOnToday = bOnToday ?? false;
+    if (isOnToday == true) {
+        tagSearch = `${tagSearch} AND DATE(t6.createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'`;
+    }
+
     const [result] = await db.sequelize.query(
         `
         SELECT t1.strNickname AS lev1, t2.strNickname as lev2, t3.strNickname as lev3, t4.strNickname as lev4, t5.strNickname as lev5, t6.strNickname as lev6, t6.iClass, t6.strID, t6.strNickname,
-        t6.iCash, t6.iClass, t6.strGroupID, t6.eState, t6.createdAt, t6.loginedAt, t6.strIP,
+        t6.iCash, t6.iClass, t6.strGroupID, t6.eState, DATE_FORMAT(t6.createdAt,'%Y-%m-%d %H:%i:%S') AS createdAt, DATE_FORMAT(t6.loginedAt,'%Y-%m-%d %H:%i:%S') AS loginedAt, t6.strIP,
         IFNULL(charges.iInput,0) AS iInput, 
         IFNULL(exchanges.iOutput,0) AS iOutput, 
         IFNULL(dailyBetting.iMyRollingMoney,0) AS iMyRollingMoney, 
@@ -1218,22 +1224,27 @@ exports.GetUserList = async (strTimeStart, strTimeEnd, strGroupID, strSearchNick
                     where DATE(createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'
                     GROUP BY strID) dailyBetting
                 ON t6.strID = dailyBetting.strID
-        WHERE t6.iClass=${EAgent.eUser} AND t6.strGroupID LIKE CONCAT('${strGroupID}', '%')${tagSearch};
+        WHERE t6.iClass=${EAgent.eUser} AND t6.strGroupID LIKE CONCAT('${strGroupID}', '%') ${tagSearch};
         `
     );
     return result;
 }
 
-exports.GetShopList = async (strTimeStart, strTimeEnd, strGroupID, strSearchNickname) => {
+exports.GetShopList = async (strTimeStart, strTimeEnd, strGroupID, strSearchNickname, bOnToday) => {
 
     let tagSearch = '';
     if ( strSearchNickname != undefined && strSearchNickname != '' )
         tagSearch = `AND t5.strNickname='${strSearchNickname}'`;
 
+    let isOnToday = bOnToday ?? false;
+    if (isOnToday == true) {
+        tagSearch = `${tagSearch} AND DATE(t5.createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'`;
+    }
+
     const [result] = await db.sequelize.query(
         `
         SELECT t1.strNickname AS lev1, t2.strNickname as lev2, t3.strNickname as lev3, t4.strNickname as lev4, t5.strNickname as lev5, t5.strNickname as lev6, t5.iClass, t5.strID, t5.strNickname,
-        t5.iCash, t5.iClass, t5.strGroupID, t5.eState, t5.createdAt, t5.loginedAt, t5.strIP,
+        t5.iCash, t5.iClass, t5.strGroupID, t5.eState, DATE_FORMAT(t5.createdAt,'%Y-%m-%d %H:%i:%S') AS createdAt, DATE_FORMAT(t5.loginedAt,'%Y-%m-%d %H:%i:%S') AS loginedAt, t5.strIP,
         IFNULL(charges.iInput,0) AS iInput, 
         IFNULL(exchanges.iOutput,0) AS iOutput,
         IFNULL((SELECT sum(iRollingB + iRollingUO + iRollingS + iRollingPBA + iRollingPBB) FROM RecordDailyOverviews WHERE strID = t5.strID AND date(strDate) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'),0) as iMyRollingMoney,
@@ -1259,22 +1270,27 @@ exports.GetShopList = async (strTimeStart, strTimeEnd, strGroupID, strSearchNick
                     AND eType = 'OUTPUT'
                     GROUP BY strID) exchanges
                 ON t5.strNickname = exchanges.strID
-        WHERE t5.iClass=${EAgent.eShop} AND t5.strGroupID LIKE CONCAT('${strGroupID}', '%')${tagSearch};
+        WHERE t5.iClass=${EAgent.eShop} AND t5.strGroupID LIKE CONCAT('${strGroupID}', '%') ${tagSearch};
         `
     );
     return result;
 }
 
-exports.GetAgentList = async (strTimeStart, strTimeEnd, strGroupID, strSearchNickname) => {
+exports.GetAgentList = async (strTimeStart, strTimeEnd, strGroupID, strSearchNickname, bOnToday) => {
 
     let tagSearch = '';
     if ( strSearchNickname != undefined && strSearchNickname != '' )
         tagSearch = `AND t4.strNickname='${strSearchNickname}'`;
 
+    let isOnToday = bOnToday ?? false;
+    if (isOnToday == true) {
+        tagSearch = `${tagSearch} AND DATE(t4.createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'`;
+    }
+
     const [result] = await db.sequelize.query(
         `
         SELECT t1.strNickname AS lev1, t2.strNickname as lev2, t3.strNickname as lev3, t4.strNickname as lev4, t4.strNickname as lev5, t4.strNickname as lev6, t4.iClass, t4.strID, t4.strNickname,
-        t4.iCash, t4.iClass, t4.strGroupID, t4.eState, t4.createdAt, t4.loginedAt, t4.strIP,
+        t4.iCash, t4.iClass, t4.strGroupID, t4.eState, DATE_FORMAT(t4.createdAt,'%Y-%m-%d %H:%i:%S') AS createdAt, DATE_FORMAT(t4.loginedAt,'%Y-%m-%d %H:%i:%S') AS loginedAt, t4.strIP,
         IFNULL(charges.iInput,0) AS iInput, 
         IFNULL(exchanges.iOutput,0) AS iOutput, 
         IFNULL((SELECT sum(iRollingB + iRollingUO + iRollingS + iRollingPBA + iRollingPBB) FROM RecordDailyOverviews WHERE strID = t4.strID AND date(strDate) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'),0) as iMyRollingMoney,
@@ -1299,22 +1315,27 @@ exports.GetAgentList = async (strTimeStart, strTimeEnd, strGroupID, strSearchNic
                     AND eType = 'OUTPUT'
                     GROUP BY strID) exchanges
                 ON t4.strNickname = exchanges.strID
-        WHERE t4.iClass=${EAgent.eAgent} AND t4.strGroupID LIKE CONCAT('${strGroupID}', '%')${tagSearch};
+        WHERE t4.iClass=${EAgent.eAgent} AND t4.strGroupID LIKE CONCAT('${strGroupID}', '%') ${tagSearch};
         `
     );
     return result;
 }
 
-exports.GetViceAdminList = async (strTimeStart, strTimeEnd, strGroupID, strSearchNickname) => {
+exports.GetViceAdminList = async (strTimeStart, strTimeEnd, strGroupID, strSearchNickname, bOnToday) => {
 
     let tagSearch = '';
     if ( strSearchNickname != undefined && strSearchNickname != '' )
         tagSearch = `AND t3.strNickname='${strSearchNickname}'`;
 
+    let isOnToday = bOnToday ?? false;
+    if (isOnToday == true) {
+        tagSearch = `${tagSearch} AND DATE(t3.createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'`;
+    }
+
     const [result] = await db.sequelize.query(
         `
         SELECT t1.strNickname AS lev1, t2.strNickname as lev2, t3.strNickname as lev3, t3.strNickname as lev4, t3.strNickname as lev5, t3.strNickname as lev6, t3.iClass, t3.strID, t3.strNickname,
-        t3.iCash, t3.iClass, t3.strGroupID, t3.eState, t3.createdAt, t3.loginedAt, t3.strIP,
+        t3.iCash, t3.iClass, t3.strGroupID, t3.eState, DATE_FORMAT(t3.createdAt,'%Y-%m-%d %H:%i:%S') AS createdAt, DATE_FORMAT(t3.loginedAt,'%Y-%m-%d %H:%i:%S') AS loginedAt, t3.strIP,
         IFNULL(charges.iInput,0) AS iInput, 
         IFNULL(exchanges.iOutput,0) AS iOutput, 
         IFNULL((SELECT sum(iRollingB + iRollingUO + iRollingS + iRollingPBA + iRollingPBB) FROM RecordDailyOverviews WHERE strID = t3.strID AND date(strDate) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'),0) as iMyRollingMoney,
@@ -1338,22 +1359,27 @@ exports.GetViceAdminList = async (strTimeStart, strTimeEnd, strGroupID, strSearc
                     AND eType = 'OUTPUT'
                     GROUP BY strID) exchanges
                 ON t3.strNickname = exchanges.strID
-        WHERE t3.iClass=${EAgent.eViceAdmin} AND t3.strGroupID LIKE CONCAT('${strGroupID}', '%')${tagSearch};
+        WHERE t3.iClass=${EAgent.eViceAdmin} AND t3.strGroupID LIKE CONCAT('${strGroupID}', '%') ${tagSearch};
         `
     );
     return result;
 }
 
-exports.GetProAdminList = async (strTimeStart, strTimeEnd, strGroupID, strSearchNickname) => {
+exports.GetProAdminList = async (strTimeStart, strTimeEnd, strGroupID, strSearchNickname, bOnToday) => {
 
     let tagSearch = '';
     if ( strSearchNickname != undefined && strSearchNickname != '' )
         tagSearch = `AND t3.strNickname='${strSearchNickname}'`;
 
+    let isOnToday = bOnToday ?? false;
+    if (isOnToday == true) {
+        tagSearch = `${tagSearch} AND DATE(t3.createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'`;
+    }
+
     const [result] = await db.sequelize.query(
         `
         SELECT t1.strNickname AS lev1, t2.strNickname as lev2, t3.strNickname as lev3, t3.strNickname as lev4, t3.strNickname as lev5, t3.strNickname as lev6, t3.iClass, t3.strID, t3.strNickname,
-        t3.iCash, t3.iClass, t3.strGroupID, t3.eState, t3.createdAt, t3.loginedAt, t3.strIP,
+        t3.iCash, t3.iClass, t3.strGroupID, t3.eState, DATE_FORMAT(t3.createdAt,'%Y-%m-%d %H:%i:%S') AS createdAt, DATE_FORMAT(t3.loginedAt,'%Y-%m-%d %H:%i:%S') AS loginedAt, t3.strIP,
         0 AS iInput,
         0 AS iOutput,
         IFNULL((SELECT sum(iRollingB + iRollingUO + iRollingS + iRollingPBA + iRollingPBB) FROM RecordDailyOverviews WHERE strID = t3.strID AND date(strDate) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'),0) as iMyRollingMoney,
@@ -1377,7 +1403,7 @@ exports.GetProAdminList = async (strTimeStart, strTimeEnd, strGroupID, strSearch
                     AND eType = 'OUTPUT'
                     GROUP BY strID) exchanges
                 ON t3.strNickname = exchanges.strID
-        WHERE t3.iClass=${EAgent.eProAdmin} AND t3.strGroupID LIKE CONCAT('${strGroupID}', '%')${tagSearch};
+        WHERE t3.iClass=${EAgent.eProAdmin} AND t3.strGroupID LIKE CONCAT('${strGroupID}', '%') ${tagSearch};
         `
     );
     return result;
@@ -1544,7 +1570,7 @@ let inline_GetPopupShareInfo = async (strID, strGroupID) => {
         return null;
 
     const list = await db.sequelize.query(`
-        SELECT u.strNickname AS parentNickname, su.strNickname AS strNickname, su.strID AS strID, 
+        SELECT u.strNickname AS parentNickname, su.strNickname AS strNickname, su.strID AS strID, su.strGroupID AS strGroupID,  
         su.fShareR AS fShareR, 
         0 AS iShare,
         0 AS iShareAccBefore,       
@@ -1603,3 +1629,64 @@ var inline_GetChildNicknameList = async (strGroupID, iClass) => {
     return list;
 }
 exports.GetChildNicknameList = inline_GetChildNicknameList;
+
+var inline_GetUserInfo = async (strNickname) => {
+    let strID = '';
+    let iClass = '';
+    let strGroupID = '';
+    let iCash = 0;
+    let iRolling = 0;
+    let iSettle = 0;
+    let strOptionCode = '';
+    let strIDRel = '' // 연결된 strID
+    let strNicknameRel = '' // 연결된 strNickname
+    let iSettleAcc = 0;
+
+    let fBaccaratR = 0;
+    let fSlotR = 0;
+    let fUnderOverR = 0;
+    let fPBR = 0;
+    let fPBSingleR = 0;
+    let fPBDoubleR = 0;
+    let fPBTripleR = 0;
+
+    let iRelUserID = 0;
+
+    let iPermission = 0;
+
+    let dbuser = await db.Users.findOne({where:{strNickname:strNickname}});
+    if (dbuser != null) {
+        strID = dbuser.strID;
+        iPermission = dbuser.iPermission;
+        // 연결된 이용자 정보
+        iRelUserID = dbuser.iRelUserID ?? 0;
+        if (iRelUserID != 0) {
+            dbuser = await db.Users.findOne({where: {id: dbuser.iRelUserID}});
+            strIDRel = dbuser.strID;
+            strNicknameRel = dbuser.strNickname;
+        }
+
+        if ( dbuser != null ) {
+            iCash = dbuser.iCash;
+            iRolling = dbuser.iRolling;
+            iSettle = dbuser.iSettle;
+            iClass = dbuser.iClass;
+            strGroupID = dbuser.strGroupID;
+            strOptionCode = dbuser.strOptionCode;
+            iSettleAcc = dbuser.iSettleAcc;
+
+            fBaccaratR = dbuser.fBaccaratR;
+            fSlotR = dbuser.fSlotR;
+            fUnderOverR = dbuser.fUnderOverR;
+            fPBR = dbuser.fPBR;
+            fPBSingleR = dbuser.fPBSingleR;
+            fPBDoubleR = dbuser.fPBDoubleR;
+            fPBTripleR = dbuser.fPBTripleR;
+        }
+    }
+
+    return {iCash:iCash, iRolling: iRolling, iSettle:iSettle, strID:strID, strNickname:strNickname, iClass:iClass, strGroupID:strGroupID, strOptionCode:strOptionCode, iSettleAcc: iSettleAcc,
+        strIDRel: strIDRel, strNicknameRel: strNicknameRel, iPermission:iPermission,
+        fBaccaratR: fBaccaratR, fSlotR: fSlotR, fUnderOverR: fUnderOverR, fPBR: fPBR, fPBSingleR: fPBSingleR, fPBDoubleR: fPBDoubleR, fPBTripleR: fPBTripleR};
+}
+exports.GetUserInfo = inline_GetUserInfo;

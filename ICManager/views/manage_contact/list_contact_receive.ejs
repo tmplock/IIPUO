@@ -224,10 +224,6 @@
 
                     let strSubject = list[i].strSubject.replace(/(<br>)/g,' ');
                     let strFrom = list[i].strFrom;
-                    let strWriter = list[i].strWriter ?? '';
-                    if (strWriter != '') {
-                        strFrom = strWriter;
-                    }
                     let tag = `
                     <tr height="30">
                         <td><input type="checkbox" id="chk" class="chkGrp" value="${list[i].id}"></td>

@@ -223,10 +223,13 @@ router.post('/popup_write_contact', async(req, res) => {
 });
 
 router.post('/request_writecontact', async(req, res) => {
+    let user = await IAgent.GetUserInfo(req.body.strFrom);
+    let strNickname = user.iPermission == 100 ? user.strNicknameRel : user.strNickname;
+
     await db.ContactLetter.create({
         strTo:req.body.strTo,
-        strFrom:req.body.strFrom,
-        strGroupID:req.body.strGroupID,
+        strFrom:strNickname,
+        strGroupID:user.strGroupID,
         strSubject:req.body.strSubject,
         strContents:req.body.strContents,
         eRead:'UNREAD',
@@ -268,6 +271,9 @@ router.post('/popup_read_contact', async(req, res) => {
     const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:req.body.iClass,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission};
     let obj = await db.ContactLetter.findByPk(req.body.id);
+    let dbuser = await IAgent.GetUserInfo(req.body.strNickname);
+    let strNickname = dbuser.iPermission == 100 ? dbuser.strNicknameRel : dbuser.strNickname;
+    user.strNickname = strNickname;
 
     if (user.iPermission != 100) {
         if (obj.eRead == 'UNREAD') {
@@ -292,6 +298,10 @@ router.post('/popup_read_contact', async(req, res) => {
     res.render('manage_contact/popup_read_contact', {iLayout:1, iHeaderFocus:1, user:user, letter:obj.toJSON()});
 });
 
+
+/**
+ * 미사용 api
+ */
 router.post('/popup_charge_request', async(req, res) => {
     console.log(req.body);
     const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:req.body.iClass,

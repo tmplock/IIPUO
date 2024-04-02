@@ -332,6 +332,10 @@ router.post('/request_gt', isLoggedIn, async(req, res) => {
         let from = await db.Users.findOne({where:{strNickname:req.body.strFrom}});
 
         const cAmount = parseInt(req.body.iAmount);
+        if (cAmount < 0) {
+            res.send({result:'FAIL', reason:'NOTENOUGH'});
+            return;
+        }
 
         if ( to != null && from != null )
         {

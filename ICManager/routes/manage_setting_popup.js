@@ -281,7 +281,7 @@ router.post('/request_writeletter', async (req, res) => {
             strSubject:'',
             strContents:req.body.contents,
             iClassTo:req.body.iClass,
-            iClassFrom:req.user.iClass,
+            iClassFrom:dbuser.iClass,
             strWriter:req.user.strNickname
         });
 
@@ -337,7 +337,7 @@ router.post('/request_writeletter_partner', async (req, res) => {
         strContents:req.body.contents,
         strAnswers:'',
         iClassTo:toUser.iClass,
-        iClassFrom:req.user.iClass,
+        iClassFrom:fromUser.iClass,
         strWriter:req.user.strNickname
     });
 

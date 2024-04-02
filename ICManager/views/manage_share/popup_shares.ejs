@@ -191,27 +191,27 @@
                         <% } else { %>
                             <td id='strNickname_${strNickname}'>${strNickname}</td>
                         <% } %>
-                        <td id='iShareOrgin_${strNickname}' style="font-size: 12px; padding: 10px; line-height: 1.5;">
+                        <td id='iShareOrgin_${strNickname}' style="font-size: 12px; padding: 10px; line-height: 1.5; color:${GetColor(iShareOrgin)};">
                             <label id='iShareOrgin_${strNickname}' for="mile_sect_cash_2" style="font-size:12px;">${GetNumberSign(iShareOrgin, '0')}</label>
                         </td>
-                        <td id='iShareCommision_${strNickname}' style="font-size: 12px; padding: 10px; line-height: 1.5;">
+                        <td id='iShareCommision_${strNickname}' style="font-size: 12px; padding: 10px; line-height: 1.5; color:${GetColor(iSlotCommission)};">
                             <label id='iShareCommisionS_${strNickname}' for="mile_sect_cash_2" style="font-size:12px;">${GetNumberSign(iSlotCommission, '0')}</label>
                         </td>
-                        <td id='iSharePayback_${strNickname}' style="font-size: 12px; padding: 10px; line-height: 1.5;">
+                        <td id='iSharePayback_${strNickname}' style="font-size: 12px; padding: 10px; line-height: 1.5; color:${GetColor(iPayback)};">
                             <label id='iSharePayback_${strNickname}' for="mile_sect_cash_2" style="font-size:12px;">${GetNumberSign(iPayback, '0')}</label>
                         </td>
-                        <td id='iShareTotal_${strNickname}' style="font-size: 12px; padding: 10px; line-height: 1.5;">
+                        <td id='iShareTotal_${strNickname}' style="font-size: 12px; padding: 10px; line-height: 1.5; color:${GetColor(iSum)};">
                             <label id='iShareTotal_${strNickname}' for="mile_sect_cash_2" style="font-size:12px;">${GetNumberSign(iSum, '0')}</label>
                         </td>
                         <td style="font-size: 12px; padding: 10px; line-height: 1.5;">
                             <input type="number" style="width:50%;" name="bakara_over_31" id="fShareR_${aObject.strNickname}" required="no" message="지분" value=${aObject.fShareR} ${tagoption}>%
                         </td>
-                        <td id='iShare_${strNickname}' style="font-size: 12px; padding: 10px; line-height: 1.5;">
+                        <td id='iShare_${strNickname}' style="font-size: 12px; padding: 10px; line-height: 1.5; color:${GetColor(iShare)};">
                             <label id='iShare_${strNickname}' for="mile_sect_cash_2" style="font-size:12px;">${GetNumberSign(iShare, '0')}</label>
                         </td>
-                        <td id='iShareAccBefore_${strNickname}'>${GetNumberSign(iShareAccBefore)}</td>
-                        <td id='iCreditBefore_${strNickname}'>${GetNumberSign(iCreditBefore, '0')}</td>
-                        <td id='iCreditAfter_${strNickname}'>${GetNumberSign(iCreditAfter, '0')}</td>
+                        <td id='iShareAccBefore_${strNickname}' style="font-size: 12px; padding: 10px; line-height: 1.5; color:${GetColor(iShareAccBefore)};">${GetNumberSign(iShareAccBefore)}</td>
+                        <td id='iCreditBefore_${strNickname}' style="font-size: 12px; padding: 10px; line-height: 1.5; color:${GetColor(iCreditBefore)};">${GetNumberSign(iCreditBefore, '0')}</td>
+                        <td id='iCreditAfter_${strNickname}' style="font-size: 12px; padding: 10px; line-height: 1.5; color:${GetColor(iCreditAfter)};">${GetNumberSign(iCreditAfter, '0')}</td>
                         <% if (user.iPermission != 100) { %>
                             <td>
                                 <input type="radio" name="${aObject.strID}_mile_sect" required="yes" message="구분" value="M" id="share_type_1">
@@ -261,15 +261,15 @@
             $('#list_agents').append(`
                     <tr class="Total" style="font-weight: bold">
                         <td colspan="2">합계</td>
-                        <td>${GetNumberSign(data.iShareOrgin, '0')}</td>
-                        <td>${GetNumberSign(data.iSlotCommission, '0')}</td>
-                        <td>${GetNumberSign(data.iPayback, '0')}</td>
-                        <td>${GetNumberSign(data.iSum, '0')}</td>
+                        <td style="font-size: 12px; padding: 10px; line-height: 1.5; color:${GetColor(data.iShareOrgin)};">${GetNumberSign(data.iShareOrgin, '0')}</td>
+                        <td style="font-size: 12px; padding: 10px; line-height: 1.5; color:${GetColor(data.iSlotCommission)};">${GetNumberSign(data.iSlotCommission, '0')}</td>
+                        <td style="font-size: 12px; padding: 10px; line-height: 1.5; color:${GetColor(data.iPayback)};">${GetNumberSign(data.iPayback, '0')}</td>
+                        <td style="font-size: 12px; padding: 10px; line-height: 1.5; color:${GetColor(data.iSum)};">${GetNumberSign(data.iSum, '0')}</td>
                         <td></td>
-                        <td>${GetNumberSign(data.iShare, '0')}</td>
-                        <td>${GetNumberSign(data.iShareAccBefore)}</td>
-                        <td>${GetNumberSign(data.iCreditBefore, '0')}</td>
-                        <td>${GetNumberSign(data.iCreditAfter, '0')}</td>
+                        <td style="font-size: 12px; padding: 10px; line-height: 1.5; color:${GetColor(data.iShare)};">${GetNumberSign(data.iShare, '0')}</td>
+                        <td style="font-size: 12px; padding: 10px; line-height: 1.5; color:${GetColor(data.iShareAccBefore)};">${GetNumberSign(data.iShareAccBefore)}</td>
+                        <td style="font-size: 12px; padding: 10px; line-height: 1.5; color:${GetColor(data.iCreditBefore)};">${GetNumberSign(data.iCreditBefore, '0')}</td>
+                        <td style="font-size: 12px; padding: 10px; line-height: 1.5; color:${GetColor(data.iCreditAfter)};">${GetNumberSign(data.iCreditAfter, '0')}</td>
                         <td></td>
                     </tr>
                 `);

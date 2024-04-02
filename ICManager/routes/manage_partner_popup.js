@@ -620,27 +620,6 @@ let CalculateGroupID = async (strParentGroupID, iParentClass) => {
 router.post('/request_register', isLoggedIn, async(req, res) => {
     console.log(req.body);
     try {
-        // if (IUtil.checkBlockCharNickname(req.body.strID) === true) {
-        //     res.send({result:'Error', error:'', string: '닉네임에 쓸수 없는 특수문자가 있습니다'});
-        //     return;
-        // }
-        //
-        // if (IUtil.checkBlockCharNickname(req.body.strPassword) === true) {
-        //     res.send({result:'Error', error:'', string: '비밀번호에 쓸수 없는 특수문자가 있습니다'});
-        //     return;
-        // }
-        //
-        // var values = [
-        //     req.body.fSlotR, req.body.fBaccaratR, req.body.fUnderOverR, req.body.fPBR,
-        //     req.body.fPBSingleR, req.body.fPBDoubleR, req.body.fPBTripleR,
-        //     req.body.fSettleBaccarat, req.body.fSettleSlot, req.body.fSettlePBA, req.body.fSettlePBB,
-        //     req.body.iPBLimit, req.body.iPBSingleLimit, req.body.iPBDoubleLimit, req.body.iPBTripleLimit];
-        // for (const v in values) {
-        //     if (IUtil.checkBlockNum(v)) {
-        //         res.send({result:'Error', error:'', string: '비밀번호에 쓸수 없는 특수문자가 있습니다'});
-        //         return;
-        //     }
-        // }
         let strGroupID = await CalculateGroupID(req.body.strParentGroupID, req.body.iParentClass);
         console.log(`parent : ${req.body.strParentGroupID}, child : ${strGroupID}`);
 
@@ -1010,10 +989,6 @@ router.post('/request_agentinfo_modify',isLoggedIn, async (req, res) => {
         let listHistory = [];
         if ( user.strNickname != req.body.strNickname || user.strID != req.body.strID )
         {
-            if (user.iClass <= 3 && user.iPermission != 100) {
-                res.send({result:'ERROR', code:'Impossible'});
-                return;
-            }
             let targetuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
             if ( null != targetuser )
             {
@@ -1021,7 +996,7 @@ router.post('/request_agentinfo_modify',isLoggedIn, async (req, res) => {
                 return;
             }
 
-            const maxCount = 50;
+            const maxCount = 30;
             let count = 0;
             // 지분자 정보 확인
             listShare = await db.ShareUsers.findAll({where: {strID: user.strID}});
@@ -1092,13 +1067,13 @@ router.post('/request_agentinfo_modify',isLoggedIn, async (req, res) => {
                 return;
             }
             // 전환
-            listGtTo = await db.GTs.findAll({where: {strTo: user.strID}});
+            listGtTo = await db.GTs.findAll({where: {strTo: user.strNickname}});
             count += listGtTo.length;
             if (count > maxCount) {
                 res.send({result:'ERROR', code:'Impossible'});
                 return;
             }
-            listGtFrom = await db.GTs.findAll({where: {strFrom: user.strID}});
+            listGtFrom = await db.GTs.findAll({where: {strFrom: user.strNickname}});
             count += listGtFrom.length;
             if (count > maxCount) {
                 res.send({result:'ERROR', code:'Impossible'});
@@ -1194,8 +1169,8 @@ router.post('/request_agentinfo_modify',isLoggedIn, async (req, res) => {
             let logMsg = logMessage(user, data);
             if (logMsg != '') {
                 await db.DataLogs.create({
-                    strNickname: user.strNickname,
-                    strID: user.strID,
+                    strNickname: req.body.strNickname,
+                    strID: req.body.strID,
                     strGroupID: user.strGroupID,
                     strLogs: logMsg,
                     strEditorNickname: req.user.strNickname,
@@ -1303,10 +1278,10 @@ router.post('/request_agentinfo_modify',isLoggedIn, async (req, res) => {
                     await db.RecordBets.update({strID: req.body.strID, strNickname: req.body.strNickname}, {where: {strID: user.strID}});
                 }
                 if (listGtTo.length > 0) {
-                    await db.GTs.update({strTo:req.body.strID}, {where: {strTo: user.strID}});
+                    await db.GTs.update({strTo:req.body.strNickname}, {where: {strTo: user.strNickname}});
                 }
                 if (listGtFrom.length > 0) {
-                    await db.GTs.update({strFrom:req.body.strID}, {where: {strFrom: user.strID}});
+                    await db.GTs.update({strFrom:req.body.strNickname}, {where: {strFrom: user.strNickname}});
                 }
                 if (listHistory.length > 0) {
                     await db.CreditRecords.update({strID: req.body.strID, strNickname:req.body.strNickname}, {where: {strID: user.strID}});

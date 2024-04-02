@@ -141,6 +141,8 @@
 <script>
 
 	let agent = JSON.parse('<%-JSON.stringify(agent)%>');
+	let bCheckID = false;
+	let bCheckNickname = false;
 
 	$(document).ready( ()=> {
 		let cUsingInput = parseInt(agent.strOptionCode[0]);
@@ -224,6 +226,7 @@
 				if ( data == 'OK' )
 				{
 					alert(strAlertEnableToUse);
+					bCheckID = true;
 				}
 				else
 				{
@@ -244,6 +247,7 @@
 				if ( data == 'OK' )
 				{
 					alert(strAlertEnableToUse);
+					bCheckNickname = true;
 				}
 				else
 				{
@@ -293,6 +297,15 @@
 		const strBankname = $('#bank_name').val();
 		const strBankAccount = $('#bank_num').val();
 		const strBankOwner = $('#bank_owner').val();
+
+		if (strNickname != agent.strNickname && bCheckNickname == false) {
+			alert(strAlertNeedToDuplicationCheckNickname);
+			return;
+		}
+		if (strID != agent.strID && bCheckID == false) {
+			alert(strAlertNeedToDuplicationCheckID);
+			return;
+		}
 
 		const fSlotR = $('#fSlotR').val();
 		const fBaccaratR = $('#fBaccaratR').val();

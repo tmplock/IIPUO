@@ -278,7 +278,9 @@
 		SetOverview(overview, '#overview', true, '', '');
 		SetOverviewShare(overviewShare, overview, '#overview_share');
 		//TESTCODE
-		TestTagSettle('testSettle');
+		if (user.iPermission != 100) {
+			TestTagSettle('testSettle');
+		}
 	});
 
 	let Request1stHalf = () => {

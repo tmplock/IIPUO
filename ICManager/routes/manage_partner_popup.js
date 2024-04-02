@@ -197,6 +197,8 @@ router.post('/request_gtrecord_partner', isLoggedIn, async(req, res) => {
 
     let strTimeStart = req.body.dateStart;
     let strTimeEnd = req.body.dateEnd;
+    let user = await IAgent.GetUserInfo(req.body.strNickname);
+    let strNickname = user.iPermission == 100 ? user.strNicknameRel : user.strNickname;
     let list = [];
     // 두개를 하나의 테이블로 UNION
     if ( req.body.strSearch == '' )
@@ -204,12 +206,12 @@ router.post('/request_gtrecord_partner', isLoggedIn, async(req, res) => {
         list = await db.sequelize.query(`
             SELECT *, DATE_FORMAT(createdAt,'%Y-%m-%d %H:%i:%S') AS createdAtFormat 
             FROM GTs 
-            WHERE strFrom = '${req.body.strNickname}'
+            WHERE strFrom = '${strNickname}'
             AND date(createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'
             UNION
             SELECT *, DATE_FORMAT(createdAt,'%Y-%m-%d %H:%i:%S') AS createdAtFormat
             FROM GTs 
-            WHERE strTo = '${req.body.strNickname}' 
+            WHERE strTo = '${strNickname}' 
             AND date(createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'
             ORDER BY createdAt DESC
         `);
@@ -217,13 +219,13 @@ router.post('/request_gtrecord_partner', isLoggedIn, async(req, res) => {
         list = await db.sequelize.query(`
             SELECT *, DATE_FORMAT(createdAt,'%Y-%m-%d %H:%i:%S') AS createdAtFormat
             FROM GTs 
-            WHERE strFrom = '${req.body.strNickname}' 
+            WHERE strFrom = '${strNickname}' 
             AND strTo LIKE CONCAT('${req.body.strSearch}', '%') 
             AND date(createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'
             UNION
             SELECT *, DATE_FORMAT(createdAt,'%Y-%m-%d %H:%i:%S') AS createdAtFormat
             FROM GTs 
-            WHERE strTo = '${req.body.strNickname}' 
+            WHERE strTo = '${strNickname}' 
             AND strFrom LIKE CONCAT('${req.body.strSearch}', '%')
             AND date(createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'
             ORDER BY createdAt DESC

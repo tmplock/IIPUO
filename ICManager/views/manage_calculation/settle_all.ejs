@@ -1195,11 +1195,7 @@
 			if (data.iSettleBeforeAcc < 0) {
 				data.iInputQuaterSettle += data.iSettleBeforeAcc;
 			}
-
-			// 마이너스는 수정 불가
-			if (data.iInputQuaterSettle < 0) {
-				data.inputSettleOption = 'disabled="disabled"';
-			}
+			data.inputSettleOption = 'disabled="disabled"';
 
 			// if (parseInt(aObject.iClass) == 4) {
 			// 	// 마이너스는 수정 불가

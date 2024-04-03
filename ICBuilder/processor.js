@@ -69,13 +69,17 @@ exports.ProcessEzugi = async (listDB, listOverview, listOdds, listUpdateDB) => {
         const cData = listDB[i];
 
         let listData = RDEzugi.GetRD(res, cData.strUniqueID);
-        //TODO: TEST CODE 삭제 필요
-        if (listData == null) {
-            if (listDB[i].strTableID.indexOf('TEST') != -1) {
-                // listData = CreateRoundDetailObj('EZUGI', list[i]);
-                listData = RDEzugi.GetTestObj(listDB[i]);
-            }
-        }
+
+        console.log(`##### ProcessEzugi listDB[${i}]`);
+        console.log(listData);
+
+        // //TODO: TEST CODE 삭제 필요
+        // if (listData == null) {
+        //     if (listDB[i].strTableID.indexOf('TEST') != -1) {
+        //         // listData = CreateRoundDetailObj('EZUGI', list[i]);
+        //         listData = RDEzugi.GetTestObj(listDB[i]);
+        //     }
+        // }
 
         if (listData != null)
         {

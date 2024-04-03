@@ -29,21 +29,6 @@ let GetDBListFromVender = (listDB, strVender) => {
     return list;
 }
 
-let GetBaseTime = (iSecondOffset) => {
-
-    console.log(`1`);
-    let time = new Date();
-    console.log(`1`);
-    time.setHours(time.getHours()-9);
-    console.log(`1`);
-    time.setSeconds(time.getSeconds()+iSecondOffset);
-    console.log(`1`);
-
-    const date = moment(time).format('YYYY-MM-DD HH:mm:ss');
-    return date;
-}
-
-
 let GetDBListFromType = (listDB, eType) => {
 
     let list = [];
@@ -73,18 +58,12 @@ let lProcessID = -1;
     let listUpdateDB = [];
     let listOverview = [];
 
-    console.log(`1`);
-    let dateBase = GetBaseTime(-120);
-    let dateBefore = GetBaseTime(-3600);
-
-    console.log(`##### dateBase :${dateBase}`);
-
     let listBetDB = await db.RecordBets.findAll({
         where: {
             eState: 'STANDBY',
             eType:{[Op.or]:['RD', 'CANCEL', 'CANCEL_BET', 'CANCEL_WIN', 'BET', 'WIN']},
             createdAt:{
-                [Op.lte]:moment().subtract(2, "minutes").toDate(),
+                [Op.lte]:moment().subtract(3, "minutes").toDate(),
             }
         },
         order: [['createdAt', 'ASC']]

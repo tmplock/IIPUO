@@ -50,12 +50,22 @@ let IAccount =
     cLanguage: 'kr',
     cIP:'',
     SignatureHashKey: 'b328ca06-0d15-44d9-9fa7-be94c9b592ad',
-    cAPIUSER : 'IIPUser',
+    cAPIUSER : 'IIPmanager',
     cAPIID : '10752001-a4e1e2c9',
-    cAPIAccess : '28c65b947b57b4ca405d3aea2152fce02a5542679049646770d0f09ae774939b',
+    cAPIAccess : 'https://hushnote.io/note/92f6410c-f424-4468-a0db-3ff53e211247',
     cBOAddress : 'https://sbo.ezugi.com/api/get/'
 };
+/*
+    Username: IIPmanager
+    Password: B3th@ppy123! => iip37#Game
+    Email:  ptarowana@proton.me
+    
+    Link to SBO: https://sbo.ezugi.com/
 
+    API User: IIPmanager
+API ID: 10752001-a4e1e2c9
+API Access: https://hushnote.io/note/92f6410c-f424-4468-a0db-3ff53e211247
+*/
 let GetTime = (strTime, iSecondOffset) => {
 
     let time = new Date(strTime);

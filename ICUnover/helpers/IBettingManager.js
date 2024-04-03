@@ -45,7 +45,8 @@ exports.ProcessBet = async (strID, strNickname, strGroupID, iClass, iBalance, iG
                 eType = 'BETRD';
             break;
         case 'EZUGI':
-            eType = 'BETRD';
+            if ( strTableID == 100 || strTableID == 101 || strTableID == 102 || strTableID == 105 || strTableID == 106 || strTableID == 32100 || strTableID == 32101 || strTableID == 32102 || strTableID == 32103 || strTableID == 170 || strTableID == 171 )
+                eType = 'BETRD';
             break;
         case 'CQ9':
             eType = 'BETRD';

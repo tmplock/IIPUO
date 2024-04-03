@@ -347,11 +347,11 @@ exports.GetSettleClass = async (strGroupID, iClass, strQuater, dateStart, dateEn
                 IFNULL((SELECT sum(iAgentBetS - iAgentWinS) FROM RecordDailyOverviews WHERE strID = t4.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iSlotWinLose,
                 IFNULL((SELECT sum(iAgentBetPB - iAgentWinPB) FROM RecordDailyOverviews WHERE strID = t4.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iPBWinLose,
 
-                IFNULL((SELECT -sum(-(iAgentBetB - iAgentWinB) + iAgentRollingB)*t5.fSettleBaccarat*0.01 FROM RecordDailyOverviews WHERE t5.strID=strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iBaccaratTotalVice,
-                IFNULL((SELECT -sum(-(iAgentBetUO - iAgentWinUO) + iAgentRollingUO)*t5.fSettleBaccarat*0.01 FROM RecordDailyOverviews WHERE t5.strID=strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iUnderOverTotalVice,
-                IFNULL((SELECT -sum(-(iAgentBetS - iAgentWinS) + iAgentRollingS)*t5.fSettleSlot*0.01 FROM RecordDailyOverviews WHERE t5.strID=strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iSlotTotalVice,
-                IFNULL((SELECT -sum(-(iAgentBetPB - iAgentWinPB) + iAgentRollingPBA)*t5.fSettlePBA*0.01 FROM RecordDailyOverviews WHERE t5.strID=strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iPBATotalVice,
-                IFNULL((SELECT -sum(-(iAgentBetPB - iAgentWinPB) + iAgentRollingPBB)*t5.fSettlePBB*0.01 FROM RecordDailyOverviews WHERE t5.strID=strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iPBBTotalVice,
+                IFNULL((SELECT -sum((-(r.iAgentBetB - r.iAgentWinB) + r.iAgentRollingB)*u.fSettleBaccarat*0.01) FROM RecordDailyOverviews r LEFT JOIN Users u ON u.strID = r.strID WHERE r.iClass = 5 AND r.strGroupID LIKE CONCAT('${strGroupID}', '%') AND date(r.strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iBaccaratTotalVice,
+                IFNULL((SELECT -sum((-(r.iAgentBetUO - r.iAgentWinUO) + r.iAgentRollingUO)*u.fSettleBaccarat*0.01) FROM RecordDailyOverviews r LEFT JOIN Users u ON u.strID = r.strID WHERE r.iClass = 5 AND r.strGroupID LIKE CONCAT('${strGroupID}', '%') AND date(r.strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iUnderOverTotalVice,
+                IFNULL((SELECT -sum((-(r.iAgentBetS - r.iAgentWinS) + r.iAgentRollingS)*u.fSettleSlot*0.01) FROM RecordDailyOverviews r LEFT JOIN Users u ON u.strID = r.strID WHERE r.iClass = 5 AND r.strGroupID LIKE CONCAT('${strGroupID}', '%') AND date(r.strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iSlotTotalVice,
+                IFNULL((SELECT -sum((-(r.iAgentBetPB - r.iAgentWinPB) + r.iAgentRollingPBA)*u.fSettlePBA*0.01) FROM RecordDailyOverviews r LEFT JOIN Users u ON u.strID = r.strID WHERE r.iClass = 5 AND r.strGroupID LIKE CONCAT('${strGroupID}', '%') AND date(r.strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iPBATotalVice,
+                IFNULL((SELECT -sum((-(r.iAgentBetPB - r.iAgentWinPB) + r.iAgentRollingPBB)*u.fSettlePBB*0.01) FROM RecordDailyOverviews r LEFT JOIN Users u ON u.strID = r.strID WHERE r.iClass = 5 AND r.strGroupID LIKE CONCAT('${strGroupID}', '%') AND date(r.strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iPBBTotalVice,
 
                 IFNULL((SELECT sum(iAmount) FROM Inouts WHERE strGroupID LIKE CONCAT(t4.strGroupID,'%') AND eState = 'COMPLETE' AND eType = 'INPUT' AND date(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}' ),0) as iInput,
                 IFNULL((SELECT sum(iAmount) FROM Inouts WHERE strGroupID LIKE CONCAT(t4.strGroupID,'%') AND eState = 'COMPLETE' AND eType = 'OUTPUT' AND date(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iOutput,
@@ -359,7 +359,6 @@ exports.GetSettleClass = async (strGroupID, iClass, strQuater, dateStart, dateEn
                 IFNULL((SELECT sum(iAmount) FROM Inouts WHERE eState = 'COMPLETE' AND eType = 'OUTPUT' AND strID = t4.strNickname AND date(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iOutput
             FROM Users t4
                      LEFT JOIN Users t3 ON t3.id = t4.iParentID
-                     LEFT JOIN Users t5 ON t5.iParentID = t4.id
             WHERE t4.iClass = ${iClass} AND t4.strGroupID LIKE CONCAT('${strGroupID}', '%')
             ORDER BY settleCount ASC, t4.strGroupID ASC
                 LIMIT ${limit}

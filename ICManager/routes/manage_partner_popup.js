@@ -1199,33 +1199,33 @@ router.post('/request_agentinfo_modify',isLoggedIn, async (req, res) => {
                         msg = `${msg} | 슬롯롤링 변경(${user.fSlotR}=>${data.fSlotR})`;
                 }
 
-                if ( msg != '' ) {
-                    // 부본사 리스트 가져오기
-                    let children = await db.Users.findAll({
-                        where: {
-                            iParentID:user.id,
-                            iPermission: {
-                                [Op.notIn]: [100]
-                            },
-                        }
-                    });
-
-                    for (let i in children) {
-                        await children[i].update({
-                            fSlotR:data.fSlotR,
-                            fBaccaratR:data.fBaccaratR,
-                            fUnderOverR:data.fUnderOverR,
-                        });
-
-                        await db.DataLogs.create({
-                            strNickname: children[i].strNickname,
-                            strID: children[i].strID,
-                            strGroupID: children[i].strGroupID,
-                            strLogs: msg,
-                            strEditorNickname: req.user.strNickname,
-                        });
-                    }
-                }
+                // if ( msg != '' ) {
+                //     // 부본사 리스트 가져오기
+                //     let children = await db.Users.findAll({
+                //         where: {
+                //             iParentID:user.id,
+                //             iPermission: {
+                //                 [Op.notIn]: [100]
+                //             },
+                //         }
+                //     });
+                //
+                //     for (let i in children) {
+                //         await children[i].update({
+                //             fSlotR:data.fSlotR,
+                //             fBaccaratR:data.fBaccaratR,
+                //             fUnderOverR:data.fUnderOverR,
+                //         });
+                //
+                //         await db.DataLogs.create({
+                //             strNickname: children[i].strNickname,
+                //             strID: children[i].strID,
+                //             strGroupID: children[i].strGroupID,
+                //             strLogs: msg,
+                //             strEditorNickname: req.user.strNickname,
+                //         });
+                //     }
+                // }
             }
 
             await user.update(data);

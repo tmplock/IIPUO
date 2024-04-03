@@ -75,6 +75,7 @@ let lProcessID = -1;
 
     console.log(`1`);
     let dateBase = GetBaseTime(-120);
+    let dateBefore = GetBaseTime(-3600);
 
     console.log(`##### dateBase :${dateBase}`);
 
@@ -83,6 +84,7 @@ let lProcessID = -1;
             eState: 'STANDBY',
             eType:{[Op.or]:['RD', 'CANCEL', 'CANCEL_BET', 'CANCEL_WIN', 'BET', 'WIN']},
             createdAt:{
+                [Op.gt]:dateBefore,
                 [Op.lte]:dateBase,
             }
         },

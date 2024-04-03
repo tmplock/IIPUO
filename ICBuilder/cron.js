@@ -122,7 +122,9 @@ let lProcessID = -1;
     {
         const cData = listUpdateDB[i];
 
-        if ( cData.eType == 'RD' && cData.eState == 'STANDBY' )
+        if ( cData.eType == 'BETRD' && cData.eState == 'STANDBY' )
+            continue;
+        else if ( cData.eType == 'RD' && cData.eState == 'STANDBY' )
             continue;
         else if ( cData.eType == 'BET' && cData.eState == 'PENDING' )
         {

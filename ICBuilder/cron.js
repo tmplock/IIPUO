@@ -29,9 +29,13 @@ let GetDBListFromVender = (listDB, strVender) => {
 
 let GetBaseTime = (iSecondOffset) => {
 
+    console.log(`1`);
     let time = new Date();
+    console.log(`1`);
     time.setHours(time.getHours()-9);
+    console.log(`1`);
     time.setSeconds(time.getSeconds()+iSecondOffset);
+    console.log(`1`);
 
     const date = moment(time).format('YYYY-MM-DD HH:mm:ss');
     return date;
@@ -52,7 +56,7 @@ let GetDBListFromType = (listDB, eType) => {
 let lProcessID = -1;
 
 //cron.schedule('*/5 * * * * * ', async ()=> {
- cron.schedule('*/2 * * * * ', async ()=> {
+ cron.schedule('*/1 * * * * ', async ()=> {
 //cron.schedule('0,5,10,15,20,25,30,35,40,45,50,55 * * * * ', async ()=> {
 
     console.log(`##### CRON`);
@@ -67,6 +71,7 @@ let lProcessID = -1;
     let listUpdateDB = [];
     let listOverview = [];
 
+    console.log(`1`);
     let dateBase = GetBaseTime(-120);
 
     console.log(`##### dateBase :${dateBase}`);

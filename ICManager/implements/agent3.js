@@ -630,7 +630,7 @@ var inline_CalculateTermBettingRecord = async (strGroupID, iClass, dateStart, da
 
     for ( var i in records)
     {
-        var td = records[i].createdAt.substring(0,10);
+        var td = records[i].strDate;
 
         iCurrent = FindIndexFromBettingRecord(td, list);
         if ( iCurrent == -1 )

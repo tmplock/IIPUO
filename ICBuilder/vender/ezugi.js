@@ -53,7 +53,7 @@ let IAccount =
     cAPIUSER : 'IIPUser',
     cAPIID : '10752001-a4e1e2c9',
     cAPIAccess : '28c65b947b57b4ca405d3aea2152fce02a5542679049646770d0f09ae774939b',
-    cBOAddress : 'https://boint.tableslive.com/api/get/'
+    cBOAddress : 'https://sbo.ezugi.com/api/get/'
 };
 
 let GetTime = (strTime, iSecondOffset) => {

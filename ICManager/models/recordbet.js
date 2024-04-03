@@ -10,13 +10,13 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
         },
         strID: {
-            type:DataTypes.STRING,
+            type:DataTypes.STRING(10),
         },
         strNickname: {
-            type:DataTypes.STRING,
+            type:DataTypes.STRING(10),
         },
         strGroupID:{
-            type:DataTypes.STRING,
+            type:DataTypes.STRING(32),
         },
         iClass: {
             type:DataTypes.INTEGER,
@@ -29,24 +29,27 @@ module.exports = (sequelize, DataTypes) => {
             type:DataTypes.INTEGER,
         },
         strVender: {
-            type:DataTypes.STRING,
+            type:DataTypes.STRING(32),
         },
         strGameID: {
-            type:DataTypes.STRING,
+            type:DataTypes.STRING(64),
         },
         strTableID: {
-            type:DataTypes.STRING,
+            type:DataTypes.STRING(64),
         },
         strRound: {
-            type:DataTypes.STRING,
+            type:DataTypes.STRING(64),
         },
         strUniqueID: {
-            type:DataTypes.STRING,
+            type:DataTypes.STRING(64),
         },
         strDetail: {
             type:DataTypes.STRING,
         },
         strResult: {
+            type:DataTypes.STRING,
+        },
+        strOverview: {
             type:DataTypes.STRING,
         },
         iTarget: {
@@ -61,14 +64,15 @@ module.exports = (sequelize, DataTypes) => {
             default:0,
         },
         eState: {
-            type:DataTypes.ENUM('STANDBY', 'COMPLETE', 'PENDING', 'ERROR', 'CANCEL_STANDBY', 'CANCELED'),
+            //type:DataTypes.ENUM('STANDBY', 'COMPLETE', 'PENDING', 'ERROR', 'CANCEL_STANDBY', 'CANCELED', 'BET_STANDBY', 'WIN_STANDBY'),
+            type:DataTypes.ENUM('STANDBY', 'PENDING', 'COMPLETE', 'ERROR'),
         },
         eType: {
-            type:DataTypes.ENUM('BET', 'WIN', 'CANCEL'),
+            type:DataTypes.ENUM('BET', 'BETRD', 'WIN', 'RD', 'CANCEL', 'CANCEL_BET', 'CANCEL_WIN'),
             allowNull: false
         },
         strURL: {
-            type:DataTypes.STRING,
+            type:DataTypes.STRING(32),
         },
         createdAt:{
             type:DataTypes.DATE,

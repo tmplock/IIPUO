@@ -52,7 +52,8 @@ let IAccount =
     SignatureHashKey: 'b328ca06-0d15-44d9-9fa7-be94c9b592ad',
     cAPIUSER : 'IIPUser',
     cAPIID : '10752001-a4e1e2c9',
-    cAPIAccess : '28c65b947b57b4ca405d3aea2152fce02a5542679049646770d0f09ae774939b'
+    cAPIAccess : '28c65b947b57b4ca405d3aea2152fce02a5542679049646770d0f09ae774939b',
+    cBOAddress : 'https://boint.tableslive.com/api/get/'
 };
 
 let GetTime = (strTime, iSecondOffset) => {

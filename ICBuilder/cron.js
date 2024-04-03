@@ -63,7 +63,7 @@ let lProcessID = -1;
             eState: 'STANDBY',
             eType:{[Op.or]:['RD', 'CANCEL', 'CANCEL_BET', 'CANCEL_WIN', 'BET', 'WIN']},
             createdAt:{
-                [Op.lte]:moment().subtract(3, "minutes").toDate(),
+                [Op.lte]:moment().subtract(5, "minutes").toDate(),
             }
         },
         order: [['createdAt', 'ASC']]

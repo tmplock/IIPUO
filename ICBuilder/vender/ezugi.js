@@ -114,24 +114,28 @@ exports.GetRangeRD = async (dateStart, dateEnd) => {
                 const objectData = {strUniqueID:current.TransactionID, list:[], strCards: '', strBets: ''};
 
                 const desc = JSON.parse(current.GameString);
-                console.log(desc);
-                const list = GetTarget(desc.BetsList, desc.WinningBets);
-                console.log(list);
-                if (list.length > 0) {
-                    objectData.list = list;
-                }
 
-                const bets = GetBets(list);
-                if (bets != null) {
-                    objectData.strBets = JSON.stringify(bets);
+                if ( desc != null )
+                {
+                    console.log(desc);
+                    const list = GetTarget(desc.BetsList, desc.WinningBets);
+                    console.log(list);
+                    if (list.length > 0) {
+                        objectData.list = list;
+                    }
+    
+                    const bets = GetBets(list);
+                    if (bets != null) {
+                        objectData.strBets = JSON.stringify(bets);
+                    }
+    
+                    const cards = GetCards(desc.BankerCards, desc.PlayerCards);
+                    if (cards != null) {
+                        objectData.strCards = JSON.stringify(cards);
+                    }
+    
+                    listData.push(objectData);
                 }
-
-                const cards = GetCards(desc.BankerCards, desc.PlayerCards);
-                if (cards != null) {
-                    objectData.strCards = JSON.stringify(cards);
-                }
-
-                listData.push(objectData);
             }                    
         }
         return listData;

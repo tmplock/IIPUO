@@ -102,10 +102,10 @@ exports.ProcessEzugi = async (listDB, listOverview, listOdds, listUpdateDB) => {
         }
         else
         {
-            const cElapsedSeconds = GetElapsedSeconds(cData.updatedAt);
-            if ( cElapsedSeconds > 60 )
-                //await db.RecordBets.update({eState:'PENDING'}, {where:{id:list[i].id}});
-                listUpdateDB.push({id:cData.id, eState:'PENDING'});
+            // const cElapsedSeconds = GetElapsedSeconds(cData.updatedAt);
+            // if ( cElapsedSeconds > 60 )
+            //     //await db.RecordBets.update({eState:'PENDING'}, {where:{id:list[i].id}});
+            //     listUpdateDB.push({id:cData.id, eState:'PENDING'});
         }
     }    
 }

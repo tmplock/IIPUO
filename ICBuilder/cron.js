@@ -69,6 +69,8 @@ let lProcessID = -1;
 
     let dateBase = GetBaseTime(-120);
 
+    console.log(`##### dateBase :${dateBase}`);
+
     let listBetDB = await db.RecordBets.findAll({
         where: {
             eState: 'STANDBY',

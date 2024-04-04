@@ -157,6 +157,10 @@
                     bankname = obj.bankname;
                     banknumber = obj.banknumber;
                     bankholder = obj.bankholder;
+                    if (bankname == '' || banknumber == '' || bankholder == '') {
+                        alert('등록된 출금계좌가 없습니다');
+                        return;
+                    }
                     OnClickNext();
                 } else if (obj.result == 'FAIL') {
                     bRequestAccount = false;

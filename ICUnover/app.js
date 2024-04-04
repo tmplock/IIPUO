@@ -245,11 +245,17 @@ app.get('/', async (req, res) => {
         limit:4,
     });
 
-    const listFaq= await db.Faqs.findAll({
-        where:{eState:'ENABLE'},
-        order:[['createdAt','DESC']],
-        limit:4,
-    });
+    let listFaq = [];
+    try {
+        listFaq= await db.Faqs.findAll({
+            where:{eState:'ENABLE'},
+            order:[['createdAt','DESC']],
+            limit:4,
+        });
+    } catch (err) {
+
+    }
+
 
     res.render('index', {iLayout:0, bLogin:bLogin, user:req.user, messages:req.flash('error')[0], listOutputRecent:objectOutput.listOutputRecent, listOutputRank:objectOutput.listOutputRank, listAnnouncement:listAnnouncement, listFaq:listFaq});
 });

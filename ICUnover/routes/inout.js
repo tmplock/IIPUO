@@ -523,6 +523,13 @@ router.post('/request_user_bank', async (req, res) => {
             return;
         }
         console.log(info);
+        let bankname = info.strBankname ?? '';
+        let banknumber = info.strBankAccount ?? '';
+        let bankholder = info.strBankOwner ?? '';
+        if (bankname == '' || banknumber == '' || bankholder == '') {
+            res.send({result: 'FAIL', msg: `등록된 출금 계좌가 없습니다`, bankname:'', banknumber:'', bankholder:''});
+            return;
+        }
         res.send({result: 'OK', msg:'출금 계좌 조회 성공', bankname:info.strBankname, banknumber:info.strBankAccount, bankholder:info.strBankOwner});
     } catch (err) {
         console.log(err);

@@ -277,16 +277,21 @@ router.post('/request_removeuser', async (req, res) => {
 });
 
 setInterval(async () => {
-
-    axios.post(`${global.strUserPageAddress}/realtime_user`)
-    .then((response)=> {
-        console.log(`Axios Success /realtime_user : `);
-    })
-    .catch((error)=> {
-    });
-
+    let list = await db.sequelize.query(`
+        SELECT DISTINCT strURL FROM Users WHERE strURL IS NOT NULL 
+    `);
+    if (list.length > 0) {
+        let urls = list[0];
+        for (let i in urls) {
+            axios.post(`${urls[i].strURL}/realtime_user`)
+                .then((response)=> {
+                    console.log(`Axios Success /realtime_user : `);
+                })
+                .catch((error)=> {
+                });
+        }
+    }
 }, 3000);
-
 
 let GetNumUser = (strGroupID, listUsers) => {
 

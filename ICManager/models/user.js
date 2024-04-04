@@ -70,7 +70,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         // 롤링
         iRolling: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.DOUBLE(17,4),
             default: 0,
         },
         // 죽장(시스템상으로 지급하는 금액, 죽장전환을 통해 캐시로 변경 가능)

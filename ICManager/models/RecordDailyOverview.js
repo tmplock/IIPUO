@@ -61,19 +61,19 @@ module.exports = (sequelize, DataTypes) => {
             type:DataTypes.INTEGER,
         },
         iRollingB: {
-            type:DataTypes.INTEGER,
+            type: DataTypes.DOUBLE(17,4),
         },
         iRollingUO: {
-            type:DataTypes.INTEGER,
+            type: DataTypes.DOUBLE(17,4),
         },
         iRollingS: {
-            type:DataTypes.INTEGER,
+            type: DataTypes.DOUBLE(17,4),
         },
         iRollingPBA: {
-            type:DataTypes.INTEGER,
+            type: DataTypes.DOUBLE(17,4),
         },
         iRollingPBB: {
-            type:DataTypes.INTEGER,
+            type: DataTypes.DOUBLE(17,4),
         },
         // 배팅
         iAgentBetB: {
@@ -102,19 +102,19 @@ module.exports = (sequelize, DataTypes) => {
             type:DataTypes.INTEGER,
         },
         iAgentRollingB: {
-            type:DataTypes.INTEGER,
+            type: DataTypes.DOUBLE(17,4),
         },
         iAgentRollingUO: {
-            type:DataTypes.INTEGER,
+            type: DataTypes.DOUBLE(17,4),
         },
         iAgentRollingS: {
-            type:DataTypes.INTEGER,
+            type: DataTypes.DOUBLE(17,4),
         },
         iAgentRollingPBA: {
-            type:DataTypes.INTEGER,
+            type: DataTypes.DOUBLE(17,4),
         },
         iAgentRollingPBB: {
-            type:DataTypes.INTEGER,
+            type: DataTypes.DOUBLE(17,4),
         },
         createdAt: {
             type: DataTypes.DATE,

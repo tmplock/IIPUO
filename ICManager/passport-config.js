@@ -62,7 +62,9 @@ module.exports = () => {
                     if (user.iPermission == 100) {
                         strURL = permission.strViewURL;
                     }
-                    if (!req.headers.origin.startsWith(strURL)) {
+                    // 모바일 http로 접속되는 경우가 있음
+                    let host = `https://${req.headers.host}`;
+                    if (!host.startsWith(strURL)) {
                         console.log(`Access Not User`);
                         return done(null, false, { message: '접근 권한이 없는 아이디 입니다.' });
                     }

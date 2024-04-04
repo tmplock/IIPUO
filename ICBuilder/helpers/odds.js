@@ -1042,7 +1042,9 @@ exports.UpdateOverview = async (list) => {
             console.log('db');
             //console.log(dbdata);
 
-            const cRolling = t.iRollingB + t.iRollingUO + t.iRollingS + t.iRollingPBA + t.iRollingPBB;
+            // 소수점 정리
+            // const cRolling = parseInt(t.iRollingB) + parseInt(t.iRollingUO) + parseInt(t.iRollingS) + parseInt(t.iRollingPBA) + parseInt(t.iRollingPBB);
+            const cRolling = t.iRollingB + t.iRollingUO + t.iRollingS + t.iRollingPBA + t.iRollingPBB; // 요게 맞음
             await db.Users.increment({iRolling:cRolling}, {where:{strID:t.strID}});
 
             if ( dbdata == null )
@@ -1090,32 +1092,32 @@ exports.UpdateOverview = async (list) => {
                 console.log(t);
                 await db.RecordDailyOverviews.update(
                     {
-                        iBetB:parseInt(dbdata.iBetB)+parseInt(t.iBetB),
-                        iBetUO:parseInt(dbdata.iBetUO)+parseInt(t.iBetUO),
-                        iBetS:parseInt(dbdata.iBetS)+parseInt(t.iBetS),
-                        iBetPB:parseInt(dbdata.iBetPB)+parseInt(t.iBetPB),
-                        iWinB:parseInt(dbdata.iWinB)+parseInt(t.iWinB),
-                        iWinUO:parseInt(dbdata.iWinUO)+parseInt(t.iWinUO),
-                        iWinS:parseInt(dbdata.iWinS)+parseInt(t.iWinS),
-                        iWinPB:parseInt(dbdata.iWinPB)+parseInt(t.iWinPB),
-                        iRollingB:parseInt(dbdata.iRollingB)+parseInt(t.iRollingB),
-                        iRollingUO:parseInt(dbdata.iRollingUO)+parseInt(t.iRollingUO),
-                        iRollingS:parseInt(dbdata.iRollingS)+parseInt(t.iRollingS),
-                        iRollingPBA:parseInt(dbdata.iRollingPBA)+parseInt(t.iRollingPBA),
-                        iRollingPBB:parseInt(dbdata.iRollingPBB)+parseInt(t.iRollingPBB),
-                        iAgentBetB:parseInt(dbdata.iAgentBetB)+parseInt(t.iAgentBetB),
-                        iAgentBetUO:parseInt(dbdata.iAgentBetUO)+parseInt(t.iAgentBetUO),
-                        iAgentBetS:parseInt(dbdata.iAgentBetS)+parseInt(t.iAgentBetS),
-                        iAgentBetPB:parseInt(dbdata.iAgentBetPB)+parseInt(t.iAgentBetPB),
-                        iAgentWinB:parseInt(dbdata.iAgentWinB)+parseInt(t.iAgentWinB),
-                        iAgentWinUO:parseInt(dbdata.iAgentWinUO)+parseInt(t.iAgentWinUO),
-                        iAgentWinS:parseInt(dbdata.iAgentWinS)+parseInt(t.iAgentWinS),
-                        iAgentWinPB:parseInt(dbdata.iAgentWinPB)+parseInt(t.iAgentWinPB),
-                        iAgentRollingB:parseInt(dbdata.iAgentRollingB)+parseInt(t.iAgentRollingB),
-                        iAgentRollingUO:parseInt(dbdata.iAgentRollingUO)+parseInt(t.iAgentRollingUO),
-                        iAgentRollingS:parseInt(dbdata.iAgentRollingS)+parseInt(t.iAgentRollingS),
-                        iAgentRollingPBA:parseInt(dbdata.iAgentRollingPBA)+parseInt(t.iAgentRollingPBA),
-                        iAgentRollingPBB:parseInt(dbdata.iAgentRollingPBB)+parseInt(t.iAgentRollingPBB),
+                        iBetB:dbdata.iBetB+t.iBetB,
+                        iBetUO:dbdata.iBetUO+t.iBetUO,
+                        iBetS:dbdata.iBetS+t.iBetS,
+                        iBetPB:dbdata.iBetPB+t.iBetPB,
+                        iWinB:dbdata.iWinB+t.iWinB,
+                        iWinUO:dbdata.iWinUO+t.iWinUO,
+                        iWinS:dbdata.iWinS+t.iWinS,
+                        iWinPB:dbdata.iWinPB+t.iWinPB,
+                        iRollingB:dbdata.iRollingB+t.iRollingB,
+                        iRollingUO:dbdata.iRollingUO+t.iRollingUO,
+                        iRollingS:dbdata.iRollingS+t.iRollingS,
+                        iRollingPBA:dbdata.iRollingPBA+t.iRollingPBA,
+                        iRollingPBB:dbdata.iRollingPBB+t.iRollingPBB,
+                        iAgentBetB:dbdata.iAgentBetB+t.iAgentBetB,
+                        iAgentBetUO:dbdata.iAgentBetUO+t.iAgentBetUO,
+                        iAgentBetS:dbdata.iAgentBetS+t.iAgentBetS,
+                        iAgentBetPB:dbdata.iAgentBetPB+t.iAgentBetPB,
+                        iAgentWinB:dbdata.iAgentWinB+t.iAgentWinB,
+                        iAgentWinUO:dbdata.iAgentWinUO+t.iAgentWinUO,
+                        iAgentWinS:dbdata.iAgentWinS+t.iAgentWinS,
+                        iAgentWinPB:dbdata.iAgentWinPB+t.iAgentWinPB,
+                        iAgentRollingB:dbdata.iAgentRollingB+t.iAgentRollingB,
+                        iAgentRollingUO:dbdata.iAgentRollingUO+t.iAgentRollingUO,
+                        iAgentRollingS:dbdata.iAgentRollingS+t.iAgentRollingS,
+                        iAgentRollingPBA:dbdata.iAgentRollingPBA+t.iAgentRollingPBA,
+                        iAgentRollingPBB:dbdata.iAgentRollingPBB+t.iAgentRollingPBB,
                     },
                     {where:{strID:t.strID, strDate:t.strDate}});
             }

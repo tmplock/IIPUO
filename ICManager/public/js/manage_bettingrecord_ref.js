@@ -134,7 +134,7 @@ let GetBettingTargetWins = (bets, color) => {
         for (let i in bets)
         {
             let cBetting = bets[i].W;
-            let tag = `<font style="color: black;">${cBetting.toLocaleString()}</font>`;
+            let tag = `<font style="color: black;">${GetNumber(cBetting)}</font>`;
             tags = (tags == '') ? tag : `${tags}<br>${tag}`;
         }
     } catch (err) {}

@@ -48,11 +48,11 @@
             return;
         }
 
-        // if ( iRolling < 10000 || iUserRolling < 10000 )
-        // {
-        //     alert('전환 로링비는 10,000원 이상이어야 합니다.');
-        //     return;
-        // }
+        if ( iRolling < 10000 || iUserRolling < 10000 )
+        {
+            alert('전환 로링비는 10,000원 이상이어야 합니다.');
+            return;
+        }
 
         $.ajax({
             type:'post',

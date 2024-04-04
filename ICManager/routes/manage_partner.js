@@ -301,7 +301,7 @@ router.post('/settingodds', isLoggedIn, async(req, res) => {
     const input = req.body.pass ?? '';
 
     // 비밀번호는 로그인한 이용자
-    const info = await db.Users.findOne({where: {strNickname: req.user.strNickname, strPassword: input}});
+    const info = await db.Users.findOne({where: {strNickname: req.user.strNickname, strOddPassword: input}});
     if (info == null) {
         res.send({result: 'FAIL', msg:'비밀번호가 틀립니다'});
         return;

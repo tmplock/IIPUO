@@ -192,6 +192,9 @@ module.exports = (sequelize, DataTypes) => {
         // 지분자들이 원본데이터 조회를 위한 User Id
         iRelUserID: {
             type:DataTypes.INTEGER
+        },
+        strOddPassword: {
+            type: DataTypes.STRING,
         }
     }, {
         indexes: [

@@ -1112,7 +1112,8 @@ router.post('/request_bank_list', async (req, res) => {
                 }
             });
 
-            where = `
+            where  = `
+                AND u.iPermission != 100
                 AND u.iClass IN (1,2,3)
                 AND u.strGroupID LIKE CONCAT('${user.strGroupID}', '%')
             `;
@@ -1123,11 +1124,13 @@ router.post('/request_bank_list', async (req, res) => {
                 }
             });
             where = `
+                AND u.iPermission != 100
                 AND u.iClass IN (2,3)
                 AND u.strGroupID LIKE CONCAT('${user.strGroupID}', '%')
             `;
         } else {
             where = `
+                AND u.iPermission != 100            
                 AND u.iClass = 3
                 AND u.strNickname='${req.body.strNickname}'
             `;
@@ -1141,17 +1144,20 @@ router.post('/request_bank_list', async (req, res) => {
                 }
             });
             where = `
+                AND u.iPermission != 100
                 AND u.iClass IN (2,3)
                 AND u.strGroupID LIKE CONCAT('${user.strGroupID}', '%')
             `;
         } else {
             where = `
+                AND u.iPermission != 100
                 AND u.iClass = 3
                 AND u.strNickname='${req.body.strNickname}'
             `;
         }
     } else if (iRootClass == 3) {
         where = `
+                AND u.iPermission != 100
                 AND u.iClass = 3
                 AND u.strNickname='${req.body.strNickname}'
             `;

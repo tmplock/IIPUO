@@ -215,13 +215,13 @@ let SetBettingRecordHeader = (iSection, iClass) => {
     //         </li>
     //     `;
     // }
-    if (iClass <= 2) {
-        subTag = `
-        <li style="padding-right: 20px;" class=${GetBettingRecordSectionClass(iSection, 8)}>
-            <a href="#" style="color:${GetSettingSectionColor(iSection, 8)}; font-size: 15px;" id="bettingrecord_pending">처리대기</a>
-        </li>
-    `;
-    }
+    // if (iClass <= 2) {
+    //     subTag = `
+    //     <li style="padding-right: 20px;" class=${GetBettingRecordSectionClass(iSection, 8)}>
+    //         <a href="#" style="color:${GetSettingSectionColor(iSection, 8)}; font-size: 15px;" id="bettingrecord_pending">처리대기</a>
+    //     </li>
+    // `;
+    // }
 
     let subTag3 = `
         <li style="padding-right: ${padding_right};" class=${GetBettingRecordSectionClass(iSection, 4)}>

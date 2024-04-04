@@ -572,31 +572,3 @@ $(document).on('click', '#setting_odds', ()=> {
     $form.submit();
 
 });
-
-$(document).on('click', '#remove_db', ()=> {
-    let input = prompt('암호입력');
-    if (input == null) {
-        return;
-    } else if (input.length == 0) {
-        alert(`암호 미입력`);
-        return;
-    }
-
-    window.open('', 'popupSettingOdds', 'width=768, height=490, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
-
-    var $form = $('<form></form>');
-    $form.attr('action', '/manage_partner_popup/removedb');
-    $form.attr('method', 'post');
-    $form.attr('target', 'popupSettingOdds');
-    $form.appendTo('body');
-    
-    var strNickname = $(`<input type="hidden" value="${user.strNickname}" name="strNickname">`);
-    var strGroupID = $(`<input type="hidden" value="${user.strGroupID}" name="strGroupID">`);
-    var iClass = $(`<input type="hidden" value=${user.iClass} name="iClass">`);
-    var iPermission = $(`<input type="hidden" value=${user.iPermission} name="iPermission">`);
-    var pass = $(`<input type="hidden" value=${input} name="pass">`);
-
-    $form.append(strNickname).append(strGroupID).append(iClass).append(iPermission).append(pass);
-    $form.submit();
-
-});

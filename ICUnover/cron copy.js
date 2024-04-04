@@ -156,13 +156,6 @@ cron.schedule('*/5 * * * * ', async ()=> {
         for (let i in list)
         {
             let listData = RDEzugi.GetRD(res, list[i].strUniqueID);
-            //TODO: TEST CODE 삭제 필요
-            if (listData == null) {
-                if (list[i].strTableID.indexOf('TEST') != -1) {
-                    // listData = CreateRoundDetailObj('EZUGI', list[i]);
-                    listData = RDEzugi.GetTestObj(list[i]);
-                }
-            }
 
             if (listData != null)
             {

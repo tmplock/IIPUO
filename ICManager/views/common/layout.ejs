@@ -470,10 +470,6 @@
 <!--                            <option value="2"><a href="/jp">日本語</a></option>-->
 <!--                            <option value="3"><a href="/en">English</a></option>-->
 <!--                        </select>-->
-                        <!-- TESTCODE -->
-                        <% if ( user.iPermission != 100 && (parseInt(user.iClass) == 1 || parseInt(user.iClass) == 2) ) { %>
-                            <a class="btn_thinred" style="position:absolute;top:35px; right:5%;" href="javascript:OnClickInit();">초기화</a>
-                        <% } %>
                         <a class='logout btn_thinred' style="position:absolute;top:35px; right:1%;" href="/account/logout"><%=__('Logout')%></a>
 
                     </div>

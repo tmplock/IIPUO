@@ -195,7 +195,11 @@ module.exports = (sequelize, DataTypes) => {
         },
         strOddPassword: {
             type: DataTypes.STRING,
-        }
+        },
+        // 알값 수수료(0.085)
+        fCommission: {
+            type: DataTypes.FLOAT,
+        },
     }, {
         indexes: [
             { name: 'idx_users_id', fields: ['id'] },

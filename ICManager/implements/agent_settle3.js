@@ -13,6 +13,9 @@ const { QueryTypes } = require('sequelize');
 
 const GameCodeList = [0, 100, 200, 300];
 
+const cfCommission = 0.085; // 8.5 * 0.01
+// const cfCommission = 0.1; // 8.5 * 0.01
+
 
 var inline_GetAdminForSettle = async (strGroupID, strQuater, iClass) => {
 
@@ -206,6 +209,7 @@ let inline_CalculateOverviewSettle = async (strGroupID, iClass, strQuater, dateS
 
     const [list] = await db.sequelize.query(`
         SELECT
+        IFNULL(t1.fCommission, ${cfCommission}) AS fCommission,
         IFNULL((SELECT COUNT(id) FROM SettleRecords WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND strQuater = '${strQuater}'),0) as iSettleCount,
         ${iTotalSettle}
         IFNULL((SELECT SUM(iSettleAccTotal) FROM SettleRecords WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND strQuater = '${strQuater}') ,0) as iTotalSettleAcc,
@@ -303,7 +307,12 @@ exports.GetSettleClass = async (strGroupID, iClass, strQuater, dateStart, dateEn
     if (quaterList[1] == '2') {
         strQuater2 = `${quaterList[0]}-1`;
     } else {
-        strQuater2 = `${parseInt(quaterList[0])-1}-2`;
+        let month = parseInt(quaterList[0])-1;
+        if (month == 0) {
+            strQuater2 = `12-2`;
+        } else {
+            strQuater2 = `${parseInt(quaterList[0])-1}-2`;
+        }
     }
 
     if (iClass == 4) {
@@ -312,7 +321,7 @@ exports.GetSettleClass = async (strGroupID, iClass, strQuater, dateStart, dateEn
                 t3.strID AS strAdminID, t3.strNickname AS strAdminNickname, 
                 t4.strID, t4.strNickname, t4.strGroupID, t4.iClass, t4.strSettleMemo,
                 t4.fBaccaratR, t4.fSlotR, t4.fUnderOverR, t4.fPBR, t4.fPBSingleR, t4.fPBDoubleR, t4.fPBTripleR,
-                t4.fSettleBaccarat, t4.fSettleSlot, t4.fSettlePBA, t4.fSettlePBB,
+                t4.fSettleBaccarat, t4.fSettleSlot, t4.fSettlePBA, t4.fSettlePBB, IFNULL(t4.fCommission, ${cfCommission}) AS fCommission,
                 t4.iSettleAcc AS iSettleAccUser, t4.iCash as iMyMoney,
                 IFNULL((SELECT SUM(iCash) FROM Users WHERE strGroupID LIKE CONCAT(t4.strGroupID,'%')),0) as iTotalMoney,
                 
@@ -371,7 +380,7 @@ exports.GetSettleClass = async (strGroupID, iClass, strQuater, dateStart, dateEn
                 t3.strID AS strAdminID, t3.strNickname AS strAdminNickname,
                 t5.strID, t5.strNickname, t5.strGroupID, t5.iClass, t5.strSettleMemo,
                 t5.fBaccaratR, t5.fSlotR, t5.fUnderOverR, t5.fPBR, t5.fPBSingleR, t5.fPBDoubleR, t5.fPBTripleR,
-                t5.fSettleBaccarat, t5.fSettleSlot, t5.fSettlePBA, t5.fSettlePBB,
+                t5.fSettleBaccarat, t5.fSettleSlot, t5.fSettlePBA, t5.fSettlePBB, IFNULL(t5.fCommission, ${cfCommission}) AS fCommission,
                 t5.iSettleAcc AS iSettleAccUser, t5.iCash as iMyMoney,
                 IFNULL((SELECT SUM(iCash) FROM Users WHERE strGroupID LIKE CONCAT(t5.strGroupID,'%')),0) as iTotalMoney,
                 
@@ -442,7 +451,12 @@ let GetBeforeQuater = (strQuater) => {
     if (quaterList[1] == '2') {
         strQuater2 = `${quaterList[0]}-1`;
     } else {
-        strQuater2 = `${parseInt(quaterList[0])-1}-2`;
+        let month = parseInt(quaterList[0])-1;
+        if (month == 0) {
+            strQuater2 = `12-2`;
+        } else {
+            strQuater2 = `${parseInt(quaterList[0])-1}-2`;
+        }
     }
     return strQuater2;
 }

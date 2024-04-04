@@ -200,7 +200,6 @@
 <script type="text/javascript" src="js/manage_user_menu.js"></script>
 <script type="text/javascript" src="js/pagination.js"></script>
 <script type="text/javascript" src="js/socket.js"></script>
-<script type="text/javascript" src="js/test.js"></script>
 <script>
 	let user = JSON.parse('<%-JSON.stringify(user)%>');
 	let overview = JSON.parse('<%-JSON.stringify(overview)%>');
@@ -467,7 +466,7 @@
 		// 대본사 이하는 본인의 죽장만 표시(본사는 본인 이하의 죽장 모두 합산)
 		let iTotalSettle = parseInt(aObject.iTotalSettle ?? 0); // 죽장
 		let iTotalCommission = parseInt(aObject.iTotalCommission ?? 0); // 윈로스(알값)
-		let iShareCommission = parseInt(aObject.iSWinlose ?? 0) * 0.1;
+		let iShareCommission = parseInt(aObject.iSWinlose ?? 0) * parseFloat(aObject.fCommission);
 		iTotalCommission += iShareCommission;
 		let iRealTotal = iTotalSum - iTotalSettle - iTotalCommission; // 순이익
 		let iSettleAcc = parseInt(aObject.iSettleAcc ?? 0); // 보관 죽장
@@ -836,7 +835,7 @@
 		{
 			let winloseB = (parseInt(obj.iBaccaratWinLose) + parseInt(obj.iUnderOverWinLose));
 			if (winloseB > 0) {
-				obj.iCommissionBaccarat = winloseB * 0.1;
+				obj.iCommissionBaccarat = winloseB * parseFloat(obj.fCommission);
 			} else {
 				obj.iBaccaratWinLose = 0;
 				obj.iUnderOverWinLose = 0;
@@ -847,7 +846,7 @@
 		// 슬롯 죽장이 없을 경우 알값은 지분자들이 계산
 		let fSettleSlot = parseInt(obj.fSettleSlot ?? 0);
 		if (winloseS > 0 && fSettleSlot != 0) {
-			obj.iCommissionSlot = winloseS * 0.1;
+			obj.iCommissionSlot = winloseS * parseFloat(obj.fCommission);
 		} else if (winloseS < 0) {
 			obj.iSlotWinLose = 0;
 		}

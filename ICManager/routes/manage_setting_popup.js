@@ -80,7 +80,7 @@ router.post('/readletter', async (req, res) => {
     const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:req.body.iClass, strTarget:req.body.target,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission};
 
-    const contents = await db.Letters.findOne({where:{id:parseInt(req.body.id)}});
+    let contents = await db.Letters.findOne({where:{id:parseInt(req.body.id)}});
 
     if (user.iPermission != 100) {
         if (contents.eRead == 'UNREAD') {
@@ -100,6 +100,9 @@ router.post('/readletter', async (req, res) => {
 
     // 알림들 업데이트
     ISocket.AlertUpdateByNickname(req.body.strNickname, iocount);
+
+    contents.strSubject = contents.strSubject.replace(/(\n|\r\n)/g, '');
+    contents.strContents = contents.strContents.replace(/(\n|\r\n)/g, '<br>');
 
     if (contents.strFrom == req.body.strNickname || contents.eRead == 'REPLY' || contents.eRead == 'REPLY_READED' || req.user.iPermission == 100) {
         res.render('manage_setting/popup_readletter', {iLayout:1, iHeaderFocus:1, agent:user, contents:contents, iocount:iocount, letterType: req.body.letterType});

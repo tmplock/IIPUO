@@ -130,33 +130,33 @@ let lProcessID = -1;
 
     //  ##### OVERVIEW
     console.log(`##### UPDATE OVERVIEW : Length : ${listOverview.length}`);
-    console.log(listOverview);
-    //await ODDS.UpdateOverview(listOverview);
+    //console.log(listOverview);
+    await ODDS.UpdateOverview(listOverview);
 
-    // //  ##### UPDATE BET
-    // console.log(`##### UPDATE RECORD BET : Length : ${listUpdateDB.length}`);
-    // for ( let i in listUpdateDB )
-    // {
-    //     const cData = listUpdateDB[i];
+    //  ##### UPDATE BET
+    console.log(`##### UPDATE RECORD BET : Length : ${listUpdateDB.length}`);
+    for ( let i in listUpdateDB )
+    {
+        const cData = listUpdateDB[i];
 
-    //     if ( cData.eType == 'BETRD' && cData.eState == 'STANDBY' )
-    //         continue;
-    //     else if ( cData.eType == 'RD' && cData.eState == 'STANDBY' )
-    //         continue;
-    //     else if ( cData.eType == 'BET' && cData.eState == 'PENDING' )
-    //     {
-    //         await db.RecordBets.update({eType:'BET', eState:'STANDBY'}, {where:{id:cData.id}});
-    //     }
-    //     else
-    //     {
-    //         if ( cData.strDetail != '' && cData.strResult != '' && cData.strOverview != '' )
-    //             await db.RecordBets.update({eState:'COMPLETE', strDetail:cData.strDetail, strResult:cData.strResult, strOverview:cData.strOverview}, {where:{id:cData.id}});
-    //         else if ( cData.strOverview != '' )
-    //             await db.RecordBets.update({eState:'COMPLETE', strOverview:cData.strOverview}, {where:{id:cData.id}});
-    //         else
-    //             await db.RecordBets.update({eState:'COMPLETE'}, {where:{id:cData.id}});
-    //     }
-    // }
+        if ( cData.eType == 'BETRD' && cData.eState == 'STANDBY' )
+            continue;
+        else if ( cData.eType == 'RD' && cData.eState == 'STANDBY' )
+            continue;
+        else if ( cData.eType == 'BET' && cData.eState == 'PENDING' )
+        {
+            await db.RecordBets.update({eType:'BET', eState:'STANDBY'}, {where:{id:cData.id}});
+        }
+        else
+        {
+            if ( cData.strDetail != '' && cData.strResult != '' && cData.strOverview != '' )
+                await db.RecordBets.update({eState:'COMPLETE', strDetail:cData.strDetail, strResult:cData.strResult, strOverview:cData.strOverview}, {where:{id:cData.id}});
+            else if ( cData.strOverview != '' )
+                await db.RecordBets.update({eState:'COMPLETE', strOverview:cData.strOverview}, {where:{id:cData.id}});
+            else
+                await db.RecordBets.update({eState:'COMPLETE'}, {where:{id:cData.id}});
+        }
+    }
     
     lProcessID = -1;
     

@@ -218,6 +218,9 @@
                     } else if ( list[i].eRead == 'REPLY' && list[i].strFrom == user.strNickname) {
                         eRead = '답변미확인';
                         color2 = 'red';
+                    } else if (list[i].eRead == 'REPLY' && list[i].strWriter == user.strNickname) {
+                        eRead = '답변미확인';
+                        color2 = 'red';
                     }
 
                     let eState = '대기';

@@ -130,7 +130,9 @@ exports.CalculateOdds = async (strID, iClass) => {
             objectOdds.strAdminID = result[0].strAdminID,
             objectOdds.strAdminGroupID = result[0].strAdminGroupID,
 
+            objectOdds.strPAdminGroupID = result[0].strPAdminGroupID;
             objectOdds.strPAdminID = result[0].strPAdminID;
+            objectOdds.strVAdminGroupID = result[0].strVAdminGroupID;
             objectOdds.strVAdminID = result[0].strVAdminID;
             objectOdds.strAgentID = '';
             objectOdds.strShopID = '';
@@ -221,8 +223,11 @@ exports.CalculateOdds = async (strID, iClass) => {
 
 
             objectOdds.strPAdminID = result[0].strPAdminID;
+            objectOdds.strPAdminGroupID = result[0].strPAdminGroupID,
             objectOdds.strVAdminID = result[0].strVAdminID;
+            objectOdds.strVAdminGroupID = result[0].strVAdminGroupID,
             objectOdds.strAgentID = result[0].strAgentID;
+            objectOdds.strAgentGroupID = result[0].strAgentGroupID;
             objectOdds.strShopID = '';
             objectOdds.strUserID = '';
 
@@ -328,9 +333,13 @@ exports.CalculateOdds = async (strID, iClass) => {
             objectOdds.strAdminGroupID = result[0].strAdminGroupID,
 
             objectOdds.strPAdminID = result[0].strPAdminID;
+            objectOdds.strPAdminGroupID = result[0].strPAdminGroupID,
             objectOdds.strVAdminID = result[0].strVAdminID;
+            objectOdds.strVAdminGroupID = result[0].strVAdminGroupID,
             objectOdds.strAgentID = result[0].strAgentID;
+            objectOdds.strAgentGroupID = result[0].strAgentGroupID,
             objectOdds.strShopID = result[0].strShopID;
+            objectOdds.strShopGroupID = result[0].strShopGroupID,
             objectOdds.strUserID = '';
 
             objectOdds.fPAdminBaccaratR = result[0].fPAdminBaccaratR;

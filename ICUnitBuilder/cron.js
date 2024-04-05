@@ -77,17 +77,23 @@ let lProcessID = -1;
     });
     console.log(`##### listBetDB.length = ${listBetDB.length}`);
 
-    let listOdds = await ODDS.FullCalculteOdds(listBetDB);
+    
+
+    const test = await ODDS.CalculateOdds('god1047', 5);
+    console.log(`#####################################################`);
+    console.log(test);
+
+    //let listOdds = await ODDS.FullCalculteOdds(listBetDB);
 
     // //  ##### VIVO
     // const listVivoDB = GetDBListFromVender(listBetDB, 'VIVO');
     // console.log(`##### VIVO : Length : ${listVivoDB.length}`);
     // Processor.ProcessVivo(listVivoDB, listOverview, listOdds, listUpdateDB);
 
-    // //  ##### EZUGI
-    const listEzugiDB = GetDBListFromVender(listBetDB, 'EZUGI');
-    console.log(`##### EZUGI : Length : ${listEzugiDB.length}`);
-    await Processor.ProcessEzugi(listEzugiDB, listOverview, listOdds, listUpdateDB);
+    // // //  ##### EZUGI
+    // const listEzugiDB = GetDBListFromVender(listBetDB, 'EZUGI');
+    // console.log(`##### EZUGI : Length : ${listEzugiDB.length}`);
+    // await Processor.ProcessEzugi(listEzugiDB, listOverview, listOdds, listUpdateDB);
 
     // //  ##### CQ9
     // const listCQ9DB = GetDBListFromVender(listBetDB, 'CQ9');

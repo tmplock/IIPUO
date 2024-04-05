@@ -33,6 +33,9 @@ module.exports = (sequelize, DataTypes) => {
         eState: {
             type:DataTypes.ENUM('ENABLE', 'DISABLE'),
         },
+        strURL: {
+            type:DataTypes.STRING,
+        }
     });
 
     return Announcements;

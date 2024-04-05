@@ -72,5 +72,10 @@ router.get('/ann', async (req, res) => {
     res.render('board/view', {iLayout:0, bLogin:bLogin, user:req.user, messages:null, listOutputRecent:objectOutput.listOutputRecent, listOutputRank:objectOutput.listOutputRank, objectAnn:objectAnn, eDocumentType:'ANN'});
 });
 
+router.get('/popup', async (req, res) => {
+    console.log(`#####/board/popup`);
+    const popuplist = await db.Announcements.findAll({where:{eType: 'POPUP', eState: 'ENABLE'}});
+    res.send({list: popuplist});
+});
 
 module.exports = router;

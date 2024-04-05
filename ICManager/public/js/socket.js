@@ -47,6 +47,11 @@ let AlertLetter = (strText, bOn) => {
 		$('#letter_process').append(`<a href="#" class="btn_thinyellow" style="position:absolute;top:35px; right:30%;" onclick="OnClickLetterProcess();">${strText}</a>`);
 		if (intervalLetterSoundOn == 1)
 			Alertinterval('alert_letter');
+	} else if ( user.iPermission == 100 && user.iClass == 3 && bOn) {
+		$('#letter_process').empty();
+		$('#letter_process').append(`<a href="#" class="btn_thinyellow" style="position:absolute;top:35px; right:30%;" onclick="OnClickLetterProcess();">${strText}</a>`);
+		if (intervalLetterSoundOn == 1)
+			Alertinterval('alert_letter');
 	} else {
 		clearInterval(intervalLetter);
 		$('#letter_process').empty();
@@ -55,6 +60,11 @@ let AlertLetter = (strText, bOn) => {
 
 let AlertLetterReply = (strText, bOn) => {
 	if ( user.iPermission != 100 && bOn) {
+		$('#letterreply_process').empty();
+		$('#letterreply_process').append(`<a href="#" class="btn_thinyellow" style="position:absolute;top:35px; right:30%;" onclick="OnClickLetterReply();">${strText}</a>`);
+		if (intervalLetterReplySoundOn == 1)
+			Alertinterval('alert_letter_reply');
+	} else if (user.iPermission == 100 && user.iClass == 3 && bOn) {
 		$('#letterreply_process').empty();
 		$('#letterreply_process').append(`<a href="#" class="btn_thinyellow" style="position:absolute;top:35px; right:30%;" onclick="OnClickLetterReply();">${strText}</a>`);
 		if (intervalLetterReplySoundOn == 1)
@@ -91,6 +101,11 @@ let AlertContact = (strText, bOn) => {
 
 let AlertContactReply = (strText, bOn) => {
 	if ( user.iPermission != 100 && bOn ) {
+		$('#contactreply_process').empty();
+		$('#contactreply_process').append(`<a href="#" class="btn_thinyellow" style="position:absolute;top:35px; right:30%;" onclick="OnClickContactSendReply();">${strText}</a>`);
+		if (intervalContactReplySoundOn == 1)
+			Alertinterval('alert_contact_reply');
+	} else if ( user.iPermission == 100 && user.iClass == 3 && bOn ) {
 		$('#contactreply_process').empty();
 		$('#contactreply_process').append(`<a href="#" class="btn_thinyellow" style="position:absolute;top:35px; right:30%;" onclick="OnClickContactSendReply();">${strText}</a>`);
 		if (intervalContactReplySoundOn == 1)
@@ -291,7 +306,7 @@ let SaveLocalStorage = () => {
 }
 
 let Alert = (iocount, strInput, strOutput, strLetter, strCharge, strContact) => {
-	if ( user.iPermission != 100 ) {
+	if ( user.iPermission != 100 || (user.iPermission == 100 && user.iClass == 3) ) {
 		var right = 40;
 		var space = 3;
 		$(`#process`).empty();
@@ -385,7 +400,7 @@ socket.on("alert_output", ()=> {
 })
 
 socket.on("alert_letter", ()=> {
-	if ( user.iPermission != 100 ) {
+	if ( user.iPermission != 100 || (user.iPermission == 100 && user.iClass == 3) ) {
 		intervalLetterSoundOn = 1;
 		letter = parseInt(letter)+1;
 		SaveLocalStorage();
@@ -424,9 +439,9 @@ socket.on('realtime_user', (numUser) => {
 	}
 });
 
-socket.on('register_user', (numPartner, numUser) => {
-	if (user.iClass <= 3) {
-		$('#today_regist_list').text(`신규등록(파:${numPartner}|회:${numUser})`);
+socket.on('register_user', (num) => {
+	if (user.iClass == 2) {
+		$('#today_regist_list').text(`당일등록현황 (${num})`);
 	}
 });
 

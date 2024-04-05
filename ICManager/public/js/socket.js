@@ -47,11 +47,6 @@ let AlertLetter = (strText, bOn) => {
 		$('#letter_process').append(`<a href="#" class="btn_thinyellow" style="position:absolute;top:35px; right:30%;" onclick="OnClickLetterProcess();">${strText}</a>`);
 		if (intervalLetterSoundOn == 1)
 			Alertinterval('alert_letter');
-	} else if ( user.iPermission == 100 && user.iClass == 3 && bOn) {
-		$('#letter_process').empty();
-		$('#letter_process').append(`<a href="#" class="btn_thinyellow" style="position:absolute;top:35px; right:30%;" onclick="OnClickLetterProcess();">${strText}</a>`);
-		if (intervalLetterSoundOn == 1)
-			Alertinterval('alert_letter');
 	} else {
 		clearInterval(intervalLetter);
 		$('#letter_process').empty();

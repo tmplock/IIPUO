@@ -38,7 +38,7 @@ let inline_GetProcessing = async (strGroupID, strNickname, iClass) => {
         const letter = await inline_GetProcessingLetter(strNickname2, 'UNREAD');
         const contact = await inline_GetProcessingContact(strNickname2, 'UNREAD'); // 받은쪽지
         const letterreply = await inline_GetProcessingLetterReply(strNickname2, 'REPLY'); // 보낸쪽지
-        const contactreply = await inline_GetProcessingContactReply(strNickname2, 'REPLY'); // 보낸쪽지
+        const contactreply = await inline_GetProcessingContactReply(strNickname2, 'REPLY', iClass); // 보낸쪽지
         return {input:input, output:output, letter:letter, charge:charge, contact:contact, letterreply: letterreply, contactreply:contactreply};
     } else {
         return {};
@@ -206,8 +206,18 @@ let inline_GetProcessingContact = async (strNickname, eRead) => {
 exports.GetProcessingContact = inline_GetProcessingContact;
 
 // 보낸쪽지
-let inline_GetProcessingContactReply = async (strNickname, eRead) => {
-
+let inline_GetProcessingContactReply = async (strNickname, eRead, iClass) => {
+    let iclass = iClass ?? 0;
+    if (iclass == 3) {
+        const result = await db.ContactLetter.findAll({where:{
+                [Op.or]: {
+                    strFrom: strNickname,
+                    strWriter: strNickname,
+                },
+                eRead:`${eRead}`,
+            }});
+        return result.length;
+    }
     const result = await db.ContactLetter.findAll({where:{
             strFrom: strNickname,
             eRead:`${eRead}`,

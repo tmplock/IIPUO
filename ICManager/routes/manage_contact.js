@@ -287,6 +287,13 @@ router.post('/popup_read_contact', async(req, res) => {
                 await obj.update({eRead:'REPLY_READED'}, {where:{id:parseInt(req.body.id)}});
             }
         }
+    } else if (user.iClass == 3 && user.iPermission == 100) {
+        if (obj.eRead == 'REPLY') {
+            // 답변확인은 작성자일 경우에만 읽음 처리
+            if (dbuser.strNickname == obj.strWriter) {
+                await obj.update({eRead:'REPLY_READED'}, {where:{id:parseInt(req.body.id)}});
+            }
+        }
     }
 
     let iocount = await IInout.GetProcessing(user.strGroupID, user.strNickname, req.user.iClass);

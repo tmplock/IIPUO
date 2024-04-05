@@ -1,4 +1,5 @@
 const db = require('../models');
+const {Op} = require("sequelize");
 
 let IsSameGroup = (strGroupID1, strGroupID2) => {
 
@@ -82,38 +83,46 @@ let inline_AlertByGroupIDExclusionOwner = (strGroupID, eAlertType, strNickname) 
 }
 exports.AlertByGroupIDExclusionOwner = inline_AlertByGroupIDExclusionOwner;
 let inline_AlertByNickname = async (strNickname, eAlertType) => {
-    let bSending = false;
     for (let i in global.socket_list) {
-        let socket = global.socket_list[i];
-        if (socket.strNickname == strNickname) {
-            bSending = true;
-            if (socket.iClass == 3 && socket.iPermission != 100) {
-                inline_AlertByViewGroupID(socket.strNickname, socket.strGroupID, socket.iClass, eAlertType);
-            }
+        if (global.socket_list[i].strNickname == strNickname) {
             console.log(`SOCKET : ${strNickname}`);
             global.socket_list[i].emit(eAlertType);
         }
     }
-
-    if (bSending == false) {
-        if (eAlertType == 'alert_letter' || eAlertType == 'alert_letter_reply' || eAlertType == 'alert_contact_reply') {
-            let user = await db.Users.findOne({where:{strNickname: strNickname}});
-            if (user != null && user.iClass == 3) {
-                inline_AlertByViewGroupID(user.strNickname, user.strGroupID, user.iClass, eAlertType);
-            }
+    // 보는 본사에 대한 관리자문의 답변 알림 처리
+    if (eAlertType == 'alert_contact_reply') {
+        let user = await db.Users.findOne({where:{strNickname: strNickname, iClass:3}});
+        if (user != null) {
+            inline_AlertByViewGroupID(user.strNickname, user.strGroupID, user.iClass, eAlertType);
         }
     }
 }
 exports.AlertByNickname = inline_AlertByNickname;
 
-let inline_AlertByViewGroupID = (strNickname, strGroupID, iClass, eAlertType) => {
-    for ( let i in global.socket_list )
-    {
-        let socket = global.socket_list[i];
-        if ( socket.iPermission == 100 && socket.strNickname != strNickname && socket.strGroupID == strGroupID && socket.iClass == iClass )
-        {
-            console.log(`SOCKET : ${global.socket_list[i].strNickname}`);
-            global.socket_list[i].emit(eAlertType);
+let inline_AlertByViewGroupID = async (strNickname, strGroupID, iClass, eAlertType) => {
+    if (eAlertType == 'alert_contact_reply') {
+        let userlist = await db.Users.findAll({
+                attributes: ['strNickname'],
+                where: {
+                    iPermission:100,
+                    iClass: iClass,
+                    strGroupID: strGroupID,
+                    strNickname: {[Op.notIn]: [strNickname]}
+            }
+        });
+
+        if (userlist.length > 0) {
+            let list = [];
+            for (let i in userlist) {
+                list.push(userlist[i].strNickname);
+            }
+            for (let i in global.socket_list) {
+                let nick = global.socket_list[i].strNickname;
+                if (list.indexOf(nick) > -1) {
+                    console.log(`SOCKET : ${global.socket_list[i].strNickname}`);
+                    global.socket_list[i].emit(eAlertType);
+                }
+            }
         }
     }
 }

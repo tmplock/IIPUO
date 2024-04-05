@@ -352,7 +352,7 @@
 		let iRootClass = parseInt(agent.iRootClass);
 		let iClass = parseInt(agent.iClass);
 
-		if ( !(iRootClass == 4 && iClass == 5) && (iRootClass <= 3 || (iRootClass == 4 && iClass > 5) || (iRootClass < iClass)) ) {
+		if ( iRootClass <= 3 || (iRootClass < iClass) ) {
 			fSlotR = $('#fSlotR').val();
 			fBaccaratR = $('#fBaccaratR').val();
 			fUnderOverR = $('#fUnderOverR').val();

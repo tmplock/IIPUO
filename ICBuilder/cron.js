@@ -34,7 +34,11 @@ let GetDBListFromType = (listDB, eType) => {
     let list = [];
     for ( let i in listDB )
     {
-        if ( listDB[i].eType == eType )
+        if ( eType == 'WIN' && listDB[i].strOverview != '' )
+            list.push(listDB[i]);
+        else if ( eType == 'BETWIN' && listDB[i].strOverview == '' )
+            list.push(listDB[i]);
+        else if ( listDB[i].eType == eType )
             list.push(listDB[i]);
     }
     return list;
@@ -101,6 +105,11 @@ let lProcessID = -1;
     const listWin = GetDBListFromType(listBetDB, 'WIN');
     console.log(`##### WIN : Length : ${listWin.length}`);
     Processor.ProcessWin(listWin, listOverview, listOdds, listUpdateDB);
+
+    //  ##### BetWin
+    const listBetWin = GetDBListFromType(listBetDB, 'BETWIN');
+    console.log(`##### BETWIN : Length : ${listBetWin.length}`);
+    Processor.ProcessBetWin(listBetWin, listOverview, listOdds, listUpdateDB);
 
     //  ##### CANCEL
     const listCancelAll = GetDBListFromType(listBetDB, 'CANCEL');

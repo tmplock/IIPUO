@@ -81,7 +81,7 @@
             eRead = strUnread;
         }
 
-        let strModified = contents.strContents.replace(/(<br>)/g,'\r\n');
+        let strModified = (contents.strContents ?? '').replace(/(<br>)/g,'\r\n');
         let strModifiedAnswer = (contents.strAnswers ?? '').replace(/(<br>)/g,'\r\n');
 
         let buttonTag = `<a href="javascript:Close();" class="custom-btn btn-5"><%=__('Close')%></a>`;

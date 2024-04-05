@@ -52,9 +52,9 @@
         if (letter.eState == 'WAIT' && letter.strTo == user.strNickname) {
             isEdit = true;
         }
-        let strSubject = letter.strSubject.replace(/(<br>)/g,'\n');
-        let strContents = letter.strContents.replace(/(<br>)/g,'\n');
-        let strAnswers = letter.strAnswers.replace(/(<br>)/g,'\n');
+        let strSubject = (letter.strSubject ?? '').replace(/(<br>)/g,'\n');
+        let strContents = (letter.strContents ?? '').replace(/(<br>)/g,'\n');
+        let strAnswers = (letter.strAnswers ?? '').replace(/(<br>)/g,'\n');
         $('#subject').val(strSubject);
         $('#contents').val(strContents);
         $('#answer').val(strAnswers);

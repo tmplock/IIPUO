@@ -21,7 +21,7 @@ let GetDBListFromVender = (listDB, strVender) => {
     let list = [];
     for ( let i in listDB )
     {
-        if ( listDB[i].strVender == strVender )
+        if ( listDB[i].strVender == strVender && listDB[i].eType == 'RD' )
         {
             list.push(listDB[i]);
         }
@@ -34,9 +34,12 @@ let GetDBListFromType = (listDB, eType) => {
     let list = [];
     for ( let i in listDB )
     {
-        if ( eType == 'WIN' && listDB[i].strOverview != '' )
+        if ( listDB[i].eType == 'RD' || listDB[i].eType == 'BETRD' )
+            continue;
+
+        if ( eType == 'WIN' && listDB[i].eType == 'WIN' && listDB[i].strOverview != '' )
             list.push(listDB[i]);
-        else if ( eType == 'BETWIN' && listDB[i].strOverview == '' )
+        else if ( eType == 'BETWIN' && listDB[i].eType == 'WIN' && listDB[i].strOverview == '' )
             list.push(listDB[i]);
         else if ( listDB[i].eType == eType )
             list.push(listDB[i]);

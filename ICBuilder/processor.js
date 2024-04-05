@@ -262,7 +262,8 @@ exports.ProcessWin = (listDB, listOverview, listOdds, listUpdateDB) => {
         console.log(`###### strOverview : ${strOverview}`);
 
         //await db.RecordBets.update({eState:'COMPLETE'}, {where:{id:list[i].id}});
-        listUpdateDB.push({id:cData.id, eState:'COMPLETE', strDetail:'', strResult:'', strOverview:''});
+        //listUpdateDB.push({id:cData.id, eState:'COMPLETE', strDetail:'', strResult:'', strOverview:''});
+        listUpdateDB.push({id:cData.id, eState:'COMPLETE', strDetail:'', strResult:'', strOverview:strOverview});
     }
 }
 

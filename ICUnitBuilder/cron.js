@@ -64,13 +64,14 @@ let lProcessID = -1;
 
     let listBetDB = await db.RecordBets.findAll({
         where: {
-            eState: 'COMPLETE',
-            //eType:{[Op.or]:['RD', 'CANCEL', 'CANCEL_BET', 'CANCEL_WIN', 'BET', 'WIN']},
-            eType:{[Op.or]:['WIN']},
-            strVender:'HONORLINK',
-            createdAt:{
-                [Op.lte]:moment().subtract(5, "minutes").toDate(),
-            }
+            id:2525
+            // eState: 'STANDBY',
+            // //eType:{[Op.or]:['RD', 'CANCEL', 'CANCEL_BET', 'CANCEL_WIN', 'BET', 'WIN']},
+            // eType:{[Op.or]:['RD']},
+            // strVender:'EZUGI',
+            // createdAt:{
+            //     [Op.lte]:moment().subtract(5, "minutes").toDate(),
+            // }
         },
         order: [['createdAt', 'ASC']]
     });
@@ -84,9 +85,9 @@ let lProcessID = -1;
     // Processor.ProcessVivo(listVivoDB, listOverview, listOdds, listUpdateDB);
 
     // //  ##### EZUGI
-    // const listEzugiDB = GetDBListFromVender(listBetDB, 'EZUGI');
-    // console.log(`##### EZUGI : Length : ${listEzugiDB.length}`);
-    // await Processor.ProcessEzugi(listEzugiDB, listOverview, listOdds, listUpdateDB);
+    const listEzugiDB = GetDBListFromVender(listBetDB, 'EZUGI');
+    console.log(`##### EZUGI : Length : ${listEzugiDB.length}`);
+    await Processor.ProcessEzugi(listEzugiDB, listOverview, listOdds, listUpdateDB);
 
     // //  ##### CQ9
     // const listCQ9DB = GetDBListFromVender(listBetDB, 'CQ9');
@@ -108,9 +109,9 @@ let lProcessID = -1;
     // console.log(`##### WIN : Length : ${listWin.length}`);
     // Processor.ProcessWin(listWin, listOverview, listOdds, listUpdateDB);
 
-    const listBetWin = GetDBListFromType(listBetDB, 'BETWIN');
-    console.log(`##### BETWIN : Length : ${listBetWin.length}`);
-    Processor.ProcessBetWin(listBetWin, listOverview, listOdds, listUpdateDB);
+    // const listBetWin = GetDBListFromType(listBetDB, 'BETWIN');
+    // console.log(`##### BETWIN : Length : ${listBetWin.length}`);
+    // Processor.ProcessBetWin(listBetWin, listOverview, listOdds, listUpdateDB);
 
 
     // //  ##### CANCEL
@@ -128,35 +129,35 @@ let lProcessID = -1;
     // console.log(`##### CANCEL : Length : ${listCancelWin.length}`);
     // Processor.ProcessCancel('WIN', listCancelWin, listOverview, listOdds, listUpdateDB);
 
-    //  ##### OVERVIEW
-    console.log(`##### UPDATE OVERVIEW : Length : ${listOverview.length}`);
-    //console.log(listOverview);
-    await ODDS.UpdateOverview(listOverview);
+    // //  ##### OVERVIEW
+    // console.log(`##### UPDATE OVERVIEW : Length : ${listOverview.length}`);
+    // //console.log(listOverview);
+    // await ODDS.UpdateOverview(listOverview);
 
-    //  ##### UPDATE BET
-    console.log(`##### UPDATE RECORD BET : Length : ${listUpdateDB.length}`);
-    for ( let i in listUpdateDB )
-    {
-        const cData = listUpdateDB[i];
+    // //  ##### UPDATE BET
+    // console.log(`##### UPDATE RECORD BET : Length : ${listUpdateDB.length}`);
+    // for ( let i in listUpdateDB )
+    // {
+    //     const cData = listUpdateDB[i];
 
-        if ( cData.eType == 'BETRD' && cData.eState == 'STANDBY' )
-            continue;
-        else if ( cData.eType == 'RD' && cData.eState == 'STANDBY' )
-            continue;
-        else if ( cData.eType == 'BET' && cData.eState == 'PENDING' )
-        {
-            await db.RecordBets.update({eType:'BET', eState:'STANDBY'}, {where:{id:cData.id}});
-        }
-        else
-        {
-            if ( cData.strDetail != '' && cData.strResult != '' && cData.strOverview != '' )
-                await db.RecordBets.update({eState:'COMPLETE', strDetail:cData.strDetail, strResult:cData.strResult, strOverview:cData.strOverview}, {where:{id:cData.id}});
-            else if ( cData.strOverview != '' )
-                await db.RecordBets.update({eState:'COMPLETE', strOverview:cData.strOverview}, {where:{id:cData.id}});
-            else
-                await db.RecordBets.update({eState:'COMPLETE'}, {where:{id:cData.id}});
-        }
-    }
+    //     if ( cData.eType == 'BETRD' && cData.eState == 'STANDBY' )
+    //         continue;
+    //     else if ( cData.eType == 'RD' && cData.eState == 'STANDBY' )
+    //         continue;
+    //     else if ( cData.eType == 'BET' && cData.eState == 'PENDING' )
+    //     {
+    //         await db.RecordBets.update({eType:'BET', eState:'STANDBY'}, {where:{id:cData.id}});
+    //     }
+    //     else
+    //     {
+    //         if ( cData.strDetail != '' && cData.strResult != '' && cData.strOverview != '' )
+    //             await db.RecordBets.update({eState:'COMPLETE', strDetail:cData.strDetail, strResult:cData.strResult, strOverview:cData.strOverview}, {where:{id:cData.id}});
+    //         else if ( cData.strOverview != '' )
+    //             await db.RecordBets.update({eState:'COMPLETE', strOverview:cData.strOverview}, {where:{id:cData.id}});
+    //         else
+    //             await db.RecordBets.update({eState:'COMPLETE'}, {where:{id:cData.id}});
+    //     }
+    // }
     
     lProcessID = -1;
     

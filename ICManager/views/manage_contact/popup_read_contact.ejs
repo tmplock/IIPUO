@@ -52,9 +52,12 @@
         if (letter.eState == 'WAIT' && letter.strTo == user.strNickname) {
             isEdit = true;
         }
-        $('#subject').val(letter.strSubject);
-        $('#contents').val(letter.strContents);
-        $('#answer').val(letter.strAnswers);
+        let strSubject = letter.strSubject.replace(/(<br>)/g,'\n');
+        let strContents = letter.strContents.replace(/(<br>)/g,'\n');
+        let strAnswers = letter.strAnswers.replace(/(<br>)/g,'\n');
+        $('#subject').val(strSubject);
+        $('#contents').val(strContents);
+        $('#answer').val(strAnswers);
 
         if (isEdit) {
             $('#answer').prop('disabled', false);

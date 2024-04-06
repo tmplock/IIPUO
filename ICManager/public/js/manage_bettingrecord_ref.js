@@ -207,7 +207,7 @@ let SetBettingList = (records, startIndex) => {
         if (eType == 'CANCEL_BET' || eType == 'CANCEL' || eType == 'CANCEL_WIN') {
             if (iBet > 0) {
                 iCancelBet = iBet;
-                tagWin = `<td style="background-color:${color};color:red;">${GetNumber(iWin)}</td>`;
+                tagWin = `<td style="background-color:${color};color:red;">${GetNumber(iBet)}</td>`;
             }
             if (iWin > 0) {
                 iCancelWin = iWin;

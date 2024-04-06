@@ -344,10 +344,8 @@ router.post('/request_exchange', async (req, res) => {
     }
 
 
-    if ( true ) {
-        res.send({result:'Error'});
-        return;
-    }
+    res.send({result:'Error'});
+    return;
 
     console.log(`/request_exchange`);
     console.log(req.body);

@@ -166,6 +166,8 @@ let SetBettingList = (records, startIndex) => {
     {
         console.log('records[i]');
         console.log(records[i]);
+        let eType = records[i].eType ?? '';
+
         let color = '#FFFFFF';
         if ( records[i].iWin > 0 ) {
             // color = '#d6f3c9';
@@ -177,12 +179,18 @@ let SetBettingList = (records, startIndex) => {
             color = `rgb(255, 150, 125);`;
         }
 
+        if (eType == 'CANCEL_BET' || eType == 'CANCEL' || eType == 'CANCEL_WIN') {
+            color = `#E7AD6C`;
+        }
+
         let iBalance = parseInt(records[i].iBalance);
         let iPreviousCash = iBalance;
         let iBet = parseInt(records[i].iBet);
         let iAfterCash = 0;
         let iWin = parseInt(records[i].iWin);
         let iResultCash = 0;
+        let iCancelBet = 0;
+        let iCancelWin = 0;
 
         let tagWin = `<td style="background-color:${color};"></td>`;
         let tagWinResult = `<td style="background-color:${color};"></td>`;
@@ -196,6 +204,14 @@ let SetBettingList = (records, startIndex) => {
             iAfterCash = iBalance - iBet;
         }
 
+        if (eType == 'CANCEL_BET' || eType == 'CANCEL' || eType == 'CANCEL_WIN') {
+            if (iBet > 0) {
+                iCancelBet = iBet;
+            }
+            if (iWin > 0) {
+                iCancelWin = iWin;
+            }
+        }
 
         let bets = GetBets(records[i].strDetail);
         let tagTarget = GetBettingTargets(bets, color);
@@ -206,18 +222,22 @@ let SetBettingList = (records, startIndex) => {
         let iGameCode = parseInt(records[i].iGameCode);
         let eState = records[i].eState;
         let updatedAt = '';
-        if (iGameCode == 0 || iGameCode == 100) {
-            if (eState == 'COMPLETE') {
-                if ( records[i].iWin > 0 ) {
-                    tagDetail =  `<a style="color:red;" onclick="OnClickRoundDetail('${records[i].id}')" href="#">당첨 결과</a>`;
-                } else {
-                    tagDetail =  `<a style="color:blue;" onclick="OnClickRoundDetail('${records[i].id}')" href="#">당첨 결과</a>`;
+
+        if (eType == 'CANCEL_BET' || eType == 'CANCEL' || eType == 'CANCEL_WIN') {
+        } else {
+            if (iGameCode == 0 || iGameCode == 100) {
+                if (eState == 'COMPLETE') {
+                    if ( records[i].iWin > 0 ) {
+                        tagDetail =  `<a style="color:red;" onclick="OnClickRoundDetail('${records[i].id}')" href="#">당첨 결과</a>`;
+                    } else {
+                        tagDetail =  `<a style="color:blue;" onclick="OnClickRoundDetail('${records[i].id}')" href="#">당첨 결과</a>`;
+                    }
+                    updatedAt = records[i].updatedAt;
+                } else if (eState == 'PENDING') {
+                    tagDetail =  `<a style="color:blue;"></a>`;
+                } else if (eState == 'ERROR') {
+                    tagDetail =  `<a style="color:#e7af16;" href="#">당첨 조회 오류</a>`;
                 }
-                updatedAt = records[i].updatedAt;
-            } else if (eState == 'PENDING') {
-                tagDetail =  `<a style="color:blue;"></a>`;
-            } else if (eState == 'ERROR') {
-                tagDetail =  `<a style="color:#e7af16;" href="#">당첨 조회 오류</a>`;
             }
         }
 
@@ -245,6 +265,10 @@ let SetBettingList = (records, startIndex) => {
 
         iTotalBet += iBet;
         iTotalWin += iWin;
+
+        // cancel 처리
+        iTotalBet -= iCancelBet;
+        iTotalWin -= iCancelWin;
     }
 
     let tagEnd = `

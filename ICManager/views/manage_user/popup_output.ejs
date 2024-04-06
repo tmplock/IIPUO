@@ -9,8 +9,7 @@
 		<div style="background-color:#ffffff;text-align:right;padding-right:5px;padding-top:10px;padding-bottom:10px;" colspan="19">
 			<input style="margin-left:180px;width:100px;" type="text" id="datepicker1" class="datepicker"/>~
 			<input style="width:100px;" type="text" id="datepicker2" class="datepicker" />
-			<!-- <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearch(8, '<%=agent.strGroupID%>', '<%=agent.iClass%>');"><%=__('Search')%></button> -->
-			<button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearchInput(true);"><%=__('Search')%></button>
+			<button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearchInput();"><%=__('Search')%></button>
 		</div>
 
 		<table class="search_list">
@@ -26,7 +25,6 @@
 					<th width="8%"><%=__('DateProcess')%></th>
 				</tr>
 			</thead>
-			<!-- <tbody id="userpopup_outputrecord"> -->
 			<tbody id="input_list">
 			</tbody>
 		</table>
@@ -41,24 +39,26 @@
 <script type="text/javascript" src="js/util.js"></script>
 <script type="text/javascript" src="js/manage_user_popup_menu.js"></script>
 <script type="text/javascript" src="js/manage_partner_ref.js"></script>
+<script type="text/javascript" src="js/pagination.js"></script>
 <script type="text/javascript">
 	let agent = JSON.parse('<%-JSON.stringify(agent)%>');
-	let iCurrentPage = 1;
-	let iLimit = 20;
 
+	DatePicker();
+	$('#datepicker1').val(GetCurrentDate());
+	$('#datepicker2').val(GetCurrentDate());
+
+
+	let iCurrentPage = 1;
+	let iLimit = 30;
 	$('#select_limit').on("change", function () {
 		iLimit = this.value;
 	});
 
 	$(document).ready(() => {
-		DatePicker();
-		$('#datepicker1').val(GetCurrentDate());
-		$('#datepicker2').val(GetCurrentDate());
-
-		OnClickSearchInput(true);
+		OnClickSearchInput();
 	});
 
-	let OnClickSearchInput = (bSearch) => {
+	let OnClickSearchInput = () => {
 
 		let date1 = $("#datepicker1").val();
 		let date2 = $("#datepicker2").val();
@@ -82,14 +82,26 @@
 				success:function(obj) {
 
 					console.log(obj);
-					
-					SetList(obj.data);
+
+					const total = obj.totalCount ?? 0;
+					SetList(obj.data, getNo(iLimit, total, iCurrentPage, 0));
+
+					$('#pagination').empty();
+					$('#pagination').append(getPagination(iLimit, obj.totalCount, iCurrentPage));
 				}
 			}
 		);
 	}
 
-	let SetList = (data) =>
+	let OnClickPage = (iPage) => {
+		if (iPage < 1) {
+			return;
+		}
+		iCurrentPage = iPage;
+		OnClickSearchInput();
+	}
+
+	let SetList = (data, startIndex) =>
 	{
 		let iTotal = 0;
 
@@ -100,12 +112,12 @@
 			{
 				let tag = `
 				<tr>
-					<td>${parseInt(i)+1}</td>
+					<td>${parseInt(startIndex)-i}</td>
 					<td>${data[i].id}</td>
 					<td>${data[i].strID}</td>
 					<td>${data[i].iPreviousCash.toLocaleString()}</td>
 					<td>${data[i].iAmount.toLocaleString()}</td>
-					<td>${data[i].strName}</td>
+					<td>${data[i].strAccountOwner}</td>
 					<td>${data[i].createdAt}</td>
 					<td>${data[i].updatedAt}</td>
 				</tr>

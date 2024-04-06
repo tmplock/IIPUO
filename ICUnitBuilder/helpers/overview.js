@@ -112,7 +112,8 @@ let GetData = (listBetDB) => {
     {
         //console.log(`listBetDB[i].id = ${listBetDB[i].id}`);
         //if ( listBetDB[i].strDetail != '' )
-        if ( listBetDB[i].strResult != '' )
+        //if ( listBetDB[i].strResult != '' )
+        if ( listBetDB[i].eType == 'RD' && listBetDB[i].strDetail.length > 10 )
         {
             const test = JSON.parse(listBetDB[i].strDetail);
             //console.log(test);                    

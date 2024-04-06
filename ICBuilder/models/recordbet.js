@@ -44,10 +44,10 @@ module.exports = (sequelize, DataTypes) => {
             type:DataTypes.STRING(64),
         },
         strDetail: {
-            type:DataTypes.STRING,
+            type:DataTypes.TEXT,
         },
         strResult: {
-            type:DataTypes.STRING,
+            type:DataTypes.TEXT,
         },
         strOverview: {
             type:DataTypes.STRING,

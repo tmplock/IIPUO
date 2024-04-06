@@ -129,21 +129,21 @@ let lProcessID = -1;
     console.log(`##### CANCEL : Length : ${listCancelWin.length}`);
     Processor.ProcessCancel('WIN', listCancelWin, listOverview, listOdds, listUpdateDB);
 
-    //  ##### OVERVIEW
-    console.log(`##### UPDATE OVERVIEW : Length : ${listOverview.length}`);
-    await ODDS.UpdateOverview(listOverview);
+    // //  ##### OVERVIEW
+    // console.log(`##### UPDATE OVERVIEW : Length : ${listOverview.length}`);
+    // await ODDS.UpdateOverview(listOverview);
 
     //  ##### UPDATE BET
     console.log(`##### UPDATE RECORD BET : Length : ${listUpdateDB.length}`);
     for ( let i in listUpdateDB )
     {
-        if ( i == 0 )
-            continue;
+        // if ( i == 0 )
+        //     continue;
 
         const cData = listUpdateDB[i];
 
-        console.log(i);
-        console.log(cData);
+        // console.log(i);
+        // console.log(cData);
 
         if ( cData.eType == 'BETRD' && cData.eState == 'STANDBY' )
             continue;
@@ -163,6 +163,11 @@ let lProcessID = -1;
                 await db.RecordBets.update({eState:'COMPLETE'}, {where:{id:cData.id}});
         }
     }
+
+    //  ##### OVERVIEW
+    console.log(`##### UPDATE OVERVIEW : Length : ${listOverview.length}`);
+    await ODDS.UpdateOverview(listOverview);
+    
     
     lProcessID = -1;
     

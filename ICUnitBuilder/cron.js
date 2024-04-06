@@ -8,6 +8,8 @@ const RDVivo = require('./vender/vivo');
 
 const ODDS = require('./helpers/odds');
 
+const Overview = require('./helpers/overview');
+
 const Processor = require('./processor');
 
 const {Op}= require('sequelize');
@@ -290,162 +292,73 @@ let testfunc = (o, strID, iBetB, iBetUO, iBetS, iWinB, iWinUO, iWinS) => {
             let listUpdateDB = [];
             let listOverview = [];
 
-            const strID = 'gkfn6';
 
-            let objectOdds = await ODDS.CalculateOdds(strID, 8);
-            console.log(objectOdds);
 
-            const dateStart = moment('2024-04-05');
-            const dateEnd = moment('2024-04-05');
-        
-            let listBetDB = await db.RecordBets.findAll({
-                where: {
-                    createdAt:{
-                        [Op.between]:[ moment(dateStart), require('moment')(dateEnd).add(1, 'days').format('YYYY-MM-DD')],
-                    },
-                    strID:strID
+            let listID = [
+                {strID:'qa123', iClass:7},
+                {strID:'jojo05', iClass:8},
+                {strID:'cjsgh1', iClass:7},
+                {strID:'kkk123', iClass:8},
+                {strID:'qwe01', iClass:8},
+                {strID:'zxc01', iClass:8},
+                {strID:'t1000', iClass:7},                
+                {strID:'gkfn1', iClass:8},
+                {strID:'gkfn2', iClass:8},
+                {strID:'zlekfl5', iClass:8},
+                {strID:'gkfn3', iClass:8},
+                {strID:'sss1000', iClass:6},
+                {strID:'tpdud123', iClass:8},
+                {strID:'gkfn6', iClass:8},
+            ];
+            // let listID = [
+            //     {strID:'jojo05', iClass:8},
+            // ];
+
+            let strDate = '2024-04-05';
+
+            for ( let i in listID )
+            {
+                await Overview.CalculateOverview(listID[i].strID, listID[i].iClass, strDate, listOverview);
+            }
+
+            for ( let i in listOverview )
+            {
+                await db.RecordDailyOverviews.update({
+                    iBetB:listOverview.iBetB,
+                    iBetUO:listOverview.iBetUO,
+                    iBetS:listOverview.iBetS,
+                    iBetPB:listOverview.iBetPB,
+                    iWinB:listOverview.iWinB,
+                    iWinUO:listOverview.iWinUO,
+                    iWinS:listOverview.iWinS,
+                    iWinPB:listOverview.iWinPB,
+                    iRollingB:listOverview.iRollingB,
+                    iRollingUO:listOverview.iAgentBetUO,
+                    iRollingS:listOverview.iRollingS,
+                    iRollingPBA:listOverview.iRollingPBA,
+                    iRollingPBB:listOverview.iRollingPBB,
+                    iAgentBetB:listOverview.iAgentBetB,
+                    iAgentBetUO:listOverview.iAgentBetUO,
+                    iAgentBetS:listOverview.iAgentWinS,
+                    iAgentBetPB:listOverview.iAgentWinPB,
+                    iAgentWinB:listOverview.iAgentWinB,
+                    iAgentWinUO:listOverview.iAgentWinUO,
+                    iAgentWinS:listOverview.iAgentWinS,
+                    iAgentWinPB:listOverview.iAgentWinPB,
+                    iAgentRollingB:listOverview.iAgentRollingB,
+                    iAgentRollingUO:listOverview.iAgentRollingUO,
+                    iAgentRollingS:listOverview.iAgentRollingS,
+                    iAgentRollingPBA:listOverview.iAgentRollingPBA,
+                    iAgentRollingPBB:listOverview.iAgentRollingPBB,
                 },
-            });
-            console.log(`##### listBetDB.length = ${listBetDB.length}`);
-
-            let object = {iBetB:0, iBetUO:0, iBetS:0, iWinUO:0, iWinB:0, iWinS:0};
-
-            for ( let i in listBetDB )
-            {
-                //console.log(`listBetDB[i].id = ${listBetDB[i].id}`);
-                if ( listBetDB[i].strDetail != '' )
                 {
-                    const test = JSON.parse(listBetDB[i].strDetail);
-                    //console.log(test);                    
-                    for ( let j in test )
-                    {
-                        if ( test[j].C == 100 )
-                        {
-                            object.iBetUO += test[j].B;
-                            object.iWinUO += test[j].W;
-                        }
-                        else
-                        {
-                            object.iBetB += test[j].B;
-                            object.iWinB += test[j].W;
-                        }
-                    }
-                }
-                else
-                {
-                    if ( listBetDB[i].iGameCode == 200 )
-                    {
-                        object.iBetS += listBetDB[i].iBet;
-                        object.iWinS += listBetDB[i].iWin;
-                    }                        
-                    else
-                    {
-                        object.iBetB += listBetDB[i].iBet;
-                        object.iWinB += listBetDB[i].iWin;
-                    }
-                        
-                }
+                    where:{strID:listOverview[i].strID, strDate:listOverview[i].strDate}
+                });
             }
-
-            console.log(object);
-
-            let object2 = testfunc(objectOdds, strID, object.iBetB, object.iBetUO, object.iBetS, object.iWinB, object.iWinUO, object.iWinS);
-            console.log(object2);
-
-            const listFinal = ODDS.ProcessGroupDailyOverview(objectOdds, object2, dateStart);
-
-            ODDS.JoinGroupDailyOverview(listOverview, listFinal);
-            console.log(listOverview);
-
-            return;
         
-            
-        
-            // const test = await ODDS.CalculateOdds('god1047', 5);
-            // console.log(`#####################################################`);
-            // console.log(test);
-        
-            let listOdds = await ODDS.FullCalculteOdds(listBetDB);
-        
-            // //  ##### VIVO
-            // const listVivoDB = GetDBListFromVender(listBetDB, 'VIVO');
-            // console.log(`##### VIVO : Length : ${listVivoDB.length}`);
-            // Processor.ProcessVivo(listVivoDB, listOverview, listOdds, listUpdateDB);
-        
-            // // //  ##### EZUGI
-            const listEzugiDB = GetDBListFromVender(listBetDB, 'EZUGI');
-            console.log(`##### EZUGI : Length : ${listEzugiDB.length}`);
-            await Processor.ProcessEzugi(listEzugiDB, listOverview, listOdds, listUpdateDB);
-        
-            // //  ##### CQ9
-            // const listCQ9DB = GetDBListFromVender(listBetDB, 'CQ9');
-            // console.log(`##### CQ9 : Length : ${listCQ9DB.length}`);
-            // await Processor.ProcessCQ9(listCQ9DB, listOverview, listOdds, listUpdateDB);
-        
-            // //  ##### HonorLink
-            // const listHL = GetDBListFromVender(listBetDB, 'HONORLINK');
-            // console.log(`##### HONORLINK : Length : ${listHL.length}`);
-            // await Processor.ProcessHLink(listHL, listOverview, listOdds, listUpdateDB);
-        
-            //  ##### Bet
-            // const listBet = GetDBListFromType(listBetDB, 'WIN');
-            // console.log(`##### BET : Length : ${listBet.length}`);
-            // Processor.ProcessBet(listBet, listOverview, listOdds, listUpdateDB);
-        
-            // //  ##### Win
-            // const listWin = GetDBListFromType(listBetDB, 'WIN');
-            // console.log(`##### WIN : Length : ${listWin.length}`);
-            // Processor.ProcessWin(listWin, listOverview, listOdds, listUpdateDB);
-        
-            // const listBetWin = GetDBListFromType(listBetDB, 'BETWIN');
-            // console.log(`##### BETWIN : Length : ${listBetWin.length}`);
-            // Processor.ProcessBetWin(listBetWin, listOverview, listOdds, listUpdateDB);
-        
-        
-            // //  ##### CANCEL
-            // const listCancelAll = GetDBListFromType(listBetDB, 'CANCEL');
-            // console.log(`##### CANCEL : Length : ${listCancelAll.length}`);
-            // Processor.ProcessCancel('ALL', listCancelAll, listOverview, listOdds, listUpdateDB);
-        
-            // //  ##### CANCEL
-            // const listCancelBet = GetDBListFromType(listBetDB, 'CANCEL_BET');
-            // console.log(`##### CANCEL_BET : Length : ${listCancelBet.length}`);
-            // Processor.ProcessCancel('BET', listCancelBet, listOverview, listOdds, listUpdateDB);
-        
-            // //  ##### CANCEL
-            // const listCancelWin = GetDBListFromType(listBetDB, 'CANCEL_WIN');
-            // console.log(`##### CANCEL : Length : ${listCancelWin.length}`);
-            // Processor.ProcessCancel('WIN', listCancelWin, listOverview, listOdds, listUpdateDB);
-        
-            // //  ##### OVERVIEW
-            // console.log(`##### UPDATE OVERVIEW : Length : ${listOverview.length}`);
-            // //console.log(listOverview);
-            // await ODDS.UpdateOverview(listOverview);
-        
-            // //  ##### UPDATE BET
-            // console.log(`##### UPDATE RECORD BET : Length : ${listUpdateDB.length}`);
-            for ( let i in listUpdateDB )
-            {
-                const cData = listUpdateDB[i];
-        
-                // if ( cData.eType == 'BETRD' && cData.eState == 'STANDBY' )
-                //     continue;
-                // else if ( cData.eType == 'RD' && cData.eState == 'STANDBY' )
-                //     continue;
-                // else if ( cData.eType == 'BET' && cData.eState == 'PENDING' )
-                // {
-                //     await db.RecordBets.update({eType:'BET', eState:'STANDBY'}, {where:{id:cData.id}});
-                // }
-                // else
-                {
-                    if ( cData.strDetail != '' && cData.strResult != '' && cData.strOverview != '' )
-                        await db.RecordBets.update({strDetail:cData.strDetail, strResult:cData.strResult}, {where:{id:cData.id}});
-                    // else if ( cData.strOverview != '' )
-                    //     await db.RecordBets.update({eState:'COMPLETE', strOverview:cData.strOverview}, {where:{id:cData.id}});
-                    // else
-                    //     await db.RecordBets.update({eState:'COMPLETE'}, {where:{id:cData.id}});
-                }
-            }
+            // console.log(``);
+            // console.log(`##### Result `);
+            // console.log(listOverview);
             
             lProcessID = -1;
             

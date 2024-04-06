@@ -343,6 +343,12 @@ router.post('/request_exchange', async (req, res) => {
         return;
     }
 
+
+    if ( true ) {
+        res.send({result:'Error'});
+        return;
+    }
+
     console.log(`/request_exchange`);
     console.log(req.body);
 

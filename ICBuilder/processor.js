@@ -195,7 +195,8 @@ exports.ProcessHLink = async (listDB, listOverview, listOdds, listUpdateDB) => {
             if ( cOdd == null )
                 continue;
 
-            let objectReturn = ODDS.ProcessRolling(cOdd, listData.list, 0, 0, strDate);
+            //let objectReturn = ODDS.ProcessRolling(cOdd, listData.list, 0, 0, strDate);
+            let objectReturn = ODDS.ProcessRollingHLink(cOdd, listData.list, 0, 0, strDate, listDB[i].iGameCode, listDB[i].iBet, listDB[i].iWin);
             let listCurrentOverview = objectReturn.listFinal;
             let objectBetRolling = objectReturn.objectBet;
 

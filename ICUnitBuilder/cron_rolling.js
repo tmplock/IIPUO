@@ -37,11 +37,19 @@ let AddRolling = (strID, object, list) => {
 
     if ( found == null )
     {
-        let object = {strID:strID, iRolling:cRolling};
+        let object = {strID:strID, iRolling:cRolling, iSubtract:0};
         list.push(object);
     }
     else
         found.iRolling += cRolling;
+}
+
+let SubtractRolling = (strID, list, iAmount) => {
+
+    let found = Find(strID, list);
+
+    if ( found )
+        found.iSubtract += iAmount;
 }
 
 cron.schedule('*/5 * * * * * ', async ()=> {
@@ -65,8 +73,30 @@ cron.schedule('*/5 * * * * * ', async ()=> {
         AddRolling(overviews[i].strID, overviews[i], listRolling);
     }
 
+    console.log('test1');
+    let listR2 = [];
+    let rolling = await db.GTs.findAll({where:{eType:'ROLLING'}});
+    for ( let i in rolling )
+    {
+        console.log(`${rolling[i].strTo}`);
+        const user = await db.Users.findOne({where:{strNickname:rolling[i].strTo}});
+        console.log(`${user.strID}`);
+        listR2.push({strID:user.strID, iRolling:rolling[i].iAmount});
+    }
+    console.log('test1');
+
+    for ( let i in listR2 )
+    {
+        SubtractRolling(listR2[i].strID, listRolling, listR2[i].iRolling);
+    }
+
     console.log(listRolling);
 
+    // for ( let i in listRolling )
+    // {
+    //     console.log(i);
+    //     await db.Users.update({iRolling:listRolling[i].iRolling-listRolling[i].iSubtract}, {where:{strID:listRolling[i].strID}});
+    // }
 
     lProcessID = -1;
     

@@ -366,6 +366,11 @@ router.post('/request_exchange', async (req, res) => {
     {
         const cAmount = parseInt(req.body.iRolling);
 
+        if (cAmount <= 0) {
+            res.send({result:'Error'});
+            return;
+        }
+
         // 롤링전환시에는 전환전 금액에 전환전 롤링값을 표시
         const iBeforeCashTo = parseInt(target.iCash);
         const iAfterCashTo = iBeforeCashTo+cAmount;

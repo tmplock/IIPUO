@@ -623,36 +623,31 @@ router.post('/request_register', isLoggedIn, async(req, res) => {
         console.log(`parent : ${req.body.strParentGroupID}, child : ${strGroupID}`);
 
         const parent = await db.Users.findOne({where:{id:req.body.iParentID}});
+        if ( parent == null ) {
+            res.send({result:'FAIL', error:'Rolling', string:'에이전트 생성을 실패했습니다.(${err})'});
+            return;
+        }
         if ( parent != null )
         {
-            // 총본은 롤링 입력값에 대한 체크 안함
-            if (parent.iClass > 2) {
-                if ( parent.fSlotR < parseInt(req.body.fSlotR) ||
-                    parent.fBaccaratR < parseInt(req.body.fBaccaratR) ||
-                    parent.fUnderOverR < parseInt(req.body.fUnderOverR) ||
-                    parent.fPBR < parseInt(req.body.fPBR) ||
-                    parent.fPBSingleR < parseInt(req.body.fPBSingleR) ||
-                    parent.fPBDoubleR < parseInt(req.body.fPBDoubleR) ||
-                    parent.fPBTripleR < parseInt(req.body.fPBTripleR) )
-                {
-                    res.send({result:'Error', error:'Rolling', string:'롤링비(%)는 상위 에이전트 보다 클 수 없습니다.'});
-                    return;
-                }
-                else if (parent.fSettleBaccarat < parseInt(req.body.fSettleBaccarat) ||
-                    parent.fSettleSlot < parseInt(req.body.fSettleSlot) ||
-                    parent.fSettlePBA < parseInt(req.body.fSettlePBA) ||
-                    parent.fSettlePBB < parseInt(req.body.fSettlePBB) )
-                {
-                    res.send({result:'Error', error:'Settle', string:'죽장(%)은 상위 에이전트 보다 클 수 없습니다.'});
-                    return;
-                }
+            if ( parent.fSlotR < parseFloat(req.body.fSlotR) ||
+                parent.fBaccaratR < parseFloat(req.body.fBaccaratR) ||
+                parent.fUnderOverR < parseFloat(req.body.fUnderOverR) ||
+                parent.fPBR < parseFloat(req.body.fPBR) ||
+                parent.fPBSingleR < parseFloat(req.body.fPBSingleR) ||
+                parent.fPBDoubleR < parseFloat(req.body.fPBDoubleR) ||
+                parent.fPBTripleR < parseFloat(req.body.fPBTripleR) )
+            {
+                res.send({result:'Error', error:'Rolling', string:'롤링비(%)는 상위 에이전트 보다 클 수 없습니다.'});
+                return;
             }
-
-                // 본사에서 직접 세팅 가능
-                // else if(parent.iPBLimit < req.body.iPBLimit || parent.iPBSingleLimit < req.body.iPBSingleLimit || parent.iPBDoubleLimit < req.body.iPBDoubleLimit || parent.iPBTripleLimit < req.body.iPBTripleLimit)
-                // {
-                //     res.send({result:'Error', error:'PB', string:'베팅값은 상위 에이전트 보다 클 수 없습니다.'});
-            // }
+            else if (parent.fSettleBaccarat < parseFloat(req.body.fSettleBaccarat) ||
+                parent.fSettleSlot < parseFloat(req.body.fSettleSlot) ||
+                parent.fSettlePBA < parseFloat(req.body.fSettlePBA) ||
+                parent.fSettlePBB < parseFloat(req.body.fSettlePBB) )
+            {
+                res.send({result:'Error', error:'Settle', string:'죽장(%)은 상위 에이전트 보다 클 수 없습니다.'});
+                return;
+            }
         }
 
         let iLoginMax = 1;
@@ -1102,6 +1097,8 @@ router.post('/request_agentinfo_modify',isLoggedIn, async (req, res) => {
                     console.log(`########## ModifyAgentInfo : Error Parent`);
                     bUpdate = false;
                     strErrorCode = 'GreaterThanParent';
+                    res.send({result:'ERROR', code:strErrorCode});
+                    return;
                 }
             }
         }
@@ -1129,6 +1126,8 @@ router.post('/request_agentinfo_modify',isLoggedIn, async (req, res) => {
                     console.log(`########## ModifyAgentInfo : Error Children`);
                     bUpdate = false;
                     strErrorCode = 'LessThanChild';
+                    res.send({result:'ERROR', code:strErrorCode});
+                    return;
                 }               
             }
         }
@@ -1174,57 +1173,6 @@ router.post('/request_agentinfo_modify',isLoggedIn, async (req, res) => {
                     strLogs: logMsg,
                     strEditorNickname: req.user.strNickname,
                 });
-            }
-
-            // 대본사 롤링값이 변경될 경우 부본사 롤링값도 같이 변경 처리
-            if (user.iClass == 4) {
-                let msg = '';
-                if (user.fBaccaratR != data.fBaccaratR) {
-                    if (msg == '')
-                        msg = `바카라롤링 변경(${user.fBaccaratR}=>${data.fBaccaratR})`;
-                    else
-                        msg = `${msg} | 바카라롤링 변경(${user.fBaccaratR}=>${data.fBaccaratR})`;
-                }
-                if (user.fUnderOverR != data.fUnderOverR) {
-                    if (msg == '')
-                        msg = `언오버롤링 변경(${user.fUnderOverR}=>${data.fUnderOverR})`;
-                    else
-                        msg = `${msg} | 언오버롤링 변경(${user.fUnderOverR}=>${data.fUnderOverR})`;
-                }
-                if (user.fSlotR != data.fSlotR) {
-                    if (msg == '')
-                        msg = `슬롯롤링 변경(${user.fSlotR}=>${data.fSlotR})`;
-                    else
-                        msg = `${msg} | 슬롯롤링 변경(${user.fSlotR}=>${data.fSlotR})`;
-                }
-
-                // if ( msg != '' ) {
-                //     // 부본사 리스트 가져오기
-                //     let children = await db.Users.findAll({
-                //         where: {
-                //             iParentID:user.id,
-                //             iPermission: {
-                //                 [Op.notIn]: [100]
-                //             },
-                //         }
-                //     });
-                //
-                //     for (let i in children) {
-                //         await children[i].update({
-                //             fSlotR:data.fSlotR,
-                //             fBaccaratR:data.fBaccaratR,
-                //             fUnderOverR:data.fUnderOverR,
-                //         });
-                //
-                //         await db.DataLogs.create({
-                //             strNickname: children[i].strNickname,
-                //             strID: children[i].strID,
-                //             strGroupID: children[i].strGroupID,
-                //             strLogs: msg,
-                //             strEditorNickname: req.user.strNickname,
-                //         });
-                //     }
-                // }
             }
 
             await user.update(data);

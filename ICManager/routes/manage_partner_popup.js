@@ -737,11 +737,8 @@ router.post('/request_bettinglist', isLoggedIn, async (req, res) => {
             },
             strID:strID,
             iGameCode: {
-                [Op.in]:[0, 100]
-            },
-            // eState:{
-            //     [Op.notIn]:['STANDBY']
-            // }
+                [Op.notIn]:[200, 300]
+            }
         }
     });
 
@@ -753,11 +750,8 @@ router.post('/request_bettinglist', isLoggedIn, async (req, res) => {
                 },
                 strID:strID,
                 iGameCode: {
-                    [Op.in]:[0, 100]
-                },
-                // eState:{
-                //     [Op.notIn]:['STANDBY']
-                // }
+                    [Op.notIn]:[200, 300]
+                }
             },
             offset:iOffset,
             limit:iLimit,

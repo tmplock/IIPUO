@@ -138,7 +138,10 @@ let lProcessID = -1;
     for ( let i in listUpdateDB )
     {
         console.log(i);
+
         const cData = listUpdateDB[i];
+
+        console.log(cData);
 
         if ( cData.eType == 'BETRD' && cData.eState == 'STANDBY' )
             continue;

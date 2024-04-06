@@ -556,30 +556,6 @@ const logRollingMessage = (source, data) => {
         else
             msg = `${msg} | 슬롯롤링 변경(${source.fSlotR}=>${data.fSlot})`;
     }
-    if (source.fPBR != data.fPB) {
-        if (msg == '')
-            msg = `파워볼A롤링 변경(${source.fPBR}=>${data.fPB})`;
-        else
-            msg = `${msg} | 파워볼A롤링 변경(${source.fPBR}=>${data.fPB})`;
-    }
-    if (source.fPBSingleR != data.fPBSingle) {
-        if (msg == '')
-            msg = `파워볼B단폴롤링 변경(${source.fPBSingleR}=>${data.fPBSingle})`;
-        else
-            msg = `${msg} | 파워볼B단폴롤링 변경(${source.fPBSingleR}=>${data.fPBSingle})`;
-    }
-    if (source.fPBDoubleR != data.fPBDouble) {
-        if (msg == '')
-            msg = `파워볼B투폴롤링 변경(${source.fPBDoubleR}=>${data.fPBDouble})`;
-        else
-            msg = `${msg} | 파워볼B투폴롤링 변경(${source.fPBDoubleR}=>${data.fPBDouble})`;
-    }
-    if (source.fPBTripleR != data.fPBTriple) {
-        if (msg == '')
-            msg = `파워볼B쓰리폴롤링 변경(${source.fPBTripleR}=>${data.fPBTriple})`;
-        else
-            msg = `${msg} | 파워볼B쓰리폴롤링 변경(${source.fPBTripleR}=>${data.fPBTriple})`;
-    }
 
     return msg;
 }
@@ -642,19 +618,6 @@ const logSettleMessage = (source, data) => {
         else
             msg = `${msg} | 슬롯죽장 변경(${source.fSettleSlot}=>${data.fSettleSlot})`;
     }
-    if (source.fSettlePBA != data.fSettlePBA) {
-        if (msg == '')
-            msg = `파워A죽장 변경(${source.fSettlePBA}=>${data.fSettlePBA})`;
-        else
-            msg = `${msg} | 파워A죽장 변경(${source.fSettlePBA}=>${data.fSettlePBA})`;
-    }
-    if (source.fSettlePBB != data.fSettlePBB) {
-        if (msg == '')
-            msg = `파워B죽장 변경(${source.fSettlePBB}=>${data.fSettlePBB})`;
-        else
-            msg = `${msg} | 파워B죽장 변경(${source.fSettlePBB}=>${data.fSettlePBB})`;
-    }
-
     return msg;
 }
 

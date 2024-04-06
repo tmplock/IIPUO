@@ -440,9 +440,6 @@ router.post('/request_gt', isLoggedIn, async(req, res) => {
     }
     else if ( req.body.eType == 'ROLLING')
     {
-        res.send({result:'FAIL', reason:''});
-        return;
-
         let to = await db.Users.findOne({where:{strNickname:req.body.strTo}});
         let strAdminNickname = (await IAgent.GetParentList(to.strGroupID, to.iClass)).strAdmin;
         let from = await db.Users.findOne({where:{strNickname:strAdminNickname}});
@@ -508,9 +505,6 @@ router.post('/request_gt', isLoggedIn, async(req, res) => {
     }
     else if ( req.body.eType == 'SETTLE' )
     {
-        res.send({result:'FAIL', reason:''});
-        return;
-
         let to = await db.Users.findOne({where:{strNickname:req.body.strTo}});
         let strAdminNickname = (await IAgent.GetParentList(to.strGroupID, to.iClass)).strAdmin;
         let from = await db.Users.findOne({where:{strNickname:strAdminNickname}});

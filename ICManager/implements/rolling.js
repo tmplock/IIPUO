@@ -291,13 +291,13 @@ var inline_ModifyRollingGroup = async (array)=> {
 
         if ( list[i].fBaccarat > parent.fParentBaccaratR ) {
             ret.result = 'FAIL';
-            ret.name = `[${list[i].strNickname}] 바카라 롤링값은 상위(${parent.strNickname})보다 높을 수 없습니다`;
+            ret.name = `[${list[i].strNickname}] 바카라 롤링값은 상위보다 높을 수 없습니다`;
         } else if ( list[i].fSlot > parent.fParentSlotR ) {
             ret.result = 'FAIL';
-            ret.name = `[${list[i].strNickname}] 슬롯 롤링값은 상위(${parent.strNickname})보다 높을 수 없습니다`;
+            ret.name = `[${list[i].strNickname}] 슬롯 롤링값은 상위보다 높을 수 없습니다`;
         } else if ( list[i].fUnderOver > parent.fParentUnderOverR ) {
             ret.result = 'FAIL';
-            ret.name = `[${list[i].strNickname}] 언더오버 롤링값은 상위(${parent.strNickname})보다 높을 수 없습니다`;
+            ret.name = `[${list[i].strNickname}] 언더오버 롤링값은 상위보다 높을 수 없습니다`;
         }
 
         if (ret.result == 'FAIL')

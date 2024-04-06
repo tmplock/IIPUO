@@ -32,7 +32,11 @@ let inline_GetProcessing = async (strGroupID, strNickname, iClass) => {
 
     let strNickname2 = strNickname ?? '';
     if (strNickname2 != undefined && strNickname2 != null && strNickname2.length > 0) {
-        const input = await inline_GetProcessingInput(strGroupID, iClass);
+        let iclass = iClass ?? 0;
+        let input = 0;
+        if (iclass != 0) {
+            input = await inline_GetProcessingInput(strGroupID, iClass);
+        }
         const output = await inline_GetProcessingOutput(strGroupID);
         const charge = await inline_GetProcessingCharge(strNickname2);
         const letter = await inline_GetProcessingLetter(strNickname2, 'UNREAD');

@@ -225,19 +225,22 @@ let SetBettingList = (records, startIndex) => {
 
         if (eType == 'CANCEL_BET' || eType == 'CANCEL' || eType == 'CANCEL_WIN') {
         } else {
-            if (iGameCode == 0 || iGameCode == 100) {
-                if (eState == 'COMPLETE') {
-                    if ( records[i].iWin > 0 ) {
-                        tagDetail =  `<a style="color:red;" onclick="OnClickRoundDetail('${records[i].id}')" href="#">당첨 결과</a>`;
+            if (eState == 'COMPLETE') {
+                if (eType == 'RD') {
+                    if (records[i].iWin > 0) {
+                        tagDetail = `<a style="color:red;" onclick="OnClickRoundDetail('${records[i].id}')" href="#">당첨 결과</a>`;
                     } else {
-                        tagDetail =  `<a style="color:blue;" onclick="OnClickRoundDetail('${records[i].id}')" href="#">당첨 결과</a>`;
+                        tagDetail = `<a style="color:blue;" onclick="OnClickRoundDetail('${records[i].id}')" href="#">당첨 결과</a>`;
                     }
-                    updatedAt = records[i].updatedAt;
-                } else if (eState == 'PENDING') {
-                    tagDetail =  `<a style="color:blue;"></a>`;
-                } else if (eState == 'ERROR') {
-                    tagDetail =  `<a style="color:#e7af16;" href="#">당첨 조회 오류</a>`;
+                } else {
+                    tagTargetBet = `<td style="font-size: 12px; background-color:${color}; padding: 10px; line-height: 1.5;"><font style="color: black;">${GetNumber(records[i].iBet)}</font></td>`;
+                    tagTargetWin = `<td style="font-size: 12px; background-color:${color}; padding: 10px; line-height: 1.5;"><font style="color: black;">${GetNumber(records[i].iWin)}</font></td>`
                 }
+                updatedAt = records[i].updatedAt;
+            } else if ('PENDING') {
+                tagDetail =  `<a style="color:#e7af16;" href="#">당첨 조회 실패</a>`;
+            } else if ('ERROR') {
+                tagDetail =  `<a style="color:#e7af16;" href="#">당첨 조회 오류</a>`;
             }
         }
 
@@ -328,14 +331,9 @@ let SetSlotBettingList = (records, startIndex) => {
         let iGameCode = parseInt(records[i].iGameCode);
         let eState = records[i].eState;
         let updatedAt = '';
-        if (iGameCode == 0 || iGameCode == 100) {
-            if (eState == 'COMPLETE') {
-                updatedAt = records[i].updatedAt;
-            } else if (eState == 'PENDING') {
-                tagDetail =  `<a style="color:blue;">PENDING</a>`;
-            } else if (eState == 'ERROR') {
-                tagDetail =  `<a style="color:#e7af16;" href="#">ERROR</a>`;
-            }
+
+        if (eState == 'COMPLETE') {
+            updatedAt = records[i].updatedAt;
         }
 
         let tag =

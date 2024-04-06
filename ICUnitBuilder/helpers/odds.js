@@ -827,7 +827,7 @@ exports.JoinGroupDailyOverview = (list, listAdd) =>
     }    
 }
 
-let ProcessGroupDailyOverview = (objectRolling, objectArg, strDate) => {
+exports.ProcessGroupDailyOverview = (objectRolling, objectArg, strDate) => {
 
     console.log(`##### ProcessGroupDailyOverview`);
     console.log(objectRolling);

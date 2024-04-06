@@ -400,8 +400,8 @@ let inline_GetIOMFromDate = async (strGroupID, iClass, strStartDate, strEndDate,
                 IFNULL((SELECT SUM(iRolling) FROM Users WHERE strNickname = '${strNickname}' AND iClass ='${iClass}'),0) as iRolling,
                 IFNULL((SELECT SUM(iSettle) FROM Users WHERE strNickname = '${strNickname}' AND iClass ='${iClass}') ,0) as iSettle,
                 IFNULL((SELECT SUM(iCash) FROM Users WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND iClass > 3 ),0) as iTotalMoney,
-                IFNULL((SELECT SUM(iAmount) FROM Inouts WHERE eType='INPUT' AND eState = 'COMPLETE' AND strGroupID LIKE CONCAT('${strGroupID}','%') AND date(createdAt) BETWEEN '${strStartDate}' AND '${strEndDate}'),0) as iInput,
-                IFNULL((SELECT SUM(iAmount) FROM Inouts WHERE eType='OUTPUT' AND eState = 'COMPLETE' AND strGroupID LIKE CONCAT('${strGroupID}','%') AND date(createdAt) BETWEEN '${strStartDate}' AND '${strEndDate}'),0) as iOutput,
+                IFNULL((SELECT SUM(iAmount) FROM Inouts WHERE eType='INPUT' AND eState = 'COMPLETE' AND strID = '${strNickname}' AND date(createdAt) BETWEEN '${strStartDate}' AND '${strEndDate}'),0) as iInput,
+                IFNULL((SELECT SUM(iAmount) FROM Inouts WHERE eType='OUTPUT' AND eState = 'COMPLETE' AND strID = '${strNickname}' AND date(createdAt) BETWEEN '${strStartDate}' AND '${strEndDate}'),0) as iOutput,
                 IFNULL(SUM(case when Inouts.eType = 'ROLLING' OR Inouts.eType = 'SETTLE' then Inouts.iAmount ELSE 0 END),0) as iExchange,
                 IFNULL(SUM(case when Inouts.eType = 'ROLLING' then Inouts.iAmount ELSE 0 END),0) as iExchangeRolling,
                 IFNULL(SUM(case when Inouts.eType = 'SETTLE' then Inouts.iAmount ELSE 0 END),0) as iExchangeSettle,
@@ -580,7 +580,7 @@ var inline_CalculateTermSelfBettingRecord = async (strGroupID, iClass, dateStart
 
     for ( let date in iom)
     {
-        let iCurrent = FindIndexFromBettingRecord(iom[date].date, list);
+        let iCurrent = FindIndexFromBettingRecord(iom[date].strDate, list);
         if ( iCurrent == -1 )
             continue;
 
@@ -918,6 +918,10 @@ var inline_GetComputedAgentList = async (strGroupID, iClass, dateStart, dateEnd,
     if (bTotal != undefined && bTotal == true) {
         subQuery2 = GetDailyBettingQuery(iClass, dateStart, dateEnd);
     }
+    let subQuery3 = `
+        IFNULL((SELECT sum(iAmount) FROM Inouts WHERE strGroupID LIKE CONCAT(t2.strGroupID,'%') AND eState = 'COMPLETE' AND eType = 'INPUT' AND date(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}' ),0) as iInput,
+        IFNULL((SELECT sum(iAmount) FROM Inouts WHERE strGroupID LIKE CONCAT(t2.strGroupID,'%') AND eState = 'COMPLETE' AND eType = 'OUTPUT' AND date(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iOutput
+    `;
     if ( iClass == EAgent.eViceHQ )
     {
         subQuery = `
@@ -999,6 +1003,10 @@ var inline_GetComputedAgentList = async (strGroupID, iClass, dateStart, dateEnd,
             0 as iNumUsers,
             IFNULL((SELECT sum(iRolling) FROM Users WHERE strGroupID LIKE CONCAT(t2.strGroupID,'%') AND iClass > 3), 0) AS iCurrentRollingTotal
         `;
+        subQuery3 = `
+            IFNULL((SELECT sum(iAmount) FROM Inouts WHERE strID = t2.strNickname AND eState = 'COMPLETE' AND eType = 'INPUT' AND date(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}' ),0) as iInput,
+            IFNULL((SELECT sum(iAmount) FROM Inouts WHERE strID = t2.strNickname AND eState = 'COMPLETE' AND eType = 'OUTPUT' AND date(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iOutput
+        `;
     }
 
     if (subQuery == '' || subQuery2 == '') {
@@ -1027,8 +1035,7 @@ var inline_GetComputedAgentList = async (strGroupID, iClass, dateStart, dateEnd,
             WHEN t2.iClass > 3 THEN t2.iSettleAcc
             ELSE 0
         END AS iCurrentSettleAcc,
-        IFNULL((SELECT sum(iAmount) FROM Inouts WHERE strGroupID LIKE CONCAT(t2.strGroupID,'%') AND eState = 'COMPLETE' AND eType = 'INPUT' AND date(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}' ),0) as iInput,
-        IFNULL((SELECT sum(iAmount) FROM Inouts WHERE strGroupID LIKE CONCAT(t2.strGroupID,'%') AND eState = 'COMPLETE' AND eType = 'OUTPUT' AND date(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iOutput,    
+        ${subQuery3},    
         IFNULL((SELECT sum(iSettle) FROM Users WHERE strGroupID LIKE CONCAT(t2.strGroupID,'%') AND iClass > 3), 0) AS iCurrentSettleTotal,
         IFNULL((SELECT sum(iAmount) FROM GTs WHERE eType='ROLLING' AND strGroupID LIKE CONCAT(t2.strGroupID, '%') AND date(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iRollingTranslate,
         IFNULL((SELECT sum(iAmount) FROM GTs WHERE eType='SETTLE' AND strGroupID LIKE CONCAT(t2.strGroupID, '%') AND date(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iSettleTranslate,

@@ -183,8 +183,8 @@ function AddTableOwner(iHeader, iInput, iOutput, iCash, aObject, iRootClass)
 	}
 
 	tag += `<td><a style="${fontWeight}">${GetNumber(aObject.iInput)}</a></td>`;
-	tag += `<td><a style="${fontWeight}">${GetNumber(aObject.iExchange)}</a></td>`;
 	tag += `<td><a style="${fontWeight}">${GetNumber(aObject.iOutput)}</a></td>`;
+	tag += `<td><a style="${fontWeight}">${GetNumberSign(parseInt(aObject.iInput) - parseInt(aObject.iOutput))}</a></td>`;
 	tag += `<td><a style="${fontWeight}">${GetNumber(aObject.iTotalCash)}</a></td>`;
 
 	tag += `<td style="text-align:right;">`;
@@ -537,8 +537,9 @@ function SetOverviewRecordList(aObject, strParentTag, bClear, iRootClass)
 		console.log(`## AddTable`);
 		console.log(tObject);
 
-		for ( let i in tObject.kBettingInfo )
+		for ( let i in tObject.kBettingInfo ) {
 			object.kBettingInfo.push(tObject.kBettingInfo[i]);
+		}
 
 		object.iExchange += parseInt(tObject.iExchange);
 		object.iInput += parseInt(tObject.iInput);
@@ -1718,6 +1719,9 @@ let RequestBettingRecordMe = (iTargetClass, strGroupID, iClass, strID) => {
 	});
 }
 
+/**
+ * 일자별 토탈
+ */
 let RequestBettingRecordUser = (iTargetClass, strGroupID, iClass, strNickname) => {
 
 	const dateStart = $('#datepicker1').val();

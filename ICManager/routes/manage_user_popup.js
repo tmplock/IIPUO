@@ -333,7 +333,7 @@ router.post('/request_gt', isLoggedIn, async(req, res) => {
 
         const cAmount = parseInt(req.body.iAmount);
         if (cAmount < 0) {
-            res.send({result:'FAIL', reason:'NOTENOUGH'});
+            res.send({result:'FAIL', reason:''});
             return;
         }
 
@@ -392,6 +392,11 @@ router.post('/request_gt', isLoggedIn, async(req, res) => {
 
         const cAmount = parseInt(req.body.iAmount);
 
+        if (cAmount < 0) {
+            res.send({result:'FAIL', reason:''});
+            return;
+        }
+
         if ( to != null && from != null )
         {
             console.log(`FROM : ${from.iCash}, TO : ${to.iCash}`);
@@ -448,6 +453,12 @@ router.post('/request_gt', isLoggedIn, async(req, res) => {
         if ( to != null && from != null )
         {
             const cAmount = parseInt(req.body.iAmount);
+
+            if (cAmount < 0) {
+                res.send({result:'FAIL', reason:''});
+                return;
+            }
+
             if ( from.iCash < cAmount )
             {
                 res.send({result:'FAIL', reason:'NOTENOUGH'});
@@ -512,6 +523,12 @@ router.post('/request_gt', isLoggedIn, async(req, res) => {
         if ( to != null && from != null)
         {
             const cAmount = parseInt(req.body.iAmount);
+
+            if (cAmount < 0) {
+                res.send({result:'FAIL', reason:''});
+                return;
+            }
+
             if ( from.iCash < cAmount )
             {
                 res.send({result:'FAIL', reason:'NOTENOUGH'});

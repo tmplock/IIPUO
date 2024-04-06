@@ -207,9 +207,11 @@ let SetBettingList = (records, startIndex) => {
         if (eType == 'CANCEL_BET' || eType == 'CANCEL' || eType == 'CANCEL_WIN') {
             if (iBet > 0) {
                 iCancelBet = iBet;
+                tagWin = `<td style="background-color:${color};color:red;">${GetNumber(iWin)}</td>`;
             }
             if (iWin > 0) {
                 iCancelWin = iWin;
+                tagWin = `<td style="background-color:${color};color:red;">${GetNumber(iWin)}</td>`;
             }
         }
 
@@ -224,6 +226,8 @@ let SetBettingList = (records, startIndex) => {
         let updatedAt = '';
 
         if (eType == 'CANCEL_BET' || eType == 'CANCEL' || eType == 'CANCEL_WIN') {
+            tagTargetBet = `<td style="font-size: 12px; background-color:${color}; padding: 10px; line-height: 1.5;"><font style="color: black;">${GetNumber(records[i].iBet)}</font></td>`;
+            tagTargetWin = `<td style="font-size: 12px; background-color:${color}; padding: 10px; line-height: 1.5;"><font style="color: black;">${GetNumber(records[i].iWin)}</font></td>`
         } else {
             if (eState == 'COMPLETE') {
                 if (eType == 'RD') {
@@ -237,9 +241,13 @@ let SetBettingList = (records, startIndex) => {
                     tagTargetWin = `<td style="font-size: 12px; background-color:${color}; padding: 10px; line-height: 1.5;"><font style="color: black;">${GetNumber(records[i].iWin)}</font></td>`
                 }
                 updatedAt = records[i].updatedAt;
-            } else if ('PENDING') {
+            } else if (eState == 'PENDING') {
+                tagTargetBet = `<td style="font-size: 12px; background-color:${color}; padding: 10px; line-height: 1.5;"><font style="color: black;">${GetNumber(records[i].iBet)}</font></td>`;
+                tagTargetWin = `<td style="font-size: 12px; background-color:${color}; padding: 10px; line-height: 1.5;"><font style="color: black;">${GetNumber(records[i].iWin)}</font></td>`
                 tagDetail =  `<a style="color:#e7af16;" href="#">당첨 조회 실패</a>`;
-            } else if ('ERROR') {
+            } else if (eState == 'ERROR') {
+                tagTargetBet = `<td style="font-size: 12px; background-color:${color}; padding: 10px; line-height: 1.5;"><font style="color: black;">${GetNumber(records[i].iBet)}</font></td>`;
+                tagTargetWin = `<td style="font-size: 12px; background-color:${color}; padding: 10px; line-height: 1.5;"><font style="color: black;">${GetNumber(records[i].iWin)}</font></td>`
                 tagDetail =  `<a style="color:#e7af16;" href="#">당첨 조회 오류</a>`;
             }
         }

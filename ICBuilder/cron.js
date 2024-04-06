@@ -137,10 +137,12 @@ let lProcessID = -1;
     console.log(`##### UPDATE RECORD BET : Length : ${listUpdateDB.length}`);
     for ( let i in listUpdateDB )
     {
-        console.log(i);
+        if ( i == 0 )
+            continue;
 
         const cData = listUpdateDB[i];
 
+        console.log(i);
         console.log(cData);
 
         if ( cData.eType == 'BETRD' && cData.eState == 'STANDBY' )

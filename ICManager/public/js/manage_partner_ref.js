@@ -183,8 +183,8 @@ function AddTableOwner(iHeader, iInput, iOutput, iCash, aObject, iRootClass)
 	}
 
 	tag += `<td><a style="${fontWeight}">${GetNumber(aObject.iInput)}</a></td>`;
-	tag += `<td><a style="${fontWeight}">${GetNumber(aObject.iExchange)}</a></td>`;
 	tag += `<td><a style="${fontWeight}">${GetNumber(aObject.iOutput)}</a></td>`;
+	tag += `<td><a style="${fontWeight}">${GetNumberSign(parseInt(aObject.iInput) - parseInt(aObject.iOutput))}</a></td>`;
 	tag += `<td><a style="${fontWeight}">${GetNumber(aObject.iTotalCash)}</a></td>`;
 
 	tag += `<td style="text-align:right;">`;

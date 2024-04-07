@@ -14,7 +14,7 @@
 		&nbsp;
 		<button class="menu1" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;" onclick="OnClickMonthly2ndRecord();"><%=__('Half2')%></button>
 		&nbsp;
-		<button class="btn_blue" id="button_toggle_record" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(136, 136, 248);color:white" onclick="OnClickMonthlyRecord();"><%=__('Open')%></button>
+		<button class="btn_blue" id="button_toggle_record" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(136, 136, 248);color:white" onclick="OnClickRecord();"><%=__('Open')%></button>
 		<select id="select_limit" style="width:80px; display: none;" >
 			<option value="30">30개씩</option>
 			<option value="50">50개씩</option>
@@ -108,13 +108,10 @@
 	});
 
 	let bToggleRecord = false;
-	let bClickDateSelection	= false;
 	let bettingType = 'B';
 
 	$(document).ready(() => {
 		DatePicker();
-		$('#datepicker1').val(GetCurrentDate());
-		$('#datepicker2').val(GetCurrentDate());
 
 		$("#table_record_list").hide();
 		OnClickTodayRecord();
@@ -123,6 +120,7 @@
 	let SetBettingButton = () => {
 		$('#bettingrecord_tab').empty();
 		$('#betting_title').empty();
+		$('#tbody_record_list').empty();
 		if (bettingType == 'B') {
 			$('#bettingrecord_tab').append(`
 				<ul class="list_tab" style="margin-bottom:10px;width:100%;z-index:10000;" id="bettingrecord_header">
@@ -189,87 +187,20 @@
 		} else if (type == 'S') {
 			bettingType = 'S';
 		}
-		OnClickPage(1);
+		SetBettingButton();
+		RequestBettingListOnPopup(EAgent.eUser, agent.strGroupID, agent.iClass, agent.iPermission, iLimit, iCurrentPage, agent.strID, bettingType);
 	}
 
 	let OnClickTodayRecord = () => {
 
-		bClickDateSelection	= true;
+		bToggleRecord = false;
+		$("#button_toggle_record").text(strClose);
+
 
 		$('#datepicker1').val(GetCurrentDate());
 		$('#datepicker2').val(GetCurrentDate());
 
-		bToggleRecord = true;
-		$("#button_toggle_record").text("<%=__('Close')%>");
-
-		RequestOverviewUser(EAgent.eUser, agent.strGroupID, agent.iClass, agent.strNickname);
-		RequestBettingRecordUser(EAgent.eUser, agent.strGroupID, agent.iClass, agent.strNickname);
-		SetBettingButton();
-		RequestBettingListOnPopup(EAgent.eUser, agent.strGroupID, agent.iClass, agent.iPermission, iLimit, iCurrentPage, agent.strID, bettingType);
-	}
-
-	let OnClickMonthly1stRecord = () => {
-
-		bClickDateSelection	= true;
-		$('#datepicker1').val(GetMonthly1stStartDate());
-		$('#datepicker2').val(GetMonthly1stEndDate());
-
-		bToggleRecord = true;
-		$("#button_toggle_record").text("<%=__('Close')%>");
-
-		RequestOverviewUser(EAgent.eUser, agent.strGroupID, agent.iClass, agent.strNickname);
-		RequestBettingRecordUser(EAgent.eUser, agent.strGroupID, agent.iClass, agent.strNickname);
-		SetBettingButton();
-		RequestBettingListOnPopup(EAgent.eUser, agent.strGroupID, agent.iClass, agent.iPermission, iLimit, iCurrentPage, agent.strID, bettingType);
-	}
-
-	let OnClickMonthly2ndRecord = () => {
-
-		bClickDateSelection	= true;
-		$('#datepicker1').val(GetMonthly2ndStartDate());
-		$('#datepicker2').val(GetMonthly2ndEndDate());
-
-		bToggleRecord = true;
-		$("#button_toggle_record").text("<%=__('Close')%>");
-
-		RequestOverviewUser(EAgent.eUser, agent.strGroupID, agent.iClass, agent.strNickname);
-		RequestBettingRecordUser(EAgent.eUser, agent.strGroupID, agent.iClass, agent.strNickname);
-		SetBettingButton();
-		RequestBettingListOnPopup(EAgent.eUser, agent.strGroupID, agent.iClass, agent.iPermission, iLimit, iCurrentPage, agent.strID, bettingType);
-	}
-	
-	function OnClickMonthlyRecord()
-	{
-		bToggleRecord = !bToggleRecord;
-
-		if ( bToggleRecord ) {
-
-			$("#table_record_list").show();
-			$("#button_toggle_record").text("<%=__('Close')%>");
-
-			if ( false == bClickDateSelection )
-			{
-				$('#datepicker1').val(GetMonthlyStartDate());
-				$('#datepicker2').val(GetMonthlyEndDate());
-			}
-
-			RequestBettingRecordUser(EAgent.eUser, agent.strGroupID, agent.iClass, agent.strNickname);
-		}
-		else {
-			$("#table_record_list").hide();
-			$("#button_toggle_record").text(strOpen);
-		}
-	}
-
-	let OnClickSearch = (iTargetClass, strGroupID, iClass) => {
-
-		bToggleRecord = true;
-		$("#button_toggle_record").text("<%=__('Close')%>");
-
-		RequestOverviewUser(EAgent.eUser, agent.strGroupID, agent.iClass, agent.strNickname);
-		RequestBettingRecordUser(EAgent.eUser, agent.strGroupID, agent.iClass, agent.strNickname);
-		SetBettingButton();
-		RequestBettingListOnPopup(EAgent.eUser, agent.strGroupID, agent.iClass, agent.iPermission, iLimit, iCurrentPage, agent.strID, bettingType);
+		OnClickSearch();
 	}
 
 	let OnClickPage = (iPage) => {
@@ -277,6 +208,49 @@
 			return;
 		}
 		iCurrentPage = iPage;
+		RequestBettingListOnPopup(EAgent.eUser, agent.strGroupID, agent.iClass, agent.iPermission, iLimit, iCurrentPage, agent.strID, bettingType);
+	}
+
+	function OnClickRecord()
+	{
+		bToggleRecord = !bToggleRecord;
+
+		if ( bToggleRecord ) {
+			$("#table_record_list").show();
+			$("#button_toggle_record").text(strClose);
+		}
+		else {
+			$("#table_record_list").hide();
+			$("#button_toggle_record").text(strOpen);
+		}
+	}
+
+	let OnClickMonthly1stRecord = () => {
+
+		$('#datepicker1').val(GetMonthly1stStartDate());
+		$('#datepicker2').val(GetMonthly1stEndDate());
+
+		bToggleRecord = true;
+		$("#button_toggle_record").text("<%=__('Close')%>");
+
 		OnClickSearch();
+	}
+
+	let OnClickMonthly2ndRecord = () => {
+
+		$('#datepicker1').val(GetMonthly2ndStartDate());
+		$('#datepicker2').val(GetMonthly2ndEndDate());
+
+		bToggleRecord = true;
+		$("#button_toggle_record").text("<%=__('Close')%>");
+
+		OnClickSearch();
+	}
+
+	let OnClickSearch = () => {
+		RequestOverviewUser(EAgent.eUser, agent.strGroupID, agent.iClass, agent.strNickname);
+		RequestBettingRecordUser(EAgent.eUser, agent.strGroupID, agent.iClass, agent.strNickname);
+		SetBettingButton();
+		RequestBettingListOnPopup(EAgent.eUser, agent.strGroupID, agent.iClass, agent.iPermission, iLimit, iCurrentPage, agent.strID, bettingType);
 	}
 </script>

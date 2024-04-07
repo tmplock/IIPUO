@@ -137,6 +137,8 @@ let lProcessID = -1;
     console.log(`##### UPDATE RECORD BET : Length : ${listUpdateDB.length}`);
     for ( let i in listUpdateDB )
     {
+        console.log(`##### listDBUpdate : ${i} db.id : ${listUpdateDB[i].id}`);
+
         // if ( i == 0 )
         //     continue;
 

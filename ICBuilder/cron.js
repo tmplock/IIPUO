@@ -168,14 +168,15 @@ let strCurrentStep = '';
 
     //  ##### CANCEL
     const listCancelWin = GetDBListFromType(listBetDB, 'CANCEL_WIN');
-    console.log(`##### CANCEL : Length : ${listCancelWin.length}`);
+    console.log(`##### CANCEL_WIN : Length : ${listCancelWin.length}`);
     Processor.ProcessCancel('WIN', listCancelWin, listOverview, listOdds, listUpdateDB);
+
+    strCurrentStep = '12 : CANCEL_WIN COMPLETE';
 
     const listBetRD = GetDBListFromType(listBetDB, 'BETRD');
     console.log(`##### BETRD : Length : ${listBetRD.length}`);
     Processor.ProcessBetRD(listBetRD, listUpdateDB);
-
-    strCurrentStep = '12 : CANCEL_WIN COMPLETE';
+    
 
     strCurrentStep = '13 : DB UPDATE START';
 

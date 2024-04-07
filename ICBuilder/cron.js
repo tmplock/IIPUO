@@ -193,6 +193,10 @@ let strCurrentStep = '';
             continue;
         else if ( cData.eType == 'RD' && cData.eState == 'STANDBY' )
             continue;
+        else if ( cData.eType == 'BETWIN' )
+        {
+            await db.RecordBets.update({eType:'BETWIN', eState:'STANDBY'}, {where:{id:cData.id}});
+        }
         else if ( cData.eType == 'BET' && cData.eState == 'PENDING' )
         {
             await db.RecordBets.update({eType:'BET', eState:'STANDBY'}, {where:{id:cData.id}});

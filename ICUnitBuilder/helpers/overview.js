@@ -164,7 +164,7 @@ exports.CalculateOverview = async (strID, iClass, strDate, listOverview) => {
             createdAt:{
                 [Op.between]:[ dateStart, dateEnd],
             },
-            eType:{[Op.or]:['BET', 'WIN', 'RD']},
+            eType:{[Op.or]:['BET', 'WIN', 'RD', 'BETWIN']},
             eState:'COMPLETE',
             strID:strID,
         },

@@ -93,12 +93,13 @@ exports.ProcessEzugi = async (listDB, listOverview, listOdds, listUpdateDB) => {
                 listUpdateDB.push({id:cData.id, eState:'COMPLETE', strDetail:listData.strBets, strResult:listData.strCards, strOverview:strOverview});
             }
             else
-            {
-                //listUpdateDB.push({id:cData.id, eState:'COMPLETE', eType:'BETWIN'});
+            {                
+               listUpdateDB.push({id:cData.id, eState:'STANDBY', eType:'BETWIN'});
             }
         }
         else
         {
+            listUpdateDB.push({id:cData.id, eState:'STANDBY', eType:'BETWIN'});
             // const cElapsedSeconds = GetElapsedSeconds(cData.updatedAt);
             // if ( cElapsedSeconds > 60 )
             //     //await db.RecordBets.update({eState:'PENDING'}, {where:{id:list[i].id}});
@@ -131,26 +132,31 @@ exports.ProcessCQ9 = async (listDB, listOverview, listOdds, listUpdateDB) => {
             const strDate = cData.createdAt.substr(0,10);
 
             const cOdd = ODDS.FindOdd(cData.strID, listOdds);
-            if ( cOdd == null )
-                continue;
-
-            let objectReturn = ODDS.ProcessRolling(cOdd, listData.list, 0, 0, strDate);
-            let listCurrentOverview = objectReturn.listFinal;
-            let objectBetRolling = objectReturn.objectBet;
-
-            ODDS.JoinGroupDailyOverview(listOverview, listCurrentOverview);
-
-            const strOverview = ODDS.GetRollingString(objectBetRolling);
-
-            //await db.RecordBets.update({eState:'COMPLETE', strDetail:listData.strBets, strResult:listData.strCards, strOverview:strOverview}, {where:{id:list[i].id}});
-            listUpdateDB.push({id:cData.id, eState:'COMPLETE', strDetail:listData.strBets, strResult:listData.strCards, strOverview:strOverview});
+            if ( cOdd != null )
+            {
+                let objectReturn = ODDS.ProcessRolling(cOdd, listData.list, 0, 0, strDate);
+                let listCurrentOverview = objectReturn.listFinal;
+                let objectBetRolling = objectReturn.objectBet;
+    
+                ODDS.JoinGroupDailyOverview(listOverview, listCurrentOverview);
+    
+                const strOverview = ODDS.GetRollingString(objectBetRolling);
+    
+                //await db.RecordBets.update({eState:'COMPLETE', strDetail:listData.strBets, strResult:listData.strCards, strOverview:strOverview}, {where:{id:list[i].id}});
+                listUpdateDB.push({id:cData.id, eState:'COMPLETE', strDetail:listData.strBets, strResult:listData.strCards, strOverview:strOverview});
+            }
+            else
+            {
+                listUpdateDB.push({id:cData.id, eState:'STANDBY', eType:'BETWIN'});                
+            }
         }
         else
         {
-            const cElapsedSeconds = GetElapsedSeconds(list[i].updatedAt);
-            if ( cElapsedSeconds > 60 )
-                //await db.RecordBets.update({eState:'PENDING'}, {where:{id:list[i].id}});
-                listUpdateDB.push({id:cData.id, eState:'PENDING'});
+            listUpdateDB.push({id:cData.id, eState:'STANDBY', eType:'BETWIN'});
+            // const cElapsedSeconds = GetElapsedSeconds(list[i].updatedAt);
+            // if ( cElapsedSeconds > 60 )
+            //     //await db.RecordBets.update({eState:'PENDING'}, {where:{id:list[i].id}});
+            //     listUpdateDB.push({id:cData.id, eState:'PENDING'});
         }
     }
 }

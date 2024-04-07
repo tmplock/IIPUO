@@ -242,7 +242,7 @@ router.post('/request_output', async (req, res) => {
         LEFT JOIN Users AS t4 ON t4.iParentID = t3.id
         LEFT JOIN Users AS t5 ON t5.iParentID = t4.id
         LEFT JOIN Users AS t6 ON t6.iParentID = t5.id
-        WHERE t6.iClass='8' AND t6.strGroupID LIKE CONCAT('${userinfo.strGroupID}', '%');
+        WHERE t6.iClass=${userinfo.iClass} AND t6.strGroupID LIKE CONCAT('${userinfo.strGroupID}', '%');
         `
         );
 

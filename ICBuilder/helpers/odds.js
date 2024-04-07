@@ -828,11 +828,11 @@ exports.ProcessRollingHLink = (oRO, listBet, cPBType, cPBTarget, strDate, iGameC
 
     if ( objectData.iBetB == 0 && objectData.iWinB == 0 )
     {
-        objectData.iPAdminRB += CalculateRollingAmount(o.strPAdminID, cBetAmount, o.fPAdminBaccaratR, o.fVAdminBaccaratR);
-        objectData.iVAdminRB += CalculateRollingAmount(o.strVAdminID, cBetAmount, o.fVAdminBaccaratR, o.fAgentBaccaratR);
-        objectData.iAgentRB += CalculateRollingAmount(o.strAgentID, cBetAmount, o.fAgentBaccaratR, o.fShopBaccaratR);
-        objectData.iShopRB += CalculateRollingAmount(o.strShopID, cBetAmount, o.fShopBaccaratR, o.fUserBaccaratR);
-        objectData.iUserRB += CalculateRollingAmount(o.strUserID, cBetAmount, o.fUserBaccaratR, 0);
+        objectData.iPAdminRB += CalculateRollingAmount(o.strPAdminID, iBet, o.fPAdminBaccaratR, o.fVAdminBaccaratR);
+        objectData.iVAdminRB += CalculateRollingAmount(o.strVAdminID, iBet, o.fVAdminBaccaratR, o.fAgentBaccaratR);
+        objectData.iAgentRB += CalculateRollingAmount(o.strAgentID, iBet, o.fAgentBaccaratR, o.fShopBaccaratR);
+        objectData.iShopRB += CalculateRollingAmount(o.strShopID, iBet, o.fShopBaccaratR, o.fUserBaccaratR);
+        objectData.iUserRB += CalculateRollingAmount(o.strUserID, iBet, o.fUserBaccaratR, 0);
 
         objectData.iBetB += iBet;
         objectData.iWinB += iWin;

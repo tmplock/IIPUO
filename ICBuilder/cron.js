@@ -39,7 +39,7 @@ let GetDBListFromType = (listDB, eType) => {
 
         if ( eType == 'WIN' && listDB[i].eType == 'WIN' && listDB[i].strOverview != '' )
             list.push(listDB[i]);
-        else if ( eType == 'BETWIN' && listDB[i].eType == 'WIN' && listDB[i].strOverview == '' )
+        else if ( eType == 'BETWIN' && listDB[i].eType == 'WIN' && listDB[i].strOverview == '' && listDB[i].iGameCode != 200 )
             list.push(listDB[i]);
         else if ( listDB[i].eType == eType )
             list.push(listDB[i]);
@@ -48,6 +48,7 @@ let GetDBListFromType = (listDB, eType) => {
 }
 
 let lProcessID = -1;
+let strCurrentStep = '';
 
 //cron.schedule('*/5 * * * * * ', async ()=> {
  cron.schedule('*/1 * * * * ', async ()=> {
@@ -57,10 +58,11 @@ let lProcessID = -1;
     
     if (lProcessID != -1)
     {
-        console.log(`##### CRON IS PROCESSING`);
+        console.log(`##### CRON IS PROCESSING : ${strCurrentStep}`);
         return;
     }
     lProcessID = 1;
+    strCurrentStep = '1 : START';
 
     let listUpdateDB = [];
     let listOverview = [];
@@ -69,31 +71,58 @@ let lProcessID = -1;
         where: {
             eState: 'STANDBY',
             eType:{[Op.or]:['RD', 'CANCEL', 'CANCEL_BET', 'CANCEL_WIN', 'BET', 'WIN']},
+            // strVender:{[Op.not]:'EZUGI'},
             createdAt:{
-                [Op.lte]:moment().subtract(5, "minutes").toDate(),
+                [Op.lte]:moment().subtract(1, "minutes").toDate(),
             }
         },
         order: [['createdAt', 'ASC']]
     });
     console.log(`##### listBetDB.length = ${listBetDB.length}`);
 
+    strCurrentStep = '2 : GET DB COMPLETE';
+
+    //  이주기 자체가 15분 내외로 오기 때문에 낭비할 필요가 없다. 17분 후로 설정하여 따로 얻어 오는 것이 효율적으로 판단.
+    let listEzugiBetDB = await db.RecordBets.findAll({
+        where: {
+            eState: 'STANDBY',
+            eType:{[Op.or]:['RD']},
+            strVender:'EZUGI',
+            createdAt:{
+                [Op.lte]:moment().subtract(17, "minutes").toDate(),
+            }
+        },
+        order: [['createdAt', 'ASC']]
+    });
+    console.log(`##### listEzugiBetDB.length = ${listEzugiBetDB.length}`);
+
+
     let listOdds = await ODDS.FullCalculteOdds(listBetDB);
+
+    strCurrentStep = '3 : START PROCESSING';
 
     //  ##### VIVO
     const listVivoDB = GetDBListFromVender(listBetDB, 'VIVO');
     console.log(`##### VIVO : Length : ${listVivoDB.length}`);
     Processor.ProcessVivo(listVivoDB, listOverview, listOdds, listUpdateDB);
 
+    strCurrentStep = '4 : VIVO COMPLETE';
+
     //  ##### EZUGI
-    const listEzugiDB = GetDBListFromVender(listBetDB, 'EZUGI');
-    console.log(`##### EZUGI : Length : ${listEzugiDB.length}`);
-    await Processor.ProcessEzugi(listEzugiDB, listOverview, listOdds, listUpdateDB);
+    //const listEzugiDB = GetDBListFromVender(listBetDB, 'EZUGI');
+    console.log(`##### EZUGI : Length : ${listEzugiBetDB.length}`);
+    await Processor.ProcessEzugi(listEzugiBetDB, listOverview, listOdds, listUpdateDB);
+
+    strCurrentStep = '5 : EZUGI COMPLETE';
 
     //  ##### CQ9
     const listCQ9DB = GetDBListFromVender(listBetDB, 'CQ9');
     console.log(`##### CQ9 : Length : ${listCQ9DB.length}`);
     await Processor.ProcessCQ9(listCQ9DB, listOverview, listOdds, listUpdateDB);
 
+    strCurrentStep = '6 : CQ9 COMPLETE';
+
+    //  아너링크는 기본적으로 베팅에 관련된 것을 미리 처리 한 후에 RD 를 얻어 오는 것으로 결정
     //  ##### HonorLink
     const listHL = GetDBListFromVender(listBetDB, 'HONORLINK');
     console.log(`##### HONORLINK : Length : ${listHL.length}`);
@@ -104,34 +133,44 @@ let lProcessID = -1;
     console.log(`##### BET : Length : ${listBet.length}`);
     Processor.ProcessBet(listBet, listOverview, listOdds, listUpdateDB);
 
+    strCurrentStep = '7 : BET COMPLETE';
+
     //  ##### Win
     const listWin = GetDBListFromType(listBetDB, 'WIN');
     console.log(`##### WIN : Length : ${listWin.length}`);
     Processor.ProcessWin(listWin, listOverview, listOdds, listUpdateDB);
+
+    strCurrentStep = '8 : WIN COMPLETE';
 
     //  ##### BetWin
     const listBetWin = GetDBListFromType(listBetDB, 'BETWIN');
     console.log(`##### BETWIN : Length : ${listBetWin.length}`);
     Processor.ProcessBetWin(listBetWin, listOverview, listOdds, listUpdateDB);
 
+    strCurrentStep = '9 : BETWIN COMPLETE';
+
     //  ##### CANCEL
     const listCancelAll = GetDBListFromType(listBetDB, 'CANCEL');
     console.log(`##### CANCEL : Length : ${listCancelAll.length}`);
     Processor.ProcessCancel('ALL', listCancelAll, listOverview, listOdds, listUpdateDB);
+
+    strCurrentStep = '10 : CANCEL COMPLETE';
 
     //  ##### CANCEL
     const listCancelBet = GetDBListFromType(listBetDB, 'CANCEL_BET');
     console.log(`##### CANCEL_BET : Length : ${listCancelBet.length}`);
     Processor.ProcessCancel('BET', listCancelBet, listOverview, listOdds, listUpdateDB);
 
+    strCurrentStep = '11 : CANCEL_BET COMPLETE';
+
     //  ##### CANCEL
     const listCancelWin = GetDBListFromType(listBetDB, 'CANCEL_WIN');
     console.log(`##### CANCEL : Length : ${listCancelWin.length}`);
     Processor.ProcessCancel('WIN', listCancelWin, listOverview, listOdds, listUpdateDB);
 
-    // //  ##### OVERVIEW
-    // console.log(`##### UPDATE OVERVIEW : Length : ${listOverview.length}`);
-    // await ODDS.UpdateOverview(listOverview);
+    strCurrentStep = '12 : CANCEL_WIN COMPLETE';
+
+    strCurrentStep = '13 : DB UPDATE START';
 
     //  ##### UPDATE BET
     console.log(`##### UPDATE RECORD BET : Length : ${listUpdateDB.length}`);
@@ -166,12 +205,14 @@ let lProcessID = -1;
         }
     }
 
+    strCurrentStep = '14 : OVERVIEW UPDATE START';
+
     //  ##### OVERVIEW
     console.log(`##### UPDATE OVERVIEW : Length : ${listOverview.length}`);
     await ODDS.UpdateOverview(listOverview);
     
-    
     lProcessID = -1;
+    strCurrentStep = '';
     
     console.log(`##### END OF CRON`);
 });

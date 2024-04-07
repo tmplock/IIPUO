@@ -120,6 +120,10 @@ exports.ProcessWin = async (strID, strNickname, strGroupID, iClass, iBalance, iG
                         {
                             await db.RecordBets.update({iWin:iWin, strUniqueID:strUniqueID, eType:'RD', eState:'STANDBY'}, {where:{id:bet.id}});
                         }
+                        else if ( bet.eType == 'BET' )
+                        {
+                            await db.RecordBets.update({iWin:iWin, strUniqueID:strUniqueID, eType:'BETWIN', eState:'STANDBY'}, {where:{id:bet.id}});
+                        }
                         else
                         {
                             const cWin = parseFloat(bet.iWin) + iWin;

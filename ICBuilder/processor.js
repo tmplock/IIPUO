@@ -318,5 +318,12 @@ exports.ProcessCancel = (eType, listDB, listOverview, listOdds, listUpdateDB) =>
         //await db.RecordBets.update({eState:'COMPLETE'}, {where:{id:list[i].id}});
         listUpdateDB.push({id:cData.id, eState:'COMPLETE', strDetail:'', strResult:'', strOverview:''});
     }
+}
 
+exports.ProcessBetRD = (listDB, listUpdateDB) => {
+
+    for (let i in listDB)
+    {
+        listUpdateDB.push({id:cData.id, eState:'STANDBY', eType:'BET'});
+    }
 }

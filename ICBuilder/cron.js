@@ -73,7 +73,7 @@ let strCurrentStep = '';
     let listBetDB = await db.RecordBets.findAll({
         where: {
             eState: 'STANDBY',
-            eType:{[Op.or]:['RD', 'CANCEL', 'CANCEL_BET', 'CANCEL_WIN', 'BET', 'WIN', 'BETWIN']},
+            eType:{[Op.or]:['RD', 'CANCEL', 'CANCEL_BET', 'CANCEL_WIN', 'BET', 'WIN', 'BETWIN', 'BETRD']},
             // strVender:{[Op.not]:'EZUGI'},
             createdAt:{
                 [Op.lte]:moment().subtract(1, "minutes").toDate(),
@@ -171,6 +171,10 @@ let strCurrentStep = '';
     console.log(`##### CANCEL : Length : ${listCancelWin.length}`);
     Processor.ProcessCancel('WIN', listCancelWin, listOverview, listOdds, listUpdateDB);
 
+    const listBetRD = GetDBListFromType(listBetDB, 'BETRD');
+    console.log(`##### BETRD : Length : ${listCancelWin.length}`);
+    Processor.ProcessBetRD(listBetRD, listUpdateDB);
+
     strCurrentStep = '12 : CANCEL_WIN COMPLETE';
 
     strCurrentStep = '13 : DB UPDATE START';
@@ -193,7 +197,11 @@ let strCurrentStep = '';
             continue;
         else if ( cData.eType == 'RD' && cData.eState == 'STANDBY' )
             continue;
-        else if ( cData.eType == 'BETWIN' )
+        else if ( cData.eType == 'BET' && cData.eState == 'STANDBY' )
+        {
+            await db.RecordBets.update({eType:'BET', eState:'STANDBY'}, {where:{id:cData.id}});
+        }
+        else if ( cData.eType == 'BETWIN' && cData.eState == 'STANDBY' )
         {
             await db.RecordBets.update({eType:'BETWIN', eState:'STANDBY'}, {where:{id:cData.id}});
         }

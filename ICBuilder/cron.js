@@ -127,9 +127,9 @@ let strCurrentStep = '';
 
     //  아너링크는 기본적으로 베팅에 관련된 것을 미리 처리 한 후에 RD 를 얻어 오는 것으로 결정
     //  ##### HonorLink
-    const listHL = GetDBListFromVender(listBetDB, 'HONORLINK');
-    console.log(`##### HONORLINK : Length : ${listHL.length}`);
-    await Processor.ProcessHLink(listHL, listOverview, listOdds, listUpdateDB);
+    // const listHL = GetDBListFromVender(listBetDB, 'HONORLINK');
+    // console.log(`##### HONORLINK : Length : ${listHL.length}`);
+    // await Processor.ProcessHLink(listHL, listOverview, listOdds, listUpdateDB);
 
     //  ##### Bet
     const listBet = GetDBListFromType(listBetDB, 'BET');

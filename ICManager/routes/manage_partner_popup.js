@@ -716,7 +716,7 @@ router.post('/request_agentlist', isLoggedIn, async (req, res) => {
 });
 
 /**
- * 본인 베팅 레코드 조회
+ * 본인 베팅 레코드 조회(바카라)
  */
 router.post('/request_bettinglist', isLoggedIn, async (req, res) => {
     console.log(req.body);
@@ -752,6 +752,77 @@ router.post('/request_bettinglist', isLoggedIn, async (req, res) => {
                 iGameCode: {
                     [Op.notIn]:[200, 300]
                 }
+            },
+            offset:iOffset,
+            limit:iLimit,
+            order:[['id','DESC']]
+        });
+
+    let records = [];
+
+    for ( let i in list )
+    {
+        records.push({
+            id: list[i].id,
+            strID:list[i].strID,
+            strNickname:list[i].strNickname,
+            strGroupID:list[i].strGroupID,
+            iClass:list[i].iClass,
+            iBalance:list[i].iBalance,
+            iGameCode:list[i].iGameCode,
+            strVender:list[i].strVender,
+            strTableID:list[i].strTableID,
+            strRound:list[i].strRound,
+            strUniqueID:list[i].strUniqueID,
+            strDetail:list[i].strDetail,
+            strResult:list[i].strResult,
+            iBet:list[i].iBet,
+            iWin: list[i].iWin,
+            eState:list[i].eState,
+            eType:list[i].eType,
+            iTarget:list[i].iTarget,
+            createdAt:list[i].createdAt,
+            updatedAt:list[i].updatedAt
+        });
+    }
+    console.log(records);
+
+    res.send({result:'OK', list:records, totalCount: totalCount});
+})
+
+/**
+ * 본인 베팅 레코드 조회(슬롯)
+ */
+router.post('/request_bettinglist_slot', isLoggedIn, async (req, res) => {
+    console.log(req.body);
+
+    let strTimeStart = req.body.dateStart;
+    let strTimeEnd = req.body.dateEnd;
+    let strGroupID = req.body.strGroupID;
+    let strID = req.body.strID ?? '';
+
+    let iLimit = parseInt(req.body.iLimit);
+    let iPage = parseInt(req.body.iPage);
+    let iOffset = (iPage-1) * iLimit;
+
+    let totalCount = await db.RecordBets.count({
+        where: {
+            createdAt:{
+                [Op.between]:[ strTimeStart, require('moment')(strTimeEnd).add(1, 'days').format('YYYY-MM-DD')],
+            },
+            strID:strID,
+            iGameCode: 200
+        }
+    });
+
+    let list = await db.RecordBets.findAll(
+        {
+            where: {
+                createdAt:{
+                    [Op.between]:[ strTimeStart, require('moment')(strTimeEnd).add(1, 'days').format('YYYY-MM-DD')],
+                },
+                strID:strID,
+                iGameCode: 200
             },
             offset:iOffset,
             limit:iLimit,

@@ -73,7 +73,7 @@ let strCurrentStep = '';
     let listBetDB = await db.RecordBets.findAll({
         where: {
             eState: 'STANDBY',
-            eType:{[Op.or]:['RD', 'CANCEL', 'CANCEL_BET', 'CANCEL_WIN', 'BET', 'WIN']},
+            eType:{[Op.or]:['RD', 'CANCEL', 'CANCEL_BET', 'CANCEL_WIN', 'BET', 'WIN', 'BETWIN']},
             // strVender:{[Op.not]:'EZUGI'},
             createdAt:{
                 [Op.lte]:moment().subtract(1, "minutes").toDate(),

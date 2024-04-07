@@ -172,7 +172,7 @@ let strCurrentStep = '';
     Processor.ProcessCancel('WIN', listCancelWin, listOverview, listOdds, listUpdateDB);
 
     const listBetRD = GetDBListFromType(listBetDB, 'BETRD');
-    console.log(`##### BETRD : Length : ${listCancelWin.length}`);
+    console.log(`##### BETRD : Length : ${listBetRD.length}`);
     Processor.ProcessBetRD(listBetRD, listUpdateDB);
 
     strCurrentStep = '12 : CANCEL_WIN COMPLETE';

@@ -324,6 +324,9 @@ exports.ProcessBetRD = (listDB, listUpdateDB) => {
 
     for (let i in listDB)
     {
+        const cData = listDB[i];
+        
         listUpdateDB.push({id:cData.id, eState:'STANDBY', eType:'BET'});
     }
+
 }

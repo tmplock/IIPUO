@@ -17,34 +17,6 @@ const {Op}= require('sequelize');
 const moment = require('moment');
 
 
-let GetDBListFromVender = (listDB, strVender) => {
-
-    console.log(`##### DBListFromVender listDB.length : ${listDB.length}`);
-    let list = [];
-    for ( let i in listDB )
-    {
-        if ( listDB[i].strVender == strVender )
-        {
-            list.push(listDB[i]);
-        }
-    }
-    return list;
-}
-
-let GetDBListFromType = (listDB, eType) => {
-
-    let list = [];
-    for ( let i in listDB )
-    {
-        if ( eType == 'WIN' && listDB[i].strOverview != '' )
-            list.push(listDB[i]);
-        else if ( eType == 'BETWIN' && listDB[i].strOverview == '' )
-            list.push(listDB[i]);
-        else if ( listDB[i].eType == eType )
-            list.push(listDB[i]);
-    }
-    return list;
-}
 
 let lProcessID = -1;
 
@@ -84,28 +56,45 @@ cron.schedule('*/5 * * * * * ', async ()=> {
     // ];
 
     //  2024-04-06
-    let listID = [
-        {strID:'gkfn6', iClass:8},
-        {strID:'gkfn2', iClass:8},
-        {strID:'sss1000', iClass:6},
-        {strID:'jojo01', iClass:8},
-        {strID:'gkfn3', iClass:8},
-        {strID:'rudwn01', iClass:6},
-        {strID:'gkfn1', iClass:8},                
-        {strID:'gkfn5', iClass:8},
-        {strID:'tpdud123', iClass:8},
-        {strID:'ehqhd22', iClass:8},
-        {strID:'ehqhd55', iClass:8},
-        {strID:'gkfn01', iClass:8},
-        {strID:'kkk123', iClass:8},
-    ];
+    // let listID = [
+    //     {strID:'gkfn6', iClass:8},
+    //     {strID:'gkfn2', iClass:8},
+    //     {strID:'sss1000', iClass:6},
+    //     {strID:'jojo01', iClass:8},
+    //     {strID:'gkfn3', iClass:8},
+    //     {strID:'rudwn01', iClass:6},
+    //     {strID:'gkfn1', iClass:8},                
+    //     {strID:'gkfn5', iClass:8},
+    //     {strID:'tpdud123', iClass:8},
+    //     {strID:'ehqhd22', iClass:8},
+    //     {strID:'ehqhd55', iClass:8},
+    //     {strID:'gkfn01', iClass:8},
+    //     {strID:'kkk123', iClass:8},
+    // ];
 
+    //  2024-04-07
+    let listID = [
+        {strID:'zlekfl5', iClass:8},
+        {strID:'cjsgh1', iClass:7},
+        {strID:'kkk123', iClass:8},
+        {strID:'jojo05', iClass:8},
+        {strID:'rudwn01', iClass:6},
+        {strID:'jnh720', iClass:8},
+        {strID:'MARBRORED', iClass:8},                
+        {strID:'gkfn02', iClass:8},
+        {strID:'gkfn04', iClass:8},
+        {strID:'rkskek', iClass:7},
+        {strID:'sss1000', iClass:6},
+        {strID:'gkfn08', iClass:8},
+        {strID:'zlekfl6', iClass:8},
+        {strID:'rhtks9', iClass:8},
+    ];
 
     // let listID = [
     //     {strID:'qwe01', iClass:8},
     // ];
 
-    let strDate = '2024-04-06';
+    let strDate = '2024-04-07';
 
     for ( let i in listID )
     {

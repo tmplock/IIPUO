@@ -73,32 +73,29 @@ exports.ProcessEzugi = async (listDB, listOverview, listOdds, listUpdateDB) => {
         console.log(`##### ProcessEzugi listDB[${i}]`);
         console.log(listData);
 
-        // //TODO: TEST CODE 삭제 필요
-        // if (listData == null) {
-        //     if (listDB[i].strTableID.indexOf('TEST') != -1) {
-        //         // listData = CreateRoundDetailObj('EZUGI', list[i]);
-        //         listData = RDEzugi.GetTestObj(listDB[i]);
-        //     }
-        // }
-
+        //  라운드 디테일 없을 경우
         if (listData != null)
         {
             const strDate = cData.createdAt.substr(0,10);
 
             const cOdd = ODDS.FindOdd(cData.strID, listOdds);
-            if ( cOdd == null )
-                continue;
-    
-            let objectReturn = ODDS.ProcessRolling(cOdd, listData.list, 0, 0, strDate);
-            let listCurrentOverview = objectReturn.listFinal;
-            let objectBetRolling = objectReturn.objectBet;
-    
-            ODDS.JoinGroupDailyOverview(listOverview, listCurrentOverview);
-    
-            const strOverview = ODDS.GetRollingString(objectBetRolling);
-    
-            //await db.RecordBets.update({eState:'COMPLETE', strDetail:listData.strBets, strResult:listData.strCards, strOverview:strOverview}, {where:{id:list[i].id}});
-            listUpdateDB.push({id:cData.id, eState:'COMPLETE', strDetail:listData.strBets, strResult:listData.strCards, strOverview:strOverview});
+            if ( cOdd != null )
+            {
+                let objectReturn = ODDS.ProcessRolling(cOdd, listData.list, 0, 0, strDate);
+                let listCurrentOverview = objectReturn.listFinal;
+                let objectBetRolling = objectReturn.objectBet;
+        
+                ODDS.JoinGroupDailyOverview(listOverview, listCurrentOverview);
+        
+                const strOverview = ODDS.GetRollingString(objectBetRolling);
+        
+                //await db.RecordBets.update({eState:'COMPLETE', strDetail:listData.strBets, strResult:listData.strCards, strOverview:strOverview}, {where:{id:list[i].id}});
+                listUpdateDB.push({id:cData.id, eState:'COMPLETE', strDetail:listData.strBets, strResult:listData.strCards, strOverview:strOverview});
+            }
+            else
+            {
+                //listUpdateDB.push({id:cData.id, eState:'COMPLETE', eType:'BETWIN'});
+            }
         }
         else
         {

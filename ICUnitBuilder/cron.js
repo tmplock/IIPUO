@@ -323,38 +323,46 @@ let testfunc = (o, strID, iBetB, iBetUO, iBetS, iWinB, iWinUO, iWinS) => {
 
             for ( let i in listOverview )
             {
-                await db.RecordDailyOverviews.update({
-                    iBetB:listOverview.iBetB,
-                    iBetUO:listOverview.iBetUO,
-                    iBetS:listOverview.iBetS,
-                    iBetPB:listOverview.iBetPB,
-                    iWinB:listOverview.iWinB,
-                    iWinUO:listOverview.iWinUO,
-                    iWinS:listOverview.iWinS,
-                    iWinPB:listOverview.iWinPB,
-                    iRollingB:listOverview.iRollingB,
-                    iRollingUO:listOverview.iAgentBetUO,
-                    iRollingS:listOverview.iRollingS,
-                    iRollingPBA:listOverview.iRollingPBA,
-                    iRollingPBB:listOverview.iRollingPBB,
-                    iAgentBetB:listOverview.iAgentBetB,
-                    iAgentBetUO:listOverview.iAgentBetUO,
-                    iAgentBetS:listOverview.iAgentWinS,
-                    iAgentBetPB:listOverview.iAgentWinPB,
-                    iAgentWinB:listOverview.iAgentWinB,
-                    iAgentWinUO:listOverview.iAgentWinUO,
-                    iAgentWinS:listOverview.iAgentWinS,
-                    iAgentWinPB:listOverview.iAgentWinPB,
-                    iAgentRollingB:listOverview.iAgentRollingB,
-                    iAgentRollingUO:listOverview.iAgentRollingUO,
-                    iAgentRollingS:listOverview.iAgentRollingS,
-                    iAgentRollingPBA:listOverview.iAgentRollingPBA,
-                    iAgentRollingPBB:listOverview.iAgentRollingPBB,
-                },
+                if ( listOverview[i].strID == 'jojo05' )
                 {
-                    where:{strID:listOverview[i].strID, strDate:listOverview[i].strDate}
-                });
+                console.log(listOverview[i]);
+                }
             }
+
+            // for ( let i in listOverview )
+            // {
+            //     await db.RecordDailyOverviews.update({
+            //         iBetB:listOverview.iBetB,
+            //         iBetUO:listOverview.iBetUO,
+            //         iBetS:listOverview.iBetS,
+            //         iBetPB:listOverview.iBetPB,
+            //         iWinB:listOverview.iWinB,
+            //         iWinUO:listOverview.iWinUO,
+            //         iWinS:listOverview.iWinS,
+            //         iWinPB:listOverview.iWinPB,
+            //         iRollingB:listOverview.iRollingB,
+            //         iRollingUO:listOverview.iAgentBetUO,
+            //         iRollingS:listOverview.iRollingS,
+            //         iRollingPBA:listOverview.iRollingPBA,
+            //         iRollingPBB:listOverview.iRollingPBB,
+            //         iAgentBetB:listOverview.iAgentBetB,
+            //         iAgentBetUO:listOverview.iAgentBetUO,
+            //         iAgentBetS:listOverview.iAgentWinS,
+            //         iAgentBetPB:listOverview.iAgentWinPB,
+            //         iAgentWinB:listOverview.iAgentWinB,
+            //         iAgentWinUO:listOverview.iAgentWinUO,
+            //         iAgentWinS:listOverview.iAgentWinS,
+            //         iAgentWinPB:listOverview.iAgentWinPB,
+            //         iAgentRollingB:listOverview.iAgentRollingB,
+            //         iAgentRollingUO:listOverview.iAgentRollingUO,
+            //         iAgentRollingS:listOverview.iAgentRollingS,
+            //         iAgentRollingPBA:listOverview.iAgentRollingPBA,
+            //         iAgentRollingPBB:listOverview.iAgentRollingPBB,
+            //     },
+            //     {
+            //         where:{strID:listOverview[i].strID, strDate:listOverview[i].strDate}
+            //     });
+            // }
         
             // console.log(``);
             // console.log(`##### Result `);

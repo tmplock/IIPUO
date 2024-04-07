@@ -34,14 +34,17 @@ let GetDBListFromType = (listDB, eType) => {
     let list = [];
     for ( let i in listDB )
     {
-        if ( listDB[i].eType == 'RD' || listDB[i].eType == 'BETRD' )
-            continue;
+        // if ( listDB[i].eType == 'RD' || listDB[i].eType == 'BETRD' )
+        //     continue;
 
-        if ( eType == 'WIN' && listDB[i].eType == 'WIN' && listDB[i].strOverview != '' )
-            list.push(listDB[i]);
-        else if ( eType == 'BETWIN' && listDB[i].eType == 'WIN' && listDB[i].strOverview == '' && listDB[i].iGameCode != 200 )
-            list.push(listDB[i]);
-        else if ( listDB[i].eType == eType )
+        // if ( eType == 'WIN' && listDB[i].eType == 'WIN' && listDB[i].strOverview != '' )
+        //     list.push(listDB[i]);
+        // else if ( eType == 'BETWIN' && listDB[i].eType == 'WIN' && listDB[i].strOverview == '' && listDB[i].iGameCode != 200 )
+        //     list.push(listDB[i]);
+        // else if ( listDB[i].eType == eType )
+        //     list.push(listDB[i]);
+
+        if ( listDB[i].eType == eType )
             list.push(listDB[i]);
     }
     return list;

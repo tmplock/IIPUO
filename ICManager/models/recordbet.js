@@ -68,7 +68,7 @@ module.exports = (sequelize, DataTypes) => {
             type:DataTypes.ENUM('STANDBY', 'PENDING', 'COMPLETE', 'ERROR'),
         },
         eType: {
-            type:DataTypes.ENUM('BET', 'BETRD', 'WIN', 'RD', 'CANCEL', 'CANCEL_BET', 'CANCEL_WIN'),
+            type:DataTypes.ENUM('BET', 'BETRD', 'WIN', 'RD', 'CANCEL', 'CANCEL_BET', 'CANCEL_WIN', 'BETWIN'),
             allowNull: false
         },
         strURL: {

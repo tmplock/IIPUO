@@ -728,9 +728,11 @@ exports.ProcessRolling = (oRO, listBet, cPBType, cPBTarget, strDate) => {
 //
 exports.ProcessRollingHLink = (oRO, listBet, cPBType, cPBTarget, strDate, iGameCode, iBet, iWin) => {
 
-    console.log('##### Process Rolling')
+    console.log('##### Process Rolling Honorlink')
     console.log(oRO);
     console.log(listBet);
+
+    console.log(`0`);
 
     let objectData = {
         strID:oRO.strID,
@@ -781,6 +783,7 @@ exports.ProcessRollingHLink = (oRO, listBet, cPBType, cPBTarget, strDate, iGameC
         iWinLosePB:0,
     }
 
+    console.log(`1`);
     const o = oRO.objectData;
     console.log(o);
 
@@ -821,6 +824,8 @@ exports.ProcessRollingHLink = (oRO, listBet, cPBType, cPBTarget, strDate, iGameC
         }
     }
 
+    console.log(`2`);
+
     if ( objectData.iBetB == 0 && objectData.iWinB == 0 )
     {
         objectData.iPAdminRB += CalculateRollingAmount(o.strPAdminID, cBetAmount, o.fPAdminBaccaratR, o.fVAdminBaccaratR);
@@ -834,7 +839,11 @@ exports.ProcessRollingHLink = (oRO, listBet, cPBType, cPBTarget, strDate, iGameC
         objectData.iWinLoseB += (iBet-iWin);
     }
 
+    console.log(`3`);
+
     let listFinal = ProcessGroupDailyOverview(o, objectData, strDate);
+
+    console.log(`4`);
 
     return {listFinal:listFinal, objectBet:objectData};
     //return objectData;

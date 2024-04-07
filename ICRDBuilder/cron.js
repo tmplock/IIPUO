@@ -63,13 +63,12 @@ cron.schedule('*/10 * * * * * ', async ()=> {
     lProcessID = 1;
 
     let listUpdateDB = [];
-    let listOverview = [];
 
     let listBetDB = await db.RecordBets.findAll({
         where: {
             eState: 'COMPLETE',
             //eType:{[Op.or]:['BET', 'WIN']},
-            eType:{[Op.or]:['BET', 'WIN']},
+            eType:{[Op.or]:['BETWIN']},
             iGameCode:0,
             strGameID:'evolution',
             strVender:'HONORLINK',
@@ -81,32 +80,32 @@ cron.schedule('*/10 * * * * * ', async ()=> {
     });
     console.log(`##### listBetDB.length = ${listBetDB.length}`);
 
-    //  EZUGI TEST
-    let listEzugiBet = await db.RecordBets.findAll({
-        where: {
-            eState: 'COMPLETE',
-            //eType:{[Op.or]:['BET', 'WIN']},
-            eType:{[Op.or]:['RD']},
-            strVender:{[Op.not]:'EZUGI'},
-            createdAt:{
-                [Op.between]:[ moment().subtract(5, "minutes").toDate(), moment().subtract(6, "minutes").toDate()],
-            }
-        },
-        order: [['createdAt', 'ASC']]
-    });
-    console.log(`##### listEzugiBet.length = ${listEzugiBet.length}`);
-    //
+    // //  EZUGI TEST
+    // let listEzugiBet = await db.RecordBets.findAll({
+    //     where: {
+    //         eState: 'COMPLETE',
+    //         //eType:{[Op.or]:['BET', 'WIN']},
+    //         eType:{[Op.or]:['RD']},
+    //         strVender:{[Op.not]:'EZUGI'},
+    //         createdAt:{
+    //             [Op.between]:[ moment().subtract(5, "minutes").toDate(), moment().subtract(6, "minutes").toDate()],
+    //         }
+    //     },
+    //     order: [['createdAt', 'ASC']]
+    // });
+    // console.log(`##### listEzugiBet.length = ${listEzugiBet.length}`);
+    // //
 
-    if ( listBetDB.length > 0 )
-    {
-        for ( let i in listBetDB )
-        {
-            console.log(`${i} : ${listBetDB[i].createdAt}`);
-        }
-    }
+    // if ( listBetDB.length > 0 )
+    // {
+    //     for ( let i in listBetDB )
+    //     {
+    //         console.log(`${i} : ${listBetDB[i].createdAt}`);
+    //     }
+    // }
 
-    // //  ##### HonorLink
-    //await Processor.ProcessHLink(listHL, listOverview, listOdds, listUpdateDB);
+    //  ##### HonorLink
+    await Processor.ProcessHLink(listHL, listUpdateDB);
 
     //  ##### UPDATE RECORD-BETS
     console.log(`##### UPDATE RECORD BET : Length : ${listUpdateDB.length}`);

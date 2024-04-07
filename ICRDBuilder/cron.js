@@ -15,42 +15,10 @@ const {Op}= require('sequelize');
 const moment = require('moment');
 
 
-let GetDBListFromVender = (listDB, strVender) => {
-
-    console.log(`##### DBListFromVender listDB.length : ${listDB.length}`);
-    let list = [];
-    for ( let i in listDB )
-    {
-        if ( listDB[i].strVender == strVender && listDB[i].eType == 'RD' )
-        {
-            list.push(listDB[i]);
-        }
-    }
-    return list;
-}
-
-let GetDBListFromType = (listDB, eType) => {
-
-    let list = [];
-    for ( let i in listDB )
-    {
-        if ( listDB[i].eType == 'RD' || listDB[i].eType == 'BETRD' )
-            continue;
-
-        if ( eType == 'WIN' && listDB[i].eType == 'WIN' && listDB[i].strOverview != '' )
-            list.push(listDB[i]);
-        else if ( eType == 'BETWIN' && listDB[i].eType == 'WIN' && listDB[i].strOverview == '' )
-            list.push(listDB[i]);
-        else if ( listDB[i].eType == eType )
-            list.push(listDB[i]);
-    }
-    return list;
-}
-
 let lProcessID = -1;
 
-//cron.schedule('*/10 * * * * * ', async ()=> {
-cron.schedule('*/1 * * * * ', async ()=> {
+cron.schedule('*/5 * * * * * ', async ()=> {
+//cron.schedule('*/1 * * * * ', async ()=> {
 //cron.schedule('0,5,10,15,20,25,30,35,40,45,50,55 * * * * ', async ()=> {
 
     console.log(`##### CRON`);
@@ -68,7 +36,7 @@ cron.schedule('*/1 * * * * ', async ()=> {
         where: {
             eState: 'COMPLETE',
             //eType:{[Op.or]:['BET', 'WIN']},
-            eType:{[Op.or]:['BETWIN']},
+            eType:'BETWIN',
             iGameCode:0,
             strGameID:'evolution',
             strVender:'HONORLINK',
@@ -76,9 +44,11 @@ cron.schedule('*/1 * * * * ', async ()=> {
                 [Op.between]:[ moment().subtract(2, "minutes").toDate(), moment().subtract(1, "minutes").toDate()],
             }
         },
-        order: [['createdAt', 'ASC']]
+        // order: [['createdAt', 'ASC']]
     });
     console.log(`##### listBetDB.length = ${listBetDB.length}`);
+
+    return;
 
     //  ##### HonorLink
     await Processor.ProcessHLink(listBetDB, listUpdateDB);

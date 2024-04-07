@@ -41,7 +41,7 @@ cron.schedule('*/1 * * * * ', async ()=> {
             strGameID:'evolution',
             strVender:'HONORLINK',
             createdAt:{
-                [Op.between]:[ moment().subtract(2, "minutes").toDate(), moment().subtract(1, "minutes").toDate()],
+                [Op.between]:[ moment().subtract(4, "minutes").toDate(), moment().subtract(3, "minutes").toDate()],
             }
         },
         // order: [['createdAt', 'ASC']]

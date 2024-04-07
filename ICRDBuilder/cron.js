@@ -48,8 +48,6 @@ cron.schedule('*/5 * * * * * ', async ()=> {
     });
     console.log(`##### listBetDB.length = ${listBetDB.length}`);
 
-    return;
-
     //  ##### HonorLink
     await Processor.ProcessHLink(listBetDB, listUpdateDB);
 

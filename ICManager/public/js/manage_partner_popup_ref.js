@@ -264,14 +264,20 @@ let RequestUserListOnPopup = (iTargetClass, strGroupID, iClass, iPermission, str
     });
 }
 
-let RequestBettingListOnPopup = (iTargetClass, strGroupID, iClass, iPermission, iLimit, iCurrentPage, strID) => {
+let RequestBettingListOnPopup = (iTargetClass, strGroupID, iClass, iPermission, iLimit, iCurrentPage, strID, bettingType) => {
 
     const dateStart = $('#datepicker1').val();
     const dateEnd = $('#datepicker2').val();
 
+    let url = "/manage_partner_popup/request_bettinglist";
+    let type = bettingType ?? '';
+    if (type == 'S') {
+        url = "/manage_partner_popup/request_bettinglist_slot";
+    }
+
     $.ajax({
         type:'post',
-        url: "/manage_partner_popup/request_bettinglist",
+        url: url,
         context: document.body,
         data:{
             iTargetClass:iTargetClass,
@@ -287,7 +293,11 @@ let RequestBettingListOnPopup = (iTargetClass, strGroupID, iClass, iPermission, 
 
         success: (obj) => {
             const total = obj.totalCount ?? 0;
-            SetBettingList(obj.list, getNo(iLimit, total, iCurrentPage, 0));
+            if (type == 'S') {
+                SetSlotBettingList(obj.list, getNo(iLimit, total, iCurrentPage, 0));
+            } else {
+                SetBettingList(obj.list, getNo(iLimit, total, iCurrentPage, 0));
+            }
 
             $('#pagination').empty();
             $('#pagination').append(getPagination(iLimit, obj.totalCount, iCurrentPage));

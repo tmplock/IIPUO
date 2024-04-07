@@ -60,50 +60,18 @@
 	</div>
 
 	<div class="search_wrap">
-		
-		<!-- <p style=" font-size:20px; color:#d6f3c9; padding-left:22px;margin-top:10px;height:30px;margin-bottom:5px;"></p> -->
 		<p style=" font-size:20px; color:#454545; padding-left:22px;margin-top:10px;height:30px;margin-bottom:5px;"></p>
 		<input type="hidden" name="data_member_idx" value=""/>
 			<div style="text-align:right;padding-right:10px;margin-top:-40px;margin-bottom:10px;">
 			</div>
 	</div>
+	<div id="bettingrecord_tab" style="margin: 5px;">
+	</div>
 	<div class="search_wrap">
-		<p style="background-repeat:no-repeat; background-position:left center; font-size:20px; color:#454545; padding-left:22px;margin-top:10px;height:30px;margin-bottom:5px;"><%=__('Baccarat')%> <%=__('RecordBetting')%></p>
+		<p id="bettingrecord_title" style="background-repeat:no-repeat; background-position:left center; font-size:20px; color:#454545; padding-left:22px;margin-top:10px;height:30px;margin-bottom:5px;"><%=__('RecordBetting')%></p>
 		<table class="search_list">
 			<caption><%=__('SearchResult')%></caption>
-			<colgroup>
-				<col style="width:3%;">
-				<col style="width:5%;">
-				<col style="width:7%;">
-				<col style="width:7%;">
-				<col style="width:7%;">
-				<col style="width:7%;">
-				<col style="width:5%;">
-				<col style="width:5%;">
-				<col style="width:5%;">
-				<col style="width:7%;">
-				<col style="width:7%;">
-				<col style="width:7%;">
-				<col style="width:10%;">
-				<col style="width:10%;">
-				<col style="width:7%;">
-			</colgroup>
-			<thead>
-			<tr>
-				<th scope="col">번호</th>
-				<th scope="col">벤더</th>
-				<th scope="col">테이블</th>
-				<th scope="col"><%=__('Round')%></th>
-				<th scope="col"><%=__('Nickname')%></th>
-				<th scope="col"><%=__('BettingOriginCash')%></th>
-				<th scope="col" colspan="3"><%=__('BettingAccount')%></th>
-				<th scope="col">베팅후 금액</th>
-				<th scope="col">당첨 금액</th>
-				<th scope="col">당첨후 금액</th>
-				<th scope="col"><%=__('BettingTime')%></th>
-				<th scope="col">당첨 결과</th>
-				<th scope="col">비고</th>
-			</tr>
+			<thead id="betting_title">
 			</thead>
 			<tbody id="betting_list">
 			</tbody>
@@ -141,6 +109,7 @@
 
 	let bToggleRecord = false;
 	let bClickDateSelection	= false;
+	let bettingType = 'B';
 
 	$(document).ready(() => {
 		DatePicker();
@@ -151,6 +120,77 @@
 		OnClickTodayRecord();
 	});
 
+	let SetBettingButton = () => {
+		$('#bettingrecord_tab').empty();
+		$('#betting_title').empty();
+		if (bettingType == 'B') {
+			$('#bettingrecord_tab').append(`
+				<ul class="list_tab" style="margin-bottom:10px;width:100%;z-index:10000;" id="bettingrecord_header">
+					<li style="padding-right: 10px;" class="on">
+						<a href="#" style="color:#ffffff; font-size: 15px;" onclick="OnClickBetting('B');">카지노</a>
+					</li>
+					<li class="">
+						<a href="#" style="color:#000000; font-size: 15px;" onclick="OnClickBetting('S');">슬롯</a>
+					</li>
+				</ul>
+			`);
+			$('#betting_title').append(`
+				<tr>
+					<th scope="col">번호</th>
+					<th scope="col">벤더</th>
+					<th scope="col">테이블</th>
+					<th scope="col"><%=__('Round')%></th>
+					<th scope="col"><%=__('Nickname')%></th>
+					<th scope="col"><%=__('BettingOriginCash')%></th>
+					<th scope="col" colspan="3"><%=__('BettingAccount')%></th>
+					<th scope="col">베팅후 금액</th>
+					<th scope="col">당첨 금액</th>
+					<th scope="col">당첨후 금액</th>
+					<th scope="col"><%=__('BettingTime')%></th>
+					<th scope="col">당첨 결과</th>
+					<th scope="col">비고</th>
+				</tr>
+			`);
+
+		} else if (bettingType == 'S') {
+			$('#bettingrecord_tab').append(`
+				<ul class="list_tab" style="margin-bottom:10px;width:100%;z-index:10000;" id="bettingrecord_header">
+					<li style="padding-right: 10px;">
+						<a href="#" style="color:#000000; font-size: 15px;" onclick="OnClickBetting('B');">카지노</a>
+					</li>
+					<li class="on">
+						<a href="#" style="color:#ffffff; font-size: 15px;" onclick="OnClickBetting('S');">슬롯</a>
+					</li>
+				</ul>
+			`);
+			$('#betting_title').append(`
+				<tr>
+					<th scope="col">번호</th>
+					<th scope="col">벤더</th>
+					<th scope="col">테이블</th>
+					<th scope="col"><%=__('Round')%></th>
+					<th scope="col"><%=__('Nickname')%></th>
+					<th scope="col"><%=__('BettingOriginCash')%></th>
+					<th scope="col">베팅 금액</th>
+					<th scope="col">베팅후 금액</th>
+					<th scope="col">당첨 금액</th>
+					<th scope="col">당첨후 금액</th>
+					<th scope="col"><%=__('BettingTime')%></th>
+					<th scope="col">당첨 결과</th>
+					<th scope="col">비고</th>
+				</tr>
+			`);
+		}
+	}
+
+	let OnClickBetting = (type) => {
+		if (type == 'B') {
+			bettingType = 'B';
+		} else if (type == 'S') {
+			bettingType = 'S';
+		}
+		OnClickPage(1);
+	}
 
 	let OnClickTodayRecord = () => {
 
@@ -163,8 +203,9 @@
 		$("#button_toggle_record").text("<%=__('Close')%>");
 
 		RequestOverviewUser(EAgent.eUser, agent.strGroupID, agent.iClass, agent.strNickname);
-		RequestBettingListOnPopup(EAgent.eUser, agent.strGroupID, agent.iClass, agent.iPermission, iLimit, iCurrentPage, agent.strID);
 		RequestBettingRecordUser(EAgent.eUser, agent.strGroupID, agent.iClass, agent.strNickname);
+		SetBettingButton();
+		RequestBettingListOnPopup(EAgent.eUser, agent.strGroupID, agent.iClass, agent.iPermission, iLimit, iCurrentPage, agent.strID, bettingType);
 	}
 
 	let OnClickMonthly1stRecord = () => {
@@ -177,8 +218,9 @@
 		$("#button_toggle_record").text("<%=__('Close')%>");
 
 		RequestOverviewUser(EAgent.eUser, agent.strGroupID, agent.iClass, agent.strNickname);
-		RequestBettingListOnPopup(EAgent.eUser, agent.strGroupID, agent.iClass, agent.iPermission, iLimit, iCurrentPage, agent.strID);
 		RequestBettingRecordUser(EAgent.eUser, agent.strGroupID, agent.iClass, agent.strNickname);
+		SetBettingButton();
+		RequestBettingListOnPopup(EAgent.eUser, agent.strGroupID, agent.iClass, agent.iPermission, iLimit, iCurrentPage, agent.strID, bettingType);
 	}
 
 	let OnClickMonthly2ndRecord = () => {
@@ -191,8 +233,9 @@
 		$("#button_toggle_record").text("<%=__('Close')%>");
 
 		RequestOverviewUser(EAgent.eUser, agent.strGroupID, agent.iClass, agent.strNickname);
-		RequestBettingListOnPopup(EAgent.eUser, agent.strGroupID, agent.iClass, agent.iPermission, iLimit, iCurrentPage, agent.strID);
 		RequestBettingRecordUser(EAgent.eUser, agent.strGroupID, agent.iClass, agent.strNickname);
+		SetBettingButton();
+		RequestBettingListOnPopup(EAgent.eUser, agent.strGroupID, agent.iClass, agent.iPermission, iLimit, iCurrentPage, agent.strID, bettingType);
 	}
 	
 	function OnClickMonthlyRecord()
@@ -224,8 +267,9 @@
 		$("#button_toggle_record").text("<%=__('Close')%>");
 
 		RequestOverviewUser(EAgent.eUser, agent.strGroupID, agent.iClass, agent.strNickname);
-		RequestBettingListOnPopup(EAgent.eUser, agent.strGroupID, agent.iClass, agent.iPermission, iLimit, iCurrentPage, agent.strID);
 		RequestBettingRecordUser(EAgent.eUser, agent.strGroupID, agent.iClass, agent.strNickname);
+		SetBettingButton();
+		RequestBettingListOnPopup(EAgent.eUser, agent.strGroupID, agent.iClass, agent.iPermission, iLimit, iCurrentPage, agent.strID, bettingType);
 	}
 
 	let OnClickPage = (iPage) => {

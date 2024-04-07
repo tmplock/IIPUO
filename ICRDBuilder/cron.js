@@ -49,8 +49,8 @@ let GetDBListFromType = (listDB, eType) => {
 
 let lProcessID = -1;
 
-cron.schedule('*/10 * * * * * ', async ()=> {
-//cron.schedule('*/1 * * * * ', async ()=> {
+//cron.schedule('*/10 * * * * * ', async ()=> {
+cron.schedule('*/1 * * * * ', async ()=> {
 //cron.schedule('0,5,10,15,20,25,30,35,40,45,50,55 * * * * ', async ()=> {
 
     console.log(`##### CRON`);
@@ -73,7 +73,7 @@ cron.schedule('*/10 * * * * * ', async ()=> {
             strGameID:'evolution',
             strVender:'HONORLINK',
             createdAt:{
-                [Op.between]:[ moment().subtract(5, "minutes").toDate(), moment().subtract(6, "minutes").toDate()],
+                [Op.between]:[ moment().subtract(2, "minutes").toDate(), moment().subtract(1, "minutes").toDate()],
             }
         },
         order: [['createdAt', 'ASC']]
@@ -117,8 +117,8 @@ cron.schedule('*/10 * * * * * ', async ()=> {
 
         console.log(cData);
 
-        // if ( cData.strDetail != '' && cData.strResult != '' )
-        //     await db.RecordBets.update({strDetail:cData.strDetail, strResult:cData.strResult}, {where:{id:cData.id}});
+        if ( cData.strDetail != '' && cData.strResult != '' )
+            await db.RecordBets.update({strDetail:cData.strDetail, strResult:cData.strResult}, {where:{id:cData.id}});
     }
     
     lProcessID = -1;

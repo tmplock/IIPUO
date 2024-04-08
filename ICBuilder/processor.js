@@ -147,7 +147,7 @@ exports.ProcessCQ9 = async (listDB, listOverview, listOdds, listUpdateDB) => {
             }
             else
             {
-                listUpdateDB.push({id:cData.id, eState:'STANDBY', eType:'BETWIN'});                
+                listUpdateDB.push({id:cData.id, eState:'STANDBY', eType:'BETWIN'});
             }
         }
         else

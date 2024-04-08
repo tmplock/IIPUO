@@ -77,7 +77,7 @@ let strCurrentStep = '';
             eType:{[Op.or]:['CANCEL', 'CANCEL_BET', 'CANCEL_WIN', 'BET', 'WIN', 'BETWIN']},
             // strVender:{[Op.not]:'EZUGI'},
             createdAt:{
-                [Op.lte]:moment().subtract(10, "minutes").toDate(),
+                [Op.lte]:moment().subtract(1, "minutes").toDate(),
             }
         },
         order: [['createdAt', 'ASC']]

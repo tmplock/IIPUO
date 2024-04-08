@@ -73,7 +73,8 @@ let strCurrentStep = '';
     let listBetDB = await db.RecordBets.findAll({
         where: {
             eState: 'STANDBY',
-            eType:{[Op.or]:['RD', 'CANCEL', 'CANCEL_BET', 'CANCEL_WIN', 'BET', 'WIN', 'BETWIN', 'BETRD']},
+            //eType:{[Op.or]:['RD', 'CANCEL', 'CANCEL_BET', 'CANCEL_WIN', 'BET', 'WIN', 'BETWIN', 'BETRD']},
+            eType:{[Op.or]:['CANCEL', 'CANCEL_BET', 'CANCEL_WIN', 'BET', 'WIN', 'BETWIN']},
             // strVender:{[Op.not]:'EZUGI'},
             createdAt:{
                 [Op.lte]:moment().subtract(1, "minutes").toDate(),
@@ -85,43 +86,43 @@ let strCurrentStep = '';
 
     strCurrentStep = '2 : GET DB COMPLETE';
 
-    //  이주기 자체가 15분 내외로 오기 때문에 낭비할 필요가 없다. 17분 후로 설정하여 따로 얻어 오는 것이 효율적으로 판단.
-    let listEzugiBetDB = await db.RecordBets.findAll({
-        where: {
-            eState: 'STANDBY',
-            eType:{[Op.or]:['RD']},
-            strVender:'EZUGI',
-            createdAt:{
-                [Op.lte]:moment().subtract(17, "minutes").toDate(),
-            }
-        },
-        order: [['createdAt', 'ASC']]
-    });
-    console.log(`##### listEzugiBetDB.length = ${listEzugiBetDB.length}`);
+    // //  이주기 자체가 15분 내외로 오기 때문에 낭비할 필요가 없다. 17분 후로 설정하여 따로 얻어 오는 것이 효율적으로 판단.
+    // let listEzugiBetDB = await db.RecordBets.findAll({
+    //     where: {
+    //         eState: 'STANDBY',
+    //         eType:{[Op.or]:['RD']},
+    //         strVender:'EZUGI',
+    //         createdAt:{
+    //             [Op.lte]:moment().subtract(17, "minutes").toDate(),
+    //         }
+    //     },
+    //     order: [['createdAt', 'ASC']]
+    // });
+    // console.log(`##### listEzugiBetDB.length = ${listEzugiBetDB.length}`);
 
 
     let listOdds = await ODDS.FullCalculteOdds(listBetDB);
 
     strCurrentStep = '3 : START PROCESSING';
 
-    //  ##### VIVO
-    const listVivoDB = GetDBListFromVender(listBetDB, 'VIVO');
-    console.log(`##### VIVO : Length : ${listVivoDB.length}`);
-    Processor.ProcessVivo(listVivoDB, listOverview, listOdds, listUpdateDB);
+    // //  ##### VIVO
+    // const listVivoDB = GetDBListFromVender(listBetDB, 'VIVO');
+    // console.log(`##### VIVO : Length : ${listVivoDB.length}`);
+    // Processor.ProcessVivo(listVivoDB, listOverview, listOdds, listUpdateDB);
 
-    strCurrentStep = '4 : VIVO COMPLETE';
+    // strCurrentStep = '4 : VIVO COMPLETE';
 
-    //  ##### EZUGI
-    //const listEzugiDB = GetDBListFromVender(listBetDB, 'EZUGI');
-    console.log(`##### EZUGI : Length : ${listEzugiBetDB.length}`);
-    await Processor.ProcessEzugi(listEzugiBetDB, listOverview, listOdds, listUpdateDB);
+    // //  ##### EZUGI
+    // //const listEzugiDB = GetDBListFromVender(listBetDB, 'EZUGI');
+    // console.log(`##### EZUGI : Length : ${listEzugiBetDB.length}`);
+    // await Processor.ProcessEzugi(listEzugiBetDB, listOverview, listOdds, listUpdateDB);
 
-    strCurrentStep = '5 : EZUGI COMPLETE';
+    // strCurrentStep = '5 : EZUGI COMPLETE';
 
-    //  ##### CQ9
-    const listCQ9DB = GetDBListFromVender(listBetDB, 'CQ9');
-    console.log(`##### CQ9 : Length : ${listCQ9DB.length}`);
-    await Processor.ProcessCQ9(listCQ9DB, listOverview, listOdds, listUpdateDB);
+    // //  ##### CQ9
+    // const listCQ9DB = GetDBListFromVender(listBetDB, 'CQ9');
+    // console.log(`##### CQ9 : Length : ${listCQ9DB.length}`);
+    // await Processor.ProcessCQ9(listCQ9DB, listOverview, listOdds, listUpdateDB);
 
     strCurrentStep = '6 : CQ9 COMPLETE';
 
@@ -173,9 +174,9 @@ let strCurrentStep = '';
 
     strCurrentStep = '12 : CANCEL_WIN COMPLETE';
 
-    const listBetRD = GetDBListFromType(listBetDB, 'BETRD');
-    console.log(`##### BETRD : Length : ${listBetRD.length}`);
-    Processor.ProcessBetRD(listBetRD, listUpdateDB);
+    // const listBetRD = GetDBListFromType(listBetDB, 'BETRD');
+    // console.log(`##### BETRD : Length : ${listBetRD.length}`);
+    // Processor.ProcessBetRD(listBetRD, listUpdateDB);
     
 
     strCurrentStep = '13 : DB UPDATE START';

@@ -38,25 +38,25 @@ exports.ProcessBet = async (strID, strNickname, strGroupID, iClass, iBalance, iG
     let eType = 'BET';
     let eState = 'STANDBY';
 
-    switch ( strVender )
-    {
-        case 'VIVO':
-            if ( strGameID == 2 )
-                eType = 'BETRD';
-            break;
-        case 'EZUGI':
-            if ( strTableID == 100 || strTableID == 101 || strTableID == 102 || strTableID == 105 || strTableID == 106 || strTableID == 32100 || strTableID == 32101 || strTableID == 32102 || strTableID == 32103 || strTableID == 170 || strTableID == 171 )
-                eType = 'BETRD';
-            break;
-        case 'CQ9':
-            eType = 'BETRD';
-            break;
-        case 'HONORLINK':
-            // //if ( iGameCode == 0 )
-            // if ( strGameID == 'evolution' && iGameCode == 0 )
-            //     eType = 'BETRD';
-            break;
-    }
+    // switch ( strVender )
+    // {
+    //     case 'VIVO':
+    //         if ( strGameID == 2 )
+    //             eType = 'BETRD';
+    //         break;
+    //     case 'EZUGI':
+    //         if ( strTableID == 100 || strTableID == 101 || strTableID == 102 || strTableID == 105 || strTableID == 106 || strTableID == 32100 || strTableID == 32101 || strTableID == 32102 || strTableID == 32103 || strTableID == 170 || strTableID == 171 )
+    //             eType = 'BETRD';
+    //         break;
+    //     case 'CQ9':
+    //         eType = 'BETRD';
+    //         break;
+    //     case 'HONORLINK':
+    //         // //if ( iGameCode == 0 )
+    //         // if ( strGameID == 'evolution' && iGameCode == 0 )
+    //         //     eType = 'BETRD';
+    //         break;
+    // }
 
     await CreateBet(strID, strNickname, strGroupID, iClass, iBalance, iGameCode, strVender, strGameID, strTableID, strRound, strUniqueID, strDetail, strResult, iTarget, iBet, 0, eState, eType, strURL);
 }
@@ -79,77 +79,15 @@ exports.ProcessWin = async (strID, strNickname, strGroupID, iClass, iBalance, iG
     let bet = await db.RecordBets.findOne({where:{strID:strID, strRound:strRound, strVender:strVender, eState:'STANDBY'}});
     if ( bet != null )
     {
-        //const cResultWin = parseInt(bet.iWin) + parseInt(iWin);
-
-        switch ( strVender )
+        if ( bet.iBet == iWin )
         {
-            case 'VIVO':
-                {
-                    let listBet = vVivo.ParseBetDetails(strGameID, bet.strDetail, bet.iBet, bet.iBalance);
-                    console.log(listBet);
-            
-                    let listWin = vVivo.ParseWinDetails(strGameID, strDetail, iWin, iBalance);
-                    console.log(listWin);
-        
-                    let listFinal = vVivo.GetDetails(listBet, listWin);
-                    console.log(listFinal);
-        
-                    let listCards = vVivo.GetCards(strDetail);
-        
-                    if ( bet.iBet == iWin )
-                    {
-                        await db.RecordBets.update({iWin:iWin, strDetail:JSON.stringify(listFinal), strResult:JSON.stringify(listCards), eType:'CANCEL_BET', eState:'COMPLETE'}, {where:{id:bet.id}});
-                    }
-                    else
-                    {
-                        await db.RecordBets.update({iWin:iWin, strDetail:JSON.stringify(listFinal), strResult:JSON.stringify(listCards), eType:'RD', eState:'STANDBY'}, {where:{id:bet.id}});
-                    }
-                }
-                break;
-            case 'EZUGI':
-            case 'CQ9':
-            case 'HONORLINK':
-                {
-                    if ( bet.iBet == iWin )
-                    {
-                        await db.RecordBets.update({iWin:iWin, strUniqueID:strUniqueID, eType:'CANCEL_BET', eState:'STANDBY'}, {where:{id:bet.id}});
-                    }
-                    else
-                    {
-                        if ( bet.eType == 'BETRD' )
-                        {
-                            await db.RecordBets.update({iWin:iWin, strUniqueID:strUniqueID, eType:'RD', eState:'STANDBY'}, {where:{id:bet.id}});
-                        }
-                        else if ( bet.eType == 'BET' )
-                        {
-                            await db.RecordBets.update({iWin:iWin, strUniqueID:strUniqueID, eType:'BETWIN', eState:'STANDBY'}, {where:{id:bet.id}});
-                        }
-                        else
-                        {
-                            const cWin = parseFloat(bet.iWin) + iWin;
-    
-                            //await db.RecordBets.update({iWin:iWin, eType:'WIN', eState:'STANDBY'}, {where:{id:bet.id}});
-                            await db.RecordBets.update({iWin:cWin, eType:'BETWIN', eState:'STANDBY'}, {where:{id:bet.id}});
-                        }
-                    }
-                }
-                break;
-            default:
-                {
-                    if ( bet.iBet == iWin )
-                    {
-                        //  TIE WIN
-                        await db.RecordBets.update({iWin:iWin, eType:'CANCEL_BET', eState:'STANDBY'}, {where:{id:bet.id}});
-                    }
-                    else
-                    {
-                        const cWin = parseFloat(bet.iWin) + iWin;
-
-                        //await db.RecordBets.update({iWin:iWin, eType:'WIN', eState:'STANDBY'}, {where:{id:bet.id}});
-                        await db.RecordBets.update({iWin:cWin, eType:'BETWIN', eState:'STANDBY'}, {where:{id:bet.id}});
-                    }
-                }
-                break;
+            //  TIE WIN
+            await db.RecordBets.update({iWin:iWin, eType:'CANCEL_BET', eState:'STANDBY'}, {where:{id:bet.id}});
+        }
+        else
+        {
+            const cWin = parseFloat(bet.iWin) + iWin;
+            await db.RecordBets.update({iWin:cWin, eType:'BETWIN', eState:'STANDBY'}, {where:{id:bet.id}});
         }
     }
     else
@@ -185,3 +123,131 @@ exports.ProcessCancel = async (strUniqueID, strGameID, strRound, eType) => {
     }
 
 }
+// exports.ProcessBet = async (strID, strNickname, strGroupID, iClass, iBalance, iGameCode, strVender, strGameID, strTableID, strRound, strUniqueID, strDetail, strResult, iTarget, iBet, strURL) => {
+
+//     console.log(`##### exports.ProcessBet : ${strID}`);
+//     await db.Users.decrement({iCash:parseFloat(iBet)}, {where:{strID:strID}});
+
+//     let eType = 'BET';
+//     let eState = 'STANDBY';
+
+//     switch ( strVender )
+//     {
+//         case 'VIVO':
+//             if ( strGameID == 2 )
+//                 eType = 'BETRD';
+//             break;
+//         case 'EZUGI':
+//             if ( strTableID == 100 || strTableID == 101 || strTableID == 102 || strTableID == 105 || strTableID == 106 || strTableID == 32100 || strTableID == 32101 || strTableID == 32102 || strTableID == 32103 || strTableID == 170 || strTableID == 171 )
+//                 eType = 'BETRD';
+//             break;
+//         case 'CQ9':
+//             eType = 'BETRD';
+//             break;
+//         case 'HONORLINK':
+//             // //if ( iGameCode == 0 )
+//             // if ( strGameID == 'evolution' && iGameCode == 0 )
+//             //     eType = 'BETRD';
+//             break;
+//     }
+
+//     await CreateBet(strID, strNickname, strGroupID, iClass, iBalance, iGameCode, strVender, strGameID, strTableID, strRound, strUniqueID, strDetail, strResult, iTarget, iBet, 0, eState, eType, strURL);
+// }
+
+// exports.ProcessWin = async (strID, strNickname, strGroupID, iClass, iBalance, iGameCode, strVender, strGameID, strTableID, strRound, strUniqueID, strDetail, strResult, iTarget, iWin, strURL) => {
+
+//     //  슬롯일 경우 무조건 새로 생성
+//     if ( iGameCode == 200 ) // When win event occured from slot
+//     {
+//         if (iWin > 0)
+//         {
+//             let eState = 'STANDBY';
+//             await CreateBet(strID, strNickname, strGroupID, iClass, iBalance, iGameCode, strVender, strGameID, strTableID, strRound, strUniqueID, strDetail, strResult, iTarget, 0, iWin, eState, 'WIN', strURL);
+
+//         }
+//         return;
+//     }
+
+//     //  베팅한 상태에서 완료가 안된 상태만 조회
+//     let bet = await db.RecordBets.findOne({where:{strID:strID, strRound:strRound, strVender:strVender, eState:'STANDBY'}});
+//     if ( bet != null )
+//     {
+//         //const cResultWin = parseInt(bet.iWin) + parseInt(iWin);
+
+//         switch ( strVender )
+//         {
+//             case 'VIVO':
+//                 {
+//                     let listBet = vVivo.ParseBetDetails(strGameID, bet.strDetail, bet.iBet, bet.iBalance);
+//                     console.log(listBet);
+            
+//                     let listWin = vVivo.ParseWinDetails(strGameID, strDetail, iWin, iBalance);
+//                     console.log(listWin);
+        
+//                     let listFinal = vVivo.GetDetails(listBet, listWin);
+//                     console.log(listFinal);
+        
+//                     let listCards = vVivo.GetCards(strDetail);
+        
+//                     if ( bet.iBet == iWin )
+//                     {
+//                         await db.RecordBets.update({iWin:iWin, strDetail:JSON.stringify(listFinal), strResult:JSON.stringify(listCards), eType:'CANCEL_BET', eState:'COMPLETE'}, {where:{id:bet.id}});
+//                     }
+//                     else
+//                     {
+//                         await db.RecordBets.update({iWin:iWin, strDetail:JSON.stringify(listFinal), strResult:JSON.stringify(listCards), eType:'RD', eState:'STANDBY'}, {where:{id:bet.id}});
+//                     }
+//                 }
+//                 break;
+//             case 'EZUGI':
+//             case 'CQ9':
+//             case 'HONORLINK':
+//                 {
+//                     if ( bet.iBet == iWin )
+//                     {
+//                         await db.RecordBets.update({iWin:iWin, strUniqueID:strUniqueID, eType:'CANCEL_BET', eState:'STANDBY'}, {where:{id:bet.id}});
+//                     }
+//                     else
+//                     {
+//                         if ( bet.eType == 'BETRD' )
+//                         {
+//                             await db.RecordBets.update({iWin:iWin, strUniqueID:strUniqueID, eType:'RD', eState:'STANDBY'}, {where:{id:bet.id}});
+//                         }
+//                         else if ( bet.eType == 'BET' )
+//                         {
+//                             await db.RecordBets.update({iWin:iWin, strUniqueID:strUniqueID, eType:'BETWIN', eState:'STANDBY'}, {where:{id:bet.id}});
+//                         }
+//                         else
+//                         {
+//                             const cWin = parseFloat(bet.iWin) + iWin;
+    
+//                             //await db.RecordBets.update({iWin:iWin, eType:'WIN', eState:'STANDBY'}, {where:{id:bet.id}});
+//                             await db.RecordBets.update({iWin:cWin, eType:'BETWIN', eState:'STANDBY'}, {where:{id:bet.id}});
+//                         }
+//                     }
+//                 }
+//                 break;
+//             default:
+//                 {
+//                     if ( bet.iBet == iWin )
+//                     {
+//                         //  TIE WIN
+//                         await db.RecordBets.update({iWin:iWin, eType:'CANCEL_BET', eState:'STANDBY'}, {where:{id:bet.id}});
+//                     }
+//                     else
+//                     {
+//                         const cWin = parseFloat(bet.iWin) + iWin;
+
+//                         //await db.RecordBets.update({iWin:iWin, eType:'WIN', eState:'STANDBY'}, {where:{id:bet.id}});
+//                         await db.RecordBets.update({iWin:cWin, eType:'BETWIN', eState:'STANDBY'}, {where:{id:bet.id}});
+//                     }
+//                 }
+//                 break;
+//         }
+//     }
+//     else
+//     {
+//         let eState = 'STANDBY';
+//         await CreateBet(strID, strNickname, strGroupID, iClass, iBalance, iGameCode, strVender, strGameID, strTableID, strRound, strUniqueID, strDetail, strResult, iTarget, 0, iWin, eState, 'WIN', strURL);
+//     }
+// }

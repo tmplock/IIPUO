@@ -405,13 +405,18 @@ router.post('/request_exchange', async (req, res) => {
             eState:'COMPLETE'
         });
     
-        await target.update({
-            iCash:parseInt(target.iCash)+cAmount,
-            iRolling:parseInt(target.iRolling)-cAmount,
-        });
-    
         const cAdminCash = parseInt(admin.iCash)-cAmount;
-        await admin.update({iCash:cAdminCash, iRolling:parseInt(admin.iRolling)+cAmount});
+
+        await db.Users.update({iCash:parseInt(target.iCash)+cAmount, iRolling:parseInt(target.iRolling)-cAmount}, {where:{strNickname:req.body.strNickname}});
+        await db.Users.update({iCash:cAdminCash, iRolling:parseInt(admin.iRolling)+cAmount}, {where:{strNickname:objectData.strAdmin}});
+
+        // await target.update({
+        //     iCash:parseInt(target.iCash)+cAmount,
+        //     iRolling:parseInt(target.iRolling)-cAmount,
+        // });
+
+        // const cAdminCash = parseInt(admin.iCash)-cAmount;
+        // await admin.update({iCash:cAdminCash, iRolling:parseInt(admin.iRolling)+cAmount});
     
         res.send({result:'OK'});
     }

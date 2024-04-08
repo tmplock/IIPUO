@@ -346,7 +346,7 @@ exports.ProcessOverview = async (listDB, listOverview, listOdds, listUpdateDB) =
         if ( cOdd == null )
             continue;
 
-        if ( cDB.strResult.length > 10 && cDB.strDetail.length > 10 && cDB.strVender == 'EZUGI' && cDB.iGameCode == 0 && cDB.eType == 'BETWIN' && (cDB.strTableID == '101' || cDB.strTableID == '100' || cDB.strTableID == '102') )
+        if ( cData.strResult.length > 10 && cData.strDetail.length > 10 && cData.strVender == 'EZUGI' && cData.iGameCode == 0 && cData.eType == 'BETWIN' && (cData.strTableID == '101' || cData.strTableID == '100' || cData.strTableID == '102') )
         {
             try {
                 let objectReturn = ODDS.ProcessRolling(cOdd, listData.list, 0, 0, strDate);
@@ -366,7 +366,7 @@ exports.ProcessOverview = async (listDB, listOverview, listOdds, listUpdateDB) =
                 listUpdateDB.push({id:cData.id, strOverview:strOverview});
             }
         }
-        else if ( cDB.strResult.length > 10 && cDB.strDetail.length > 10 && cDB.strVender ==' CQ9' || cDB.eType == 'BETWIN' )
+        else if ( cData.strResult.length > 10 && cData.strDetail.length > 10 && cData.strVender ==' CQ9' || cData.eType == 'BETWIN' )
         {
             try
             {
@@ -387,7 +387,7 @@ exports.ProcessOverview = async (listDB, listOverview, listOdds, listUpdateDB) =
                 listUpdateDB.push({id:cData.id, strOverview:strOverview});
             }
         }
-        else if ( cDB.eType == 'BET' )
+        else if ( cData.eType == 'BET' )
         {
             let objectReturn = ODDS.ProcessRollingBet(cOdd, cData.iGameCode, cData.iBet, strDate);
             let listCurrentOverview = objectReturn.listFinal;
@@ -397,7 +397,7 @@ exports.ProcessOverview = async (listDB, listOverview, listOdds, listUpdateDB) =
             const strOverview = ODDS.GetRollingString(objectBetRolling);
             listUpdateDB.push({id:cData.id, strOverview:strOverview});            
         }
-        else if ( cDB.eType == 'WIN' )
+        else if ( cData.eType == 'WIN' )
         {
             let objectReturn = ODDS.ProcessRollingWin(cOdd, cData.iGameCode, cData.iWin, strDate);
             let listCurrentOverview = objectReturn.listFinal;
@@ -406,7 +406,7 @@ exports.ProcessOverview = async (listDB, listOverview, listOdds, listUpdateDB) =
             const strOverview = ODDS.GetRollingString(objectBetRolling);
             listUpdateDB.push({id:cData.id, strOverview:strOverview});
         }
-        else if ( cDB.eType == 'BETWIN' )
+        else if ( cData.eType == 'BETWIN' )
         {
             let objectReturn = ODDS.ProcessRollingBetWin(cOdd, cData.iGameCode, cData.iBet, cData.iWin, strDate);
             let listCurrentOverview = objectReturn.listFinal;

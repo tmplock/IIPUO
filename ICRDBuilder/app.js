@@ -83,6 +83,7 @@ cron.schedule('*/1 * * * * ', async ()=> {
     await Processor.ProcessHLink(listHLDB, listUpdateDB);
     await Processor.ProcessCQ9(listCQ9DB, listUpdateDB);
     await Processor.ProcessEzugi(listEzugiDB, listUpdateDB);
+    await Processor.ProcessEtc(listEtc, listUpdateDB);
 
 
     //  ##### UPDATE RECORD-BETS

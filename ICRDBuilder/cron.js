@@ -32,6 +32,7 @@ cron.schedule('*/1 * * * * ', async ()=> {
 
     let listUpdateDB = [];
 
+    //  ##### HonorLink
     let listHLDB = await db.RecordBets.findAll({
         where: {
             eState: 'COMPLETE',
@@ -47,11 +48,9 @@ cron.schedule('*/1 * * * * ', async ()=> {
         // order: [['createdAt', 'ASC']]
     });
     console.log(`##### listHLDB.length = ${listHLDB.length}`);
-
-    //  ##### HonorLink
     await Processor.ProcessHLink(listHLDB, listUpdateDB);
 
-    //  CQ9
+    //  ##### CQ9
     let listCQ9DB = await db.RecordBets.findAll({
         where: {
             eState: 'COMPLETE',
@@ -62,11 +61,26 @@ cron.schedule('*/1 * * * * ', async ()=> {
                 [Op.between]:[ moment().subtract(4, "minutes").toDate(), moment().subtract(3, "minutes").toDate()],
             }
         },
-        order: [['createdAt', 'ASC']]
     });
     console.log(`##### listCQ9DB.length = ${listCQ9DB.length}`);
 
     await Processor.ProcessCQ9(listCQ9DB, listUpdateDB);
+
+    //  ##### EZUGI
+    let listEzugiDB = await db.RecordBets.findAll({
+        where: {
+            eState: 'COMPLETE',
+            eType:'BETWIN',
+            iGameCode:0,
+            strVender:'EZUGI',
+            strTableID:{[Op.or]:['100', '101', '102']},
+            createdAt:{
+                [Op.between]:[ moment().subtract(21, "minutes").toDate(), moment().subtract(20, "minutes").toDate()],
+            }
+        },
+    });
+    console.log(`##### listEzugiDB.length = ${listEzugiDB.length}`);
+    await Processor.ProcessEzugi(listEzugiDB, listUpdateDB);
 
 
     //  ##### UPDATE RECORD-BETS

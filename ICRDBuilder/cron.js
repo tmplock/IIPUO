@@ -17,8 +17,34 @@ const moment = require('moment');
 
 let lProcessID = -1;
 
+let GetEachDB = (listDB, listHL, listCQ9, listEzugi, listEtc) => {
+
+    for ( let i in listDB )
+    {
+        const cDB = listDB[i];
+
+        if ( cDB.strVender == 'EZUGI' && cDB.iGameCode == 0 && cDB.eType == 'BETWIN' && (cDB.strTableID == '101' || cDB.strTableID == '100' || cDB.strTableID == '102') )
+        {
+            listEzugi.push(cDB);
+        }
+        else if ( cDB.strVender ==' CQ9' || cDB.eType == 'BETWIN' )
+        {
+            listCQ9.push(cDB);
+        }
+        else if ( cDB.strVender =='HONORLINK' && cDB.eType == 'BETWIN' && cDB.strGameID == 'evolution' && cDB.iGameCode == 0 )
+        {
+            listHL.push(cDB);
+        }
+        else
+        {
+            listEtc.push(cDB);
+        }
+    }
+}
+
 //cron.schedule('*/5 * * * * * ', async ()=> {
-cron.schedule('*/1 * * * * ', async ()=> {
+//cron.schedule('*/1 * * * * ', async ()=> {
+    cron.schedule('* * * * * * ', async ()=> {
 //cron.schedule('0,5,10,15,20,25,30,35,40,45,50,55 * * * * ', async ()=> {
 
     console.log(`##### CRON`);
@@ -28,74 +54,54 @@ cron.schedule('*/1 * * * * ', async ()=> {
         console.log(`##### CRON IS PROCESSING`);
         return;
     }
+
+    console.log(`1`)
     lProcessID = 1;
 
+    console.log(`1`)
     let listUpdateDB = [];
+    
+    const cMinuteBefore = 1;
 
-    //  ##### HonorLink
-    let listHLDB = await db.RecordBets.findAll({
+    console.log(`1`)
+    let listDB = await db.RecordBets.findAll({
         where: {
-            eState: 'COMPLETE',
-            //eType:{[Op.or]:['BET', 'WIN']},
-            eType:'BETWIN',
-            iGameCode:0,
-            strGameID:'evolution',
-            strVender:'HONORLINK',
+            eState: 'STANDBY',
+            eType:{[Op.or]:['BET', 'WIN', 'BETWIN']},
             createdAt:{
-                [Op.between]:[ moment().subtract(4, "minutes").toDate(), moment().subtract(3, "minutes").toDate()],
+                [Op.lte]:moment().subtract(cMinuteBefore, "minutes").toDate(),
             }
         },
-        // order: [['createdAt', 'ASC']]
+        order: [['createdAt', 'ASC']]
     });
-    console.log(`##### listHLDB.length = ${listHLDB.length}`);
+    console.log(`1`)
+    let listHLDB = [];
+    let listCQ9DB = [];
+    let listEzugiDB = [];
+    let listEtc = [];
+
+    console.log(`5`)
+    GetEachDB(listDB, listHLDB, listCQ9DB, listEzugiDB, listEtc);
+
+    console.log(`6`)
     await Processor.ProcessHLink(listHLDB, listUpdateDB);
-
-    //  ##### CQ9
-    let listCQ9DB = await db.RecordBets.findAll({
-        where: {
-            eState: 'COMPLETE',
-            eType:'BETWIN',
-            iGameCode:0,
-            strVender:'CQ9',
-            createdAt:{
-                [Op.between]:[ moment().subtract(4, "minutes").toDate(), moment().subtract(3, "minutes").toDate()],
-            }
-        },
-    });
-    console.log(`##### listCQ9DB.length = ${listCQ9DB.length}`);
-
     await Processor.ProcessCQ9(listCQ9DB, listUpdateDB);
-
-    //  ##### EZUGI
-    let listEzugiDB = await db.RecordBets.findAll({
-        where: {
-            eState: 'COMPLETE',
-            eType:'BETWIN',
-            iGameCode:0,
-            strVender:'EZUGI',
-            strTableID:{[Op.or]:['100', '101', '102']},
-            createdAt:{
-                [Op.between]:[ moment().subtract(21, "minutes").toDate(), moment().subtract(20, "minutes").toDate()],
-            }
-        },
-    });
-    console.log(`##### listEzugiDB.length = ${listEzugiDB.length}`);
     await Processor.ProcessEzugi(listEzugiDB, listUpdateDB);
 
+    console.log(`7`)
 
     //  ##### UPDATE RECORD-BETS
     console.log(`##### UPDATE RECORD BET : Length : ${listUpdateDB.length}`);
+    
     for ( let i in listUpdateDB )
     {
         console.log(`##### listDBUpdate : ${i} db.id : ${listUpdateDB[i].id}`);
 
         const cData = listUpdateDB[i];
-
-        console.log(cData);
-
-        if ( cData.strDetail != '' && cData.strResult != '' )
-            await db.RecordBets.update({strDetail:cData.strDetail, strResult:cData.strResult}, {where:{id:cData.id}});
+        await db.RecordBets.update({strDetail:cData.strDetail, strResult:cData.strResult, eType:'ROLLING'}, {where:{id:cData.id}});
     }
+
+    console.log(`DBLength : ${listDB.length}, UpdateDBLength : ${listUpdateDB.length}`);
     
     lProcessID = -1;
     

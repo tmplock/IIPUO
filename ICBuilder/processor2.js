@@ -341,79 +341,43 @@ exports.ProcessOverview = async (listDB, listOverview, listOdds, listUpdateDB) =
     for ( let i in listDB )
     {
         const cData = listDB[i];
-        const strDate = cData.createdAt.substr(0,10);
-        const cOdd = ODDS.FindOdd(cData.strID, listOdds);
-        if ( cOdd == null )
-            continue;
 
-        if ( cDB.strResult.length > 10 && cDB.strDetail.length > 10 && cDB.strVender == 'EZUGI' && cDB.iGameCode == 0 && cDB.eType == 'BETWIN' && (cDB.strTableID == '101' || cDB.strTableID == '100' || cDB.strTableID == '102') )
-        {
-            try {
-                let objectReturn = ODDS.ProcessRolling(cOdd, listData.list, 0, 0, strDate);
-                let listCurrentOverview = objectReturn.listFinal;
-                let objectBetRolling = objectReturn.objectBet;
-                ODDS.JoinGroupDailyOverview(listOverview, listCurrentOverview);
-                const strOverview = ODDS.GetRollingString(objectBetRolling);
-                listUpdateDB.push({id:cData.id, strOverview:strOverview});
-            }
-            catch {
+        let listData = RDEzugi.GetRD(res, cData.strUniqueID);
 
-                let objectReturn = ODDS.ProcessRollingBetWin(cOdd, cData.iGameCode, cData.iBet, cData.iWin, strDate);
-                let listCurrentOverview = objectReturn.listFinal;
-                let objectBetRolling = objectReturn.objectBet;
-                ODDS.JoinGroupDailyOverview(listOverview, listCurrentOverview);
-                const strOverview = ODDS.GetRollingString(objectBetRolling);
-                listUpdateDB.push({id:cData.id, strOverview:strOverview});
-            }
-        }
-        else if ( cDB.strResult.length > 10 && cDB.strDetail.length > 10 && cDB.strVender ==' CQ9' || cDB.eType == 'BETWIN' )
+        console.log(`##### ProcessEzugi listDB[${i}]`);
+        console.log(listData);
+
+        //  라운드 디테일 없을 경우
+        if (listData != null)
         {
-            try
+            const strDate = cData.createdAt.substr(0,10);
+
+            const cOdd = ODDS.FindOdd(cData.strID, listOdds);
+            if ( cOdd != null )
             {
                 let objectReturn = ODDS.ProcessRolling(cOdd, listData.list, 0, 0, strDate);
                 let listCurrentOverview = objectReturn.listFinal;
                 let objectBetRolling = objectReturn.objectBet;
+        
                 ODDS.JoinGroupDailyOverview(listOverview, listCurrentOverview);
+        
                 const strOverview = ODDS.GetRollingString(objectBetRolling);
-                listUpdateDB.push({id:cData.id, strOverview:strOverview});
+        
+                //await db.RecordBets.update({eState:'COMPLETE', strDetail:listData.strBets, strResult:listData.strCards, strOverview:strOverview}, {where:{id:list[i].id}});
+                listUpdateDB.push({id:cData.id, eState:'COMPLETE', strDetail:listData.strBets, strResult:listData.strCards, strOverview:strOverview});
             }
-            catch
-            {
-                let objectReturn = ODDS.ProcessRollingBetWin(cOdd, cData.iGameCode, cData.iBet, cData.iWin, strDate);
-                let listCurrentOverview = objectReturn.listFinal;
-                let objectBetRolling = objectReturn.objectBet;
-                ODDS.JoinGroupDailyOverview(listOverview, listCurrentOverview);
-                const strOverview = ODDS.GetRollingString(objectBetRolling);
-                listUpdateDB.push({id:cData.id, strOverview:strOverview});
+            else
+            {                
+               listUpdateDB.push({id:cData.id, eState:'STANDBY', eType:'BETWIN'});
             }
         }
-        else if ( cDB.eType == 'BET' )
+        else
         {
-            let objectReturn = ODDS.ProcessRollingBet(cOdd, cData.iGameCode, cData.iBet, strDate);
-            let listCurrentOverview = objectReturn.listFinal;
-            let objectBetRolling = objectReturn.objectBet;
-
-            ODDS.JoinGroupDailyOverview(listOverview, listCurrentOverview);
-            const strOverview = ODDS.GetRollingString(objectBetRolling);
-            listUpdateDB.push({id:cData.id, strOverview:strOverview});            
-        }
-        else if ( cDB.eType == 'WIN' )
-        {
-            let objectReturn = ODDS.ProcessRollingWin(cOdd, cData.iGameCode, cData.iWin, strDate);
-            let listCurrentOverview = objectReturn.listFinal;
-            let objectBetRolling = objectReturn.objectBet;
-            ODDS.JoinGroupDailyOverview(listOverview, listCurrentOverview);
-            const strOverview = ODDS.GetRollingString(objectBetRolling);
-            listUpdateDB.push({id:cData.id, strOverview:strOverview});
-        }
-        else if ( cDB.eType == 'BETWIN' )
-        {
-            let objectReturn = ODDS.ProcessRollingBetWin(cOdd, cData.iGameCode, cData.iBet, cData.iWin, strDate);
-            let listCurrentOverview = objectReturn.listFinal;
-            let objectBetRolling = objectReturn.objectBet;
-            ODDS.JoinGroupDailyOverview(listOverview, listCurrentOverview);
-            const strOverview = ODDS.GetRollingString(objectBetRolling);
-            listUpdateDB.push({id:cData.id, strOverview:strOverview});
+            listUpdateDB.push({id:cData.id, eState:'STANDBY', eType:'BETWIN'});
+            // const cElapsedSeconds = GetElapsedSeconds(cData.updatedAt);
+            // if ( cElapsedSeconds > 60 )
+            //     //await db.RecordBets.update({eState:'PENDING'}, {where:{id:list[i].id}});
+            //     listUpdateDB.push({id:cData.id, eState:'PENDING'});
         }
     }    
 }

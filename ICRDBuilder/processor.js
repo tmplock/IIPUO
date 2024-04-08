@@ -4,15 +4,23 @@ const RDEzugi = require('./vender/ezugi');
 
 exports.ProcessHLink = async (listDB, listUpdateDB) => {
 
-    console.log(`##### ProcessHLink`);
- 
     if ( listDB.length <= 0 )
+    {
+        for (let i in listDB)
+        {
+            listUpdateDB.push({id:cData.id, strDetail:'', strResult:''});
+        }
         return;
+    }
 
     let res = await RDHLink.GetRangeRD(listDB[0].createdAt, listDB[listDB.length-1].updatedAt);
     if (res == null) 
     {
         //  못 얻어올 경우 아무 업데이트 필요 없음
+        for (let i in listDB)
+        {
+            listUpdateDB.push({id:cData.id, strDetail:'', strResult:''});
+        }
         return;
     }
 
@@ -27,18 +35,33 @@ exports.ProcessHLink = async (listDB, listUpdateDB) => {
         {
             listUpdateDB.push({id:cData.id, strDetail:listData.strBets, strResult:listData.strCards});
         }
+        else
+        {
+            listUpdateDB.push({id:cData.id, strDetail:'', strResult:''});
+        }
     }
 }
 
 exports.ProcessCQ9 = async (listDB, listUpdateDB) => {
 
     if ( listDB.length <= 0 )
+    {
+        for (let i in listDB)
+        {
+            listUpdateDB.push({id:cData.id, strDetail:'', strResult:''});
+        }
         return;
+    }
 
     const res = await RDCQ9.GetRangeRD(listDB[0].createdAt, listDB[listDB.length - 1].updatedAt);
     console.log(res);
 
-    if (res == null) {
+    if (res == null) 
+    {
+        for (let i in listDB)
+        {
+            listUpdateDB.push({id:cData.id, strDetail:'', strResult:''});
+        }
         return;
     }
 
@@ -52,6 +75,10 @@ exports.ProcessCQ9 = async (listDB, listUpdateDB) => {
         {
             listUpdateDB.push({id:cData.id, strDetail:listData.strBets, strResult:listData.strCards});
         }
+        else
+        {
+            listUpdateDB.push({id:cData.id, strDetail:'', strResult:''});
+        }
     }
 }
 
@@ -59,12 +86,22 @@ exports.ProcessCQ9 = async (listDB, listUpdateDB) => {
 exports.ProcessEzugi = async (listDB, listUpdateDB) => {
 
     if ( listDB.length <= 0 )
+    {
+        for (let i in listDB)
+        {
+            listUpdateDB.push({id:cData.id, strDetail:'', strResult:''});
+        }
         return;
+    }
 
     const res = await RDEzugi.GetRangeRD(listDB[0].createdAt, listDB[listDB.length-1].updatedAt);
     if (res == null)
     {
-        // return;
+        for (let i in listDB)
+        {
+            listUpdateDB.push({id:cData.id, strDetail:'', strResult:''});
+        }
+        return;
     }
 
     for ( let i in listDB )
@@ -80,5 +117,18 @@ exports.ProcessEzugi = async (listDB, listUpdateDB) => {
         {
             listUpdateDB.push({id:cData.id, strDetail:listData.strBets, strResult:listData.strCards});
         }
+        else
+        {
+            listUpdateDB.push({id:cData.id, strDetail:'', strResult:''});
+        }
     }    
 }
+
+exports.ProcessEtc = async (listDB, listUpdateDB) => {
+
+    for (let i in listDB)
+    {
+        listUpdateDB.push({id:cData.id, strDetail:'', strResult:''});
+    }
+}
+

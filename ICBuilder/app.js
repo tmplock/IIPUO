@@ -8,5 +8,5 @@ const cron = require('./cron');
 
 const cPort = 3003;
 server.listen(cPort, () => {
-    console.log(`IBetBuilder Server is started At ${cPort}`);
+    console.log(`ICBuilder Server is started At ${cPort}`);
 });

@@ -230,7 +230,7 @@ let SetBettingList = (records, startIndex) => {
             tagTargetWin = `<td style="font-size: 12px; background-color:${color}; padding: 10px; line-height: 1.5;"><font style="color: black;">${GetNumber(records[i].iWin)}</font></td>`
         } else {
             if (eState == 'COMPLETE') {
-                if (eType == 'RD' || eType == 'BETWIN') {
+                if (eType == 'RD') {
                     if (records[i].iWin > 0) {
                         tagDetail = `<a style="color:red;" onclick="OnClickRoundDetail('${records[i].id}')" href="#">당첨 결과</a>`;
                     } else {

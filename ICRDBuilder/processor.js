@@ -8,6 +8,7 @@ exports.ProcessHLink = async (listDB, listUpdateDB) => {
     {
         for (let i in listDB)
         {
+            const cData = listDB[i];
             listUpdateDB.push({id:cData.id, strDetail:'', strResult:''});
         }
         return;
@@ -19,6 +20,7 @@ exports.ProcessHLink = async (listDB, listUpdateDB) => {
         //  못 얻어올 경우 아무 업데이트 필요 없음
         for (let i in listDB)
         {
+            const cData = listDB[i];
             listUpdateDB.push({id:cData.id, strDetail:'', strResult:''});
         }
         return;
@@ -48,6 +50,7 @@ exports.ProcessCQ9 = async (listDB, listUpdateDB) => {
     {
         for (let i in listDB)
         {
+            const cData = listDB[i];
             listUpdateDB.push({id:cData.id, strDetail:'', strResult:''});
         }
         return;
@@ -60,6 +63,7 @@ exports.ProcessCQ9 = async (listDB, listUpdateDB) => {
     {
         for (let i in listDB)
         {
+            const cData = listDB[i];
             listUpdateDB.push({id:cData.id, strDetail:'', strResult:''});
         }
         return;
@@ -89,6 +93,7 @@ exports.ProcessEzugi = async (listDB, listUpdateDB) => {
     {
         for (let i in listDB)
         {
+            const cData = listDB[i];
             listUpdateDB.push({id:cData.id, strDetail:'', strResult:''});
         }
         return;
@@ -99,6 +104,7 @@ exports.ProcessEzugi = async (listDB, listUpdateDB) => {
     {
         for (let i in listDB)
         {
+            const cData = listDB[i];
             listUpdateDB.push({id:cData.id, strDetail:'', strResult:''});
         }
         return;
@@ -128,6 +134,7 @@ exports.ProcessEtc = async (listDB, listUpdateDB) => {
 
     for (let i in listDB)
     {
+        const cData = listDB[i];
         listUpdateDB.push({id:cData.id, strDetail:'', strResult:''});
     }
 }

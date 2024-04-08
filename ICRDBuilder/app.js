@@ -61,7 +61,7 @@ cron.schedule('*/1 * * * * ', async ()=> {
 
     let listUpdateDB = [];
     
-    const cMinuteBefore = 1;
+    const cMinuteBefore = 10;
 
     let listDB = await db.RecordBets.findAll({
         where: {

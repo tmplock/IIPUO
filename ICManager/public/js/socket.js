@@ -20,7 +20,7 @@ var intervalContactReplySoundOn = 1;
 let AlertInput = (strText, bOn) => {
 	if ( user.iPermission != 100 && bOn ) {
 		$('#input_process').empty();
-		$('#input_process').append(`<a href="#" class="btn_thingreen" style="position:absolute;top:35px; right:40%;" onclick="OnClickInputProcess();">${strRequestInput}</a>`);
+		$('#input_process').append(`<li><a href="#" class="btn_thingreen" style="width: 70px;" onclick="OnClickInputProcess();">${strRequestInput}</a></li>`);
 		if (intervalInputSoundOn == 1)
 			Alertinterval('alert_input');
 	} else {
@@ -32,7 +32,7 @@ let AlertInput = (strText, bOn) => {
 let AlertOutput = (strText, bOn) => {
 	if ( user.iPermission != 100 && bOn) {
 		$('#output_process').empty();
-		$('#output_process').append(`<a href="#" class="btn_thinblue" style="position:absolute;top:35px; right:35%;" onclick="OnClickOutputProcess();">${strRequestOutput}</a>`);
+		$('#output_process').append(`<li><a href="#" class="btn_thinblue" style="width: 70px;" onclick="OnClickOutputProcess();">${strRequestOutput}</a></li>`);
 		if (intervalOutputSoundOn == 1)
 			Alertinterval('alert_output');
 	} else {
@@ -44,7 +44,7 @@ let AlertOutput = (strText, bOn) => {
 let AlertLetter = (strText, bOn) => {
 	if ( user.iPermission != 100 && bOn) {
 		$('#letter_process').empty();
-		$('#letter_process').append(`<a href="#" class="btn_thinyellow" style="position:absolute;top:35px; right:30%;" onclick="OnClickLetterProcess();">${strText}</a>`);
+		$('#letter_process').append(`<li><a href="#" class="btn_thinyellow" style="width: 70px;" onclick="OnClickLetterProcess();">${strText}</a></li>`);
 		if (intervalLetterSoundOn == 1)
 			Alertinterval('alert_letter');
 	} else {
@@ -56,12 +56,12 @@ let AlertLetter = (strText, bOn) => {
 let AlertLetterReply = (strText, bOn) => {
 	if ( user.iPermission != 100 && bOn) {
 		$('#letterreply_process').empty();
-		$('#letterreply_process').append(`<a href="#" class="btn_thinyellow" style="position:absolute;top:35px; right:30%;" onclick="OnClickLetterReply();">${strText}</a>`);
+		$('#letterreply_process').append(`<li><a href="#" class="btn_thinyellow" style="width: 70px;" onclick="OnClickLetterReply();">${strText}</a></li>`);
 		if (intervalLetterReplySoundOn == 1)
 			Alertinterval('alert_letter_reply');
 	} else if (user.iPermission == 100 && user.iClass == 3 && bOn) {
 		$('#letterreply_process').empty();
-		$('#letterreply_process').append(`<a href="#" class="btn_thinyellow" style="position:absolute;top:35px; right:30%;" onclick="OnClickLetterReply();">${strText}</a>`);
+		$('#letterreply_process').append(`<li><a href="#" class="btn_thinyellow" style="width: 70px;" onclick="OnClickLetterReply();">${strText}</a></li>`);
 		if (intervalLetterReplySoundOn == 1)
 			Alertinterval('alert_letter_reply');
 	} else {
@@ -73,7 +73,7 @@ let AlertLetterReply = (strText, bOn) => {
 let AlertCharge = (strText, bOn) => {
 	if ( user.iPermission != 100 && bOn ) {
 		$('#charge_process').empty();
-		$('#charge_process').append(`<a href="#" class="btn_thingreen" style="position:absolute;top:35px; right:40%;" onclick="OnClickChargeProcess();">충전요청</a>`);
+		$('#charge_process').append(`<li><a href="#" class="btn_thingreen" style="width: 70px;" onclick="OnClickChargeProcess();">충전요청</a></li>`);
 		if (intervalChargeSoundOn == 1)
 			Alertinterval('alert_charge');
 	} else {
@@ -85,7 +85,7 @@ let AlertCharge = (strText, bOn) => {
 let AlertContact = (strText, bOn) => {
 	if ( user.iPermission != 100 && bOn ) {
 		$('#contact_process').empty();
-		$('#contact_process').append(`<a href="#" class="btn_thinyellow" style="position:absolute;top:35px; right:30%;" onclick="OnClickContactProcess();">${strText}</a>`);
+		$('#contact_process').append(`<li><a href="#" class="btn_thinyellow" style="width: 70px;" onclick="OnClickContactProcess();">${strText}</a></li>`);
 		if (intervalContactSoundOn == 1)
 			Alertinterval('alert_contact');
 	} else {
@@ -97,12 +97,12 @@ let AlertContact = (strText, bOn) => {
 let AlertContactReply = (strText, bOn) => {
 	if ( user.iPermission != 100 && bOn ) {
 		$('#contactreply_process').empty();
-		$('#contactreply_process').append(`<a href="#" class="btn_thinyellow" style="position:absolute;top:35px; right:30%;" onclick="OnClickContactSendReply();">${strText}</a>`);
+		$('#contactreply_process').append(`<li><a href="#" class="btn_thinyellow" style="width: 70px;" onclick="OnClickContactSendReply();">${strText}</a></li>`);
 		if (intervalContactReplySoundOn == 1)
 			Alertinterval('alert_contact_reply');
 	} else if ( user.iPermission == 100 && user.iClass == 3 && bOn ) {
 		$('#contactreply_process').empty();
-		$('#contactreply_process').append(`<a href="#" class="btn_thinyellow" style="position:absolute;top:35px; right:30%;" onclick="OnClickContactSendReply();">${strText}</a>`);
+		$('#contactreply_process').append(`<li><a href="#" class="btn_thinyellow" style="width: 70px;" onclick="OnClickContactSendReply();">${strText}</a></li>`);
 		if (intervalContactReplySoundOn == 1)
 			Alertinterval('alert_contact_reply');
 	} else {
@@ -353,7 +353,7 @@ let Alert = (iocount, strInput, strOutput, strLetter, strCharge, strContact) => 
 		AlertLetterReply('문의답변', parseInt(iocount.letterreply) > 0);
 		AlertCharge('충전요청', parseInt(iocount.charge) > 0 );
 		AlertContact('관리자문의', parseInt(iocount.contact) > 0);
-		AlertContactReply('관리자문의답변', parseInt(iocount.contactreply) > 0);
+		AlertContactReply('문의답변', parseInt(iocount.contactreply) > 0);
 	} else {
 		Alertinterval('');
 	}

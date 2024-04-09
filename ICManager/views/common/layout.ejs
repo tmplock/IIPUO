@@ -441,38 +441,9 @@
 
 <body>
     <div id="wrap" class="skin_type01">
-        <header id="header">
+        <div id="header">
             <nav id="gnb">
                 <ul class="clearfix">
-                    <div style="float:right;">
-                        <div id="input_process">
-                        </div>
-                        <div id="output_process">
-                        </div>
-                        <div id="letter_process">
-                        </div>
-                        <div id="charge_process">
-                        </div>
-                        <div id="contact_process">
-                        </div>
-                        <div id="letterreply_process">
-                        </div>
-                        <div id="contactreply_process">
-                        </div>
-                        <% if ( parseInt(user.iClass) <= 2 ) { %>
-                            <a class="btn_thinorange" style="position:absolute;top:35px; right:15%;" href="javascript:OnClickChangeMoney('<%=user.strNickname%>', '<%=user.strGroupID%>', '<%=user.iClass%>');"><%=__('Give')%><%=__('Take')%> <%=__('Record')%></a>
-                        <%} else if ( parseInt(user.iClass) <= 3 ) { %>
-                            <a class="btn_thinorange" style="position:absolute;top:35px; right:15%;" href="javascript:OnClickChangeMoney('<%=user.strNickname%>', '<%=user.strGroupID%>', '<%=user.iClass%>');"><%=__('CashRecord')%></a>
-                        <% } %>
-<!--                        <select id="LanguageSelect" class="form-select form-select-sm" aria-label=".form-select-sm example" style="width:100px; height:27px; position:absolute;top:35px; right:8%;background-color:black; color:white;">-->
-<!--                            <option selected>Language</option>-->
-<!--                            <option value="1"><a href="/ko">한국어</a></option>-->
-<!--                            <option value="2"><a href="/jp">日本語</a></option>-->
-<!--                            <option value="3"><a href="/en">English</a></option>-->
-<!--                        </select>-->
-                        <a class='logout btn_thinred' style="position:absolute;top:35px; right:1%;" href="/account/logout"><%=__('Logout')%></a>
-
-                    </div>
                     <li>
                         <% if ( user.iClass == 1 ) { %>
                         <p style="margin-top:-5px;margin-bottom:-5px; color:yellow;font-size:20px;font-family:'Spoqa Han Sans Neo', 'sans-serif';">[총총]<%=user.strNickname%></p>
@@ -576,14 +547,40 @@
                             </li>
                         <% } %>
                     <% } %>
-                    <li>
-                        <p style="margin-top:-15px; margin-bottom:-16px; font-weight:medium; color:rgb(255, 251, 0);font-size:17px;font-family:'Spoqa Han Sans Neo', 'sans-serif';"><%=__('MyCash')%><br><span style="color:white;" id="MainLayoutMyCash"><%=parseInt(user.iCash).toLocaleString()%></span></p>
-                    </li>
                     <% if (parseInt(user.iClass) == 3) { %>
                         <li>
                             <p style="margin-top:-15px; margin-bottom:-16px; color:rgb(255, 251, 0);font-size:17px;">롤링/죽장전환<span style="color:white;" id="MainLayoutMyChip"><br><%=parseInt(user.iRolling ?? 0).toLocaleString()%>/<%=parseInt(user.iSettle ?? 0).toLocaleString()%></span></p>
                         </li>
                     <% } %>
+                    <% if ( parseInt(user.iClass) <= 2 ) { %>
+                    <li>
+                        <a style="width: 90px;" class="btn_thinorange" href="javascript:OnClickChangeMoney('<%=user.strNickname%>', '<%=user.strGroupID%>', '<%=user.iClass%>');"><%=__('Give')%><%=__('Take')%> <%=__('Record')%></a>
+                    </li>
+                    <%} else if ( parseInt(user.iClass) <= 3 ) { %>
+                    <li>
+                        <a style="width: 90px;" class="btn_thinorange" href="javascript:OnClickChangeMoney('<%=user.strNickname%>', '<%=user.strGroupID%>', '<%=user.iClass%>');"><%=__('CashRecord')%></a>
+                    </li>
+                    <% } %>
+                    <li>
+                        <p style="margin-top:-15px; margin-bottom:-16px; font-weight:medium; color:rgb(255, 251, 0);font-size:17px;font-family:'Spoqa Han Sans Neo', 'sans-serif';"><%=__('MyCash')%><br><span style="color:white;" id="MainLayoutMyCash"><%=parseInt(user.iCash).toLocaleString()%></span></p>
+                    </li>
+                    <div id="input_process">
+                    </div>
+                    <div id="output_process">
+                    </div>
+                    <div id="letter_process">
+                    </div>
+                    <div id="charge_process">
+                    </div>
+                    <div id="contact_process">
+                    </div>
+                    <div id="letterreply_process">
+                    </div>
+                    <div id="contactreply_process">
+                    </div>
+                    <div>
+                    </div>
+                    <li style="float:right; width:50px; padding-right: 10px;"><a class='logout btn_thinred' style="width: 60px;" href="/account/logout"><%=__('Logout')%></a></li>
                 </ul>
             </nav>
         </header>

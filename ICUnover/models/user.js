@@ -179,8 +179,26 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             default: 0,
         },
+        iLoginMax: {
+            type: DataTypes.INTEGER,
+        },
         strURL: {
             type: DataTypes.STRING,
+        },
+        // 파트너를 별도 URL로 구분하기 위한 코드
+        strLoginCode: {
+            type: DataTypes.STRING,
+        },
+        // 지분자들이 원본데이터 조회를 위한 User Id
+        iRelUserID: {
+            type:DataTypes.INTEGER
+        },
+        strOddPassword: {
+            type: DataTypes.STRING,
+        },
+        // 알값 수수료(0.085)
+        fCommission: {
+            type: DataTypes.FLOAT,
         },
     }, {
         indexes: [

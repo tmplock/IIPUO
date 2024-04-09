@@ -172,68 +172,78 @@ let start = async () => {
 
     //  2024-04-05
     // let listID = [
-    //     {strID:'qa123', iClass:7},
-    //     {strID:'jojo05', iClass:8},
-    //     {strID:'cjsgh1', iClass:7},
-    //     {strID:'kkk123', iClass:8},
-    //     {strID:'qwe01', iClass:8},
-    //     {strID:'zxc01', iClass:8},
-    //     {strID:'t1000', iClass:7},
-    //     {strID:'gkfn1', iClass:8},
-    //     {strID:'gkfn2', iClass:8},
-    //     {strID:'zlekfl5', iClass:8},
     //     {strID:'gkfn3', iClass:8},
     //     {strID:'sss1000', iClass:6},
-    //     {strID:'tpdud123', iClass:8},
-    //     {strID:'gkfn6', iClass:8},
-    // ];
-
-    //  2024-04-06
-    // let listID = [
-    //     {strID: 'gkfn6', iClass: 8},
-    //     {strID: 'gkfn2', iClass: 8},
-    //     {strID: 'sss1000', iClass: 6},
-    //     {strID: 'jojo01', iClass: 8},
-    //     {strID: 'gkfn3', iClass: 8},
-    //     {strID: 'rudwn01', iClass: 6},
-    //     {strID: 'gkfn1', iClass: 8},
-    //     {strID: 'gkfn5', iClass: 8},
-    //     {strID: 'tpdud123', iClass: 8},
-    //     {strID: 'ehqhd22', iClass: 8},
-    //     {strID: 'ehqhd55', iClass: 8},
-    //     {strID: 'gkfn01', iClass: 8},
-    //     {strID: 'kkk123', iClass: 8},
-    // ];
-
-    //  2024-04-07
-    // let listID = [
-    //     {strID:'zlekfl5', iClass:8},
-    //     {strID:'cjsgh1', iClass:7},
     //     {strID:'kkk123', iClass:8},
+    //     {strID:'gkfn1', iClass:8},
+    //     {strID:'gkfn6', iClass:8},
+    //     {strID:'gkfn2', iClass:8},
+    //     {strID:'zlekfl5', iClass:8},
+    //     {strID:'t1000', iClass:7},
+    //     {strID:'zxc01', iClass:8},
+    //     {strID:'cjsgh1', iClass:7},
     //     {strID:'jojo05', iClass:8},
-    //     {strID:'rudwn01', iClass:6},
-    //     {strID:'jnh720', iClass:8},
-    //     {strID:'MARBRORED', iClass:8},
-    //     {strID:'gkfn02', iClass:8},
-    //     {strID:'gkfn04', iClass:8},
-    //     {strID:'rkskek', iClass:7},
-    //     {strID:'sss1000', iClass:6},
-    //     {strID:'gkfn08', iClass:8},
-    //     {strID:'zlekfl6', iClass:8},
-    //     {strID:'rhtks9', iClass:8},
+    //     {strID:'qwe01', iClass:8},
+    //     {strID:'qa123', iClass:7},
+    //     {strID:'tpdud123', iClass:8},
     // ];
 
+    // 2024-04-06
+    // let listID = [
+    //     {strID:'rudwn01',iClass:6},
+    //     {strID:'gkfn6',iClass:8},
+    //     {strID:'gkfn3',iClass:8},
+    //     {strID:'jojo01',iClass:8},
+    //     {strID:'kkk123',iClass:8},
+    //     {strID:'gkfn2',iClass:8},
+    //     {strID:'sss1000',iClass:6},
+    //     {strID:'gkfn5',iClass:8},
+    //     {strID:'ehqhd22',iClass:8},
+    //     {strID:'gkfn1',iClass:8},
+    //     {strID:'gkfn01',iClass:8},
+    //     {strID:'ehqhd55',iClass:8},
+    //     {strID:'tpdud123',iClass:8},
+    // ];
+
+    // 2024-04-07
+    // let listID = [
+    //     {strID: 'rudwn01',iClass:6},
+    //     {strID: 'sss1000',iClass:6},
+    //     {strID: 'kkk123',iClass:8},
+    //     {strID: 'gkfn02',iClass:8},
+    //     {strID: 'gkfn04',iClass:8},
+    //     {strID: 'gkfn08',iClass:8},
+    //     {strID: 'rhtks9',iClass:8},
+    //     {strID: 'jojo05',iClass:8},
+    //     {strID: 'cjsgh1',iClass:7},
+    //     {strID: 'jnh720',iClass:8},
+    //     {strID: 'MARBRORED',iClass:8},
+    //     {strID: 'rkskek',iClass:7},
+    //     {strID: 'zlekfl6',iClass:8},
+    //     {strID: 'gg997',iClass:8},
+    //     {strID: 'zlekfl5',iClass:8},
+    //     {strID: 'jojo01',iClass:8},
+    // ];
+
+    // 2024-04-08
     let listID = [
-        {strID:'cjsgh1', iClass:7, strNickname:'천호1'},
-        {strID:'kkk123', iClass:8, strNickname:'페리카나'},
-        {strID:'sss1000', iClass:6, strNickname:'개화산'}
+        {strID: 'rudwn01',iClass:6},
+        {strID: 'gkfn02',iClass:8},
+        {strID: 'rhtks9',iClass:8},
+        {strID: 'ehqhd22',iClass:8},
+        {strID: 'zlekfl7',iClass:8},
+        {strID: 'zlekfl6',iClass:8},
+        {strID: 'ehqhd33',iClass:8},
+        {strID: 'gkfn08',iClass:8},
     ];
 
+
+    let listGroupUser = [];
+
+    let strDate = '2024-04-08';
     // let listID = [
     //     {strID:'qwe01', iClass:8},
     // ];
-
-    let strDate = '2024-04-07';
 
     for (let i in listID) {
         await Overview.CalculateOverview(listID[i].strID, listID[i].iClass, strDate, listOverview);
@@ -241,13 +251,13 @@ let start = async () => {
 
     // 닉네임 설정하기
     console.log('결과값 출력하기');
-    let targetID = 'aktjr01';
+    let targetID = '';
     logHeader();
     for (let i in listOverview) {
         let strNickname = '';
-        for (let j in listID) {
-            if (listID[j].strID == listOverview[i].strID) {
-                strNickname = listID[j].strNickname;
+        for (let j in listGroupUser) {
+            if (listGroupUser[j].strID == listOverview[i].strID) {
+                strNickname = listGroupUser[j].strNickname;
                 break;
             }
         }
@@ -324,15 +334,15 @@ let logHeader = (overview) => {
     logHeader += ', 바카라 로링';
     logHeader += ', 언오버 로링';
     logHeader += ', 슬롯 로링';
-    logHeader += ', iAgentBetB';
-    logHeader += ', iAgentBetUO';
-    logHeader += ', iAgentBetS';
-    logHeader += ', iAgentWinB';
-    logHeader += ', iAgentWinUO';
-    logHeader += ', iAgentWinS';
-    logHeader += ', iAgentRollingB';
-    logHeader += ', iAgentRollingUO';
-    logHeader += ', iAgentRollingS';
+    logHeader += ', iBetB';
+    logHeader += ', iBetUO';
+    logHeader += ', iBetS';
+    logHeader += ', iWinB';
+    logHeader += ', iWinUO';
+    logHeader += ', iWinS';
+    logHeader += ', iRollingB';
+    logHeader += ', iRollingUO';
+    logHeader += ', iRollingS';
     logHeader += ', strGroupID';
     console.log(logHeader);
 }

@@ -346,10 +346,13 @@ exports.ProcessOverview = async (listDB, listOverview, listOdds, listUpdateDB) =
         if ( cOdd == null )
             continue;
 
-        if ( cData.strResult.length > 10 && cData.strDetail.length > 10 && cData.strVender == 'EZUGI' && cData.iGameCode == 0 && cData.eType == 'BETWIN' && (cData.strTableID == '101' || cData.strTableID == '100' || cData.strTableID == '102') )
+        let strDetail = ToJsonString(cData.strDetail ?? '');
+        let strResult = ToJsonString(cData.strResult ?? '');
+
+        if ( strDetail.length > 0 && strResult.length > 0 && cData.strVender == 'EZUGI' && cData.iGameCode == 0 && cData.eType == 'BETWIN' && (cData.strTableID == '101' || cData.strTableID == '100' || cData.strTableID == '102') )
         {
             try {
-                let objectReturn = ODDS.ProcessRolling(cOdd, listData.list, 0, 0, strDate);
+                let objectReturn = ODDS.ProcessRolling(cOdd, strDetail, 0, 0, strDate);
                 let listCurrentOverview = objectReturn.listFinal;
                 let objectBetRolling = objectReturn.objectBet;
                 ODDS.JoinGroupDailyOverview(listOverview, listCurrentOverview);
@@ -366,11 +369,11 @@ exports.ProcessOverview = async (listDB, listOverview, listOdds, listUpdateDB) =
                 listUpdateDB.push({id:cData.id, strOverview:strOverview});
             }
         }
-        else if ( cData.strResult.length > 10 && cData.strDetail.length > 10 && cData.strVender ==' CQ9' || cData.eType == 'BETWIN' )
+        else if ( strDetail.length > 0 && strResult.length > 0 && cData.strVender ==' CQ9' || cData.eType == 'BETWIN' )
         {
             try
             {
-                let objectReturn = ODDS.ProcessRolling(cOdd, listData.list, 0, 0, strDate);
+                let objectReturn = ODDS.ProcessRolling(cOdd, strDetail, 0, 0, strDate);
                 let listCurrentOverview = objectReturn.listFinal;
                 let objectBetRolling = objectReturn.objectBet;
                 ODDS.JoinGroupDailyOverview(listOverview, listCurrentOverview);
@@ -416,4 +419,13 @@ exports.ProcessOverview = async (listDB, listOverview, listOdds, listUpdateDB) =
             listUpdateDB.push({id:cData.id, strOverview:strOverview});
         }
     }    
+}
+
+exports.ToJsonString = (str) => {
+    try {
+        let json = JSON.parse(str);
+        return json;
+    } catch (e) {
+        return [];
+    }
 }

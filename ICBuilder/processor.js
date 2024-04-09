@@ -424,7 +424,26 @@ exports.ProcessOverview = async (listDB, listOverview, listOdds, listUpdateDB) =
 exports.ToJsonString = (str) => {
     try {
         let json = JSON.parse(str);
-        return json;
+
+        //  우리가 써야 하는 형태 [{"iGameCode":0,"iTarget":1,"iBet":1000,"iWin":0},{"iGameCode":0,"iTarget":3,"iBet":1000,"iWin":0},{"iGameCode":100,"iTarget":101,"iBet":1000,"iWin":0}]
+        //  DB 에 들어가 있는 형태 [{'C':0, 'T':1, 'B':1000, 'W':0}, {'C':0, 'T':3, 'B':1000, 'W':0}, {'C':100, 'T':101, 'B':1000, 'W':0}] 형태로 만듬
+
+        let list = [];
+
+        try
+        {
+            for ( let i in json )
+            {
+                list.push({iGameCode:json[i].C, iTarget:json[i].T, iBet:json[i].B, iBet:json[i].W});
+            }
+            return list;
+        }
+        catch
+        {
+            return [];
+        }
+
+        //return json;
     } catch (e) {
         return [];
     }

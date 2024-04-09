@@ -58,6 +58,7 @@
 
 <script>
 
+    let isSending = false;
     let bRequestAccount = false;
     let strRequestAccountMsg = '';
 
@@ -116,6 +117,12 @@
             return;
         }
 
+        if (isSending) {
+            console.log(`RequestInput Sending`);
+            return;
+        }
+        isSending = true;
+
         $.ajax({
             type:'post',
             url: "/inout/request_input",
@@ -124,6 +131,9 @@
                 strAccountOwner: bankholder, strBankName: bankname, strAccountNumber: banknumber},
     
             success:function(data) {
+
+                isSending = false;
+
                 if ( data.result == 'OK' ){
                     alert(`입금신청이 완료 되었습니다.`);
                     location.href = '/';

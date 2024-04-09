@@ -34,6 +34,7 @@
 
 <script>
 
+    let isSending = false;
     let bankname = '';
     let banknumber = '';
     let bankholder = '';
@@ -99,6 +100,12 @@
             return;
         }
 
+        if (isSending) {
+            console.log(`RequestOutput Sending`);
+            return;
+        }
+        isSending = true;
+
         $.ajax({
             type:'post',
             url: "/inout/request_output",
@@ -106,6 +113,8 @@
             data:{strID:user.strID, iAmount:iAmount, strGroupID:user.strGroupID},
 
             success:function(data) {
+
+                isSending = false;
 
                 if ( data.result == 'OK' ) {
 

@@ -41,6 +41,8 @@
     checkBlockCharSpecial2(`#strSubject`);
     checkBlockCharSpecial2(`#strContents`);
 
+    let isSending = false;
+
     let WriteLetter = () => {
         
         let strSubject = $('#strSubject').val();
@@ -57,6 +59,12 @@
             alert("글 내용을 입력해주세요");
             return;
         }
+
+        if (isSending) {
+            console.log(`WriteLetter Sending`);
+            return;
+        }
+        isSending = true;
         
         $.ajax({
             
@@ -67,6 +75,7 @@
 
             success:function(data) {
 
+                isSending = false;
 
                 if ( data.result == 'OK' ) {
                     alert('쪽지를 전송하였습니다.');

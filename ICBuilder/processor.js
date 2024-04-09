@@ -346,10 +346,9 @@ exports.ProcessOverview = async (listDB, listOverview, listOdds, listUpdateDB) =
         if ( cOdd == null )
             continue;
 
-        let strDetail = ToJsonString(cData.strDetail ?? '');
-        let strResult = ToJsonString(cData.strResult ?? '');
+        let strDetail = ToJsonDetail(cData.strDetail ?? '');
 
-        if ( strDetail.length > 0 && strResult.length > 0 && cData.strVender == 'EZUGI' && cData.iGameCode == 0 && cData.eType == 'BETWIN' && (cData.strTableID == '101' || cData.strTableID == '100' || cData.strTableID == '102') )
+        if ( strDetail.length > 0 && cData.strVender == 'EZUGI' && cData.iGameCode == 0 && cData.eType == 'BETWIN' && (cData.strTableID == '101' || cData.strTableID == '100' || cData.strTableID == '102') )
         {
             try {
                 let objectReturn = ODDS.ProcessRolling(cOdd, strDetail, 0, 0, strDate);
@@ -369,7 +368,7 @@ exports.ProcessOverview = async (listDB, listOverview, listOdds, listUpdateDB) =
                 listUpdateDB.push({id:cData.id, strOverview:strOverview});
             }
         }
-        else if ( strDetail.length > 0 && strResult.length > 0 && cData.strVender ==' CQ9' || cData.eType == 'BETWIN' )
+        else if ( strDetail.length > 0 && cData.strVender ==' CQ9' && cData.eType == 'BETWIN' )
         {
             try
             {
@@ -421,7 +420,7 @@ exports.ProcessOverview = async (listDB, listOverview, listOdds, listUpdateDB) =
     }    
 }
 
-exports.ToJsonString = (str) => {
+let ToJsonDetail = (str) => {
     try {
         let json = JSON.parse(str);
 
@@ -434,7 +433,7 @@ exports.ToJsonString = (str) => {
         {
             for ( let i in json )
             {
-                list.push({iGameCode:json[i].C, iTarget:json[i].T, iBet:json[i].B, iBet:json[i].W});
+                list.push({iGameCode:json[i].C, iTarget:json[i].T, iBet:parseFloat(json[i].B ?? 0), iWin:parseFloat(json[i].W ?? 0)});
             }
             return list;
         }

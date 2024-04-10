@@ -19,7 +19,7 @@ socket.on('UserLogout', () => {
 
 socket.on('UpdateCash', (iCash) => {
 
-    const cCash = parseFloat(iCash);
+    const cCash = parseInt(iCash);
 
     // $('#MainLayoutCash').text(iCash);
     // $('#MainLayoutCoin').text(iCash);

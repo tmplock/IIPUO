@@ -349,11 +349,16 @@ let SetSlotBettingList = (records, startIndex) => {
             updatedAt = records[i].updatedAt;
         }
 
+        let strVender = records[i].strVender;
+        if (strVender == 'HONORLINK') {
+            strVender = records[i].strGameID;
+        }
+
         let tag =
             `
                 <tr>
                     <td style="background-color:${color};">${parseInt(startIndex)-i}</td>
-                    <td style="background-color:${color};">${records[i].strVender}</td>
+                    <td style="background-color:${color};">${strVender}</td>
                     <td style="background-color:${color};">${records[i].strTableID}</td>
                     <td style="background-color:${color};">${records[i].strRound}</td>
                     <td style="background-color:${color};"><a style="color:blue;" onclick="OnClickNickname('${records[i].strNickname}')" href="#">${GetClassNickName(records[i].iClass, records[i].strNickname)}</a></td>

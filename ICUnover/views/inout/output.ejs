@@ -120,7 +120,7 @@
 
                     alert(`출금 신청이 완료 되었습니다.`);
 
-                    const cCash = data.iAmount;
+                    const cCash = parseInt(data.iAmount ?? 0);
 
                     console.log(data);
 

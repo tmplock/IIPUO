@@ -270,6 +270,7 @@ router.post('/request_casino_record', isLoggedIn, async(req, res) => {
             iBalance:list[i].iBalance,
             iGameCode:list[i].iGameCode,
             strVender:list[i].strVender,
+            strGameID:list[i].strGameID,
             strTableID:list[i].strTableID,
             strRound:list[i].strRound,
             strUniqueID:list[i].strUniqueID,

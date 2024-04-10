@@ -225,6 +225,11 @@ let SetBettingList = (records, startIndex) => {
         let eState = records[i].eState;
         let updatedAt = '';
 
+        let strVender = records[i].strVender;
+        if (strVender == 'HONORLINK') {
+            strVender = records[i].strGameID;
+        }
+
         if (eType == 'CANCEL_BET' || eType == 'CANCEL' || eType == 'CANCEL_WIN') {
             tagTargetBet = `<td style="font-size: 12px; background-color:${color}; padding: 10px; line-height: 1.5;"><font style="color: black;">${GetNumber(records[i].iBet)}</font></td>`;
             tagTargetWin = `<td style="font-size: 12px; background-color:${color}; padding: 10px; line-height: 1.5;"><font style="color: black;">${GetNumber(records[i].iWin)}</font></td>`
@@ -256,7 +261,7 @@ let SetBettingList = (records, startIndex) => {
             `
         <tr>
             <td style="background-color:${color};">${parseInt(startIndex)-i}</td>
-            <td style="background-color:${color};">${records[i].strVender}</td>
+            <td style="background-color:${color};">${strVender}</td>
             <td style="background-color:${color};">${records[i].strTableID}</td>
             <td style="background-color:${color};">${records[i].strRound}</td>
             <td style="background-color:${color};"><a style="color:blue;" onclick="OnClickNickname('${records[i].strNickname}')" href="#">${GetClassNickName(records[i].iClass, records[i].strNickname)}</a></td>

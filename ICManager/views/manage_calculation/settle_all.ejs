@@ -654,7 +654,12 @@
 			`);
 		}
 
-		if ( user.iClass > 1 && user.iClass <= 3 && user.iPermission != 100 && bEnableSettle ) {
+		let bVisible = false;
+		let now = new Date();
+		if (now.getDate() == 16 || now.getDate() == 1) {
+			bVisible = true;
+		}
+		if ( user.iClass > 1 && user.iClass <= 3 && user.iPermission != 100 && bEnableSettle && bVisible) {
 
 			$(`#list_tit`).empty();
 			$(`#list_tit`).append(`

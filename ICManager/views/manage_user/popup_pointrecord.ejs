@@ -21,7 +21,8 @@
 				<tr>
 					<th width="5%" style="font-size:14px;"><%=__('Index')%></th>
 					<th width="16%" style="font-size:14px;">전환전 금액</th>
-					<th width="16%" style="font-size:14px;">금액</th>
+					<th width="16%" style="font-size:14px;">지급</th>
+					<th width="16%" style="font-size:14px;">차감</th>
 					<th width="16%" style="font-size:14px;">합계</th>
 					<th width="15%" style="font-size:14px;"><%=__('Exchange')%><%=__('Type')%></th>
 					<th width="16%" style="font-size:14px;">닉네임</th>
@@ -72,7 +73,7 @@
 		$('#datepicker1').val(GetCurrentDate());
 		$('#datepicker2').val(GetCurrentDate());
 
-		Search('');
+		Search(searchType);
 	});
 
 	let RequestGTRecord = (strSearch, iClass) => {
@@ -91,7 +92,8 @@
 					let objectType = GetType(list[i].eType);
 					let nickname = list[i].strTo;
 					let iClass = list[i].iClassTo;
-					let iAmount = list[i].iAmount;
+					let iAmountIn = 0;
+					let iAmountOut = 0;
 					let iBeforeAmount = list[i].iBeforeAmountFrom;
 					let iAfterAmount = list[i].iAfterAmountFrom;
 					if (nickname == agent.strNickname) {
@@ -102,12 +104,17 @@
 						iBeforeAmount = list[i].iBeforeAmountTo;
 						iAfterAmount = list[i].iAfterAmountTo;
 					}
+					if (list[i].eType == 'ROLLING' || list[i].eType == 'TAKE') {
+						iAmountOut = list[i].iAmount;
+					} else if (list[i].eType == 'GIVE') {
+						iAmountIn = list[i].iAmount;
+					}
 
 					let tag = `	<tr>
 								<td>${list[i].id}</td>
-
 								<td>${GetNumberSign(iBeforeAmount)}</td>
-								<td>${GetNumberSign(iAmount)}</td>
+								<td style="color: blue">${GetNumberSign(iAmountIn)}</td>
+								<td style="color: red">${GetNumberSign(iAmountOut)}</td>
 								<td>${GetNumberSign(iAfterAmount)}</td>
 								<td style='color:${objectType.color}'>${objectType.strType}</td>
 								<td>${GetClassNickName(iClass, nickname)}</td>
@@ -128,19 +135,25 @@
 		if (searchType == 'inout' || searchType == '') {
 			let giveTotal = 0;
 			let takeTotal = 0;
+			let rollingTotal = 0;
 			for (let i in list) {
 				if (list[i].eType == 'GIVE') {
 					giveTotal += list[i].iAmount;
 				} else if (list[i].eType == 'TAKE') {
 					takeTotal += list[i].iAmount;
+				} else if (list[i].eType == 'ROLLING') {
+					rollingTotal += list[i].iAmount;
 				}
 			}
-			let total = giveTotal - takeTotal;
+			let total = giveTotal - takeTotal - rollingTotal;
 			let tag = `	<tr>
+					<td colspan="2">합게</td>
+					<td style="color: blue">${GetNumberSign(giveTotal)}</td>
+					<td style="color: red">${GetNumberSign(takeTotal+rollingTotal)}</td>
+					<td style="color: ${GetColor(total)}">${GetNumberSign(total)}</td>
 					<td></td>
-					<td>합계</td>
-					<td>${GetNumberSign(total)}</td>
-					<td colspan="4" style="text-align: left; padding-left: 10px;"><font style="color: blue;">지급 : ${GetNumberSign(giveTotal)}</font>    <font style="color: red; padding-left: 10px;">차감 : ${GetNumberSign(takeTotal)}</font></td>
+					<td></td>
+					<td></td>
 					</tr>`;
 			$('#listGTRecord').append(tag);
 		} else {
@@ -152,8 +165,12 @@
 			let tag = `	<tr>
 					<td></td>
 					<td>합계</td>
-					<td>${GetNumberSign(total)}</td>
-					<td colspan="4" style="text-align: left"></td>
+					<td></td>
+					<td style="color: ${GetColor(-total)}">${GetNumberSign(total)}</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
 					</tr>`;
 			$('#listGTRecord').append(tag);
 		}

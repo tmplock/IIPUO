@@ -88,7 +88,9 @@ router.post('/request_changeoutputpassword', async (req, res) => {
     let user = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
     if ( null != user )
     {
-        await user.update({strOutputPassword:req.body.strOutputPassword, pw_auth:0});
+        //await user.update({strOutputPassword:req.body.strOutputPassword, pw_auth:0});
+
+        await db.Users.update({strOutputPassword:req.body.strOutputPassword, pw_auth:0}, {where:{strNickname:req.body.strNickname}});
     }
 
     res.send({result:'OK'});
@@ -98,9 +100,9 @@ router.post('/request_savememo', isLoggedIn, async (req, res) => {
 
     console.log(req.body);
 
-    let data = await db.Inouts.findOne({where:{id:req.body.id}});
-    await data.update({strMemo:req.body.strMemo});
-
+    //let data = await db.Inouts.findOne({where:{id:req.body.id}});
+    //await data.update({strMemo:req.body.strMemo});
+    await db.Inouts.findOne({strMemo:req.body.strMemo}, {where:{id:req.body.id}});
 });
 
 router.post('/request_adjustinput', isLoggedIn, async (req, res) => {

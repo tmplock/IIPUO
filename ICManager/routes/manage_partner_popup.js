@@ -455,11 +455,16 @@ router.post('/request_register_view', isLoggedIn, async(req, res) => {
 
         // 업데이트
         if (user != null) {
-            await user.update({
+            // await user.update({
+            //     strID:req.body.strID,
+            //     strPassword:req.body.strPassword,
+            //     strNickname:req.body.strNickname,
+            // });
+            await db.Users.update({            
                 strID:req.body.strID,
                 strPassword:req.body.strPassword,
                 strNickname:req.body.strNickname,
-            });
+            }, {where:{strID:req.body.strID}});
             res.send({result:'OK', string:'에이전트(보기용) 수정 되었습니다.'});
             return;
         }
@@ -976,13 +981,14 @@ router.post('/request_settingodds', isLoggedIn, async (req, res) => {
 
     for ( let i in users )
     {
-        await users[i].update({
+        //await users[i].update({
+        await db.Users.update({
             fBaccaratR:fRollingBaccarat,
             fSlotR:fRollingSlot,
             fUnderOverR:fRollingUnderOver,
             fSettleSlot:fSettleSlot,
             fSettleBaccarat:fSettleBaccarat,
-        });
+        }, {where:{id:users[i].id}});
     }
 
     res.send({result:'OK'});
@@ -1026,8 +1032,10 @@ router.post('/request_removedb', isLoggedIn, async (req, res) => {
 //router.post('/initialization', isLoggedIn, async (req, res) => {
 router.post('/request_initoutputpass', isLoggedIn, async (req, res) => {
 
-    let user = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
-    await user.update({pw_auth:1});
+    // let user = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
+    // await user.update({pw_auth:1});
+
+    await db.Users.update({pw_auth:1}, {where:{strNickname:req.body.strNickname}});
 
     res.send({result:'OK'});
 });

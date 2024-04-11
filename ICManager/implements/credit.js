@@ -39,8 +39,9 @@ let inline_DeleteCredit = async (id, writer) => {
     if (credit == null) {
         return;
     }
-    await credit.update({
-        iDel:1, writer: writer
-    });
+    // await credit.update({
+    //     iDel:1, writer: writer
+    // });
+    await db.CreditRecords.update({iDel:1, writer: writer}, {where: {id: id}});
 }
 exports.DeleteCredit = inline_DeleteCredit;

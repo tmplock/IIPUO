@@ -365,9 +365,13 @@ router.post('/request_agentstate', isLoggedIn, async(req, res) => {
             return;
         }
         if (req.body.eState == 'NORMAL') {
-            await agent.update({eState:req.body.eState, iNumLoginFailed: 0});
+
+            await db.Users.update({eState:req.body.eState, iNumLoginFailed: 0}, {where:{strNickname:req.body.strNickname}});
+            //await agent.update({eState:req.body.eState, iNumLoginFailed: 0});
         } else {
-            await agent.update({eState:req.body.eState});
+
+            await db.Users.update({eState:req.body.eState}, {where:{strNickname:req.body.strNickname}});
+            //await agent.update({eState:req.body.eState});
         }
         res.send('OK');
     }

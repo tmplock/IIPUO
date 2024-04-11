@@ -345,12 +345,15 @@ router.post('/request_gt', isLoggedIn, async(req, res) => {
             {
                 const iBeforeCashTo = parseInt(to.iCash);
                 const iAfterCashTo = iBeforeCashTo+cAmount;
-                await to.update({iCash:iAfterCashTo});
+                //await to.update({iCash:iAfterCashTo});
+                await db.Users.update({iCash:iAfterCashTo}, {where:{strNickname:req.body.strTo}});
 
                 const iBeforeCashFrom = parseInt(from.iCash);
                 const iAfterCashFrom = iBeforeCashFrom - cAmount;
                 if ( from.iClass != IAgent.EAgent.eHQ ) {
-                    await from.update({iCash:iAfterCashFrom});
+                    //await from.update({iCash:iAfterCashFrom});
+
+                    await db.Users.update({iCash:iAfterCashFrom}, {where:{strNickname:req.body.strFrom}});
                 }
 
                 await db.GTs.create({
@@ -405,12 +408,14 @@ router.post('/request_gt', isLoggedIn, async(req, res) => {
             {
                 const iBeforeCashTo = parseInt(to.iCash);
                 const iAfterCashTo = iBeforeCashTo-cAmount;
-                await to.update({iCash:iAfterCashTo});
+                //await to.update({iCash:iAfterCashTo});
+                await db.Users.update({iCash:iAfterCashTo}, {where:{strNickname:req.body.strTo}});
 
                 const iBeforeCashFrom = parseInt(from.iCash);
                 const iAfterCashFrom = iBeforeCashFrom + cAmount;
                 if ( from.iClass != IAgent.EAgent.eHQ ) {
-                    await from.update({iCash:iAfterCashFrom});
+                    //await from.update({iCash:iAfterCashFrom});
+                    await db.Users.update({iCash:iAfterCashFrom}, {where:{strNickname:req.body.strFrom}});
                 }
 
                 await db.GTs.create({
@@ -470,14 +475,21 @@ router.post('/request_gt', isLoggedIn, async(req, res) => {
             const iBeforeRollingTo = parseInt(to.iRolling);
             const iAfterRollingTo = iBeforeRollingTo-cAmount;
             // 롤링전환시에는 전환전 금액에 전환전 롤링값을 표시
-            await to.update({
+
+            await db.Users.update({
                 iCash:iAfterCashTo,
                 iRolling:iAfterRollingTo,
-            });
+            }, {where:{strNickname:req.body.strTo}});
+            // await to.update({
+            //     iCash:iAfterCashTo,
+            //     iRolling:iAfterRollingTo,
+            // });
 
             const iBeforeCashFrom = parseInt(from.iCash);
             const iAfterCashFrom = iBeforeCashFrom - cAmount;
-            await from.update({iCash:iAfterCashFrom, iRolling: from.iRolling + cAmount});
+            //await from.update({iCash:iAfterCashFrom, iRolling: from.iRolling + cAmount});
+            await db.Users.findOne({iCash:iAfterCashFrom, iRolling: from.iRolling + cAmount}, {where:{strNickname:strAdminNickname}});
+
 
             // 롤링전환시에는 전환전 금액에 전환전 롤링값을 표시
             await db.GTs.create({
@@ -539,10 +551,11 @@ router.post('/request_gt', isLoggedIn, async(req, res) => {
             const iAfterCashTo = iBeforeCashTo+cAmount;
             const iBeforeSettleTo = parseInt(to.iSettle);
             const iAfterSettleTo = iBeforeSettleTo-cAmount;
-            await to.update({
-                iCash:iAfterCashTo,
-                iSettle:iAfterSettleTo,
-            });
+            await db.Users.update({iCash:iAfterCashTo, iSettle:iAfterSettleTo},{where:{strNickname:req.body.strTo}});
+            // await to.update({
+            //     iCash:iAfterCashTo,
+            //     iSettle:iAfterSettleTo,
+            // });
 
             // 마지막 죽장의 입출후 금액을 갱신하기
             let settle = await db.SettleRecords.findAll({
@@ -552,17 +565,24 @@ router.post('/request_gt', isLoggedIn, async(req, res) => {
                 order: [['id', 'DESC']],
                 limit: 1
             });
-            if (settle.length > 0) {
-                for (let i in settle) {
-                    await settle[i].update({
-                        iSettleAfter:iAfterSettleTo
-                    });
-                }
+
+            for (let i in settle) {
+                await db.SettleRecords.update({
+                    iSettleAfter:iAfterSettleTo
+                }, {where:{id:settle[i].id}});
             }
+            // if (settle.length > 0) {
+            //     for (let i in settle) {
+            //         await settle[i].update({
+            //             iSettleAfter:iAfterSettleTo
+            //         });
+            //     }
+            // }
 
             const iBeforeCashFrom = parseInt(from.iCash);
             const iAfterCashFrom = iBeforeCashFrom - cAmount;
-            await from.update({iCash:iAfterCashFrom, iSettle: from.iSettle + cAmount});
+            //await from.update({iCash:iAfterCashFrom, iSettle: from.iSettle + cAmount});
+            await db.Users.update({iCash:iAfterCashFrom, iSettle: from.iSettle + cAmount}, {where:{strNickname:strAdminNickname}});
 
             // 죽장전환시에는 전환전 금액에 전환전 죽장값을 표시
             await db.GTs.create({

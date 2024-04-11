@@ -587,7 +587,8 @@ router.post('/request_incompletecancel', async (req, res) => {
         {
             let iAmount = parseInt(aUser.iCash)+parseInt(list[i].iBetting);
 
-            await aUser.update({iCash:iAmount});
+            await db.Users.findOne({iCash:iAmount}, {where:{strNickname:list[i].strID}});
+            //await aUser.update({iCash:iAmount});
         }
     }
 
@@ -658,42 +659,51 @@ router.post('/request_incompletedmanual', async (req, res) => {
         {
             const cRolling = list[i].iBetting * list[i].fRollingUser * 0.01;
             const cSettle = 0;
-            await aUser.update({iRolling:aUser.iRolling+cRolling});
+            await db.Users.update({iRolling:aUser.iRolling+cRolling}, {where:{strNickname:list[i].strID}});
+            //await aUser.update({iRolling:aUser.iRolling+cRolling});
 
             let aShop = await db.Users.findOne({where:{id:aUser.iParentID}});
             if ( aShop != null )
             {
                 const cShopRolling = objectRolling.iShop;
                 const cShopSettle = 0;
-                await aShop.update({iRolling:aShop.iRolling+cShopRolling});
+
+                await db.Users.update({iRolling:aShop.iRolling+cShopRolling}, {where:{id:aUser.iParentID}});
+                //await aShop.update({iRolling:aShop.iRolling+cShopRolling});
 
                 let aAgent = await db.Users.findOne({where:{id:aShop.iParentID}});
                 if ( aAgent != null )
                 {
                     const cAgentRolling = objectRolling.iAgent;
                     const cAgentSettle = 0;
-                    await aAgent.update({iRolling:aAgent.iRolling+cAgentRolling});
+
+                    await db.Users.update({iRolling:aAgent.iRolling+cAgentRolling}, {where:{id:aShop.iParentID}});
+                    //await aAgent.update({iRolling:aAgent.iRolling+cAgentRolling});
 
                     let aViceAdmin = await db.Users.findOne({where:{id:aAgent.iParentID}});
                     if ( aViceAdmin != null )
                     {
                         const cViceAdminRolling = objectRolling.iVAdmin;
                         const cViceAdminSettle = 0;
-                        await aViceAdmin.update({iRolling:aViceAdmin.iRolling+cViceAdminRolling});
+                        //await aViceAdmin.update({iRolling:aViceAdmin.iRolling+cViceAdminRolling});
+                        await db.Users.update({iRolling:aViceAdmin.iRolling+cViceAdminRolling}, {where:{id:aAgent.iParentID}});
 
                         let aProAdmin = await db.Users.findOne({where:{id:aViceAdmin.iParentID}});
                         if ( aProAdmin != null )
                         {
                             const cProAdminRolling = objectRolling.iPAdmin;
                             const cProAdminSettle = 0;
-                            await aProAdmin.update({iRolling:aProAdmin.iRolling+cProAdminRolling});
+                            await db.Users.update({iRolling:aProAdmin.iRolling+cProAdminRolling}, {where:{id:aViceAdmin.iParentID}});
+                            //await aProAdmin.update({iRolling:aProAdmin.iRolling+cProAdminRolling});
 
                             let aAdmin = await db.Users.findOne({where:{id:aProAdmin.iParentID}});
                             if ( aAdmin != null )
                             {
                                 const cAdminRolling = 0;
                                 const cAdminSettle = 0;
-                                await aAdmin.update({iRolling:0});
+
+                                await db.Users.update({iRolling:0}, {where:{id:aProAdmin.iParentID}});
+                                //await aAdmin.update({iRolling:0});
                             }
                         }
                     }

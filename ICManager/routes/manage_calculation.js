@@ -286,7 +286,8 @@ router.post('/request_applysettle', isLoggedIn, async (req, res) => {
 
                 let iSettleUser = parseInt(user.iSettle); // 이용자가 가지고 있는 죽장
                 iSettleUser = iSettleUser + iAmout; // 죽장이 실제 발생시에만 이용자에 추가
-                await user.update({iSettle:iSettleUser, iSettleAccBefore: user.iSettleAcc, iSettleAcc:iSettleAccTotal});
+                //await user.update({iSettle:iSettleUser, iSettleAccBefore: user.iSettleAcc, iSettleAcc:iSettleAccTotal});
+                await db.Users.update({iSettle:iSettleUser, iSettleAccBefore: user.iSettleAcc, iSettleAcc:iSettleAccTotal}, {where:{strNickname:list[i].strNickname}});
             }
         }
     }
@@ -540,7 +541,8 @@ router.post('/request_applysettle_all', isLoggedIn, async (req, res) => {
 
                 let iSettleUser = parseInt(user.iSettle); // 이용자가 가지고 있는 죽장
                 iSettleUser = iSettleUser + iAmout; // 죽장이 실제 발생시에만 이용자에 추가
-                await user.update({iSettle:iSettleUser, iSettleAccBefore: user.iSettleAcc, iSettleAcc:iSettleAccTotal});
+                //await user.update({iSettle:iSettleUser, iSettleAccBefore: user.iSettleAcc, iSettleAcc:iSettleAccTotal});
+                await db.Users.update({iSettle:iSettleUser, iSettleAccBefore: user.iSettleAcc, iSettleAcc:iSettleAccTotal}, {where:{strNickname:list[i].strNickname}});
             }
         }
     }
@@ -1164,8 +1166,8 @@ router.post('/request_credit_apply', async (req, res) => {
                 });
 
                 let iSettleAcc = user.iSettleAcc + iCredit;
-
-                await user.update({iSettleAccBefore:user.iSettleAcc, iSettleAcc:iSettleAcc});
+                //await user.update({iSettleAccBefore:user.iSettleAcc, iSettleAcc:iSettleAcc});
+                await db.Users.update({iSettleAccBefore:user.iSettleAcc, iSettleAcc:iSettleAcc}, {where:{strID:list[i].strID}});
 
                 // 마지막 죽장의 입출후 금액을 갱신하기
                 let settle = await db.SettleRecords.findAll({
@@ -1175,13 +1177,19 @@ router.post('/request_credit_apply', async (req, res) => {
                     order: [['id', 'DESC']],
                     limit: 1
                 });
-                if (settle.length > 0) {
-                    for (let i in settle) {
-                        await settle[i].update({
-                            iSettleAfter:iSettleAcc
-                        });
-                    }
+
+                for ( let i in settle )
+                {
+                    await db.SettleRecords.update({iSettleAfter:iSettleAcc}, {where:{id:settle[i].id}});
                 }
+
+                // if (settle.length > 0) {
+                //     for (let i in settle) {
+                //         await settle[i].update({
+                //             iSettleAfter:iSettleAcc
+                //         });
+                //     }
+                // }
             } else {
                 failStrIDs.push(user.strID);
             }
@@ -1202,7 +1210,8 @@ router.post('/request_savememo', async (req, res) => {
     let user = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
     if ( user != null )
     {
-        await user.update({strSettleMemo:req.body.strValue});
+        await db.Users.update({strSettleMemo:req.body.strValue}, {where:{strNickname:req.body.strNickname}});
+        //await user.update({strSettleMemo:req.body.strValue});
         res.send({result:'OK'});
     }
     else
@@ -1223,10 +1232,15 @@ router.post('/request_share_savememo', async (req, res) => {
     let shares = await db.ShareRecords.findAll({where:{strID:req.body.strID}});
     for ( let i in shares )
     {
-        await shares[i].update({
+        await db.ShareRecords.update({
             strMemo: req.body.strMemo,
             strMemo2: req.body.strMemo2
-        });
+        }, {where:{id:shares[i].id}});
+
+        // await shares[i].update({
+        //     strMemo: req.body.strMemo,
+        //     strMemo2: req.body.strMemo2
+        // });
     }
 
     res.send({result:'OK'});

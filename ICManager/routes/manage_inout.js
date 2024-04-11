@@ -408,7 +408,8 @@ router.post('/request_inputstate', isLoggedIn, async (req, res) => {
 
     if ( req.body.type == 0 )   // request
     {
-        await charge.update({eState:"STANDBY"});
+        //await charge.update({eState:"STANDBY"});
+        await db.Inouts.update({eState:"STANDBY"}, {where:{id:req.body.id}});
 
         res.send({result:"OK", id:req.body.id});
     }
@@ -420,12 +421,15 @@ router.post('/request_inputstate', isLoggedIn, async (req, res) => {
         {
             if ( parent.iCash >= parseInt(charge.iAmount) )
             {
-                await charge.update({eState:"COMPLETE", completedAt:ITime.getCurrentDateFull(), strProcessNickname: req.user.strNickname, iProcessClass: req.user.iClass});
+                //await charge.update({eState:"COMPLETE", completedAt:ITime.getCurrentDateFull(), strProcessNickname: req.user.strNickname, iProcessClass: req.user.iClass});
+                await db.Inouts.update({eState:"COMPLETE", completedAt:ITime.getCurrentDateFull(), strProcessNickname: req.user.strNickname, iProcessClass: req.user.iClass}, {where:{id:req.body.id}});
 
                 let user = await db.Users.findOne({where:{strNickname:charge.strID}});
         
-                await user.update({iCash:user.iCash+charge.iAmount});
-                await parent.update({iCash:parent.iCash-parseInt(charge.iAmount)});
+                await db.Users.update({iCash:user.iCash+charge.iAmount}, {where:{strNickname:charge.strID}});
+                //await user.update({iCash:user.iCash+charge.iAmount});
+                await db.Users.update({iCash:parent.iCash-parseInt(charge.iAmount)}, {where:{strNickname:charge.strAdminNickname}});
+                //await parent.update({iCash:parent.iCash-parseInt(charge.iAmount)});
 
                 let objectAxios = {strNickname:user.strNickname, iAmount:user.iCash};
 
@@ -463,7 +467,8 @@ router.post('/request_inputstate', isLoggedIn, async (req, res) => {
     }
     else if ( req.body.type == 2 )  // cancel
     {
-        await charge.update({eState:"CANCEL", completedAt:ITime.getCurrentDateFull()});
+        await db.Inouts.update({eState:"CANCEL", completedAt:ITime.getCurrentDateFull()}, {where:{id:req.body.id}});
+        //await charge.update({eState:"CANCEL", completedAt:ITime.getCurrentDateFull()});
 
         res.send({result:"OK", id:req.body.id});
   }
@@ -731,17 +736,20 @@ router.post('/request_outputstate', isLoggedIn, async (req, res) => {
 
     if ( req.body.type == 0 )   // request
     {
-        await charge.update({eState:"STANDBY"});
+        //await charge.update({eState:"STANDBY"});
+        await db.Inouts.update({eState:"STANDBY"}, {where:{id:req.body.id}});
         res.send({result:"OK", id:req.body.id});
     }
     else if ( req.body.type == 1 )  // standby
     {
-        await charge.update({eState:"COMPLETE", completedAt:ITime.getCurrentDateFull(), strProcessNickname: req.user.strNickname, iProcessClass: req.user.iClass});
+        await db.Inouts.update({eState:"COMPLETE", completedAt:ITime.getCurrentDateFull(), strProcessNickname: req.user.strNickname, iProcessClass: req.user.iClass}, {where:{id:req.body.id}});
+        //await charge.update({eState:"COMPLETE", completedAt:ITime.getCurrentDateFull(), strProcessNickname: req.user.strNickname, iProcessClass: req.user.iClass});
 
         let parent = await db.Users.findOne({where:{strNickname:charge.strAdminNickname}});
         if ( parent != null )
         {
-            await parent.update({iCash:parent.iCash+parseInt(charge.iAmount)});
+            await db.Users.update({iCash:parent.iCash+parseInt(charge.iAmount)}, {where:{strNickname:charge.strAdminNickname}});
+            //await parent.update({iCash:parent.iCash+parseInt(charge.iAmount)});
             res.send({result:"OK", id:req.body.id});
         }
         else
@@ -751,11 +759,13 @@ router.post('/request_outputstate', isLoggedIn, async (req, res) => {
     }
     else if ( req.body.type == 2 )  // cancel
     {
-        await charge.update({eState:"CANCEL", completedAt:ITime.getCurrentDateFull()});
+        await db.Inouts.update({eState:"CANCEL", completedAt:ITime.getCurrentDateFull()}, {where:{id:req.body.id}});
+        //await charge.update({eState:"CANCEL", completedAt:ITime.getCurrentDateFull()});
 
         let user = await db.Users.findOne({where:{strNickname:charge.strID}});
 
-        await user.update({iCash:user.iCash+charge.iAmount});
+        //await user.update({iCash:user.iCash+charge.iAmount});
+        await db.Users.findOne({iCash:user.iCash+charge.iAmount}, {where:{strNickname:charge.strID}});
 
         let objectAxios = {strNickname:user.strNickname, iAmount:user.iCash};
 
@@ -891,9 +901,12 @@ router.post('/request_savememo', isLoggedIn, async (req, res) => {
 
     console.log(req.body);
 
-    let data = await db.Inouts.findOne({where:{id:req.body.id}});
-    await data.update({strMemo:req.body.strMemo});
+    // let data = await db.Inouts.findOne({where:{id:req.body.id}});
+    // await data.update({strMemo:req.body.strMemo});
 
+    await db.Inouts.update({strMemo:req.body.strMemo}, {where:{id:req.body.id}});
+
+    res.send({result:'OK'});
 });
 
 let IsSameGroup = (strGroupID1, strGroupID2) => {

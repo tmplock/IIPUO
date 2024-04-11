@@ -413,18 +413,24 @@ router.post('/request_charge_apply', async (req, res) => {
             return;
         }
         if ( req.body.type == 0 ) { //  대기 클릭
-            await charge.update({eState:"STANDBY"});
+            //await charge.update({eState:"STANDBY"});
+
+            await db.ChargeRequest.update({eState:"STANDBY"}, {where:{id:req.body.id}});
+
             res.send({result:"OK", id:req.body.id});
             return;
         } else if ( req.body.type == 1 ) { // 처리 클릭
-            await charge.update({
-                eState:"COMPLETE",
-                completedAt: ITime.getCurrentDate()
-            });
+
+            await db.ChargeRequest.update({eState:"COMPLETE", completedAt: ITime.getCurrentDate()}, {where:{id:req.body.id}});
+            // await charge.update({
+            //     eState:"COMPLETE",
+            //     completedAt: ITime.getCurrentDate()
+            // });
             res.send({result:"OK", id:req.body.id});
             return;
         } else if ( req.body.type == 2 ) { // 취소 클릭
-            await charge.update({eState:"CANCEL", completedAt:ITime.getCurrentDateFull()});
+            //await charge.update({eState:"CANCEL", completedAt:ITime.getCurrentDateFull()});
+            await db.ChargeRequest.update({eState:"CANCEL", completedAt:ITime.getCurrentDateFull()}, {where:{id:req.body.id}});
             res.send({result:"OK", id:req.body.id});
             return;
         }

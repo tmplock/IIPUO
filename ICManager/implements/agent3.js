@@ -397,9 +397,9 @@ let inline_GetIOMFromDate = async (strGroupID, iClass, strStartDate, strEndDate,
         const [rList]  = await db.sequelize.query(
             `
                 SELECT DATE(Inouts.createdAt) AS date,
-                IFNULL((SELECT SUM(iRolling) FROM Users WHERE strNickname = '${strNickname}' AND iClass ='${iClass}'),0) as iRolling,
-                IFNULL((SELECT SUM(iSettle) FROM Users WHERE strNickname = '${strNickname}' AND iClass ='${iClass}') ,0) as iSettle,
-                IFNULL((SELECT SUM(iCash) FROM Users WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND iClass > 3 ),0) as iTotalMoney,
+                IFNULL((SELECT SUM(iRolling) FROM Users WHERE strNickname = '${strNickname}'),0) as iRolling,
+                IFNULL((SELECT SUM(iSettle) FROM Users WHERE strNickname = '${strNickname}') ,0) as iSettle,
+                IFNULL((SELECT SUM(iCash) FROM Users WHERE strNickname = '${strNickname}'),0) as iTotalMoney,
                 IFNULL((SELECT SUM(iAmount) FROM Inouts WHERE eType='INPUT' AND eState = 'COMPLETE' AND strID = '${strNickname}' AND date(createdAt) BETWEEN '${strStartDate}' AND '${strEndDate}'),0) as iInput,
                 IFNULL((SELECT SUM(iAmount) FROM Inouts WHERE eType='OUTPUT' AND eState = 'COMPLETE' AND strID = '${strNickname}' AND date(createdAt) BETWEEN '${strStartDate}' AND '${strEndDate}'),0) as iOutput,
                 IFNULL(SUM(case when Inouts.eType = 'ROLLING' OR Inouts.eType = 'SETTLE' then Inouts.iAmount ELSE 0 END),0) as iExchange,

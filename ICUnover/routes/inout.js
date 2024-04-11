@@ -315,7 +315,10 @@ router.post('/request_output', async (req, res) => {
         
                 let resultCash = userinfo.iCash - parseInt(req.body.iAmount);
     
-                await userinfo.update({iCash:resultCash});
+                await db.Users.update({iCash:resultCash},
+                    {where:{
+                        strID:req.body.strID
+                    }});
 
                 res.send({result:'OK', reason:'OK', iAmount:resultCash});
             // }

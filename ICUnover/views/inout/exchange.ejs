@@ -35,6 +35,7 @@
 
     let iUserRolling = '<%= user.iRolling%>';
     iUserRolling = parseInt(iUserRolling);
+    let isSending = false;
 
     let RequestExchange = () => {
 
@@ -53,6 +54,11 @@
             alert('전환 로링비는 10,000원 이상이어야 합니다.');
             return;
         }
+
+        if (isSending) {
+            return;
+        }
+        isSending = true;
 
         $.ajax({
             type:'post',

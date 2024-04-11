@@ -488,7 +488,7 @@ router.post('/request_gt', isLoggedIn, async(req, res) => {
             const iBeforeCashFrom = parseInt(from.iCash);
             const iAfterCashFrom = iBeforeCashFrom - cAmount;
             //await from.update({iCash:iAfterCashFrom, iRolling: from.iRolling + cAmount});
-            await db.Users.findOne({iCash:iAfterCashFrom, iRolling: from.iRolling + cAmount}, {where:{strNickname:strAdminNickname}});
+            await db.Users.update({iCash:iAfterCashFrom, iRolling: from.iRolling + cAmount}, {where:{strNickname:strAdminNickname}});
 
 
             // 롤링전환시에는 전환전 금액에 전환전 롤링값을 표시

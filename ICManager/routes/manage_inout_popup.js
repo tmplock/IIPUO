@@ -102,7 +102,7 @@ router.post('/request_savememo', isLoggedIn, async (req, res) => {
 
     //let data = await db.Inouts.findOne({where:{id:req.body.id}});
     //await data.update({strMemo:req.body.strMemo});
-    await db.Inouts.findOne({strMemo:req.body.strMemo}, {where:{id:req.body.id}});
+    await db.Inouts.update({strMemo:req.body.strMemo}, {where:{id:req.body.id}});
 });
 
 router.post('/request_adjustinput', isLoggedIn, async (req, res) => {

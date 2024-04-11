@@ -279,7 +279,7 @@ let CreateDailyBettingRecord = async (dailyData, strID) => {
 
 let UpdateDailyBettingRecord = async (obj, strID, dailyData) => {
     // 업데이트
-    await obj.update({
+    await db.DailyBettingRecords.update({
         iInput: obj.iInput + (dailyData.iInput ?? 0),
         iExchange: obj.iExchange + (dailyData.iExchange ?? 0),
         iOutput: obj.iOutput + (dailyData.iOutput ?? 0),
@@ -333,6 +333,10 @@ let UpdateDailyBettingRecord = async (obj, strID, dailyData) => {
         iUORollingVAdmin: obj.iUORollingVAdmin + (dailyData.iRollingVAdmin ?? 0),
         iSlotRollingVAdmin: obj.iSlotRollingVAdmin + (dailyData.iRollingVAdmin ?? 0),
         iPBRollingVAdmin: obj.iPBRollingVAdmin + (dailyData.iRollingVAdmin ?? 0),
+    }, {
+        where: {
+            id:obj.id
+        }
     });
 }
 
@@ -414,9 +418,8 @@ let ForceUpdateDailyBettingRecord = async (strID, strGroupID, iClass, daily) => 
         return;
     }
 
-
     // 업데이트
-    await obj.update({
+    await db.DailyBettingRecords.update({
         iInput: data.iInput,
         iExchange: data.iExchange,
         iOutput: data.iOutput,
@@ -471,7 +474,7 @@ let ForceUpdateDailyBettingRecord = async (strID, strGroupID, iClass, daily) => 
         iUORollingVAdmin: data.iRollingVAdmin,
         iSlotRollingVAdmin: data.iRollingVAdmin,
         iPBRollingVAdmin: data.iRollingVAdmin,
-    });
+    }, {where: {id: obj.id}});
 }
 
 let GetPartnerData = async (daily, strID, strGroupID, iClass) => {

@@ -107,7 +107,7 @@ router.post('/request_credit_memo_apply', isLoggedIn, async (req, res) => {
     let credit = await db.CreditRecords.findByPk(req.body.id);
 
     if (credit != null) {
-        await credit.update({strMemo:req.body.strMemo});
+        await db.CreditRecords.update({strMemo:req.body.strMemo}, {where:{id: req.body.id}});
     }
     res.send({result:  'ok'});
 });
@@ -176,10 +176,11 @@ router.post('/request_modify_share_group', isLoggedIn, async(req, res) => {
             let user = await db.ShareUsers.findOne({where:{strNickname:strNickname}});
             if ( user != null )
             {
-                await user.update(
+                await db.ShareUsers.update(
                     {
                         fShareR:fShareR,
-                    });
+                    },
+                    {where:{strNickname:strNickname}});
             }
         }
         res.send({result:'OK', msg: '적용되었습니다'});
@@ -259,11 +260,12 @@ router.post('/request_share_apply', isLoggedIn, async  (req, res) => {
                             strQuater: strQuater,
                         });
 
-                    await user.update({
-                        iShareAccBefore: obj.iShareAccBefore,
-                        iCreditBefore: obj.iCreditBefore,
-                        iCreditAfter: obj.iCreditBefore,
-                    })
+                    await db.ShareUsers.update({
+                            iShareAccBefore: obj.iShareAccBefore,
+                            iCreditBefore: obj.iCreditBefore,
+                            iCreditAfter: obj.iCreditBefore,
+                        },
+                        {where:{strNickname:strNickname}})
                 }
             }
         }
@@ -306,10 +308,12 @@ router.post('/request_share_credit_apply', isLoggedIn, async  (req, res) => {
 
     let iCreditAfter = parseInt(user.iCreditAfter) + parseInt(iIncrease);
 
-    await user.update({
+    await db.ShareUsers.update({
         strMemo: strMemo,
         iCreditAfter:iCreditAfter,
-    });
+    }, {where: {
+            strNickname: strNickname
+        }});
 
     // 마지막 죽장의 입출후 금액을 갱신하기
     let share = await db.ShareRecords.findAll({
@@ -321,9 +325,12 @@ router.post('/request_share_credit_apply', isLoggedIn, async  (req, res) => {
     });
     if (share.length > 0) {
         for (let i in share) {
-            await share[i].update({
+            await db.ShareRecords.update({
                 iCreditAfter:iCreditAfter,
-            });
+            }, {where: {id: share[i].id}});
+            // await share[i].update({
+            //     iCreditAfter:iCreditAfter,
+            // });
         }
     }
 
@@ -446,9 +453,9 @@ router.post('/update_share_user', isLoggedIn, async(req, res) => {
         res.send({result: 'FAIL', msg: '대상자가 없습니다'});
         return;
     }
-    await user.update({
+    await db.ShareUsers.update({
         fShareR: req.body.fShareR
-    });
+    }, {where:{strNickname:req.body.strNickname}});
     res.send({result: 'OK', msg: '저장 되었습니다'});
 });
 

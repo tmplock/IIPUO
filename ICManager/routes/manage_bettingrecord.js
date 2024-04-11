@@ -577,10 +577,9 @@ router.post('/request_incompletecancel', async (req, res) => {
 
     for ( let i in list )
     {
-        await list[i].update(
-            {
-                iComplete:2,
-            });
+        await db.RecordBets.update({
+            iComplete:2,
+        }, {where: {id: list[i].id}});
 
         let aUser = await db.Users.findOne({where:{strNickname:list[i].strID}});
         if ( aUser != null )
@@ -633,7 +632,7 @@ router.post('/request_incompletedmanual', async (req, res) => {
             iAdmin:0
         };
 
-        await list[i].update(
+        await db.RecordBets.update(
             {
                 iRolling:list[i].iBetting * cTotalOdds * 0.01,
                 iRollingUser:objectRolling.iUser,
@@ -651,6 +650,11 @@ router.post('/request_incompletedmanual', async (req, res) => {
                 // iSettleAdmin:(list[i].iBetting-list[i].iWin) * list[i].fSettleAdmin * 0.01,
                 iComplete:1,
                 iWin:iWin
+            },
+            {
+                where: {
+                    id: list[i].id
+                }
             }
         );
 

@@ -220,7 +220,8 @@ router.post('/request_adjustoutput', isLoggedIn, async (req, res) => {
         console.log(`AdjustOutput : ${iCash}`);
 
         if ( iCash >= 0 ) {
-            await target.update({iCash:iCash});
+            await db.Users.update({iCash:iCash}, {where: {strNickname:req.body.strNickname}});
+            // await target.update({iCash:iCash});
 
             console.log(`Pre Calculated`);
 

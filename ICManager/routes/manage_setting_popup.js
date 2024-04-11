@@ -86,12 +86,12 @@ router.post('/readletter', async (req, res) => {
         if (contents.eRead == 'UNREAD') {
             // 읽음 처리는 작성자와 다른 사람이 볼 경우에만 처리
             if (user.strNickname != contents.strFrom) {
-                await contents.update({eRead:'READED'});
+                await db.Letters.update({eRead:'READED'}, {where:{id:parseInt(req.body.id)}});
             }
         } else if (contents.eRead == 'REPLY') {
             // 답변확인은 작성자일 경우에만 처리
             if (user.strNickname == contents.strFrom) {
-                await contents.update({eRead:'REPLY_READED'});
+                await db.Letters.update({eRead:'REPLY_READED'}, {where:{id:parseInt(req.body.id)}});
             }
         }
     }
@@ -119,7 +119,7 @@ router.post('/request_replyletter', async (req, res) => {
         return;
     }
 
-    await letter.update({eRead:'REPLY', strAnswers: req.body.strAnswers});
+    await db.Letters.update({eRead:'REPLY', strAnswers: req.body.strAnswers}, {where : {id: req.body.id}});
 
     if (letter.iClassFrom >= 6) {
         // letter_reply

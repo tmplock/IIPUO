@@ -395,7 +395,7 @@ router.post('/request_modifyrollingodds', isLoggedIn, async(req, res) => {
     else
     {
         //await user.update({fSlotTR:req.body.fSlot, fBaccaratTR:req.body.fBaccarat, fUnderOverTR:req.body.fUnderOver, fBlackjackTR:req.body.fBlackjack});
-        await user.update({fSlotR:req.body.fSlot, fBaccaratR:req.body.fBaccarat, fUnderOverR:req.body.fUnderOver});
+        await db.Users.update({fSlotR:req.body.fSlot, fBaccaratR:req.body.fBaccarat, fUnderOverR:req.body.fUnderOver}, {where: {strNickname:req.body.strNickname}});
 
         res.send('ok');
     }
@@ -519,7 +519,7 @@ router.post('/request_modify_rollingodds_group', isLoggedIn, async(req, res) => 
                     });
                 }
 
-                await user.update(
+                await db.Users.update(
                     {
                         fBaccaratR:ret.data[i].fBaccarat,
                         fSlotR:ret.data[i].fSlot,
@@ -528,7 +528,7 @@ router.post('/request_modify_rollingodds_group', isLoggedIn, async(req, res) => 
                         fPBSingleR:ret.data[i].fPBSingle,
                         fPBDoubleR:ret.data[i].fPBDouble,
                         fPBTripleR:ret.data[i].fPBTriple
-                    });
+                    }, {where:{strNickname:ret.data[i].strNickname}});
             }
         }
         res.send({result:'OK'});
@@ -589,13 +589,13 @@ router.post('/request_modify_settle_group', isLoggedIn, async(req, res) => {
                     });
                 }
 
-                await user.update(
+                await db.Users.update(
                     {
                         fSettleBaccarat:ret.data[i].fSettleBaccarat,
                         fSettleSlot:ret.data[i].fSettleSlot,
                         fSettlePBA:ret.data[i].fSettlePBA,
                         fSettlePBB:ret.data[i].fSettlePBB
-                    });
+                    }, {where:{strNickname:ret.data[i].strNickname}});
             }
         }
         res.send({result:'OK'});

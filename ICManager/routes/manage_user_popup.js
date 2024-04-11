@@ -704,11 +704,18 @@ router.post('/request_gtrecord_user', isLoggedIn, async(req, res) => {
     console.log(`request_gtrecord_user############################################################################`);
     console.log(req.body);
 
+    let searchType = req.body.searchType ?? '';
     let strTimeStart = req.body.dateStart;
     let strTimeEnd = req.body.dateEnd;
     let list = [];
     let user = await IAgent.GetUserInfo(req.body.strNickname);
     let strNickname = user.iPermission == 100 ? user.strNicknameRel : user.strNickname;
+    let subQuery = '';
+    if (searchType == 'inout') {
+        subQuery = `AND eType IN ('GIVE', 'TAKE')`;
+    } else if (searchType == 'rolling') {
+        subQuery = `AND eType IN ('ROLLING')`;
+    }
     // 두개를 하나의 테이블로 UNION
     if ( req.body.strSearch == '' )
     {
@@ -717,11 +724,13 @@ router.post('/request_gtrecord_user', isLoggedIn, async(req, res) => {
             FROM GTs g
             WHERE g.strFrom = '${strNickname} '
             AND date(g.createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'
+            ${subQuery} 
             UNION
             SELECT g.*, DATE_FORMAT(g.createdAt,'%Y-%m-%d %H:%i:%S') AS createdAtFormat
             FROM GTs g
             WHERE g.strTo = '${strNickname}' 
             AND date(g.createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'
+            ${subQuery}
             ORDER BY createdAt DESC
         `);
     } else {
@@ -731,12 +740,14 @@ router.post('/request_gtrecord_user', isLoggedIn, async(req, res) => {
             WHERE g.strFrom = '${strNickname}' 
             AND g.strTo LIKE CONCAT('${req.body.strSearch}', '%') 
             AND date(g.createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'
+            ${subQuery}
             UNION
             SELECT g.*, DATE_FORMAT(g.createdAt,'%Y-%m-%d %H:%i:%S') AS createdAtFormat
             FROM GTs g
             WHERE g.strTo = '${strNickname}' 
             AND g.strFrom LIKE CONCAT('${req.body.strSearch}', '%')
             AND date(g.createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'
+            ${subQuery}
             ORDER BY createdAt DESC
         `);
     }

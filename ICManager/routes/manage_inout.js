@@ -765,7 +765,7 @@ router.post('/request_outputstate', isLoggedIn, async (req, res) => {
         let user = await db.Users.findOne({where:{strNickname:charge.strID}});
 
         //await user.update({iCash:user.iCash+charge.iAmount});
-        await db.Users.findOne({iCash:user.iCash+charge.iAmount}, {where:{strNickname:charge.strID}});
+        await db.Users.update({iCash:user.iCash+charge.iAmount}, {where:{strNickname:charge.strID}});
 
         let objectAxios = {strNickname:user.strNickname, iAmount:user.iCash};
 

@@ -220,7 +220,7 @@ router.post('/request_output', async (req, res) => {
     console.log(req.body);
 
     let iAmout = parseInt(req.body.iAmount ?? 0);
-    if (iAmout <= 50000) {
+    if (iAmout < 50000) {
         res.send({result:'Error', reason:'Error'});
         return;
     }

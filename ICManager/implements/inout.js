@@ -25,7 +25,8 @@ let inline_GetProcessing = async (strGroupID, strNickname, iClass) => {
         const charge = await inline_GetProcessingChargeGroup(strGroupID);
         const letter = await inline_GetProcessingLetterGroup(strGroupID, strNickname, iClass, 'UNREAD');
         const contact = await inline_GetProcessingContact(strNickname, 'UNREAD'); // 받은쪽지
-        const letterreply = await inline_GetProcessingLetterReply(strNickname, 'REPLY');// 보낸쪽지
+        const letterreply = 0;
+        // const letterreply = await inline_GetProcessingLetterReply(strNickname, 'REPLY');// 총본이 보낸 쪽지 보낸쪽지
         const contactreply = await inline_GetProcessingContactReply(strNickname, 'REPLY'); // 보낸쪽지
         return {input:input, output:output, letter:letter, charge:charge, contact:contact, letterreply: letterreply, contactreply:contactreply};
     }

@@ -195,11 +195,18 @@ router.post('/request_gtrecord_partner', isLoggedIn, async(req, res) => {
     console.log(`request_gtrecord_user############################################################################`);
     console.log(req.body);
 
+    let searchType = req.body.searchType ?? '';
     let strTimeStart = req.body.dateStart;
     let strTimeEnd = req.body.dateEnd;
     let user = await IAgent.GetUserInfo(req.body.strNickname);
     let strNickname = user.iPermission == 100 ? user.strNicknameRel : user.strNickname;
     let list = [];
+    let subQuery = '';
+    if (searchType == 'inout') {
+        subQuery = `AND eType IN ('GIVE', 'TAKE')`;
+    } else if (searchType == 'rolling') {
+        subQuery = `AND eType IN ('ROLLING')`;
+    }
     // 두개를 하나의 테이블로 UNION
     if ( req.body.strSearch == '' )
     {
@@ -208,11 +215,13 @@ router.post('/request_gtrecord_partner', isLoggedIn, async(req, res) => {
             FROM GTs 
             WHERE strFrom = '${strNickname}'
             AND date(createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'
+            ${subQuery}
             UNION
             SELECT *, DATE_FORMAT(createdAt,'%Y-%m-%d %H:%i:%S') AS createdAtFormat
             FROM GTs 
             WHERE strTo = '${strNickname}' 
             AND date(createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'
+            ${subQuery}
             ORDER BY createdAt DESC
         `);
     } else {
@@ -222,12 +231,14 @@ router.post('/request_gtrecord_partner', isLoggedIn, async(req, res) => {
             WHERE strFrom = '${strNickname}' 
             AND strTo LIKE CONCAT('${req.body.strSearch}', '%') 
             AND date(createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'
+            ${subQuery}
             UNION
             SELECT *, DATE_FORMAT(createdAt,'%Y-%m-%d %H:%i:%S') AS createdAtFormat
             FROM GTs 
             WHERE strTo = '${strNickname}' 
             AND strFrom LIKE CONCAT('${req.body.strSearch}', '%')
             AND date(createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'
+            ${subQuery}
             ORDER BY createdAt DESC
         `);
     }

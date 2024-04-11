@@ -5,10 +5,15 @@
 			<%=__('RecordPointExchange')%>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 		</p>
 
+		<div style="text-align: left; padding-left: 5px;">
+			<button class="btn_blue" id="button_search" style="border:1px solid rgb(95, 93, 93);width:70px;;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="Search('');">전체</button>
+			<button class="btn_blue" id="button_search" style="border:1px solid rgb(95, 93, 93);width:70px;;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="Search('inout');">지급/차감</button>
+			<button class="btn_blue" id="button_search" style="border:1px solid rgb(95, 93, 93);width:70px;;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="Search('rolling');">롤링</button>
+		</div>
 		<div style="background-color:#ffffff;text-align:right;padding-right:5px;padding-top:10px;padding-bottom:10px;" colspan="19">
 			<input style="margin-left:180px;width:100px;" type="text" id="datepicker1" class="datepicker"/>~
 			<input style="width:100px;" type="text" id="datepicker2" class="datepicker" />
-			<button class="btn_blue" id="button_search" style="border:1px solid rgb(95, 93, 93);width:70px;;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="Search();"><%=__('Search')%></button>
+			<button class="btn_blue" id="button_search" style="border:1px solid rgb(95, 93, 93);width:70px;;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="Search(searchType);"><%=__('Search')%></button>
 		</div>
 
 		<table class="search_list">
@@ -26,10 +31,6 @@
 			<tbody id="listGTRecord">
 			</tbody>
 		</table>
-			
-		<div class="pagination mt0">
-			<a href="javascript:get_data('inner_partner_list2.php', 'inner_content', 's_sido=13&s_gugun=parent_level=4&s_date=&e_date=&s_cate=&pageNo=1');" class="on" style="color:#ffffff;">1</a>
-		</div>
 	</div>
 </div>
 
@@ -39,6 +40,7 @@
 <script type="text/javascript" src="js/manage_user_popup_menu.js"></script>
 <script type="text/javascript">
 	let agent = JSON.parse('<%-JSON.stringify(agent)%>');
+	let searchType = '';
 
 	let GetType = (eType) => {
 		if ( eType == 'ROLLING' )
@@ -70,7 +72,7 @@
 		$('#datepicker1').val(GetCurrentDate());
 		$('#datepicker2').val(GetCurrentDate());
 
-		Search();
+		Search('');
 	});
 
 	let RequestGTRecord = (strSearch, iClass) => {
@@ -82,7 +84,7 @@
 			type:'post',
 			url: "/manage_user_popup/request_gtrecord_user",
 			context: document.body,
-			data:{strNickname:agent.strNickname, dateStart:dateStart, dateEnd:dateEnd, strSearch:strSearch, iClass:iClass},
+			data:{strNickname:agent.strNickname, dateStart:dateStart, dateEnd:dateEnd, strSearch:strSearch, iClass:iClass, searchType:searchType},
 			success: (list) => {
 				for ( let i in list )
 				{
@@ -112,8 +114,9 @@
 								<td>${list[i].createdAtFormat}</td>
 								</tr>`;
 
-								$('#listGTRecord').append(tag);
+					$('#listGTRecord').append(tag);
 				}
+				SetTotal(list);
 			},
 			error:function(request,status,error){
 				alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
@@ -121,7 +124,43 @@
 		});
 	}
 
-	let Search = () => {
+	let SetTotal = (list) => {
+		if (searchType == 'inout' || searchType == '') {
+			let giveTotal = 0;
+			let takeTotal = 0;
+			for (let i in list) {
+				if (list[i].eType == 'GIVE') {
+					giveTotal += list[i].iAmount;
+				} else if (list[i].eType == 'TAKE') {
+					takeTotal += list[i].iAmount;
+				}
+			}
+			let total = giveTotal - takeTotal;
+			let tag = `	<tr>
+					<td></td>
+					<td>합계</td>
+					<td>${GetNumberSign(total)}</td>
+					<td colspan="4" style="text-align: left; padding-left: 10px;"><font style="color: blue;">지급 : ${GetNumberSign(giveTotal)}</font>    <font style="color: red; padding-left: 10px;">차감 : ${GetNumberSign(takeTotal)}</font></td>
+					</tr>`;
+			$('#listGTRecord').append(tag);
+		} else {
+			let total = 0;
+			for (let i in list) {
+				total += list[i].iAmount;
+			}
+
+			let tag = `	<tr>
+					<td></td>
+					<td>합계</td>
+					<td>${GetNumberSign(total)}</td>
+					<td colspan="4" style="text-align: left"></td>
+					</tr>`;
+			$('#listGTRecord').append(tag);
+		}
+	}
+
+	let Search = (type) => {
+		searchType = type;
 		$('#listGTRecord').empty();
 		RequestGTRecord('');
 	}

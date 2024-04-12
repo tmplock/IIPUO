@@ -31,7 +31,7 @@ let GetEachDB = (listDB, listHL, listCQ9, listEzugi, listEtc) => {
         {
             listEzugi.push(cDB);
         }
-        else if ( cDB.strVender ==' CQ9' && cDB.eType == 'BETWIN' )
+        else if ( cDB.strVender =='CQ9' && cDB.eType == 'BETWIN' )
         {
             listCQ9.push(cDB);
         }

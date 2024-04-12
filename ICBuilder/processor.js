@@ -368,7 +368,7 @@ exports.ProcessOverview = async (listDB, listOverview, listOdds, listUpdateDB) =
                 listUpdateDB.push({id:cData.id, strOverview:strOverview});
             }
         }
-        else if ( strDetail.length > 0 && cData.strVender ==' CQ9' && cData.eType == 'BETWIN' )
+        else if ( strDetail.length > 0 && cData.strVender =='CQ9' && cData.eType == 'BETWIN' )
         {
             try
             {

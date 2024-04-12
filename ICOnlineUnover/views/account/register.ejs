@@ -190,7 +190,16 @@
                     location.href = '/';
                 }
                 else
-                    alert('회원 가입에 실패 하였습니다.');
+                {
+                    if ( data.result == 'Error' && data.eCode == 'InvalidParent')
+                    {
+                        alert('추천인 아이디가 올바르지 않습니다.');
+                    }
+                    else
+                    {
+                        alert('회원 가입에 실패 하였습니다.');
+                    }
+                }                    
             },
             error:function() {
                 console.log('error');

@@ -149,7 +149,8 @@ router.post('/request_register', async (req, res) => {
             parent = await db.Users.findOne({where:{strID:req.body.strRegisterRecommender, iClass:7}});
             if ( parent == null )
             {
-                parent = await db.Users.findOne({where:{strID:'wnrqo04'}});    
+                res.send({result:'Error', eCode:'InvalidParent'});
+                return;
             }
         }
         else

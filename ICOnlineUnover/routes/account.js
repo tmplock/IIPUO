@@ -143,6 +143,14 @@ router.post('/request_register', async (req, res) => {
 
     try
     {
+        let user = await db.Users.findOne({where:{strID:req.body.strRegisterID}});
+        let user2 = await db.Users.findOne({where:{strNickname:req.body.strRegisterNickname}});
+        if ( user != null || user2 != null )
+        {
+            res.send({result:'Error'});
+            return;
+        }
+
         let parent = null;
         if ( req.body.strRegisterRecommender != '' )
         {

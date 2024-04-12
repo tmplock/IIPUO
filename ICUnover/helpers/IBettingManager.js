@@ -82,7 +82,9 @@ exports.ProcessWin = async (strID, strNickname, strGroupID, iClass, iBalance, iG
         if ( bet.iBet == iWin )
         {
             //  TIE WIN
-            await db.RecordBets.update({iWin:iWin, eType:'CANCEL_BET', eState:'STANDBY'}, {where:{id:bet.id}});
+            //await db.RecordBets.update({iWin:iWin, eType:'CANCEL_BET', eState:'STANDBY'}, {where:{id:bet.id}});
+            //  계산을 할 필요가 없어서 바로 COMPLETE 로 설정
+            await db.RecordBets.update({iWin:iWin, eType:'CANCEL_BET', eState:'COMPLETE'}, {where:{id:bet.id}});
         }
         else
         {
@@ -109,8 +111,13 @@ exports.ProcessCancel = async (strUniqueID, strGameID, strRound, eType) => {
         bet = await db.RecordBets.findOne({where:{strGameID:strGameID, strRound:strRound}});
     }
 
-    if ( bet != null )
+    //if ( bet != null )
+    //  COMPLETE 가 된 상태에서만 처리한다. 다른건 할 필요가 없음.
+    if ( bet != null && bet.eState == 'COMPLETE' )
     {
+        //await db.RecordBets.update({eState:'STANDBY', eType:'CANCEL'}, {where:{id:bet.id}});
+
+        //  
         switch ( eType )
         {
             case 'BET':
@@ -119,6 +126,9 @@ exports.ProcessCancel = async (strUniqueID, strGameID, strRound, eType) => {
             case 'WIN':
                 await db.RecordBets.update({eState:'STANDBY', eType:'CANCEL_WIN'}, {where:{id:bet.id}});
                 break;
+            // case 'BETWIN':  // 이건 사실 오진 않는다.
+            //     await db.RecordBets.update({eState:'STANDBY', eType:'CANCEL'}, {where:{id:bet.id}});
+            //     break;
         }
     }
 

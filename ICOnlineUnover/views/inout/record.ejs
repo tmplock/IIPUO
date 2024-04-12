@@ -1,0 +1,229 @@
+<br><br><br>
+<div class="container">
+    <div class="sub-wrap">
+        <div class="subscr">
+            <div class="subtitle">
+                <h1>입출금내역</h1>
+                <span>회원님의 입출금내역입니다.</span>
+                <select style=" height:32px; display: inline-block; width:80px; margin-left:10px; padding-left:15px; line-height: 198px; background: none; color:#8b8b8b; color:#8b8b8b;font-size:14px; font-weight: bold; font-family: 'Noto Sans KR', sans-serif; " name="type" id="type" onchange="Change(this.value)" span="span">
+                    <option value="Input" selected>입금</option>
+                    <option value="Output">출금</option>
+                </select>
+            </div>
+            <table>
+                <colgroup>
+                    <col style="width:9%;">
+                    <col style="width:5%;">
+                    <col style="width:22%;">
+                    <col style="width:22%;">
+                    <col style="width:22%;">
+                    <col style="width:10%;">
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th>구분</th>
+                        <th>번호</th>
+                        <th>금액</th>
+                        <th>신청일자</th>
+                        <th>처리일자</th>
+                        <th>상태</th>
+                    </tr>
+                </thead>
+                <tbody style="text-align: center;" id="listTable">
+                    <!-- <tr>
+                        <td>1</td>
+                        <td>2023.12.30</td>
+                        <td>로얄카지노</td>
+                        <td>500,000</td>
+                        <td id="m-in">입금</td>
+                        <td>2023.12.30</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>2023.12.30</td>
+                        <td>로얄카지노</td>
+                        <td>500,000</td>
+                        <td id="m-out">출금</td>
+                        <td>2023.12.30</td>
+                    </tr> -->
+                    <!-- <tr>
+                        <td height="34" align="center" class="color_white" colspan="6">회원님의 입금내역이 존재하지 않습니다.</td>
+                    </tr> -->
+                </tbody>
+            </table>
+            <p align="center" style="display: block;font-weight: 400; font-size:14px; color:#DC4F00;">
+                최신순으로의 내역입니다.
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+    let RequestInputList = () => {
+
+        $.ajax({
+			type:'post',
+			url: "/inout/request_inputlist",
+			context: document.body,
+			data:{strNickname:user.strNickname, strGroupID:user.strGroupID},
+	
+			success:function(data) {
+
+				console.log(data);
+                console.log(data.length);
+
+                if ( data.length > 0 )
+                {
+                    $('#listTable').empty();
+                    let tag = '';
+                    for ( let i in data )
+                    {
+                        let eState = '신청';
+                        let color = 'white';
+                        if ( data[i].eState == 'CANCEL' ){
+                            eState = '취소';
+                            color = 'red';
+                        }
+                        else if ( data[i].eState == 'COMPLETE' ){
+                            eState = '완료';
+                            color = 'skyblue';
+                        }
+                        tag += 
+                        `
+                            <tr>
+                                <td id="m-in">입금</td>
+                                <td>${i}</td>
+                                <td>${data[i].iAmount.toLocaleString()}</td>
+                                <td>${data[i].createdAt}</td>
+                                <td>${data[i].completedAt}</td>
+                                <td style="color:${color};font-weight:bold;font-size:15px;">${eState}</td>                                
+                            </tr>
+                        `;
+                    }                    
+                    $('#listTable').append(tag);
+                }
+                else
+                {
+                    $('#listTable').empty();
+                    let tag = 
+                    `
+                    <tr>
+                        <td height="34" align="center" class="color_white" colspan="6">회원님의 입금내역이 존재하지 않습니다.</td>
+                    </tr>
+                    `;
+                    $('#listTable').append(tag);
+                }
+
+				// let tag = 
+				// `
+				// <tr>
+				// 	<td width="10%" class="list_title1">상태</td>
+				// 	<td width="10%" class="list_title1">입금 금액</td>
+				// 	<td width="10%" class="list_title1">신청 날짜</td>                  
+				// 	<td width="10%" class="list_title1">처리 날짜</td>                                                                          
+				// 	</tr>
+				// `;
+				// $('#input_list').empty();
+				// $('#input_list').append(tag);
+
+				// for ( let i in data )
+				// {
+				// 	let eState = '신청';
+				// 	let color = 'white';
+				// 	if ( data[i].eState == 'CANCEL' ){
+				// 		eState = '취소';
+				// 		color = 'red';
+				// 	}
+				// 	else if ( data[i].eState == 'COMPLETE' ){
+				// 		eState = '완료';
+				// 		color = 'skyblue';
+				// 	}
+
+				// 	let subtag = `<tr>
+				// 					<td class="list1" style="color:${color};font-weight:bold;font-size:15px;">${eState}</td>
+				// 					<td class="list1">${data[i].iAmount.toLocaleString()}</td>
+				// 					<td class="list1">${data[i].createdAt}</td>
+				// 					<td class="list1">${data[i].completedAt}</td>
+				// 					</tr>`;
+				// 	$('#input_list').append(subtag);
+				// }
+			}
+		});
+    }
+
+    let RequestOutputList = () => {
+
+        $.ajax({
+            type:'post',
+            url: "/inout/request_outputlist",
+            context: document.body,
+            data:{strNickname:user.strNickname, strGroupID:user.strGroupID},
+
+            success:function(data) {
+
+                $('#listTable').empty();
+
+                console.log(data);
+                console.log(data.length);
+
+                if ( data.length > 0 )
+                {
+                    let tag = '';
+                    for ( let i in data )
+                    {
+                        let eState = '신청';
+                        let color = 'white';
+                        if ( data[i].eState == 'CANCEL' ){
+                            eState = '취소';
+                            color = 'red';
+                        }
+                        else if ( data[i].eState == 'COMPLETE' ){
+                            eState = '완료';
+                            color = 'skyblue';
+                        }
+                        tag += 
+                        `
+                            <tr>
+                                <td id="m-out">출금</td>
+                                <td>${i}</td>
+                                <td>${data[i].iAmount.toLocaleString()}</td>
+                                <td>${data[i].createdAt}</td>
+                                <td>${data[i].completedAt}</td>
+                                <td style="color:${color};font-weight:bold;font-size:15px;">${eState}</td>                                
+                            </tr>
+                        `;
+                    }                    
+                    $('#listTable').append(tag);
+                }
+                else
+                {
+                    $('#listTable').empty();
+                    let tag = 
+                    `
+                    <tr>
+                        <td height="34" align="center" class="color_white" colspan="6">회원님의 출금내역이 존재하지 않습니다.</td>
+                    </tr>
+                    `;
+                    $('#listTable').append(tag);
+                }
+            }
+        });
+    }
+
+    let Change = (strType) => {
+        console.log(strType);
+        if ( strType == 'Input' )
+        {
+            RequestInputList();
+        }
+        else
+        {
+            RequestOutputList();
+        }
+    }
+
+    RequestInputList();
+
+    
+
+</script>

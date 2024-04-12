@@ -1,0 +1,199 @@
+<% if ( iLayout == 1) { %>
+
+    <%- body %>
+
+    <%- script %>
+
+<% } else if ( iLayout == 0 ) { %>
+
+<!doctype html>
+<html>
+    <head>
+        <%- include('head') %>
+    </head>
+
+    <body>
+        <!--allwrap-->
+        <div style="width:100%;">
+            <!--left-->
+            <div class="left-container">
+                <h1 onclick="location.href='/';"><img src="/img/logo.png"></h1>
+                <!--menu-->
+                <div class="l-menu-wrap">
+                    <!-- mem -->
+                    <div class="m-mem">
+                        <!-- <div class="id">[mandu2023]</div> -->
+                        <button type="button" onclick="javascript:location.href='/account/logout'">로그아웃</button>
+                        <button type="button" onclick="javascript:location.href='/account/mypage'">마이페이지</button>
+                    </div>
+                    <!-- mem -->
+                    <div class="l-menu">
+                        <ul>
+                            <li class="ico01" onclick="location.href='/inout/input'"><span>입금신청</span></li>
+                            <li class="ico04" onclick="location.href='/inout/output'"><span>출금신청</span></li>
+
+                            <li class="ico05" onclick="location.href='/inout/exchange'"><span>머니전환</span></li>
+                            <!-- <li class="ico03" onclick="location.href='/account/virtual_request'"><span>체험머니</span></li>
+                            
+                            <li class="ico05" onclick="location.href='#'"><span>입금계좌재전송</span></li> -->
+                            <li class="ico06" onclick="location.href='/inout/record'"><span>입출금내역보기</span></li>
+                            <!-- <li class="ico07" onclick="location.href='/account/record_coupon'"><span>쿠폰내역보기</span></li> -->
+                            <li class="ico07" onclick="location.href='/letter/listcs'"><span>고객센터<span style="color:red;" id="MainLayoutNumLetters"></span></span></li>
+                            <li class="ico03" onclick="location.href='/board/list'"><span>공지사항</span></li>
+
+                            <li onclick="location.href='/desc?id=00'"><span>언더오버 게임설명</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="right-container">
+                <div class="contents">
+        
+                    <% if ( bLogin == true ) { %>
+
+                        <div class="login">
+                            <div class="m-logo" onclick="location.href='/';"><img src="/img/logo.png"></div>
+                            <div class="login-box" style="color:#ffffff;">
+                                <span class="font12"><%=user.strNickname%></span>&nbsp;&nbsp;
+                                <span>게임머니 <span class="font11" id="MainLayoutCoin"><%=user.iCash.toLocaleString()%></span> </span>
+                                &nbsp;&nbsp;
+                                <button type="button" onclick="location.href='/account/logout'">로그아웃</button>
+                                <button type="button" onclick="location.href='/account/mypage';">마이페이지</button>
+                                <button type="button" id="gnb_open"><i class="fa fa-bars" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+
+                    <% } else { %>
+
+                        <form method="post" action="/account/login">
+                            <div class="login">
+                                <div class="m-logo" onclick="location.href='/';"><img src="/img/logo.png"></div>
+                                <div class="login-box" style="color:#ffffff;">
+
+                                    <button type="button" class="font12" onclick="javascript:location.href='/account/register'" style="background-color: orange;">회원가입</button>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+                                    <input type="text" name="strID" placeholder="아이디" onfocus="this.placeholder = ''">
+                                    <input type="password" name="strPassword" placeholder="비밀번호" onfocus="this.placeholder = ''">
+                                    <button type="submit">로그인</button>
+                                    <span class="m-login"><a href="/account/login_m">로그인</a></span>
+                                    <!-- <button type="button" id="gnb_open"><i class="fa fa-bars" aria-hidden="true"></i></button>  -->
+        
+                                    <% if ( messages ) { %>
+                                        <p style="color:red;"><%=messages%></p>
+                                    <% } %>
+                                </div>
+                                
+                            </div>
+                        </form>
+                    <% } %>
+
+
+                    <%- body %>
+
+                    <footer>
+                        <div class="footer-wrap">
+                            <div class="link-bl">
+                                <!-- <div>
+                                    <h1>Live casino</h1>
+                                    <span>
+                                        <ul>
+                                            <li><a href="#">Vivo</a></li>
+                                            <li>Pragmatic</li>
+                                            <li>Ezugi</li>
+                                            <li>Evolution</li>
+                                        </ul>
+                                    </span>
+                                    <span>
+                                        <ul>
+                                            <li>RT GAME</li>
+                                            <li>H GAME</li>
+                                            <li>SA GAME</li>
+                                            <li>G GAME</li>
+                                        </ul>
+                                    </span>
+                                </div>
+                                <div>
+                                    <h1>Slot game</h1>
+                                    <span>
+                                        <ul>
+                                            <li><a href="#">SA slot</a></li>
+                                            <li>M slot</li>
+                                            <li>RT slot</li>
+                                        </ul>
+                                    </span>
+                    
+                                </div> -->
+                                <div>
+                                    <h1>게임 설명</h1>
+                                    <span>
+                                        <ul>
+                                           <li><a href="/desc?id=00">언오버</a></li>
+                                            <li><a href="/desc?id=01">바카라</a></li>
+                                            <li><a href="/desc?id=02">블랙잭</a></li>
+                                            <li><a href="/desc?id=03">룰렛</a></li>
+                                            <li><a href="/desc?id=04">식보</a></li>
+                                            <li><a href="/desc?id=05">드래곤타이거</a></li>                                            
+                                        </ul>
+                                    </span>
+                                    <span>
+                                        <ul>
+                                            <li><a href="/desc?id=10">캐러비안스터드포커</a></li>
+                                            <li><a href="/desc?id=09">BULLFIGHT</a></li>
+                                            <li><a href="/desc?id=08">트리플페이스카드</a></li>
+                                            <li><a href="/desc?id=11">마종</a></li>
+                                            <li><a href="/desc?id=07">바카라보험</a></li>
+                                        </ul>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="foot-end">
+                                <span><img src="/img/free_casino_logo_3.png"></span>
+                                <span>COPYRIGHT 2023, UNOVER CASINO. ALL RIGHTS RESERVED. GAMBLING CAN BE<br />ADDICTIVE, PLEASE PLAY RESPONSIBLY.FOR MORE INFORMATION ON SUPPORT<br />TOOLS,PLEASE VISIT OUR RESPONSIBLE GAMBLING PAGE
+                                <br />PAYMENT SUPPORTED BY</span>
+                                <span>
+                                    <ul>
+                                        <li><img src="/img/visa.png"></li>
+                                        <li><img src="/img/paypal.png"></li>
+                                        <li><img src="/img/amex.png"></li>
+                                        <li><img src="/img/master.png"></li>
+                                    </ul>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="foot-partner">
+                            <span><img src="/img/footer_partner.png"></span>
+                        </div>
+                    </footer>
+                    <!--메인컨텐츠-->
+                </div>
+            <!--allwrap-->
+            </div>
+        </div>
+
+        <script>
+            const bLogin = '<%=bLogin%>';
+            console.log(bLogin);
+            let user = null;
+            if ( bLogin == "true" )
+            {
+                user = JSON.parse('<%-JSON.stringify(user)%>');
+                RequestLogin(user);
+            }
+                
+            console.log(user);
+            const listOutputRecent = JSON.parse('<%-JSON.stringify(listOutputRecent)%>');
+            console.log(listOutputRecent);
+            const listOutputRank = JSON.parse('<%-JSON.stringify(listOutputRank)%>');
+            console.log(listOutputRank);
+
+        </script>
+
+        <%- script %>
+
+
+    </body>
+
+</html>
+<% } %>
+

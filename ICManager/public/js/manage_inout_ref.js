@@ -236,14 +236,14 @@ let SetInputList = (list, iRootClass) => {
 
         let tagAccountOwner = '';
         if (iRootClass <= 3) {
-            tagAccountOwner = `<td>${list[i].strAccountOwner}</td>`;
+            tagAccountOwner = `<td>${list[i].strUserAccountOwner}</td>`;
         }
 
         let tag = `
             <tr name="${list[i].id}" nickname="${list[i].strID}">
             <td>${list[i].id}</td>
             <td>${strParent}</td>
-            <td><a href="javascript:OnClickInOutUser(true, '${list[i].strID}', '${list[i].strGroupID}', '${list[i].iClass}');">${GetClassNickName(list[i].iClass, list[i].strID)}</a></td>
+            <td><a href="javascript:OnClickNickname('${list[i].strID}');"><font style="color:blue;">${GetClassNickName(list[i].iClass, list[i].strID)}</font></a></td>
             ${tagAccountOwner}
             <td><font style="color:blue;">${list[i].iAmount.toLocaleString()}</font></td>`;
         
@@ -294,12 +294,12 @@ let SetInputList = (list, iRootClass) => {
                 tag += `<td id="td_state_${list[i].id}"></td>`;
         }
 
-        let cdate = list[i].completedAt;
+        let cdate = list[i].completedAt ?? '';
         if ( cdate == 'Invalid date' )
             cdate = '';
 
         tag += `
-                <td>${list[i].createdAt}</td>
+                <td>${list[i].createdAt ?? ''}</td>
                 <td>${cdate}</td>`;
 
         if ( parseInt(user.iRootClass) <= 3 && user.iPermission != 100 ) {
@@ -400,7 +400,7 @@ let SetOutputList = (list, iRootClass) => {
             <tr name="${list[i].id}" nickname="${list[i].strID}">
             <td>${list[i].id}</td>
             <td>${strParent}</td>
-            <td><a href="javascript:OnClickInOutUser(true, '${list[i].strID}', '${list[i].strGroupID}', '${list[i].iClass}');">${GetClassNickName(list[i].iClass, list[i].strID)}</a></td>
+            <td><a href="javascript:OnClickNickname('${list[i].strID}');"><font style="color:blue;">${GetClassNickName(list[i].iClass, list[i].strID)}</font></a></td>
             ${tagbank}
             <td><font style="color:red;">${list[i].iAmount.toLocaleString()}</font></td>`;
 
@@ -449,12 +449,12 @@ let SetOutputList = (list, iRootClass) => {
                     tag += `<td id="td_state_${list[i].id}"></td>`;
             }
 
-            let cdate = list[i].completedAt;
+            let cdate = list[i].completedAt ?? '';
             if ( cdate == 'Invalid date' )
                 cdate = '';
 
             tag += `
-                    <td>${list[i].createdAt}</td>
+                    <td>${list[i].createdAt ?? ''}</td>
                     <td>${cdate}</td>`;
 
             if ( user.iRootClass <= 3 && user.iPermission != 100 ) {
@@ -534,3 +534,72 @@ let OnClickMemo = (id) => {
     }
 }
 
+let OnClickNickname = (strNickname) => {
+    $.ajax({
+        type:'post',
+        url: "/manage_setting/request_agentinfo",
+        context: document.body,
+        data:{strNickname:strNickname},
+        success:function(data) {
+            if ( data.result == 'OK' )
+            {
+                OnClickUser(data.data.strNickname, data.data.strGroupID, data.data.iClass);
+            }
+            else if (data.result == 'FAIL')
+            {
+                alert(data.msg);
+            }
+        }
+    });
+}
+
+
+let OnClickUser = (strNickname, strGroupID, iClass) => {
+
+    if ( iClass == 8 )
+    {
+        //  User Popup
+
+        console.log(strNickname);
+        console.log(strGroupID);
+        console.log(iClass);
+
+        let strAddress = '/manage_user_popup/output';
+        window.open('', 'popupInoutAgent', 'width=1280, height=720, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
+
+        var $form = $('<form></form>');
+        $form.attr('action', strAddress);
+        $form.attr('method', 'post');
+        $form.attr('target', 'popupInoutAgent');
+        $form.appendTo('body');
+
+        var idx = $(`<input type="hidden" value="${strNickname}" name="strNickname">`);
+        var page = $(`<input type="hidden" value="${strGroupID}" name="strGroupID">`);
+        var category = $(`<input type="hidden" value=${parseInt(iClass)} name="iClass">`);
+
+        $form.append(idx).append(page).append(category);
+        $form.submit();
+    }
+    else
+    {
+        //  Agent Popup
+        window.open('', 'popupInoutAgent', 'width=1280, height=720, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
+        // $("#Input1_"+strNickname).val(strNickname);
+        // $("#Form_"+strNickname).submit();
+        // console.log($("#Input1_"+strNickname).val());
+
+        var $form = $('<form></form>');
+        //$form.attr('action', '/manage_partner_popup/userlist');
+        $form.attr('action', '/manage_partner_popup/agentinfo');
+        $form.attr('method', 'post');
+        $form.attr('target', 'popupInoutAgent');
+        $form.appendTo('body');
+
+        var idx = $(`<input type="hidden" value="${strNickname}" name="strNickname">`);
+        var page = $(`<input type="hidden" value="${strGroupID}" name="strGroupID">`);
+        var category = $(`<input type="hidden" value=${parseInt(iClass)} name="iClass">`);
+
+        $form.append(idx).append(page).append(category);
+        $form.submit();
+    }
+}

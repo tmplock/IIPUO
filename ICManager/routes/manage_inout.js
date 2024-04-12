@@ -114,32 +114,30 @@ router.post('/request_searchby', isLoggedIn, async(req, res) => {
         }
 
         if (bRoot == true) {
-            list = await db.Inouts.findAll({
-                where:{
-                    createdAt:{
-                        [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
-                    },
-                    strGroupID:{[Op.like]:req.body.strGroupID+'%'},
-                    eType:req.body.type,
-                    iClass: 2
-                },
-                offset:iOffset,
-                limit:iLimit,
-                order:[['createdAt','DESC']]
-            });
+            list = await db.sequelize.query(`
+                SELECT i.*, DATE_FORMAT(i.createdAt,'%Y-%m-%d %H:%i:%S') AS createdAt, DATE_FORMAT(i.completedAt,'%Y-%m-%d %H:%i:%S') AS completedAt, DATE_FORMAT(i.updatedAt,'%Y-%m-%d %H:%i:%S') AS updatedAt, u.strBankOwner AS strUserAccountOwner
+                FROM Inouts i
+                LEFT JOIN Users u ON u.strNickname = i.strID
+                WHERE DATE(i.createdAt) BETWEEN '${req.body.dateStart}' AND '${req.body.dateEnd}'
+                AND i.strGroupID LIKE '${req.body.strGroupID}%'
+                AND i.eType = '${req.body.type}'
+                AND i.iClass = 2
+                ORDER BY i.createdAt DESC
+                LIMIT ${iLimit}
+                OFFSET ${iOffset}
+            `, {type: db.Sequelize.QueryTypes.SELECT});
         } else {
-            list = await db.Inouts.findAll({
-                where:{
-                    createdAt:{
-                        [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
-                    },
-                    strGroupID:{[Op.like]:req.body.strGroupID+'%'},
-                    eType:req.body.type,
-                },
-                offset:iOffset,
-                limit:iLimit,
-                order:[['createdAt','DESC']]
-            });
+            list = await db.sequelize.query(`
+                SELECT i.*, DATE_FORMAT(i.createdAt,'%Y-%m-%d %H:%i:%S') AS createdAt, DATE_FORMAT(i.completedAt,'%Y-%m-%d %H:%i:%S') AS completedAt, DATE_FORMAT(i.updatedAt,'%Y-%m-%d %H:%i:%S') AS updatedAt, u.strBankOwner AS strUserAccountOwner
+                FROM Inouts i
+                LEFT JOIN Users u ON u.strNickname = i.strID
+                WHERE DATE(i.createdAt) BETWEEN '${req.body.dateStart}' AND '${req.body.dateEnd}'
+                AND i.strGroupID LIKE '${req.body.strGroupID}%'
+                AND i.eType = '${req.body.type}'
+                ORDER BY i.createdAt DESC
+                LIMIT ${iLimit}
+                OFFSET ${iOffset}
+            `, {type: db.Sequelize.QueryTypes.SELECT});
         }
         res.send({data: list, totalCount: totalCount, iRootClass: req.user.iClass});
     }
@@ -151,6 +149,7 @@ router.post('/request_searchby', isLoggedIn, async(req, res) => {
                     createdAt:{
                         [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
                     },
+                    strGroupID:{[Op.like]:req.body.strGroupID+'%'},
                     strID:req.body.strSearchNickname,
                     eType:req.body.type,
                     iClass: 2
@@ -162,6 +161,7 @@ router.post('/request_searchby', isLoggedIn, async(req, res) => {
                     createdAt:{
                         [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
                     },
+                    strGroupID:{[Op.like]:req.body.strGroupID+'%'},
                     strID:req.body.strSearchNickname,
                     eType:req.body.type,
                 }
@@ -169,33 +169,32 @@ router.post('/request_searchby', isLoggedIn, async(req, res) => {
         }
 
         if (bRoot == true) {
-            list = await db.Inouts.findAll({
-                where:{
-                    createdAt:{
-                        [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
-                    },
-                    strID:req.body.strSearchNickname,
-                    eType:req.body.type,
-                    iClass: 2
-                },
-                offset:iOffset,
-                limit:iLimit,
-                order:[['createdAt','DESC']]
-            });
-
+            list = await db.sequelize.query(`
+                SELECT i.*, DATE_FORMAT(i.createdAt,'%Y-%m-%d %H:%i:%S') AS createdAt, DATE_FORMAT(i.completedAt,'%Y-%m-%d %H:%i:%S') AS completedAt, DATE_FORMAT(i.updatedAt,'%Y-%m-%d %H:%i:%S') AS updatedAt, u.strBankOwner AS strUserAccountOwner
+                FROM Inouts i
+                LEFT JOIN Users u ON u.strNickname = i.strID
+                WHERE DATE(i.createdAt) BETWEEN '${req.body.dateStart}' AND '${req.body.dateEnd}'
+                AND i.strGroupID LIKE '${req.body.strGroupID}%'
+                AND i.eType = '${req.body.type}'
+                AND i.iClass = 2
+                AND i.strID = '${req.body.strSearchNickname}'
+                ORDER BY i.createdAt DESC
+                LIMIT ${iLimit}
+                OFFSET ${iOffset}
+            `, {type: db.Sequelize.QueryTypes.SELECT});
         } else {
-            list = await db.Inouts.findAll({
-                where:{
-                    createdAt:{
-                        [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
-                    },
-                    strID:req.body.strSearchNickname,
-                    eType:req.body.type,
-                },
-                offset:iOffset,
-                limit:iLimit,
-                order:[['createdAt','DESC']]
-            });
+            list = await db.sequelize.query(`
+                SELECT i.*, DATE_FORMAT(i.createdAt,'%Y-%m-%d %H:%i:%S') AS createdAt, DATE_FORMAT(i.completedAt,'%Y-%m-%d %H:%i:%S') AS completedAt, DATE_FORMAT(i.updatedAt,'%Y-%m-%d %H:%i:%S') AS updatedAt, u.strBankOwner AS strUserAccountOwner
+                FROM Inouts i
+                LEFT JOIN Users u ON u.strNickname = i.strID
+                WHERE DATE(i.createdAt) BETWEEN '${req.body.dateStart}' AND '${req.body.dateEnd}'
+                AND i.strGroupID LIKE '${req.body.strGroupID}%'
+                AND i.eType = '${req.body.type}'
+                AND i.strID = '${req.body.strSearchNickname}'
+                ORDER BY i.createdAt DESC
+                LIMIT ${iLimit}
+                OFFSET ${iOffset}
+            `, {type: db.Sequelize.QueryTypes.SELECT});
         }
 
         res.send({data : list, totalCount : totalCount, iRootClass:req.user.iClass});

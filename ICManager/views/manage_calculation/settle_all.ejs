@@ -659,15 +659,23 @@
 		if (now.getDate() == 16 || now.getDate() == 1) {
 			bVisible = true;
 		}
-		if ( user.iClass > 1 && user.iClass <= 3 && user.iPermission != 100 && bEnableSettle && bVisible) {
+		if ( user.iClass > 1 && user.iClass <= 3 && user.iPermission != 100 && bEnableSettle) {
 
 			$(`#list_tit`).empty();
-			$(`#list_tit`).append(`
+			if (bVisible) {
+				$(`#list_tit`).append(`
 							<h3>죽장 정산
 								<button id='button_changesettle' style="margin-left:8%;width:200px;height:40px;text-align:center;background-color: rgb(82, 161, 206);color:white" onclick="DoApplySettle();"><strong>죽장 적용</strong></button>
 								<button id='button_applysettle' style="margin-left:300px;width:200px;height:40px;text-align:center;background-color: rgb(218, 107, 107);color:white" onclick="RequestApplySettle();"><strong>죽장 지급</strong></button>
 							</h3>
 						`);
+			} else {
+				$(`#list_tit`).append(`
+							<h3>죽장 정산
+								<button id='button_changesettle' style="margin-left:8%;width:200px;height:40px;text-align:center;background-color: rgb(82, 161, 206);color:white" onclick="DoApplySettle();"><strong>죽장 적용</strong></button>
+							</h3>
+						`);
+			}
 		} else {
 			$(`#list_tit`).empty();
 			$(`#list_tit`).append(`

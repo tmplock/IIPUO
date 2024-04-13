@@ -124,7 +124,9 @@ let GetBettingTargetBettings = (bets, color) => {
             let tag = `<font style="color: black;">${GetNumber(cBetting)}</font>`;
             tags = (tags == '') ? tag : `${tags}<br style="padding: 10px;">${tag}`;
         }
-    } catch (err) {}
+    } catch (err) {
+
+    }
     return `<td style="font-size: 12px; background-color:${color}; padding: 10px; line-height: 1.5;">${tags}</td>`
 }
 
@@ -235,7 +237,7 @@ let SetBettingList = (records, startIndex) => {
             tagTargetWin = `<td style="font-size: 12px; background-color:${color}; padding: 10px; line-height: 1.5;"><font style="color: black;">${GetNumber(records[i].iWin)}</font></td>`
         } else {
             if (eState == 'COMPLETE') {
-                if (tagTargetBet.length > 0) {
+                if (bets.length > 0) {
                     if (records[i].iWin > 0) {
                         tagDetail = `<a style="color:red;" onclick="OnClickRoundDetail('${records[i].id}')" href="#">당첨 결과</a>`;
                     } else {

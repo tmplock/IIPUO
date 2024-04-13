@@ -1,8 +1,6 @@
-const Enum = require('./enum');
 const db = require('../db');
-const axios = require('axios');
 
-const vVivo = require('../vender/vivo');
+const cron = require('node-cron');
 
 let CreateBet = async (strID, strNickname, strGroupID, iClass, iBalance, iGameCode, strVender, strGameID, strTableID, strRound, strUniqueID, strDetail, strResult, iTarget, iBet, iWin, eState, eType, strURL) => {
 
@@ -101,13 +99,12 @@ exports.ProcessBet = async (strID, strNickname, strGroupID, iClass, iBalance, iG
 
 exports.ProcessWin = async (strID, strNickname, strGroupID, iClass, iBalance, iGameCode, strVender, strGameID, strTableID, strRound, strUniqueID, strDetail, strResult, iTarget, iWin, strURL) => {
 
-    if ( iWin <= 0 )
+    if ( parseInt(iWin) <= 0 )
         return;
 
-    //  슬롯일 경우 무조건 새로 생성
     switch ( iGameCode )
     {
-    case 0:
+    case 0: //  바카라일 경우만
         {
             //  베팅한 상태에서 완료가 안된 상태만 조회
             let bet = await db.RecordBets.findOne({where:{strID:strID, strRound:strRound, strVender:strVender, eState:'STANDBY'}});
@@ -122,8 +119,8 @@ exports.ProcessWin = async (strID, strNickname, strGroupID, iClass, iBalance, iG
                 }
                 else
                 {
-                    const cWin = parseFloat(bet.iWin) + iWin;
-                    await db.RecordBets.update({iWin:cWin, eType:'BETWIN', eState:'STANDBY', strUniqueID:strUniqueID}, {where:{id:bet.id}});
+                    //const cWin = parseFloat(bet.iWin) + iWin;
+                    await db.RecordBets.update({iWin:iWin, eType:'BETWIN', eState:'STANDBY', strUniqueID:strUniqueID}, {where:{id:bet.id}});
                 }
             }
             else

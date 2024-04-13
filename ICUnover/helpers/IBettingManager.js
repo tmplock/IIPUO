@@ -61,43 +61,87 @@ exports.ProcessBet = async (strID, strNickname, strGroupID, iClass, iBalance, iG
     await CreateBet(strID, strNickname, strGroupID, iClass, iBalance, iGameCode, strVender, strGameID, strTableID, strRound, strUniqueID, strDetail, strResult, iTarget, iBet, 0, eState, eType, strURL);
 }
 
+// exports.ProcessWin = async (strID, strNickname, strGroupID, iClass, iBalance, iGameCode, strVender, strGameID, strTableID, strRound, strUniqueID, strDetail, strResult, iTarget, iWin, strURL) => {
+
+//     //  슬롯일 경우 무조건 새로 생성
+//     if ( iGameCode == 200 ) // When win event occured from slot
+//     {
+//         if (iWin > 0)
+//         {
+//             let eState = 'STANDBY';
+//             await CreateBet(strID, strNickname, strGroupID, iClass, iBalance, iGameCode, strVender, strGameID, strTableID, strRound, strUniqueID, strDetail, strResult, iTarget, 0, iWin, eState, 'WIN', strURL);
+
+//         }
+//         return;
+//     }
+
+//     //  베팅한 상태에서 완료가 안된 상태만 조회
+//     let bet = await db.RecordBets.findOne({where:{strID:strID, strRound:strRound, strVender:strVender, eState:'STANDBY'}});
+//     if ( bet != null )
+//     {
+//         if ( bet.iBet == iWin )
+//         {
+//             //  TIE WIN
+//             //await db.RecordBets.update({iWin:iWin, eType:'CANCEL_BET', eState:'STANDBY'}, {where:{id:bet.id}});
+//             //  계산을 할 필요가 없어서 바로 COMPLETE 로 설정
+//             await db.RecordBets.update({iWin:iWin, eType:'CANCEL_BET', eState:'COMPLETE'}, {where:{id:bet.id}});
+//         }
+//         else
+//         {
+//             const cWin = parseFloat(bet.iWin) + iWin;
+//             await db.RecordBets.update({iWin:cWin, eType:'BETWIN', eState:'STANDBY', strUniqueID:strUniqueID}, {where:{id:bet.id}});
+//         }
+//     }
+//     else
+//     {
+//         let eState = 'STANDBY';
+//         await CreateBet(strID, strNickname, strGroupID, iClass, iBalance, iGameCode, strVender, strGameID, strTableID, strRound, strUniqueID, strDetail, strResult, iTarget, 0, iWin, eState, 'WIN', strURL);
+//     }
+// }
+
 exports.ProcessWin = async (strID, strNickname, strGroupID, iClass, iBalance, iGameCode, strVender, strGameID, strTableID, strRound, strUniqueID, strDetail, strResult, iTarget, iWin, strURL) => {
 
+    if ( iWin <= 0 )
+        return;
+
     //  슬롯일 경우 무조건 새로 생성
-    if ( iGameCode == 200 ) // When win event occured from slot
+    switch ( iGameCode )
     {
-        if (iWin > 0)
+    case 0:
+        {
+            //  베팅한 상태에서 완료가 안된 상태만 조회
+            let bet = await db.RecordBets.findOne({where:{strID:strID, strRound:strRound, strVender:strVender, eState:'STANDBY'}});
+            if ( bet != null )
+            {
+                if ( bet.iBet == iWin )
+                {
+                    //  TIE WIN
+                    //await db.RecordBets.update({iWin:iWin, eType:'CANCEL_BET', eState:'STANDBY'}, {where:{id:bet.id}});
+                    //  계산을 할 필요가 없어서 바로 COMPLETE 로 설정
+                    await db.RecordBets.update({iWin:iWin, eType:'CANCEL_BET', eState:'COMPLETE'}, {where:{id:bet.id}});
+                }
+                else
+                {
+                    const cWin = parseFloat(bet.iWin) + iWin;
+                    await db.RecordBets.update({iWin:cWin, eType:'BETWIN', eState:'STANDBY', strUniqueID:strUniqueID}, {where:{id:bet.id}});
+                }
+            }
+            else
+            {
+                let eState = 'STANDBY';
+                await CreateBet(strID, strNickname, strGroupID, iClass, iBalance, iGameCode, strVender, strGameID, strTableID, strRound, strUniqueID, strDetail, strResult, iTarget, 0, iWin, eState, 'WIN', strURL);
+            }
+        }
+        break;
+    default:
         {
             let eState = 'STANDBY';
             await CreateBet(strID, strNickname, strGroupID, iClass, iBalance, iGameCode, strVender, strGameID, strTableID, strRound, strUniqueID, strDetail, strResult, iTarget, 0, iWin, eState, 'WIN', strURL);
-
         }
-        return;
-    }
-
-    //  베팅한 상태에서 완료가 안된 상태만 조회
-    let bet = await db.RecordBets.findOne({where:{strID:strID, strRound:strRound, strVender:strVender, eState:'STANDBY'}});
-    if ( bet != null )
-    {
-        if ( bet.iBet == iWin )
-        {
-            //  TIE WIN
-            //await db.RecordBets.update({iWin:iWin, eType:'CANCEL_BET', eState:'STANDBY'}, {where:{id:bet.id}});
-            //  계산을 할 필요가 없어서 바로 COMPLETE 로 설정
-            await db.RecordBets.update({iWin:iWin, eType:'CANCEL_BET', eState:'COMPLETE'}, {where:{id:bet.id}});
-        }
-        else
-        {
-            const cWin = parseFloat(bet.iWin) + iWin;
-            await db.RecordBets.update({iWin:cWin, eType:'BETWIN', eState:'STANDBY', strUniqueID:strUniqueID}, {where:{id:bet.id}});
-        }
-    }
-    else
-    {
-        let eState = 'STANDBY';
-        await CreateBet(strID, strNickname, strGroupID, iClass, iBalance, iGameCode, strVender, strGameID, strTableID, strRound, strUniqueID, strDetail, strResult, iTarget, 0, iWin, eState, 'WIN', strURL);
+        break;
     }
 }
+
 
 exports.ProcessCancel = async (strUniqueID, strGameID, strRound, eType) => {
 

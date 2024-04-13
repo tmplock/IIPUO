@@ -5,7 +5,7 @@ const app = express();
 const server = require('http').Server(app);
 
 // const cron = require('./cron');
-//const cron = require('./cron_overview');
+const cron = require('./cron_overview');
 //const cron = require('./cron_rolling');
 
 const db = require('./db');
@@ -17,7 +17,7 @@ server.listen(cPort, () => {
     console.log(`IBetBuilder Server is started At ${cPort}`);
 });
 
-
+/*
 
 
 
@@ -99,3 +99,4 @@ setInterval( async () => {
 
 }, 1000);
 
+*/

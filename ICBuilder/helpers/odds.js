@@ -1610,6 +1610,9 @@ exports.ProcessRollingWin = (oRO, iGameCode, iWin, strDate) => {
         case Enum.EGameCode.PowerBall:
             objectData.iWinPB += cWinAmount;
             break;
+        default:
+            objectData.iWinB += cWinAmount;
+            break;
     }
     let listFinal = ProcessGroupDailyOverview(o, objectData, strDate);
 

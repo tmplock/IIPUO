@@ -236,7 +236,7 @@ let SetInputList = (list, iRootClass) => {
 
         let tagAccountOwner = '';
         if (iRootClass <= 3) {
-            tagAccountOwner = `<td>${list[i].strUserAccountOwner}</td>`;
+            tagAccountOwner = `<td>${list[i].strAccountOwner}</td>`;
         }
 
         let tag = `
@@ -332,7 +332,7 @@ let SetInputList = (list, iRootClass) => {
 
         if (parseInt(user.iRootClass) <= 3) {
             tag += `<td id="bank_info"">
-                <p style="color: black;">${list[i].strBankName}(${list[i].strAccountOwner})</p>
+                <p style="color: black;">${list[i].strBankName}(${list[i].strUserAccountOwner})</p>
                 </td>`;
         }
 

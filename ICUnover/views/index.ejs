@@ -233,63 +233,179 @@
 
 <!--pop 배너영역-->
 <!--  popup  -->
-    <div id="main_pop_notice_popup" class="pop_main" style="z-index:1000; position:absolute; top: 85px;">
-    <table style="">
-        <tr>
-            <td style="padding-left: 10px;">
-                <div id="main_pop_notice_popup_01" style="display: none">
-                    <div><img src="/img/pop/popup_01.png" style="width:450px; height: 700px;" /></div>
-                    <div style="height:35px; background:#262626;  color:#ffffff;">
-                        <span style="float: left; margin-left: 20px; margin-top: 5px;"><input type="checkbox" name="nomore" onclick="closePop('main_pop_notice_popup_01');"></span>
-                        <span onclick="$('#main_pop_notice_popup_01').hide();" style="cursor:hand;cursor:pointer;line-height: 35px;float:left; margin-left:5px;">오늘하루 이창 열지않음</span>
-                        <span class="close">
-                            <span onclick="$('#main_pop_notice_popup_01').hide();" style="cursor:hand;cursor:pointer;line-height: 35px;float:right; margin-right:20px;">닫기 X</span>
-                        </span>
-                    </div>
-                </div>
-            </td>
-            <td style="padding-left: 10px;">
-                <div id="main_pop_notice_popup_02" style="display: none">
-                    <div><img src="/img/pop/popup_02.png" style="width:450px; height: 700px;" /></div>
-                    <div style="height:35px; background:#262626;  color:#ffffff;">
-                        <span style="float: left; margin-left: 20px; margin-top: 5px;"><input type="checkbox" name="nomore" onclick="closePop('main_pop_notice_popup_02');"></span>
-                        <span onclick="$('#main_pop_notice_popup_02').hide();" style="cursor:hand;cursor:pointer;line-height: 35px;float:left; margin-left:5px;">오늘하루 이창 열지않음</span>
-                        <span class="close">
-                            <span onclick="$('#main_pop_notice_popup_02').hide();" style="cursor:hand;cursor:pointer;line-height: 35px;float:right; margin-right:20px;">닫기 X</span>
-                        </span>
-                    </div>
-                </div>
-            </td>
-        </tr>
-    </table>
-</div>
+    <div id="main_pop_notice_popup" class="pop_main" style="display:none; z-index:1000; position:absolute; top: 85px;">
+    </div>
 
     <!--  Play moview  -->
-    <div id="main_pop_notice_new20" class="pop_main" style="display:none;z-index:9990;">
-        <table border="0" cellspacing="0" cellpadding="0">
-            <tr>
-                <td align="center" bgcolor="#000000">
-                    <video width="620" controls autoplay loop muted>
-                        <source src="/img/uo.mp4" type="video/mp4">
-                    </video>
-                </td>
-            </tr>
-        </table>
+    <div id="main_pop_play_movie" class="pop_main" style="display:none;z-index:999; position:absolute; top: 85px; right: 10px;">
+<!--        <table border="0" cellspacing="0" cellpadding="0">-->
+<!--            <tr>-->
+<!--                <td align="center" bgcolor="#000000">-->
+<!--                    <video width="620" controls autoplay loop muted>-->
+<!--                        <source src="/img/uo.mp4" type="video/mp4">-->
+<!--                    </video>-->
+<!--                </td>-->
+<!--            </tr>-->
+<!--        </table>-->
 
-        <div style="height:35px; background:#262626;  color:#ffffff; margin-top: -5px;">
+<!--        <div style="height:35px; background:#262626;  color:#ffffff; margin-top: -5px;">-->
 
-        <span style="width:325px;float:left; display:block; font-size:12px; letter-spacing:-0.05em; font-weight:bold;
-        line-height:25px; padding-left:20px;padding-top:5px; cursor:pointer;" >오늘하루 이창 열지않음<span><input type="checkbox" name="nomore" onclick="closePop('main_pop_notice_new20');"></span></span>
+<!--        <span style="width:325px;float:left; display:block; font-size:12px; letter-spacing:-0.05em; font-weight:bold;-->
+<!--        line-height:25px; padding-left:20px;padding-top:5px; cursor:pointer;" >오늘하루 이창 열지않음<span><input type="checkbox" name="nomore" onclick="closePop('main_pop_notice_new20');"></span></span>-->
 
-            <span class="close">
-                <span onclick="$('#main_pop_notice_new20').hide();" style="cursor:hand;cursor:pointer;line-height: 35px;float:right; margin-right:10px;">닫기 X</span>
-            </span>
-        </div>
+<!--            <span class="close">-->
+<!--                <span onclick="$('#main_pop_notice_new20').hide();" style="cursor:hand;cursor:pointer;line-height: 35px;float:right; margin-right:10px;">닫기 X</span>-->
+<!--            </span>-->
+<!--        </div>-->
 
     </div>
 
 
     <script>
+
+        let movieList = ['uo.mp4'];
+        let popupList = ['popup_01.png', 'popup_02.png'];
+
+    function showPopup() {
+        if (popupList.length <= 0) {
+            $('#main_pop_notice_popup').empty();
+            $('#main_pop_notice_popup').hide();
+            return;
+        }
+
+        let showPopupList = [];
+        for (let i in popupList) {
+            if (getCookie(`${popupList[i]}`) != 'done') {
+                showPopupList.push(popupList[i]);
+            }
+        }
+
+        if (showPopupList.length > 0) {
+            // 모바일 여부 체크
+            const screenWidth = window.screen.width;
+            const screenHeight = window.screen.height;
+            const fullSizeWidth = showPopupList.length * 480 + (showPopupList.length-1 * 10);
+            if (screenWidth > fullSizeWidth) {
+                // 기존 방식으로 그리기
+                $('#main_pop_notice_popup').empty();
+                $('#main_pop_notice_popup').append(`<table style=""><tr>`);
+                for (let i in showPopupList) {
+                    $('#main_pop_notice_popup').append(`
+                        <td id="${showPopupList[i]}" style="padding-left: 10px;" style="display: "">
+                            <div><img src="/img/pop/${showPopupList[i]}" style="width:450px; height: 700px;" /></div>
+                                <div style="height:35px; background:#262626;  color:#ffffff;">
+                                    <span style="float: left; margin-left: 20px; margin-top: 5px;"><input type="checkbox" name="nomore" onclick="closePopNotice('${showPopupList[i]}', '${showPopupList[i]}');"></span>
+                                    <span onclick="closePopNotice('${showPopupList[i]}', '${showPopupList[i]}');" style="cursor:hand;cursor:pointer;line-height: 35px;float:left; margin-left:5px;">오늘하루 이창 열지않음</span>
+                                    <span class="close">
+                                        <span onclick="closePopNotice('', '${showPopupList[i]}')" style="cursor:hand;cursor:pointer;line-height: 35px;float:right; margin-right:20px;">닫기 X</span>
+                                    </span>
+                                </div>
+                        </td>
+                    `);
+                }
+                $('#main_pop_notice_popup').append(`</tr></table>`);
+            } else {
+                // 기존 방식으로 그리기
+                $('#main_pop_notice_popup').empty();
+                $('#main_pop_notice_popup').append(`<table style="">`);
+                for (let i in showPopupList) {
+                    $('#main_pop_notice_popup').append(`
+                        <tr id="${showPopupList[i]}" style="display: "">
+                        <td style="padding-left: 0px;">
+                            <div id="${showPopupList}">
+                                <div><img src="/img/pop/${showPopupList[i]}" style="width:100%; height: 700px;" /></div>
+                                <div style="height:35px; background:#262626;  color:#ffffff;">
+                                    <span style="float: left; margin-left: 0px; margin-top: 5px;"><input type="checkbox" name="nomore" onclick="closePopNotice('${showPopupList[i]}', '${showPopupList[i]}');"></span>
+                                    <span onclick="closePopNotice('${showPopupList[i]}', '${showPopupList[i]}');" style="cursor:hand;cursor:pointer;line-height: 35px;float:left; margin-left:5px;">오늘하루 이창 열지않음</span>
+                                    <span class="close">
+                                        <span onclick="closePopNotice('', '${showPopupList[i]}');" style="cursor:hand;cursor:pointer;line-height: 35px;float:right; margin-right:20px;">닫기 X</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </td>
+                        </tr>
+                    `);
+                }
+                $('#main_pop_notice_popup').append(`</table>`);
+            }
+            $('#main_pop_notice_popup').show();
+        }
+    }
+
+    function showMovie() {
+        if (movieList.length <= 0) {
+            $('#main_pop_play_movie').empty();
+            $('#main_pop_play_movie').hide();
+            return;
+        }
+
+        let showMovieList = [];
+        for (let i in movieList) {
+            if (getCookie(`${movieList[i]}`) != 'done') {
+                showMovieList.push(movieList[i]);
+            }
+        }
+        console.log(`movieList: ${movieList.length}`);
+        $('#main_pop_play_movie').empty();
+        if (showMovieList.length > 0) {
+            // 모바일 여부 체크
+            const screenWidth = window.screen.width;
+            const screenHeight = window.screen.height;
+            const fullSizeWidth = showMovieList.length * 620 + (showMovieList.length-1 * 10);
+            if (screenWidth > fullSizeWidth) {
+                // 기존 방식으로 그리기
+                for (let i in showMovieList) {
+                    $('#main_pop_play_movie').append(`
+                        <table border="0" cellspacing="0" cellpadding="0">
+                            <tr>
+                                <td align="center" bgcolor="#000000">
+                                    <video width="620" controls autoplay loop muted>
+                                        <source src="/img/${showMovieList[i]}" type="video/mp4">
+                                    </video>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <div style="height:35px; background:#262626;  color:#ffffff; margin-top: -5px;">
+
+                        <span style="width:325px;float:left; display:block; font-size:12px; letter-spacing:-0.05em; font-weight:bold;
+                        line-height:25px; padding-left:20px;padding-top:5px; cursor:pointer;" >오늘하루 이창 열지않음<span><input type="checkbox" name="nomore" onclick="closePopMovie('${showMovieList[i]}', '${showMovieList[i]}');"></span></span>
+
+                            <span class="close">
+                                <span onclick="closePopMovie('', '${showMovieList[i]}')" style="cursor:hand;cursor:pointer;line-height: 35px;float:right; margin-right:10px;">닫기 X</span>
+                            </span>
+                        </div>
+                    `);
+                }
+            } else {
+                // 모바일 방식으로 그리기
+                for (let i in showMovieList) {
+                    $('#main_pop_play_movie').append(`
+                        <table id="${showMovieList[i]}" border="0" cellspacing="0" cellpadding="0">
+                            <tr>
+                                <td align="center" bgcolor="#000000">
+                                    <video width="100%" controls autoplay loop muted>
+                                        <source src="/img/${showMovieList[i]}" type="video/mp4">
+                                    </video>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <div style="height:35px; background:#262626;  color:#ffffff; margin-top: -5px;">
+
+                        <span style="width:80%;float:left; display:block; font-size:12px; letter-spacing:-0.05em; font-weight:bold;
+                        line-height:25px; padding-left:20px;padding-top:5px; cursor:pointer;" >오늘하루 이창 열지않음<span><input type="checkbox" name="nomore" onclick="closePopMovie('${showMovieList[i]}', '${showMovieList[i]}');"></span></span>
+
+                            <span class="close">
+                                <span onclick="closePopMovie('', '${showMovieList[i]}');" style="cursor:hand;cursor:pointer;line-height: 35px;float:right; margin-right:10px;">닫기 X</span>
+                            </span>
+                        </div>
+                    `);
+                }
+            }
+            $('#main_pop_play_movie').show();
+        }
+    }
 
     function getCookie( name ){
         var nameOfCookie = name + "=";
@@ -318,8 +434,44 @@
 
     function closePop(getId)
     {
-        setCookie( getId, "done" , 1 );
+        let id = getId ?? '';
+        if (id.length > 0) {
+            setCookie( id, "done" , 1 );
+        }
         $('#'+getId).hide();
+    }
+
+    function closePopNotice(getId, tag)
+    {
+        let id = getId ?? '';
+        if (id.length > 0) {
+            setCookie( getId, "done" , 1 );
+        }
+        let list = [];
+        for (let i in popupList) {
+            if (popupList[i] != tag) {
+                list.push(popupList[i]);
+            }
+        }
+        popupList = list;
+        showPopup();
+    }
+
+
+    function closePopMovie(getId, tag)
+    {
+        let id = getId ?? '';
+        if (id.length > 0) {
+            setCookie( id, "done" , 1 );
+        }
+        let list = [];
+        for (let i in movieList) {
+            if (movieList[i] != tag) {
+                list.push(movieList[i]);
+            }
+        }
+        movieList = list;
+        showMovie();
     }
 
     if(getCookie("main_pop_notice_new20") != "done") {
@@ -327,17 +479,17 @@
         $("#main_pop_notice_new20").show();
     }
 
-    if(getCookie("main_pop_notice_popup_01") != "done") {
-        $("#main_pop_notice_popup_01").show();
-    }else{
-        $("#main_pop_notice_popup_01").hide();
-    }
-
-    if(getCookie("main_pop_notice_popup_02") != "done") {
-        $("#main_pop_notice_popup_02").show();
-    }else{
-        $("#main_pop_notice_popup_02").hide();
-    }
+    // if(getCookie("main_pop_notice_popup_01") != "done") {
+    //     $("#main_pop_notice_popup_01").show();
+    // }else{
+    //     $("#main_pop_notice_popup_01").hide();
+    // }
+    //
+    // if(getCookie("main_pop_notice_popup_02") != "done") {
+    //     $("#main_pop_notice_popup_02").show();
+    // }else{
+    //     $("#main_pop_notice_popup_02").hide();
+    // }
     
     function Popup_new(divname, topPos, mWidth) {
         //request data for centering
@@ -369,6 +521,9 @@
         });
     }
 
+    showMovie();
+    showPopup();
+
 </script>
 
 
@@ -382,6 +537,7 @@
         // ajaxContents("/ajaxCall/topEvent", "main_event");
         // ajaxContents("/ajaxCall/topFaq", "main_faq");
         // ajaxContents("/ajaxCall/topWeekWithdraw", "week");
+
     });
 
 </script><!-- 여기서 부터 카피라이트 부분입니다. -->

@@ -221,9 +221,6 @@ console.log(dateCurrent);
 var daily = null;
 
 cron.schedule('*/1 * * * *', async () => {
-    let date = moment(Date.now()).format('YYYY-MM-dd HH:mm:ss');
-    logger.info(`스케줄 처리 :  ${date}`);
-
     // 정산 확인용
     let datas= await db.sequelize.query(`
         SELECT

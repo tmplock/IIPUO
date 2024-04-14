@@ -20,7 +20,7 @@ const logger = winston.createLogger({
     //* 로그 출력 형식 정의
     format: combine(
         timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-        label({ label: 'Winston 연습 어플리케이션' }), // 어플리케이션 이름
+        label({ label: 'ICManager' }), // 어플리케이션 이름
         logFormat, // log 출력 포맷
     ),
 

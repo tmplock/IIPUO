@@ -95,6 +95,7 @@ const { suppressDeprecationWarnings } = require('moment');
 const {DATETIME} = require("mysql/lib/protocol/constants/types");
 const {Op} = require("sequelize");
 const moment = require("moment");
+const logger = require("./config/logger");
 app.use(i18na);
 
 
@@ -218,10 +219,38 @@ console.log(dateCurrent);
  **/
 // IAgent3.CreateOrUpdateDailyRecord(daily);
 var daily = null;
-cron.schedule('0,5,10,15,20,25,30,35,40,45,50,55 * * * *', async () => {
+
+cron.schedule('*/1 * * * *', async () => {
     let date = moment(Date.now()).format('YYYY-MM-dd HH:mm:ss');
-    console.log(`정산 스케줄 :  ${date}`);
-    // daily =  await IAgent3.CreateOrUpdateDailyRecord(daily);
+    logger.info(`스케줄 처리 :  ${date}`);
+
+    // 정산 확인용
+    let datas= await db.sequelize.query(`
+        SELECT
+        t2.strID, t2.strNickname,
+        IFNULL((SELECT sum(iAmount) FROM Inouts WHERE strGroupID LIKE CONCAT(t2.strGroupID,'%') AND eState = 'COMPLETE' AND eType = 'INPUT' AND date(createdAt) BETWEEN '2024-04-01' AND '2024-04-15' ),0) as input,
+        IFNULL((SELECT sum(iAmount) FROM Inouts WHERE strGroupID LIKE CONCAT(t2.strGroupID,'%') AND eState = 'COMPLETE' AND eType = 'OUTPUT' AND date(createdAt) BETWEEN '2024-04-01' AND '2024-04-15'),0) as output,
+        IFNULL((SELECT SUM(iCash) FROM Users WHERE strGroupID LIKE CONCAT(t2.strGroupID,'%') AND iClass > 3),0) as money,
+        IFNULL((SELECT sum(iRolling) FROM Users WHERE strGroupID LIKE CONCAT(t2.strGroupID,'%') AND iClass > 3), 0) AS rolling,
+        IFNULL((SELECT -SUM((iAgentWinB + iAgentWinUO + iAgentWinS + iAgentWinPB) - (iAgentBetB + iAgentBetUO + iAgentBetS + iAgentBetPB) + (iAgentRollingB + iAgentRollingUO + iAgentRollingS + iAgentRollingPBA + iAgentRollingPBB)) FROM RecordDailyOverviews WHERE strID = t2.strID AND date(strDate) BETWEEN '2024-04-01' AND '2024-04-15'), 0) AS total
+        FROM Users AS t1
+        LEFT JOIN Users AS t2 ON t2.iParentID = t1.id
+        WHERE t2.iPermission != 100 AND t2.iClass=3 AND t1.strGroupID LIKE CONCAT('000', '%');
+    `);
+    if (datas.length > 0) {
+        logger.info("################################################");
+        logger.info(`아이디 / 닉네임 / 입금 / 출금 / 보유머니 / 미전환롤링 / 합계 / 차이 / 일치여부`);
+        let list = datas[0];
+        for (let i in list) {
+            let total = list[i].input - list[i].output - list[i].money - list[i].rolling;
+            let cal  = Math.abs(total-list[i].total);
+            let memo = '일치';
+            if (cal > 100) {
+                memo = '미일치';
+            }
+            logger.info(`${list[i].strID} / ${list[i].strNickname} / ${list[i].input} / ${list[i].output} / ${list[i].money} / ${list[i].rolling} / ${list[i].total} / ${cal} / ${memo}`);
+        }
+    }
 });
 
 // 처음 시작시에 한번 기동되도록 수정

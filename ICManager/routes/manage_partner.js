@@ -13,7 +13,7 @@ const db = require('../models');
 //const db = require('../db');
 const ITime = require('../utils/time');
 const IInout = require('../implements/inout');
-const {Op, where}= require('sequelize');
+const {Op, where, QueryTypes}= require('sequelize');
 
 //const IObject = require('../objects/betting');
 
@@ -30,6 +30,7 @@ const cNumGameRooms = 3;
 //var kRealtimeObject = new IObject.IRealtimeBetting();
 
 const {isLoggedIn, isNotLoggedIn} = require('./middleware');
+const moment = require("moment");
 
 
 router.get('/default', isLoggedIn, async(req, res) => {
@@ -240,7 +241,20 @@ router.post('/listadmin', isLoggedIn, async(req, res) => {
         }
     }
 
-    let strPartnerInfo = `본사 : ${admin.toLocaleString()} / 대본사 : ${proAdmin.toLocaleString()} / 부본사 : ${viceAdmin.toLocaleString()} / 총판 : ${agent.toLocaleString()} / 매장 : ${shop.toLocaleString()} / 회원 : ${member.toLocaleString()}`;
+    let now = moment().format('YYYY-MM-DD');
+    let dailys = await db.sequelize.query(`
+        SELECT COUNT(id) AS total
+        FROM RecordDailyOverviews 
+        WHERE strDate = '${now}' 
+          AND iClass > 5 AND strGroupID LIKE '${req.body.strGroupID}%' 
+          AND (iBetB > 0 OR iBetUO > 0 OR iBetS > 0)
+    `, {type: QueryTypes.SELECT});
+    let userCount = 0;
+    if (dailys.length > 0) {
+        userCount = dailys[0].total;
+    }
+
+    let strPartnerInfo = `본사 : ${admin.toLocaleString()} / 대본사 : ${proAdmin.toLocaleString()} / 부본사 : ${viceAdmin.toLocaleString()} / 총판 : ${agent.toLocaleString()} / 매장 : ${shop.toLocaleString()} / 회원 : ${member.toLocaleString()} / 당일게임인원 : ${userCount.toLocaleString()}`;
     user.strPartnerInfo = strPartnerInfo;
 
     res.render('manage_partner/betting_listadmin', {iLayout:0, iHeaderFocus:0, data:bobj, user:user, agentinfo:agentinfo, iocount:iocount});

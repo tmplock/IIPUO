@@ -211,6 +211,9 @@ router.post('/listadmin', isLoggedIn, async(req, res) => {
             },
             iClass: {
                 [Op.gt]: 2
+            },
+            iPermission: {
+                [Op.notIn]: [100]
             }
         }});
 

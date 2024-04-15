@@ -205,6 +205,41 @@ router.post('/listadmin', isLoggedIn, async(req, res) => {
     const agentinfo = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
     let iocount = await IInout.GetProcessing(user.strGroupID, user.strNickname, dbuser.iClass);
 
+    let list = await db.Users.findAll({where: {
+            strGroupID: {
+                [Op.like]: `${req.body.strGroupID}%`,
+            },
+            iClass: {
+                [Op.gt]: 2
+            }
+        }});
+
+    let admin = 0;
+    let proAdmin = 0;
+    let viceAdmin = 0;
+    let agent = 0;
+    let shop = 0;
+    let member = 0;
+
+    for (let i in list) {
+        if (list[i].iClass == 3) {
+            admin += 1;
+        } else if (list[i].iClass == 4) {
+            proAdmin += 1;
+        } else if (list[i].iClass == 5) {
+            viceAdmin += 1;
+        } else if (list[i].iClass == 6) {
+            agent += 1;
+        } else if (list[i].iClass == 7) {
+            shop += 1;
+        } else if (list[i].iClass == 8) {
+            member += 1;
+        }
+    }
+
+    let strPartnerInfo = `본사 : ${admin.toLocaleString()} / 대본사 : ${proAdmin.toLocaleString()} / 부본사 : ${viceAdmin.toLocaleString()} / 총판 : ${agent.toLocaleString()} / 매장 : ${shop.toLocaleString()} / 회원 : ${member.toLocaleString()}`;
+    user.strPartnerInfo = strPartnerInfo;
+
     res.render('manage_partner/betting_listadmin', {iLayout:0, iHeaderFocus:0, data:bobj, user:user, agentinfo:agentinfo, iocount:iocount});
 });
 

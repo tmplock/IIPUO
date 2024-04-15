@@ -719,6 +719,12 @@
 				if (iClass == 4) {
 					totalObj.iBaccaratWinLose += dataList[i].iBaccaratWinLose ?? 0;
 					totalObj.iUnderOverWinLose += dataList[i].iUnderOverWinLose ?? 0;
+					totalObj.iSlotWinLose += dataList[i].iSlotWinLose ?? 0;
+					totalObj.iCommissionBaccarat += dataList[i].iCommissionBaccarat ?? 0;
+					let fSettleSlot = dataList[i].fSettleSlot ?? 0;
+					if (fSettleSlot != 0) {
+						totalObj.iCommissionSlot += dataList[i].iCommissionSlot ?? 0;
+					}
 				}
 				if (iClass == 5) {
 					totalObj.iSettleVice += dataList[i].iSettle ?? 0;
@@ -728,12 +734,6 @@
 					totalObj.iSettleVice += dataList[i].iSettleVice ?? 0;
 					totalObj.iSettle += dataList[i].iSettle ?? 0;
 					totalObj.iQuarterSettle += dataList[i].iSettle ?? 0;
-				}
-				totalObj.iCommissionBaccarat += dataList[i].iCommissionBaccarat ?? 0;
-				totalObj.iSlotWinLose += dataList[i].iSlotWinLose ?? 0;
-				let fSettleSlot = dataList[i].fSettleSlot ?? 0;
-				if (fSettleSlot != 0) {
-					totalObj.iCommissionSlot += dataList[i].iCommissionSlot ?? 0;
 				}
 
 				totalObj.iResult += dataList[i].iResult ?? 0;
@@ -853,15 +853,15 @@
 				obj.iBaccaratWinLose = 0;
 				obj.iUnderOverWinLose = 0;
 			}
-		}
 
-		let winloseS = parseInt(obj.iSlotWinLose ?? 0);
-		// 슬롯 죽장이 없을 경우 알값은 지분자들이 계산
-		let fSettleSlot = parseInt(obj.fSettleSlot ?? 0);
-		if (winloseS > 0 && fSettleSlot != 0) {
-			obj.iCommissionSlot = winloseS * parseFloat(obj.fCommission);
-		} else if (winloseS < 0) {
-			obj.iSlotWinLose = 0;
+			let winloseS = parseInt(obj.iSlotWinLose ?? 0);
+			// 슬롯 죽장이 없을 경우 알값은 지분자들이 계산
+			let fSettleSlot = parseInt(obj.fSettleSlot ?? 0);
+			if (winloseS > 0 && fSettleSlot != 0) {
+				obj.iCommissionSlot = winloseS * parseFloat(obj.fCommission);
+			} else if (winloseS < 0) {
+				obj.iSlotWinLose = 0;
+			}
 		}
 		console.log(obj);
 	}

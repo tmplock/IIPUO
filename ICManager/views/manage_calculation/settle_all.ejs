@@ -777,60 +777,97 @@
 				iSettlePBB = parseFloat(obj.iPBBTotalVice ?? 0);
 			}
 
-			// 죽장계산
-			iSettleBaccarat = (parseInt(obj.iBaccaratTotal) + parseInt(obj.iUnderOverTotal) - parseInt(obj.iCommissionBaccarat ?? 0) - parseInt(iSettleBaccarat)) * obj.fSettleBaccarat * 0.01;
-			iSettleSlot = (obj.iSlotTotal - parseInt(obj.iCommissionSlot) - parseInt(iSettleSlot)) * obj.fSettleSlot * 0.01;
-			iSettlePBA = (obj.iPBATotal - parseInt(iSettlePBA)) * obj.fSettlePBA * 0.01;
-			iSettlePBB = (obj.iPBBTotal - parseInt(iSettlePBB)) * obj.fSettlePBB * 0.01;
+			// 합계
+			let iBTotal = parseInt(obj.iBaccaratTotal) + parseInt(obj.iUnderOverTotal);
+			let iSTotal = parseInt(obj.iSlotTotal);
 
-			obj.iSettleBaccarat = iSettleBaccarat;
-			obj.iSettleSlot = iSettleSlot;
-			obj.iSettlePBA = iSettlePBA;
-			obj.iSettlePBB = iSettlePBB;
-			obj.iSettle = GetParseInt(iSettleBaccarat + iSettleSlot + iSettlePBA + iSettlePBB);
+			// 선행조건 확인
+			// 1. 두개의 죽장률이 다를 경우 2. 두개의 합계가 서로 부호가 다를 경우 3-1. 플러스로 이긴경우 해당 게임의 죽장비율 적용 3-2. 마이너스로 이긴경우 해당 게임의 죽장비율 적용
+			let fSettle = 0.0
+			if (obj.fSettleBaccarat != obj.fSettleSlot) {
+				if ((iBTotal > 0 && iSTotal < 0) || (iBTotal < 0 && iSTotal > 0)) {
+					if (Math.abs(iBTotal) > Math.abs(iSTotal)) {
+						fSettle = obj.fSettleBaccarat;
+					} else if (Math.abs(iSTotal) > Math.abs(iBTotal)) {
+						fSettle = obj.fSettleSlot;
+					}
+				}
+			}
+
+			iBTotal = parseInt(obj.iBaccaratTotal) + parseInt(obj.iUnderOverTotal) - parseInt(obj.iCommissionBaccarat ?? 0) - parseInt(iSettleBaccarat);
+			iSTotal = (parseInt(obj.iSlotTotal) - parseInt(obj.iCommissionSlot) - parseInt(iSettleSlot));
+
+			// 죽장계산
+			if (fSettle > 0) {
+				const iSettle = (iBTotal + iSTotal) * fSettle * 0.01;
+				obj.iSettle = GetParseInt(iSettle);
+			} else {
+				iSettleBaccarat = iBTotal * obj.fSettleBaccarat * 0.01;
+				iSettleSlot = iSTotal * obj.fSettleSlot * 0.01;
+				iSettlePBA = 0;
+				iSettlePBB = 0;
+				obj.iSettle = GetParseInt(iSettleBaccarat + iSettleSlot + iSettlePBA + iSettlePBB);
+			}
+
 			console.log('죽장 정산');
 			console.log(obj.strNickname);
 			console.log(obj.iSettle);
 		} else if (obj.iClass == 5) {
+			// 합계
 			let iBTotal = parseInt(obj.iBaccaratTotal) + parseInt(obj.iUnderOverTotal);
 			let iSTotal = parseInt(obj.iSlotTotal);
-			let iPBATotal = parseInt(obj.iPBATotal);
-			let iPBBTotal = parseInt(obj.iPBBTotal);
 
-			iSettleBaccarat = iBTotal * obj.fSettleBaccarat * 0.01;
-			iSettleSlot = iSTotal * obj.fSettleSlot * 0.01;
-			iSettlePBA = iPBATotal * obj.fSettlePBA * 0.01;
-			iSettlePBB = iPBBTotal * obj.fSettlePBB * 0.01;
+			// 선행조건 확인
+			// 1. 두개의 죽장률이 다를 경우 2. 두개의 합계가 서로 부호가 다를 경우 3-1. 플러스로 이긴경우 해당 게임의 죽장비율 적용 3-2. 마이너스로 이긴경우 해당 게임의 죽장비율 적용
+			let fSettle = 0.0
+			if (obj.fSettleBaccarat != obj.fSettleSlot) {
+				if ((iBTotal > 0 && iSTotal < 0) || (iBTotal < 0 && iSTotal > 0)) {
+					if (Math.abs(iBTotal) > Math.abs(iSTotal)) {
+						fSettle = obj.fSettleBaccarat;
+					} else if (Math.abs(iSTotal) > Math.abs(iBTotal)) {
+						fSettle = obj.fSettleSlot;
+					}
+				}
+			}
 
-			// if (iBTotal > 0) {
-			// 	iSettleBaccarat = iBTotal * obj.fSettleBaccarat * 0.01;
-			// }
-			// if (iSTotal > 0) {
-			// 	iSettleSlot = iSTotal * obj.fSettleSlot * 0.01;
-			// }
-			// if (iPBATotal > 0) {
-			// 	iSettlePBA = iPBATotal * obj.fSettlePBA * 0.01;
-			// }
-			// if (iPBBTotal > 0) {
-			// 	iSettlePBB = iPBBTotal * obj.fSettlePBB * 0.01;
-			// }
-
-			obj.iSettleBaccarat = iSettleBaccarat;
-			obj.iSettleSlot = iSettleSlot;
-			obj.iSettlePBA = iSettlePBA;
-			obj.iSettlePBB = iSettlePBB;
-			obj.iSettle = GetParseInt(iSettleBaccarat + iSettleSlot + iSettlePBA + iSettlePBB);
+			if (fSettle > 0) {
+				const iSettle = (iBTotal + iSTotal) * fSettle * 0.01;
+				obj.iSettle = GetParseInt(iSettle);
+			} else {
+				iSettleBaccarat = iBTotal * obj.fSettleBaccarat * 0.01;
+				iSettleSlot = iSTotal * obj.fSettleSlot * 0.01;
+				iSettlePBA = 0;
+				iSettlePBB = 0;
+				obj.iSettle = GetParseInt(iSettleBaccarat + iSettleSlot + iSettlePBA + iSettlePBB);
+			}
 		} else {
-			iSettleBaccarat = (parseInt(obj.iBaccaratTotal) + parseInt(obj.iUnderOverTotal)) * obj.fSettleBaccarat * 0.01;
-			iSettleSlot = parseInt(obj.iSlotTotal) * obj.fSettleSlot * 0.01;
-			iSettlePBA = parseInt(obj.iPBATotal) * obj.fSettlePBA * 0.01;
-			iSettlePBB = parseInt(obj.iPBBTotal) * obj.fSettlePBB * 0.01;
+			// 합계
+			let iBTotal = parseInt(obj.iBaccaratTotal) + parseInt(obj.iUnderOverTotal);
+			let iSTotal = parseInt(obj.iSlotTotal);
 
-			obj.iSettleBaccarat = iSettleBaccarat;
-			obj.iSettleSlot = iSettleSlot;
-			obj.iSettlePBA = iSettlePBA;
-			obj.iSettlePBB = iSettlePBB;
-			obj.iSettle = GetParseInt(iSettleBaccarat + iSettleSlot + iSettlePBA + iSettlePBB);
+			// 선행조건 확인
+			// 1. 두개의 죽장률이 다를 경우 2. 두개의 합계가 서로 부호가 다를 경우 3-1. 플러스로 이긴경우 해당 게임의 죽장비율 적용 3-2. 마이너스로 이긴경우 해당 게임의 죽장비율 적용
+			let fSettle = 0.0
+			if (obj.fSettleBaccarat != obj.fSettleSlot) {
+				if ((iBTotal > 0 && iSTotal < 0) || (iBTotal < 0 && iSTotal > 0)) {
+					if (Math.abs(iBTotal) > Math.abs(iSTotal)) {
+						fSettle = obj.fSettleBaccarat;
+					} else if (Math.abs(iSTotal) > Math.abs(iBTotal)) {
+						fSettle = obj.fSettleSlot;
+					}
+				}
+			}
+
+			if (fSettle > 0) {
+				const iSettle = (iBTotal + iSTotal) * fSettle * 0.01;
+				obj.iSettle = GetParseInt(iSettle);
+			} else {
+				iSettleBaccarat = iBTotal * obj.fSettleBaccarat * 0.01;
+				iSettleSlot = iSTotal * obj.fSettleSlot * 0.01;
+				iSettlePBA = 0;
+				iSettlePBB = 0;
+				obj.iSettle = GetParseInt(iSettleBaccarat + iSettleSlot + iSettlePBA + iSettlePBB);
+			}
 		}
 		console.log(obj);
 	}

@@ -564,6 +564,11 @@
                     <li>
                         <p style="margin-top:-15px; margin-bottom:-16px; font-weight:medium; color:rgb(255, 251, 0);font-size:17px;font-family:'Spoqa Han Sans Neo', 'sans-serif';"><%=__('MyCash')%><br><span style="color:white;" id="MainLayoutMyCash"><%=parseInt(user.iCash).toLocaleString()%></span></p>
                     </li>
+                    <% if (parseInt(user.iClass) == 2 && user.iPermission != 100) { %>
+                        <li>
+                            <a style="width: 90px;" class="btn_blue" href="javascript:OnClickTodayUser();"><span style="color:white;" id="MainTodayUser">승인요청(0)</span></a>
+                        </li>
+                    <% } %>
                     <div id="input_process">
                     </div>
                     <div id="output_process">
@@ -741,6 +746,22 @@
             var strGroupID = $(`<input type="hidden" value="${user.strGroupID}" name="strGroupID">`);
             var iClass = $(`<input type="hidden" value=${user.iClass} name="iClass">`);
             var iPermission = $(`<input type="hidden" value=${user.iPermission} name="iPermission">`);
+
+            $form.append(strNickname).append(strGroupID).append(iClass).append(iPermission);
+            $form.submit();
+        }
+
+        let OnClickTodayUser = () => {
+
+            let $form = $('<form></form>');
+            $form.attr('action', '/manage_partner/listtodayregist');
+            $form.attr('method', 'post');
+            $form.appendTo('body');
+
+            let strNickname = $(`<input type="hidden" value="${user.strNickname}" name="strNickname">`);
+            let strGroupID = $(`<input type="hidden" value="${user.strGroupID}" name="strGroupID">`);
+            let iClass = $(`<input type="hidden" value=${user.iClass} name="iClass">`);
+            let iPermission = $(`<input type="hidden" value=${user.iPermission} name="iPermission">`);
 
             $form.append(strNickname).append(strGroupID).append(iClass).append(iPermission);
             $form.submit();

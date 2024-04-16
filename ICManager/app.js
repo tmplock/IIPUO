@@ -235,8 +235,8 @@ cron.schedule('*/1 * * * *', async () => {
         WHERE t2.iPermission != 100 AND t2.iClass=3 AND t1.strGroupID LIKE CONCAT('000', '%');
     `);
     if (datas.length > 0) {
-        logger.info("################################################");
         logger.info(`아이디 / 닉네임 / 입금 / 출금 / 보유머니 / 미전환롤링 / 합계 / 차이 / 일치여부`);
+        console.log(`아이디 / 닉네임 / 입금 / 출금 / 보유머니 / 미전환롤링 / 합계 / 차이 / 일치여부`);
         let list = datas[0];
         for (let i in list) {
             let total = list[i].input - list[i].output - list[i].money - list[i].rolling;
@@ -246,6 +246,35 @@ cron.schedule('*/1 * * * *', async () => {
                 memo = '미일치';
             }
             logger.info(`${list[i].strID} / ${list[i].strNickname} / ${list[i].input} / ${list[i].output} / ${list[i].money} / ${list[i].rolling} / ${list[i].total} / ${cal} / ${memo}`);
+            console.log(`${list[i].strID} / ${list[i].strNickname} / ${list[i].input} / ${list[i].output} / ${list[i].money} / ${list[i].rolling} / ${list[i].total} / ${cal} / ${memo}`);
+        }
+        console.log('정산 정보 로그 저장 완료');
+    }
+});
+
+//
+cron.schedule('*/30 * * * * *', async () => {
+    console.log('당일 등록 유저 조회(승인대기)');
+    let todayUsers = await db.Users.count({
+        where: {
+            strGroupID: {
+                [Op.like] : '000%'
+            },
+            iClass: {
+                [Op.gte]:4
+            },
+            eState: 'BLOCK',
+            createdAt: {
+                [Op.gte]:moment().format('YYYY-MM-DD')
+            }
+        }
+    });
+    console.log(`당일 등록 유저 조회(승인대기) : ${todayUsers}`);
+    for ( let i in socket_list )
+    {
+        if ( socket_list[i].iClass == 2 )
+        {
+            socket_list[i].emit('alert_today_user', todayUsers);
         }
     }
 });

@@ -366,6 +366,11 @@ let AlertCash = (iCash) => {
 
 }
 
+let AlertTodayUser = (todayUser) => {
+	console.log(`AlertTodayUser ${todayUser}`);
+	$('#MainTodayUser').text(`승인요청(${todayUser})`);
+}
+
 //let socket = io();
 
 socket.on('connect', ()=> {
@@ -426,6 +431,13 @@ socket.on('alert_cash', (iAmount) => {
 		AlertCash(iAmount);
 	}
 });
+
+socket.on('alert_today_user', (todayUsers) => {
+	if ( user.iPermission != 100 ) {
+		AlertTodayUser(todayUsers);
+	}
+});
+
 
 socket.on('realtime_user', (numUser) => {
 	if (user.iClass <= 3) {

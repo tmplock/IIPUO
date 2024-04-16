@@ -30,6 +30,7 @@ const cNumGameRooms = 3;
 //var kRealtimeObject = new IObject.IRealtimeBetting();
 
 const {isLoggedIn, isNotLoggedIn} = require('./middleware');
+const {GetQuaterEndDate} = require("../implements/agent_settle3");
 
 /**
  * 가불
@@ -494,32 +495,18 @@ router.post('/request_share_list', isLoggedIn, async(req, res) => {
         return;
     }
 
-    let users = await db.Users.findAll({
-        where:
-            {
-                iClass: {
-                    [Op.in]:[4,5]
-                },
-                iPermission: {
-                    [Op.notIn]:[100]
-                },
-                strGroupID: {
-                    [Op.like]:strGroupID+'%'
-                }
-            }
+    let exist = await db.SettleRecords.findAll({where:{
+            strQuater:req.body.strQuater,
+            iClass: {
+                [Op.in]:[4,5]
+            },
+            strGroupID:{[Op.like]:req.body.strGroupID+'%'},
+        }, order: [['createdAt', 'DESC']]
     });
 
-    let exist = await db.SettleRecords.findAll({
-        where:
-            {
-                strQuater: strQuater,
-                strGroupID: {
-                    [Op.like]:strGroupID+'%'
-                }
-            }
-    });
+    const targetUserCount = await getSettleTargetUserCount(req.body.strQuater, req.body.strGroupID);
 
-    if (users.length != exist.length) {
+    if ( targetUserCount != exist.length ) {
         res.send({result:'FAIL', msg: '죽장 완료 후 조회 가능합니다'});
         return;
     }
@@ -547,7 +534,6 @@ router.post('/request_share_list', isLoggedIn, async(req, res) => {
         res.send({result: 'OK', list: list, enable: false});
         return;
     }
-
 
     let strQuater2 = '';
     let quaterList = strQuater.split('-');
@@ -579,6 +565,38 @@ router.post('/request_share_list', isLoggedIn, async(req, res) => {
     res.send({result: 'OK', list: list[0], enable: true});
 });
 
+let getSettleTargetUserCount = async (strQuater, strGroupID) => {
+    let lastDate = GetQuaterEndDate(strQuater);
 
+    if (lastDate != '') {
+        let count = await db.Users.count({
+            where: {
+                iClass: {
+                    [Op.in]:[4,5]
+                },
+                iPermission: {
+                    [Op.notIn]: [100]
+                },
+                strGroupID: {[Op.like]: strGroupID + '%'},
+                createdAt: {[Op.lt]: lastDate}
+            }
+        });
+        return count;
+    } else {
+        let count = await db.Users.count({
+            where: {
+                iClass: {
+                    [Op.in]:[4,5]
+                },
+                iPermission: {
+                    [Op.notIn]: [100]
+                },
+                strGroupID: {[Op.like]: strGroupID + '%'}
+            }
+        });
+        return count;
+    }
+    return 0;
+}
 
 module.exports = router;

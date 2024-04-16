@@ -10,6 +10,7 @@ const EAgent = Object.freeze({"eHQ":1, "eViceHQ":2, "eAdmin":3, "eProAdmin":4, "
 module.exports.EAgent = EAgent;
 
 const { QueryTypes } = require('sequelize');
+const moment = require("moment/moment");
 
 const GameCodeList = [0, 100, 200, 300];
 
@@ -299,9 +300,20 @@ let inline_CalculateOverviewShare = async (strGroupID, strQuater) => {
 };
 exports.CalculateOverviewShare = inline_CalculateOverviewShare;
 
-exports.GetSettleClass = async (strGroupID, iClass, strQuater, dateStart, dateEnd, iOffset, iLimit) => {
+exports.GetSettleClass = async (strGroupID, iClass, strQuater, dateStart, dateEnd, iOffset, iLimit, lastDate) => {
     let offset = parseInt(iOffset ?? 0);
     let limit = parseInt(iLimit ?? 30);
+
+    let lastDateQuery = '';
+    let date = lastDate ?? '';
+    if (date.length > 0) {
+        if (iClass == 4) {
+            lastDateQuery = `AND t4.createdAt < '${date}'`;
+        } else if (iClass == 5) {
+            lastDateQuery = `AND t5.createdAt < '${date}'`;
+        }
+    }
+
     let strQuater2 = '';
     let quaterList = strQuater.split('-');
     if (quaterList[1] == '2') {
@@ -369,6 +381,7 @@ exports.GetSettleClass = async (strGroupID, iClass, strQuater, dateStart, dateEn
             FROM Users t4
                      LEFT JOIN Users t3 ON t3.id = t4.iParentID
             WHERE t4.iClass = ${iClass} AND t4.strGroupID LIKE CONCAT('${strGroupID}', '%')
+            ${lastDateQuery}
             ORDER BY settleCount ASC, t4.strGroupID ASC
                 LIMIT ${limit}
             OFFSET ${offset}
@@ -423,6 +436,7 @@ exports.GetSettleClass = async (strGroupID, iClass, strQuater, dateStart, dateEn
                 LEFT JOIN Users t4 ON t4.id = t5.iParentID
                 LEFT JOIN Users t3 ON t3.id = t4.iParentID
             WHERE t5.iClass = ${iClass} AND t5.strGroupID LIKE CONCAT('${strGroupID}', '%')
+            ${lastDateQuery}
             ORDER BY settleCount ASC, t5.strGroupID ASC
             LIMIT ${limit}
             OFFSET ${offset}
@@ -459,4 +473,16 @@ let GetBeforeQuater = (strQuater) => {
         }
     }
     return strQuater2;
+}
+
+exports.GetQuaterEndDate = (quater) => {
+    let endDate = '';
+    let quaterList = quater.split('-');
+    if (quaterList[1] == '1') {
+        endDate = ITime.get1QuaterEndDate(parseInt(quaterList[0])-1);
+    } else if (quaterList[1] == '2') {
+        endDate = ITime.get2QuaterEndDate(parseInt(quaterList[0])-1);
+    }
+    const date = moment(endDate).add(1, 'days').format('YYYY-MM-DD');
+    return date;
 }

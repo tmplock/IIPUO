@@ -373,6 +373,12 @@
 					bEnableSettle = false;
 					RequestOverview(user.strGroupID, user.iClass, strQuater, dateQuaterStart, dateQuaterEnd, user.strID);
 					SetList(obj.list, iClass);
+					$(`#list_tit`).empty();
+					$(`#list_tit`).append(`
+						<h3>죽장 정산
+							<button id='button_changesettle' style="margin-left:8%;width:200px;height:40px;text-align:center;background-color: rgb(82, 161, 206);color:white" onclick="DoApplySettle();"><strong>죽장 적용</strong></button>
+						</h3>
+					`);
 				}
 
 				$('#pagination').empty();

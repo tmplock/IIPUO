@@ -181,9 +181,6 @@ exports.get2QuaterStartDate = (month) => {
     var date = new Date();
 
     let iDate = 16;
-    //TODO: 추후 해당 부분 삭제 필요
-    if ( date.getDate() < 16 )
-        iDate = date.getDate();
 
     var res = new Date(date.getFullYear(), month, iDate);
 

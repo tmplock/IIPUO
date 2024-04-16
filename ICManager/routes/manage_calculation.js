@@ -16,6 +16,7 @@ const {Op}= require('sequelize');
 const IAgent = require('../implements/agent3');
 const IAgentSettle = require('../implements/agent_settle3');
 const {isLoggedIn, isNotLoggedIn} = require('./middleware');
+const {GetQuaterEndDate} = require("../implements/agent_settle3");
 
 
 router.get('/calculation', isLoggedIn, async(req, res) => {
@@ -315,23 +316,16 @@ router.post('/request_applysettle_all', isLoggedIn, async (req, res) => {
 
     // 대본사는 부본사 죽장 완료 여부 확인 필요
     if (parseInt(req.body.iClass) == 4) {
-        let users = await db.Users.findAll({
-            where: {
-                iClass:5,
-                iPermission: {
-                    [Op.notIn]: [100]
-                },
-                strGroupID:{[Op.like]:req.body.strGroupID+'%'},
-            }
-        });
-
         let exist = await db.SettleRecords.findAll({where:{
                 strQuater:req.body.strQuater,
                 iClass:5,
                 strGroupID:{[Op.like]:req.body.strGroupID+'%'},
-            }});
+            }, order: [['createdAt', 'DESC']]
+        });
 
-        if ( users.length != exist.length ) {
+        const targetUserCount = await getSettleTargetUserCount(req.body.strQuater, 5, req.body.strGroupID);
+
+        if ( targetUserCount == exist.length ) {
             res.send({result:'FAIL', msg: '부본사 죽장 정산을 먼저 처리해 주세요.'});
             return;
         }
@@ -353,23 +347,16 @@ router.post('/request_applysettle_all', isLoggedIn, async (req, res) => {
 
     if ( list.length > 0 )
     {
-        let users = await db.Users.findAll({
-            where: {
-                iClass:req.body.iClass,
-                iPermission: {
-                    [Op.notIn]: [100]
-                },
-                strGroupID:{[Op.like]:req.body.strGroupID+'%'},
-            }
-        });
-
         let exist = await db.SettleRecords.findAll({where:{
                 strQuater:req.body.strQuater,
                 iClass:req.body.iClass,
                 strGroupID:{[Op.like]:req.body.strGroupID+'%'},
-            }});
+            }, order: [['createdAt', 'DESC']]
+        });
 
-        if ( users.length == exist.length )
+        const targetUserCount = await getSettleTargetUserCount(req.body.strQuater, req.body.iClass, req.body.strGroupID);
+
+        if ( targetUserCount == exist.length )
         {
             res.send({result:'EXIST'});
             return;
@@ -650,32 +637,23 @@ let SettleViceAll = async (req, res) => {
         list = await GetSettleAll2(req.body.strGroupID, req.body.strQuater, req.body.dateStart, req.body.dateEnd, 5, iOffset, iLimit);
     }
 
-    let users = await db.Users.findAll({
-        where: {
-            iClass: req.body.iClass,
-            iPermission: {
-                [Op.notIn]: [100]
-            },
-            strGroupID: {[Op.like]: req.body.strGroupID + '%'},
-        }
+    let exist = await db.SettleRecords.findAll({where:{
+            strQuater:req.body.strQuater,
+            iClass:req.body.iClass,
+            strGroupID:{[Op.like]:req.body.strGroupID+'%'},
+        }, order: [['createdAt', 'DESC']]
     });
 
-    let exist = await db.SettleRecords.findAll({
-        where: {
-            strQuater: req.body.strQuater,
-            iClass: req.body.iClass,
-            strGroupID: {[Op.like]: req.body.strGroupID + '%'},
-        }
-    });
+    const targetUserCount = await getSettleTargetUserCount(req.body.strQuater, req.body.iClass, req.body.strGroupID);
 
-    if (users.length == exist.length) {
+    if ( targetUserCount == exist.length ) {
         res.send({
             result: 'EXIST',
             list: list,
             iRootClass: req.user.iClass,
             exist: exist,
             msg: '정상조회',
-            totalCount: users.length
+            totalCount: targetUserCount
         });
     } else {
         res.send({
@@ -684,7 +662,7 @@ let SettleViceAll = async (req, res) => {
             iRootClass: req.user.iClass,
             exist: exist,
             msg: '조회불가',
-            totalCount: users.length
+            totalCount: targetUserCount
         });
     }
 }
@@ -703,31 +681,58 @@ router.post('/request_settle_all', isLoggedIn, async(req, res) => {
     let iPage = parseInt(req.body.iPage);
     let iOffset = (iPage-1) * iLimit;
 
-    let list = await GetSettleAll2(req.body.strGroupID, req.body.strQuater, req.body.dateStart, req.body.dateEnd, req.body.iClass, iOffset, iLimit);
-
-    let users = await db.Users.findAll({where: {
-            iClass:req.body.iClass,
-            iPermission: {
-                [Op.notIn]: [100]
-            },
-            strGroupID:{[Op.like]:req.body.strGroupID+'%'},
-        }});
-
     let exist = await db.SettleRecords.findAll({where:{
             strQuater:req.body.strQuater,
             iClass:req.body.iClass,
             strGroupID:{[Op.like]:req.body.strGroupID+'%'},
-        }});
+        }, order: [['createdAt', 'DESC']]
+    });
 
-    if ( users.length == exist.length )
+    let lastDate = IAgentSettle.GetQuaterEndDate(req.body.strQuater);
+
+    let list = await GetSettleAll2(req.body.strGroupID, req.body.strQuater, req.body.dateStart, req.body.dateEnd, req.body.iClass, iOffset, iLimit, lastDate);
+
+    const targetUserCount = await getSettleTargetUserCount(req.body.strQuater, req.body.iClass, req.body.strGroupID);
+
+    if ( targetUserCount == exist.length )
     {
-        res.send({result:'EXIST', list:list, iRootClass: req.user.iClass, exist: exist, msg: '정상조회', totalCount: users.length});
+        res.send({result:'EXIST', list:list, iRootClass: req.user.iClass, exist: exist, msg: '정상조회', totalCount: targetUserCount});
     }
     else
     {
-        res.send({result:'OK', list:list, iRootClass: req.user.iClass, exist: exist, msg: '정상조회', totalCount: users.length});
+        res.send({result:'OK', list:list, iRootClass: req.user.iClass, exist: exist, msg: '정상조회', totalCount: targetUserCount});
     }
 });
+
+let getSettleTargetUserCount = async (strQuater, iClass, strGroupID) => {
+    let lastDate = GetQuaterEndDate(strQuater);
+
+    if (lastDate != '') {
+        let count = await db.Users.count({
+            where: {
+                iClass: iClass,
+                iPermission: {
+                    [Op.notIn]: [100]
+                },
+                strGroupID: {[Op.like]: strGroupID + '%'},
+                createdAt: {[Op.lt]: lastDate}
+            }
+        });
+        return count;
+    } else {
+        let count = await db.Users.count({
+            where: {
+                iClass: iClass,
+                iPermission: {
+                    [Op.notIn]: [100]
+                },
+                strGroupID: {[Op.like]: strGroupID + '%'}
+            }
+        });
+        return count;
+    }
+    return 0;
+}
 
 let GetSettleAll = async (strGroupID, strQuater, dateStart, dateEnd) => {
     // strQuater
@@ -768,7 +773,7 @@ let GetSettleAll = async (strGroupID, strQuater, dateStart, dateEnd) => {
     return list;
 }
 
-let GetSettleAll2 = async (strGroupID, strQuater, dateStart, dateEnd, iClass, iOffset, iLimit) => {
+let GetSettleAll2 = async (strGroupID, strQuater, dateStart, dateEnd, iClass, iOffset, iLimit, lastDate) => {
     // strQuater
     let start = dateStart ?? '';
     let end = dateEnd ?? '';
@@ -790,7 +795,7 @@ let GetSettleAll2 = async (strGroupID, strQuater, dateStart, dateEnd, iClass, iO
     }
 
     // 파트너 목록
-    let partnerList = await IAgentSettle.GetSettleClass(strGroupID, iClass, strQuater, start, end, iOffset, iLimit);
+    let partnerList = await IAgentSettle.GetSettleClass(strGroupID, iClass, strQuater, start, end, iOffset, iLimit, lastDate);
 
     let list = [];
     for (let i in partnerList) {

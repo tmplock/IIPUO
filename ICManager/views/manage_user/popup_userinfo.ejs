@@ -206,12 +206,11 @@
 		['#bank_name', '#bank_owner'].forEach(item => {
 			checkBlockCharSpecial($(item));
 		});
-		['#bank_num', '#cell',
-			'#fBaccaratR', '#fUnderOverR', '#fSlotR',
+		['#bank_num', '#fBaccaratR', '#fUnderOverR', '#fSlotR',
 		].forEach(item => {
 			checkBlockNum($(item));
 		});
-		["#member_nick", '#member_id', '#member_password', '#member_password2'].forEach(item => {
+		["#member_nick", '#member_id', '#member_password', '#member_password2', '#cell'].forEach(item => {
 			checkBlockCharNickname($(item));
 		});
 	});

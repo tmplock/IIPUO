@@ -59,7 +59,7 @@
 						<%=__('Nickname')%>
 					</th>
 					<td style="background-color:lightsteelblue">
-						<input type="text" style="width:50%;" required="yes" id="strNickname" message="">&nbsp;<a
+						<input type="text" style="width:50%;" required="yes" id="strNickname" message="" placeholder="한글,숫자만 가능">&nbsp;<a
 							href="#" class="btn_red" id="check_nickname">
 							<%=__('Duplication')%>
 								<%=__('OK')%>
@@ -69,7 +69,7 @@
 						<%=__('ID')%>
 					</th>
 					<td>
-						<input type="text" style="width:50%;" required="yes" id="strID" message="" />&nbsp;<a href="#"
+						<input type="text" style="width:50%;" required="yes" id="strID" message="" placeholder="영문,숫자만 가능" />&nbsp;<a href="#"
 																											  class="btn_red" id="check_id">
 							<%=__('Duplication')%>
 							<%=__('OK')%>
@@ -129,8 +129,8 @@
 
 		const caAgentType = ['', '<%=__("HQ")%>', '<%=__("ViceHQ")%>', '<%=__("Admin")%>', '<%=__("ProAdmin")%>', '<%=__("ViceAdmin")%>', '<%=__("Agent")%>', '<%=__("Shop")%>', '<%=__("User")%>'];
 
-		checkBlockCharNickname(`#strNickname`);
-		checkBlockCharNickname(`#strID`);
+		checkBlockCharNicknameOnlyKr(`#strNickname`);
+		checkBlockCharNicknameOnlyEng(`#strID`);
 		checkBlockCharNickname(`#strPassword`);
 		checkBlockCharNickname(`#strPasswordConfirm`);
 
@@ -182,9 +182,19 @@
 			const strNickname = $('#strNickname').val();
 
 			if (iRelUserID == 0) {
+				if (!isValidationOnlyEngOrNumber(strID)) {
+					alert('아이디는 영어, 숫자만 가능합니다');
+					return;
+				}
+
 				if ( false == bCheckID )
 				{
 					alert(strAlertNeedToDuplicationCheckID);
+					return;
+				}
+
+				if (!isValidationOnlyKrOrNumber(strNickname)) {
+					alert('닉네임은 한글, 숫자만 가능합니다');
 					return;
 				}
 
@@ -194,15 +204,29 @@
 					return;
 				}
 			} else {
-				if (strID != agent.strID && false == bCheckID) {
-					alert(strAlertNeedToDuplicationCheckID);
-					return;
+				if (strID != agent.strID) {
+					if (!isValidationOnlyEngOrNumber(strID)) {
+						alert('아이디는 영어, 숫자만 가능합니다');
+						return;
+					}
+
+					if (false == bCheckID) {
+						alert(strAlertNeedToDuplicationCheckID);
+						return;
+					}
 				}
 
-				if ( strNickname != agent.strNickname && false == bCheckNickname )
+				if ( strNickname != agent.strNickname )
 				{
-					alert(strAlertNeedToDuplicationCheckNickname);
-					return;
+					if (!isValidationOnlyKrOrNumber(strNickname)) {
+						alert('닉네임은 한글, 숫자만 가능합니다');
+						return;
+					}
+
+					if (false == bCheckNickname) {
+						alert(strAlertNeedToDuplicationCheckNickname);
+						return;
+					}
 				}
 			}
 

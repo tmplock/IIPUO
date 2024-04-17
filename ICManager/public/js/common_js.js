@@ -643,3 +643,69 @@ function checkBlockNum(id) {
 		$(this).val($(this).val().replace(regExp, ""));
 	});
 }
+
+
+/**
+ * 한글+숫자만 입력 가능함
+ */
+function checkBlockCharNicknameOnlyKr(id) {
+	var regExp = /[^ㄱ-ㅎ가-힣0-9]/gi;
+	$(id).on("focusout", function() {
+		var x = $(this).val();
+		if (x.length > 0) {
+			if (x.match(regExp)) {
+				x = x.replace(regExp, "");
+			}
+			$(this).val(x);
+		}
+	}).on("keyup", function() {
+		$(this).val($(this).val().replace(regExp, ""));
+	});
+}
+
+function isValidationOnlyKrOrNumber(x) {
+	var regExp = /[^ㄱ-ㅎ가-힣0-9]/gi;
+	let text = "";
+	if (x.length > 0) {
+		if (x.match(regExp)) {
+			text = x.replace(regExp, "");
+		}
+	}
+	if (text === x) {
+		return true;
+	}
+	return false;
+}
+
+function isValidationOnlyEngOrNumber(x) {
+	var regExp = /[^a-z0-9]/gi;
+	let text = "";
+	if (x.length > 0) {
+		if (x.match(regExp)) {
+			text = x.replace(regExp, "");
+		}
+	}
+	if (text === x) {
+		return true;
+	}
+	return false;
+}
+
+/**
+ * 영문 + 숫자
+ */
+//영문, 숫자만 입력가능한 keyup 이벤트 함수
+function checkBlockCharNicknameOnlyEng(id) {
+	var regExp = /[^a-z0-9]/gi;
+	$(id).on("focusout", function() {
+		var x = $(this).val();
+		if (x.length > 0) {
+			if (x.match(regExp)) {
+				x = x.replace(regExp, "");
+			}
+			$(this).val(x);
+		}
+	}).on("keyup", function() {
+		$(this).val($(this).val().replace(regExp, ""));
+	});
+}

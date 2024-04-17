@@ -14,7 +14,7 @@
 			<tr>
 				<th scope="row"><%=__('Nickname')%></th>
 				<td>
-					<input type="text" style="width:50%;" name="member_nick" id="member_nick" required="no"  message="" value="<%=agent.strNickname%>">&nbsp;
+					<input type="text" style="width:50%;" name="member_nick" id="member_nick" required="no"  message="" placeholder="한글,숫자만 가능" value="<%=agent.strNickname%>">&nbsp;
 					<% if (agent.iPermission != 100) { %>
 						<a href="#" onclick="CheckNickname();" class="btn_red"><%=__('Duplication')%><%=__('OK')%></a>
 					<% } %>
@@ -31,7 +31,7 @@
 			<tr>
 				<th scope="row"><%=__('ID')%></th>
 				<td>
-					<input type="text" style="width:50%;" name="member_id" id="member_id" value="<%=agent.strID%>" required="yes"  message="아이디"/>&nbsp;
+					<input type="text" style="width:50%;" name="member_id" id="member_id" placeholder="영어,숫자만 가능" value="<%=agent.strID%>" required="yes"  message="아이디"/>&nbsp;
 					<% if (agent.iPermission != 100) { %>
 						<a href="#" onclick="CheckID();" class="btn_red"><%=__('Duplication')%><%=__('OK')%></a>
 					<% } %>
@@ -240,11 +240,16 @@
 	});
 
 	let CheckID = () => {
+		let strID = $('#member_id').val();
+		if (!isValidationOnlyEngOrNumber(strID)) {
+			alert('아이디는 영문,숫자만 입력가능합니다');
+			return;
+		}
 
 		$.ajax({
 			type : "POST",
 			url : "/manage_partner_popup/request_confirmagentid",
-			data : {strID:$('#member_id').val()},
+			data : {strID:strID},
 			success : (data) => {
 
 				if ( data == 'OK' )
@@ -262,11 +267,16 @@
 
 	
 	let CheckNickname = () => {
+		let strNickname = $('#member_nick').val();
+		if (!isValidationOnlyKrOrNumber(strNickname)) {
+			alert('닉네임은 한글,숫자만 입력가능합니다');
+			return;
+		}
 
 		$.ajax({
 			type : "POST",
 			url : "/manage_partner_popup/request_confirmagentnickname",
-			data : {strNickname:$('#member_nick').val()},
+			data : {strNickname:strNickname},
 			success : (data) => {
 
 				if ( data == 'OK' )
@@ -322,13 +332,25 @@
 		const strBankAccount = $('#bank_num').val();
 		const strBankOwner = $('#bank_owner').val();
 
-		if (strNickname != agent.strNickname && bCheckNickname == false) {
-			alert(strAlertNeedToDuplicationCheckNickname);
-			return;
+		if (strNickname != agent.strNickname) {
+			if (!isValidationOnlyKrOrNumber(strNickname)) {
+				alert('닉네임은 한글, 숫자만 가능합니다');
+				return;
+			}
+			if (bCheckNickname == false) {
+				alert(strAlertNeedToDuplicationCheckNickname);
+				return;
+			}
 		}
-		if (strID != agent.strID && bCheckID == false) {
-			alert(strAlertNeedToDuplicationCheckID);
-			return;
+		if (strID != agent.strID) {
+			if (!isValidationOnlyEngOrNumber(strID)) {
+				alert('아이디는 영문, 숫자만 가능합니다');
+				return;
+			}
+			if (bCheckID == false) {
+				alert(strAlertNeedToDuplicationCheckID);
+				return;
+			}
 		}
 
 		let fSlotR = agent.fSlotR;

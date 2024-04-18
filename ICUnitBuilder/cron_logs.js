@@ -27,7 +27,7 @@ cron.schedule('*/1 * * * *', async () => {
         IFNULL((SELECT SUM(iBet) FROM RecordBets WHERE strGroupID LIKE CONCAT(t2.strGroupID, '%') AND eState = 'ROLLING' AND date(createdAt) BETWEEN  '2024-04-01' AND '${now}'),0) as rollingBet,
         IFNULL((SELECT SUM(iWin) FROM RecordBets WHERE strGroupID LIKE CONCAT(t2.strGroupID, '%') AND eState = 'ROLLING' AND date(createdAt) BETWEEN  '2024-04-01' AND '${now}'),0) as rollingWin,
         IFNULL((SELECT SUM(iBet) FROM RecordBets WHERE strGroupID LIKE CONCAT(t2.strGroupID, '%') AND eState = 'STANDBY' AND date(createdAt) BETWEEN  '${now2}' AND '${now}'),0) as standbyBet,
-        IFNULL((SELECT SUM(iBet) FROM RecordBets WHERE strGroupID LIKE CONCAT(t2.strGroupID, '%') AND eState = 'STANDBY' AND date(createdAt) BETWEEN  '${now2}' AND '${now}'),0) as standbyWin
+        IFNULL((SELECT SUM(iWin) FROM RecordBets WHERE strGroupID LIKE CONCAT(t2.strGroupID, '%') AND eState = 'STANDBY' AND date(createdAt) BETWEEN  '${now2}' AND '${now}'),0) as standbyWin
         FROM Users AS t1
         LEFT JOIN Users AS t2 ON t2.iParentID = t1.id
         WHERE t2.iPermission != 100 AND t2.iClass=3 AND t1.strGroupID LIKE CONCAT('000', '%');

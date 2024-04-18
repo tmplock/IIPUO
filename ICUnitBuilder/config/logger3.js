@@ -31,7 +31,7 @@ const logger3 = winston.createLogger({
             level: 'info', // info 레벨에선
             datePattern: 'YYYY-MM-DD', // 파일 날짜 형식
             dirname: logDir, // 파일 경로
-            filename: `%DATE%.log`, // 파일 이름
+            filename: `%DATE%-2.log`, // 파일 이름
             maxFiles: 30, // 최근 30일치 로그 파일을 남김
             zippedArchive: true, // 아카이브된 로그 파일을 gzip으로 압축할지 여부
         }),

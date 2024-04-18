@@ -16,7 +16,7 @@ const logger = require("./config/logger");
 
 const cPort = 3005;
 server.listen(cPort, () => {
-    console.log(`IBetBuilder Server is started At ${cPort}`);
+    console.log(`ICUnitBuilder Server is started At ${cPort}`);
 });
 
 

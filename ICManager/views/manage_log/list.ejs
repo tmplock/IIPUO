@@ -1,0 +1,188 @@
+<div class="search_wrap">
+    <div class="container clearfix">
+        <p style="background-repeat:no-repeat; background-position:left center; font-size:20px; color:#454545; padding-left:22px;margin-top:10px;height:30px;margin-bottom:5px;">
+            정산 이력 목록
+        </p>
+        <div class="list">
+            <div class="search_wrap" id="div_realtimebet">
+                <div style="background-color:#ffffff;text-align:right;padding-right:5px;padding-top:10px;padding-bottom:10px;" colspan="19">
+                    금액 차이 설정
+                    <input style="margin-left:0px;width:100px;" id="minPrice" type="number"/>
+                    <%=__('Search')%>
+                    <select id="select_roomno" style="width:80px;">
+                        <option><%=__('Nickname')%></option>
+                    </select>
+                    <input style="margin-left:0px;width:100px;" id="strSearchNickname" type="text"/>
+                    <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickPage(1);"><%=__('Search')%></button>
+                    <input style="margin-left:10px;width:100px;" type="text" id="datepicker1" class="datepicker"/>~
+                    <input style="width:100px;" type="text" id="datepicker2" class="datepicker" />
+                </div>
+
+                <table class="search_list">
+                    <caption><%=__('SearchResult')%></caption>
+                    <thead>
+                    <tr>
+                        <th scope="col">번호</th>
+                        <th scope="col">닉네임</th>
+                        <th scope="col">입금</th>
+                        <th scope="col">출금</th>
+                        <th scope="col">보유금액</th>
+                        <th scope="col">미전환롤링</th>
+                        <th scope="col">미전환죽장</th>
+                        <th scope="col">계</th>
+                        <th scope="col">차이</th>
+                        <th scope="col">합계</th>
+                        <th scope="col">배팅합</th>
+                        <th scope="col">승리합</th>
+                        <th scope="col">롤링합</th>
+                        <th scope="col">미적용베팅합</th>
+                        <th scope="col">미적용승리합</th>
+                        <th scope="col">일시</th>
+                    </tr>
+                    </thead>
+                    <tbody id="list_agents">
+                    </tbody>
+                </table>
+                <div class="pagination mt0" id="pagination">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<script type="text/javascript" src="js/enum.js"></script>
+<script type="text/javascript" src="js/time.js"></script>
+<script type="text/javascript" src="js/util.js"></script>
+<script type="text/javascript" src="js/common_menu.js"></script>
+<script type="text/javascript" src="js/pagination.js"></script>
+<script type="text/javascript">
+    let dateStart = '';
+    let dateEnd = '';
+    let minPrice = 1000;
+
+    DatePicker();
+    $("#datepicker1").val(GetCurrentDate());
+    $("#datepicker2").val(GetCurrentDate());
+
+    let iCurrentPage = 1;
+    let iLimit = 500;
+    $('#select_limit').on("change", function () {
+        iLimit = this.value;
+    });
+
+    $('#minPrice').val(minPrice);
+
+    let OnClickPage = (iPage) => {
+        if (iPage < 1) {
+            return;
+        }
+        iCurrentPage = iPage;
+        const dateStart = $('#datepicker1').val();
+        const dateEnd =  $('#datepicker2').val();
+        let strNickname = $('#strSearchNickname').val();
+        RequestRecord(dateStart, dateEnd, strNickname);
+    }
+
+    let OnClickRecord = () => {
+        iCurrentPage = 1;
+        const dateStart = $('#datepicker1').val();
+        const dateEnd =  $('#datepicker2').val();
+        let strNickname = $('#strSearchNickname').val();
+        RequestRecord(dateStart, dateEnd, strNickname);
+    }
+
+    $(document).ready( ()=> {
+        OnClickPage(1);
+    });
+
+    let RequestRecord = (dateStart, dateEnd, strNickname) => {
+        $.ajax({
+                url:'/manage_logs/request_logs',
+                type:"POST",
+                data: {
+                    strNickname:strNickname,
+                    dateStart: dateStart,
+                    dateEnd: dateEnd,
+                    iLimit:iLimit,
+                    iPage:iCurrentPage,
+                },
+                dataType: "json",
+                success: function (obj) {
+                    console.log(obj);
+                    // 해당 분기 죽장 완료 여부 체크
+                    if ( obj.result == 'OK')
+                    {
+                        const total = obj.totalCount ?? 0;
+                        SetList(obj.data, getNo(iLimit, total, iCurrentPage, 0));
+
+                        $('#pagination').empty();
+                        $('#pagination').append(getPagination(iLimit, obj.totalCount, iCurrentPage));
+                    }
+                    else
+                    {
+                        alert(obj.msg);
+                    }
+                }
+            });
+    }
+
+    let SetList = (list, startIndex) => {
+            console.log('SetList');
+            console.log(list);
+            console.log(list.length);
+
+            const minPrice = parseInt($('#minPrice').val() ?? 0);
+
+            $("#list_agents").empty();
+            if (list.length > 0) {
+                for (let i = 0; i<list.length; i++) {
+                    let total = list[i].fTotal ?? 0;
+                    let total2 = list[i].fOverviewTotal ?? 0;
+                    let cal  = total - total2;
+                    let tag = minPrice < cal ?  'background-color:#E8FCDE;' : '';
+                    $('#list_agents').append(`
+                                    <tr>
+                                        <td style="${tag}">${parseInt(startIndex)-i}</td>
+                                        <td style="${tag}">${list[i].strNickname}</td>
+                                        <td  style="${tag}">${GetNumber(list[i].fInput ?? 0)}</td>
+                                        <td  style="${tag}">${GetNumber(list[i].fOutput ?? 0)}</td>
+                                        <td  style="${tag}">${GetNumber(list[i].fCash ?? 0)}</td>
+                                        <td  style="${tag}">${GetNumber(list[i].fRolling ?? 0)}</td>
+                                        <td  style="${tag}">${GetNumber(list[i].fSettle ?? 0)}</td>
+                                        <td  style="${tag}">${GetNumberSign(list[i].fTotal ?? 0)}</td>
+                                        <td  style="${tag}">${GetNumberSign(cal)}</td>
+                                        <td  style="${tag}">${GetNumberSign(list[i].fOverviewTotal ?? 0)}</td>
+                                        <td  style="${tag}">${GetNumber(list[i].fOverviewTotalBet ?? 0)}</td>
+                                        <td  style="${tag}">${GetNumber(list[i].fOverviewTotalWin ?? 0)}</td>
+                                        <td  style="${tag}">${GetNumberSign(list[i].fOverviewTotalRolling ?? 0)}</td>
+                                        <td  style="${tag}">${GetNumber((list[i].fBetStandbyBetTotal ?? 0) + (list[i].fBetRollingBetTotal ?? 0))}</td>
+                                        <td  style="${tag}">${GetNumber((list[i].fBetStandbyWinTotal ?? 0) + (list[i].fBetRollingWinTotal ?? 0))}</td>
+                                        <td  style="${tag}">${list[i].createdAt}</td>
+                                    </tr>
+                                `);
+                }
+             } else {
+                console.log('else');
+                $('#list_agents').append(`
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                        `);
+            }
+    }
+
+</script>

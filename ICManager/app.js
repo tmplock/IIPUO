@@ -113,6 +113,7 @@ app.use('/manage_setting_popup', require('./routes/manage_setting_popup'));
 app.use('/manage_calculation', require('./routes/manage_calculation'));
 app.use('/manage_share', require('./routes/manage_share'));
 app.use('/manage_chip', require('./routes/manage_chip'));
+app.use('/manage_logs', require('./routes/manage_logs'));
 app.use('/test', require('./routes/test'));
 
 app.use((req, res, next) => {

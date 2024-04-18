@@ -431,6 +431,28 @@
 <%- script %>
 </body>
 </html>
+
+<% } else if ( iLayout == 9 ) { %>
+
+    <!doctype html>
+    <html>
+    <head>
+        <%- include('headpopup') %>
+    </head>
+    <body>
+    <div class="content" style="position:relative; padding:0 10px 0 10px;">
+        <div class="list_tit" style="height:80px; padding-top:10px;">
+            <h3>
+                <div style="text-align:right;padding-right:0px;margin-top:0px;">
+                </div>
+            </h3>
+        </div>
+        <%- body %>
+
+    </div>
+    <%- script %>
+    </body>
+    </html>
 <% } else { %>
 
 <!doctype html>

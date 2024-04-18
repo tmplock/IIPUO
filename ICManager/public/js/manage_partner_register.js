@@ -49,6 +49,24 @@ $(document).on('click', '#register_agent_view', (event) => {
     $form.submit();
 })
 
+
+$(document).on('click', '#popup_overview_logs', (event) => {
+
+    let $form = $('<form></form>');
+    $form.attr('action', '/manage_logs/popup_overview_logs');
+    $form.attr('method', 'post');
+    $form.attr('target', 'popupChkLogs');
+    $form.appendTo('body');
+
+    let id = $(`<input type="hidden" value="${user.strID}" name="strID">`);
+    let idx = $(`<input type="hidden" value="${user.strNickname}" name="strNickname">`);
+    let page = $(`<input type="hidden" value="${user.strGroupID}" name="strGroupID">`);
+    let category = $(`<input type="hidden" value=${parseInt(user.iClass)} name="iClass">`);
+
+    $form.append(id).append(idx).append(page).append(category);
+    $form.submit();
+})
+
 // $(document).on('click', '#partner_adjust', (event) => {
 
 //     window.open('', 'popupAdjust', 'width=1280, height=720, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');

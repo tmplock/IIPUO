@@ -14,7 +14,7 @@ const db = require('./db');
 const {Op} = require('sequelize');
 const logger = require("./config/logger");
 
-const cPort = 3004;
+const cPort = 3005;
 server.listen(cPort, () => {
     console.log(`IBetBuilder Server is started At ${cPort}`);
 });

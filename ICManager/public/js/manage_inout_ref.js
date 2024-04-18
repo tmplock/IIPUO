@@ -173,9 +173,10 @@ let OnSave = (event) => {
         },
         dataType: "json",
         success: function (obj) {
-            $(`#button_standby_${id}`).remove();
-            $(`#button_cancel_${id}`).remove();
-            $(`#td_state_${id}`).append(`<font style="color:blue;">${strStateComplete}</font>`);
+            if (obj.result == 'OK') {
+            } else {
+                alert('저장 오류');
+            }
         }
     });
 }

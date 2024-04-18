@@ -669,6 +669,8 @@ function isValidationOnlyKrOrNumber(x) {
 	if (x.length > 0) {
 		if (x.match(regExp)) {
 			text = x.replace(regExp, "");
+		} else {
+			text = x;
 		}
 	}
 	if (text === x) {
@@ -683,6 +685,8 @@ function isValidationOnlyEngOrNumber(x) {
 	if (x.length > 0) {
 		if (x.match(regExp)) {
 			text = x.replace(regExp, "");
+		} else {
+			text = x;
 		}
 	}
 	if (text === x) {

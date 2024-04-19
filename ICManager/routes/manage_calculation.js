@@ -67,6 +67,7 @@ router.post('/calculation', isLoggedIn, async(req, res) => {
     res.render('manage_calculation/calculation', {iLayout:0, iHeaderFocus:6, user:user, data:bobj, agentinfo:agentinfo, iocount:iocount});
 });
 
+// 미사용
 router.post('/settle', isLoggedIn, async(req, res) => {
 
     console.log(req.body);
@@ -128,7 +129,7 @@ router.post('/settle', isLoggedIn, async(req, res) => {
         listViceHQ: listViceHQ, listAdmin:listAdmin, listProAdmin:listProAdmin, listViceAdmin: listViceAdmin, listAgent:listAgent});
 });
 
-// 죽장 조회
+// 죽장 조회(미사용)
 router.post('/request_settle', async (req, res) => {
 
     console.log('/request_settle');
@@ -161,7 +162,7 @@ router.post('/request_settle', async (req, res) => {
     }
 });
 
-// 죽장 지급
+// 죽장 지급(미사용)
 router.post('/request_applysettle', isLoggedIn, async (req, res) => {
 
     console.log(`/request_applysettle`);
@@ -325,7 +326,7 @@ router.post('/request_applysettle_all', isLoggedIn, async (req, res) => {
 
         const targetUserCount = await getSettleTargetUserCount(req.body.strQuater, 5, req.body.strGroupID);
 
-        if ( targetUserCount == exist.length ) {
+        if ( targetUserCount > exist.length ) {
             res.send({result:'FAIL', msg: '부본사 죽장 정산을 먼저 처리해 주세요.'});
             return;
         }
@@ -356,7 +357,7 @@ router.post('/request_applysettle_all', isLoggedIn, async (req, res) => {
 
         const targetUserCount = await getSettleTargetUserCount(req.body.strQuater, req.body.iClass, req.body.strGroupID);
 
-        if ( targetUserCount == exist.length )
+        if ( targetUserCount > exist.length )
         {
             res.send({result:'EXIST'});
             return;
@@ -607,6 +608,7 @@ router.post('/settle_all', isLoggedIn, async(req, res) => {
     res.render('manage_calculation/settle_all', {iLayout:0, iHeaderFocus:6, user:user, agentinfo:agentinfo, iocount:iocount, list:[], overview:overview, overviewShare:overviewShare});
 });
 
+// 미사용
 router.post('/request_settle_partner', isLoggedIn, async(req, res) => {
 
     console.log(req.body);
@@ -646,7 +648,7 @@ let SettleViceAll = async (req, res) => {
 
     const targetUserCount = await getSettleTargetUserCount(req.body.strQuater, req.body.iClass, req.body.strGroupID);
 
-    if ( targetUserCount == exist.length ) {
+    if ( targetUserCount > exist.length ) {
         res.send({
             result: 'EXIST',
             list: list,
@@ -694,7 +696,7 @@ router.post('/request_settle_all', isLoggedIn, async(req, res) => {
 
     const targetUserCount = await getSettleTargetUserCount(req.body.strQuater, req.body.iClass, req.body.strGroupID);
 
-    if ( targetUserCount == exist.length )
+    if ( targetUserCount > exist.length )
     {
         res.send({result:'EXIST', list:list, iRootClass: req.user.iClass, exist: exist, msg: '정상조회', totalCount: targetUserCount});
     }

@@ -397,6 +397,14 @@
 		// 지분자 정보
 		if ( user.iClass <= 3 ) {
 			// 순이익(순이익 - 슬롯 알값 + 수금)
+			let iTotalSum = parseInt(overview.iTotal)  + parseInt(overview.iTotalUnover) + parseInt(overview.iTotalSlot) + parseInt(overview.iTotalPB);
+			// 대본사 이하는 본인의 죽장만 표시(본사는 본인 이하의 죽장 모두 합산)
+			let iTotalSettle = parseInt(overview.iTotalSettle ?? 0); // 죽장
+			let iTotalCommission = parseInt(overview.iTotalCommission ?? 0); // 윈로스(알값)
+			let iShareCommission = parseInt(overview.iSWinlose ?? 0) * parseFloat(overview.fCommission);
+			iTotalCommission += iShareCommission;
+			let iRealTotal = iTotalSum - iTotalSettle - iTotalCommission; // 순이익
+
 			let iShareOrgin = parseInt(aObject.iShareOrgin ?? 0);
 			let iSlotCommission = parseInt(aObject.iSlotCommission ?? 0);
 			let iPayback = parseInt(aObject.iPayback ?? 0);
@@ -432,7 +440,7 @@
 					<tbody>
 						<tr>
 							<td><a style="font-weight:100;"></a></td>
-							<td><a style="font-weight:100;"></a>${GetNumberSign(iShareOrgin)}</td>
+							<td><a style="font-weight:100;"></a>${GetNumberSign(iRealTotal)}</td>
 							<td><a style="font-weight:100;"></a>${GetNumberSign(iShare)}</td>
 							<td><a style="font-weight:100;"></a>${GetNumberSign(iShareAccBefore)}</td>
 							<td><a style="font-weight:100;"></a>${GetNumberSign(iCreditBefore)}</td>
@@ -1052,7 +1060,7 @@
 			subtag += `<td style="background-color:${color};"  class="parent_row_31"></td>`;
 		}
 
-		// 부본죽장
+
 		if ( isShowSettle )
 		{
 			// 부본 죽장
@@ -1097,7 +1105,7 @@
 		{
 			subtag += `
 				<td style="background-color:${color};" class="parent_row_31">
-					<input type="number" style='width:80%;height:20px;text-align:center;color:black;' value='${data.iInputQuaterSettle}' id='input_${aObject.strNickname}' ${data.inputSettleOption}/>
+					<input type="number" style='width:80%;height:20px;text-align:center;color:black;' value='${data.iTotal != 0 ? data.iInputQuaterSettle : 0}' id='input_${aObject.strNickname}' ${data.inputSettleOption}/>
 				</td>`;
 		}
 		else
@@ -1241,12 +1249,27 @@
 
 		// 적립 죽장비
 		if (bEnableSettle == true) {
+			let iSettle = parseInt(aObject.iSettle ?? 0);
 			// 적립가능 금액 = 해당월 죽장 - 전월 죽장 이월
-			data.iInputQuaterSettle = parseInt(aObject.iSettle ?? 0);
+			data.iInputQuaterSettle = iSettle;
 			if (data.iSettleBeforeAcc < 0) {
 				data.iInputQuaterSettle += data.iSettleBeforeAcc;
 			}
 			data.inputSettleOption = 'disabled="disabled"';
+
+
+			// 죽장이 플러스일 경우 자동 수금 처리 표시
+			let iPayback = parseInt(data.iPayback ?? 0);
+			let iSettleBeforeAcc = parseInt(data.iSettleBeforeAcc ?? 0) + iPayback;
+			if (iSettle > 0 && iSettleBeforeAcc < 0) {
+				// 이월 금액이 남아 있는 경우
+				if (-iSettleBeforeAcc > iSettle) {
+					iPayback = iPayback + iSettle;
+				} else {
+					iPayback = iPayback - iSettleBeforeAcc;
+				}
+				data.iPayback = iPayback;
+			}
 
 			// if (parseInt(aObject.iClass) == 4) {
 			// 	// 마이너스는 수정 불가

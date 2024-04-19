@@ -34,6 +34,7 @@
                 <table class="search_list">
                     <caption><%=__('SearchResult')%></caption>
                     <colgroup>
+                        <col style="width:3%">
                         <col style="width:7%">
                         <col style="width:7%">
                         <col style="width:7%">
@@ -49,6 +50,7 @@
                     </colgroup>
                     <thead>
                     <tr>
+                        <th scope="col">번호</th>
                         <th scope="col">본사</th>
                         <th scope="col">지분자</th>
                         <th scope="col">순이익</th>
@@ -107,22 +109,12 @@
 
     $(document).on('click', '#button_quater1', (e) => {
         let iMonth = parseInt($('#quater_month').val());
-        // if (!ValidationSettleHalf1(iMonth)) {
-        // 	$(e.currentTarget).attr('class', 'menu1');
-        // 	alert('현재 해당 분기는 조회할 수 없습니다(16일부터 가능합니다)');
-        // 	return;
-        // }
         $('.menu5').attr('class', 'menu1');
         $(e.currentTarget).attr('class', 'menu5');
     });
 
     $(document).on('click', '#button_quater2', (e) => {
         let iMonth = parseInt($('#quater_month').val());
-        // if (!ValidationSettleHalf2(iMonth)) {
-        // 	$(e.currentTarget).attr('class', 'menu1');
-        // 	alert('현재 해당 분기는 조회할 수 없습니다(1일부터 가능합니다)');
-        // 	return;
-        // }
         $('.menu5').attr('class', 'menu1');
         $(e.currentTarget).attr('class', 'menu5');
     });
@@ -185,6 +177,7 @@
                 console.log(aObject);
                 $('#list_agents').append(`
                     <tr class="Share" id=${aObject.strNickname}>
+                        <td>${i+1}</td>
                         <td id='agent_${strNickname}'>${parentNickname}</td>
                         <% if (user.iPermission != 100) { %>
                             <td id='strNickname_${strNickname}'><a style="color:blue;" href='#' onclick="OnClickNicknameShare('${strNickname}')";>${strNickname}</a></td>
@@ -260,7 +253,7 @@
             }
             $('#list_agents').append(`
                     <tr class="Total" style="font-weight: bold">
-                        <td colspan="2">합계</td>
+                        <td colspan="3">합계</td>
                         <td style="font-size: 12px; padding: 10px; line-height: 1.5; color:${GetColor(data.iShareOrgin)};">${GetNumberSign(data.iShareOrgin, '0')}</td>
                         <td style="font-size: 12px; padding: 10px; line-height: 1.5; color:${GetColor(data.iSlotCommission)};">${GetNumberSign(data.iSlotCommission, '0')}</td>
                         <td style="font-size: 12px; padding: 10px; line-height: 1.5; color:${GetColor(data.iPayback)};">${GetNumberSign(data.iPayback, '0')}</td>

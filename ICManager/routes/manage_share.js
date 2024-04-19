@@ -505,18 +505,20 @@ router.post('/request_share_list', isLoggedIn, async(req, res) => {
     });
 
     const targetUserCount = await getSettleTargetUserCount(req.body.strQuater, req.body.strGroupID);
-
-    if ( targetUserCount != exist.length ) {
+    // 이용자는 추후에 삭제가 가능함
+    if ( targetUserCount > exist.length ) {
         res.send({result:'FAIL', msg: '죽장 완료 후 조회 가능합니다'});
         return;
     }
 
     // 완료여부
+    let lastDate = GetQuaterEndDate(strQuater);
     let shares = await db.ShareUsers.findAll({
         where: {
             strGroupID: {
                 [Op.like]:`${strGroupID}%`
-            }
+            },
+            createdAt: {[Op.lt]: lastDate}
         }
     });
 
@@ -528,8 +530,8 @@ router.post('/request_share_list', isLoggedIn, async(req, res) => {
             }
         }
     });
-
-    if (shares.length == shareExist.length) {
+    // 지분자는 추후에 삭제가 가능함
+    if (shares.length <= shareExist.length) {
         let list = await IAgent.GetPopupGetShareInfo(strID, strGroupID, strQuater);
         res.send({result: 'OK', list: list, enable: false});
         return;
@@ -561,6 +563,8 @@ router.post('/request_share_list', isLoggedIn, async(req, res) => {
                 ) sr ON su.strNickname = sr.strNickname
             WHERE su.strGroupID LIKE CONCAT('${strGroupID}', '%')
         `);
+    // 완료여부
+    let complete = true;
 
     res.send({result: 'OK', list: list[0], enable: true});
 });

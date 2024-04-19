@@ -1597,17 +1597,17 @@ let inline_GetPopupGetShareInfo = async (strID, strGroupID, strQuater) => {
         return null;
 
     const list = await db.sequelize.query(`
-        SELECT u.strNickname AS parentNickname, su.strNickname AS strNickname, u.strID,
+        SELECT u.strNickname AS parentNickname, sr.strNickname AS strNickname, u.strID,
             sr.iShareOrgin, sr.iSlotCommission, sr.iPayback AS iPayback,
             sr.fShareR AS fShareR,
             sr.iShare AS iShare,
             sr.iShareAccBefore AS iShareAccBefore,
             sr.iCreditBefore AS iCreditBefore,
             sr.iCreditAfter AS iCreditAfter
-        FROM ShareUsers su
-        LEFT JOIN ShareRecords sr ON su.strNickname = sr.strNickname
+        FROM ShareRecords sr
+        LEFT JOIN ShareUsers su ON su.strNickname = sr.strNickname
         LEFT JOIN Users u ON u.strID = su.strID
-        WHERE sr.strQuater = '${strQuater}' AND u.strGroupID LIKE CONCAT('${strGroupID}', '%')
+        WHERE sr.strQuater = '${strQuater}' AND sr.strGroupID LIKE CONCAT('${strGroupID}', '%')
     `);
     return list[0];
 }

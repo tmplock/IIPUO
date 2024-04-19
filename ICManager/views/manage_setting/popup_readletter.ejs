@@ -85,7 +85,7 @@
         let strModifiedAnswer = (contents.strAnswers ?? '').replace(/(<br>)/g,'\r\n');
 
         let buttonTag = `<a href="javascript:Close();" class="custom-btn btn-5"><%=__('Close')%></a>`;
-        if (user.iRootClass <= 3 || user.iPermission != 100) {
+        if (user.iPermission != 100) {
             let strNickname = '';
             if (letterType == 0) {
                 strNickname = contents.strFrom;
@@ -93,8 +93,8 @@
                 strNickname = contents.strTo;
             }
             buttonTag = `
-            <a href="javascript:OnClickWritingLetter('${strNickname}');" class="custom-btn btn-3">쪽지 쓰기</a>
-            <a href="javascript:Close();" class="custom-btn btn-5"><%=__('Close')%></a>
+                <a href="javascript:OnClickWritingLetter('${strNickname}');" class="custom-btn btn-3">쪽지 쓰기</a>
+                <a href="javascript:Close();" class="custom-btn btn-5"><%=__('Close')%></a>
         `;
         }
         $('#read_letter_buttons').append(buttonTag);

@@ -412,7 +412,7 @@
 			let iShare = parseInt(aObject.iShare ?? 0); // 배당금
 			let iShareAccBefore = parseInt(aObject.iShareAccBefore ?? 0); // 지분자 전월 이월
 			let iCreditBefore = parseInt(aObject.iCreditBefore ?? 0); // 지분자 총 이월
-			let iShareTotal = iShareOrgin - iShare; // 지분자 순이익 - 배당금
+			let iShareTotal = iRealTotal - iShare; // 지분자 순이익 - 배당금
 			let iCurrentTotalShare = parseInt(aObject.iCurrentTotalShare ?? 0); // 현재 잔여 지분금액
 			let iSharePlus = parseInt(aObject.iSharePlus ?? 0);
 			let iShareMinus = parseInt(aObject.iShareMinus ?? 0);
@@ -1180,6 +1180,9 @@
 		return `<tr style="font-weight: bold">${subtag}</tr>`;
 	}
 
+	/**
+	 * 화면 표시 및 전송할 죽장값들 계산
+	 */
 	let CalculateSendData = (aObject, bEnableSettle) => {
 		let data = {
 			iTotal: 0,
@@ -1218,6 +1221,7 @@
 			data.iSettleAccTotal = 0;
 			data.iSettleVice = parseInt(aObject.iSettleVice ?? 0);
 			data.iSettleQuater = parseInt(aObject.iSettle ?? 0);
+			data.iSettleAcc = parseInt(aObject.iSettleAcc ?? 0);
 		} else {  // 죽장 완료
 			data.iTotal = parseInt(aObject.iBaccaratTotal) + parseInt(aObject.iUnderOverTotal) + parseInt(aObject.iSlotTotal) + parseInt(aObject.iPBATotal) + parseInt(aObject.iPBBTotal);
 			data.iRolling = parseInt(aObject.iRollingMoney);
@@ -1233,6 +1237,7 @@
 			data.iSettleVice = parseInt(aObject.iSettleVice ?? 0);
 			data.iSettleQuater = parseInt(aObject.iSettle ?? 0);
 			data.iPayback = parseInt(aObject.iPayback ?? 0);
+			data.iSettleAcc = parseInt(aObject.iSettleAcc ?? 0);
 		}
 
 		data.iSettle = parseInt(aObject.iSettle);
@@ -1249,26 +1254,55 @@
 
 		// 적립 죽장비
 		if (bEnableSettle == true) {
-			let iSettle = parseInt(aObject.iSettle ?? 0);
-			// 적립가능 금액 = 해당월 죽장 - 전월 죽장 이월
-			data.iInputQuaterSettle = iSettle;
-			if (data.iSettleBeforeAcc < 0) {
-				data.iInputQuaterSettle += data.iSettleBeforeAcc;
-			}
-			data.inputSettleOption = 'disabled="disabled"';
 
-
-			// 죽장이 플러스일 경우 자동 수금 처리 표시
-			let iPayback = parseInt(data.iPayback ?? 0);
-			let iSettleBeforeAcc = parseInt(data.iSettleBeforeAcc ?? 0) + iPayback;
-			if (iSettle > 0 && iSettleBeforeAcc < 0) {
-				// 이월 금액이 남아 있는 경우
-				if (-iSettleBeforeAcc > iSettle) {
-					iPayback = iPayback + iSettle;
-				} else {
-					iPayback = iPayback - iSettleBeforeAcc;
+			if (true) {
+				let iSettle = parseInt(aObject.iSettle ?? 0);
+				// 적립가능 금액 = 해당월 죽장 - 전월 죽장 이월
+				data.iInputQuaterSettle = iSettle;
+				if (data.iSettleBeforeAcc < 0) {
+					data.iInputQuaterSettle += data.iSettleBeforeAcc;
 				}
-				data.iPayback = iPayback;
+				data.inputSettleOption = 'disabled="disabled"';
+
+
+				// 죽장이 플러스일 경우 자동 수금 처리 표시
+				let iPayback = parseInt(data.iPayback ?? 0);
+				let iSettleBeforeAcc = parseInt(data.iSettleBeforeAcc ?? 0) + iPayback;
+				if (iSettle > 0 && iSettleBeforeAcc < 0) {
+					// 이월 금액이 남아 있는 경우
+					if (-iSettleBeforeAcc > iSettle) {
+						iPayback = iPayback + iSettle;
+					} else {
+						iPayback = iPayback - iSettleBeforeAcc;
+					}
+					data.iPayback = iPayback;
+				}
+			}
+
+
+			if (false) {
+				let iSettle = parseInt(aObject.iSettle ?? 0);
+				// 적립가능 금액 = 해당월 죽장 - 전월 죽장 이월
+				data.iInputQuaterSettle = iSettle;
+				if (data.iSettleAcc < 0) {
+					data.iInputQuaterSettle += data.iSettleAcc;
+				}
+				data.inputSettleOption = 'disabled="disabled"';
+
+
+				// 죽장이 플러스일 경우 자동 수금 처리 표시
+				let iPayback = parseInt(data.iPayback ?? 0);
+				// 이용자가 가지고 있는 보유죽장
+				let iSettleAcc = parseInt(data.iSettleAcc ?? 0) + iPayback;
+				if (iSettle > 0 && iSettleAcc < 0) {
+					// 이월 금액이 남아 있는 경우
+					if (-iSettleAcc > iSettle) {
+						iPayback = iPayback + iSettle;
+					} else {
+						iPayback = iPayback - iSettleAcc;
+					}
+					data.iPayback = iPayback;
+				}
 			}
 
 			// if (parseInt(aObject.iClass) == 4) {

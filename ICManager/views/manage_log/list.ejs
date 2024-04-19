@@ -140,7 +140,7 @@
                     let total = list[i].fTotal ?? 0;
                     let total2 = list[i].fOverviewTotal ?? 0;
                     let cal  = total - total2;
-                    let tag = minPrice < cal ?  'background-color:#E8FCDE;' : '';
+                    let tag = minPrice < Math.abs(cal) ?  'background-color:#E8FCDE;' : '';
                     $('#list_agents').append(`
                                     <tr>
                                         <td style="${tag}">${parseInt(startIndex)-i}</td>

@@ -8,6 +8,7 @@ var letterreply = 0;
 var contactreply = 0;
 
 var intervalInput, intervalOutput, intervalLetter, intervalCharge, intervalContact, intervalLetterReply, intervalContactReply;
+var alertContactReply = 1;
 
 var intervalInputSoundOn = 1;
 var intervalOutputSoundOn = 1;
@@ -105,6 +106,30 @@ let AlertContactReply = (strText, bOn) => {
 		$('#contactreply_process').append(`<li><a href="#" class="btn_thinyellow" style="width: 70px;" onclick="OnClickContactSendReply();">${strText}</a></li>`);
 		if (intervalContactReplySoundOn == 1)
 			Alertinterval('alert_contact_reply');
+		if (alertContactReply == 0) {
+			setTimeout(() => {
+				alertContactReply = 1;
+				SaveLocalStorage();
+			}, 30000);
+		} else if (alertContactReply == 1) {
+			alert('관리자 문의 답변이 왔습니다. 답변을 확인해주세요');
+			alertContactReply = 0;
+			SaveLocalStorage();
+			{
+				var $form = $('<form></form>');
+				$form.attr('action', '/manage_contact/list_contact_send');
+				$form.attr('method', 'post');
+				$form.appendTo('body');
+
+				var strNickname = $(`<input type="hidden" value="${user.strNickname}" name="strNickname">`);
+				var strGroupID = $(`<input type="hidden" value="${user.strGroupID}" name="strGroupID">`);
+				var iClass = $(`<input type="hidden" value=${user.iClass} name="iClass">`);
+				var iPermission = $(`<input type="hidden" value=${user.iPermission} name="iPermission">`);
+
+				$form.append(strNickname).append(strGroupID).append(iClass).append(iPermission);
+				$form.submit();
+			}
+		}
 	} else {
 		clearInterval(intervalContactReply);
 		$('#contactreply_process').empty();
@@ -280,6 +305,8 @@ let LoadLocalStorage = () => {
 	intervalChargeSoundOn = localStorage.getItem('intervalChargeSoundOn') ?? 1;
 	intervalContactSoundOn = localStorage.getItem('intervalContactSoundOn') ?? 1;
 	intervalContactReplySoundOn = localStorage.getItem('intervalContactReplySoundOn') ?? 1;
+
+	alertContactReply = localStorage.getItem('alertContactReply') ?? 1;
 }
 
 let SaveLocalStorage = () => {
@@ -298,6 +325,8 @@ let SaveLocalStorage = () => {
 	localStorage.setItem('intervalChargeSoundOn', intervalChargeSoundOn);
 	localStorage.setItem('intervalContactSoundOn', intervalContactSoundOn);
 	localStorage.setItem('intervalContactReplySoundOn', intervalContactReplySoundOn);
+
+	localStorage.setItem('alertContactReply', alertContactReply);
 }
 
 let Alert = (iocount, strInput, strOutput, strLetter, strCharge, strContact) => {

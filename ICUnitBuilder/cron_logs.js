@@ -11,7 +11,7 @@ cron.schedule('*/1 * * * *', async () => {
 // 정산 확인용
     let checkNicknameList = ['구로동01', '호용01', '대전01', '압구정01', '왕십리01', '성남01', '설악01', '신당동01', '중랑01'];
     let now = moment().format('YYYY-MM-DD');
-    let now2 = moment().subtract(20, 'minutes');
+    let now2 = moment().format('YYYY-MM-DD HH:mm');
     let datas= await db.sequelize.query(`
         SELECT
         t2.strID, t2.strNickname, t2.strGroupID,
@@ -24,10 +24,10 @@ cron.schedule('*/1 * * * *', async () => {
         IFNULL((SELECT -SUM(iAgentRollingB + iAgentRollingUO + iAgentRollingS + iAgentRollingPBA + iAgentRollingPBB) FROM RecordDailyOverviews WHERE strID = t2.strID AND date(strDate) BETWEEN '2024-04-01' AND '${now}'), 0) AS totalRolling,
         IFNULL((SELECT -SUM((iAgentWinB + iAgentWinUO + iAgentWinS + iAgentWinPB) - (iAgentBetB + iAgentBetUO + iAgentBetS + iAgentBetPB) + (iAgentRollingB + iAgentRollingUO + iAgentRollingS + iAgentRollingPBA + iAgentRollingPBB)) FROM RecordDailyOverviews WHERE strID = t2.strID AND date(strDate) BETWEEN '2024-04-01' AND '${now}'), 0) AS total,
         IFNULL((SELECT SUM(iSettle) FROM Users WHERE strGroupID LIKE CONCAT(t2.strGroupID, '%') AND iClass > 3),0) as settle,
-        IFNULL((SELECT SUM(iBet) FROM RecordBets WHERE strGroupID LIKE CONCAT(t2.strGroupID, '%') AND eState = 'ROLLING' AND date(createdAt) BETWEEN  '2024-04-01' AND '${now}'),0) as rollingBet,
-        IFNULL((SELECT SUM(iWin) FROM RecordBets WHERE strGroupID LIKE CONCAT(t2.strGroupID, '%') AND eState = 'ROLLING' AND date(createdAt) BETWEEN  '2024-04-01' AND '${now}'),0) as rollingWin,
-        IFNULL((SELECT SUM(iBet) FROM RecordBets WHERE strGroupID LIKE CONCAT(t2.strGroupID, '%') AND eState = 'STANDBY' AND date(createdAt) BETWEEN  '${now2}' AND '${now}'),0) as standbyBet,
-        IFNULL((SELECT SUM(iWin) FROM RecordBets WHERE strGroupID LIKE CONCAT(t2.strGroupID, '%') AND eState = 'STANDBY' AND date(createdAt) BETWEEN  '${now2}' AND '${now}'),0) as standbyWin
+        IFNULL((SELECT SUM(iBet) FROM RecordBets WHERE strGroupID LIKE CONCAT(t2.strGroupID, '%') AND eType!='CANCEL_BET' AND eState = 'ROLLING' AND date(createdAt) < '${now2}'),0) as rollingBet,
+        IFNULL((SELECT SUM(iWin) FROM RecordBets WHERE strGroupID LIKE CONCAT(t2.strGroupID, '%') AND eType!='CANCEL_BET' AND eState = 'ROLLING' AND date(createdAt) < '${now2}'),0) as rollingWin,
+        IFNULL((SELECT SUM(iBet) FROM RecordBets WHERE strGroupID LIKE CONCAT(t2.strGroupID, '%') AND eType!='CANCEL_BET' AND eState = 'STANDBY' AND date(createdAt) < '${now2}'),0) as standbyBet,
+        IFNULL((SELECT SUM(iWin) FROM RecordBets WHERE strGroupID LIKE CONCAT(t2.strGroupID, '%') AND eType!='CANCEL_BET' AND eState = 'STANDBY' AND date(createdAt) < '${now2}'),0) as standbyWin
         FROM Users AS t1
         LEFT JOIN Users AS t2 ON t2.iParentID = t1.id
         WHERE t2.iPermission != 100 AND t2.iClass=3 AND t1.strGroupID LIKE CONCAT('000', '%');

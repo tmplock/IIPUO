@@ -171,7 +171,7 @@ let start = async () => {
 
     let listGroupUser = [];
 
-    let strDate = '2024-04-13';
+    let strDate = '2024-04-19';
 
     let listDBData = await db.RecordDailyOverviews.findAll({where:
         {
@@ -208,57 +208,57 @@ let start = async () => {
     //     {strID:'qwe01', iClass:8},
     // ];
 
-    // for (let i in listID) {
-    //     await Overview.CalculateOverview(listID[i].strID, listID[i].iClass, strDate, listOverview);
-    // }
-
-    // for ( let i in listOverview )
-    // {
-    //     //console.log(listOverview[i]);
-
-    //     console.log(`########## strID : ${listOverview[i].strID}, iClass : ${listOverview[i].iClass}`);
-    //     if ( listOverview[i].strID == 'tkqnr01')
-    //     {
-    //         console.log(listOverview[i]);
-    //     }
-    // }
+    for (let i in listID) {
+        await Overview.CalculateOverview(listID[i].strID, listID[i].iClass, strDate, listOverview);
+    }
 
     for ( let i in listOverview )
     {
-        console.log(`${i}`);
+        //console.log(listOverview[i]);
 
-        await db.RecordDailyOverviews.update({
-            iBetB:listOverview[i].iBetB,
-            iBetUO:listOverview[i].iBetUO,
-            iBetS:listOverview[i].iBetS,
-            iBetPB:listOverview[i].iBetPB,
-            iWinB:listOverview[i].iWinB,
-            iWinUO:listOverview[i].iWinUO,
-            iWinS:listOverview[i].iWinS,
-            iWinPB:listOverview[i].iWinPB,
-            iRollingB:listOverview[i].iRollingB,
-            iRollingUO:listOverview[i].iRollingUO,
-            iRollingS:listOverview[i].iRollingS,
-            iRollingPBA:listOverview[i].iRollingPBA,
-            iRollingPBB:listOverview[i].iRollingPBB,
-            iAgentBetB:listOverview[i].iAgentBetB,
-            iAgentBetUO:listOverview[i].iAgentBetUO,
-            iAgentBetS:listOverview[i].iAgentBetS,
-            iAgentBetPB:listOverview[i].iAgentBetPB,
-            iAgentWinB:listOverview[i].iAgentWinB,
-            iAgentWinUO:listOverview[i].iAgentWinUO,
-            iAgentWinS:listOverview[i].iAgentWinS,
-            iAgentWinPB:listOverview[i].iAgentWinPB,
-            iAgentRollingB:listOverview[i].iAgentRollingB,
-            iAgentRollingUO:listOverview[i].iAgentRollingUO,
-            iAgentRollingS:listOverview[i].iAgentRollingS,
-            iAgentRollingPBA:listOverview[i].iAgentRollingPBA,
-            iAgentRollingPBB:listOverview[i].iAgentRollingPBB,
-        },
+        console.log(`########## strID : ${listOverview[i].strID}, iClass : ${listOverview[i].iClass}`);
+        if ( listOverview[i].strID == 'tkqnr01')
         {
-            where:{strID:listOverview[i].strID, strDate:listOverview[i].strDate}
-        });
+            console.log(listOverview[i]);
+        }
     }
+
+    // for ( let i in listOverview )
+    // {
+    //     console.log(`${i}`);
+
+    //     await db.RecordDailyOverviews.update({
+    //         iBetB:listOverview[i].iBetB,
+    //         iBetUO:listOverview[i].iBetUO,
+    //         iBetS:listOverview[i].iBetS,
+    //         iBetPB:listOverview[i].iBetPB,
+    //         iWinB:listOverview[i].iWinB,
+    //         iWinUO:listOverview[i].iWinUO,
+    //         iWinS:listOverview[i].iWinS,
+    //         iWinPB:listOverview[i].iWinPB,
+    //         iRollingB:listOverview[i].iRollingB,
+    //         iRollingUO:listOverview[i].iRollingUO,
+    //         iRollingS:listOverview[i].iRollingS,
+    //         iRollingPBA:listOverview[i].iRollingPBA,
+    //         iRollingPBB:listOverview[i].iRollingPBB,
+    //         iAgentBetB:listOverview[i].iAgentBetB,
+    //         iAgentBetUO:listOverview[i].iAgentBetUO,
+    //         iAgentBetS:listOverview[i].iAgentBetS,
+    //         iAgentBetPB:listOverview[i].iAgentBetPB,
+    //         iAgentWinB:listOverview[i].iAgentWinB,
+    //         iAgentWinUO:listOverview[i].iAgentWinUO,
+    //         iAgentWinS:listOverview[i].iAgentWinS,
+    //         iAgentWinPB:listOverview[i].iAgentWinPB,
+    //         iAgentRollingB:listOverview[i].iAgentRollingB,
+    //         iAgentRollingUO:listOverview[i].iAgentRollingUO,
+    //         iAgentRollingS:listOverview[i].iAgentRollingS,
+    //         iAgentRollingPBA:listOverview[i].iAgentRollingPBA,
+    //         iAgentRollingPBB:listOverview[i].iAgentRollingPBB,
+    //     },
+    //     {
+    //         where:{strID:listOverview[i].strID, strDate:listOverview[i].strDate}
+    //     });
+    // }
 
     return;
 

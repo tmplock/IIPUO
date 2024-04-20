@@ -376,6 +376,10 @@ let Submit = () => {
                     {
                         alert(data.string);
                     }
+                    else
+                    {
+                        alert(data.string);
+                    }
                 }                
             },
             error:function(request,status,error){

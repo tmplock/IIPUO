@@ -1,21 +1,21 @@
 <div class="search_wrap">
     <div class="container clearfix">
         <p style="background-repeat:no-repeat; background-position:left center; font-size:20px; color:#454545; padding-left:22px;margin-top:10px;height:30px;margin-bottom:5px;">
-            정산 이력 목록(시간별)
+            정산 이력 목록(본사별)
         </p>
         <div class="list">
             <div class="search_wrap" id="div_realtimebet">
                 <div style="background-color:#ffffff;text-align:right;padding-right:5px;padding-top:10px;padding-bottom:10px;" colspan="19">
                     금액 차이 설정
                     <input style="margin-left:0px;width:100px;" id="minPrice" type="number"/>
-                    <%=__('Search')%>
-                    <select id="select_roomno" style="width:80px;">
-                        <option><%=__('Nickname')%></option>
-                    </select>
-                    <input style="margin-left:0px;width:100px;" id="strSearchNickname" type="text"/>
+<!--                    <%=__('Search')%>-->
+<!--                    <select id="select_roomno" style="width:80px;">-->
+<!--                        <option><%=__('Nickname')%></option>-->
+<!--                    </select>-->
+<!--                    <input style="margin-left:0px;width:100px;" id="strSearchNickname" type="text"/>-->
                     <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickPage(1);"><%=__('Search')%></button>
-                    <input style="margin-left:10px;width:100px;" type="text" id="datepicker1" class="datepicker"/>~
-                    <input style="width:100px;" type="text" id="datepicker2" class="datepicker" />
+<!--                    <input style="margin-left:10px;width:100px;" type="text" id="datepicker1" class="datepicker"/>~-->
+<!--                    <input style="width:100px;" type="text" id="datepicker2" class="datepicker" />-->
                 </div>
 
                 <table class="search_list">
@@ -44,7 +44,6 @@
                     </tbody>
                 </table>
                 <div class="pagination mt0" id="pagination">
-
                 </div>
             </div>
         </div>
@@ -98,14 +97,9 @@
 
     let RequestRecord = (dateStart, dateEnd, strNickname) => {
         $.ajax({
-                url:'/manage_logs/request_logs',
+                url:'/manage_logs/request_logs2',
                 type:"POST",
                 data: {
-                    strNickname:strNickname,
-                    dateStart: dateStart,
-                    dateEnd: dateEnd,
-                    iLimit:iLimit,
-                    iPage:iCurrentPage,
                 },
                 dataType: "json",
                 success: function (obj) {
@@ -115,9 +109,6 @@
                     {
                         const total = obj.totalCount ?? 0;
                         SetList(obj.data, getNo(iLimit, total, iCurrentPage, 0));
-
-                        $('#pagination').empty();
-                        $('#pagination').append(getPagination(iLimit, obj.totalCount, iCurrentPage));
                     }
                     else
                     {

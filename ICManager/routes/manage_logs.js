@@ -10,7 +10,7 @@ router.use(express.static(path.join(__dirname, '../', 'objects')));
 
 const db = require('../models');
 const ITime = require('../utils/time');
-const {Op, where}= require('sequelize');
+const {Op, where, Sequelize}= require('sequelize');
 
 //////////////////////////////////////////////////////////////////////////////
 const IAgent = require('../implements/agent3');
@@ -68,6 +68,22 @@ router.post('/request_logs', isLoggedIn, async  (req, res) => {
 });
 
 
+router.post('/request_logs2', isLoggedIn, async  (req, res) => {
+    let list = await db.sequelize.query(`
+        SELECT *
+        FROM (SELECT *
+              FROM OverviewLogs
+              WHERE (strID, createdAt) in (SELECT strID, max(createdAt) as createdAt
+                                           FROM OverviewLogs
+                                           GROUP BY strID)
+              ORDER BY createdAt DESC) t
+        GROUP BY t.strID        
+    `, {type: db.Sequelize.QueryTypes.SELECT});
+
+    res.send({result:'OK', data:list});
+});
+
+
 /**
  * move
  */
@@ -81,6 +97,17 @@ router.post('/popup_overview_logs', isLoggedIn, async (req, res) => {
         iRootClass:req.user.iClass, iPermission:req.user.iPermission};
 
     res.render('manage_log/list', {iLayout:9, iHeaderFocus:0, user:user});
+});
+
+router.post('/popup_overview_logs2', isLoggedIn, async (req, res) => {
+    let strParent = await IAgent.GetParentNickname(req.body.strNickname);
+
+    const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
+
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle, strID:dbuser.strID,
+        iRootClass:req.user.iClass, iPermission:req.user.iPermission};
+
+    res.render('manage_log/list2', {iLayout:9, iHeaderFocus:0, user:user});
 });
 
 module.exports = router;

@@ -470,6 +470,12 @@ router.post('/request_gt', isLoggedIn, async(req, res) => {
                 return;
             }
 
+            if ( to.iRolling < cAmount )
+            {
+                res.send({result:'FAIL', reason:'NOTENOUGH'});
+                return;
+            }
+
             const iBeforeCashTo = parseInt(to.iCash);
             const iAfterCashTo = iBeforeCashTo+cAmount;
             const iBeforeRollingTo = parseInt(to.iRolling);

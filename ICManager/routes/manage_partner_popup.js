@@ -640,7 +640,7 @@ router.post('/request_register', isLoggedIn, async(req, res) => {
 
         const parent = await db.Users.findOne({where:{id:req.body.iParentID}});
         if ( parent == null ) {
-            res.send({result:'FAIL', error:'Rolling', string:'에이전트 생성을 실패했습니다.(${err})'});
+            res.send({result:'FAIL', error:'Rolling', string:'에이전트 생성을 실패했습니다.'});
             return;
         }
         if ( parent != null )

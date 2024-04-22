@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="Keywords" content="">
+    <meta name="Description" content="">
+    <title>IIP CMS DB</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script type="text/javascript" src="../../js/jquery.bxslider.min.js"></script>
+    <script type="text/javascript" src="../../js/placeholders.js"></script>
+    <script type="text/javascript" src="../../js/layout.js"></script>
+    <script type="text/javascript" src="../../js/common_js.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../css/general.css"/>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css" type="text/css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.8.18/jquery-ui.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href='//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css' rel='stylesheet' type='text/css'>
+</head>
+
+<body style="font-family:'Spoqa Han Sans Neo';">
+
+<div class="content" style="position:relative; padding:0 10px 0 10px;">
+    <div class="list_tit" id="registeragent_title">
+        <h3 style="font-size:22px;color:yellow;font-weight:bold;">배팅내역 롤백</h3>
+    </div>
+    <div class="write">
+        <div id='bet_info'></div>
+        <div class="list_tit" style="margin-top:20px;">
+            <h3>롤백할 항목을 선택해주세요.</h3>
+        </div>
+        <table>
+            <thead>
+                <th width="20%">체크</th>
+                <th width="80%">롤백 항목</th>
+            </thead>
+            <tbody>
+            <tr height="40px;">
+                <td style="text-align: center;"><input type="checkbox" id="chk" class="chkGrp" value="betting" checked></td>
+                <td>배팅금액 롤백(정산데이터에서 취소 금액만큼 배팅금액 차감됩니다)</td>
+            </tr>
+            <tr height="40px;">
+                <td style="text-align: center;"><input type="checkbox" id="chk" class="chkGrp" value="cash" checked></td>
+                <td>보유머니 롤백(이용자에게 취소 금액만큼 캐시가 증가됩니다)</td>
+            </tr>
+            </tbody>
+        </table>
+        <br>
+        <br>
+        <div class="align_c margin_t20" id="buttons">
+            <button type="button" onclick="OnClickCancel();" class="btn_del">취소하기</button>
+            <button onclick="OnClickClose();" class="custom-btn btn-5">닫기</button>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="js/enum.js"></script>
+<script type="text/javascript" src="js/time.js"></script>
+<script type="text/javascript" src="js/util.js"></script>
+<script type="text/javascript" src="js/manage_partner_popup_register.js"></script>
+<script type="text/javascript">
+    let bet = JSON.parse('<%-JSON.stringify(bet)%>');
+    let isSending = false;
+
+    $(document).ready(() => {
+        let strVender = bet.strVender;
+        if (strVender == 'HONORLINK') {
+            strVender = bet.strGameID;
+        }
+
+        let msg = `[롤백 배팅 정보]<br><br>벤더 : ${strVender} / 닉네임 : ${bet.strNickname} / 배팅금액 : ${GetNumber(bet.iBet)} / 승리금액 : ${GetNumber(bet.iWin)} / 배팅시간 : ${bet.createdAt}`;
+        $('#bet_info').empty();
+        $('#bet_info').append(`
+            <p style="background-repeat:no-repeat; background-position:left center; font-size:16px; color:red; padding-left:0px;">${msg}</p>
+        `);
+    });
+
+    let OnClickCancel = () => {
+        if (isSending) {
+            return;
+        }
+        isSending = true;
+        let cash = 0;
+        let betting = 0;
+        let msg = '';
+        $(".chkGrp:checked").each((idx, item) => {
+            if (item.value == 'cash') {
+                cash = 1;
+                msg = msg == '' ? '보유머니 롤백' : `${msg}, 보유머니 롤백`;
+            } else if (item.value == 'betting') {
+                betting = 1;
+                msg = msg == '' ? '배팅금액 롤백' : `${msg}, 배팅금액 롤백`;
+            }
+        });
+        if (msg == '') {
+            alert('롤백할 항목을 선택해주세요');
+            return;
+        }
+
+        if ( confirm(`배팅금액을 롤백 하시겠습니까?\r\n${msg}`) )
+        {
+            const data = {cash: cash, betting: betting, betId: bet.id};
+
+            $.ajax({
+                type:'post',
+                url: "/manage_bettingrecord/request_betting_cancel",
+                context: document.body,
+                data:data,
+
+                success:function(data) {
+
+                    if ( data.result == 'OK' )
+                    {
+                        alert('수정 완료');
+
+                        $('#buttons').empty();
+                        $('#buttons').append(`
+                            <button onclick="OnClickClose();" class="custom-btn btn-5">닫기</button>
+                        `);
+                    }
+                    else
+                    {
+                        isSending = false;
+                        alert(`${data.msg}`);
+                    }
+                }
+            });
+        }
+    }
+
+    let OnClickClose = () => {
+        window.close();
+    }
+
+    $(document).on('click', '.btn_blue', (e) => {
+
+        $('.btn_blue').css('background-color', 'rgb(39, 169, 209)');
+
+        $(e.currentTarget).css('background-color', 'red');
+    })
+
+</script>
+
+
+</body>
+</html>

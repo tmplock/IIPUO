@@ -223,6 +223,7 @@ let SetBettingList = (records, startIndex) => {
         let tagTargetWin = GetBettingTargetWins(bets, color);
 
         let tagDetail = '';
+        let tagCancel = '';
         let iGameCode = parseInt(records[i].iGameCode);
         let eState = records[i].eState;
         let updatedAt = '';
@@ -231,6 +232,8 @@ let SetBettingList = (records, startIndex) => {
         if (strVender == 'HONORLINK') {
             strVender = records[i].strGameID;
         }
+
+        tagCancel = records[i].cancel == true ? `<button onclick="OnClickCancel(${records[i].id});">배팅취소</button>` : '';
 
         if (eType == 'CANCEL_BET' || eType == 'CANCEL' || eType == 'CANCEL_WIN') {
             tagTargetBet = `<td style="font-size: 12px; background-color:${color}; padding: 10px; line-height: 1.5;"><font style="color: black;">${GetNumber(records[i].iBet)}</font></td>`;
@@ -276,7 +279,7 @@ let SetBettingList = (records, startIndex) => {
             ${tagWinResult}
             <td style="background-color:${color};">${records[i].createdAt}</td>
             <td style="background-color:${color};">${updatedAt}</td>
-            <td style="background-color:${color};">${tagDetail}</td>
+            <td style="background-color:${color};">${tagDetail}${tagCancel}</td>
         </tr>											
         `;
         $('#betting_list').append(tag);
@@ -343,8 +346,10 @@ let SetSlotBettingList = (records, startIndex) => {
         }
 
         let tagDetail = '';
+        let tagCancel = '';
         let iGameCode = parseInt(records[i].iGameCode);
         let eState = records[i].eState;
+        let eType = records[i].eType;
         let updatedAt = '';
 
         if (eState == 'COMPLETE') {
@@ -355,6 +360,8 @@ let SetSlotBettingList = (records, startIndex) => {
         if (strVender == 'HONORLINK') {
             strVender = records[i].strGameID;
         }
+
+        tagCancel = records[i].cancel == true ? `<button onclick="OnClickCancel(${records[i].id});">배팅취소</button>` : '';
 
         let tag =
             `
@@ -371,7 +378,7 @@ let SetSlotBettingList = (records, startIndex) => {
                     <td style="background-color:${color};color:black;">${GetNumber(iResultCash)}</td>
                     <td style="background-color:${color};">${records[i].createdAt}</td>
                     <td style="background-color:${color};">${updatedAt}</td>
-                    <td style="background-color:${color};">${tagDetail}</td>
+                    <td style="background-color:${color};">${tagDetail}${tagCancel}</td>
                 </tr>											
             `;
         $('#betting_list').append(tag);
@@ -397,6 +404,20 @@ let SetSlotBettingList = (records, startIndex) => {
 
 }
 
+let OnClickCancel = (betId) => {
+    let strAddress = '/manage_bettingrecord/popup_cancel';
+    window.open('', 'popupCancel', 'width=680, height=500, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
+
+    var $form = $('<form></form>');
+    $form.attr('action', strAddress);
+    $form.attr('method', 'post');
+    $form.attr('target', 'popupCancel');
+    $form.appendTo('body');
+
+    var idx = $(`<input type="hidden" value="${betId}" name="betId">`);
+    $form.append(idx);
+    $form.submit();
+}
 
 let GetBettingTarget = (iGameCode, iTarget, color) => {
 

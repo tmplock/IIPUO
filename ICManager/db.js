@@ -52,4 +52,5 @@ db.RecordDailyOverviews = require('./models/RecordDailyOverview')(sequelize, Seq
 db.Chips = require('./models/chip')(sequelize, Sequelize);
 db.Permissions = require('./models/permission')(sequelize, Sequelize);
 db.OverviewLogs = require('./models/OverviewLog')(sequelize, Sequelize);
+db.BettingLogs = require('./models/betting_log')(sequelize, Sequelize);
 module.exports = db;

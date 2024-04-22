@@ -17,6 +17,8 @@ const {isLoggedIn, isNotLoggedIn} = require('./middleware');
 
 const IInout = require("../implements/inout");
 const IAgent = require('../implements/agent3');
+const Processor = require("../icbuilder/processor");
+const ODDS = require("../icbuilder/helpers/odds");
 
 const cPBGOdds = [
     [
@@ -259,8 +261,18 @@ router.post('/request_casino_record', isLoggedIn, async(req, res) => {
 
     let records = [];
 
+    const cancel = (req.user.iPermission != 100 && req.user.iClass < 3) ? true : false;
+
     for ( let i in list )
     {
+
+        console.log(`${list[i].iWin} / ${list[i].eState == 'COMPLETE'}`);
+        let isCancel = false;
+        if (cancel == false || list[i].eType == 'CANCEL' || list[i].eType == 'CANCEL_BET' || list[i].eType == 'CANCEL_WIN') {
+            isCancel = false;
+        } else if (cancel && list[i].eState == 'COMPLETE') {
+            isCancel = true;
+        }
         records.push({
             id: list[i].id,
             strID:list[i].strID,
@@ -282,7 +294,8 @@ router.post('/request_casino_record', isLoggedIn, async(req, res) => {
             eType:list[i].eType,
             iTarget:list[i].iTarget,
             createdAt:list[i].createdAt,
-            updatedAt:list[i].updatedAt
+            updatedAt:list[i].updatedAt,
+            cancel:isCancel
         });
     }
     console.log(records);
@@ -346,9 +359,18 @@ router.post('/request_slot_record', isLoggedIn, async(req, res) => {
         });
 
     let records = [];
+    const cancel = (req.user.iPermission != 100 && req.user.iClass < 3) ? true : false;
 
     for ( let i in list )
     {
+        console.log(`${list[i].iWin} / ${list[i].eState == 'COMPLETE'}`);
+        let isCancel = false;
+        if (cancel == false || list[i].eType == 'CANCEL' || list[i].eType == 'CANCEL_BET' || list[i].eType == 'CANCEL_WIN') {
+            isCancel = false;
+        } else if (cancel && list[i].eState == 'COMPLETE') {
+            isCancel = true;
+        }
+
         records.push({
             id: list[i].id,
             strID:list[i].strID,
@@ -370,12 +392,172 @@ router.post('/request_slot_record', isLoggedIn, async(req, res) => {
             eType:list[i].eType,
             iTarget:list[i].iTarget,
             createdAt:list[i].createdAt,
-            updatedAt:list[i].updatedAt
+            updatedAt:list[i].updatedAt,
+            cancel: isCancel
         });
     }
     console.log(records);
 
     res.send({result:'OK', data:records, totalCount: totalCount});
+});
+
+
+/**
+ * 배팅 취소
+ */
+
+router.post('/request_betting_cancel', isLoggedIn, async (req, res) => {
+    console.log('/request_betting_cancel');
+    console.log(req.body);
+
+    const betId = req.body.betId ?? 0;
+    const cash = req.body.cash ?? 0;
+    const betting = req.body.betting ?? 0;
+
+    if (betId == 0 || (cash == 0 && betting == 0)) {
+        res.send({result: 'FAIL', msg:'잘못된 요청입니다'});
+        return;
+    }
+
+    const bet = await db.RecordBets.findOne({where: {id: betId}});
+
+    if (bet.eType == 'CANCEL' || bet.eType == 'CANCEL_BET' || bet.eType == 'CANCEL_WIN') {
+        res.send({result: 'FAIL', msg:'이미 취소된 배팅입니다'});
+        return;
+    }
+
+    if (bet.eState == 'PENDING' || bet.eState == 'ERROR') {
+        res.send({result: 'FAIL', msg:'취소할 수 없는 베팅입니다'});
+        return;
+    }
+
+    let iCash = bet.iBet - bet.iWin;
+
+    let log = `배팅취소 | 취소금액(배팅-승리) : ${iCash}`;
+    if (cash == 1) {
+        log = `${log} | 보유금액롤백`;
+    }
+    if (betting == 1) {
+        log = `${log} | 배팅금액롤백`;
+    }
+    log = `${log} | 벤더(게임) : ${bet.strVender}(${bet.strGameID}) | BetID : ${bet.id}`;
+
+    try {
+        if (bet.eState == 'STANDBY') {
+
+            await db.RecordBets.update({
+                eType: 'CANCEL_BET', eState: 'COMPLETE'
+            }, {where: {id: betId}});
+
+            await db.Users.increment({
+                iCash:iCash
+            }, {where: { strID: bet.strID }});
+
+            log = `${log} | 롤링 지급전`;
+
+            // 로그 남기기
+            await db.BettingLogs.create({
+                strNickname: bet.strNickname,
+                strID:bet.strID,
+                iClass:bet.iClass,
+                strGroupID:bet.strGroupID,
+                strLogs:log,
+                strEditorID: req.user.strID,
+                strEditorNickname:req.user.strNickname,
+            });
+
+            res.send({result: 'OK'});
+
+        } else if (bet.eState == 'COMPLETE') {
+
+            // 상부 Overview 감소처리(ICBuilder 참고)
+            let listOverview = [];
+            let listUpdateDB = [];
+            let listBetDB = [bet];
+            let listOdds = await ODDS.FullCalculteOdds(listBetDB);
+            const listCancelBet = [bet];
+            Processor.ProcessCancel('ALL', listCancelBet, listOverview, listOdds, listUpdateDB);
+
+            // 배팅 처리
+            await db.RecordBets.update({
+                eType: 'CANCEL_BET', eState: 'COMPLETE'
+            }, {where: {id: betId}});
+
+            // 정산데이터 롤백
+            if (betting == 1) {
+                await ODDS.UpdateOverview(listOverview);
+            }
+
+            // 유저 보유머니
+            if (cash == 1) {
+                await db.Users.increment({
+                    iCash:iCash
+                }, {where: { strID: bet.strID }});
+            }
+
+            log = `${log} | 롤링 롤백`;
+
+            // 로그 남기기
+            await db.BettingLogs.create({
+                strNickname: bet.strNickname,
+                strID:bet.strID,
+                iClass:bet.iClass,
+                strGroupID:bet.strGroupID,
+                strLogs:log,
+                strEditorID: req.user.strID,
+                strEditorNickname:req.user.strNickname,
+            });
+
+            res.send({result: 'OK'});
+        } else {
+            res.send({result: 'FAIL', msg:'처리 실패'});
+        }
+    } catch (err) {
+        res.send({result: 'FAIL', msg:`처리 실패(${err})`});
+    }
+});
+
+router.post('/popup_cancel', isLoggedIn, async (req, res) => {
+    console.log(`popup_cancel`);
+    console.log(req.body);
+
+    const strID = req.user.strID ?? '';
+    const betId = req.body.betId ?? 0;
+    let iClass = parseInt(req.user.iClass ?? 100);
+    let iPermission = parseInt(req.user.iPermission ?? 0);
+
+    if (iClass > 3 || iPermission == 100) {
+        res.send({result: 'FAIL', msg:'권한이 없습니다'});
+        return;
+    }
+
+    if (betId == 0 || strID == '' ) {
+        res.send({result: 'FAIL', msg:'잘못된 요청입니다'});
+        return;
+    }
+
+    const bet = await db.RecordBets.findOne({where: {id: betId}});
+    if (bet.eType == 'CANCEL' || bet.eType == 'CANCEL_BET' || bet.eType == 'CANCEL_WIN') {
+        res.send({result: 'FAIL', msg:'이미 취소된 배팅입니다'});
+        return;
+    }
+
+    let betInfo = {
+        id:bet.id,
+        strVender:bet.strVender,
+        strGameID:bet.strGameID,
+        strID: bet.strID,
+        strNickname: bet.strNickname,
+        iBet: bet.iBet,
+        iWin: bet.iWin,
+        strOverview: bet.strOverview,
+        createdAt:bet.createdAt,
+        eType: bet.eType,
+        eState: bet.eState,
+    }
+
+    const info = await db.Users.findOne({where: {strID: strID}});
+    res.render('manage_bettingrecord/popup_cancel', {iLayout:1, iHeaderFocus:0, agent:info, user:info, bet:betInfo});
 });
 
 
@@ -435,9 +617,13 @@ router.post('/request_record', isLoggedIn, async(req, res) => {
     });
 
     let records = [];
+    let cancel = (req.user.iPermission != 100 && req.user.iClass < 3) ? true : false;
 
     for ( let i in list )
     {
+        if (list[i].eType == 'CANCEL' || list[i].eType == 'CANCEL_BET' || list[i].eType == 'CANCEL_WIN') {
+            cancel = false;
+        }
         records.push({
             id: list[i].id,
             strID:list[i].strID,
@@ -459,7 +645,8 @@ router.post('/request_record', isLoggedIn, async(req, res) => {
             eType:list[i].eType,
             iTarget:list[i].iTarget,
             createdAt:list[i].createdAt,
-            updatedAt:list[i].updatedAt
+            updatedAt:list[i].updatedAt,
+            cancel:(cancel && list[i].iWin == 0 && list[i].eState == 'COMPLETE')
         });
     }
     console.log(records);
@@ -534,7 +721,7 @@ router.post('/request_pending_record', isLoggedIn, async(req, res) => {
         });
 
     let records = [];
-
+    let cancel = (req.user.iPermission != 100 && req.user.iClass < 3) ? true : false;
     for ( let i in list )
     {
         records.push({
@@ -558,7 +745,8 @@ router.post('/request_pending_record', isLoggedIn, async(req, res) => {
             eType:list[i].eType,
             iTarget:list[i].iTarget,
             createdAt:list[i].createdAt,
-            updatedAt:list[i].updatedAt
+            updatedAt:list[i].updatedAt,
+            cancel:cancel
         });
     }
     console.log(records);

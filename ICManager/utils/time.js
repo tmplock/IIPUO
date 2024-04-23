@@ -81,7 +81,7 @@ exports.getDateEnd = (dateEnd) => {
     let now = new Date();
     let end = new Date(dateEnd);
     if (now < end) {
-        end = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours(), now.getMinutes(), now.getSeconds());
+        end = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
     }
     return end;
 }

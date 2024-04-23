@@ -19,7 +19,7 @@ let RequestOverview = (bInput) => {
         dataType: "json",
         success: function (obj) {
 
-            let total = parseInt(obj.input) - parseInt(obj.output);
+            let total = (obj.input) - (obj.output);
             let tag = 
             `
             <td style="background-color:#E7E6D2;height:60px;background-color:#E7E6D2;font-size:15px;">
@@ -269,7 +269,7 @@ let SetInputList = (list, iRootClass) => {
                 const strChar = (iOn) ? `<font style="color:red;font-size:15px;"> ❊ </font>` : '';
                 const strSChar = (iOn) ? `<font style="color:transparent;font-size:15px;"> ❊ </font>` : '';
                 tag += `<td id="td_state_${list[i].id}">${strSChar}<font style="color:blue;">${strStateComplete}</font>${strChar}</td>`;
-                iTotal += parseInt(list[i].iAmount);
+                iTotal += (list[i].iAmount);
             } 
             else if ( list[i].eState == 'CANCEL' ) {
                 tag += `<td id="td_state_${list[i].id}"><font style="color:red;">${strCancel}</font></td>`;
@@ -286,7 +286,7 @@ let SetInputList = (list, iRootClass) => {
                 const strChar = (iOn) ? `<font style="color:red;font-size:15px;"> ❊ </font>` : '';
                 const strSChar = (iOn) ? `<font style="color:transparent;font-size:15px;"> ❊ </font>` : '';
                 tag += `<td id="td_state_${list[i].id}">${strSChar}<font style="color:blue;">${strStateComplete}</font>${strChar}</td>`;
-                iTotal += parseInt(list[i].iAmount);
+                iTotal += (list[i].iAmount);
             } 
             else if ( list[i].eState == 'CANCEL' ) {
                 tag += `<td id="td_state_${list[i].id}"><font style="color:red;">${strCancel}</font></td>`;
@@ -425,7 +425,7 @@ let SetOutputList = (list, iRootClass) => {
                     const strChar = (iOn) ? `<font style="color:red;font-size:15px;"> ❊ </font>` : '';
                     const strSChar = (iOn) ? `<font style="color:transparent;font-size:15px;"> ❊ </font>` : '';
                     tag += `<td id="td_state_${list[i].id}">${strSChar}<font style="color:blue;">${strStateComplete}</font>${strChar}</td>`;
-                    iTotal += parseInt(list[i].iAmount);
+                    iTotal += (list[i].iAmount);
                 } 
                 else if ( list[i].eState == 'CANCEL' )
                     tag += `<td id="td_state_${list[i].id}"><font style="color:red;">${strCancel}</font></td>`;
@@ -441,7 +441,7 @@ let SetOutputList = (list, iRootClass) => {
                     const strSChar = (iOn) ? `<font style="color:transparent;font-size:15px;"> ❊ </font>` : '';
                     tag += `<td id="td_state_${list[i].id}">${strSChar}<font style="color:blue;">${strStateComplete}</font>${strChar}</td>`;
     
-                    iTotal += parseInt(list[i].iAmount);
+                    iTotal += (list[i].iAmount);
                 } 
                 else if ( list[i].eState == 'CANCEL' ) {
                     tag += `<td id="td_state_${list[i].id}"><font style="color:red;">${strCancel}</font></td>`;
@@ -504,7 +504,7 @@ let SetOutputList = (list, iRootClass) => {
             <tr>
             <tr style="font-weight: bold;">
             <td colspan="${colspan}">${strTotal}</td>
-            <td><font style="color:red;">${iTotal.toLocaleString()}</font></td>
+            <td><font style="color:red;">${GetNumber(iTotal)}</font></td>
             <td></td>
             <td></td>
             <td></td>

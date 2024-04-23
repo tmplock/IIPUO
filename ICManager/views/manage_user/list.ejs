@@ -279,13 +279,13 @@
 
             $('#userlist').append(tag);
 
-            total.cash += parseInt(userlist[i].iCash);
-            total.input += parseInt(userlist[i].iInput);
-            total.output += parseInt(userlist[i].iOutput);
-            total.rolling += parseInt(userlist[i].iMyRollingMoney);
-            total.loan += parseInt(userlist[i].iLoan);
-            total.total += parseInt(userlist[i].iTotal);
-            total.totalRolling += parseInt(userlist[i].iCurrentRolling);
+            total.cash += (userlist[i].iCash);
+            total.input += (userlist[i].iInput);
+            total.output += (userlist[i].iOutput);
+            total.rolling += (userlist[i].iMyRollingMoney);
+            total.loan += (userlist[i].iLoan);
+            total.total += (userlist[i].iTotal);
+            total.totalRolling += (userlist[i].iCurrentRolling);
         }
 
         return total;
@@ -325,7 +325,7 @@
         totalRolling: total1.totalRolling + total2.totalRolling + total3.totalRolling + total4.totalRolling
         };
 
-        let total_f = parseInt(total.total) - parseInt(total.rolling);
+        let total_f = (total.total) - (total.rolling);
 
         let endtag = `
         <tr>

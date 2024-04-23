@@ -66,7 +66,7 @@
                 let strNickname = aObject.strNickname ?? '';
                 let iSettleAcc = aObject.iSettleAcc ?? '0';
                 let strMemo = aObject.strSettleMemo ?? '';
-                total = parseInt(total) + parseInt(iSettleAcc);
+                total = (total) + (iSettleAcc);
 
                 $('#list_agents').append(`
                     <tr class="Settle" id=${aObject.strNickname}>

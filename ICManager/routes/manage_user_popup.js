@@ -343,12 +343,12 @@ router.post('/request_gt', isLoggedIn, async(req, res) => {
 
             if ( from.iCash >= cAmount || from.iClass == IAgent.EAgent.eHQ)
             {
-                const iBeforeCashTo = parseInt(to.iCash);
+                const iBeforeCashTo = (to.iCash);
                 const iAfterCashTo = iBeforeCashTo+cAmount;
                 //await to.update({iCash:iAfterCashTo});
                 await db.Users.update({iCash:iAfterCashTo}, {where:{strNickname:req.body.strTo}});
 
-                const iBeforeCashFrom = parseInt(from.iCash);
+                const iBeforeCashFrom = (from.iCash);
                 const iAfterCashFrom = iBeforeCashFrom - cAmount;
                 if ( from.iClass != IAgent.EAgent.eHQ ) {
                     //await from.update({iCash:iAfterCashFrom});
@@ -406,12 +406,12 @@ router.post('/request_gt', isLoggedIn, async(req, res) => {
 
             if ( to.iCash >= cAmount )
             {
-                const iBeforeCashTo = parseInt(to.iCash);
+                const iBeforeCashTo = (to.iCash);
                 const iAfterCashTo = iBeforeCashTo-cAmount;
                 //await to.update({iCash:iAfterCashTo});
                 await db.Users.update({iCash:iAfterCashTo}, {where:{strNickname:req.body.strTo}});
 
-                const iBeforeCashFrom = parseInt(from.iCash);
+                const iBeforeCashFrom = (from.iCash);
                 const iAfterCashFrom = iBeforeCashFrom + cAmount;
                 if ( from.iClass != IAgent.EAgent.eHQ ) {
                     //await from.update({iCash:iAfterCashFrom});
@@ -476,9 +476,9 @@ router.post('/request_gt', isLoggedIn, async(req, res) => {
                 return;
             }
 
-            const iBeforeCashTo = parseInt(to.iCash);
+            const iBeforeCashTo = (to.iCash);
             const iAfterCashTo = iBeforeCashTo+cAmount;
-            const iBeforeRollingTo = parseInt(to.iRolling);
+            const iBeforeRollingTo = (to.iRolling);
             const iAfterRollingTo = iBeforeRollingTo-cAmount;
             // 롤링전환시에는 전환전 금액에 전환전 롤링값을 표시
 
@@ -491,7 +491,7 @@ router.post('/request_gt', isLoggedIn, async(req, res) => {
             //     iRolling:iAfterRollingTo,
             // });
 
-            const iBeforeCashFrom = parseInt(from.iCash);
+            const iBeforeCashFrom = (from.iCash);
             const iAfterCashFrom = iBeforeCashFrom - cAmount;
             //await from.update({iCash:iAfterCashFrom, iRolling: from.iRolling + cAmount});
             await db.Users.update({iCash:iAfterCashFrom, iRolling: from.iRolling + cAmount}, {where:{strNickname:strAdminNickname}});
@@ -554,9 +554,9 @@ router.post('/request_gt', isLoggedIn, async(req, res) => {
                 return;
             }
 
-            const iBeforeCashTo = parseInt(to.iCash);
+            const iBeforeCashTo = (to.iCash);
             const iAfterCashTo = iBeforeCashTo+cAmount;
-            const iBeforeSettleTo = parseInt(to.iSettle);
+            const iBeforeSettleTo = (to.iSettle);
             const iAfterSettleTo = iBeforeSettleTo-cAmount;
             await db.Users.update({iCash:iAfterCashTo, iSettle:iAfterSettleTo},{where:{strNickname:req.body.strTo}});
             // await to.update({
@@ -586,7 +586,7 @@ router.post('/request_gt', isLoggedIn, async(req, res) => {
             //     }
             // }
 
-            const iBeforeCashFrom = parseInt(from.iCash);
+            const iBeforeCashFrom = (from.iCash);
             const iAfterCashFrom = iBeforeCashFrom - cAmount;
             //await from.update({iCash:iAfterCashFrom, iSettle: from.iSettle + cAmount});
             await db.Users.update({iCash:iAfterCashFrom, iSettle: from.iSettle + cAmount}, {where:{strNickname:strAdminNickname}});

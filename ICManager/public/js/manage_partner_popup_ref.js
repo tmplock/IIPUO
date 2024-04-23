@@ -28,12 +28,12 @@ let RequestAgentListOnPopup = (iTargetClass, strGroupID, iClass, iPermission, st
             for ( let i in list )
             {
                 let obj = list[i];
-                iInput += parseInt(obj.iInput);
-                iOutput += parseInt(obj.iOutput);
-                iTotalMoney += parseInt(obj.iTotalMoney);
-                iRollingMoney += parseInt(obj.iRollingMoney);
-                iTotal += parseInt(obj.iTotal);
-                iMyRollingMoney += parseInt(obj.iMyRollingMoney);
+                iInput += (obj.iInput);
+                iOutput += (obj.iOutput);
+                iTotalMoney += (obj.iTotalMoney);
+                iRollingMoney += (obj.iRollingMoney);
+                iTotal += (obj.iTotal);
+                iMyRollingMoney += (obj.iMyRollingMoney);
 
                 //<td>${obj.strID}</td>
                 let tag = 
@@ -139,12 +139,12 @@ let RequestUserListOnPopup = (iTargetClass, strGroupID, iClass, iPermission, str
             for ( let i in list )
             {
                 let obj = list[i];
-                iInput += parseInt(obj.iInput);
-                iOutput += parseInt(obj.iOutput);
-                iTotalMoney += parseInt(obj.iMyMoney);
-                iMyRollingMoney += parseInt(obj.iMyRollingMoney);
-                iTotal += parseInt(obj.iTotal);
-                iTotalRolling += parseInt(obj.iCurrentRolling);
+                iInput += (obj.iInput);
+                iOutput += (obj.iOutput);
+                iTotalMoney += (obj.iMyMoney);
+                iMyRollingMoney += (obj.iMyRollingMoney);
+                iTotal += (obj.iTotal);
+                iTotalRolling += (obj.iCurrentRolling);
 
                 let strLoginedAt = '';
                 if ( obj.loginedAt != null && obj.loginedAt != undefined )

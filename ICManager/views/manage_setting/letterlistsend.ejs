@@ -221,7 +221,7 @@
                 $('#remove_select').css('background-color', 'grey');
 
                 let letters = obj.letters;
-                let totalCount = parseInt(obj.totalCount);
+                let totalCount = (obj.totalCount);
                 let iStartIndex = totalCount;
                 if (iCurrentPage > 1) {
                     iStartIndex = totalCount - (iCurrentPage-1)*iLimit;

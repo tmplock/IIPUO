@@ -328,16 +328,16 @@
 
 			response_list.push({me:aObject[i].strNickname, childs:[], visible:true});
 
-			iInput += parseInt(aObject[i].iInputGts);
-			iOutput += parseInt(aObject[i].iOutputGts);
-			iTotalMoney += parseInt(aObject[i].iTotalMoney);
+			iInput += (aObject[i].iInputGts);
+			iOutput += (aObject[i].iOutputGts);
+			iTotalMoney += (aObject[i].iTotalMoney);
 
-			iBWinLose += parseInt(aObject[i].iBaccaratTotal) + parseInt(aObject[i].iBaccaratRollingMoney);
-			iUWinLose += parseInt(aObject[i].iUnderOverTotal) + parseInt(aObject[i].iUnderOverRollingMoney);
-			iSWinLose += parseInt(aObject[i].iSlotTotal) + parseInt(aObject[i].iSlotRollingMoney);
-			iPBWinLose += (parseInt(aObject[i].iPBTotal) + parseInt(aObject[i].iPBRollingMoney));
+			iBWinLose += (aObject[i].iBaccaratTotal) + (aObject[i].iBaccaratRollingMoney);
+			iUWinLose += (aObject[i].iUnderOverTotal) + (aObject[i].iUnderOverRollingMoney);
+			iSWinLose += (aObject[i].iSlotTotal) + (aObject[i].iSlotRollingMoney);
+			iPBWinLose += ((aObject[i].iPBTotal) + (aObject[i].iPBRollingMoney));
 
-			iMyMoney += parseInt(aObject[i].iMyMoney);
+			iMyMoney += (aObject[i].iMyMoney);
 
 			tag += subtag;
 		}
@@ -401,17 +401,17 @@
 		`;
 
 
-		let iInput = parseInt(aObject.iInputGts);
-		let iOutput = parseInt(aObject.iOutputGts);
-		let iTotalMoney = parseInt(aObject.iTotalMoney);
+		let iInput = (aObject.iInputGts);
+		let iOutput = (aObject.iOutputGts);
+		let iTotalMoney = (aObject.iTotalMoney);
 
-		let iBWinLose = parseInt(aObject.iBaccaratTotal) + parseInt(aObject.iBaccaratRollingMoney);
-		let iUWinLose = parseInt(aObject.iUnderOverTotal) + parseInt(aObject.iUnderOverRollingMoney);
-		let iSWinLose = parseInt(aObject.iSlotTotal) + parseInt(aObject.iSlotRollingMoney);
-		let iPBWinLose = parseInt(aObject.iPBTotal) + parseInt(aObject.iPBRollingMoney);
+		let iBWinLose = (aObject.iBaccaratTotal) + (aObject.iBaccaratRollingMoney);
+		let iUWinLose = (aObject.iUnderOverTotal) + (aObject.iUnderOverRollingMoney);
+		let iSWinLose = (aObject.iSlotTotal) + (aObject.iSlotRollingMoney);
+		let iPBWinLose = (aObject.iPBTotal) + (aObject.iPBRollingMoney);
 		let iWinLose = iBWinLose + iUWinLose + iSWinLose + iPBWinLose;
 
-		let iMyMoney = parseInt(aObject.iMyMoney);
+		let iMyMoney = (aObject.iMyMoney);
 
 		subtag += `<td style="background-color:${color};"  class="parent_row_31">${GetNumber(iInput)}</td>`;
 		subtag += `<td style="background-color:${color};"  class="parent_row_31">${GetNumber(iOutput)}</td>`;

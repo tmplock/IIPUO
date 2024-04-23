@@ -808,7 +808,7 @@ router.post('/listtodayregist', isLoggedIn, async(req, res) => {
             result.splice(i, 1);
         }
         else
-            total.iTotalCash += parseInt(result[i].iCash);
+            total.iTotalCash += (result[i].iCash);
     }
 
     var overview = await IAgent.CalculateBettingRecord(user.strGroupID, user.iClass, strTimeStart, strTimeEnd, '', dbuser.strID);

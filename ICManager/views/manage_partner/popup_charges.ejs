@@ -142,13 +142,13 @@
 				`;
 				$('#input_list').append(tag);
 
-				iTotal += parseInt(data[i].iAmount);
+				iTotal += (data[i].iAmount);
 			}
 		}
 
 		let endtag = `
 			<td colspan = "4" style="color:red;"><%=__('Total')%></td>
-			<td>${iTotal.toLocaleString()}</td>
+			<td>${GetNumber(iTotal)}</td>
 			<td></td>
 			<td></td>
 			<td></td>

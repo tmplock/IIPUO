@@ -39,19 +39,7 @@
 					<% if ( user.iRootClass <= 3 && user.iPermission != 100 ) { %>
 						<button class="btn_blue" style="margin-left:15%;width:200px;text-align:center;background-color: #f0d17e;color:black" onclick="javascript:DoApplyRolling(user);"><%=__('Rolling')%> <%=__('Apply')%></button>
 					<%}%>
-
 					<% if ( user.iRootClass > 3 ) { %>
-
-<!--						<div style="text-align:right;padding-right:10%;margin-top:-55px;">-->
-<!--							<span id="top_total_point_area">-->
-<!--								<font style="color:#00FFFF;font-size:15px;font-weight:bold;"><%=__('Cash')%> :</font><font style="color:yellow;font-size:15px;font-weight:bold;"><%=parseInt(agentinfo.iCash).toLocaleString()%></font>-->
-<!--								&nbsp;&nbsp;-->
-<!--								<font style="color:#00FFFF;font-size:15px;font-weight:bold;"><%=__('Rolling')%> :</font><font style="color:yellow;font-size:15px;font-weight:bold;"><%=parseInt(agentinfo.iRolling).toLocaleString()%></font>-->
-<!--								&nbsp;&nbsp;-->
-<!--								<font style="color:#00FFFF;font-size:15px;font-weight:bold;"><%=__('Settle')%> :</font><font style="color:yellow;font-size:15px;font-weight:bold;"><%=parseInt(agentinfo.iSettle).toLocaleString()%></font>-->
-<!--								&nbsp;&nbsp;&nbsp;-->
-<!--							</span>-->
-<!--						</div>-->
 					<%}%>
 				</h3>
 			</div>

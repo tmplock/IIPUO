@@ -111,7 +111,7 @@
 							iClass = list[i].iClassFrom;
 						}
 						iBeforeAmount = list[i].iBeforeAmountTo;
-						iAfterAmount = parseInt(list[i].iBeforeAmountTo) - parseInt(iAmount);
+						iAfterAmount = (list[i].iBeforeAmountTo) - (iAmount);
 					}
 					if (list[i].eType == 'ROLLING' || list[i].eType == 'TAKE') {
 						iAmountOut = list[i].iAmount;

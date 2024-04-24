@@ -1069,7 +1069,7 @@ router.post('/request_agentinfo_modify',isLoggedIn, async (req, res) => {
         let listHistory = [];
         if ( user.strNickname != req.body.strNickname || user.strID != req.body.strID )
         {
-            let targetuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
+            let targetuser = await db.Users.findOne({where:{strNickname:user.strNickname}});
             if ( null != targetuser )
             {
                 res.send({result:'ERROR', code:'UnknownUser'});

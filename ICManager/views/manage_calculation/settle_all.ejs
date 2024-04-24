@@ -1096,7 +1096,7 @@
 		}
 
 		// 죽장 적립(입력값 죽장 이월)
-		subtag += `<input type='hidden' id='quatersettle_${aObject.strNickname}' value='${aObject.iSettleOrigin}'/>`;
+		subtag += `<input type='hidden' id='quatersettle_${aObject.strNickname}' value='${parseInt(aObject.iSettleOrigin)}'/>`;
 		subtag += `<input type='hidden' id='class_${aObject.strNickname}' value='${aObject.iClass}'/>`;
 		subtag += `<input type='hidden' id='rolling_${aObject.strNickname}' value='${aObject.iRollingMoney}'/>`;
 
@@ -1105,7 +1105,7 @@
 		{
 			subtag += `
 				<td style="background-color:${color};" class="parent_row_31">
-					<input type="number" style='width:80%;height:20px;text-align:center;color:black;' value='${data.iTotal != 0 ? data.iInputQuaterSettle : 0}' id='input_${aObject.strNickname}' ${data.inputSettleOption}/>
+					<input type="number" style='width:80%;height:20px;text-align:center;color:black;' value='${data.iTotal != 0 ? parseInt(data.iInputQuaterSettle) : 0}' id='input_${aObject.strNickname}' ${data.inputSettleOption}/>
 				</td>`;
 		}
 		else

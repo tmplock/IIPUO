@@ -214,7 +214,7 @@ let inline_CalculateSelfBettingRecord = async (strGroupID, iClass, dateStart, da
 
     if ( iom.length > 0 )
     {
-        data.iInput = (iom[0].iInput);
+        data.iInput = parseFloat(iom[0].iInput);
         data.iOutput = iom[0].iOutput;
         data.iTotalCash = iom[0].iTotalMoney;
         data.iRolling = iom[0].iRolling;
@@ -276,7 +276,7 @@ let inline_CalculateBettingRecord = async (strGroupID, iClass, dateStart, dateEn
 
     if ( iom.length > 0 )
     {
-        data.iInput = (iom[0].iInput);
+        data.iInput = parseFloat(iom[0].iInput);
         data.iOutput = iom[0].iOutput;
         data.iTotalCash = iom[0].iTotalMoney;
         data.iRolling = iom[0].iRolling;
@@ -584,7 +584,7 @@ var inline_CalculateTermSelfBettingRecord = async (strGroupID, iClass, dateStart
         if ( iCurrent == -1 )
             continue;
 
-        list[iCurrent].iInput = (iom[date].iInput);
+        list[iCurrent].iInput = parseFloat(iom[date].iInput);
         list[iCurrent].iOutput = iom[date].iOutput;
         list[iCurrent].iExchange = iom[date].iExchange;
     }
@@ -650,7 +650,7 @@ var inline_CalculateTermBettingRecord = async (strGroupID, iClass, dateStart, da
         if ( iCurrent == -1 )
             continue;
 
-        list[iCurrent].iInput = (iom[date].iInput);
+        list[iCurrent].iInput = parseFloat(iom[date].iInput);
         list[iCurrent].iOutput = iom[date].iOutput;
         list[iCurrent].iExchange = iom[date].iExchange;
     }
@@ -866,22 +866,22 @@ let GetClassRolling = (daiyBetting, iClass, iGameCode) => {
  */
 let GetSelfBetting = (daiyBetting, iClass, iGameCode, fB, fUO, fS, fPB) => {
     if (iGameCode == 0) {
-        if ((daiyBetting.iBetB) > 0) {
+        if (parseFloat(daiyBetting.iBetB) > 0) {
             return {iBetting:daiyBetting.iBetB, iWin:daiyBetting.iWinB, iRolling:(daiyBetting.iBetB)*fB*0.01, iTarget:0, iGameCode:iGameCode};
         }
         return {iBetting:0, iWin:0, iRolling:0, iTarget:0, iGameCode:iGameCode};
     } else if (iGameCode == 100) {
-        if ((daiyBetting.iBetUO) > 0) {
+        if (parseFloat(daiyBetting.iBetUO) > 0) {
             return {iBetting:daiyBetting.iBetUO, iWin:daiyBetting.iWinUO, iRolling:(daiyBetting.iBetUO)*fUO*0.01, iTarget:0, iGameCode:iGameCode};
         }
         return {iBetting:0, iWin:0, iRolling:0, iTarget:0, iGameCode:iGameCode};
     } else if (iGameCode == 200) {
-        if ((daiyBetting.iBetS) > 0) {
+        if (parseFloat(daiyBetting.iBetS) > 0) {
             return {iBetting:daiyBetting.iBetS, iWin:daiyBetting.iWinS, iRolling:(daiyBetting.iBetS)*fS*0.01, iTarget:0, iGameCode:iGameCode};
         }
         return {iBetting:0, iWin:0, iRolling:0, iTarget:0, iGameCode:iGameCode};
     } else if (iGameCode == 300) {
-        if ((daiyBetting.iBetPB) > 0) {
+        if (parseFloat(daiyBetting.iBetPB) > 0) {
             return {iBetting:daiyBetting.iBetPB, iWin:daiyBetting.iWinPB, iRolling:(daiyBetting.iBetPB)*fPB*0.01, iTarget:0, iGameCode:iGameCode};
         }
         return {iBetting:0, iWin:0, iRolling:0, iTarget:0, iGameCode:iGameCode};

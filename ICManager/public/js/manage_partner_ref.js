@@ -95,10 +95,10 @@ function AddTable(iHeader, iInput, iOutput, iCash, aObject, iRootClass, hidden)
 
 	// +/- 모두 나와야함
 	if (hidden != undefined && hidden == true) {
-		const total = (iTotalBetting ?? 0);
-		const input = (aObject.iInput ?? 0);
-		const exchange = (aObject.iExchange ?? 0);
-		const output = (aObject.iOutput ?? 0);
+		const total = parseFloat(iTotalBetting ?? 0);
+		const input = parseFloat(aObject.iInput ?? 0);
+		const exchange = parseFloat(aObject.iExchange ?? 0);
+		const output = parseFloat(aObject.iOutput ?? 0);
 
 		if (total == 0 && input == 0 && exchange == 0 && output == 0) {
 			return '';
@@ -122,8 +122,8 @@ function AddTable(iHeader, iInput, iOutput, iCash, aObject, iRootClass, hidden)
 
 	tag += `<td><a style="${fontWeight}">${GetNumber(aObject.iInput)}</a></td>`;
 	tag += `<td><a style="${fontWeight}">${GetNumber(aObject.iOutput)}</a></td>`;
-	const input = (aObject.iInput ?? 0);
-	const output = (aObject.iOutput ?? 0);
+	const input = parseFloat(aObject.iInput ?? 0);
+	const output = parseFloat(aObject.iOutput ?? 0);
 	const cal = input - output;
 	tag += `<td><a style="${fontWeight}">${GetNumberSign(cal)}</a></td>`;
 	tag += `<td><a style="${fontWeight}">${GetNumber(aObject.iTotalCash)}</a></td>`;
@@ -184,7 +184,7 @@ function AddTableOwner(iHeader, iInput, iOutput, iCash, aObject, iRootClass)
 
 	tag += `<td><a style="${fontWeight}">${GetNumber(aObject.iInput)}</a></td>`;
 	tag += `<td><a style="${fontWeight}">${GetNumber(aObject.iOutput)}</a></td>`;
-	tag += `<td><a style="${fontWeight}">${GetNumberSign((aObject.iInput) - (aObject.iOutput))}</a></td>`;
+	tag += `<td><a style="${fontWeight}">${GetNumberSign(parseFloat(aObject.iInput) - parseFloat(aObject.iOutput))}</a></td>`;
 	tag += `<td><a style="${fontWeight}">${GetNumber(aObject.iTotalCash)}</a></td>`;
 
 	tag += `<td style="text-align:right;">`;
@@ -541,9 +541,9 @@ function SetOverviewRecordList(aObject, strParentTag, bClear, iRootClass)
 			object.kBettingInfo.push(tObject.kBettingInfo[i]);
 		}
 
-		object.iExchange += (tObject.iExchange);
-		object.iInput += (tObject.iInput);
-		object.iOutput += (tObject.iOutput);
+		object.iExchange += parseFloat(tObject.iExchange);
+		object.iInput += parseFloat(tObject.iInput);
+		object.iOutput += parseFloat(tObject.iOutput);
 	}
 	//	For Total
 	tag += AddTable('', 0, 0, 0, object, iRootClass);
@@ -811,17 +811,17 @@ function AddPartner(iRootClass, aObject, bDisableRolling, iPermission)
 		subtag += `<td style="background-color:${color};"  class="parent_row_31"></td>`;
 
 	if ( iRootClass <= 3 ) {
-		let iWinLose = (((aObject.iBaccaratTotal) + (aObject.iUnderOverTotal) + (aObject.iSlotTotal)) - ((aObject.iBaccaratRollingMoney) + (aObject.iUnderOverRollingMoney) + (aObject.iSlotRollingMoney)));
-		iWinLose = iWinLose + ((aObject.iPBTotal) - (aObject.iPBRollingMoney));
+		let iWinLose = ((parseFloat(aObject.iBaccaratTotal) + parseFloat(aObject.iUnderOverTotal) + parseFloat(aObject.iSlotTotal)) - (parseFloat(aObject.iBaccaratRollingMoney) + parseFloat(aObject.iUnderOverRollingMoney) + parseFloat(aObject.iSlotRollingMoney)));
+		iWinLose = iWinLose + (parseFloat(aObject.iPBTotal) - parseFloat(aObject.iPBRollingMoney));
 		subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetClassColor(iWinLose, iRootClass)}">${GetNumber((iWinLose))}</font></td>`;
 	}
 
-	let iRolling = (aObject.iRollingMoney);
-	let iTotal = (aObject.iBaccaratTotal) + (aObject.iUnderOverTotal) + (aObject.iSlotTotal) + (aObject.iPBTotal);
+	let iRolling = parseFloat(aObject.iRollingMoney);
+	let iTotal = parseFloat(aObject.iBaccaratTotal) + parseFloat(aObject.iUnderOverTotal) + parseFloat(aObject.iSlotTotal) + parseFloat(aObject.iPBTotal);
 	subtag += `<td style="background-color:${color}; class="parent_row_31"><font color="${GetClassSettleColor(iRolling, iRootClass)}">${GetNumber(iRolling)}</font></td>`;
 
 	subtag += `<td style="background-color:${color};"  class="parent_row_31"><a><font color="${GetClassColor(iTotal, iRootClass)}">${GetNumber(iTotal)}</font></a></td>`;
-	let iCurrentMyRolling = (aObject.iMyRollingMoney);
+	let iCurrentMyRolling = parseFloat(aObject.iMyRollingMoney);
 
 	if ( iCurrentMyRolling != 0)
 		subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetClassSettleColor(iCurrentMyRolling, iRootClass)}">${GetNumber(iCurrentMyRolling)}</font></td>`;
@@ -834,8 +834,8 @@ function AddPartner(iRootClass, aObject, bDisableRolling, iPermission)
 		subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetClassSettleColor(aObject.iCurrentRolling, iRootClass)}">${GetNumber(aObject.iCurrentRolling)}</font></td>`;
 
 	//	미전환죽장(전월이월이 있을 경우 전월이월 표시)
-	let iCurrentSettle = (aObject.iCurrentSettle ?? 0);
-	let iCurrentSettleAcc = (aObject.iCurrentSettleAcc ?? 0);
+	let iCurrentSettle = parseFloat(aObject.iCurrentSettle ?? 0);
+	let iCurrentSettleAcc = parseFloat(aObject.iCurrentSettleAcc ?? 0);
 	iCurrentSettle += iCurrentSettleAcc;
 	if (iCurrentSettle < 0) {
 		subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="black">${GetNumberSign(iCurrentSettle)}</font></td>`;
@@ -989,26 +989,26 @@ let SetAdminList = (iRootClass, strParentTag, aObject, iPermission) => {
 
 		response_list.push({me:aObject[i].strNickname, childs:[], visible:true});
 
-		iInput += (aObject[i].iInput);
-		iOutput += (aObject[i].iOutput);
-		iTotalMoney += (aObject[i].iTotalMoney);
-		iRollingMoney += (aObject[i].iRollingMoney);
-		iTotal += (aObject[i].iTotal);
+		iInput += parseFloat(aObject[i].iInput ?? 0);
+		iOutput += parseFloat(aObject[i].iOutput ?? 0);
+		iTotalMoney += parseFloat(aObject[i].iTotalMoney);
+		iRollingMoney += parseFloat(aObject[i].iRollingMoney);
+		iTotal += parseFloat(aObject[i].iTotal);
 
-		iMyRollingMoney += (aObject[i].iRollingMoney)-(aObject[i].iRollingTranslate);
+		iMyRollingMoney += parseFloat(aObject[i].iRollingMoney)-parseFloat(aObject[i].iRollingTranslate);
 
-		iLoan += (aObject[i].iLoan);
-		iMyMoney += (aObject[i].iMyMoney);
-		iRollingTranslate += (aObject[i].iRollingTranslate);
-		iSettle += (aObject[i].iSettle);
-		iSettleTranslate += (aObject[i].iSettleTranslate);
+		iLoan += parseFloat(aObject[i].iLoan);
+		iMyMoney += parseFloat(aObject[i].iMyMoney);
+		iRollingTranslate += parseFloat(aObject[i].iRollingTranslate);
+		iSettle += parseFloat(aObject[i].iSettle);
+		iSettleTranslate += parseFloat(aObject[i].iSettleTranslate);
 
-		iWinLose += ((aObject[i].iBaccaratTotal) + (aObject[i].iUnderOverTotal) + (aObject[i].iSlotTotal) + (aObject[i].iBaccaratRollingMoney) + (aObject[i].iUnderOverRollingMoney) + (aObject[i].iSlotRollingMoney));
-		iPBWinLose += ((aObject[i].iPBTotal) + (aObject[i].iPBRollingMoney));
+		iWinLose += (parseFloat(aObject[i].iBaccaratTotal) + parseFloat(aObject[i].iUnderOverTotal) + parseFloat(aObject[i].iSlotTotal) + parseFloat(aObject[i].iBaccaratRollingMoney) + parseFloat(aObject[i].iUnderOverRollingMoney) + parseFloat(aObject[i].iSlotRollingMoney));
+		iPBWinLose += (parseFloat(aObject[i].iPBTotal) + parseFloat(aObject[i].iPBRollingMoney));
 		iWinLose += iPBWinLose;
 
-		iCurrentRollingTotal += (aObject[i].iCurrentRollingTotal);
-		iCurrentSettleTotal += (aObject[i].iCurrentSettleTotal);
+		iCurrentRollingTotal += parseFloat(aObject[i].iCurrentRollingTotal);
+		iCurrentSettleTotal += parseFloat(aObject[i].iCurrentSettleTotal ?? 0);
 		tag += subtag;
 	}
 	$(strParentTag).append(tag);
@@ -1083,8 +1083,8 @@ let AddAdmin = (iRootClass, aObject, iPermission) => {
 		</td>
 		`;
 
-	let iWinLose = ((aObject.iBaccaratTotal) + (aObject.iUnderOverTotal) + (aObject.iSlotTotal)) + ((aObject.iBaccaratRollingMoney) + (aObject.iUnderOverRollingMoney) + (aObject.iSlotRollingMoney));
-	let iPBWinLose = (aObject.iPBRollingMoney) + (aObject.iPBTotal);
+	let iWinLose = (parseFloat(aObject.iBaccaratTotal) + parseFloat(aObject.iUnderOverTotal) + parseFloat(aObject.iSlotTotal)) + (parseFloat(aObject.iBaccaratRollingMoney) + parseFloat(aObject.iUnderOverRollingMoney) + parseFloat(aObject.iSlotRollingMoney));
+	let iPBWinLose = parseFloat(aObject.iPBRollingMoney) + parseFloat(aObject.iPBTotal);
 	iWinLose += iPBWinLose;
 	let iRolling = (aObject.iRollingMoney);
 	let iTotal = (aObject.iTotal);
@@ -1096,7 +1096,7 @@ let AddAdmin = (iRootClass, aObject, iPermission) => {
 	subtag += `<td style="background-color:${color};color:red;"  class="parent_row_31">${GetNumber(iRolling)}</td>`;
 	subtag += `<td style="background-color:${color};color:${GetColor(iTotal)}"  class="parent_row_31">${GetNumber(iTotal)}</td>`;
 
-	let iRollingCalc = (aObject.iRollingMoney) - (aObject.iRollingTranslate);
+	let iRollingCalc = parseFloat(aObject.iRollingMoney) - parseFloat(aObject.iRollingTranslate);
 
 	subtag += `<td style="background-color:${color};color:red;"  class="parent_row_31">${GetNumber(aObject.iCurrentRollingTotal)}</td>`;
 	subtag += `<td style="background-color:${color};color:${GetInversedColor(aObject.iCurrentSettleTotal)};"  class="parent_row_31">${GetSettleNumber(aObject.iCurrentSettleTotal)}</td>`;
@@ -1184,23 +1184,23 @@ function SetPartnerList(iRootClass, strParentTag, aObject, bDisableRolling, iPer
 
 		response_list.push({me:aObject[i].strNickname, childs:[], visible:true});
 
-		iInput += (aObject[i].iInput);
-		iOutput += (aObject[i].iOutput);
-		iTotalMoney += (aObject[i].iTotalMoney);
-		iRollingMoney += ((aObject[i].iRollingMoney));
-		iTotal += (aObject[i].iTotal);
-		iMyRollingMoney += ((aObject[i].iMyRollingMoney)-(aObject[i].iRollingTranslate));
-		iLoan += (aObject[i].iLoan);
-		iMyMoney += (aObject[i].iMyMoney);
-		iRollingTranslate += (aObject[i].iRollingTranslate);
-		iSettle += (aObject[i].iSettle);
-		iSettleTranslate += (aObject[i].iSettleTranslate);
-		iWinLose += ((aObject[i].iBaccaratTotal) + (aObject[i].iUnderOverTotal) + (aObject[i].iSlotTotal) + (aObject[i].iBaccaratRollingMoney) + (aObject[i].iUnderOverRollingMoney) + (aObject[i].iSlotRollingMoney));
-		iWinLose2 += ((aObject[i].iPBTotal) + (aObject[i].iPBRollingMoney));
+		iInput += parseFloat(aObject[i].iInput);
+		iOutput += parseFloat(aObject[i].iOutput);
+		iTotalMoney += parseFloat(aObject[i].iTotalMoney);
+		iRollingMoney += (parseFloat(aObject[i].iRollingMoney));
+		iTotal += parseFloat(aObject[i].iTotal);
+		iMyRollingMoney += (parseFloat(aObject[i].iMyRollingMoney)-parseFloat(aObject[i].iRollingTranslate));
+		iLoan += parseFloat(aObject[i].iLoan);
+		iMyMoney += parseFloat(aObject[i].iMyMoney);
+		iRollingTranslate += parseFloat(aObject[i].iRollingTranslate);
+		iSettle += parseFloat(aObject[i].iSettle);
+		iSettleTranslate += parseFloat(aObject[i].iSettleTranslate);
+		iWinLose += (parseFloat(aObject[i].iBaccaratTotal) + parseFloat(aObject[i].iUnderOverTotal) + parseFloat(aObject[i].iSlotTotal) + parseFloat(aObject[i].iBaccaratRollingMoney) + parseFloat(aObject[i].iUnderOverRollingMoney) + parseFloat(aObject[i].iSlotRollingMoney));
+		iWinLose2 += (parseFloat(aObject[i].iPBTotal) + parseFloat(aObject[i].iPBRollingMoney));
 		iWinLose += iWinLose2;
 
-		iCurrentRolling += (aObject[i].iCurrentRolling);
-		iCurrentSettle += (aObject[i].iCurrentSettle);
+		iCurrentRolling += parseFloat(aObject[i].iCurrentRolling);
+		iCurrentSettle += parseFloat(aObject[i].iCurrentSettle);
 
 		tag += subtag;
 	}
@@ -1249,22 +1249,22 @@ function SetPartnerList(iRootClass, strParentTag, aObject, bDisableRolling, iPer
 
 	for ( let i in aTotalObject)
 	{
-		iInput += (aTotalObject[i].iInput);
-		iOutput += (aTotalObject[i].iOutput);
-		iTotalMoney += (aTotalObject[i].iTotalMoney);
-		iRollingMoney += ((aTotalObject[i].iRollingMoney));
-		iTotal += (aTotalObject[i].iTotal);
-		iMyRollingMoney += ((aTotalObject[i].iMyRollingMoney)-(aTotalObject[i].iRollingTranslate));
-		iLoan += (aTotalObject[i].iLoan);
-		iMyMoney += (aTotalObject[i].iMyMoney);
-		iRollingTranslate += (aTotalObject[i].iRollingTranslate);
-		iSettle += (aTotalObject[i].iSettle);
-		iSettleTranslate += (aTotalObject[i].iSettleTranslate);
-		iWinLose += (((aTotalObject[i].iBaccaratTotal) + (aTotalObject[i].iUnderOverTotal) + (aTotalObject[i].iSlotTotal)) - ((aTotalObject[i].iBaccaratRollingMoney) + (aTotalObject[i].iUnderOverRollingMoney) + (aTotalObject[i].iSlotRollingMoney)));
+		iInput += parseFloat(aTotalObject[i].iInput);
+		iOutput += parseFloat(aTotalObject[i].iOutput);
+		iTotalMoney += parseFloat(aTotalObject[i].iTotalMoney);
+		iRollingMoney += (parseFloat(aTotalObject[i].iRollingMoney));
+		iTotal += parseFloat(aTotalObject[i].iTotal);
+		iMyRollingMoney += (parseFloat(aTotalObject[i].iMyRollingMoney)-parseFloat(aTotalObject[i].iRollingTranslate));
+		iLoan += parseFloat(aTotalObject[i].iLoan);
+		iMyMoney += parseFloat(aTotalObject[i].iMyMoney);
+		iRollingTranslate += parseFloat(aTotalObject[i].iRollingTranslate);
+		iSettle += parseFloat(aTotalObject[i].iSettle);
+		iSettleTranslate += parseFloat(aTotalObject[i].iSettleTranslate);
+		iWinLose += ((parseFloat(aTotalObject[i].iBaccaratTotal) + parseFloat(aTotalObject[i].iUnderOverTotal) + parseFloat(aTotalObject[i].iSlotTotal)) - (parseFloat(aTotalObject[i].iBaccaratRollingMoney) + parseFloat(aTotalObject[i].iUnderOverRollingMoney) + parseFloat(aTotalObject[i].iSlotRollingMoney)));
 		iWinLose2 += ((aTotalObject[i].iPBTotal) - (aTotalObject[i].iPBRollingMoney));
 		iWinLose += iWinLose2;
-		iCurrentRolling += (iCurrentRolling);
-		iCurrentSettle += (iCurrentSettle);
+		iCurrentRolling += parseFloat(iCurrentRolling);
+		iCurrentSettle += parseFloat(iCurrentSettle);
 	}
 
 	let winloseTag = ``;

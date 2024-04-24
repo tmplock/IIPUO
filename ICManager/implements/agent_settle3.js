@@ -157,7 +157,7 @@ let inline_CalculateOverviewSettleCurrent = async (strGroupID, strQuater) => {
     }
 
     for (let i in list) {
-        const iSettleAfter = (list[i].iSettleAfter ?? 0);
+        const iSettleAfter = parseFloat(list[i].iSettleAfter ?? 0);
         if (iSettleAfter > 0) {
             data.iSettlePlus += iSettleAfter;
         } else {
@@ -266,7 +266,7 @@ let inline_CalculateOverviewShareCurrent = async (strGroupID, strQuater) => {
     }
 
     for (let i in list) {
-        const iCreditAfter = (list[i].iCreditAfter ?? 0);
+        const iCreditAfter = parseFloat(list[i].iCreditAfter ?? 0);
         if (iCreditAfter > 0) {
             data.iSharePlus += iCreditAfter;
         } else {

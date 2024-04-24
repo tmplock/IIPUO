@@ -148,14 +148,14 @@
 
                 let parentNickname = aObject.parentNickname ?? '';
                 let strNickname = aObject.strNickname ?? '';
-                let iShareOrgin = (aObject.iShareOrgin ?? '0'); // 순이익
-                let iSlotCommission = (aObject.iSlotCommission ?? 0);
-                let iPayback = (aObject.iPayback ?? 0);
+                let iShareOrgin = parseFloat(aObject.iShareOrgin ?? '0'); // 순이익
+                let iSlotCommission = parseFloat(aObject.iSlotCommission ?? 0);
+                let iPayback = parseFloat(aObject.iPayback ?? 0);
                 let iSum = iShareOrgin + iSlotCommission + iPayback;
-                let fShareR = (aObject.fShareR ?? 0); // 지분율
-                let iShare = (aObject.iShare ?? 0); // 배당금
+                let fShareR = parseFloat(aObject.fShareR ?? 0); // 지분율
+                let iShare =parseFloat (aObject.iShare ?? 0); // 배당금
                 if (enable) {
-                    iSlotCommission = -(aObject.iSWinlose ?? 0) * 0.1; // 슬롯 알값(슬롯 죽장이 0일 경우 슬롯에 대한 수수료를 지분자들이 부담)
+                    iSlotCommission = -parseFloat(aObject.iSWinlose ?? 0) * 0.1; // 슬롯 알값(슬롯 죽장이 0일 경우 슬롯에 대한 수수료를 지분자들이 부담)
                     iSum = iShareOrgin + iSlotCommission + iPayback;
                     // 서버 전송용
                     aObject.iSlotCommission = iSlotCommission;
@@ -165,9 +165,9 @@
                     aObject.iSum = iSum;
                 }
 
-                let iShareAccBefore = (aObject.iShareAccBefore ?? 0); // 전월 이월금액
-                let iCreditBefore = (aObject.iCreditBefore ?? 0); // 가불전 금액(배당금 + 전월 이월 금액)
-                let iCreditAfter = (aObject.iCreditAfter ?? 0); // 가불후 금액
+                let iShareAccBefore = parseFloat(aObject.iShareAccBefore ?? 0); // 전월 이월금액
+                let iCreditBefore = parseFloat(aObject.iCreditBefore ?? 0); // 가불전 금액(배당금 + 전월 이월 금액)
+                let iCreditAfter = parseFloat(aObject.iCreditAfter ?? 0); // 가불후 금액
 
                 let tagoption = 'disabled="disabled"';
                 if (enable) {
@@ -240,16 +240,16 @@
                     continue;
                 }
                 strIDs.push(strID);
-                data.iShareOrgin += (shareList[i].iShareOrgin ?? 0);
-                data.iSlotCommission += (shareList[i].iSlotCommission ?? 0);
-                data.iSum += (shareList[i].iSum ?? 0);
+                data.iShareOrgin += parseFloat(shareList[i].iShareOrgin ?? 0);
+                data.iSlotCommission += parseFloat(shareList[i].iSlotCommission ?? 0);
+                data.iSum += parseFloat(shareList[i].iSum ?? 0);
                 if (!enable) {
-                    data.iShare += (shareList[i].iShare ?? 0);
+                    data.iShare += parseFloat(shareList[i].iShare ?? 0);
                 }
-                data.iShareAccBefore += (shareList[i].iShareAccBefore ?? 0);
-                data.iCreditBefore += (shareList[i].iCreditBefore ?? 0);
-                data.iCreditAfter += (shareList[i].iCreditAfter ?? 0);
-                data.iPayback += (shareList[i].iPayback ?? 0);
+                data.iShareAccBefore += parseFloat(shareList[i].iShareAccBefore ?? 0);
+                data.iCreditBefore += parseFloat(shareList[i].iCreditBefore ?? 0);
+                data.iCreditAfter += parseFloat(shareList[i].iCreditAfter ?? 0);
+                data.iPayback += parseFloat(shareList[i].iPayback ?? 0);
             }
             $('#list_agents').append(`
                     <tr class="Total" style="font-weight: bold">
@@ -393,7 +393,7 @@
     let OnClickShareApply = (strID, strNickname, strGroupID) => {
         let type = $(`input[name="${strID}_mile_sect"]:checked`).val();
         let iIncrease = $(`#iIncrease_${strNickname}`).val();
-        iIncrease = (iIncrease);
+        iIncrease = parseFloat(iIncrease);
 
         if (iIncrease <= 0) {
             alert('가불액을 확인해주세요');

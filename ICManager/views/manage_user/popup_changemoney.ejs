@@ -486,9 +486,9 @@
 						target = list[i].strFrom;
 
 					if ( list[i].eType == 'GIVE')
-						iTotalGive += (list[i].iAmount);
+						iTotalGive += parseFloat(list[i].iAmount);
 					else if ( list[i].eType == 'TAKE' )
-						iTotalTake += (list[i].iAmount);
+						iTotalTake += parseFloat(list[i].iAmount);
 
 					let tag = 
 					`
@@ -503,7 +503,7 @@
 					$(parent_id).append(tag);
 				}
 
-				let total = (iTotalGive) + (iTotalTake);
+				let total = parseFloat(iTotalGive) + parseFloat(iTotalTake);
 
 				let finaltag = `
 					<tr>

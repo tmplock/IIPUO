@@ -92,13 +92,13 @@ let GetTotalBWR = (array) => {
 
     for ( let i in array )
     {
-        const cSubBetting = parseInt(array[i].iBetting ?? 0);
-        const cSubWin = parseInt(array[i].iWin ?? 0);
-        const cSubRolling = parseInt(array[i].iRolling ?? 0);
+        const cSubBetting = parseFloat(array[i].iBetting ?? 0);
+        const cSubWin = parseFloat(array[i].iWin ?? 0);
+        const cSubRolling = parseFloat(array[i].iRolling ?? 0);
 
-        iBetting = parseInt(iBetting ?? 0) + cSubBetting;
-        iWin = parseInt(iWin ?? 0) + cSubWin;
-        iRolling = parseInt(iRolling ?? 0) + cSubRolling;
+        iBetting = parseFloat(iBetting ?? 0) + cSubBetting;
+        iWin = parseFloat(iWin ?? 0) + cSubWin;
+        iRolling = parseFloat(iRolling ?? 0) + cSubRolling;
         // console.log(`idx: ${i} / iBetting : ${iBetting} / iWin : ${iWin} / iRolling : ${iRolling}`);
     }
 

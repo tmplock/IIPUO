@@ -397,30 +397,30 @@
 		// 지분자 정보
 		if ( user.iClass <= 3 ) {
 			// 순이익(순이익 - 슬롯 알값 + 수금)
-			let iTotalSum = (overview.iTotal)  + (overview.iTotalUnover) + (overview.iTotalSlot) + (overview.iTotalPB);
+			let iTotalSum = parseFloat(overview.iTotal)  + parseFloat(overview.iTotalUnover) + parseFloat(overview.iTotalSlot) + parseFloat(overview.iTotalPB);
 			// 대본사 이하는 본인의 죽장만 표시(본사는 본인 이하의 죽장 모두 합산)
-			let iTotalSettle = (overview.iTotalSettle ?? 0); // 죽장
-			let iTotalCommission = (overview.iTotalCommission ?? 0); // 윈로스(알값)
-			let iShareCommission = (overview.iSWinlose ?? 0) * parseFloat(overview.fCommission);
+			let iTotalSettle = parseFloat(overview.iTotalSettle ?? 0); // 죽장
+			let iTotalCommission = parseFloat(overview.iTotalCommission ?? 0); // 윈로스(알값)
+			let iShareCommission = parseFloat(overview.iSWinlose ?? 0) * parseFloat(overview.fCommission);
 			iTotalCommission += iShareCommission;
 			let iRealTotal = iTotalSum - iTotalSettle - iTotalCommission; // 순이익
 
-			let iShareOrgin = (aObject.iShareOrgin ?? 0);
-			let iSlotCommission = (aObject.iSlotCommission ?? 0);
-			let iPayback = (aObject.iPayback ?? 0);
+			let iShareOrgin = parseFloat(aObject.iShareOrgin ?? 0);
+			let iSlotCommission = parseFloat(aObject.iSlotCommission ?? 0);
+			let iPayback = parseFloat(aObject.iPayback ?? 0);
 			iShareOrgin = iShareOrgin + iSlotCommission + iPayback;
-			let iShare = (aObject.iShare ?? 0); // 배당금
-			let iShareAccBefore = (aObject.iShareAccBefore ?? 0); // 지분자 전월 이월
-			let iCreditBefore = (aObject.iCreditBefore ?? 0); // 지분자 총 이월
+			let iShare = parseFloat(aObject.iShare ?? 0); // 배당금
+			let iShareAccBefore = parseFloat(aObject.iShareAccBefore ?? 0); // 지분자 전월 이월
+			let iCreditBefore = parseFloat(aObject.iCreditBefore ?? 0); // 지분자 총 이월
 			let iShareTotal = iRealTotal - iShare; // 지분자 순이익 - 배당금
-			let iCurrentTotalShare = (aObject.iCurrentTotalShare ?? 0); // 현재 잔여 지분금액
-			let iSharePlus = (aObject.iSharePlus ?? 0);
-			let iShareMinus = (aObject.iShareMinus ?? 0);
+			let iCurrentTotalShare = parseFloat(aObject.iCurrentTotalShare ?? 0); // 현재 잔여 지분금액
+			let iSharePlus = parseFloat(aObject.iSharePlus ?? 0);
+			let iShareMinus = parseFloat(aObject.iShareMinus ?? 0);
 
 			// 대본보관죽장
-			let iCurrentTotalSettle = (overview.iCurrentTotalSettle ?? 0);
-			let iSettlePlus = (overview.iSettlePlus ?? 0);
-			let iSettleMinus = (overview.iSettleMinus ?? 0);
+			let iCurrentTotalSettle = parseFloat(overview.iCurrentTotalSettle ?? 0);
+			let iSettlePlus = parseFloat(overview.iSettlePlus ?? 0);
+			let iSettleMinus = parseFloat(overview.iSettleMinus ?? 0);
 
 			let shareTag = `
 				<table class="search_list" style="margin-bottom:20px;">
@@ -471,67 +471,67 @@
 		if ( bClear == true )
 			$(strParentTag).empty();
 
-		const iInput = (aObject.iInput ?? 0);
-		const iOutput = (aObject.iOutput ?? 0);
+		const iInput = parseFloat(aObject.iInput ?? 0);
+		const iOutput = parseFloat(aObject.iOutput ?? 0);
 		const cal = iInput - iOutput;
 
-		let iTotalMoney = (aObject.iTotalMoney);
-		let iTotalSum = (aObject.iTotal)  + (aObject.iTotalUnover) + (aObject.iTotalSlot) + (aObject.iTotalPB);
+		let iTotalMoney = parseFloat(aObject.iTotalMoney);
+		let iTotalSum = parseFloat(aObject.iTotal)  + parseFloat(aObject.iTotalUnover) + parseFloat(aObject.iTotalSlot) + parseFloat(aObject.iTotalPB);
 		// 대본사 이하는 본인의 죽장만 표시(본사는 본인 이하의 죽장 모두 합산)
-		let iTotalSettle = (aObject.iTotalSettle ?? 0); // 죽장
-		let iTotalCommission = (aObject.iTotalCommission ?? 0); // 윈로스(알값)
-		let iShareCommission = (aObject.iSWinlose ?? 0) * parseFloat(aObject.fCommission);
+		let iTotalSettle = parseFloat(aObject.iTotalSettle ?? 0); // 죽장
+		let iTotalCommission = parseFloat(aObject.iTotalCommission ?? 0); // 윈로스(알값)
+		let iShareCommission = parseFloat(aObject.iSWinlose ?? 0) * parseFloat(aObject.fCommission);
 		iTotalCommission += iShareCommission;
 		let iRealTotal = iTotalSum - iTotalSettle - iTotalCommission; // 순이익
-		let iSettleAcc = (aObject.iSettleAcc ?? 0); // 보관 죽장
+		let iSettleAcc = parseFloat(aObject.iSettleAcc ?? 0); // 보관 죽장
 
 		// 보관 죽장
-		let iSettleCount = (aObject.iSettleCount);
+		let iSettleCount = parseFloat(aObject.iSettleCount);
 		let iTotalSettleAcc = 0;
 		let iTotalSettleBeforeAcc1 = 0; // 전월이월(전분기 이월금액 : 죽장 - 지급액)
 		let iTotalSettleBeforeAcc2 = 0; // 전전월이월
 
 		if (iSettleCount > 0) {
-			iTotalSettleAcc = (aObject.iTotalSettleAcc ?? 0);
-			iTotalSettleBeforeAcc1 = (aObject.iTotalSettleBeforeAcc1 ?? 0);
-			iTotalSettleBeforeAcc2 = (aObject.iTotalSettleBeforeAcc2 ?? 0);
+			iTotalSettleAcc = parseFloat(aObject.iTotalSettleAcc ?? 0);
+			iTotalSettleBeforeAcc1 = parseFloat(aObject.iTotalSettleBeforeAcc1 ?? 0);
+			iTotalSettleBeforeAcc2 = parseFloat(aObject.iTotalSettleBeforeAcc2 ?? 0);
 		}
 
-		let iBetting = (aObject.iBetting);
-		let iBettingUnover = (aObject.iBettingUnover);
-		let iBettingSlot = (aObject.iBettingSlot);
-		let iBettingPB = (aObject.iBettingPB);
+		let iBetting = parseFloat(aObject.iBetting);
+		let iBettingUnover = parseFloat(aObject.iBettingUnover);
+		let iBettingSlot = parseFloat(aObject.iBettingSlot);
+		let iBettingPB = parseFloat(aObject.iBettingPB);
 
-		let iWin = (aObject.iWin);
-		let iWinUnover = (aObject.iWinUnover);
-		let iWinSlot = (aObject.iWinSlot);
-		let iWinPB = (aObject.iWinPB);
+		let iWin = parseFloat(aObject.iWin);
+		let iWinUnover = parseFloat(aObject.iWinUnover);
+		let iWinSlot = parseFloat(aObject.iWinSlot);
+		let iWinPB = parseFloat(aObject.iWinPB);
 
 		// let iWinLose = iBetting - iWin;
 		// let iWinLoseUnover = iBettingUnover - iWinUnover;
 		// let iWinLoseSlot = iBettingSlot - iWinSlot;
 		// let iWinLosePB = iBettingPB - iWinPB;
 
-		let iWinLose = (aObject.iWinLose);
-		let iWinLoseUnover = (aObject.iWinLoseUnover);
-		let iWinLoseSlot = (aObject.iWinLoseSlot);
-		let iWinLosePB = (aObject.iWinLosePB);
+		let iWinLose = parseFloat(aObject.iWinLose);
+		let iWinLoseUnover = parseFloat(aObject.iWinLoseUnover);
+		let iWinLoseSlot = parseFloat(aObject.iWinLoseSlot);
+		let iWinLosePB = parseFloat(aObject.iWinLosePB);
 
-		let iTotalRolling = (aObject.iTotalRolling);
-		let iTotalRollingUnover = (aObject.iTotalRollingUnover);
-		let iTotalRollingSlot = (aObject.iTotalRollingSlot);
-		let iTotalRollingPB = (aObject.iTotalRollingPB);
+		let iTotalRolling = parseFloat(aObject.iTotalRolling);
+		let iTotalRollingUnover = parseFloat(aObject.iTotalRollingUnover);
+		let iTotalRollingSlot = parseFloat(aObject.iTotalRollingSlot);
+		let iTotalRollingPB = parseFloat(aObject.iTotalRollingPB);
 
-		let iTotal = (aObject.iTotal);
-		let iTotalUnover = (aObject.iTotalUnover);
-		let iTotalSlot = (aObject.iTotalSlot);
-		let iTotalPB = (aObject.iTotalPB);
+		let iTotal = parseFloat(aObject.iTotal);
+		let iTotalUnover = parseFloat(aObject.iTotalUnover);
+		let iTotalSlot = parseFloat(aObject.iTotalSlot);
+		let iTotalPB = parseFloat(aObject.iTotalPB);
 
-		let iSettleGive = (aObject.iSettleGive ?? 0); // 지급 죽장
-		let iRolling = (aObject.iRolling); // 미전환 롤링
-		let iRollingTranslate = (aObject.iRollingTranslate);
-		let iSettle = (aObject.iSettle); // 죽장합
-		let iSettleTranslate = (aObject.iSettleTranslate);
+		let iSettleGive = parseFloat(aObject.iSettleGive ?? 0); // 지급 죽장
+		let iRolling = parseFloat(aObject.iRolling); // 미전환 롤링
+		let iRollingTranslate = parseFloat(aObject.iRollingTranslate);
+		let iSettle = parseFloat(aObject.iSettle); // 죽장합
+		let iSettleTranslate = parseFloat(aObject.iSettleTranslate);
 
 		let tag =
 				`
@@ -785,15 +785,15 @@
 		if (obj.iClass == 4) {
 			// 부본죽장 계산
 			{
-				iSettleBaccarat = (obj.iBaccaratTotalVice ?? 0) + (obj.iUnderOverTotalVice ?? 0);
-				iSettleSlot = (obj.iSlotTotalVice ?? 0);
-				iSettlePBA = (obj.iPBATotalVice ?? 0);
-				iSettlePBB = (obj.iPBBTotalVice ?? 0);
+				iSettleBaccarat = parseFloat(obj.iBaccaratTotalVice ?? 0) + parseFloat(obj.iUnderOverTotalVice ?? 0);
+				iSettleSlot = parseFloat(obj.iSlotTotalVice ?? 0);
+				iSettlePBA = parseFloat(obj.iPBATotalVice ?? 0);
+				iSettlePBB = parseFloat(obj.iPBBTotalVice ?? 0);
 			}
 
 			// 합계
-			let iBTotal = (obj.iBaccaratTotal) + (obj.iUnderOverTotal);
-			let iSTotal = (obj.iSlotTotal);
+			let iBTotal = parseFloat(obj.iBaccaratTotal) + parseFloat(obj.iUnderOverTotal);
+			let iSTotal = parseFloat(obj.iSlotTotal);
 
 			// 선행조건 확인
 			// 1. 두개의 죽장률이 다를 경우 2. 두개의 합계가 서로 부호가 다를 경우 3-1. 플러스로 이긴경우 해당 게임의 죽장비율 적용 3-2. 마이너스로 이긴경우 해당 게임의 죽장비율 적용
@@ -808,8 +808,8 @@
 				}
 			}
 
-			iBTotal = (obj.iBaccaratTotal) + (obj.iUnderOverTotal) - (obj.iCommissionBaccarat ?? 0) - (iSettleBaccarat);
-			iSTotal = ((obj.iSlotTotal) - (obj.iCommissionSlot) - (iSettleSlot));
+			iBTotal = parseFloat(obj.iBaccaratTotal) + parseFloat(obj.iUnderOverTotal) - parseFloat(obj.iCommissionBaccarat ?? 0) - parseFloat(iSettleBaccarat);
+			iSTotal = (parseFloat(obj.iSlotTotal) - parseFloat(obj.iCommissionSlot) - parseFloat(iSettleSlot));
 
 			// 죽장계산
 			if (fSettle > 0) {
@@ -820,7 +820,7 @@
 				iSettleSlot = iSTotal * obj.fSettleSlot * 0.01;
 				iSettlePBA = 0;
 				iSettlePBB = 0;
-				obj.iSettle = (iSettleBaccarat + iSettleSlot + iSettlePBA + iSettlePBB);
+				obj.iSettle = parseFloat(iSettleBaccarat + iSettleSlot + iSettlePBA + iSettlePBB);
 			}
 
 			console.log('죽장 정산');
@@ -828,8 +828,8 @@
 			console.log(obj.iSettle);
 		} else if (obj.iClass == 5) {
 			// 합계
-			let iBTotal = (obj.iBaccaratTotal) + (obj.iUnderOverTotal);
-			let iSTotal = (obj.iSlotTotal);
+			let iBTotal = parseFloat(obj.iBaccaratTotal) + parseFloat(obj.iUnderOverTotal);
+			let iSTotal = parseFloat(obj.iSlotTotal);
 
 			// 선행조건 확인
 			// 1. 두개의 죽장률이 다를 경우 2. 두개의 합계가 서로 부호가 다를 경우 3-1. 플러스로 이긴경우 해당 게임의 죽장비율 적용 3-2. 마이너스로 이긴경우 해당 게임의 죽장비율 적용
@@ -846,18 +846,18 @@
 
 			if (fSettle > 0) {
 				const iSettle = (iBTotal + iSTotal) * fSettle * 0.01;
-				obj.iSettle = (iSettle);
+				obj.iSettle = parseFloat(iSettle);
 			} else {
 				iSettleBaccarat = iBTotal * obj.fSettleBaccarat * 0.01;
 				iSettleSlot = iSTotal * obj.fSettleSlot * 0.01;
 				iSettlePBA = 0;
 				iSettlePBB = 0;
-				obj.iSettle = (iSettleBaccarat + iSettleSlot + iSettlePBA + iSettlePBB);
+				obj.iSettle = parseFloat(iSettleBaccarat + iSettleSlot + iSettlePBA + iSettlePBB);
 			}
 		} else {
 			// 합계
-			let iBTotal = (obj.iBaccaratTotal) + (obj.iUnderOverTotal);
-			let iSTotal = (obj.iSlotTotal);
+			let iBTotal = parseFloat(obj.iBaccaratTotal) + parseFloat(obj.iUnderOverTotal);
+			let iSTotal = parseFloat(obj.iSlotTotal);
 
 			// 선행조건 확인
 			// 1. 두개의 죽장률이 다를 경우 2. 두개의 합계가 서로 부호가 다를 경우 3-1. 플러스로 이긴경우 해당 게임의 죽장비율 적용 3-2. 마이너스로 이긴경우 해당 게임의 죽장비율 적용
@@ -874,13 +874,13 @@
 
 			if (fSettle > 0) {
 				const iSettle = (iBTotal + iSTotal) * fSettle * 0.01;
-				obj.iSettle = (iSettle);
+				obj.iSettle = parseFloat(iSettle);
 			} else {
 				iSettleBaccarat = iBTotal * obj.fSettleBaccarat * 0.01;
 				iSettleSlot = iSTotal * obj.fSettleSlot * 0.01;
 				iSettlePBA = 0;
 				iSettlePBB = 0;
-				obj.iSettle = (iSettleBaccarat + iSettleSlot + iSettlePBA + iSettlePBB);
+				obj.iSettle = parseFloat(iSettleBaccarat + iSettleSlot + iSettlePBA + iSettlePBB);
 			}
 		}
 		console.log(obj);
@@ -897,7 +897,7 @@
 
 		if (obj.iClass == 4) // 대본
 		{
-			let winloseB = ((obj.iBaccaratWinLose) + (obj.iUnderOverWinLose));
+			let winloseB = (parseFloat(obj.iBaccaratWinLose) + parseFloat(obj.iUnderOverWinLose));
 			if (winloseB > 0) {
 				obj.iCommissionBaccarat = winloseB * parseFloat(obj.fCommission);
 			} else {
@@ -905,9 +905,9 @@
 				obj.iUnderOverWinLose = 0;
 			}
 
-			let winloseS = (obj.iSlotWinLose ?? 0);
+			let winloseS = parseFloat(obj.iSlotWinLose ?? 0);
 			// 슬롯 죽장이 없을 경우 알값은 지분자들이 계산
-			let fSettleSlot = (obj.fSettleSlot ?? 0);
+			let fSettleSlot = parseFloat(obj.fSettleSlot ?? 0);
 			if (winloseS > 0 && fSettleSlot != 0) {
 				obj.iCommissionSlot = winloseS * parseFloat(obj.fCommission);
 			} else if (winloseS < 0) {
@@ -1210,53 +1210,53 @@
 			iPayback: 0, // 수금액
 		};
 		if (bEnableSettle) {
-			data.iTotal = (aObject.iBaccaratTotal) + (aObject.iUnderOverTotal) + (aObject.iSlotTotal) + (aObject.iPBATotal) + (aObject.iPBBTotal);
-			data.iRolling = (aObject.iRollingMoney);
-			data.iBaccaratWinLose = (aObject.iBaccaratWinLose);
-			data.iUnderOverWinLose = (aObject.iUnderOverWinLose);
-			data.iSlotWinLose = (aObject.iSlotWinLose);
-			data.iPBWinLose = (aObject.iPBWinLose);
-			data.iResult = data.iTotal - (aObject.iSettleVice ?? 0) - (aObject.iCommissionBaccarat) - (aObject.iCommissionSlot) - (aObject.iSettle);
-			data.iSettleBeforeAcc = (aObject.iSettleAccUser ?? 0);
+			data.iTotal = parseFloat(aObject.iBaccaratTotal) + parseFloat(aObject.iUnderOverTotal) + parseFloat(aObject.iSlotTotal) + parseFloat(aObject.iPBATotal) + parseFloat(aObject.iPBBTotal);
+			data.iRolling = parseFloat(aObject.iRollingMoney);
+			data.iBaccaratWinLose = parseFloat(aObject.iBaccaratWinLose);
+			data.iUnderOverWinLose = parseFloat(aObject.iUnderOverWinLose);
+			data.iSlotWinLose = parseFloat(aObject.iSlotWinLose);
+			data.iPBWinLose = parseFloat(aObject.iPBWinLose);
+			data.iResult = data.iTotal - parseFloat(aObject.iSettleVice ?? 0) - parseFloat(aObject.iCommissionBaccarat) - parseFloat(aObject.iCommissionSlot) - parseFloat(aObject.iSettle);
+			data.iSettleBeforeAcc = parseFloat(aObject.iSettleAccUser ?? 0);
 			data.iSettleAccTotal = 0;
-			data.iSettleVice = (aObject.iSettleVice ?? 0);
-			data.iSettleQuater = (aObject.iSettle ?? 0);
-			data.iSettleAcc = (aObject.iSettleAcc ?? 0);
+			data.iSettleVice = parseFloat(aObject.iSettleVice ?? 0);
+			data.iSettleQuater = parseFloat(aObject.iSettle ?? 0);
+			data.iSettleAcc = parseFloat(aObject.iSettleAcc ?? 0);
 		} else {  // 죽장 완료
-			data.iTotal = (aObject.iBaccaratTotal) + (aObject.iUnderOverTotal) + (aObject.iSlotTotal) + (aObject.iPBATotal) + (aObject.iPBBTotal);
-			data.iRolling = (aObject.iRollingMoney);
-			data.iBaccaratWinLose = (aObject.iBaccaratWinLose);
-			data.iUnderOverWinLose = (aObject.iUnderOverWinLose);
-			data.iSlotWinLose = (aObject.iSlotWinLose);
-			data.iPBWinLose = (aObject.iPBWinLose);
-			data.iResult = data.iTotal - (aObject.iSettleVice ?? 0) - (aObject.iCommissionBaccarat) - (aObject.iCommissionSlot) - (aObject.iSettle);
-			data.iSettleBeforeAcc = (aObject.iSettleBeforeAcc ?? 0);
-			data.iSettleAfter = (aObject.iSettleAfter ?? 0);
-			data.iSettleAccTotal = (aObject.iSettleAfter ?? 0);
-			data.iSettle = (aObject.iSettle);
-			data.iSettleVice = (aObject.iSettleVice ?? 0);
-			data.iSettleQuater = (aObject.iSettle ?? 0);
-			data.iPayback = (aObject.iPayback ?? 0);
-			data.iSettleAcc = (aObject.iSettleAcc ?? 0);
+			data.iTotal = parseFloat(aObject.iBaccaratTotal) + parseFloat(aObject.iUnderOverTotal) + parseFloat(aObject.iSlotTotal) + parseFloat(aObject.iPBATotal) + parseFloat(aObject.iPBBTotal);
+			data.iRolling = parseFloat(aObject.iRollingMoney);
+			data.iBaccaratWinLose = parseFloat(aObject.iBaccaratWinLose);
+			data.iUnderOverWinLose = parseFloat(aObject.iUnderOverWinLose);
+			data.iSlotWinLose = parseFloat(aObject.iSlotWinLose);
+			data.iPBWinLose = parseFloat(aObject.iPBWinLose);
+			data.iResult = data.iTotal - parseFloat(aObject.iSettleVice ?? 0) - parseFloat(aObject.iCommissionBaccarat) - parseFloat(aObject.iCommissionSlot) - parseFloat(aObject.iSettle);
+			data.iSettleBeforeAcc = parseFloat(aObject.iSettleBeforeAcc ?? 0);
+			data.iSettleAfter = parseFloat(aObject.iSettleAfter ?? 0);
+			data.iSettleAccTotal = parseFloat(aObject.iSettleAfter ?? 0);
+			data.iSettle = parseFloat(aObject.iSettle);
+			data.iSettleVice = parseFloat(aObject.iSettleVice ?? 0);
+			data.iSettleQuater = parseFloat(aObject.iSettle ?? 0);
+			data.iPayback = parseFloat(aObject.iPayback ?? 0);
+			data.iSettleAcc = parseFloat(aObject.iSettleAcc ?? 0);
 		}
 
-		data.iSettle = (aObject.iSettle);
+		data.iSettle = parseFloat(aObject.iSettle);
 		if (aObject.iClass == 5) {
-			data.iSettleVice = (aObject.iSettle ?? 0);
+			data.iSettleVice = parseFloat(aObject.iSettle ?? 0);
 		}
 
-		data.iCommissionBaccarat = (aObject.iCommissionBaccarat ?? 0);
-		data.iCommissionSlot = (aObject.iCommissionSlot ?? 0);
-		data.iSettleGive = (aObject.iSettleGive ?? 0);
-		data.iSettleAcc = (aObject.iSettleAcc ?? 0);
+		data.iCommissionBaccarat = parseFloat(aObject.iCommissionBaccarat ?? 0);
+		data.iCommissionSlot = parseFloat(aObject.iCommissionSlot ?? 0);
+		data.iSettleGive = parseFloat(aObject.iSettleGive ?? 0);
+		data.iSettleAcc = parseFloat(aObject.iSettleAcc ?? 0);
 		// 죽장 총합
-		data.iSettleTotal = (bEnableSettle == true) ? 0 : (aObject.iSettleGive ?? 0) + (aObject.iSettleAcc ?? 0) + (aObject.iPayback ?? 0);
+		data.iSettleTotal = (bEnableSettle == true) ? 0 : parseFloat(aObject.iSettleGive ?? 0) + parseFloat(aObject.iSettleAcc ?? 0) + parseFloat(aObject.iPayback ?? 0);
 
 		// 적립 죽장비
 		if (bEnableSettle == true) {
 
 			if (true) {
-				let iSettle = (aObject.iSettle ?? 0);
+				let iSettle = parseFloat(aObject.iSettle ?? 0);
 				// 적립가능 금액 = 해당월 죽장 - 전월 죽장 이월
 				data.iInputQuaterSettle = iSettle;
 				if (data.iSettleBeforeAcc < 0) {
@@ -1266,8 +1266,8 @@
 
 
 				// 죽장이 플러스일 경우 자동 수금 처리 표시
-				let iPayback = (data.iPayback ?? 0);
-				let iSettleBeforeAcc = (data.iSettleBeforeAcc ?? 0) + iPayback;
+				let iPayback = parseFloat(data.iPayback ?? 0);
+				let iSettleBeforeAcc = parseFloat(data.iSettleBeforeAcc ?? 0) + iPayback;
 				if (iSettle > 0 && iSettleBeforeAcc < 0) {
 					// 이월 금액이 남아 있는 경우
 					if (-iSettleBeforeAcc > iSettle) {
@@ -1281,7 +1281,7 @@
 
 
 			if (false) {
-				let iSettle = (aObject.iSettle ?? 0);
+				let iSettle = parseFloat(aObject.iSettle ?? 0);
 				// 적립가능 금액 = 해당월 죽장 - 전월 죽장 이월
 				data.iInputQuaterSettle = iSettle;
 				if (data.iSettleAcc < 0) {
@@ -1291,9 +1291,9 @@
 
 
 				// 죽장이 플러스일 경우 자동 수금 처리 표시
-				let iPayback = (data.iPayback ?? 0);
+				let iPayback = parseFloat(data.iPayback ?? 0);
 				// 이용자가 가지고 있는 보유죽장
-				let iSettleAcc = (data.iSettleAcc ?? 0) + iPayback;
+				let iSettleAcc = parseFloat(data.iSettleAcc ?? 0) + iPayback;
 				if (iSettle > 0 && iSettleAcc < 0) {
 					// 이월 금액이 남아 있는 경우
 					if (-iSettleAcc > iSettle) {

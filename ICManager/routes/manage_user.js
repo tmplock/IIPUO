@@ -54,7 +54,7 @@ router.get('/userlist', isLoggedIn, async(req, res) => {
             result.splice(i, 1);
         }
         else
-            total.iTotalCash += (result[i].iCash);
+            total.iTotalCash += parseFloat(result[i].iCash);
     }
     //  Shops
     var bobj = {overview:null};
@@ -98,7 +98,7 @@ router.post('/userlist', isLoggedIn, async(req, res) => {
             result.splice(i, 1);
         }
         else
-            total.iTotalCash += (result[i].iCash);
+            total.iTotalCash += parseFloat(result[i].iCash);
     }
 
     const agentinfo = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);

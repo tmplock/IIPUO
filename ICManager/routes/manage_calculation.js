@@ -211,10 +211,10 @@ router.post('/request_applysettle', isLoggedIn, async (req, res) => {
         let user = await db.Users.findOne({where:{strNickname:list[i].strNickname}});
         if ( user != null )
         {
-            let iSettleAcc = parseInt(user.iSettleAcc); // 전웡이월
-            let iSettle = parseInt(list[i].iSettle); // 분기 죽장
-            let iSettleGive = parseInt(list[i].iInputSettle);   // 지급죽장
-            let iSettleAccTotal = parseInt(user.iSettleAcc); // 총이월(전월죽장이월 + 죽장 - 죽장지급)
+            let iSettleAcc = parseFloat(user.iSettleAcc); // 전웡이월
+            let iSettle = parseFloat(list[i].iSettle); // 분기 죽장
+            let iSettleGive = parseFloat(list[i].iInputSettle);   // 지급죽장
+            let iSettleAccTotal = parseFloat(user.iSettleAcc); // 총이월(전월죽장이월 + 죽장 - 죽장지급)
 
             if (user.iClass == 5) // 부본은 바로 죽장 지급(마이너스는 미지급)
             {
@@ -286,9 +286,8 @@ router.post('/request_applysettle', isLoggedIn, async (req, res) => {
                         iClassFrom: from.iClass,
                     });
 
-                let iSettleUser = parseInt(user.iSettle); // 이용자가 가지고 있는 죽장
+                let iSettleUser = parseFloat(user.iSettle); // 이용자가 가지고 있는 죽장
                 iSettleUser = iSettleUser + iAmout; // 죽장이 실제 발생시에만 이용자에 추가
-                //await user.update({iSettle:iSettleUser, iSettleAccBefore: user.iSettleAcc, iSettleAcc:iSettleAccTotal});
                 await db.Users.update({iSettle:iSettleUser, iSettleAccBefore: user.iSettleAcc, iSettleAcc:iSettleAccTotal}, {where:{strNickname:list[i].strNickname}});
             }
         }
@@ -383,10 +382,10 @@ router.post('/request_applysettle_all', isLoggedIn, async (req, res) => {
         if ( user != null )
         {
             let iSettleAcc = 0; // 죽장 이월
-            let iSettle = parseInt(list[i].iSettle); // 분기 죽장
-            let iSettleGive = parseInt(list[i].iInputSettle); // 지급죽장
-            let iSettleBeforeAcc = parseInt(list[i].iSettleBeforeAcc); // 전월죽장이월
-            let iSettleAccTotal = parseInt(user.iSettleAcc); // 총이월(전월죽장이월 + 죽장이월)
+            let iSettle = parseFloat(list[i].iSettle); // 분기 죽장
+            let iSettleGive = parseFloat(list[i].iInputSettle); // 지급죽장
+            let iSettleBeforeAcc = parseFloat(list[i].iSettleBeforeAcc); // 전월죽장이월
+            let iSettleAccTotal = parseFloat(user.iSettleAcc); // 총이월(전월죽장이월 + 죽장이월)
             let iPayback = 0; // 수금
 
             // // 부본일 경우 마이너스 죽장은 지급 안함
@@ -527,7 +526,7 @@ router.post('/request_applysettle_all', isLoggedIn, async (req, res) => {
                         iClassFrom: from.iClass,
                     });
 
-                let iSettleUser = parseInt(user.iSettle); // 이용자가 가지고 있는 죽장
+                let iSettleUser = parseFloat(user.iSettle); // 이용자가 가지고 있는 죽장
                 iSettleUser = iSettleUser + iAmout; // 죽장이 실제 발생시에만 이용자에 추가
                 //await user.update({iSettle:iSettleUser, iSettleAccBefore: user.iSettleAcc, iSettleAcc:iSettleAccTotal});
                 await db.Users.update({iSettle:iSettleUser, iSettleAccBefore: user.iSettleAcc, iSettleAcc:iSettleAccTotal}, {where:{strNickname:list[i].strNickname}});
@@ -814,10 +813,10 @@ let GetSettleAll2 = async (strGroupID, strQuater, dateStart, dateEnd, iClass, iO
 
 let GetSettleVice = (obj) => {
     // 죽장 계산
-    let iBTotal = parseInt(obj.iBaccaratTotalVice ?? 0) + parseInt(obj.iUnderOverTotalVice ?? 0);
-    let iSTotal = parseInt(obj.iSlotTotalVice ?? 0);
-    let iPBATotal = parseInt(obj.iPBATotalVice ?? 0);
-    let iPBBTotal = parseInt(obj.iPBBTotalVice ?? 0);
+    let iBTotal = parseFloat(obj.iBaccaratTotalVice ?? 0) + parseFloat(obj.iUnderOverTotalVice ?? 0);
+    let iSTotal = parseFloat(obj.iSlotTotalVice ?? 0);
+    let iPBATotal = parseFloat(obj.iPBATotalVice ?? 0);
+    let iPBBTotal = parseFloat(obj.iPBBTotalVice ?? 0);
 
     // if (iBTotal < 0) {
     //     iBTotal = 0;

@@ -194,7 +194,7 @@
             if ( user.iRootClass <= 3 && user.iPermission != 100 )
                 tagOut = `<a href="javascript:OnClickLogout('${userlist[i].strNickname}');" class="btn_green">로그아웃</a>`;
 
-            let total = parseInt(userlist[i].iTotal)-parseInt(userlist[i].iMyRollingMoney);
+            let total = parseFloat(userlist[i].iTotal)-parseFloat(userlist[i].iMyRollingMoney);
             let tag = `
                 <tr>
                     <td style="background-color:${bgcolor};">${cNumUsers-parseInt(i)}</td>
@@ -226,12 +226,12 @@
 
             $('#userlist').append(tag);
 
-            total.cash += parseInt(userlist[i].iCash);
-            total.input += parseInt(userlist[i].iInput);
-            total.output += parseInt(userlist[i].iOutput);
-            total.rolling += parseInt(userlist[i].iMyRollingMoney);
-            total.loan += parseInt(userlist[i].iLoan);
-            total.total += (parseInt(userlist[i].iTotal)-parseInt(userlist[i].iMyRollingMoney));
+            total.cash += parseFloat(userlist[i].iCash);
+            total.input += parseFloat(userlist[i].iInput);
+            total.output += parseFloat(userlist[i].iOutput);
+            total.rolling += parseFloat(userlist[i].iMyRollingMoney);
+            total.loan += parseFloat(userlist[i].iLoan);
+            total.total += (parseFloat(userlist[i].iTotal)-parseFloat(userlist[i].iMyRollingMoney));
         }
 
         let stateTag = `<td></td>`;

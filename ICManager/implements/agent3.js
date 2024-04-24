@@ -214,7 +214,7 @@ let inline_CalculateSelfBettingRecord = async (strGroupID, iClass, dateStart, da
 
     if ( iom.length > 0 )
     {
-        data.iInput = parseInt(iom[0].iInput);
+        data.iInput = parseFloat(iom[0].iInput);
         data.iOutput = iom[0].iOutput;
         data.iTotalCash = iom[0].iTotalMoney;
         data.iRolling = iom[0].iRolling;
@@ -276,7 +276,7 @@ let inline_CalculateBettingRecord = async (strGroupID, iClass, dateStart, dateEn
 
     if ( iom.length > 0 )
     {
-        data.iInput = parseInt(iom[0].iInput);
+        data.iInput = parseFloat(iom[0].iInput);
         data.iOutput = iom[0].iOutput;
         data.iTotalCash = iom[0].iTotalMoney;
         data.iRolling = iom[0].iRolling;
@@ -584,7 +584,7 @@ var inline_CalculateTermSelfBettingRecord = async (strGroupID, iClass, dateStart
         if ( iCurrent == -1 )
             continue;
 
-        list[iCurrent].iInput = parseInt(iom[date].iInput);
+        list[iCurrent].iInput = parseFloat(iom[date].iInput);
         list[iCurrent].iOutput = iom[date].iOutput;
         list[iCurrent].iExchange = iom[date].iExchange;
     }
@@ -650,7 +650,7 @@ var inline_CalculateTermBettingRecord = async (strGroupID, iClass, dateStart, da
         if ( iCurrent == -1 )
             continue;
 
-        list[iCurrent].iInput = parseInt(iom[date].iInput);
+        list[iCurrent].iInput = parseFloat(iom[date].iInput);
         list[iCurrent].iOutput = iom[date].iOutput;
         list[iCurrent].iExchange = iom[date].iExchange;
     }
@@ -866,23 +866,23 @@ let GetClassRolling = (daiyBetting, iClass, iGameCode) => {
  */
 let GetSelfBetting = (daiyBetting, iClass, iGameCode, fB, fUO, fS, fPB) => {
     if (iGameCode == 0) {
-        if (parseInt(daiyBetting.iBetB) > 0) {
-            return {iBetting:daiyBetting.iBetB, iWin:daiyBetting.iWinB, iRolling:parseInt(daiyBetting.iBetB)*fB*0.01, iTarget:0, iGameCode:iGameCode};
+        if (parseFloat(daiyBetting.iBetB) > 0) {
+            return {iBetting:daiyBetting.iBetB, iWin:daiyBetting.iWinB, iRolling:(daiyBetting.iBetB)*fB*0.01, iTarget:0, iGameCode:iGameCode};
         }
         return {iBetting:0, iWin:0, iRolling:0, iTarget:0, iGameCode:iGameCode};
     } else if (iGameCode == 100) {
-        if (parseInt(daiyBetting.iBetUO) > 0) {
-            return {iBetting:daiyBetting.iBetUO, iWin:daiyBetting.iWinUO, iRolling:parseInt(daiyBetting.iBetUO)*fUO*0.01, iTarget:0, iGameCode:iGameCode};
+        if (parseFloat(daiyBetting.iBetUO) > 0) {
+            return {iBetting:daiyBetting.iBetUO, iWin:daiyBetting.iWinUO, iRolling:(daiyBetting.iBetUO)*fUO*0.01, iTarget:0, iGameCode:iGameCode};
         }
         return {iBetting:0, iWin:0, iRolling:0, iTarget:0, iGameCode:iGameCode};
     } else if (iGameCode == 200) {
-        if (parseInt(daiyBetting.iBetS) > 0) {
-            return {iBetting:daiyBetting.iBetS, iWin:daiyBetting.iWinS, iRolling:parseInt(daiyBetting.iBetS)*fS*0.01, iTarget:0, iGameCode:iGameCode};
+        if (parseFloat(daiyBetting.iBetS) > 0) {
+            return {iBetting:daiyBetting.iBetS, iWin:daiyBetting.iWinS, iRolling:(daiyBetting.iBetS)*fS*0.01, iTarget:0, iGameCode:iGameCode};
         }
         return {iBetting:0, iWin:0, iRolling:0, iTarget:0, iGameCode:iGameCode};
     } else if (iGameCode == 300) {
-        if (parseInt(daiyBetting.iBetPB) > 0) {
-            return {iBetting:daiyBetting.iBetPB, iWin:daiyBetting.iWinPB, iRolling:parseInt(daiyBetting.iBetPB)*fPB*0.01, iTarget:0, iGameCode:iGameCode};
+        if (parseFloat(daiyBetting.iBetPB) > 0) {
+            return {iBetting:daiyBetting.iBetPB, iWin:daiyBetting.iWinPB, iRolling:(daiyBetting.iBetPB)*fPB*0.01, iTarget:0, iGameCode:iGameCode};
         }
         return {iBetting:0, iWin:0, iRolling:0, iTarget:0, iGameCode:iGameCode};
     }
@@ -900,7 +900,7 @@ let GetBetting = (daiyBetting, iClass, iGameCode) => {
     } else if (iGameCode == 200) {
         return {iBetting:daiyBetting.iAgentBetS, iWin:daiyBetting.iAgentWinS, iRolling:daiyBetting.iAgentRollingS, iTarget:0, iGameCode:iGameCode};
     } else if (iGameCode == 300) {
-        return {iBetting:daiyBetting.iAgentBetPB, iWin:daiyBetting.iAgentWinPB, iRolling:parseInt(daiyBetting.iAgentRollingPBA) + parseInt(daiyBetting.iAgentRollingPBB), iTarget:0, iGameCode:iGameCode};
+        return {iBetting:daiyBetting.iAgentBetPB, iWin:daiyBetting.iAgentWinPB, iRolling:(daiyBetting.iAgentRollingPBA) + (daiyBetting.iAgentRollingPBB), iTarget:0, iGameCode:iGameCode};
     }
     return null;
 }

@@ -782,7 +782,7 @@ router.post('/request_incompletecancel', async (req, res) => {
         let aUser = await db.Users.findOne({where:{strNickname:list[i].strID}});
         if ( aUser != null )
         {
-            let iAmount = parseInt(aUser.iCash)+parseInt(list[i].iBetting);
+            let iAmount = parseFloat(aUser.iCash)+parseFloat(list[i].iBetting);
 
             await db.Users.findOne({iCash:iAmount}, {where:{strNickname:list[i].strID}});
             //await aUser.update({iCash:iAmount});
@@ -805,7 +805,7 @@ router.post('/request_incompletedmanual', async (req, res) => {
         if ( true == IsWinPBG(list[i].strTableID, req.body))
         {
             const cTarget = parseInt(list[i].strTableID);
-            const cWin = parseInt(list[i].iBetting) * cPBGOdds[parseInt(list[i].iGameCode)][cTarget];
+            const cWin = parseFloat(list[i].iBetting) * cPBGOdds[parseInt(list[i].iGameCode)][cTarget];
             iWin = cWin;
 
             console.log(`WinScore : ${cWin}`);

@@ -185,11 +185,11 @@ let SetBettingList = (records, startIndex) => {
             color = `#E7AD6C`;
         }
 
-        let iBalance = parseInt(records[i].iBalance);
+        let iBalance = parseFloat(records[i].iBalance);
         let iPreviousCash = iBalance;
-        let iBet = parseInt(records[i].iBet);
+        let iBet = parseFloat(records[i].iBet);
         let iAfterCash = 0;
-        let iWin = parseInt(records[i].iWin);
+        let iWin = parseFloat(records[i].iWin);
         let iResultCash = 0;
         let iCancelBet = 0;
         let iCancelWin = 0;
@@ -331,11 +331,11 @@ let SetSlotBettingList = (records, startIndex) => {
             color = `rgb(255, 150, 125);`;
         }
 
-        let iBalance = parseInt(records[i].iBalance);
+        let iBalance = parseFloat(records[i].iBalance);
         let iPreviousCash = iBalance;
-        let iBet = parseInt(records[i].iBet);
+        let iBet = parseFloat(records[i].iBet);
         let iAfterCash = 0;
-        let iWin = parseInt(records[i].iWin);
+        let iWin = parseFloat(records[i].iWin);
         let iResultCash = 0;
 
         if ( iWin > 0 ) {

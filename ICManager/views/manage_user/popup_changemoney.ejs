@@ -382,9 +382,9 @@
 							RequestGTRecord('TO');
 							RequestGTRecord('FROM');
 
-							$('#cash').text(GetNumber(parseInt(obj.cash)));
-							$('#rolling').text(GetNumber(parseInt(obj.rolling)));
-							$('#settle').text(GetNumber(parseInt(obj.settle)));
+							$('#cash').text(GetNumber((obj.cash)));
+							$('#rolling').text(GetNumber((obj.rolling)));
+							$('#settle').text(GetNumber((obj.settle)));
 
 							window.opener.location.reload(true);
 						}
@@ -486,9 +486,9 @@
 						target = list[i].strFrom;
 
 					if ( list[i].eType == 'GIVE')
-						iTotalGive += parseInt(list[i].iAmount);
+						iTotalGive += parseFloat(list[i].iAmount);
 					else if ( list[i].eType == 'TAKE' )
-						iTotalTake += parseInt(list[i].iAmount);
+						iTotalTake += parseFloat(list[i].iAmount);
 
 					let tag = 
 					`
@@ -503,7 +503,7 @@
 					$(parent_id).append(tag);
 				}
 
-				let total = parseInt(iTotalGive) + parseInt(iTotalTake);
+				let total = parseFloat(iTotalGive) + parseFloat(iTotalTake);
 
 				let finaltag = `
 					<tr>
@@ -557,9 +557,9 @@
 						{
 							RequestGTRecord('TO', '');
 							RequestGTRecord('FROM', '');
-							$('#cash').text(GetNumber(parseInt(obj.cash)));
-							$('#rolling').text(GetNumber(parseInt(obj.rolling)));
-							$('#settle').text(GetNumber(parseInt(obj.settle)));
+							$('#cash').text(GetNumber((obj.cash)));
+							$('#rolling').text(GetNumber((obj.rolling)));
+							$('#settle').text(GetNumber((obj.settle)));
 							location.reload();
 						}
 						else {

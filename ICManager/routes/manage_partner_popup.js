@@ -539,12 +539,23 @@ router.post('/request_removeagent_view', async (req, res) => {
     console.log(`/request_removeagent_view`);
     console.log(req.body);
 
+    if (req.user.iPermission == 100) {
+        res.send({result: 'ERROR', msg:'권한이 없습니다'});
+        return;
+    }
+
     let strID = req.body.strID;
     let target = await db.Users.findOne({where:{strID:strID, iPermission:100}});
     if (target == null) {
         res.send({result:'ERROR'});
         return;
     }
+
+    if (req.user.iClass >= target.iClass) {
+        res.send({result: 'ERROR', msg:'권한이 없습니다'});
+        return;
+    }
+
     await db.Users.destroy({where:{strID:strID}});
     res.send({result:'OK'});
 });

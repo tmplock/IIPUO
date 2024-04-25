@@ -682,6 +682,11 @@ router.post('/request_removeagent', async (req, res) => {
     console.log(`/request_removeagent`);
     console.log(req.body);
 
+    if (req.user.iPermission == 100) {
+        res.send({result: 'ERROR', msg:'권한이 없습니다'});
+        return;
+    }
+
     let strNickname = req.body.strNickname;
     let strGroupID = req.body.strGroupID;
 
@@ -706,6 +711,11 @@ router.post('/request_removeagent', async (req, res) => {
     let target = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
     if ( target == null || (target != null && target.iCash > 0)) {
         res.send({result:'ERROR'});
+        return;
+    }
+
+    if (req.user.iClass >= target.iClass) {
+        res.send({result: 'ERROR', msg:'권한이 없습니다'});
         return;
     }
 

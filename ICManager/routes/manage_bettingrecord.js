@@ -535,20 +535,17 @@ router.post('/popup_cancel', isLoggedIn, async (req, res) => {
         return;
     }
 
-    // if (betId == 0 || strID == '' || password == '') {
-    //     res.send({result: 'FAIL', msg:'잘못된 요청입니다'});
-    //     return;
-    // }
-    if (betId == 0 || strID == '') {
+    if (betId == 0 || strID == '' || password == '') {
         res.send({result: 'FAIL', msg:'잘못된 요청입니다'});
         return;
     }
 
-    // let dbPassword = await db.Users.findOne({where: {strID: strID}}).strOddPassword ?? '';
-    // if (dbPassword != password) {
-    //     res.send({result: 'FAIL', msg:'취소 비밀번호를 확인해주세요'});
-    //     return;
-    // }
+    let dbuser = await db.Users.findOne({where: {strID: strID}});
+    let dbPassword = dbuser.strOddPassword ?? '';
+    if (dbPassword != password) {
+        res.send({result: 'FAIL', msg:'취소 비밀번호를 확인해주세요'});
+        return;
+    }
 
     const bet = await db.RecordBets.findOne({where: {id: betId}});
     if (bet.eType == 'CANCEL' || bet.eType == 'CANCEL_BET' || bet.eType == 'CANCEL_WIN') {

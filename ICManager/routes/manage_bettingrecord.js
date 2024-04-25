@@ -521,8 +521,8 @@ router.post('/popup_cancel', isLoggedIn, async (req, res) => {
     console.log(`popup_cancel`);
     console.log(req.body);
 
-    res.send({result: 'FAIL', msg:'기능 준비중'});
-    return;
+    // res.send({result: 'FAIL', msg:'기능 준비중'});
+    // return;
 
     const strID = req.user.strID ?? '';
     const betId = req.body.betId ?? 0;
@@ -535,16 +535,20 @@ router.post('/popup_cancel', isLoggedIn, async (req, res) => {
         return;
     }
 
-    if (betId == 0 || strID == '' || password == '') {
+    // if (betId == 0 || strID == '' || password == '') {
+    //     res.send({result: 'FAIL', msg:'잘못된 요청입니다'});
+    //     return;
+    // }
+    if (betId == 0 || strID == '') {
         res.send({result: 'FAIL', msg:'잘못된 요청입니다'});
         return;
     }
 
-    let dbPassword = await db.Users.findOne({where: {strID: strID}}).strOddPassword ?? '';
-    if (dbPassword != password) {
-        res.send({result: 'FAIL', msg:'취소 비밀번호를 확인해주세요'});
-        return;
-    }
+    // let dbPassword = await db.Users.findOne({where: {strID: strID}}).strOddPassword ?? '';
+    // if (dbPassword != password) {
+    //     res.send({result: 'FAIL', msg:'취소 비밀번호를 확인해주세요'});
+    //     return;
+    // }
 
     const bet = await db.RecordBets.findOne({where: {id: betId}});
     if (bet.eType == 'CANCEL' || bet.eType == 'CANCEL_BET' || bet.eType == 'CANCEL_WIN') {

@@ -233,7 +233,7 @@ let SetBettingList = (records, startIndex) => {
             strVender = records[i].strGameID;
         }
 
-        // tagCancel = records[i].cancel == true ? `<button onclick="OnClickCancel(${records[i].id});">배팅취소</button>` : '';
+        tagCancel = records[i].cancel == true ? `<button onclick="OnClickCancel(${records[i].id});">배팅취소</button>` : '';
 
         if (eType == 'CANCEL_BET' || eType == 'CANCEL' || eType == 'CANCEL_WIN') {
             tagTargetBet = `<td style="font-size: 12px; background-color:${color}; padding: 10px; line-height: 1.5;"><font style="color: black;">${GetNumber(records[i].iBet)}</font></td>`;
@@ -361,7 +361,7 @@ let SetSlotBettingList = (records, startIndex) => {
             strVender = records[i].strGameID;
         }
 
-        // tagCancel = records[i].cancel == true ? `<button onclick="OnClickCancel(${records[i].id});">배팅취소</button>` : '';
+        tagCancel = records[i].cancel == true ? `<button onclick="OnClickCancel(${records[i].id});">배팅취소</button>` : '';
 
         let tag =
             `
@@ -405,12 +405,12 @@ let SetSlotBettingList = (records, startIndex) => {
 }
 
 let OnClickCancel = (betId) => {
-    let password = prompt('취소 비밀번호를 입력해주세요');
-
-    if (password == '') {
-        alert('취소 비밀번호를 입력해주세요');
-        return;
-    }
+    // let password = prompt('취소 비밀번호를 입력해주세요');
+    //
+    // if (password == '') {
+    //     alert('취소 비밀번호를 입력해주세요');
+    //     return;
+    // }
 
     let strAddress = '/manage_bettingrecord/popup_cancel';
     window.open('', 'popupCancel', 'width=680, height=500, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
@@ -422,8 +422,9 @@ let OnClickCancel = (betId) => {
     $form.appendTo('body');
 
     var idx = $(`<input type="hidden" value="${betId}" name="betId">`);
-    var pass = $(`<input type="hidden" value="${password}" name="password">`);
-    $form.append(idx).append(pass);
+    // var pass = $(`<input type="hidden" value="${password}" name="password">`);
+    $form.append(idx)
+    // $form.append(pass);
     $form.submit();
 }
 

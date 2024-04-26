@@ -179,6 +179,42 @@ router.post('/balance', async (req, res) => {
 
 });
 
+// router.post('/bet', async (req, res) => {
+
+//     console.log('##################################################/bet');
+//     console.log(req.body);
+    
+//     console.log(`${req.get('origin')}`);
+//     console.log(`${req.get('host')}`);
+
+//     const user = await db.Users.findOne({where: { strID: req.body.strID }});
+//     //console.log(user.iCash, parseInt(req.body.strAmount));
+//     if (user.iCash >= parseFloat(req.body.strAmount)) {
+
+//         let cURL = req.get('origin');
+//         if ( cURL == undefined )
+//             cURL = req.get('host');
+
+//         const iOriginCash = user.iCash;
+//         const iUpdatedCash = parseFloat(iOriginCash) - parseFloat(req.body.strAmount);
+//         if ( iUpdatedCash < 0 )
+//         {
+//             res.send({result:'Error', iCash:iOriginCash});
+//         }
+//         else
+//         {
+//             UpdateUserPageCash(req.body.strID, iUpdatedCash);
+//             res.send({ result: 'OK', iCash: iUpdatedCash });
+           
+//             await IBettingManager.ProcessBet(user.strID, user.strNickname, user.strGroupID, user.iClass, iOriginCash, req.body.iGameCode, req.body.strVender, req.body.strGameID, req.body.strTableID, req.body.strRoundID,
+//                 req.body.strTransactionID, req.body.strDesc, '', 0, req.body.strAmount, cURL);
+//         }
+//     }
+//     else {
+//         res.send({ result: 'Error' });
+//         }
+//     }
+// );
 router.post('/bet', async (req, res) => {
 
     console.log('##################################################/bet');
@@ -188,33 +224,52 @@ router.post('/bet', async (req, res) => {
     console.log(`${req.get('host')}`);
 
     const user = await db.Users.findOne({where: { strID: req.body.strID }});
-    //console.log(user.iCash, parseInt(req.body.strAmount));
-    if (user.iCash >= parseFloat(req.body.strAmount)) {
+
+    const cBetAmount = parseInt(req.body.strAmount);
+    const iOriginCash = parseInt(user.iCash);
+
+    //console.log(user.iCash, cBetAmount);
+    if (iOriginCash >= cBetAmount) 
+    {
+        const iUpdatedCash = parseInt(iOriginCash) - cBetAmount;
 
         let cURL = req.get('origin');
         if ( cURL == undefined )
             cURL = req.get('host');
 
-        const iOriginCash = user.iCash;
-        const iUpdatedCash = parseFloat(iOriginCash) - parseFloat(req.body.strAmount);
-        if ( iUpdatedCash < 0 )
-        {
-            res.send({result:'Error', iCash:iOriginCash});
-        }
-        else
-        {
-            UpdateUserPageCash(req.body.strID, iUpdatedCash);
-            res.send({ result: 'OK', iCash: iUpdatedCash });
-           
-            await IBettingManager.ProcessBet(user.strID, user.strNickname, user.strGroupID, user.iClass, iOriginCash, req.body.iGameCode, req.body.strVender, req.body.strGameID, req.body.strTableID, req.body.strRoundID,
-                req.body.strTransactionID, req.body.strDesc, '', 0, req.body.strAmount, cURL);
-        }
+        UpdateUserPageCash(req.body.strID, iUpdatedCash);
+        res.send({ result: 'OK', iCash: iUpdatedCash });
+        
+        await IBettingManager.ProcessBet(user.strID, user.strNickname, user.strGroupID, user.iClass, iOriginCash, req.body.iGameCode, req.body.strVender, req.body.strGameID, req.body.strTableID, req.body.strRoundID, req.body.strTransactionID, req.body.strDesc, '', 0, cBetAmount, cURL);
     }
-    else {
-        res.send({ result: 'Error' });
-        }
+    else 
+    {
+        res.send({result:'Error', iCash:iOriginCash});
     }
-);
+});
+
+// router.post('/win', async (req, res) => {
+
+//     console.log('##################################################/win');
+//     console.log(req.body);
+
+//     const cURL = req.get('origin');
+
+//     const user = await db.Users.findOne({
+//         where: { strID: req.body.strID },
+//         raw: true // 캐싱 비활성화, 최신 데이터 조회
+//     });
+
+//     const iCash = parseFloat(user.iCash) + parseFloat(req.body.strAmount);
+//     res.send({result:'OK', iCash:iCash});
+
+//     await IBettingManager.ProcessWin(user.strID, user.strNickname, user.strGroupID, user.iClass, user.iCash, req.body.iGameCode, req.body.strVender, req.body.strGameID,
+//         req.body.strTableID, req.body.strRoundID, req.body.strTransactionID, req.body.strDesc, '', 0, req.body.strAmount, cURL);
+
+//     await db.Users.increment({iCash:parseFloat(req.body.strAmount)}, {where:{strID:user.strID}});
+
+//     UpdateUserPageCash(req.body.strID, iCash);
+// });
 
 router.post('/win', async (req, res) => {
 
@@ -225,20 +280,41 @@ router.post('/win', async (req, res) => {
 
     const user = await db.Users.findOne({
         where: { strID: req.body.strID },
-        raw: true // 캐싱 비활성화, 최신 데이터 조회
+        // raw: true // 캐싱 비활성화, 최신 데이터 조회
     });
 
-    const iCash = parseFloat(user.iCash) + parseFloat(req.body.strAmount);
+    const cWinAmount = parseInt(req.body.strAmount);
+    const iCash = parseInt(user.iCash) + cWinAmount;
     res.send({result:'OK', iCash:iCash});
 
     await IBettingManager.ProcessWin(user.strID, user.strNickname, user.strGroupID, user.iClass, user.iCash, req.body.iGameCode, req.body.strVender, req.body.strGameID,
-        req.body.strTableID, req.body.strRoundID, req.body.strTransactionID, req.body.strDesc, '', 0, req.body.strAmount, cURL);
-
-    await db.Users.increment({iCash:parseFloat(req.body.strAmount)}, {where:{strID:user.strID}});
+        req.body.strTableID, req.body.strRoundID, req.body.strTransactionID, req.body.strDesc, '', 0, cWinAmount, cURL);
 
     UpdateUserPageCash(req.body.strID, iCash);
 });
 
+// router.post('/cancel', async (req, res) => {
+
+//     console.log('##################################################/cancel');
+//     console.log(req.body);
+//     /*
+//         strVender:strVender, 
+//         strID:strID,
+//         strTransactionID:strTransactionID,
+//         strGameID:strGameID,
+//         strRound:strRound,
+//         eType:eType
+//     */
+
+//     //await IBetting.ProcessCancel('', req.body.strTransactionID, 0, req.body.strID);
+
+//     await IBettingManager.ProcessCancel(req.body.strTransactionID, req.body.strGameID, req.body.strRound, req.body.eType);
+//     const user = await db.Users.findOne({where:{strID:req.body.strID}});
+
+//     UpdateUserPageCash(req.body.strID, user.iCash);
+
+//     res.send({result:'OK', iCash:user.iCash});
+// });
 router.post('/cancel', async (req, res) => {
 
     console.log('##################################################/cancel');
@@ -252,15 +328,13 @@ router.post('/cancel', async (req, res) => {
         eType:eType
     */
 
-    //await IBetting.ProcessCancel('', req.body.strTransactionID, 0, req.body.strID);
-
-    await IBettingManager.ProcessCancel(req.body.strTransactionID, req.body.strGameID, req.body.strRound, req.body.eType);
+    //await IBettingManager.ProcessCancel(req.body.strTransactionID, req.body.strGameID, req.body.strRound, req.body.eType);
+    await IBettingManager.ProcessCancel(req.body.strTransactionID);
     const user = await db.Users.findOne({where:{strID:req.body.strID}});
 
     UpdateUserPageCash(req.body.strID, user.iCash);
 
     res.send({result:'OK', iCash:user.iCash});
 });
-
 
 module.exports = router;

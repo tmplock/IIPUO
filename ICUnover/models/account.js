@@ -2,7 +2,7 @@ const moment = require('moment');
 
 module.exports = (sequelize, DataTypes) => {
 
-    const Sessions = sequelize.define("Sessions", {
+    const Accounts = sequelize.define("Accounts", {
         id: {
             allowNull: false,
             autoIncrement: true,
@@ -26,5 +26,5 @@ module.exports = (sequelize, DataTypes) => {
         },
     });
 
-    return Sessions;
+    return Accounts;
 };

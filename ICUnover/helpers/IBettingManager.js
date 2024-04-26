@@ -2,6 +2,16 @@ const db = require('../db');
 
 const cron = require('node-cron');
 
+let UpdateUserCash = async (strID, iAmount, strDesc) => {
+
+    try {
+        await db.Users.increment({iCash:iAmount}, {where:{strID:strID}});
+    }
+    catch {
+        await db.RecordErrorCashes.create({strID:strID, iAmount:iAmount, strDesc:strDesc});
+    }
+}
+
 let CreateBet = async (strID, strNickname, strGroupID, iClass, iBalance, iGameCode, strVender, strGameID, strTableID, strRound, strUniqueID, strDetail, strResult, iTarget, iBet, iWin, eState, eType, strURL) => {
 
     await db.RecordBets.create({
@@ -31,7 +41,8 @@ let CreateBet = async (strID, strNickname, strGroupID, iClass, iBalance, iGameCo
 exports.ProcessBet = async (strID, strNickname, strGroupID, iClass, iBalance, iGameCode, strVender, strGameID, strTableID, strRound, strUniqueID, strDetail, strResult, iTarget, iBet, strURL) => {
 
     console.log(`##### exports.ProcessBet : ${strID}`);
-    await db.Users.decrement({iCash:parseFloat(iBet)}, {where:{strID:strID}});
+    //await db.Users.decrement({iCash:parseFloat(iBet)}, {where:{strID:strID}});
+    await UpdateUserCash(strID, -parseInt(iBet), `BET:${strVender},${strGameID},${strTableID}`);
 
     let eType = 'BET';
     let eState = 'STANDBY';
@@ -122,11 +133,13 @@ exports.ProcessWin = async (strID, strNickname, strGroupID, iClass, iBalance, iG
                     //const cWin = parseFloat(bet.iWin) + iWin;
                     await db.RecordBets.update({iWin:iWin, eType:'BETWIN', eState:'STANDBY', strUniqueID:strUniqueID}, {where:{id:bet.id}});
                 }
+                await UpdateUserCash(strID, iWin, `WIN:${strVender},${strGameID},${strTableID}`);
             }
             else
             {
                 let eState = 'STANDBY';
                 await CreateBet(strID, strNickname, strGroupID, iClass, iBalance, iGameCode, strVender, strGameID, strTableID, strRound, strUniqueID, strDetail, strResult, iTarget, 0, iWin, eState, 'WIN', strURL);
+                await UpdateUserCash(strID, iWin, `WIN:${strVender},${strGameID},${strTableID}`);
             }
         }
         break;
@@ -134,46 +147,97 @@ exports.ProcessWin = async (strID, strNickname, strGroupID, iClass, iBalance, iG
         {
             let eState = 'STANDBY';
             await CreateBet(strID, strNickname, strGroupID, iClass, iBalance, iGameCode, strVender, strGameID, strTableID, strRound, strUniqueID, strDetail, strResult, iTarget, 0, iWin, eState, 'WIN', strURL);
+
+            await UpdateUserCash(strID, iWin, `WIN:${strVender},${strGameID},${strTableID}`);
         }
         break;
     }
 }
 
-
-exports.ProcessCancel = async (strUniqueID, strGameID, strRound, eType) => {
+exports.ProcessCancel = async (strUniqueID) => {
 
     let bet = null;
     if ( strUniqueID != '' && strUniqueID != null )
     {
         bet = await db.RecordBets.findOne({where:{strUniqueID:strUniqueID}});
     }
-    if ( bet == null && strGameID != '' && strRound != '' )
-    {
-        bet = await db.RecordBets.findOne({where:{strGameID:strGameID, strRound:strRound}});
-    }
+    // else if ( bet == null && strGameID != '' && strRound != '' )
+    // {
+    //     bet = await db.RecordBets.findOne({where:{strGameID:strGameID, strRound:strRound}});
+    // }
 
-    //if ( bet != null )
-    //  COMPLETE 가 된 상태에서만 처리한다. 다른건 할 필요가 없음.
-    if ( bet != null && bet.eState == 'COMPLETE' )
+    if ( bet != null )
     {
-        //await db.RecordBets.update({eState:'STANDBY', eType:'CANCEL'}, {where:{id:bet.id}});
-
-        //  
-        switch ( eType )
+        switch ( bet.eType )
         {
             case 'BET':
-                await db.RecordBets.update({eState:'STANDBY', eType:'CANCEL_BET'}, {where:{id:bet.id}});
+                if ( bet.eState == 'COMPLETE' )
+                    await db.RecordBets.update({eState:'STANDBY', eType:'CANCEL_BET'}, {where:{id:bet.id}});
+                else
+                    await db.RecordBets.update({eState:'COMPLETE', eType:'CANCEL_BET'}, {where:{id:bet.id}});
+
+                await UpdateUserCash(bet.strID, bet.iBet, `CANCEL:${bet.strVender},${bet.strGameID},${bet.strTableID}`);
                 break;
             case 'WIN':
-                await db.RecordBets.update({eState:'STANDBY', eType:'CANCEL_WIN'}, {where:{id:bet.id}});
+                if ( bet.eState == 'COMPLETE' )
+                    await db.RecordBets.update({eState:'STANDBY', eType:'CANCEL_WIN'}, {where:{id:bet.id}});
+                else
+                    await db.RecordBets.update({eState:'COMPLETE', eType:'CANCEL_WIN'}, {where:{id:bet.id}});
+
+                await UpdateUserCash(bet.strID, -parseInt(bet.iWin), `CANCEL:${bet.strVender},${bet.strGameID},${bet.strTableID}`);
                 break;
-            // case 'BETWIN':  // 이건 사실 오진 않는다.
-            //     await db.RecordBets.update({eState:'STANDBY', eType:'CANCEL'}, {where:{id:bet.id}});
-            //     break;
+            case 'BETWIN':
+                {
+                    if ( bet.eState == 'COMPLETE' )
+                    {
+                        await db.RecordBets.update({eState:'STANDBY', eType:'CANCEL'}, {where:{id:bet.id}});
+                    }
+                    else
+                    {
+                        await db.RecordBets.update({eState:'COMPLETE', eType:'CANCEL'}, {where:{id:bet.id}});                        
+                    }
+                    const cDiff = parseInt(bet.iBet)-parseInt(bet.iWin);
+                    await UpdateUserCash(bet.strID, cDiff, `CANCEL:${bet.strVender},${bet.strGameID},${bet.strTableID}`);
+                }
+                break;
         }
     }
 
 }
+// exports.ProcessCancel = async (strUniqueID, strGameID, strRound, eType) => {
+
+//     let bet = null;
+//     if ( strUniqueID != '' && strUniqueID != null )
+//     {
+//         bet = await db.RecordBets.findOne({where:{strUniqueID:strUniqueID}});
+//     }
+//     if ( bet == null && strGameID != '' && strRound != '' )
+//     {
+//         bet = await db.RecordBets.findOne({where:{strGameID:strGameID, strRound:strRound}});
+//     }
+
+//     //if ( bet != null )
+//     //  COMPLETE 가 된 상태에서만 처리한다. 다른건 할 필요가 없음.
+//     if ( bet != null && bet.eState == 'COMPLETE' )
+//     {
+//         //await db.RecordBets.update({eState:'STANDBY', eType:'CANCEL'}, {where:{id:bet.id}});
+
+//         //  
+//         switch ( eType )
+//         {
+//             case 'BET':
+//                 await db.RecordBets.update({eState:'STANDBY', eType:'CANCEL_BET'}, {where:{id:bet.id}});
+//                 break;
+//             case 'WIN':
+//                 await db.RecordBets.update({eState:'STANDBY', eType:'CANCEL_WIN'}, {where:{id:bet.id}});
+//                 break;
+//             // case 'BETWIN':  // 이건 사실 오진 않는다.
+//             //     await db.RecordBets.update({eState:'STANDBY', eType:'CANCEL'}, {where:{id:bet.id}});
+//             //     break;
+//         }
+//     }
+
+// }
 // exports.ProcessBet = async (strID, strNickname, strGroupID, iClass, iBalance, iGameCode, strVender, strGameID, strTableID, strRound, strUniqueID, strDetail, strResult, iTarget, iBet, strURL) => {
 
 //     console.log(`##### exports.ProcessBet : ${strID}`);

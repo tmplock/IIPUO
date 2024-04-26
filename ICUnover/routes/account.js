@@ -77,13 +77,21 @@ router.post('/login', passport.authenticate('local', {
 
 router.get('/logout', isLoggedIn, (req, res) => {
 
+    console.log(`/account/logout`);
+
+    // console.log(req.session.uid);
+    // console.log(req.user);
+
+    let strID = req.user.strID ?? null;
+
     req.logout(async function (err) {
         if (err) {
           return next(err);
         }
-
-        await db.Sessions.destroy({where:{strID:req.session.uid}, truncate:true});
+        //await db.Accounts.destroy({where:{strID:req.session.uid}});
+        await db.Accounts.destroy({where:{strID:strID}});
         delete req.session.uid;
+
 
         // if you're using express-flash
         req.flash('success_msg', 'session terminated');

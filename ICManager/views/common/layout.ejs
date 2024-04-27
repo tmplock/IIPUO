@@ -152,6 +152,14 @@
                         <% } else { %>
                             <a href="#" class="btn_green" id="popup_logs">정보로그</a> &nbsp;
                         <% } %>
+
+                        <% if ( agent.iPermission != 100 ) { %>
+                            <% if ( iHeaderFocus == 21 ) { %>
+                                <a href="#" class="btn_blue" id="popup_writeletter">쪽지</a> &nbsp;
+                            <% } else { %>
+                                <a href="#" class="btn_green" id="popup_writeletter">쪽지</a> &nbsp;
+                            <% } %>
+                        <% } %>
                     <% } %>
                 </div>
 
@@ -234,6 +242,13 @@
                             <a href="#" class="btn_blue" id="popup_logs">정보로그</a> &nbsp;
                         <% } else { %>
                             <a href="#" class="btn_green" id="popup_logs">정보로그</a> &nbsp;
+                        <% } %>
+                        <% if ( agent.iPermission != 100 ) { %>
+                            <% if ( iHeaderFocus == 21 ) { %>
+                                <a href="#" class="btn_blue" id="popup_writeletter">쪽지</a> &nbsp;
+                            <% } else { %>
+                                <a href="#" class="btn_green" id="popup_writeletter">쪽지</a> &nbsp;
+                            <% } %>
                         <% } %>
                     <% } %>
                 </div>

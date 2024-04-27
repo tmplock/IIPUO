@@ -60,6 +60,37 @@ router.post('/writeletter', async (req, res) => {
     res.render('manage_setting/popup_writeletter', {iLayout:1, iHeaderFocus:1, agent:user, strParent: '', strChildes:strChildes, strTo: strTo, directSend: false});
 });
 
+router.post('/direct_writeletter', async (req, res) => {
+
+    console.log(req.body);
+
+    const user = {strNickname:req.user.strNickname, strGroupID:req.user.strGroupID, iClass:req.user.iClass,
+        iRootClass:req.user.iClass, iPermission:req.user.iPermission};
+    const dbuser = await db.Users.findOne({where:{strNickname:user.strNickname}});
+    if ( null != dbuser )
+        user.strID = dbuser.strID;
+    let strTo = req.body.strTo ?? '';
+    if (strTo != '') {
+        res.render('manage_setting/popup_writeletter', {iLayout:1, iHeaderFocus:1, agent:user, strParent: '', strChildes:[], strTo:strTo, directSend: true});
+        return;
+    }
+    if (dbuser.iClass > 3) { // 대본사부터는 본사에만 쪽지를 보낼 수 있음(강제로 본사 지정)
+        // 본사를 가져오기
+        let parents = await IAgent.GetParentList(req.user.strGroupID, req.user.iClass);
+        strTo = parents.strAdmin;
+        res.render('manage_setting/popup_writeletter', {iLayout:1, iHeaderFocus:1, agent:user, strParent: '', strChildes:[], strTo:strTo, directSend: false});
+        return;
+    }
+
+    let strChildes = [];
+    if (dbuser.iClass == 3) { // 본사는 하위에만 쪽지 보낼 수 있음(총본에게는 관리자문의로)
+        strChildes = await IAgent.GetChildNicknameList(req.user.strGroupID, parseInt(req.user.iClass)+1);
+    } else if (dbuser.iClass <= 3) { // 본사 이하는 하위에 쪽지를 보낼 수 있음
+        strChildes = await IAgent.GetChildNicknameList(req.user.strGroupID, parseInt(req.user.iClass)+1);
+    }
+    res.render('manage_setting/popup_writeletter', {iLayout:1, iHeaderFocus:1, agent:user, strParent: '', strChildes:strChildes, strTo: strTo, directSend: false});
+});
+
 router.post('/readwriteletter', async (req, res) => {
     
     console.log(req.body);

@@ -99,3 +99,23 @@ $(document).on('click', '#popup_logs', ()=> {
     $form.append(id).append(idx).append(page).append(category);
     $form.submit();
 });
+
+
+$(document).on('click', '#popup_writeletter', ()=> {
+    window.open('', 'WriteLetter', 'width=1024, height=512, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
+
+    var $form = $('<form></form>');
+    $form.attr('action', '/manage_setting_popup/direct_writeletter');
+    $form.attr('method', 'post');
+    $form.attr('target', 'WriteLetter');
+    $form.appendTo('body');
+
+    var idx = $(`<input type="hidden" value="${agent.strNickname}" name="strNickname">`);
+    var page = $(`<input type="hidden" value="${agent.strGroupID}" name="strGroupID">`);
+    var category = $(`<input type="hidden" value=${parseInt(agent.iClass)} name="iClass">`);
+    var iPermission = $(`<input type="hidden" value=${parseInt(agent.iPermission)} name="iPermission">`);
+    var strTo = $(`<input type="hidden" value='${agent.strNickname}' name="strTo">`);
+
+    $form.append(idx).append(page).append(category).append(iPermission).append(strTo);
+    $form.submit();
+});

@@ -48,7 +48,7 @@
 			<tr>
 				<th scope="row"><%=__('Password')%></th>
 				<td>
-					<% if ((agent.iRootClass > 3 && agent.iRootClass != 7) || agent.iRootClass == 7) { %>
+					<% if (agent.iRootClass > 3 && agent.iRootClass != 7) { %>
 						<input type="password" maxlength="16" name="member_password" id="member_password" required="no"  message="" style="width:50%; ime-mode:disabled" value = "<%=agent.strPassword%>"> <span style="display:inline-block; padding-top:4px;" > </span>
 					<% } else { %>
 						<input type="text" maxlength="16" name="member_password" id="member_password" required="no"  message="" style="width:50%; ime-mode:disabled" value = "<%=agent.strPassword%>"> <span style="display:inline-block; padding-top:4px;" > </span>
@@ -66,7 +66,7 @@
 			<tr>
 				<th scope="row"><%=__('PasswordConfirm')%></th>
 				<td>
-					<% if ((agent.iRootClass > 3 && agent.iRootClass != 7) || agent.iRootClass == 7) { %>
+					<% if (agent.iRootClass > 3 && agent.iRootClass != 7) { %>
 						<input type="password" maxlength="16" name="member_password2" id="member_password2"required="no"  message="" style="width:50%; ime-mode:disabled" value = "<%=agent.strPassword%>"> <span style="display:inline-block; padding-top:4px;" > </span>
 					<% } else { %>
 						<input type="text" maxlength="16" name="member_password2" id="member_password2"required="no"  message="" style="width:50%; ime-mode:disabled" value = "<%=agent.strPassword%>"> <span style="display:inline-block; padding-top:4px;" > </span>

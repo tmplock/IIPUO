@@ -123,11 +123,10 @@
 </div>
 <script type="text/javascript" src="js/enum.js"></script>
 <script type="text/javascript" src="js/time.js"></script>
-<script type="text/javascript" src="js/manage_partner_menu.js"></script>
-<script type="text/javascript" src="js/manage_inout_ref.js"></script>
-<script type="text/javascript" src="js/manage_partner_ref.js"></script>
-<script type="text/javascript" src="js/manage_partner_register.js"></script>
 <script type="text/javascript" src="js/manage_setting_ref.js"></script>
+<script type="text/javascript" src="js/manage_partner_ref.js"></script>
+<script type="text/javascript" src="js/manage_partner_menu.js"></script>
+<script type="text/javascript" src="js/manage_partner_register.js"></script>
 <script type="text/javascript" src="js/manage_user_menu.js"></script>
 <script type="text/javascript" src="js/socket.js"></script>
 <script>
@@ -289,30 +288,6 @@
         }
 
         return total;
-    }
-
-    let OnChangeStatus = (strNickname) => {
-        console.log(strNickname);
-
-        let item = $(`#partner_agentstatus_${strNickname}`);
-        console.log(item.val());
-
-        if (confirm(strConfirmChangeState))
-        {
-            $.ajax({
-                type:'post',
-                url: "/manage_partner/request_agentstate",
-                context: document.body,
-                data:{strNickname:strNickname, eState:item.val()},
-
-                success:function(data) {
-
-                    location.reload();
-
-                }
-            });
-
-        }
     }
 
     let AddEndTag = (total1, total2, total3, total4, iRootClass) => {

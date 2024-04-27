@@ -233,7 +233,7 @@ let SetBettingList = (records, startIndex) => {
             strVender = records[i].strGameID;
         }
 
-        // tagCancel = records[i].cancel == true ? `<button onclick="OnClickCancel(${records[i].id});">배팅취소</button>` : '';
+        tagCancel = records[i].cancel == true ? `<button onclick="OnClickCancel(${records[i].id});">배팅취소</button>` : '';
 
         if (eType == 'CANCEL_BET' || eType == 'CANCEL' || eType == 'CANCEL_WIN') {
             tagTargetBet = `<td style="font-size: 12px; background-color:${color}; padding: 10px; line-height: 1.5;"><font style="color: black;">${GetNumber(records[i].iBet)}</font></td>`;
@@ -361,7 +361,7 @@ let SetSlotBettingList = (records, startIndex) => {
             strVender = records[i].strGameID;
         }
 
-        // tagCancel = records[i].cancel == true ? `<button onclick="OnClickCancel(${records[i].id});">배팅취소</button>` : '';
+        tagCancel = records[i].cancel == true ? `<button onclick="OnClickCancel(${records[i].id});">배팅취소</button>` : '';
 
         let tag =
             `

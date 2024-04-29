@@ -342,7 +342,7 @@
 					$('#agent_list').empty();
 					for ( let i in obj )
 					{
-						$('#agent_list').append(`<option style="font-size: 15px;">${obj[i].strNickname}(보유머니 : ${GetNumber(obj[i].iCash)}원)</option>`);
+						$('#agent_list').append(`<option style="font-size: 15px;" value="${obj[i].strNickname}">${obj[i].strNickname}(보유머니 : ${GetNumber(obj[i].iCash)}원)</option>`);
 					}
 				},
 				error:function(request,status,error){

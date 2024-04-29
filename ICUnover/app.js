@@ -111,6 +111,9 @@ global.strAdminAddress = 'http://188.166.231.104:3031';
 ///global.strVenderAddress = 'http://174.138.23.187:3001';
 global.strVenderAddress = 'https://iipgame.uk';
 
+//global.ePublishing = 'ON';
+global.ePublishing = 'OFF';
+
 const { default: axios2 } = require('axios');
 
 let RequestAxios = async (strAddress, objectData) =>
@@ -209,26 +212,7 @@ app.use(function (request,response,next){
         'pc';
 
     next();
-})
-
-// app.post('/sm', async (req, res) => {
-
-//     console.log('################################################## /sm');
-//     console.log(req.body);
-
-//     let objectData = {strID:req.user.strID};
-//     let res_axios = await RequestAxios(`${global.strVenderAddress}/pp/request_listsm`, objectData);
-
-//     console.log('SM_PP');
-//     console.log(res_axios.data.data[0]);
-
-//             // // await db.Users.update({vivoToken:res_axios.data.strToken}, {where:{strID:res_axios.data.strID}});
-//             // res.send({url:'/sm', data:res_axios.data});
-//             //console.log(res_axios.data[0]);
-
-//     res.render('sm', {gameList:res_axios.data.data});
-// })
-
+});
 
 app.get('/', async (req, res) => {
 
@@ -257,47 +241,15 @@ app.get('/', async (req, res) => {
 
     }
 
-
-    res.render('index', {iLayout:0, bLogin:bLogin, user:req.user, messages:req.flash('error')[0], listOutputRecent:objectOutput.listOutputRecent, listOutputRank:objectOutput.listOutputRank, listAnnouncement:listAnnouncement, listFaq:listFaq});
+    res.render('index', {iLayout:0, bLogin:bLogin, user:req.user, messages:req.flash('error')[0], listOutputRecent:objectOutput.listOutputRecent, listOutputRank:objectOutput.listOutputRank, listAnnouncement:listAnnouncement, listFaq:listFaq, ePublishing:global.ePublishing});
 });
-
-
-// // app.get('/input', async (req, res) => {
-
-// //     res.render('inout_input', {iLayout:0});
-// // });
-
-// // app.get('/output', async (req, res) => {
-
-// //     res.render('inout_output', {iLayout:0});
-// // });
-
-// app.get('/virtual', async (req, res) => {
-
-//     res.render('inout_virtual', {iLayout:0});
-// });
-
-// app.get('/move', async (req, res) => {
-
-//     res.render('inout_move', {iLayout:0});
-// });
-
-// app.get('/record', async (req, res) => {
-
-//     res.render('inout_record', {iLayout:0});
-// });
-
-// app.get('/recordcoupon', async (req, res) => {
-
-//     res.render('inout_recordcoupon', {iLayout:0});
-// });
 
 app.get('/desc', async (req, res) => {
 
     console.log('/desc');
     console.log(req.query);
 
-    res.render('desc_game01', {iLayout:0, strFilename:`/img/${req.query.id}.jpg`});
+    res.render('desc_game01', {iLayout:0, strFilename:`/img/${req.query.id}.jpg`, ePublishing:global.ePublishing});
 });
 
 app.post('/request_myrolling', async (req, res) => {
@@ -342,168 +294,56 @@ app.post('/exchange_output', async (req, res) => {
         LEFT JOIN Users AS t6 ON t6.iParentID = t5.id
         WHERE t6.iClass='8' AND t6.strGroupID LIKE CONCAT('${userinfo.strGroupID}', '%');
         `
-        );
+    );
 
-        console.log(userinfo);
+    console.log(userinfo);
     console.log(`user nickname : ${userinfo.strNickname}`);
 
     if(userinfo != undefined){
 
-        //if ( userinfo.strOutputPassword == req.body.strPassword )
-        //{
-            const inputmoney = await db.Inouts.create({
-                strID:userinfo.strNickname,
-                strAdminNickname:result[0].lev1,
-                strPAdminNickname:result[0].lev2,
-                strVAdminNickname:result[0].lev3,
-                strAgentNickname:result[0].lev4,
-                strShopNickname:result[0].lev5,
-                iClass:userinfo.iClass,
-                strName:userinfo.strNickname,
-                strGroupID:userinfo.strGroupID,
-                strAccountOwner:userinfo.strBankOwner,
-                strBankName:userinfo.strBankname,
-                strAccountNumber:userinfo.strBankAccount,
-                iPreviousCash:userinfo.iCash,
-                iAmount:req.body.iAmount,
-                eType:'OUTPUT',
-                eState:'REQUEST',
-                completedAt:null,
-            });
-    
-            let objectAxios = {strNickname:userinfo.strNickname, strID:userinfo.strID, strContents:req.body.strContents, strGroupID:userinfo.strGroupID};
-    
-            const cAddress = `${global.strAdminAddress}/manage_inout/output_alert`;
-            //axios.get('http://165.22.102.70:3030/manage_inout/output_alert')
-            //axios.get(cAddress)
-            axios.post(cAddress, objectAxios)
-            .then((response)=> {
-                console.log(`Axios Success to ${cAddress}`);
-                console.log(response);
-            })
-            .catch((error)=> {
-                console.log('axios Error');
-                console.log(error);
-            });
-    
-            res.send({result:'OK', reason:'OK'});
-        //}
-        // else
-        // {
-        //     res.send({result:'FAIL', ras})
-        // }
+        const inputmoney = await db.Inouts.create({
+            strID:userinfo.strNickname,
+            strAdminNickname:result[0].lev1,
+            strPAdminNickname:result[0].lev2,
+            strVAdminNickname:result[0].lev3,
+            strAgentNickname:result[0].lev4,
+            strShopNickname:result[0].lev5,
+            iClass:userinfo.iClass,
+            strName:userinfo.strNickname,
+            strGroupID:userinfo.strGroupID,
+            strAccountOwner:userinfo.strBankOwner,
+            strBankName:userinfo.strBankname,
+            strAccountNumber:userinfo.strBankAccount,
+            iPreviousCash:userinfo.iCash,
+            iAmount:req.body.iAmount,
+            eType:'OUTPUT',
+            eState:'REQUEST',
+            completedAt:null,
+        });
+
+        let objectAxios = {strNickname:userinfo.strNickname, strID:userinfo.strID, strContents:req.body.strContents, strGroupID:userinfo.strGroupID};
+
+        const cAddress = `${global.strAdminAddress}/manage_inout/output_alert`;
+        //axios.get('http://165.22.102.70:3030/manage_inout/output_alert')
+        //axios.get(cAddress)
+        axios.post(cAddress, objectAxios)
+        .then((response)=> {
+            console.log(`Axios Success to ${cAddress}`);
+            console.log(response);
+        })
+        .catch((error)=> {
+            console.log('axios Error');
+            console.log(error);
+        });
+
+        res.send({result:'OK', reason:'OK'});
     }
     
     else
     {
         res.send({result:'Error', reason:'Error'});
     }
-    // let isLogin = 0;
-    // if ( req.user != undefined )
-    //     isLogin = 1;
-
-    // res.render('index', {iPopup:Enum.eNone, isLogin:isLogin});
 });
-
-// app.post('/request_output', async (req, res) => {
-
-//     console.log(`request_output : ${1}`);
-//     console.log(req.body);
-
-//     const userinfo = await db.Users.findOne({where:{
-//         // strBankOwner:req.body.strAccountOwner,
-//         // strPassword:req.body.strBankPassword
-//         strID:req.body.strID
-//     }});
-
-//     const [result] = await db.sequelize.query(
-//         `
-//         SELECT t1.strNickname AS lev1,
-//         t2.strNickname AS lev2,
-//         t3.strNickname AS lev3,
-//         t4.strNickname AS lev4,
-//         t5.strNickname AS lev5
-//         FROM Users AS t1
-//         LEFT JOIN Users AS t2 ON t2.iParentID = t1.id
-//         LEFT JOIN Users AS t3 ON t3.iParentID = t2.id
-//         LEFT JOIN Users AS t4 ON t4.iParentID = t3.id
-//         LEFT JOIN Users AS t5 ON t5.iParentID = t4.id
-//         LEFT JOIN Users AS t6 ON t6.iParentID = t5.id
-//         WHERE t6.iClass='8' AND t6.strGroupID LIKE CONCAT('${userinfo.strGroupID}', '%');
-//         `
-//         );
-
-//     if(userinfo != undefined){
-
-//         if ( userinfo.iCash >= req.body.iAmount )
-//         {
-//             console.log(`Password Checking : ${req.body.strPassword}, ${userinfo.strOutputPassword}`);
-
-//             //if ( userinfo.strOutputPassword == req.body.strPassword )
-//             //{
-//                 const inputmoney = await db.Inouts.create({
-//                     strID:userinfo.strNickname,
-//                     strAdminNickname:result[0].lev1,
-//                     strPAdminNickname:result[0].lev2,
-//                     strVAdminNickname:result[0].lev3,
-//                     strAgentNickname:result[0].lev4,
-//                     strShopNickname:result[0].lev5,
-//                     iClass:userinfo.iClass,
-//                     strName:userinfo.strNickname,
-//                     strGroupID:userinfo.strGroupID,
-//                     strAccountOwner:userinfo.strBankOwner,
-//                     strBankName:userinfo.strBankname,
-//                     strAccountNumber:userinfo.strBankAccount,
-//                     iPreviousCash:userinfo.iCash,
-//                     iAmount:req.body.iAmount,
-//                     eType:'OUTPUT',
-//                     eState:'REQUEST',
-//                     completedAt:null,
-//                 });
-    
-//                 let objectAxios = {strNickname:userinfo.strNickname, strID:userinfo.strID, strContents:req.body.strContents, strGroupID:userinfo.strGroupID};
-
-//                 const cAddress = `${global.strAdminAddress}/manage_inout/output_alert`;
-//                 //axios.get('http://165.22.102.70:3030/manage_inout/output_alert')
-//                 //axios.get(cAddress)
-//                 axios.post(cAddress, objectAxios)
-//                 .then((response)=> {
-//                     //console.log('axios success');
-//                     console.log(`Axios Success Output_Alert`);
-//                     console.log(response);
-//                 })
-//                 .catch((error)=> {
-//                     console.log('axios Error');
-//                     console.log(error);
-//                 });
-        
-//                 let resultCash = userinfo.iCash - parseInt(req.body.iAmount);
-    
-//                 await userinfo.update({iCash:resultCash});
-
-//                 res.send({result:'OK', reason:'OK', iAmount:resultCash});
-//             // }
-//             // else
-//             // {
-//             //     res.send({result:"FAIL", reason:"INCORRECTPASSWORD"});    
-//             // }
-//         }
-//         else
-//         {
-//             res.send({result:"FAIL", reason:"NOTENOUGH"});
-//         }
-//     }
-//     else
-//     {
-//         res.send({result:'Error', reason:'Error'});
-//     }
-    
-//     // let isLogin = 0;
-//     // if ( req.user != undefined )
-//     //     isLogin = 1;
-
-//     // res.render('index', {iPopup:Enum.eNone, isLogin:isLogin});
-// });
 
 app.post('/request_Anncouncement', async (req, res) => {
     const data = req.body;
@@ -611,10 +451,10 @@ io.on('connection', (socket) => {
         
         console.log(`socket.on disconnect ${socket.strID}`);
         
-        if ( socket.strID != undefined )
-        {
-            await db.Sessions.destroy({where:{strID:socket.strID}, truncate:true});
-        }
+        // if ( socket.strID != undefined )
+        // {
+        //     await db.Sessions.destroy({where:{strID:socket.strID}, truncate:true});
+        // }
 
         delete socket_list[socket.id];
 

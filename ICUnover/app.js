@@ -111,7 +111,8 @@ global.strAdminAddress = 'http://188.166.231.104:3031';
 ///global.strVenderAddress = 'http://174.138.23.187:3001';
 global.strVenderAddress = 'https://iipgame.uk';
 
-global.ePublishing = 'ON';
+//global.ePublishing = 'ON';
+global.ePublishing = 'OFF';
 
 const { default: axios2 } = require('axios');
 
@@ -450,10 +451,10 @@ io.on('connection', (socket) => {
         
         console.log(`socket.on disconnect ${socket.strID}`);
         
-        if ( socket.strID != undefined )
-        {
-            await db.Sessions.destroy({where:{strID:socket.strID}, truncate:true});
-        }
+        // if ( socket.strID != undefined )
+        // {
+        //     await db.Sessions.destroy({where:{strID:socket.strID}, truncate:true});
+        // }
 
         delete socket_list[socket.id];
 

@@ -44,9 +44,15 @@ router.get('/login', (req, res) => {
     }
 });
 
+router.get('/register', (req, res) => {
+
+    res.render('account/register', {iLayout:0, user:null, bLogin:'false', messages:null, listOutputRecent:[], listOutputRank:[], ePublishing:global.ePublishing});
+});
+
+
 router.get('/login_m', async(req, res) => {
 
-    res.render('login_m', {iLayout:1, messages:req.flash('error')[0]});
+    res.render('login_m', {iLayout:1, messages:req.flash('error')[0], ePublishing:global.ePublishing});
 });
 
 router.get('/loginsuccess', (req, res) => {
@@ -111,7 +117,7 @@ router.get('/mypage', async (req, res) => {
         return;
     }
     const objectOutput = await IHelper.GetOutputRecords();
-    res.render('mypage', {iLayout:0, bLogin:bLogin, user:req.user, messages:null, listOutputRecent:objectOutput.listOutputRecent, listOutputRank:objectOutput.listOutputRank});
+    res.render('mypage', {iLayout:0, bLogin:bLogin, user:req.user, messages:null, listOutputRecent:objectOutput.listOutputRecent, listOutputRank:objectOutput.listOutputRank, ePublishing:global.ePublishing});
 });
 
 

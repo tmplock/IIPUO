@@ -69,7 +69,7 @@ router.post('/sm', async (req, res) => {
         }
     }
     let count = parseInt(newListGames.length);
-    res.render('sm', {iLayout:1, strVender:req.body.strGame, listGames:newListGames, data: res_axios.data, count:count});
+    res.render('sm', {iLayout:1, strVender:req.body.strGame, listGames:newListGames, data: res_axios.data, count:count, ePublishing:global.ePublishing});
 })
 
 router.post('/', async (req, res) => {

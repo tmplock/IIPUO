@@ -62,7 +62,7 @@ router.get('/', async (req, res) => {
         break;
     }
 
-    res.render('desc_game01', {iLayout:0, bLogin:bLogin, user:req.user, messages:null, strFilename:`/img/${req.query.id}.jpg`, listOutputRecent:objectOutput.listOutputRecent, listOutputRank:objectOutput.listOutputRank, strGameName:strGameName});
+    res.render('desc_game01', {iLayout:0, bLogin:bLogin, user:req.user, messages:null, strFilename:`/img/${req.query.id}.jpg`, listOutputRecent:objectOutput.listOutputRecent, listOutputRank:objectOutput.listOutputRank, strGameName:strGameName, ePublishing:global.ePublishing});
 });
 
 module.exports = router;

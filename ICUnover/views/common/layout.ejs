@@ -65,23 +65,48 @@
 
                     <% } else { %>
 
-                        <form method="post" action="/account/login">
-                            <div class="login">
-                                <div class="m-logo" onclick="location.href='/';"><img src="/img/logo.png"></div>
-                                <div class="login-box" style="color:#ffffff;">
-                                    <input type="text" name="strID" placeholder="아이디" onfocus="this.placeholder = ''">
-                                    <input type="password" name="strPassword" placeholder="비밀번호" onfocus="this.placeholder = ''">
-                                    <button type="submit">로그인</button>
-                                    <span class="m-login"><a href="/account/login_m">로그인</a></span>
-                                    <!-- <button type="button" id="gnb_open"><i class="fa fa-bars" aria-hidden="true"></i></button>  -->
-        
-                                    <% if ( messages ) { %>
-                                        <p style="color:red;"><%=messages%></p>
-                                    <% } %>
+                        <% if ( ePublishing == 'ONLINE' ) { %>
+                            <form method="post" action="/account/login">
+                                <div class="login">
+                                    <div class="m-logo" onclick="location.href='/';"><img src="/img/logo.png"></div>
+                                    <div class="login-box" style="color:#ffffff;">
+    
+                                        <button type="button" class="font12" onclick="javascript:location.href='/account/register'" style="background-color: orange;">회원가입</button>
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    
+                                        <input type="text" name="strID" placeholder="아이디" onfocus="this.placeholder = ''">
+                                        <input type="password" name="strPassword" placeholder="비밀번호" onfocus="this.placeholder = ''">
+                                        <button type="submit">로그인</button>
+                                        <span class="m-login"><a href="/account/login_m">로그인</a></span>
+                                        <!-- <button type="button" id="gnb_open"><i class="fa fa-bars" aria-hidden="true"></i></button>  -->
+            
+                                        <% if ( messages ) { %>
+                                            <p style="color:red;"><%=messages%></p>
+                                        <% } %>
+                                    </div>
+                                    
                                 </div>
-                                
-                            </div>
-                        </form>
+                            </form>
+                        <% } else { %>
+                            <form method="post" action="/account/login">
+                                <div class="login">
+                                    <div class="m-logo" onclick="location.href='/';"><img src="/img/logo.png"></div>
+                                    <div class="login-box" style="color:#ffffff;">
+                                        <input type="text" name="strID" placeholder="아이디" onfocus="this.placeholder = ''">
+                                        <input type="password" name="strPassword" placeholder="비밀번호" onfocus="this.placeholder = ''">
+                                        <button type="submit">로그인</button>
+                                        <span class="m-login"><a href="/account/login_m">로그인</a></span>
+                                        <!-- <button type="button" id="gnb_open"><i class="fa fa-bars" aria-hidden="true"></i></button>  -->
+            
+                                        <% if ( messages ) { %>
+                                            <p style="color:red;"><%=messages%></p>
+                                        <% } %>
+                                    </div>
+                                    
+                                </div>
+                            </form>
+                        <% } %>
+                        
                     <% } %>
 
 

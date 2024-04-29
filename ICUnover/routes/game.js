@@ -285,6 +285,9 @@ router.post('/win', async (req, res) => {
 
     const cWinAmount = parseInt(req.body.strAmount);
     const iCash = parseInt(user.iCash) + cWinAmount;
+
+    console.log(`########## WIN CASH : ${iCash}`);
+
     res.send({result:'OK', iCash:iCash});
 
     await IBettingManager.ProcessWin(user.strID, user.strNickname, user.strGroupID, user.iClass, user.iCash, req.body.iGameCode, req.body.strVender, req.body.strGameID,

@@ -46,6 +46,12 @@ router.get('/login', (req, res) => {
 
 router.get('/register', (req, res) => {
 
+    if ( global.ePublishing != 'ONLINE' )
+    {
+        res.redirect('/account/login');
+        return;
+    }
+
     res.render('account/register', {iLayout:0, user:null, bLogin:'false', messages:null, listOutputRecent:[], listOutputRank:[], ePublishing:global.ePublishing});
 });
 

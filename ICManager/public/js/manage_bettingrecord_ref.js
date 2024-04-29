@@ -259,6 +259,8 @@ let SetBettingList = (records, startIndex) => {
                 tagTargetBet = `<td style="font-size: 12px; background-color:${color}; padding: 10px; line-height: 1.5;"><font style="color: black;">${GetNumber(records[i].iBet)}</font></td>`;
                 tagTargetWin = `<td style="font-size: 12px; background-color:${color}; padding: 10px; line-height: 1.5;"><font style="color: black;">${GetNumber(records[i].iWin)}</font></td>`
                 tagDetail =  `<a style="color:#e7af16;" href="#">당첨 조회 오류</a>`;
+            } else {
+                tagTargetBet = `<td style="font-size: 12px; background-color:${color}; padding: 10px; line-height: 1.5;"><font style="color: black;">${GetNumber(records[i].iBet)}</font></td>`;
             }
         }
 

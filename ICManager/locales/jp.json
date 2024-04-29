@@ -209,6 +209,7 @@
 	"DateWrite": "作成時間",
 	"Disable": "未使用",
 	"LetterSendAll": "全文発送",
+	"LetterSendTarget": "全文発送",
 	"BettingOriginCash": "ベット前の保有額",
 	"BettingAccount": "ベット口座",
 	"BettingAmount": "ベット額",

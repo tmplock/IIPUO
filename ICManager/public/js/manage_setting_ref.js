@@ -37,6 +37,26 @@ let OnClickWritingLetter = (strTo) => {
 	$form.submit();
 }
 
+
+let OnClickGroupWritingLetter = () => {
+	window.open('', 'GroupWriteLetter', 'width=1024, height=512, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
+
+	var $form = $('<form></form>');
+	$form.attr('action', '/manage_setting_popup/group_writeletter');
+	$form.attr('method', 'post');
+	$form.attr('target', 'GroupWriteLetter');
+	$form.appendTo('body');
+
+	var idx = $(`<input type="hidden" value="${user.strNickname}" name="strNickname">`);
+	var page = $(`<input type="hidden" value="${user.strGroupID}" name="strGroupID">`);
+	var category = $(`<input type="hidden" value=${parseInt(user.iClass)} name="iClass">`);
+	var iPermission = $(`<input type="hidden" value=${parseInt(user.iPermission)} name="iPermission">`);
+	var strTo = $(`<input type="hidden" value='${strTo}' name="strTo">`);
+
+	$form.append(idx).append(page).append(category).append(iPermission).append(strTo);
+	$form.submit();
+}
+
 let ReadLetter = (id, target, type) => {
 
 	console.log(`ReadLetter : ${id}, ${target}`);

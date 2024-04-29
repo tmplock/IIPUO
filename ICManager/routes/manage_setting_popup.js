@@ -91,17 +91,48 @@ router.post('/direct_writeletter', async (req, res) => {
     res.render('manage_setting/popup_writeletter', {iLayout:1, iHeaderFocus:1, agent:user, strParent: '', strChildes:strChildes, strTo: strTo, directSend: false});
 });
 
-router.post('/readwriteletter', async (req, res) => {
-    
+router.post('/direct_writeletter', async (req, res) => {
+
     console.log(req.body);
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:req.body.iClass,
+    const user = {strNickname:req.user.strNickname, strGroupID:req.user.strGroupID, iClass:req.user.iClass,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission};
+    const dbuser = await db.Users.findOne({where:{strNickname:user.strNickname}});
+    if ( null != dbuser )
+        user.strID = dbuser.strID;
+    let strTo = req.body.strTo ?? '';
+    if (strTo != '') {
+        res.render('manage_setting/popup_writeletter', {iLayout:1, iHeaderFocus:1, agent:user, strParent: '', strChildes:[], strTo:strTo, directSend: true});
+        return;
+    }
+    if (dbuser.iClass > 3) { // 대본사부터는 본사에만 쪽지를 보낼 수 있음(강제로 본사 지정)
+        // 본사를 가져오기
+        let parents = await IAgent.GetParentList(req.user.strGroupID, req.user.iClass);
+        strTo = parents.strAdmin;
+        res.render('manage_setting/popup_writeletter', {iLayout:1, iHeaderFocus:1, agent:user, strParent: '', strChildes:[], strTo:strTo, directSend: false});
+        return;
+    }
 
-    let iocount = await IInout.GetProcessing(user.strGroupID, user.strNickname, req.user.iClass);
+    let strChildes = [];
+    if (dbuser.iClass == 3) { // 본사는 하위에만 쪽지 보낼 수 있음(총본에게는 관리자문의로)
+        strChildes = await IAgent.GetChildNicknameList(req.user.strGroupID, parseInt(req.user.iClass)+1);
+    } else if (dbuser.iClass <= 3) { // 본사 이하는 하위에 쪽지를 보낼 수 있음
+        strChildes = await IAgent.GetChildNicknameList(req.user.strGroupID, parseInt(req.user.iClass)+1);
+    }
+    res.render('manage_setting/popup_writeletter', {iLayout:1, iHeaderFocus:1, agent:user, strParent: '', strChildes:strChildes, strTo: strTo, directSend: false});
+});
 
-    res.render('manage_setting/popup_readwriteletter', {iLayout:1, iHeaderFocus:1, agent:user, strTo:req.body.strTo, strFrom:req.body.strFrom, strContents:req.body.strContents, iocount:iocount});
+router.post('/group_writeletter', async (req, res) => {
 
+    console.log(req.body);
+
+    const user = {strNickname:req.user.strNickname, strGroupID:req.user.strGroupID, iClass:req.user.iClass,
+        iRootClass:req.user.iClass, iPermission:req.user.iPermission};
+    const dbuser = await db.Users.findOne({where:{strNickname:user.strNickname}});
+    if ( null != dbuser )
+        user.strID = dbuser.strID;
+
+    res.render('manage_setting/popup_group_writeletter', {iLayout:1, iHeaderFocus:1, agent:user});
 });
 
 router.post('/readletter', async (req, res) => {
@@ -400,6 +431,132 @@ router.post('/request_writeletter_partner', async (req, res) => {
         }
         // 받는 사람에게만 알림 보내기
         ISocket.AlertByNickname(toUser.strNickname, 'alert_letter');
+    }
+
+    res.send({result:'OK'});
+});
+
+router.post('/request_writeletter_partner_group', async (req, res) => {
+    console.log(`################################################## /manage_setting_popup/request_writeletter_partner_group`);
+    console.log(req.body);
+
+    let receiverType = req.body.receiverType ?? '';
+    let receiverClass = parseInt(req.body.receiverClass ?? 0);
+    let receiverNickname = req.body.receiverNickname ?? '';
+    let bIncludeUser = req.body.bIncludeUser ?? false;
+
+    if (receiverClass == 0 || receiverType == '') {
+        res.send({result:'FAIL', msg: '전송 실패'});
+        return;
+    }
+
+    const fromUser = await IAgent.GetUserInfo(req.body.strFrom);
+    if (fromUser.iPermission == 100) {
+        fromUser.strID = fromUser.strIDRel;
+        fromUser.strNickname = fromUser.strNicknameRel;
+    }
+
+    const toGroupUser = await db.Users.findOne({where: { strNickname: receiverNickname }});
+    let receiverGroupID = toGroupUser.strGroupID;
+
+    let dataList = [];
+    // 전체 + 하위포함
+    if (receiverType == 0) {
+        dataList = await db.Users.findAll({
+            where: {
+                iClass:{
+                    [Op.gte]:receiverClass,
+                },
+                strGroupID: {
+                    [Op.like]:`${fromUser.strGroupID}%`
+                }
+            }});
+    } else if (receiverType == 1) { // 해당 클래만
+        dataList = await db.Users.findAll({
+            where: {
+                iClass:receiverClass,
+                strGroupID: {
+                    [Op.like]:`${fromUser.strGroupID}%`
+                }
+            }});
+    } else if (receiverType == 2) { // 선택 클래스만
+        dataList = await db.Users.findAll({
+            where: {
+                iClass:{
+                    [Op.gte]:receiverClass,
+                },
+                strGroupID: {
+                    [Op.like]:`${receiverGroupID}%`
+                }
+            }});
+    }
+
+    let groupList = [];
+    for (let i in dataList) {
+        if (dataList[i].iClass == 8 && bIncludeUser == true) {
+            groupList.push(dataList[i]);
+        } else {
+            groupList.push(dataList[i]);
+        }
+    }
+
+    for (let i in groupList) {
+        let toUser = groupList[i];
+        const parents = await IAgent.GetParentList(toUser.strGroupID, toUser.iClass);
+        await db.Letters.create({
+            strAdminNickname:parents.strAdmin,
+            strPAdminNickname:parents.strPAdmin,
+            strVAdminNickname:parents.strVAdmin,
+            strAgentNickname:parents.strAgent,
+            strShopNickname:parents.strShop,
+            strGroupID:fromUser.strGroupID,
+            iClass:fromUser.iClass,
+            strFrom:fromUser.strNickname,
+            strFromID:fromUser.strID,
+            strTo:toUser.strNickname,
+            strToID:toUser.strID,
+            eType:'NORMAL',
+            eRead:'UNREAD',
+            strSubject:req.body.subjects,
+            strContents:req.body.contents,
+            strAnswers:'',
+            iClassTo:toUser.iClass,
+            iClassFrom:fromUser.iClass,
+            strWriter:req.user.strNickname
+        });
+    }
+
+    for (let i in groupList) {
+        let toUser = groupList[i];
+        if (toUser.iClass >= 6) {
+            if (bIncludeUser == false && toUser.iClass != 8) {
+
+            }
+            // letter_reply
+            let objectAxios = {strNickname:toUser.strNickname, strID:toUser.strID};
+            const cAddress = `${toUser.strURL}/letter/letter_admin`;
+            axios.post(cAddress, objectAxios)
+                .then((response)=> {
+                    console.log(`Axios Success to ${cAddress}`);
+                    console.log(response);
+                })
+                .catch((error)=> {
+                    console.log('axios Error');
+                    console.log(error);
+                });
+        }
+
+        if (toUser.iClass < 8) {
+            // 본사에게 보내는 쪽지일 경우에는 소속 총본에도 보내줘야 함
+            if (toUser.iClass == 3 && fromUser.iClass != 2) {
+                let nickname = ISocket.GetNicknameClass(toUser.strGroupID, 2);
+                if (nickname != '') {
+                    ISocket.AlertByNickname(nickname, 'alert_letter');
+                }
+            }
+            // 받는 사람에게만 알림 보내기
+            ISocket.AlertByNickname(toUser.strNickname, 'alert_letter');
+        }
     }
 
     res.send({result:'OK'});

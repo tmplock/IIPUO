@@ -209,6 +209,7 @@
 	"DateWrite": "작성일",
 	"Disable": "미사용",
 	"LetterSendAll": "전체 전송",
+	"LetterSendTarget": "지정 전송",
 	"BettingOriginCash": "베팅전 머니",
 	"BettingAccount": "베팅 구좌",
 	"BettingAmount": "베팅 금액",

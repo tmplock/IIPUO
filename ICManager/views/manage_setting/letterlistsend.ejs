@@ -3,7 +3,8 @@
 
         <% if ( parseInt(user.iClass) < 3 && user.iPermission != 100 ) { %>
             <ul style="float:right; margin-right:10px; position:relative; z-index:10;" class="clearfix">
-                <a class="btn_red" style="background-color: red;color:white;" type="button" href="javascript:OnClickWritingLetter('');"><%=__('LetterSendAll')%></a>
+                <a class="btn_blue" style="background-color: orange;color:white;" type="button" href="javascript:OnClickWritingLetter('');"><%=__('LetterSendTarget')%></a>
+                <a class="btn_red" style="background-color: red;color:white;" type="button" href="javascript:OnClickGroupWritingLetter();"><%=__('LetterSendAll')%></a>
             </ul>
         <% } %>
 

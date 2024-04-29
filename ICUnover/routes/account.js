@@ -46,7 +46,7 @@ router.get('/login', (req, res) => {
 
 router.get('/register', (req, res) => {
 
-    if ( global.ePublishing != 'ONLINE' )
+    if ( global.ePublishing != 'ON' )
     {
         res.redirect('/account/login');
         return;

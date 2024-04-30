@@ -526,6 +526,33 @@ router.post('/request_applysettle_all', isLoggedIn, async (req, res) => {
                         iClassFrom: from.iClass,
                     });
 
+                // 입금처리
+                if (iAmout > 0) {
+                    const parents = await IAgent.GetParentList(user.strGroupID, user.iClass);
+                    let strAdminNickname = parents.strAdmin;
+                    let strPAdminNickname = parents.strPAdmin;
+                    let strVAdminNickname = parents.strVAdmin;
+                    await db.Inouts.create({
+                        strID:user.strNickname,
+                        strAdminNickname:strAdminNickname,
+                        strPAdminNickname:strPAdminNickname,
+                        strVAdminNickname:strVAdminNickname,
+                        strAgentNickname:'',
+                        strShopNickname:'',
+                        iClass:user.iClass,
+                        strName:user.strNickname,
+                        strGroupID:user.strGroupID,
+                        strAccountOwner:'관리자죽장지급',
+                        strBankName:'',
+                        strAccountNumber:'',
+                        iPreviousCash:user.iCash,
+                        iAmount:iAmout,
+                        eType:'INPUT',
+                        eState:'COMPLETE',
+                        completedAt:new Date(),
+                    });
+                }
+
                 let iSettleUser = parseFloat(user.iSettle); // 이용자가 가지고 있는 죽장
                 iSettleUser = iSettleUser + iAmout; // 죽장이 실제 발생시에만 이용자에 추가
                 //await user.update({iSettle:iSettleUser, iSettleAccBefore: user.iSettleAcc, iSettleAcc:iSettleAccTotal});

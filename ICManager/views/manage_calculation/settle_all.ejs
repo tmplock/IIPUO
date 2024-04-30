@@ -670,13 +670,13 @@
 
 		let bVisible = false;
 		let now = new Date();
-		if (now.getDate() == 16 || now.getDate() == 1) {
+		if ((now.getDate() == 16 || now.getDate() == 1) && bEnableSettle) {
 			bVisible = true;
 		}
 		if ( user.iClass > 1 && user.iClass <= 3 && user.iPermission != 100 && bEnableSettle) {
 
 			$(`#list_tit`).empty();
-			if (bVisible) {
+			if (bVisible && false) {
 				$(`#list_tit`).append(`
 							<h3>죽장 정산
 								<button id='button_changesettle' style="margin-left:8%;width:200px;height:40px;text-align:center;background-color: rgb(82, 161, 206);color:white" onclick="DoApplySettle();"><strong>죽장 적용</strong></button>

@@ -325,7 +325,7 @@ router.post('/request_applysettle_all', isLoggedIn, async (req, res) => {
 
         const targetUserCount = await getSettleTargetUserCount(req.body.strQuater, 5, req.body.strGroupID);
 
-        if ( exist.length > 0 && targetUserCount == exist.length ) {
+        if ( targetUserCount > exist.length ) {
             res.send({result:'FAIL', msg: '부본사 죽장 정산을 먼저 처리해 주세요.'});
             return;
         }

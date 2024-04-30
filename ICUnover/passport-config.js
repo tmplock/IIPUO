@@ -82,16 +82,16 @@ module.exports = () => {
                 // console.log(req.get('host'));
                 // console.log(req.get('origin'));
 
-                let session = await db.Accounts.findOne({where:{strID:username}});
-                if ( null != session )
-                {
-                    //console.timeLog(`Already Logined User`);
-                    //await db.Sessions.destroy({where:{strID:username}, truncate:true});
-                    return done(null, false, { message: '이미 접속 중입니다.' });
-                }
+                // let session = await db.Accounts.findOne({where:{strID:username}});
+                // if ( null != session )
+                // {
+                //     //console.timeLog(`Already Logined User`);
+                //     //await db.Sessions.destroy({where:{strID:username}, truncate:true});
+                //     return done(null, false, { message: '이미 접속 중입니다.' });
+                // }
 
-                await db.Accounts.create({strID:username});
-                req.session.uid = username;
+                // await db.Accounts.create({strID:username});
+                // req.session.uid = username;
 
                 // if (user.iClass != 8) {
                 //     console.timeLog(`Invalid Password`);

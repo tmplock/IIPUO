@@ -413,6 +413,9 @@ router.post('/request_applysettle_all', isLoggedIn, async (req, res) => {
                 } else {
                     iPayback = iSettleBeforeAcc - iSettleGive;
                 }
+            } else if (iSettle > 0) {
+                // 죽장은 발생했지만 수금할 금액이 많아서 죽장 지급이 없는 경우(이월금액 - 이번분기 죽장값)
+                iPayback = iSettleBeforeAcc - iSettle;
             }
 
             iSettleAccTotal = iSettleAccTotal + iSettleAcc;

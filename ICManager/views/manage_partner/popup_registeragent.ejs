@@ -183,54 +183,71 @@
 				</table>
 				<%}%>
 
-					<table>
-						<colgroup>
-							<col width="15%" />
-							<col width="35%" />
-							<col width="15%" />
-							<col width="35%" />
-						</colgroup>
-						<p
+			<% if (parent.iAgentClass == 8) { %>
+				<table>
+					<colgroup>
+						<col style="width:15%">
+						<col style="width:35%">
+						<col style="width:15%">
+						<col style="width:35%">
+					</colgroup>
+					<p style="background-repeat:no-repeat; background-position:left center; font-size:20px; font-weight: bold; color:#454545; padding-left:22px;">PC방 이용 설정</p>
+					<tr>
+						<th scope="row">PC방 이용 설정</th>
+						<td colspan="3">
+							<input type="checkbox" style="width:30px;height:30px;color: red" name="using_input" id="using_pc" required="no" message=""> <strong>체크시 이용자 사이트 입출금 기능을 사용할 수 없습니다</strong>
+						</td>
+					</tr>
+				</table>
+			<% } else { %>
+				<table>
+					<colgroup>
+						<col width="15%" />
+						<col width="35%" />
+						<col width="15%" />
+						<col width="35%" />
+					</colgroup>
+					<p
 							style="background-repeat:no-repeat; background-position:left center; font-size:16px; color:#454545; padding-left:22px;">
-							입출금 설정</p>
+						입출금 설정</p>
 
-						<tr>
+					<tr>
 
 
-							<th scope="row">
-								<%=__('UsingInput')%>
-							</th>
-							<td>
-								<input type="checkbox" style="width:30px;height:30px;" name="using_input"
-									id="using_input" required="no" message="" checked> <strong>
-									<%=__('DescUsingInput')%>
-								</strong>
-							</td>
-							<th scope="row">
-								<%=__('UsingOutput')%>
-							</th>
-							<td>
-								<input type="checkbox" style="width:30px;height:30px;" name="using_output"
-									id="using_output" required="no" message="" checked> <strong>
-									<%=__('DescUsingOutput')%>
-								</strong>
-							</td>
+						<th scope="row">
+							<%=__('UsingInput')%>
+						</th>
+						<td>
+							<input type="checkbox" style="width:30px;height:30px;" name="using_input"
+								   id="using_input" required="no" message="" checked> <strong>
+								<%=__('DescUsingInput')%>
+							</strong>
+						</td>
+						<th scope="row">
+							<%=__('UsingOutput')%>
+						</th>
+						<td>
+							<input type="checkbox" style="width:30px;height:30px;" name="using_output"
+								   id="using_output" required="no" message="" checked> <strong>
+								<%=__('DescUsingOutput')%>
+							</strong>
+						</td>
 
-						</tr>
+					</tr>
 
-					</table>
+				</table>
+			<% } %>
+			<!-- </form> -->
 
-					<!-- </form> -->
+			<div class="write_btn align_r mt35">
+				<button class="btn_modify" onclick="Submit();">
+					<%=__('Save')%>
+				</button>
+				<a href="javascript:self.close();" class="btn_list">
+					<%=__('Close')%>
+				</a>
 
-					<div class="write_btn align_r mt35">
-						<button class="btn_modify" onclick="Submit();">
-							<%=__('Save')%>
-						</button>
-						<a href="javascript:self.close();" class="btn_list">
-							<%=__('Close')%>
-						</a>
-
-					</div>
+			</div>
 		</div>
 	</div>
 	</div>
@@ -240,6 +257,7 @@
 	<script type="text/javascript">
 		const parent = JSON.parse('<%-JSON.stringify(parent)%>');
 		console.log(parent);
+		let bUsingPC = false;
 
 		const strAlertComplete = '<%=__("AlertComplete")%>';
 		const strAlertEnableToUse = '<%=__("AlertEnableToUse")%>';
@@ -273,6 +291,35 @@
 		checkBlockNum(`#fRollingBaccarat`);
 		checkBlockNum(`#fRollingUnderOver`);
 		checkBlockNum(`#fRollingSlot`);
+
+
+
+		$(document).ready(() => {
+			if (parent.iAgentClass == 8) {
+				$('#using_pc').attr('checked', false);
+				$('#using_pc').click((e) => {
+					var checked = $('#using_pc').is(':checked');
+
+					if (checked) {
+						bUsingPC = true;
+						['#strAccountOwner', '#strBankName', '#strAccountNumber'].forEach(item => {
+							$(item).get(0).disabled = true;
+						});
+						$('#strAccountOwner').val('PC방');
+						$('#strBankName').val('PC방');
+						$('#strAccountNumber').val('0000');
+					} else {
+						bUsingPC = false;
+						['#strAccountOwner', '#strBankName', '#strAccountNumber'].forEach(item => {
+							$(item).get(0).disabled = false;
+						});
+						$('#strAccountOwner').val('');
+						$('#strBankName').val('');
+						$('#strAccountNumber').val('');
+					}
+				});
+			}
+		});
 	</script>
 
 

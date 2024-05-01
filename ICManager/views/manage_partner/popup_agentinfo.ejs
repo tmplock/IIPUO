@@ -112,29 +112,45 @@
 		</tr>
 	</table>
 
-	<table>
-
-		<colgroup>
-			<col style="width:15%">
-			<col style="width:35%">
-			<col style="width:15%">
-			<col style="width:35%">
-		</colgroup>
-		<p style="background-repeat:no-repeat; background-position:left center; font-size:16px; color:#454545; padding-left:22px;">입출금 설정</p>
-		<tr>
-			<th scope="row"><%=__('UsingInput')%></th>
-			<td>
-				<input type="checkbox" style="width:30px;height:30px;" name="using_input" id="using_input" required="no" message="" checked> <strong><%=__('DescUsingInput')%></strong>
-			</td>
-			<th scope="row"><%=__('UsingOutput')%></th>
-			<td>
-				<input type="checkbox" style="width:30px;height:30px;" name="using_output" id="using_output" required="no" message="" checked> <strong><%=__('DescUsingOutput')%></strong>
-			</td>
-		</tr>
-	</table>
-
-		<div class="write_btn align_r" id="confirm">
-		</div>
+	<% if (agent.iClass == 8) { %>
+		<table>
+			<colgroup>
+				<col style="width:15%">
+				<col style="width:35%">
+				<col style="width:15%">
+				<col style="width:35%">
+			</colgroup>
+			<p style="background-repeat:no-repeat; background-position:left center; font-size:20px; font-weight: bold; color:#454545; padding-left:22px;">PC방 이용 설정</p>
+			<tr>
+				<th scope="row">PC방 이용 설정</th>
+				<td colspan="3">
+					<input type="checkbox" style="width:30px;height:30px;color: red" name="using_input" id="using_pc" required="no" message=""> <strong>체크시 이용자 사이트 입출금 기능을 사용할 수 없습니다</strong>
+				</td>
+			</tr>
+		</table>
+	<% } else { %>
+		<table>
+			<colgroup>
+				<col style="width:15%">
+				<col style="width:35%">
+				<col style="width:15%">
+				<col style="width:35%">
+			</colgroup>
+			<p style="background-repeat:no-repeat; background-position:left center; font-size:16px; color:#454545; padding-left:22px;">입출금 설정</p>
+			<tr>
+				<th scope="row"><%=__('UsingInput')%></th>
+				<td>
+					<input type="checkbox" style="width:30px;height:30px;" name="using_input" id="using_input" required="no" message="" checked> <strong><%=__('DescUsingInput')%></strong>
+				</td>
+				<th scope="row"><%=__('UsingOutput')%></th>
+				<td>
+					<input type="checkbox" style="width:30px;height:30px;" name="using_output" id="using_output" required="no" message="" checked> <strong><%=__('DescUsingOutput')%></strong>
+				</td>
+			</tr>
+		</table>
+	<% } %>
+	<div class="write_btn align_r" id="confirm">
+	</div>
 </div>
 
 <script src="https://code.jquery.com/ui/1.8.18/jquery-ui.min.js"></script>
@@ -143,11 +159,50 @@
 	let agent = JSON.parse('<%-JSON.stringify(agent)%>');
 	let bCheckID = false;
 	let bCheckNickname = false;
+	let bUsingPC = false;
 
 	$(document).ready( ()=> {
 
 		let cUsingInput = parseInt(agent.strOptionCode[0]);
 		let cUsingOutput = parseInt(agent.strOptionCode[1]);
+		let strUsingPC = parseInt(agent.strOptionCode[2]);
+		if ( strUsingPC == 1 ) {
+			bUsingPC = true;
+			$('#using_pc').attr('checked', true);
+			$('#bank_owner').val('PC방');
+			$('#bank_name').val('PC방');
+			$('#bank_num').val('0000');
+			['#bank_owner', '#bank_name', '#bank_num'].forEach(item => {
+				$(item).get(0).disabled = true;
+			});
+		} else {
+			$('#using_pc').attr('checked', false);
+			$('#bank_owner').val(agent.strBankOwner);
+			$('#bank_name').val(agent.strBankname);
+			$('#bank_num').val(agent.strBankAccount);
+		}
+
+		$('#using_pc').click((e) => {
+			var checked = $('#using_pc').is(':checked');
+
+			if (checked) {
+				bUsingPC = true;
+				['#bank_owner', '#bank_name', '#bank_num'].forEach(item => {
+					$(item).get(0).disabled = true;
+				});
+				$('#bank_owner').val('PC방');
+				$('#bank_name').val('PC방');
+				$('#bank_num').val('0000');
+			} else {
+				bUsingPC = false;
+				['#bank_owner', '#bank_name', '#bank_num'].forEach(item => {
+					$(item).get(0).disabled = false;
+				});
+				$('#bank_owner').val(agent.strBankOwner);
+				$('#bank_name').val(agent.strBankname);
+				$('#bank_num').val(agent.strBankAccount);
+			}
+		});
 
 		if ( cUsingInput == 1 )
 			$('#using_input').attr('checked', true);
@@ -166,7 +221,7 @@
 			["#member_nick", "#member_id",
 				"#member_password", '#member_password2', '#bank_owner', '#bank_name', '#bank_num', '#cell'
 				, '#fBaccaratR', '#fUnderOverR', '#fSlotR'
-				, '#using_input', '#using_output'
+				, '#using_input', '#using_output', '#using_pc'
 			].forEach(item => {
 				$(item).get(0).disabled = true;
 			});
@@ -175,21 +230,21 @@
 			[
 				"#member_password", '#member_password2', '#bank_owner', '#bank_name', '#bank_num', '#cell'
 				, '#fBaccaratR', '#fUnderOverR', '#fSlotR'
-				, '#using_input', '#using_output'
+				, '#using_input', '#using_output', '#using_pc'
 			].forEach(item => {
 				$(item).get(0).disabled = true;
 			});
 			$('#btn_red').hide();
 		} else if ( parseInt(agent.iRootClass) == 4 && parseInt(agent.iClass) == 5 ) {
 			["#member_password", '#member_password2', '#bank_owner', '#bank_name', '#bank_num', '#cell'
-				, '#using_input', '#using_output'
+				, '#using_input', '#using_output', '#using_pc'
 			].forEach(item => {
 				$(item).get(0).disabled = true;
 			});
 			$('#btn_red').hide();
 		} else if ( parseInt(agent.iRootClass) > 3 ) {
 			["#member_password", '#member_password2', '#bank_name', '#bank_num', '#bank_owner', '#cell'
-				, '#using_input', '#using_output'
+				, '#using_input', '#using_output', '#using_pc'
 			].forEach(item => {
 				$(item).get(0).disabled = true;
 			});
@@ -328,9 +383,9 @@
 		const strID = $('#member_id').val();
 		const strPassword = $('#member_password').val();
 		const strPasswordConfirm = $('#member_password2').val();
-		const strBankname = $('#bank_name').val();
-		const strBankAccount = $('#bank_num').val();
-		const strBankOwner = $('#bank_owner').val();
+		const strBankname = (bUsingPC == true) ? agent.strBankname : $('#bank_name').val();
+		const strBankAccount = (bUsingPC == true) ? agent.strBankAccount : $('#bank_num').val();
+		const strBankOwner = (bUsingPC == true) ? agent.strBankOwner : $('#bank_owner').val();
 
 		if (strNickname != agent.strNickname) {
 			if (!isValidationOnlyKrOrNumber(strNickname)) {
@@ -383,18 +438,21 @@
 
 			let strUsingInput = $('#using_input').attr('checked');
 			let strUsingOutput = $('#using_output').attr('checked');
+			let strUsingPC = $('#using_pc').attr('checked');
 
-			if ( strUsingInput != undefined ) {
-				strOptionCode = replaceCharacter(strOptionCode, 0, '1');
-			}
-			else {
-				strOptionCode = replaceCharacter(strOptionCode, 0, '0');
-			}
-			if ( strUsingOutput != undefined ) {
-				strOptionCode = replaceCharacter(strOptionCode, 1, '1');
-			}
-			else {
-				strOptionCode = replaceCharacter(strOptionCode, 1, '0');
+			if ( strUsingPC != undefined ) {
+				strOptionCode = '00100000';
+			} else {
+				if ( strUsingInput != undefined ) {
+					strOptionCode = replaceCharacter(strOptionCode, 0, '1');
+				} else {
+					strOptionCode = replaceCharacter(strOptionCode, 0, '0');
+				}
+				if ( strUsingOutput != undefined ) {
+					strOptionCode = replaceCharacter(strOptionCode, 1, '1');
+				} else {
+					strOptionCode = replaceCharacter(strOptionCode, 1, '0');
+				}
 			}
 		}
 
@@ -460,4 +518,4 @@
 	};
 </script>
 	
-<script type="text/javascript", src="js/manage_partner_popup_menu.js"></script>
+<script type="text/javascript" src="js/manage_partner_popup_menu.js"></script>

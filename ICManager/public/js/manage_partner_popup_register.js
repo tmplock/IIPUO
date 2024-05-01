@@ -282,27 +282,21 @@ let Submit = () => {
 
         let strUsingInput = $('#using_input').attr('checked');
         let strUsingOutput = $('#using_output').attr('checked');
+        let strUsingPC = $('#using_pc').attr('checked');
 
-        //let strOptionCode = agent.strOptionCode.toString();
-        if ( strUsingInput != undefined ) {
-            strOptionCode = replaceCharacter(strOptionCode, 0, '1');
-
-            console.log(`1 ${strOptionCode}`);
-        }
-        else {
-            strOptionCode = replaceCharacter(strOptionCode, 0, '0');
-
-            console.log(`2 ${strOptionCode}`);
-        }
-        if ( strUsingOutput != undefined ) {
-            strOptionCode = replaceCharacter(strOptionCode, 1, '1');
-
-            console.log(`3 ${strOptionCode}`);
-        }
-        else {
-            strOptionCode = replaceCharacter(strOptionCode, 1, '0');
-
-            console.log(`4 ${strOptionCode}`);
+        if ( strUsingPC != undefined ) {
+            strOptionCode = '00100000';
+        } else {
+            if ( strUsingInput != undefined ) {
+                strOptionCode = replaceCharacter(strOptionCode, 0, '1');
+            } else {
+                strOptionCode = replaceCharacter(strOptionCode, 0, '0');
+            }
+            if ( strUsingOutput != undefined ) {
+                strOptionCode = replaceCharacter(strOptionCode, 1, '1');
+            } else {
+                strOptionCode = replaceCharacter(strOptionCode, 1, '0');
+            }
         }
 
         if(fSlotR == '' || fSlotR == undefined || fSlotR == null || fBaccaratR == '' || fBaccaratR == undefined || fBaccaratR == null || fUnderOverR == '' || fUnderOverR == undefined || fUnderOverR == null)

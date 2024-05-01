@@ -112,8 +112,8 @@ global.strAdminAddress = 'http://188.166.231.104:3031';
 //global.strVenderAddress = 'https://iipgame.uk';
 global.strVenderAddress = 'https://iipgame.com';
 
-global.ePublishing = 'ON';
-//global.ePublishing = 'OFF';
+// global.ePublishing = 'ON';
+global.ePublishing = 'OFF';
 
 const { default: axios2 } = require('axios');
 

@@ -33,7 +33,7 @@ router.post('/agentinfo', isLoggedIn, async (req, res) => {
     const sid = req.user.strID
     let iC = await db.Users.findOne({where:{strID:req.user.strID}});
 
-    let strParent = await IAgent.GetParentNickname(req.body.strNickname);
+    let parents = await IAgent.GetParentList(req.body.strGroupID, req.body.iClass, user);
     let iClass = user.iClass;
     let iRootClass = iC.iClass;
 
@@ -58,7 +58,7 @@ router.post('/agentinfo', isLoggedIn, async (req, res) => {
     //     user.strPasswordConfirm = pass;
     // }
 
-    res.render('manage_partner/popup_agentinfo', {iLayout:2, iHeaderFocus:0, agent:user, sid:sid, pw_auth:iC.pw_auth, iClass:iClass, iRootClass: iRootClass, strParent:strParent, iPermission:iC.iPermission});
+    res.render('manage_partner/popup_agentinfo', {iLayout:2, iHeaderFocus:0, agent:user, sid:sid, pw_auth:iC.pw_auth, iClass:iClass, iRootClass: iRootClass, strParent:parents.strParents, iPermission:iC.iPermission});
 });
 
 router.post('/viceadminlist', isLoggedIn, async (req, res) => {
@@ -72,9 +72,8 @@ router.post('/viceadminlist', isLoggedIn, async (req, res) => {
     let overview = await IAgent.CalculateBettingRecord(req.body.strGroupID, req.body.iClass, dateStart, dateEnd, '', agent.strID);
     let agentlist = await IAgent.GetComputedAgentList(req.body.strGroupID, parseInt(req.body.iClass)+1, dateStart, dateEnd, '', true);
 
-    let strParent = await IAgent.GetParentNickname(req.body.strNickname);
-
-    res.render('manage_partner/popup_viceadminlist', {iLayout:2, iHeaderFocus:1, agent:agent, overview:overview, agentlist:agentlist, strParent:strParent});
+    let parents = await IAgent.GetParentList(req.body.strGroupID, req.body.iClass, agent);
+    res.render('manage_partner/popup_viceadminlist', {iLayout:2, iHeaderFocus:1, agent:agent, overview:overview, agentlist:agentlist, strParent:parents.strParents});
 
 });
 
@@ -88,9 +87,8 @@ router.post('/proadminlist', isLoggedIn, async (req, res) => {
 
     let overview = await IAgent.CalculateBettingRecord(req.body.strGroupID, req.body.iClass, dateStart, dateEnd, '', agent.strID);
     let agentlist = await IAgent.GetComputedAgentList(req.body.strGroupID, parseInt(req.body.iClass)+1, dateStart, dateEnd, '', true);
-    let strParent = await IAgent.GetParentNickname(req.body.strNickname);
-
-    res.render('manage_partner/popup_proadminlist', {iLayout:2, iHeaderFocus:10, agent:agent, overview:overview, agentlist:agentlist, strParent:strParent});
+    let parents = await IAgent.GetParentList(req.body.strGroupID, req.body.iClass, agent);
+    res.render('manage_partner/popup_proadminlist', {iLayout:2, iHeaderFocus:10, agent:agent, overview:overview, agentlist:agentlist, strParent:parents.strParents});
 
 });
 router.post('/agentlist', isLoggedIn, async (req, res) => {
@@ -103,9 +101,9 @@ router.post('/agentlist', isLoggedIn, async (req, res) => {
 
     let overview = await IAgent.CalculateBettingRecord(req.body.strGroupID, req.body.iClass, dateStart, dateEnd, '', agent.strID);
     let agentlist = await IAgent.GetComputedAgentList(req.body.strGroupID, parseInt(req.body.iClass)+1, dateStart, dateEnd, '', true);
-    let strParent = await IAgent.GetParentNickname(req.body.strNickname);
+    let parents = await IAgent.GetParentList(req.body.strGroupID, req.body.iClass, agent);
 
-    res.render('manage_partner/popup_agentlist', {iLayout:2, iHeaderFocus:2, agent:agent, overview:overview, agentlist:agentlist, strParent:strParent});
+    res.render('manage_partner/popup_agentlist', {iLayout:2, iHeaderFocus:2, agent:agent, overview:overview, agentlist:agentlist, strParent:parents.strParents});
 });
 
 router.post('/shoplist', isLoggedIn, async (req, res) => {
@@ -117,9 +115,9 @@ router.post('/shoplist', isLoggedIn, async (req, res) => {
     let overview = await IAgent.CalculateBettingRecord(req.body.strGroupID, req.body.iClass, dateStart, dateEnd, agent.strNickname, agent.strID);
     let bettingrecord = await IAgent.CalculateTermBettingRecord(req.body.strGroupID, req.body.iClass, dateStart, dateEnd, agent.strNickname, agent.strID);
     let agentlist = await IAgent.GetComputedAgentList(req.body.strGroupID, 3, dateStart, dateEnd,  '', true);
-    let strParent = await IAgent.GetParentNickname(req.body.strNickname);
+    let parents = await IAgent.GetParentList(req.body.strGroupID, req.body.iClass, agent);
 
-    res.render('manage_partner/popup_shoplist', {iLayout:2, iHeaderFocus:3, agent:agent, overview:overview, bettingrecord:bettingrecord, agentlist:agentlist, strParent:strParent});
+    res.render('manage_partner/popup_shoplist', {iLayout:2, iHeaderFocus:3, agent:agent, overview:overview, bettingrecord:bettingrecord, agentlist:agentlist, strParent:parents.strParents});
 
 });
 
@@ -134,8 +132,8 @@ router.post('/userlist', isLoggedIn, async (req, res) => {
     let overview = await IAgent.CalculateBettingRecord(req.body.strGroupID, req.body.iClass, dateStart, dateEnd, agent.strNickname, agent.strID);
     let bettingrecord = await IAgent.CalculateTermBettingRecord(req.body.strGroupID, req.body.iClass, dateStart, dateEnd, agent.strNickname, agent.strID);
     let agentlist = await IAgent.GetComputedAgentList(req.body.strGroupID, 8, dateStart, dateEnd);
-    let strParent = await IAgent.GetParentNickname(req.body.strNickname);
-    res.render('manage_partner/popup_userlist', {iLayout:2, iHeaderFocus:4, agent:agent, overview:overview, bettingrecord:bettingrecord, agentlist:agentlist, strParent:strParent});
+    let parents = await IAgent.GetParentList(req.body.strGroupID, req.body.iClass, agent);
+    res.render('manage_partner/popup_userlist', {iLayout:2, iHeaderFocus:4, agent:agent, overview:overview, bettingrecord:bettingrecord, agentlist:agentlist, strParent:parents.strParents});
 });
 
 router.post('/charges', isLoggedIn, async (req, res) => {
@@ -153,9 +151,9 @@ router.post('/charges', isLoggedIn, async (req, res) => {
         },
         order:[['createdAt','DESC']]
     });
-    let strParent = await IAgent.GetParentNickname(req.body.strNickname);
+    let parents = await IAgent.GetParentList(req.body.strGroupID, req.body.iClass, agent);
 
-    res.render('manage_partner/popup_charges', {iLayout:2, iHeaderFocus:5, agent:agent, inputs:inputs, strParent:strParent});
+    res.render('manage_partner/popup_charges', {iLayout:2, iHeaderFocus:5, agent:agent, inputs:inputs, strParent:parents.strParents});
 });
 
 router.post('/exchanges', isLoggedIn, async (req, res) => {
@@ -174,9 +172,9 @@ router.post('/exchanges', isLoggedIn, async (req, res) => {
         },
         order:[['createdAt','DESC']]
     });
-    let strParent = await IAgent.GetParentNickname(req.body.strNickname);
+    let parents = await IAgent.GetParentList(req.body.strGroupID, req.body.iClass, agent);
 
-    res.render('manage_partner/popup_exchanges', {iLayout:2, iHeaderFocus:6, agent:agent, outputs:outputs, strParent:strParent});
+    res.render('manage_partner/popup_exchanges', {iLayout:2, iHeaderFocus:6, agent:agent, outputs:outputs, strParent:parents.strParents});
 });
 
 router.post('/points', isLoggedIn, async (req, res) => {
@@ -185,9 +183,9 @@ router.post('/points', isLoggedIn, async (req, res) => {
     agent.iRootClass = req.user.iClass;
     agent.iPermission = req.user.iPermission;
 
-    let strParent = await IAgent.GetParentNickname(req.body.strNickname);
+    let parents = await IAgent.GetParentList(req.body.strGroupID, req.body.iClass, agent);
 
-    res.render('manage_partner/popup_points', {iLayout:2, iHeaderFocus:7, agent:agent, strParent:strParent});
+    res.render('manage_partner/popup_points', {iLayout:2, iHeaderFocus:7, agent:agent, strParent:parents.strParents});
 });
 
 router.post('/request_gtrecord_partner', isLoggedIn, async(req, res) => {
@@ -249,9 +247,8 @@ router.post('/logs', isLoggedIn, async (req, res) => {
     const agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
     agent.iRootClass = req.user.iClass;
     agent.iPermission = req.user.iPermission;
-
-    let strParent = await IAgent.GetParentNickname(req.body.strNickname);
-    res.render('manage_partner/popup_logs', {iLayout:2, iHeaderFocus:20, agent:agent, strParent: strParent});
+    let parents = await IAgent.GetParentList(req.body.strGroupID, req.body.iClass, agent);
+    res.render('manage_partner/popup_logs', {iLayout:2, iHeaderFocus:20, agent:agent, strParent: parents.strParents});
 });
 
 router.post('/games', isLoggedIn, async (req, res) => {
@@ -262,8 +259,8 @@ router.post('/games', isLoggedIn, async (req, res) => {
     const dateEnd = ITime.getTodayEnd();
     let overview = await IAgent.CalculateBettingRecord(req.body.strGroupID, req.body.iClass, dateStart, dateEnd, agent.strNickname, agent.strID);
     let bettingrecord = await IAgent.CalculateTermBettingRecord(req.body.strGroupID, req.body.iClass, dateStart, dateEnd, agent.strNickname, agent.strID);
-    let strParent = await IAgent.GetParentNickname(req.body.strNickname);
-    res.render('manage_partner/popup_games', {iLayout:2, iHeaderFocus:9, agent:agent, overview:overview, bettingrecord:bettingrecord, strParent:strParent});
+    let parents = await IAgent.GetParentList(req.body.strGroupID, req.body.iClass, agent);
+    res.render('manage_partner/popup_games', {iLayout:2, iHeaderFocus:9, agent:agent, overview:overview, bettingrecord:bettingrecord, strParent:parents.strParents});
 });
 
 router.post('/bettingrecord', isLoggedIn, async (req, res) => {
@@ -274,8 +271,8 @@ router.post('/bettingrecord', isLoggedIn, async (req, res) => {
     const dateEnd = ITime.getTodayEnd();
     let overview = await IAgent.CalculateSelfBettingRecord(req.body.strGroupID, req.body.iClass, dateStart, dateEnd, agent.strNickname, agent.strID);
     let bettingrecord = await IAgent.CalculateTermSelfBettingRecord(req.body.strGroupID, req.body.iClass, dateStart, dateEnd, agent.strNickname, agent.strID);
-    let strParent = await IAgent.GetParentNickname(req.body.strNickname);
-    res.render('manage_partner/popup_bettingrecord', {iLayout:2, iHeaderFocus:8, agent:agent, overview:overview, bettingrecord:bettingrecord, strParent:strParent});
+    let parents = await IAgent.GetParentList(req.body.strGroupID, req.body.iClass, agent);
+    res.render('manage_partner/popup_bettingrecord', {iLayout:2, iHeaderFocus:8, agent:agent, overview:overview, bettingrecord:bettingrecord, strParent:parents.strParents});
 });
 
 
@@ -1421,14 +1418,14 @@ router.post('/credits', isLoggedIn, async (req, res) => {
     agent.iRootClass = req.user.iClass;
     agent.iPermission = req.user.iPermission;
 
-    let strParent = await IAgent.GetParentNickname(req.body.strNickname);
+    let parents = await IAgent.GetParentList(req.body.strGroupID, req.body.iClass, agent);
     let list = await db.CreditRecords.findAll({
         where:{
             strID: dbuser.strID,
         },
         order:[['createdAt','DESC']]
     });
-    res.render('manage_partner/popup_credits', {iLayout:2, iHeaderFocus:11, user:user, agent:agent, list:list, strParent:strParent, isEdit:true});
+    res.render('manage_partner/popup_credits', {iLayout:2, iHeaderFocus:11, user:user, agent:agent, list:list, strParent:parents.strParents, isEdit:true});
 });
 
 router.post('/popup_credits', isLoggedIn, async (req, res) => {
@@ -1477,7 +1474,6 @@ router.post('/popup_credits', isLoggedIn, async (req, res) => {
     console.log(req.body);
 
     let parent = await IAgent.GetParentNickname();
-    let strParent = await IAgent.GetParentNickname(req.body.strNickname);
     let strParentGroupID = await IAgent.GetParentGroupID(req.body.strNickname);
 
     const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
@@ -1486,6 +1482,8 @@ router.post('/popup_credits', isLoggedIn, async (req, res) => {
         strID:dbuser.strID, iRootClass:req.user.iClass, iPermission:req.user.iPermission};
 
     const agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
+    agent.iRootClass = req.user.iClass;
+    agent.iPermission = req.user.iPermission;
 
     let iocount = await IInout.GetProcessing(user.strGroupID, user.strNickname, dbuser.iClass);
 
@@ -1500,7 +1498,9 @@ router.post('/popup_credits', isLoggedIn, async (req, res) => {
     else if ( req.body.iClass == 4 )
         list = await GetAgent(req.body.strNickname, 4);
 
-    res.render('manage_partner/popup_credits_history', {iLayout:5, iHeaderFocus:1, user:user, agent:agent, iocount:iocount, list:list, strParent:strParent});
+    let parents = await IAgent.GetParentList(req.body.strGroupID, req.body.iClass, agent);
+
+    res.render('manage_partner/popup_credits_history', {iLayout:5, iHeaderFocus:1, user:user, agent:agent, iocount:iocount, list:list, strParent:parents.strParents});
 });
 
 let GetViceHQs = async (strGroupID) => {

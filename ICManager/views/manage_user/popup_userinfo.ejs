@@ -127,26 +127,27 @@
 			</td>
 		</tr>
 	</table>
-
-<!--		<table>-->
-<!--			<colgroup>-->
-<!--				<col style="width:15%">-->
-<!--				<col style="width:35%">-->
-<!--				<col style="width:15%">-->
-<!--				<col style="width:35%">-->
-<!--			</colgroup>-->
-<!--		<p style="background-repeat:no-repeat; background-position:left center; font-size:16px; color:#454545; padding-left:22px;">입출금 설정</p>-->
-<!--		<tr>-->
-<!--			<th scope="row"><%=__('UsingInput')%></th>-->
-<!--			<td>-->
-<!--				<input type="checkbox" style="width:30px;height:30px;" name="using_input" id="using_input" required="no" message=""> <strong><%=__('DescUsingInput')%></strong>-->
-<!--			</td>-->
-<!--			<th scope="row"><%=__('UsingOutput')%></th>-->
-<!--			<td>-->
-<!--				<input type="checkbox" style="width:30px;height:30px;" name="using_output" id="using_output" required="no" message="" > <strong><%=__('DescUsingOutput')%></strong>-->
-<!--			</td>-->
-<!--		</tr>-->
-<!--	</table>-->
+	<div style="display: none">
+		<table>
+			<colgroup>
+				<col style="width:15%">
+				<col style="width:35%">
+				<col style="width:15%">
+				<col style="width:35%">
+			</colgroup>
+			<p style="background-repeat:no-repeat; background-position:left center; font-size:16px; color:#454545; padding-left:22px;">입출금 설정</p>
+			<tr>
+				<th scope="row"><%=__('UsingInput')%></th>
+				<td>
+					<input type="checkbox" style="width:30px;height:30px;" name="using_input" id="using_input" required="no" message=""> <strong><%=__('DescUsingInput')%></strong>
+				</td>
+				<th scope="row"><%=__('UsingOutput')%></th>
+				<td>
+					<input type="checkbox" style="width:30px;height:30px;" name="using_output" id="using_output" required="no" message="" > <strong><%=__('DescUsingOutput')%></strong>
+				</td>
+			</tr>
+		</table>
+	</div>
 
 	<div class="write_btn align_r" id="confirm">
 	</div>

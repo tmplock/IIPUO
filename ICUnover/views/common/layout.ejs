@@ -29,15 +29,16 @@
                     <!-- mem -->
                     <div class="l-menu">
                         <ul>
-                            <li class="ico01" onclick="location.href='/inout/input'"><span>입금신청</span></li>
-                            <li class="ico04" onclick="location.href='/inout/output'"><span>출금신청</span></li>
-
+                            <% if (bLogin == true && user != null && user.strOptionCode == '00100000') { %>
+                            <% } else { %>
+                                    <li class="ico01" onclick="location.href='/inout/input'"><span>입금신청</span></li>
+                                    <li class="ico04" onclick="location.href='/inout/output'"><span>출금신청</span></li>
+                            <% } %>
                             <li class="ico05" onclick="location.href='/inout/exchange'"><span>머니전환</span></li>
-                            <!-- <li class="ico03" onclick="location.href='/account/virtual_request'"><span>체험머니</span></li>
-                            
-                            <li class="ico05" onclick="location.href='#'"><span>입금계좌재전송</span></li> -->
-                            <li class="ico06" onclick="location.href='/inout/record'"><span>입출금내역보기</span></li>
-                            <!-- <li class="ico07" onclick="location.href='/account/record_coupon'"><span>쿠폰내역보기</span></li> -->
+                            <% if (bLogin == true && user != null && user.strOptionCode == '00100000') { %>
+                            <% } else { %>
+                                <li class="ico06" onclick="location.href='/inout/record'"><span>입출금내역보기</span></li>
+                            <% } %>
                             <li class="ico07" onclick="location.href='/letter/listcs'"><span>고객센터<span style="color:red;" id="MainLayoutNumLetters"></span></span></li>
                             <li class="ico03" onclick="location.href='/board/list'"><span>공지사항</span></li>
 

@@ -237,6 +237,22 @@
 
     const strStateComplete = '<%=__("StateComplete")%>';
 
+    let OnClickPopupHeader = () => {
+        window.close();
+    }
+    function isMobile() {
+        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    }
+
+    $(document).ready(() => {
+        $('#popup_close_button').empty();
+
+        if (isMobile() && opener) {
+            $('#popup_close_button').append(`
+                <button class="btn_red" onclick="OnClickPopupHeader();" style="margin: 10px; border:1px solid rgb(1, 147, 214);width:70px;height:35px;text-align:center;background-color: rgb(1, 147, 214);color:white">닫기</button>
+            `);
+        }
+    });
 </script>
 
 

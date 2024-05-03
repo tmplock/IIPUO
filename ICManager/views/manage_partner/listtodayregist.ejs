@@ -32,6 +32,9 @@
                 <table class="search_list">
                     <caption><%=__('SearchResult')%></caption>
                     <colgroup>
+                        <% if (user.iRootClass == 2) {%>
+                            <col style="width:5%">
+                        <% } %>
                         <col style="width:5%">
                         <col style="width:5%">
                         <col style="width:5%">
@@ -57,6 +60,9 @@
                     </colgroup>
                     <thead>
                     <tr>
+                        <% if (user.iRootClass == 2) {%>
+                            <th scope="col"><%=__('Admin')%></th>
+                        <% } %>
                         <th scope="col"><%=__('ProAdmin')%></th>
                         <th scope="col"><%=__('ViceAdmin')%></th>
                         <th scope="col"><%=__('Agent')%></th>
@@ -93,8 +99,8 @@
 <script type="text/javascript" src="js/manage_partner_menu.js"></script>
 <script type="text/javascript" src="js/manage_inout_ref.js"></script>
 <script type="text/javascript" src="js/manage_partner_register.js"></script>
-<script type="text/javascript" src="js/manage_setting_ref.js"></script>
 <script type="text/javascript" src="js/manage_user_menu.js"></script>
+<script type="text/javascript" src="js/manage_setting_ref.js"></script>
 <script type="text/javascript" src="js/socket.js"></script>
 <script>
     let user = JSON.parse('<%-JSON.stringify(user)%>');
@@ -240,6 +246,14 @@
                                 <a style="border: 1px solid green;display:inline-block;font-weight:bold;border-radius:4px;background-color:red;width:30px;color:white;" href="#" id="partner_adjustoutput" strnickname="${userlist[i].strNickname}" strgroupid="${userlist[i].strGroupID}" iclass="${userlist[i].iClass}">출금</a>
                             </td>`;
             }
+            let adminTag = '';
+            if (user.iRootClass == 2) {
+                if (userlist[i].iClass == 4) {
+                    adminTag = `<td style='background-color:${bgcolor};'>${userlist[i].lev2}</td>`;
+                } else {
+                    adminTag = `<td style='background-color:${bgcolor};'>${userlist[i].lev1}</td>`;
+                }
+            }
             let class4 = userlist[i].iClass > 4 ? `${userlist[i].lev2}` : '';
             if (userlist[i].iClass == 4) {
                 class4 = userlist[i].lev3;
@@ -249,6 +263,7 @@
             let class7 = userlist[i].iClass >= 7 ? `${userlist[i].lev5}` : '';
             let tag = `
                 <tr>
+                    ${adminTag}
                     <td style='background-color:${bgcolor};'>${class4}</td>
                     <td style='background-color:${bgcolor};'>${class5}</td>
                     <td style='background-color:${bgcolor};'>${class6}</td>
@@ -319,9 +334,14 @@
 
         let total_f = parseFloat(total.total) - parseFloat(total.rolling);
 
+        let colspan = 5;
+        if (user.iRootClass == 2) {
+            colspan = 6;
+        }
+
         let endtag = `
         <tr>
-            <td colspan="5">${strTotal}</td>
+            <td colspan="${colspan}">${strTotal}</td>
             <% if (user.iRootClass <= 3 && user.iPermission != 100) { %>
                 <td></td>
                 <td></td>
@@ -398,6 +418,25 @@
 
     let OnClickSearchNickname = () => {
         RequestUserList(user.iClass, user.strGroupID, user.iClass);
+    }
+
+    let OnClickWritingLetter = (strTo) => {
+        window.open('', 'WriteLetter', 'width=1024, height=512, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
+
+        var $form = $('<form></form>');
+        $form.attr('action', '/manage_setting_popup/writeletter');
+        $form.attr('method', 'post');
+        $form.attr('target', 'WriteLetter');
+        $form.appendTo('body');
+
+        var idx = $(`<input type="hidden" value="${user.strNickname}" name="strNickname">`);
+        var page = $(`<input type="hidden" value="${user.strGroupID}" name="strGroupID">`);
+        var category = $(`<input type="hidden" value=${parseInt(user.iClass)} name="iClass">`);
+        var iPermission = $(`<input type="hidden" value=${parseInt(user.iPermission)} name="iPermission">`);
+        var strTo = $(`<input type="hidden" value='${strTo}' name="strTo">`);
+
+        $form.append(idx).append(page).append(category).append(iPermission).append(strTo);
+        $form.submit();
     }
 
 </script>

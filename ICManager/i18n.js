@@ -4,7 +4,7 @@ i18n.configure({
     // locales:['en', 'ko', 'jp', 'cn'],
     locales:['ko'],
     directory:__dirname + '/locales',
-    defaultLocale:'en',
+    defaultLocale:'ko',
     cookie:'lang',
 });
 

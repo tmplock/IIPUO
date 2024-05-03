@@ -282,8 +282,15 @@
 
         let showPopupList = [];
         for (let i in popupList) {
-            if (getCookie(`${popupList[i]}`) != 'done') {
-                showPopupList.push(popupList[i]);
+            if (bLogin) {
+                let strID = user.strID;
+                if (getCookie(`${popupList[i]}_${strID}`) != 'done') {
+                    showPopupList.push(popupList[i]);
+                }
+            } else {
+                if (getCookie(`${popupList[i]}`) != 'done') {
+                    showPopupList.push(popupList[i]);
+                }
             }
         }
 
@@ -336,6 +343,8 @@
                 $('#main_pop_notice_popup').append(`</table>`);
             }
             $('#main_pop_notice_popup').show();
+        } else {
+            $('#main_pop_notice_popup').hide();
         }
     }
 
@@ -348,8 +357,15 @@
 
         let showMovieList = [];
         for (let i in movieList) {
-            if (getCookie(`${movieList[i]}`) != 'done') {
-                showMovieList.push(movieList[i]);
+            if (bLogin) {
+                let strID = user.strID;
+                if (getCookie(`${movieList[i]}_${strID}`) != 'done') {
+                    showMovieList.push(movieList[i]);
+                }
+            } else {
+                if (getCookie(`${movieList[i]}`) != 'done') {
+                    showMovieList.push(movieList[i]);
+                }
             }
         }
         console.log(`movieList: ${movieList.length}`);
@@ -411,6 +427,8 @@
                 }
             }
             $('#main_pop_play_movie').show();
+        } else {
+            $('#main_pop_play_movie').hide();
         }
     }
 
@@ -452,7 +470,12 @@
     {
         let id = getId ?? '';
         if (id.length > 0) {
-            setCookie( getId, "done" , 1 );
+            if (bLogin) {
+                let strID = user.strID;
+                setCookie(`${id}_${strID}`, "done" , 1 );
+            } else {
+                setCookie(id, "done" , 1 );
+            }
         }
         let list = [];
         for (let i in popupList) {
@@ -469,7 +492,12 @@
     {
         let id = getId ?? '';
         if (id.length > 0) {
-            setCookie( id, "done" , 1 );
+            if (bLogin) {
+                let strID = user.strID;
+                setCookie(`${id}_${strID}`, "done" , 1 );
+            } else {
+                setCookie( id, "done" , 1 );
+            }
         }
         let list = [];
         for (let i in movieList) {

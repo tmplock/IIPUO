@@ -4,7 +4,7 @@
     <!--서브페이지들-->
     <div class="sub-wrap">
         <!--입금신청-->
-        <div class="subscr">
+        <div class="subscr" id="input_view">
             <div class="subtitle">
                 <h1>입금신청</h1>
                 <!-- <span>신속한 충전을 위해서 올바른 입금정보를 입력해 주셔야 합니다. 입금확인 즉시 게임머니를 충전해 드립니다.</span> -->
@@ -16,34 +16,33 @@
                         <col style="width:70%;">
                     </colgroup>
                     <tr>
-                        <td>계좌 문의</td>
+                        <td style="font-size: 24px; font-weight: bold;">계좌 문의</td>
                         <td style="padding: 15px 0">
-                            <div style="color: red; font-weight: bold;  padding-top: 7px;font-size: 20px;">* 계좌는 수시로 변경되오니 반드시 "계좌 문의 하기" 후에 입금해 주세요.</div>
-                            <button type="button" style="width:300px;" onclick="RequestAccount();">계좌 문의 하기</button>
+                            <button type="button" style="width:300px; height: 50px; font-size: 24px; font-weight: bold;" onclick="RequestAccount();">계좌 문의 하기</button>
                         </td>
                     </tr>
                     <tr>
-                        <td>은행명</td>
+                        <td style="font-size: 24px; font-weight: bold;">은행명</td>
                         <td style="padding: 15px 0;">
-                            <input name="bank_name" type="text" id="bank_name" value="" disabled />
+                            <input name="bank_name" type="text" id="bank_name" style="height: 50px; font-size: 24px; font-weight: bold; width: 80%;" value="" disabled />
                         </td>
                     </tr>
                     <tr>
-                        <td>예금주</td>
+                        <td style="font-size: 24px; font-weight: bold;">예금주</td>
                         <td style="padding: 15px 0;">
-                            <input name="bank_holder" type="text" id="bank_holder" value="" disabled />
+                            <input name="bank_holder" type="text" style="height: 50px; font-size: 24px; font-weight: bold; width: 80%;" id="bank_holder" value="" disabled />
                         </td>
                     </tr>
                     <tr>
-                        <td>계좌번호</td>
+                        <td style="font-size: 24px; font-weight: bold;">계좌번호</td>
                         <td style="padding: 15px 0;">
-                            <input class="wd200" name="bank_number" id="bank_number" type="text" disabled />
+                            <input class="wd200" name="bank_number" style="height: 50px; font-size: 24px; font-weight: bold; width: 80%;" id="bank_number" type="text" disabled />
                         </td>
                     </tr>
                 </table>
             </div>
 
-            <div class="text-info-01">
+            <div class="text-info-01" style="display: none">
                 * 당사의 입금계좌는 수시로 변경될 수 있습니다. 반드시 계좌 문의 하기 후 입금해 주세요<br>
                 * 1회 입금한도는 1,000만원 입니다.<br>
                 * 수표입금시 입금승인이 불가합니다.<br>
@@ -52,7 +51,26 @@
             <div id="update_account" class="text-info-01" style="margin: 10px 0;">
             </div>
             <div class="btn_area_one" id="button">
-                <button id="btn_submit" type="button" onclick="OnClickNext();">입금확인요청</button>
+                <button id="btn_submit" type="button" onclick="OnClickNext();" style="font-size: 24px; font-weight: bold;">입금확인요청</button>
+            </div>
+        </div>
+        <!--팝업-->
+        <div id="notice_popup" class="subscr" style="display:none;">
+            <div class="subtitle">
+                <h1></h1>
+                <!-- <span>신속한 충전을 위해서 올바른 입금정보를 입력해 주셔야 합니다. 입금확인 즉시 게임머니를 충전해 드립니다.</span> -->
+            </div>
+            <div id="n_popup">
+                <div style="color: black; background-color: white; font-weight: bold; font-size: 32px; padding-top: 50px; padding-bottom: 50px; padding-left: 10px; padding-right: 30px; margin-right: 10px; text-align: center;">
+                    <span style="font-weight: bold; font-size: 45px; color: red;">계좌는 수시로 변경되오니 입금신청시 꼭 해당 계좌로 입금해 주셔야 합니다.</span>
+                    <div style="height: 60px;"></div>
+                    <p style="font-size: 20px;">이전 계좌나 다른 계좌에 입금시 당사는 해당 금액을 책임지지 않으며</p>
+                    <p style="font-size: 20px;">회원님께서도 돌려받을 수 없음을 안내드립니다.</p>
+                    <p style="font-size: 20px;"></p>
+                </div>
+            </div>
+            <div class="btn_area_one" id="button">
+                <button id="btn_submit" type="button" onclick="OnClickClose();" style="font-size: 28px; font-weight: bold;"> 확 인 </button>
             </div>
         </div>
     </div>
@@ -171,7 +189,7 @@
                     bankname = obj.bankname;
                     banknumber = obj.banknumber;
                     bankholder = obj.bankholder;
-                    iUpdateAccount = obj.iUpdateAccount ?? 0;
+                    iUpdateAccount = 1;
                     SetTagActive();
                     alert('표시되는 계좌로 입금을 해주시기 바랍니다');
 
@@ -200,14 +218,18 @@
         $('#bank_holder').val(bankholder);
         $('#bank_number').val(banknumber);
 
-        $('#update_account').empty();
         if (iUpdateAccount == 1) {
-            $('#update_account').append(`
-                <div style="color: red; font-weight: bold;  padding-top: 0px;font-size: 20px;">* 최근에 계좌가 변경되었습니다. 꼭 확인 후에 입금해 주세요.</div>
-            `);
+            showPopup();
+            $('#input_view').hide();
         } else {
-            $('#update_account').attr('display', 'none');
+            $('#notice_popup').hide();
+            $('#input_view').show();
         }
+    }
+
+    let OnClickClose = () => {
+        $('#notice_popup').hide();
+        $('#input_view').show();
     }
 
     let OnClickNext = () => {
@@ -228,29 +250,29 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>입금금액</td>
+                        <td style="font-size: 24px; font-weight: bold;">입금금액</td>
 
                         <td style="padding: 15px 0">
 
-                            <input placeholder="입금금액을 입력해 주세요" type="text" name="iAmount" id="inputPrice" readonly>
+                            <input placeholder="입금금액을 입력해 주세요" type="text" name="iAmount" id="inputPrice" readonly style="height: 50px; font-size: 24px; font-weight: bold; width: 80%;">
 
                         </td>
                     <tr>
                         <td></td>
                         <td>
-                            <button id='btn_1' type="button" onclick="AddAmount(10000);">1만원</button>
-                            <button id='btn_5' type="button" onclick="AddAmount(50000);">5만원</button>
-                            <button id='btn_10' type="button" onclick="AddAmount(100000);">10만원</button>
-                            <button id='btn_30' type="button" onclick="AddAmount(300000);">30만원</button>
-                            <button id='btn_50' type="button" onclick="AddAmount(500000);">50만원</button>
-                            <button id='btn_100' type="button" onclick="AddAmount(1000000);">100만원</button>
-                            <button id='btn_init' type="button" onclick="AddAmount(-1);" style="background-color:orange;">초기화</button>
+                            <button id='btn_1' type="button" onclick="AddAmount(10000);" style="font-size: 24px; font-weight: bold; width: 100px; height: 60px;">1만원</button>
+                            <button id='btn_5' type="button" onclick="AddAmount(50000);" style="font-size: 24px; font-weight: bold; width: 100px; height: 60px;">5만원</button>
+                            <button id='btn_10' type="button" onclick="AddAmount(100000);" style="font-size: 24px; font-weight: bold; width: 100px; height: 60px;">10만원</button>
+                            <button id='btn_30' type="button" onclick="AddAmount(300000);" style="font-size: 24px; font-weight: bold; width: 100px; height: 60px;">30만원</button>
+                            <button id='btn_50' type="button" onclick="AddAmount(500000);" style="font-size: 24px; font-weight: bold; width: 100px; height: 60px;">50만원</button>
+                            <button id='btn_100' type="button" onclick="AddAmount(1000000);" style="font-size: 24px; font-weight: bold; width: 100px; height: 60px;">100만원</button>
+                            <button id='btn_init' type="button" onclick="AddAmount(-1);" style="background-color:orange;font-size: 24px; font-weight: bold; width: 100px; height: 60px;">초기화</button>
                         </td>
                     </tr>
                     </tr>
                     <tr>
-                        <td>입금자명</td>
-                        <td style="padding: 15px 0"><input name="strName" type="text" id="inputName">
+                        <td style="font-size: 24px; font-weight: bold;">입금자명</td>
+                        <td style="padding: 15px 0"><input name="strName" type="text" id="inputName" style="height: 50px; font-size: 24px; font-weight: bold; width: 80%;">
                             <div style="padding-top: 7px;font-size: 15px;">* 수표입금시 입금승인 및 출금처리가 불가하니 절대 입금하지 마시기 바랍니다.</div>
                         </td>
                     </tr>
@@ -260,11 +282,14 @@
 
         $('#button').empty();
         $('#button').append(`
-            <button id="btn_submit" type="button" onclick="RequestInput();">입금신청하기</button>
+            <button id="btn_submit" type="button" onclick="RequestInput();" style="font-size: 24px; font-weight: bold;">입금신청하기</button>
         `);
 
         checkBlockNum(`#inputPrice`);
         checkBlockCharNickname(`#inputName`);
     }
 
+    let showPopup = () => {
+        $('#notice_popup').show();
+    }
 </script>

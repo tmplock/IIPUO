@@ -34,7 +34,19 @@
 					<h3><%=__('SubMenuAgentList')%>
 						<% if ( user.iRootClass <= 3 && user.iPermission != 100 ) { %>
 							<button class="btn_blue" style="margin-left:15%;width:200px;text-align:center;background-color: #f0d17e;color:black" onclick="javascript:DoApplyRolling(user);"><%=__('Rolling')%> <%=__('Apply')%></button>
-						<% } else { %>
+						<% }%>
+						<% if ( user.iClass > 3 ) { %>
+						<div style="text-align:right;margin-top:-55px;">
+							<button class="btn_blue" style="border:1px solid rgb(95, 93, 93);border-radius:3px;width:70px;height:25px;text-align:center;background-color: rgb(240, 90, 90);color:white" onclick="OnClickChangeMoney('<%=user.strNickname%>', '<%=user.strGroupID%>', '<%=user.iClass%>');"><%=__('ExchangeCash')%></button>
+							<span id="top_total_point_area">
+										<font style="color:#00FFFF;font-size:15px;font-weight:bold;"><%=__('Cash')%> :</font><font style="color:yellow;font-size:15px;font-weight:bold;"><%=parseInt(agentinfo.iCash).toLocaleString()%></font>
+										&nbsp;&nbsp;
+										<font style="color:#00FFFF;font-size:15px;font-weight:bold;"><%=__('Rolling')%> :</font><font style="color:yellow;font-size:15px;font-weight:bold;"><%=parseInt(agentinfo.iRolling).toLocaleString()%></font>
+										&nbsp;&nbsp;
+										<font style="color:#00FFFF;font-size:15px;font-weight:bold;"><%=__('Settle')%> :</font><font style="color:yellow;font-size:15px;font-weight:bold;">0</font>
+										&nbsp;&nbsp;&nbsp;
+									</span>
+						</div>
 						<%}%>
 					</h3>
 				</div>

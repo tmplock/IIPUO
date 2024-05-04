@@ -237,7 +237,7 @@ $(document).on('click', '#popup_credits', ()=> {
 $(document).on('click', '#popup_logs', ()=> {
     window.open('', 'popupChk_logs', 'width=1080, height=620, top=90, left=90, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
     let $form = $('<form></form>');
-    $form.attr('action', '/manage_user_popup/logs');
+    $form.attr('action', '/manage_partner_popup/logs');
     $form.attr('method', 'post');
     $form.attr('target', 'popupChk_logs');
     $form.appendTo('body');

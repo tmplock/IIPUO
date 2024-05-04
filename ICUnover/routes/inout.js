@@ -485,11 +485,20 @@ router.post('/request_bank', async (req, res) => {
             return;
         }
 
+        // 마지막에 입금한 입금 내역 확인
+        const lastInput = await db.Inouts.findAll({
+            where: {
+                id: info.id
+            },
+            order: [['createdAt', 'DESC']],
+            limit:1
+        });
+
         let obj = await IHelper.GetParentList(info.strGroupID, info.iClass);
         console.log(obj);
 
         let bank = await db.sequelize.query(`
-            SELECT b.strBankName AS strBankName, b.strBankNumber AS strBankNumber, b.strBankHolder AS strBankHolder
+            SELECT b.strBankName AS strBankName, b.strBankNumber AS strBankNumber, b.strBankHolder AS strBankHolder, DATE_FORMAT(b.createdAt,'%Y-%m-%d %H:%i:%S') AS createdAt
             FROM BankRecords b
             LEFT JOIN Users u ON u.id = b.userId
             WHERE b.eType='ACTIVE' AND u.strNickname = '${obj.strAdmin}'
@@ -508,11 +517,18 @@ router.post('/request_bank', async (req, res) => {
         // }
         console.log(bank);
         if (bank.length > 0) {
+            let iUpdateAccount = 0;
+            if (lastInput.length > 0) {
+                if (lastInput[0].createdAt < bank[0].createdAt) {
+                    iUpdateAccount = 1;
+                }
+            }
+
             let msg = `입금신청을 해주시기 바랍니다`;
             let bankname = bank[0].strBankName;
             let banknumber = bank[0].strBankNumber;
             let bankholder = bank[0].strBankHolder;
-            res.send({result: 'OK', msg: msg, bankname: bankname, banknumber: banknumber, bankholder:bankholder});
+            res.send({result: 'OK', msg: msg, bankname: bankname, banknumber: banknumber, bankholder:bankholder, iUpdateAccount:iUpdateAccount});
         } else {
             res.send({result: 'FAIL', msg: '현재 계좌 준비 중입니다', bankname:'', banknumber:'', bankholder:''});
         }

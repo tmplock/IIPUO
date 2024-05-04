@@ -270,7 +270,8 @@
     <script>
 
         let movieList = ['uo.mp4'];
-        let popupList = ['popup_0501.png', 'popup_000.png', 'popup_01.png', 'popup_02.png'];
+        let popupList = ['popup_01.png', 'popup_02.png'];
+        // let popupList = ['popup_0501.png', 'popup_000.png', 'popup_01.png', 'popup_02.png'];
 
     function showPopup() {
         if (popupList.length <= 0) {
@@ -281,8 +282,15 @@
 
         let showPopupList = [];
         for (let i in popupList) {
-            if (getCookie(`${popupList[i]}`) != 'done') {
-                showPopupList.push(popupList[i]);
+            if (bLogin) {
+                let strID = user.strID;
+                if (getCookie(`${popupList[i]}_${strID}`) != 'done') {
+                    showPopupList.push(popupList[i]);
+                }
+            } else {
+                if (getCookie(`${popupList[i]}`) != 'done') {
+                    showPopupList.push(popupList[i]);
+                }
             }
         }
 
@@ -324,7 +332,7 @@
                                     <span style="float: left; margin-left: 0px; margin-top: 5px;"><input type="checkbox" name="nomore" onclick="closePopNotice('${showPopupList[i]}', '${showPopupList[i]}');"></span>
                                     <span onclick="closePopNotice('${showPopupList[i]}', '${showPopupList[i]}');" style="cursor:hand;cursor:pointer;line-height: 35px;float:left; margin-left:5px;">오늘하루 이창 열지않음</span>
                                     <span class="close">
-                                        <span onclick="closePopNotice('', '${showPopupList[i]}');" style="cursor:hand;cursor:pointer;line-height: 35px;float:right; margin-right:20px;">닫기 X</span>
+                                        <span onclick="closePopNotice('${showPopupList[i]}', '${showPopupList[i]}');" style="cursor:hand;cursor:pointer;line-height: 35px;float:right; margin-right:20px;">닫기 X</span>
                                     </span>
                                 </div>
                             </div>
@@ -335,6 +343,8 @@
                 $('#main_pop_notice_popup').append(`</table>`);
             }
             $('#main_pop_notice_popup').show();
+        } else {
+            $('#main_pop_notice_popup').hide();
         }
     }
 
@@ -347,8 +357,15 @@
 
         let showMovieList = [];
         for (let i in movieList) {
-            if (getCookie(`${movieList[i]}`) != 'done') {
-                showMovieList.push(movieList[i]);
+            if (bLogin) {
+                let strID = user.strID;
+                if (getCookie(`${movieList[i]}_${strID}`) != 'done') {
+                    showMovieList.push(movieList[i]);
+                }
+            } else {
+                if (getCookie(`${movieList[i]}`) != 'done') {
+                    showMovieList.push(movieList[i]);
+                }
             }
         }
         console.log(`movieList: ${movieList.length}`);
@@ -378,7 +395,7 @@
                         line-height:25px; padding-left:20px;padding-top:5px; cursor:pointer;" >오늘하루 이창 열지않음<span><input type="checkbox" name="nomore" onclick="closePopMovie('${showMovieList[i]}', '${showMovieList[i]}');"></span></span>
 
                             <span class="close">
-                                <span onclick="closePopMovie('', '${showMovieList[i]}')" style="cursor:hand;cursor:pointer;line-height: 35px;float:right; margin-right:10px;">닫기 X</span>
+                                <span onclick="closePopMovie('${showMovieList[i]}', '${showMovieList[i]}')" style="cursor:hand;cursor:pointer;line-height: 35px;float:right; margin-right:10px;">닫기 X</span>
                             </span>
                         </div>
                     `);
@@ -403,13 +420,15 @@
                         line-height:25px; padding-left:20px;padding-top:5px; cursor:pointer;" >오늘하루 이창 열지않음<span><input type="checkbox" name="nomore" onclick="closePopMovie('${showMovieList[i]}', '${showMovieList[i]}');"></span></span>
 
                             <span class="close">
-                                <span onclick="closePopMovie('', '${showMovieList[i]}');" style="cursor:hand;cursor:pointer;line-height: 35px;float:right; margin-right:10px;">닫기 X</span>
+                                <span onclick="closePopMovie('${showMovieList[i]}', '${showMovieList[i]}');" style="cursor:hand;cursor:pointer;line-height: 35px;float:right; margin-right:10px;">닫기 X</span>
                             </span>
                         </div>
                     `);
                 }
             }
             $('#main_pop_play_movie').show();
+        } else {
+            $('#main_pop_play_movie').hide();
         }
     }
 
@@ -451,7 +470,12 @@
     {
         let id = getId ?? '';
         if (id.length > 0) {
-            setCookie( getId, "done" , 1 );
+            if (bLogin) {
+                let strID = user.strID;
+                setCookie(`${id}_${strID}`, "done" , 1 );
+            } else {
+                setCookie(id, "done" , 1 );
+            }
         }
         let list = [];
         for (let i in popupList) {
@@ -468,7 +492,12 @@
     {
         let id = getId ?? '';
         if (id.length > 0) {
-            setCookie( id, "done" , 1 );
+            if (bLogin) {
+                let strID = user.strID;
+                setCookie(`${id}_${strID}`, "done" , 1 );
+            } else {
+                setCookie( id, "done" , 1 );
+            }
         }
         let list = [];
         for (let i in movieList) {

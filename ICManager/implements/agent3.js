@@ -1435,11 +1435,13 @@ var inline_GetParentNickname = async (strNickname) => {
 }
 exports.GetParentNickname = inline_GetParentNickname;
 
-var inline_GetParentList = async (strGroupID, iClass) => {
+var inline_GetParentList = async (strGroupID, iClass, user) => {
 
     console.log(`GetParentList : ${strGroupID}, ${iClass}`);
 
-    let objectData = {strAdmin:'', strPAdmin:'', strVAdmin:'', strAgent:'', strShop:''};
+    let strParents = '';
+
+    let objectData = {strAdmin:'', strPAdmin:'', strVAdmin:'', strAgent:'', strShop:'', strParents:''};
 
     if ( iClass == 8 )
     {
@@ -1460,10 +1462,12 @@ var inline_GetParentList = async (strGroupID, iClass) => {
             `
         );
 
-        if ( result.length > 0 )
-            objectData = {strAdmin:result[0].lev1, strPAdmin:result[0].lev2, strVAdmin:result[0].lev3, strAgent:result[0].lev4, strShop:result[0].lev5};
-
-        //return result[0].lev1;
+        if ( result.length > 0 ) {
+            if (user != null) {
+                strParents = user.iRootClass <= 3 ? `[본사]${result[0].lev1} ▶ [대본]${result[0].lev2} ▶ [부본]${result[0].lev3} ▶ [총판]${result[0].lev4} ▶ [매장]${result[0].lev5} ▶ [회원] ${user.strNickname}(${user.strID})` : `[매장]${result[0].lev5} ▶ [회원] ${user.strNickname}(${user.strID})`;
+            }
+            objectData = {strAdmin:result[0].lev1, strPAdmin:result[0].lev2, strVAdmin:result[0].lev3, strAgent:result[0].lev4, strShop:result[0].lev5, strParents:strParents};
+        }
     }
     else if ( iClass == 7 )
     {
@@ -1482,8 +1486,12 @@ var inline_GetParentList = async (strGroupID, iClass) => {
             `
         );
 
-        if ( result.length > 0 )
-            objectData = {strAdmin:result[0].lev1, strPAdmin:result[0].lev2, strVAdmin:result[0].lev3, strAgent:result[0].lev4, strShop:''};
+        if ( result.length > 0 ) {
+            if (user != null) {
+                strParents =  user.iRootClass <= 3 ? `[본사]${result[0].lev1} ▶ [대본]${result[0].lev2} ▶ [부본]${result[0].lev3} ▶ [총판]${result[0].lev4} ▶ [매장] ${user.strNickname}(${user.strID})` : `[총판]${result[0].lev4} ▶ [매장] ${user.strNickname}(${user.strID})`;
+            }
+            objectData = {strAdmin:result[0].lev1, strPAdmin:result[0].lev2, strVAdmin:result[0].lev3, strAgent:result[0].lev4, strShop:'', strParents: strParents};
+        }
     }
     else if ( iClass == 6 )
     {
@@ -1500,8 +1508,12 @@ var inline_GetParentList = async (strGroupID, iClass) => {
             `
         );
 
-        if ( result.length > 0 )
-            objectData = {strAdmin:result[0].lev1, strPAdmin:result[0].lev2, strVAdmin:result[0].lev3, strAgent:'', strShop:''};
+        if ( result.length > 0 ) {
+            if (user != null) {
+                strParents = user.iRootClass <= 3 ? `[본사]${result[0].lev1} ▶ [대본]${result[0].lev2} ▶ [부본]${result[0].lev3} ▶ [총판] ${user.strNickname}(${user.strID})` : `[부본]${result[0].lev3} ▶ [총판] ${user.strNickname}(${user.strID})`;
+            }
+            objectData = {strAdmin:result[0].lev1, strPAdmin:result[0].lev2, strVAdmin:result[0].lev3, strAgent:'', strShop:'', strParents: strParents};
+        }
     }
     else if ( iClass == 5 )
     {
@@ -1516,8 +1528,12 @@ var inline_GetParentList = async (strGroupID, iClass) => {
             `
         );
 
-        if ( result.length > 0 )
-            objectData = {strAdmin:result[0].lev1, strPAdmin:result[0].lev2, strVAdmin:'', strAgent:'', strShop:''};
+        if ( result.length > 0 ) {
+            if (user != null) {
+                strParents = user.iRootClass <= 3 ? `[본사]${result[0].lev1} ▶ [대본]${result[0].lev2} ▶ [부본] ${user.strNickname}(${user.strID})` : `[대본]${result[0].lev2} ▶ [부본] ${user.strNickname}(${user.strID})`;
+            }
+            objectData = {strAdmin:result[0].lev1, strPAdmin:result[0].lev2, strVAdmin:'', strAgent:'', strShop:'', strParents: strParents};
+        }
     }
     else if ( iClass == 4 )
     {
@@ -1530,12 +1546,26 @@ var inline_GetParentList = async (strGroupID, iClass) => {
             `
         );
 
-        if ( result.length > 0 )
-            objectData = {strAdmin:result[0].lev1, strPAdmin:'', strVAdmin:'', strAgent:'', strShop:''};
+        if ( result.length > 0 ) {
+            if (user != null) {
+                strParents = user.iRootClass <= 3 ? `[본사]${result[0].lev1} ▶ [대본] ${user.strNickname}(${user.strID})` : `[본사]${result[0].lev1} ▶ [대본] ${user.strNickname}(${user.strID})`;
+            }
+            objectData = {strAdmin:result[0].lev1, strPAdmin:'', strVAdmin:'', strAgent:'', strShop:'', strParents: strParents};
+        }
     }
     else if ( iClass == 3 )
     {
-
+        if (user != null) {
+            strParents = `[본사] ${user.strNickname}(${user.strID})`;
+        }
+        objectData = {strAdmin:'', strPAdmin:'', strVAdmin:'', strAgent:'', strShop:'', strParents: strParents};
+    }
+    else if ( iClass == 2 )
+    {
+        if (user != null) {
+            strParents = `[총본] ${user.strNickname}(${user.strID})`;
+        }
+        objectData = {strAdmin:'', strPAdmin:'', strVAdmin:'', strAgent:'', strShop:'', strParents: strParents};
     }
     return objectData;
 }

@@ -10,33 +10,15 @@
     <html>
         <head>
             <%- include('headpopup') %>
+            <div id="popup_close_button" class="write_btn align_r"></div>
         </head>
         <body>
 
             <div class="content" style="position:relative; padding:0 10px 0 10px;">
                 <div class="list_tit" style="height:80px; padding-top:10px;">
                     <h3>
-                        <% if ( agent.iClass == 2 ) { %> 
-                            <a class="btn_gray" style="font-weight:bold; font-size:18px; position:absolute; left:50px; top:25px;">상위 ▶ <%=strParent%></a>
-                            <span style="font-size:18px; font-weight:bold; position:absolute;left:200px; top:12px;">[<%=__('ViceHQ')%>]<%=agent.strNickname%></span> 
-                        <% } else if ( agent.iClass == 3 ) { %> 
-                            <a class="btn_gray" style="font-weight:bold; font-size:18px; position:absolute; left:50px; top:25px;">상위 ▶ <%=strParent%></a>
-                            <span style="font-size:18px; font-weight:bold; position:absolute;left:200px; top:12px;">[<%=__('Admin')%>]<%=agent.strNickname%></span> 
-                        <% } else if ( agent.iClass == 4 ) { %> 
-                            <a class="btn_gray" style="font-weight:bold; font-size:18px; position:absolute; left:50px; top:25px;">상위 ▶ <%=strParent%></a>
-                            <span style="font-size:18px; font-weight:bold; position:absolute;left:200px; top:12px;">[<%=__('ProAdmin')%>]<%=agent.strNickname%></span> 
-                        <% } else if ( agent.iClass == 5 ) { %> 
-                            <a class="btn_gray" style="font-weight:bold; font-size:18px; position:absolute; left:50px; top:25px;">상위 ▶ <%=strParent%></a>
-                            <span style="font-size:18px; font-weight:bold; position:absolute;left:200px; top:12px;">[<%=__('ViceAdmin')%>]<%=agent.strNickname%></span> 
-
-                        <% } else if ( agent.iClass == 6 ) { %>
-                            <a class="btn_gray" style="font-weight:bold; font-size:18px; position:absolute; left:50px; top:25px;">상위 ▶ <%=strParent%></a>
-                            <span style="font-size:18px; font-weight:bold; position:absolute;left:200px; top:12px;">[<%=__('Agent')%>]<%=agent.strNickname%></span> 
-                        <% } else if ( agent.iClass == 7 ) { %>
-                            <a class="btn_gray" style="font-weight:bold; font-size:18px; position:absolute; left:50px; top:25px;">상위 ▶ <%=strParent%></a>
-                            <span style="font-size:18px; font-weight:bold; position:absolute;left:200px; top:12px;">[<%=__('Shop')%>]<%=agent.strNickname%></span> 
-                        <%}%>
-                </h3>
+                        <span style="font-size:16px; font-weight:normal; position:absolute;left:50px; top:12px;"><%=strParent%></span>
+                    </h3>
                     <h3>
                         <div style="text-align:right;padding-right:0px;margin-top:0px;">
                             <span id="top_total_point_area">
@@ -176,16 +158,14 @@
     <html>
         <head>
             <%- include('headpopup_user') %>
+            <div id="popup_close_button" class="write_btn align_r"></div>
         </head>
         <body>
             <div class="content" style="position:relative; padding:0 10px 0 10px;">
                 <div class="list_tit" style="height:80px; padding-top:10px;">
-                    <h3> 
-                        <!-- <span style="font-size:32px;color:yellow;font-weight:bold;padding-top:10px; font-family: 'Hahmlet', serif;">[<%=__('User')%>] &nbsp;<%=agent.strNickname%> (<%=agent.strID%>)</span>  -->
-                        <a class="btn_gray" style="font-weight:bold; font-size:18px; position:absolute; left:50px; top:25px;">▶ <%=parents.strShop%></a>
-                        <span style="font-size:18px; font-weight:bold; position:absolute;left:200px; top:12px;">[<%=__('User')%>] &nbsp;<%=agent.strNickname%> (<%=agent.strID%>)</span> 
+                    <h3>
+                        <span style="font-size:16px; font-weight:normal; position:absolute;left:50px; top:12px;"><%=parents.strParents%></span>
                     </h3>
-    
                     <h3>
                         <div style="text-align:right;padding-right:0px;margin-top:0px;">
                             <span id="top_total_point_area">
@@ -262,6 +242,7 @@
     <html>
     <head>
         <%- include('headpopup_user') %>
+        <div id="popup_close_button" class="write_btn align_r"></div>
     </head>
     <body>
     <div class="content" style="position:relative; padding:0 10px 0 10px;">
@@ -319,6 +300,7 @@
     <html>
     <head>
         <%- include('headpopup') %>
+        <div id="popup_close_button" class="write_btn align_r"></div>
     </head>
     <body>
 
@@ -355,6 +337,7 @@
 <html>
 <head>
     <%- include('headpopup') %>
+    <div id="popup_close_button" class="write_btn align_r"></div>
 </head>
 <body>
 
@@ -401,6 +384,7 @@
 <html>
 <head>
     <%- include('headpopup') %>
+    <div id="popup_close_button" class="write_btn align_r"></div>
 </head>
 <body>
 
@@ -428,6 +412,7 @@
 <html>
 <head>
     <%- include('headpopup') %>
+    <div id="popup_close_button" class="write_btn align_r"></div>
 </head>
 <body>
 <div class="content" style="position:relative; padding:0 10px 0 10px;">
@@ -453,6 +438,7 @@
     <html>
     <head>
         <%- include('headpopup') %>
+        <div id="popup_close_button" class="write_btn align_r"></div>
     </head>
     <body>
     <div class="content" style="position:relative; padding:0 10px 0 10px;">
@@ -474,6 +460,7 @@
 <html>
     <head>
         <%- include('head') %>
+        <div id="popup_close_button" class="write_btn align_r"></div>
     </head>
 
 <body>

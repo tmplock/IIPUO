@@ -55,7 +55,7 @@
                         <div class="login">
                             <div class="m-logo" onclick="location.href='/';"><img src="/img/logo.png"></div>
                             <div class="login-box" style="color:#ffffff;">
-                                <span class="font12"><%=user.strNickname%></span>&nbsp;&nbsp;
+                                <span class="font12"><%=user.strNickname%>(<%=user.strID%>)</span>&nbsp;&nbsp;
                                 <span>게임머니 <span class="font11" id="MainLayoutCoin"><%=user.iCash.toLocaleString()%></span> </span>
                                 &nbsp;&nbsp;
                                 <button type="button" onclick="location.href='/account/logout'">로그아웃</button>

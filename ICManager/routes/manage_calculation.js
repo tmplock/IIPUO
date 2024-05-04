@@ -637,66 +637,68 @@ router.post('/settle_all', isLoggedIn, async(req, res) => {
     res.render('manage_calculation/settle_all', {iLayout:0, iHeaderFocus:6, user:user, agentinfo:agentinfo, iocount:iocount, list:[], overview:overview, overviewShare:overviewShare});
 });
 
-// 미사용
-router.post('/request_settle_partner', isLoggedIn, async(req, res) => {
+/**
+ * 전체 죽장 조회2
+ */
+router.post('/settle_all2', isLoggedIn, async(req, res) => {
 
     console.log(req.body);
 
-    let iLimit = parseInt(req.body.iLimit);
-    let iPage = parseInt(req.body.iPage);
-    let iOffset = (iPage-1) * iLimit;
+    const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
 
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle, strID:dbuser.strID,
+        iRootClass:req.user.iClass, iPermission:req.user.iPermission};
 
-});
+    const agentinfo = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
 
-let SettleViceAll = async (req, res) => {
+    let iocount = await IInout.GetProcessing(user.strGroupID, user.strNickname, dbuser.iClass);
+    console.log(`ic : ${iocount.input}, oc : ${iocount.output}`);
 
-    let iLimit = parseInt(req.body.iLimit);
-    let iPage = parseInt(req.body.iPage);
-    let iOffset = (iPage-1) * iLimit;
-
-    let list = [];
-    if (req.body.iClass == 4 || req.body.iUserClass == 4) {
-        // 본인것
-        list = await GetSettleAll2(req.body.strGroupID, req.body.strQuater, req.body.dateStart, req.body.dateEnd, 4, 0, 1);
-        // 부본 리스트
-        let list2 = await GetSettleAll2(req.body.strGroupID, req.body.strQuater, req.body.dateStart, req.body.dateEnd, 5, iOffset, iLimit);
-        for (let i in list2) {
-            list.push(list2[i]);
-        }
-    } else if (req.body.iClass == 5 || req.body.iUserClass == 5) {
-        list = await GetSettleAll2(req.body.strGroupID, req.body.strQuater, req.body.dateStart, req.body.dateEnd, 5, iOffset, iLimit);
-    }
-
-    let exist = await db.SettleRecords.findAll({where:{
-            strQuater:req.body.strQuater,
-            iClass:req.body.iClass,
-            strGroupID:{[Op.like]:req.body.strGroupID+'%'},
-        }, order: [['createdAt', 'DESC']]
-    });
-
-    const targetUserCount = await getSettleTargetUserCount(req.body.strQuater, req.body.iClass, req.body.strGroupID);
-
-    if ( exist.length > 0 && targetUserCount == exist.length ) {
-        res.send({
-            result: 'EXIST',
-            list: list,
-            iRootClass: req.user.iClass,
-            exist: exist,
-            msg: '정상조회',
-            totalCount: targetUserCount
-        });
+    let date = new Date();
+    let iMonth = date.getMonth();
+    let strQuater = '';
+    let dateStart = '';
+    let dateEnd = '';
+    if ( date.getDate() < 16 ) {
+        strQuater = `${iMonth+1}-1`;
+        dateStart = ITime.get1QuaterStartDate(iMonth);
+        dateEnd = ITime.get1QuaterEndDate(iMonth);
     } else {
-        res.send({
-            result: 'OK',
-            list: list,
-            iRootClass: req.user.iClass,
-            exist: exist,
-            msg: '조회불가',
-            totalCount: targetUserCount
-        });
+        strQuater = `${iMonth+1}-2`;
+        dateStart = ITime.get2QuaterStartDate(iMonth);
+        dateEnd = ITime.get2QuaterEndDate(iMonth);
     }
-}
+
+
+    let overviewList = await IAgentSettle.CalculateOverviewSettle(req.body.strGroupID, req.body.iClass, strQuater, dateStart, dateEnd);
+    let overview = {};
+    if (overviewList.length > 0) {
+        overview = overviewList[0];
+    }
+
+    let overviewShare = {};
+
+    if (dbuser.iClass <= 3) {
+        // 대.부본 보관죽장*
+        let settleCurrent = await IAgentSettle.CalculateOverviewSettleCurrent(req.body.strGroupID, strQuater);
+        overview.iSettlePlus = settleCurrent.iSettlePlus;
+        overview.iSettleMinus = settleCurrent.iSettleMinus;
+        overview.iCurrentTotalSettle = settleCurrent.iCurrentTotalSettle;
+
+        // 순이익, 배당금, 지분자 전월 이월, 지분자 총이월, 합계
+        let overviewShareList = await IAgentSettle.CalculateOverviewShare(req.body.strGroupID, strQuater);
+        if (overviewShareList.length > 0) {
+            overviewShare = overviewShareList[0];
+        }
+        // 지분자보관죽장*
+        let shareCurrent = await IAgentSettle.CalculateOverviewShareCurrent(req.body.strGroupID, strQuater);
+        overviewShare.iSharePlus = shareCurrent.iSharePlus;
+        overviewShare.iShareMinus = shareCurrent.iShareMinus;
+        overviewShare.iCurrentTotalShare = shareCurrent.iCurrentTotalShare;
+    }
+
+    res.render('manage_calculation/settle_all2', {iLayout:0, iHeaderFocus:6, user:user, agentinfo:agentinfo, iocount:iocount, list:[], overview:overview, overviewShare:overviewShare});
+});
 
 router.post('/request_settle_all', isLoggedIn, async(req, res) => {
 
@@ -765,45 +767,6 @@ let getSettleTargetUserCount = async (strQuater, iClass, strGroupID) => {
     return 0;
 }
 
-let GetSettleAll = async (strGroupID, strQuater, dateStart, dateEnd) => {
-    // strQuater
-    let start = dateStart ?? '';
-    let end = dateEnd ?? '';
-
-    // 값이 없으면 현재 시간을 기준으로 설정
-    if (start == '' || end == '') {
-        let date = new Date();
-        let iMonth = date.getMonth();
-
-        if (date.getDate() < 16) {
-            strQuater = `${iMonth + 1}-1`;
-            start = ITime.get1QuaterStartDate(iMonth);
-            end = ITime.get1QuaterEndDate(iMonth);
-        } else {
-            strQuater = `${iMonth + 1}-2`;
-            start = ITime.get2QuaterStartDate(iMonth);
-            end = ITime.get2QuaterEndDate(iMonth);
-        }
-    }
-
-    // 본사, 대본사, 부본사 목록
-    let adminList = await GetAdmins(strGroupID, strQuater);
-    let proAdminList = await IAgentSettle.GetSettleClass(strGroupID, 4, strQuater, start, end);
-    let viceAdminList = await IAgentSettle.GetSettleClass(strGroupID, 5, strQuater, start, end);
-
-    let list = [];
-    for (let i in adminList) {
-        let obj = adminList[i];
-        obj.list = GetChildrenList(obj.id, proAdminList);
-
-        for (let j in obj.list) {
-            obj.list[j].list = GetChildrenList(obj.list[j].id, viceAdminList);
-        }
-        list.push(obj);
-    }
-    return list;
-}
-
 let GetSettleAll2 = async (strGroupID, strQuater, dateStart, dateEnd, iClass, iOffset, iLimit, lastDate) => {
     // strQuater
     let start = dateStart ?? '';
@@ -867,68 +830,6 @@ let GetSettleVice = (obj) => {
     // }
 
     return iBTotal + iSTotal + iPBATotal + iPBBTotal;
-}
-
-let GetSettleClass = async (strGroupID, iClass, strQuater, dateStart, dateEnd) => {
-    let strQuater2 = '';
-    let quaterList = strQuater.split('-');
-    if (quaterList[1] == '2') {
-        strQuater2 = `${quaterList[0]}-1`;
-    } else {
-        strQuater2 = `${parseInt(quaterList[0])-1}-2`;
-    }
-
-    let list = await db.sequelize.query(`
-        SELECT
-        t2.strNickname, t2.strGroupID, t2.iClass,
-        t2.*, t2.iSettleAcc AS iSettleAccUser, t2.iCash as iMyMoney,
-        IFNULL((SELECT iSettleAccTotal FROM SettleRecords WHERE strNickname = t2.strNickname AND strQuater='${strQuater2}'),0) as iSettleAccTotalBefore,
-        IFNULL((SELECT SUM(iCash) FROM Users WHERE strGroupID LIKE CONCAT(t2.strGroupID,'%')),0) as iTotalMoney,
-        IFNULL((SELECT iSettleAcc FROM SettleRecords WHERE strNickname = t2.strNickname AND strQuater='${strQuater}'),0) as iSettleAccQuater,
-        IFNULL((SELECT iSettle FROM SettleRecords WHERE strNickname = t2.strNickname AND strQuater='${strQuater}'),0) as iSettleComplete,
-        IFNULL((SELECT iSettleGive FROM SettleRecords WHERE strNickname =t2.strNickname AND strQuater='${strQuater}'),0) as iSettleGive,
-        IFNULL((SELECT iSettleBeforeAcc FROM SettleRecords WHERE strNickname = t2.strNickname AND strQuater='${strQuater}'),0) as iSettleBeforeAcc,
-        IFNULL((SELECT sum(iAmount) FROM GTs WHERE eType='ROLLING' AND strGroupID LIKE CONCAT(t2.strGroupID, '%') AND date(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iRollingTranslate,
-        IFNULL((SELECT sum(iAmount) FROM GTs WHERE eType='SETTLE' AND strGroupID LIKE CONCAT(t2.strGroupID, '%') AND date(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iSettleTranslate,
-        IFNULL((SELECT iSettleOrigin FROM SettleRecords WHERE strNickname = t2.strNickname AND strQuater='${strQuater}'),0) as iSettleOrigin,
-        IFNULL((SELECT iSettleAcc FROM SettleRecords WHERE strNickname = t2.strNickname AND strQuater='${strQuater}'),0) as iSettleAcc,
-        IFNULL((SELECT sum(iAgentRollingB) FROM RecordDailyOverviews WHERE strID = t2.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iBaccaratRollingMoney,
-        IFNULL((SELECT sum(iAgentRollingUO) FROM RecordDailyOverviews WHERE strID = t2.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iUnderOverRollingMoney,
-        IFNULL((SELECT sum(iAgentRollingS) FROM RecordDailyOverviews WHERE strID = t2.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iSlotRollingMoney,
-        IFNULL((SELECT sum(iAgentRollingPBA + iAgentRollingPBB) FROM RecordDailyOverviews WHERE strID = t2.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iPBRollingMoney,
-        
-        IFNULL((SELECT sum(iAgentRollingB + iAgentRollingUO + iAgentRollingS + iAgentRollingPBA + iAgentRollingPBB) FROM RecordDailyOverviews WHERE strID = t2.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iMyRollingMoney,
-        
-        IFNULL((SELECT -sum(iAgentRollingB + iAgentRollingUO + iAgentRollingS + iAgentRollingPBA + iAgentRollingPBB) FROM RecordDailyOverviews WHERE strID = t2.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iRollingMoney,
-        IFNULL((SELECT -sum(-(iAgentBetB - iAgentWinB) + iAgentRollingB) FROM RecordDailyOverviews WHERE strID = t2.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iBaccaratTotal,
-        IFNULL((SELECT -sum(-(iAgentBetUO - iAgentWinUO) + iAgentRollingUO) FROM RecordDailyOverviews WHERE strID = t2.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iUnderOverTotal,
-        IFNULL((SELECT -sum(-(iAgentBetS - iAgentWinS) + iAgentRollingS) FROM RecordDailyOverviews WHERE strID = t2.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iSlotTotal,
-        IFNULL((SELECT -sum(-(iAgentBetPB - iAgentWinPB) + iAgentRollingPBA) FROM RecordDailyOverviews WHERE strID = t2.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iPBATotal,
-        IFNULL((SELECT -sum(-(iAgentBetPB - iAgentWinPB) + iAgentRollingPBB) FROM RecordDailyOverviews WHERE strID = t2.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iPBBTotal,
-        
-        IFNULL((SELECT sum(iAgentBetB - iAgentWinB) FROM RecordDailyOverviews WHERE strID = t2.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iBaccaratWinLose,
-        IFNULL((SELECT sum(iAgentBetUO - iAgentWinUO) FROM RecordDailyOverviews WHERE strID = t2.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iUnderOverWinLose,
-        IFNULL((SELECT sum(iAgentBetS - iAgentWinS) FROM RecordDailyOverviews WHERE strID = t2.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iSlotWinLose,
-        IFNULL((SELECT sum(iAgentBetPB - iAgentWinPB) FROM RecordDailyOverviews WHERE strID = t2.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iPBWinLose,
-        IFNULL((SELECT sum(iAmount) FROM Inouts WHERE strGroupID LIKE CONCAT(t2.strGroupID,'%') AND eState = 'COMPLETE' AND eType = 'INPUT' AND date(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}' ),0) as iInput,
-        IFNULL((SELECT sum(iAmount) FROM Inouts WHERE strGroupID LIKE CONCAT(t2.strGroupID,'%') AND eState = 'COMPLETE' AND eType = 'OUTPUT' AND date(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iOutput,
-        IFNULL((SELECT sum(iAmount) FROM Inouts WHERE eState = 'COMPLETE' AND eType = 'INPUT' AND strID = t2.strNickname AND date(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}' ),0) as iInput,
-        IFNULL((SELECT sum(iAmount) FROM Inouts WHERE eState = 'COMPLETE' AND eType = 'OUTPUT' AND strID = t2.strNickname AND date(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iOutput
-        FROM Users t2
-        WHERE t2.iClass = ${iClass} AND t2.strGroupID LIKE CONCAT('${strGroupID}', '%')
-        ORDER BY t2.strGroupID ASC
-    `);
-    return list[0];
-}
-
-let GetChildrenList = (id, list) => {
-    let results = [];
-    for (let i in list) {
-        if (list[i].iParentID == id) {
-            results.push(list[i]);
-        }
-    }
-    return results;
 }
 
 /**
@@ -1147,17 +1048,6 @@ let GetAgent = async (strNickname, iClass) => {
             },
         }
     });
-    return list;
-};
-
-let GetViceAdmins = async (strGroupID) => {
-
-    let list = await db.Users.findAll({where:{iClass:5,
-            strGroupID:{
-                [Op.like]:strGroupID+'%'
-            },
-        }})
-
     return list;
 };
 

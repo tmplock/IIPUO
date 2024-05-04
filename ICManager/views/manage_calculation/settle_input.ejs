@@ -58,13 +58,13 @@
 		SetList(vadminList);
 	});
 
-	let SetList = (list, iClass) => {
+	let SetList = (list) => {
 		$('#list_agents').empty();
 
 		$(`#main_title`).empty();
 		$(`#main_title`).append(`
 					<h3>
-						<a class="btn_gray" style="font-weight:bold; font-size:18px; position:absolute; left:50px; top:25px;">입력</a>
+						<a class="btn_gray" style="font-weight:bold; font-size:18px; position:absolute; left:50px; top:25px;">죽장 데이터 입력</a>
 					</h3>
 				`);
 
@@ -86,7 +86,10 @@
 		let color = '#ffffff';
 
 		var subtag = ``;
-		subtag = `<tr><td>${aObject.strNickname4 ?? ''}</td>`;
+		// 본사
+		subtag += `<tr><td>${aObject.strNickname4 ?? ''}</td>`;
+		// 대본
+		subtag += `<tr><td>${aObject.strNickname4 ?? ''}</td>`;
 		subtag += `
 				<td style="background-color:${color};"  class="parent_row_31">
 					<a href="#" onclick="OnClickNickname('${aObject.strNickname}')" style="color:blue;">${aObject.strNickname}</a>

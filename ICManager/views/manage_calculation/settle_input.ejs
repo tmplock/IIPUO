@@ -15,6 +15,7 @@
 					<caption><%=__('SearchResult')%></caption>
 					<thead>
 						<tr>
+							<th scope="col">본사</th>
 							<th scope="col">대본사</th>
 							<th scope="col">부본사</th>
 							<th scope="col" style="background-color:#78bfdb;color:white;">바카라 베팅</th>
@@ -85,11 +86,11 @@
 	let AddPartner = (iRootClass, aObject) => {
 		let color = '#ffffff';
 
-		var subtag = ``;
+		var subtag = `<tr>`;
 		// 본사
-		subtag += `<tr><td>${aObject.strNickname4 ?? ''}</td>`;
+		subtag += `<td>${aObject.strNickname3 ?? ''}</td>`;
 		// 대본
-		subtag += `<tr><td>${aObject.strNickname4 ?? ''}</td>`;
+		subtag += `<td>${aObject.strNickname4 ?? ''}</td>`;
 		subtag += `
 				<td style="background-color:${color};"  class="parent_row_31">
 					<a href="#" onclick="OnClickNickname('${aObject.strNickname}')" style="color:blue;">${aObject.strNickname}</a>

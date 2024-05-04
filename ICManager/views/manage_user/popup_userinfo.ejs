@@ -291,10 +291,10 @@
 	let CheckNickname = () => {
 		let strNickname = $('#member_nick').val();
 
-		if (!isValidationOnlyKrOrNumber(strNickname)) {
-			alert('닉네임은 한글, 숫자만 가능합니다');
-			return;
-		}
+		// if (!(isValidationOnlyKrOrNumber(strNickname) || isValidationOnlyEngOrNumber(strNickname))) {
+		// 	alert('닉네임은 한글, 숫자만 가능합니다');
+		// 	return;
+		// }
 
 		$.ajax({
 			type : "POST",

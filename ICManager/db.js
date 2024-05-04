@@ -45,6 +45,7 @@ db.Inouts = require('./models/inout')(sequelize, Sequelize);
 db.GTs = require('./models/gt')(sequelize, Sequelize);
 db.Letters = require('./models/letter')(sequelize, Sequelize);
 db.SettleRecords = require('./models/settle_record')(sequelize, Sequelize);
+db.SettleSubRecords = require('./models/settle_sub_record')(sequelize, Sequelize);
 db.CreditRecords = require('./models/credit_record')(sequelize, Sequelize);
 db.ChargeRequest = require('./models/charge_request')(sequelize, Sequelize);
 db.ContactLetter = require('./models/contact_letter')(sequelize, Sequelize);

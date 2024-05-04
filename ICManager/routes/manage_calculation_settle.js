@@ -14,7 +14,7 @@ const IInout = require('../implements/inout');
 const {Op}= require('sequelize');
 
 const IAgent = require('../implements/agent3');
-const IAgentSettle = require('../implements/agent_settle3');
+const IAgentSettle = require('../implements/agent_settle4');
 const {isLoggedIn, isNotLoggedIn} = require('./middleware');
 const {GetQuaterEndDate} = require("../implements/agent_settle3");
 

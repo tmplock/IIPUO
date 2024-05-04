@@ -6,7 +6,31 @@
         </div>
 
         <div class="list">
+<!--			<div style="background-color:#ffffff;text-align:right;padding-right:5px;padding-top:0px;padding-bottom:0px;" colspan="19">-->
+<!--				<select id="quater_month" style="width:100px;">-->
+<!--					<option value="0">1</option>-->
+<!--					<option value="1">2</option>-->
+<!--					<option value="2">3</option>-->
+<!--					<option value="3">4</option>-->
+<!--					<option value="4">5</option>-->
+<!--					<option value="5">6</option>-->
+<!--					<option value="6">7</option>-->
+<!--					<option value="7">8</option>-->
+<!--					<option value="8">9</option>-->
+<!--					<option value="9">10</option>-->
+<!--					<option value="10">11</option>-->
+<!--					<option value="11">12</option>-->
+<!--				</select>월-->
+<!--				<button id="button_quater1" class="menu1" data-menu="2" style="border:1px solid rgb(95, 93, 93);width:170px;height:25px;text-align:center;color:white" onclick="Request1stHalf();"><%=__('Half1')%></button>-->
+<!--				<button id="button_quater2" class="menu1" data-menu="3" style="border:1px solid rgb(95, 93, 93);width:170px;height:25px;text-align:center;color:white" onclick="Request2ndHalf();"><%=__('Half2')%></button>-->
+<!--				<div id="testSettle" style="background-color:#ffffff;text-align:right;padding-right:5px;padding-top:0px;padding-bottom:0px;" colspan="19">-->
+<!--				</div>-->
+<!--			</div>-->
 			<div id = "list_tit" class="list_tit">
+				<h3>
+					<button id='button_apply' style="margin-left:8%;width:200px;height:40px;text-align:center;background-color: rgb(82, 161, 206);color:white" onclick="OnClickApplySettleInput();"><strong>입력 적용</strong></button>
+					<button id='button_rollback' style="margin-left:8%;width:200px;height:40px;text-align:center;background-color: rgb(82, 161, 206);color:white" onclick="OnClickApplySettleRollback();"><strong>이전 데이터로 초기화</strong></button>
+				</h3>
 			</div>
 
 			<div class="search_wrap" id="div_realtimebet">
@@ -52,12 +76,46 @@
 	let bEnableSettle = false;
 	let bSending = false;
 
+	let selectQuaterMonth = '';
+	let selectQuater = 0;
+
+
+	// $(document).on('click', '#button_quater1', (e) => {
+	// 	$('.menu5').attr('class', 'menu1');
+	// 	$(e.currentTarget).attr('class', 'menu5');
+	// });
+	//
+	// $(document).on('click', '#button_quater2', (e) => {
+	// 	$('.menu5').attr('class', 'menu1');
+	// 	$(e.currentTarget).attr('class', 'menu5');
+	// });
+	//
+	// $('#quater_month').on('change', () => {
+	// 	$('#button_quater1').attr('class', 'menu1');
+	// 	$('#button_quater2').attr('class', 'menu1');
+	// });
+
 	$(document).ready(() => {
-		$('#button_settle_cal').hide();
-		if ( user.iClass > 3 )
-			$('#button_settle_cal').hide();
+		// $('#quater_month').val(date.getMonth());
+		// selectQuaterMonth = date.getMonth();
 		SetList(vadminList);
 	});
+
+	let Request1stHalf = () => {
+		let iMonth = parseInt($('#quater_month').val());
+		dateQuaterStart = Get1QuaterStartDate(iMonth);
+		dateQuaterEnd = Get1QuaterEndDate(iMonth);
+		strQuater = `${parseInt(iMonth) + 1}-1`;
+		selectQuater = 1;
+	}
+
+	let Request2ndHalf = () => {
+		const iMonth = parseInt($('#quater_month').val());
+		dateQuaterStart = Get2QuaterStartDate(iMonth);
+		dateQuaterEnd = Get2QuaterEndDate(iMonth);
+		strQuater = `${parseInt(iMonth)+1}-2`;
+		selectQuater = 2;
+	}
 
 	let SetList = (list) => {
 		$('#list_agents').empty();
@@ -68,13 +126,6 @@
 						<a class="btn_gray" style="font-weight:bold; font-size:18px; position:absolute; left:50px; top:25px;">죽장 데이터 입력</a>
 					</h3>
 				`);
-
-		$(`#list_tit`).empty();
-		$(`#list_tit`).append(`
-							<h3>
-								<button id='button_calulationsettle' style="margin-left:8%;width:200px;height:40px;text-align:center;background-color: rgb(82, 161, 206);color:white" onclick="OnClickApplySettleInput();"><strong>입력 적용</strong></button>
-							</h3>
-						`);
 
 		for (let i in list) {
 			let obj = list[i];
@@ -175,7 +226,7 @@
 		console.log(data);
 
 		$.ajax({
-			url:'/manage_calculation_settle/request_settle_input',
+			url:'/manage_settle_input/input_apply',
 			type:"POST",
 			data:{
 				data:data,
@@ -196,7 +247,34 @@
 				}
 			}
 		});
+	}
 
-
+	let OnClickApplySettleRollback = () => {
+		if (bSending) {
+			alert('처리중');
+			return;
+		}
+		bSending = true;
+		$.ajax({
+			url:'/manage_settle_input/rollback',
+			type:"POST",
+			data:{
+				strGroupID:user.strGroupID,
+			},
+			dataType: "json",
+			success: function (obj) {
+				bSending = false;
+				console.log(obj);
+				if ( obj.result == 'OK')
+				{
+					alert('이전 데이터로 초기화가 완료 되었습니다.');
+					location.reload();
+				}
+				else
+				{
+					alert(obj.msg);
+				}
+			}
+		});
 	}
 </script>

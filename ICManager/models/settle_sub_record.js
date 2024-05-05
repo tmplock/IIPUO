@@ -21,6 +21,10 @@ module.exports = (sequelize, DataTypes) => {
         strQuater: {
             type:DataTypes.STRING,
         },
+        // 부본 아이디
+        strID: {
+            type:DataTypes.STRING,
+        },
         // 부본 클래스
         iClass: {
             type:DataTypes.INTEGER,

@@ -69,7 +69,7 @@ router.post('/request_apply_sub_settle', isLoggedIn, async (req, res) => {
 
         const targetUserCount = await IAgentSettle.GetSettleTargetUserCount(req.body.strQuater, 5, req.body.strGroupID);
 
-        if ( exist.length > 0 && targetUserCount > exist.length )
+        if ( targetUserCount == exist.length )
         {
             res.send({result:'EXIST'});
             return;
@@ -95,6 +95,7 @@ router.post('/request_apply_sub_settle', isLoggedIn, async (req, res) => {
                 await db.SettleSubRecords.create({
                     rId:settle.id,
                     strQuater:settle.strQuater,
+                    strID:obj.strID,
                     iClass:settle.iClass,
                     strGroupID:settle.strGroupID,
                     fSettleBaccarat:settle.fSettleBaccarat,
@@ -115,6 +116,7 @@ router.post('/request_apply_sub_settle', isLoggedIn, async (req, res) => {
                 await db.SettleSubRecords.update({
                     rId:settle.id,
                     strQuater:settle.strQuater,
+                    strID:obj.strID,
                     iClass:settle.iClass,
                     strGroupID:settle.strGroupID,
                     fSettleBaccarat:settle.fSettleBaccarat,
@@ -169,7 +171,7 @@ router.post('/request_settle_cal', isLoggedIn, async(req, res) => {
     let iPage = parseInt(req.body.iPage);
     let iOffset = (iPage-1) * iLimit;
 
-    let exist = await db.SettleRecords.findAll({where:{
+    let exist = await db.SettleSubRecords.findAll({where:{
             strQuater:req.body.strQuater,
             iClass:req.body.iClass,
             strGroupID:{[Op.like]:req.body.strGroupID+'%'},
@@ -182,7 +184,7 @@ router.post('/request_settle_cal', isLoggedIn, async(req, res) => {
 
     const targetUserCount = await IAgentSettle.GetSettleTargetUserCount(req.body.strQuater, req.body.iClass, req.body.strGroupID);
 
-    if (exist.length > 0 && targetUserCount > exist.length )
+    if (targetUserCount == exist.length)
     {
         res.send({result:'EXIST', list:list, iRootClass: req.user.iClass, exist: exist, msg: '정상조회', totalCount: targetUserCount});
     }
@@ -277,15 +279,19 @@ let GetSettlePartnerList = async (strGroupID, iClass, strQuater, dateStart, date
                 IFNULL((SELECT sum(iAgentBetUO - iAgentWinUO) FROM RecordDailyOverviews WHERE strID = t5.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iUnderOverWinLose,
                 IFNULL((SELECT sum(iAgentBetS - iAgentWinS) FROM RecordDailyOverviews WHERE strID = t5.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iSlotWinLose,
                 sr.iSettle AS iSettleVice
+                
             FROM Users t5
                 LEFT JOIN Users t4 ON t4.id = t5.iParentID
                 LEFT JOIN Users t3 ON t3.id = t4.iParentID
                 LEFT JOIN (
                     SELECT * FROM SettleRecords WHERE strQuater='${strQuater}' 
-                ) sr ON sr.strID = t5.strID  
+                ) sr ON sr.strID = t5.strID
+                LEFT JOIN (
+                    SELECT * FROM SettleSubRecords WHERE strQuater='${strQuater}'
+                ) sub ON sub.strID = t5.strID
             WHERE t5.iClass = ${iClass} AND t5.strGroupID LIKE CONCAT('${strGroupID}', '%')
             ${lastDateQuery}
-            ORDER BY t5.strGroupID ASC
+            ORDER BY sub.createdAt ASC, t5.strGroupID ASC
             LIMIT ${limit}
             OFFSET ${offset}
         `);
@@ -608,6 +614,81 @@ router.post('/request_applysettle_all', isLoggedIn, async (req, res) => {
     }
     res.send({result:'EXIST'});
 });
+
+router.post('/request_settle_all', isLoggedIn, async(req, res) => {
+
+    console.log(req.body);
+
+    // 대본, 부본은 별도 처리(정산완료건만 조회 가능)
+    // if (req.user.iClass == 4 || req.user.iClass == 5) {
+    //     SettleViceAll(req, res);
+    //     return;
+    // }
+
+    let iLimit = parseInt(req.body.iLimit);
+    let iPage = parseInt(req.body.iPage);
+    let iOffset = (iPage-1) * iLimit;
+
+    let exist = await db.SettleRecords.findAll({where:{
+            strQuater:req.body.strQuater,
+            iClass:req.body.iClass,
+            strGroupID:{[Op.like]:req.body.strGroupID+'%'},
+        }, order: [['createdAt', 'DESC']]
+    });
+
+    let lastDate = IAgentSettle.GetQuaterEndDate(req.body.strQuater);
+
+    let list = await GetSettleAll2(req.body.strGroupID, req.body.strQuater, req.body.dateStart, req.body.dateEnd, req.body.iClass, iOffset, iLimit, lastDate);
+
+    const targetUserCount = await IAgentSettle.GetSettleTargetUserCount(req.body.strQuater, req.body.iClass, req.body.strGroupID);
+
+    if ( exist.length > 0 && targetUserCount == exist.length )
+    {
+        res.send({result:'EXIST', list:list, iRootClass: req.user.iClass, exist: exist, msg: '정상조회', totalCount: targetUserCount});
+    }
+    else
+    {
+        res.send({result:'OK', list:list, iRootClass: req.user.iClass, exist: exist, msg: '정상조회', totalCount: targetUserCount});
+    }
+});
+
+
+let GetSettleAll2 = async (strGroupID, strQuater, dateStart, dateEnd, iClass, iOffset, iLimit, lastDate) => {
+    // strQuater
+    let start = dateStart ?? '';
+    let end = dateEnd ?? '';
+
+    // 값이 없으면 현재 시간을 기준으로 설정
+    if (start == '' || end == '') {
+        let date = new Date();
+        let iMonth = date.getMonth();
+
+        if (date.getDate() < 16) {
+            strQuater = `${iMonth + 1}-1`;
+            start = ITime.get1QuaterStartDate(iMonth);
+            end = ITime.get1QuaterEndDate(iMonth);
+        } else {
+            strQuater = `${iMonth + 1}-2`;
+            start = ITime.get2QuaterStartDate(iMonth);
+            end = ITime.get2QuaterEndDate(iMonth);
+        }
+    }
+
+    // 파트너 목록
+    let partnerList = await IAgentSettle.GetSettleClass(strGroupID, iClass, strQuater, start, end, iOffset, iLimit, lastDate);
+
+    let list = [];
+    for (let i in partnerList) {
+        let obj = partnerList[i];
+        if (obj.iClass == 4) {
+            obj.iSettleVice = GetSettleVice(obj);
+        } else {
+            obj.iSettleVice = 0;
+        }
+        list.push(obj);
+    }
+    return list;
+}
 
 
 

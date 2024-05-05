@@ -168,7 +168,7 @@
 			obj.parentID = obj.strAdminID;
 			obj.parentNickname = obj.strAdminNickname;
 			// let tag = AddPartner(5, obj, !ExistSettle(obj.strID));
-			let tag = AddPartner(5, obj, true);
+			let tag = AddPartner(5, obj, !ExistSettle(obj.strID));
 			$('#list_agents').append(tag);
 			dataList.push(obj);
 		}
@@ -588,8 +588,7 @@
 				if ( obj.result == 'OK')
 				{
 					alert('죽장 계산 적용이 완료 되었습니다.');
-					opener.location.reload();
-					window.close();
+					// opener.location.reload();
 				}
 				else if ( obj.result == 'EXIST' )
 				{

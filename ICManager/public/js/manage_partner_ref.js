@@ -787,11 +787,11 @@ function AddPartner(iRootClass, aObject, bDisableRolling, iPermission)
 
 	subtag += `
 		<td style="background-color:${color};"  class="parent_row_31">
-			<input type="text" style="width:50%;" name="bakara_over_31" id="fSettleBaccarat${aObject.strNickname}" required="no" message="바카라 죽장" value=${aObject.fSettleBaccarat ?? 0} ${tagoption} disabled>%
+			<input type="text" style="width:50%;" name="bakara_over_31" id="fSettleBaccarat${aObject.strNickname}" required="no" message="바카라 죽장" value=${aObject.fSettleBaccarat ?? 0} ${tagoption}>%
 		</td>
 	
 		<td style="background-color:${color};"  class="parent_row_31">
-			<input type="text" style="width:50%;" name="bakara_over_31" id="fSettleSlot${aObject.strNickname}" required="no" message="슬롯 죽장" value=${aObject.fSettleSlot ?? 0} ${tagoption} disabled>%
+			<input type="text" style="width:50%;" name="bakara_over_31" id="fSettleSlot${aObject.strNickname}" required="no" message="슬롯 죽장" value=${aObject.fSettleSlot ?? 0} ${tagoption}>%
 		</td>
 	`;
 
@@ -1463,6 +1463,9 @@ function DoApplyRolling(user)
 	let fPBDoubleParent = user.fPBDoubleR;
 	let fPBTripleParent = user.fPBTripleR;
 
+	let fSettleBaccaratParent = user.fSettleBaccarat;
+	let fSettleSlotParent = user.fSettleSlot;
+
 	for ( var i = 0; i < agents.length; ++i)
 	{
 		const element = agents[i];
@@ -1474,45 +1477,10 @@ function DoApplyRolling(user)
 		var fPBSingle = 0.0;
 		var fPBDouble = 0.0;
 		var fPBTriple = 0.0;
+		var fSettleBaccarat = parseFloat($(`#fSettleBaccarat${element.id}`).val());
+		var fSettleSlot = parseFloat($(`#fSettleSlot${element.id}`).val());
 
 		var iClass = parseInt($(`#iClass${element.id}`).val());
-		//
-		// if (fSlotParent < fSlot) {
-		// 	alert(`[${element.id}] 슬롯 롤링값은 상위보다 높을 수 없습니다`);
-		// 	return;
-		// }
-		// if (fBaccaratParent < fBaccarat) {
-		// 	alert(`[${element.id}] 바카라 롤링값은 상위보다 높을 수 없습니다`);
-		// 	return;
-		// }
-		// if (fUnderOverParent < fUnderOver) {
-		// 	alert(`[${element.id}] 언더오버 롤링값은 상위보다 높을 수 없습니다`);
-		// 	return;
-		// }
-		// if (fPBParent < fPB) {
-		// 	alert(`[${element.id}] 파워A 롤링값은 상위보다 높을 수 없습니다`);
-		// 	return;
-		// }
-		// if (fPBSingleParent < fPBSingle) {
-		// 	alert(`[${element.id}] 파워B 단폴 롤링값은 상위보다 높을 수 없습니다`);
-		// 	return;
-		// }
-		// if (fPBDoubleParent < fPBDouble) {
-		// 	alert(`[${element.id}] 파워B 투폴 롤링값은 상위보다 높을 수 없습니다`);
-		// 	return;
-		// }
-		// if (fPBTripleParent < fPBTriple) {
-		// 	alert(`[${element.id}] 파워B 쓰리폴 롤링값은 상위보다 높을 수 없습니다`);
-		// 	return;
-		// }
-		//
-		// fSlotParent = fSlot;
-		// fBaccaratParent = fBaccarat;
-		// fUnderOverParent = fUnderOver;
-		// fPBParent = fPB;
-		// fPBSingleParent = fPBSingle;
-		// fPBDoubleParent = fPBDouble;
-		// fPBTripleParent = fPBTriple;
 
 		if ( element != null )
 		{
@@ -1525,6 +1493,8 @@ function DoApplyRolling(user)
 			list.push(fPBSingle);
 			list.push(fPBDouble);
 			list.push(fPBTriple);
+			list.push(fSettleBaccarat);
+			list.push(fSettleSlot);
 		}
 	}
 

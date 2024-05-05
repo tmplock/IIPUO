@@ -265,6 +265,8 @@ let Submit = () => {
     let fSlotR = 0;
     let fBaccaratR = 0;
     let fUnderOverR = 0;
+    let fSettleBaccarat = 0;
+    let fSettleSlot = 0;
 
     let strPermissionInput = $('#using_input_permission').attr('checked');
     if ( strPermissionInput != undefined ) {
@@ -279,6 +281,8 @@ let Submit = () => {
         fSlotR = $('#fRollingSlot').val();
         fBaccaratR = $('#fRollingBaccarat').val();
         fUnderOverR = $('#fRollingUnderOver').val();
+        fSettleBaccarat = $('#fSettleBaccarat').val();
+        fSettleSlot = $('#fSettleSlot').val();
 
         let strUsingInput = $('#using_input').attr('checked');
         let strUsingOutput = $('#using_output').attr('checked');
@@ -304,6 +308,14 @@ let Submit = () => {
             alert(strAlertErrorRollingValue);
             return;
         }
+
+        if (iParentClass <= 5) {
+            if(fSettleBaccarat == '' || fSettleBaccarat == undefined || fSettleSlot == null || fSettleSlot == '')
+            {
+                alert(strAlertErrorSettleValue);
+                return;
+            }
+        }
     }
     if( strPassword == '' || strPassword == undefined || strPassword == null || strPasswordConfirm == '' || strPasswordConfirm == undefined || strPasswordConfirm == null ){
         alert(strAlertDifferentPasswordAndConfirm);
@@ -324,8 +336,8 @@ let Submit = () => {
             url: "/manage_partner_popup/request_register",
             context: document.body,
             data:{
-                strParentNickname:strParentNickname, 
-                strParentGroupID:strParentGroupID, 
+                strParentNickname:strParentNickname,
+                strParentGroupID:strParentGroupID,
                 iParentClass:iParentClass,
                 iParentPermission:iParentPermission,
                 iParentID:iParentID,
@@ -340,6 +352,8 @@ let Submit = () => {
                 fSlotR:fSlotR,
                 fBaccaratR:fBaccaratR,
                 fUnderOverR:fUnderOverR,
+                fSettleBaccarat:fSettleBaccarat,
+                fSettleSlot:fSettleSlot,
                 strOptionCode:strOptionCode,
                 iPermission:strPermissionInput,
             },

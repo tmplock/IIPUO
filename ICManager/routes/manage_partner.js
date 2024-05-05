@@ -549,7 +549,13 @@ router.post('/request_overview_user', isLoggedIn, async(req, res) => {
 
 router.post('/request_modify_rollingodds_group', isLoggedIn, async(req, res) => {
 
+    if (req.user.iPermission == 100) {
+        res.send({result: 'FAIL', msg:'권한이 없습니다'});
+        return;
+    }
+
     var json = JSON.parse(req.body.data);
+    //FIXME: 죽장도 포함
     var ret = await IRolling.ModifyRollingGroup(json);
     console.log(ret);
     if ( ret.result == "OK" )
@@ -559,6 +565,13 @@ router.post('/request_modify_rollingodds_group', isLoggedIn, async(req, res) => 
             let user = await db.Users.findOne({where:{strNickname:ret.data[i].strNickname}});
             if ( user != null )
             {
+
+                let fSettleBaccarat = ret.data[i].fSettleBaccarat ?? 0;
+                let fSettleSlot = ret.data[i].fSettleSlot ?? 0;
+                let fSettlePBA = ret.data[i].fSettlePBA ?? 0;
+                let fSettlePBB = ret.data[i].fSettlePBB ?? 0;
+
+
                 // 값이 다르면 정보로그 남기기
                 let logMsg = logRollingMessage(user, ret.data[i]);
                 if (logMsg != '') {
@@ -579,7 +592,9 @@ router.post('/request_modify_rollingodds_group', isLoggedIn, async(req, res) => 
                         fPBR:ret.data[i].fPB,
                         fPBSingleR:ret.data[i].fPBSingle,
                         fPBDoubleR:ret.data[i].fPBDouble,
-                        fPBTripleR:ret.data[i].fPBTriple
+                        fPBTripleR:ret.data[i].fPBTriple,
+                        fSettleBaccarat:ret.data[i].fSettleBaccarat,
+                        fSettleSlot:ret.data[i].fSettleSlot,
                     }, {where:{strNickname:ret.data[i].strNickname}});
             }
         }
@@ -612,11 +627,28 @@ const logRollingMessage = (source, data) => {
         else
             msg = `${msg} | 슬롯롤링 변경(${source.fSlotR}=>${data.fSlot})`;
     }
+    if (source.fSettleBaccarat != data.fSettleBaccarat) {
+        if (msg == '')
+            msg = `바카라죽장 변경(${source.fSettleBaccarat}=>${data.fSettleBaccarat})`;
+        else
+            msg = `${msg} | 바카라죽장 변경(${source.fSettleBaccarat}=>${data.fSettleBaccarat})`;
+    }
+    if (source.fSettleSlot != data.fSettleSlot) {
+        if (msg == '')
+            msg = `슬롯죽장 변경(${source.fSettleSlot}=>${data.fSettleSlot})`;
+        else
+            msg = `${msg} | 슬롯죽장 변경(${source.fSettleSlot}=>${data.fSettleSlot})`;
+    }
 
     return msg;
 }
 
 router.post('/request_modify_settle_group', isLoggedIn, async(req, res) => {
+
+    if (req.user.iPermission == 100) {
+        res.send({result: 'FAIL', msg:'권한이 없습니다'});
+        return;
+    }
 
     var json = JSON.parse(req.body.data);
 
@@ -626,9 +658,56 @@ router.post('/request_modify_settle_group', isLoggedIn, async(req, res) => {
     {
         for ( let i in ret.data )
         {
+            let fSettleBaccarat = ret.data[i].fSettleBaccarat ?? 0;
+            let fSettleSlot = ret.data[i].fSettleSlot ?? 0;
+            let fSettlePBA = ret.data[i].fSettlePBA ?? 0;
+            let fSettlePBB = ret.data[i].fSettlePBB ?? 0;
+
             let user = await db.Users.findOne({where:{strNickname:ret.data[i].strNickname}});
             if ( user != null )
             {
+                // 죽장은 상부를 넘을 수 없음
+                let parent = await db.Users.findOne({where:{id:user.iParentID}});
+
+                if ( null != parent && parent.iClass > 1 )
+                {
+                    if (
+                        parent.fSettleBaccarat < fSettleBaccarat ||
+                        parent.fSettleSlot < fSettleSlot
+                    )
+                    {
+                        console.log(`########## ModifyAgentInfo : Error Parent`);
+                        res.send({result:'ERROR', msg:'상위 보다 값이 커서 변경 할 수 없습니다.'});
+                        return;
+                    }
+                }
+
+                //  children
+                if ( user.iClass < 7)
+                {
+                    let children = await db.Users.findAll({
+                        where: {
+                            iParentID:user.id,
+                            iPermission: {
+                                [Op.notIn]: [100]
+                            },
+                        }
+                    });
+                    for ( let i in children )
+                    {
+                        let child = children[i];
+                        if (
+                            child.fSettleBaccarat > fSettleBaccarat ||
+                            child.fSettleSlot > fSettleSlot
+                        )
+                        {
+                            console.log(`########## ModifyAgentInfo : Error Children`);
+                            res.send({result:'ERROR', msg:'하위보다 값이 작아 변경 할 수 없습니다.'});
+                            return;
+                        }
+                    }
+                }
+
                 // 값이 다르면 정보로그 남기기
                 let logMsg = logSettleMessage(user, ret.data[i]);
                 if (logMsg != '') {
@@ -643,10 +722,10 @@ router.post('/request_modify_settle_group', isLoggedIn, async(req, res) => {
 
                 await db.Users.update(
                     {
-                        fSettleBaccarat:ret.data[i].fSettleBaccarat,
-                        fSettleSlot:ret.data[i].fSettleSlot,
-                        fSettlePBA:ret.data[i].fSettlePBA,
-                        fSettlePBB:ret.data[i].fSettlePBB
+                        fSettleBaccarat:fSettleBaccarat,
+                        fSettleSlot:fSettleSlot,
+                        fSettlePBA:fSettlePBA,
+                        fSettlePBB:fSettlePBB
                     }, {where:{strNickname:ret.data[i].strNickname}});
             }
         }
@@ -654,7 +733,7 @@ router.post('/request_modify_settle_group', isLoggedIn, async(req, res) => {
     }
     else
     {
-        res.send({result:'Error', data:ret.name})
+        res.send({result:'Error', msg:ret.name})
     }
 });
 

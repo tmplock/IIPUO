@@ -646,6 +646,9 @@ router.post('/request_register', isLoggedIn, async(req, res) => {
         let strGroupID = await CalculateGroupID(req.body.strParentGroupID, req.body.iParentClass);
         console.log(`parent : ${req.body.strParentGroupID}, child : ${strGroupID}`);
 
+        let fSettleBaccarat = req.body.fSettleBaccarat ?? 0;
+        let fSettleSlot = req.body.fSettleSlot ?? 0;
+
         const parent = await db.Users.findOne({where:{id:req.body.iParentID}});
         if ( parent == null ) {
             res.send({result:'FAIL', error:'Rolling', string:'에이전트 생성을 실패했습니다.'});
@@ -664,10 +667,8 @@ router.post('/request_register', isLoggedIn, async(req, res) => {
                 res.send({result:'Error', error:'Rolling', string:'롤링비(%)는 상위 에이전트 보다 클 수 없습니다.'});
                 return;
             }
-            else if (parent.fSettleBaccarat < parseFloat(req.body.fSettleBaccarat) ||
-                parent.fSettleSlot < parseFloat(req.body.fSettleSlot) ||
-                parent.fSettlePBA < parseFloat(req.body.fSettlePBA) ||
-                parent.fSettlePBB < parseFloat(req.body.fSettlePBB) )
+            else if (parent.fSettleBaccarat < parseFloat(fSettleBaccarat) ||
+                parent.fSettleSlot < parseFloat(fSettleSlot))
             {
                 res.send({result:'Error', error:'Settle', string:'죽장(%)은 상위 에이전트 보다 클 수 없습니다.'});
                 return;
@@ -707,10 +708,10 @@ router.post('/request_register', isLoggedIn, async(req, res) => {
             fPBSingleR:req.body.fPBSingleR,
             fPBDoubleR:req.body.fPBDoubleR,
             fPBTripleR:req.body.fPBTripleR,
-            fSettleSlot:req.body.fSettleBaccarat,
-            fSettleBaccarat:req.body.fSettleSlot,
-            fSettlePBA:req.body.fSettlePBA,
-            fSettlePBB:req.body.fSettlePBB,
+            fSettleSlot:fSettleSlot,
+            fSettleBaccarat:fSettleBaccarat,
+            fSettlePBA:0,
+            fSettlePBB:0,
             eState:'BLOCK',
             //strOptionCode:'00000000',
             strOptionCode:req.body.strOptionCode,
@@ -1172,7 +1173,7 @@ router.post('/request_agentinfo_modify',isLoggedIn, async (req, res) => {
         if ( user.iParentID != null )
         {
             let parent = await db.Users.findOne({where:{id:user.iParentID}});
-            if ( null != parent )
+            if ( null != parent && parent.iClass > 1 )
             {
                 console.log(`####################################################### ${parent.strID}, ${parent.iPBLimit}, ${req.body.iPBLimit}`);
                 if ( 
@@ -1180,6 +1181,17 @@ router.post('/request_agentinfo_modify',isLoggedIn, async (req, res) => {
                     parent.fBaccaratR < req.body.fBaccaratR ||
                     parent.fUnderOverR < req.body.fUnderOverR
                    )
+                {
+                    console.log(`########## ModifyAgentInfo : Error Parent`);
+                    bUpdate = false;
+                    strErrorCode = 'GreaterThanParent';
+                    res.send({result:'ERROR', code:strErrorCode});
+                    return;
+                }
+                if (
+                    parent.fSettleBaccarat < req.body.fSettleBaccarat ||
+                    parent.fSettleSlot < req.body.fSettleSlot
+                )
                 {
                     console.log(`########## ModifyAgentInfo : Error Parent`);
                     bUpdate = false;
@@ -1215,7 +1227,19 @@ router.post('/request_agentinfo_modify',isLoggedIn, async (req, res) => {
                     strErrorCode = 'LessThanChild';
                     res.send({result:'ERROR', code:strErrorCode});
                     return;
-                }               
+                }
+
+                if (
+                    child.fSettleBaccarat > req.body.fSettleBaccarat ||
+                    child.fSettleSlot > req.body.fSettleSlot
+                )
+                {
+                    console.log(`########## ModifyAgentInfo : Error Children`);
+                    bUpdate = false;
+                    strErrorCode = 'LessThanChild';
+                    res.send({result:'ERROR', code:strErrorCode});
+                    return;
+                }
             }
         }
 
@@ -1229,6 +1253,8 @@ router.post('/request_agentinfo_modify',isLoggedIn, async (req, res) => {
                 fSlotR:req.body.fSlotR,
                 fBaccaratR:req.body.fBaccaratR,
                 fUnderOverR:req.body.fUnderOverR,
+                fSettleBaccarat:req.body.fSettleBaccarat ?? 0,
+                fSettleSlot:req.body.fSettleSlot ?? 0,
                 iPermission:req.body.iPermission,
             };
 
@@ -1262,7 +1288,8 @@ router.post('/request_agentinfo_modify',isLoggedIn, async (req, res) => {
                 });
             }
 
-            await user.update(data);
+            await db.Users.update(data, {where: {id:user.id}});
+            // await user.update(data);
 
             //  현재 정책상 본사일 경우만 롤링을 수정할 수 있다. 아래의 코드는 하위 에이전트 전체를 같은 값으로 세팅 하는 것이다.
             if ( req.user.iClass == 3 && user.iClass != 8 )
@@ -1396,6 +1423,18 @@ const logMessage = (source, data) => {
             msg = `슬롯롤링 변경(${source.fSlotR}=>${data.fSlotR})`;
         else
             msg = `${msg} | 슬롯롤링 변경(${source.fSlotR}=>${data.fSlotR})`;
+    }
+    if (source.fSettleBaccarat != data.fSettleBaccarat) {
+        if (msg == '')
+            msg = `바카라 죽장 변경(${source.fSettleBaccarat}=>${data.fSettleBaccarat})`;
+        else
+            msg = `${msg} | 바카라 죽장 변경(${source.fSettleBaccarat}=>${data.fSettleBaccarat})`;
+    }
+    if (source.fSettleSlot != data.fSettleSlot) {
+        if (msg == '')
+            msg = `슬롯 죽장 변경(${source.fSettleSlot}=>${data.fSettleSlot})`;
+        else
+            msg = `${msg} | 슬롯 죽장 변경(${source.fSettleSlot}=>${data.fSettleSlot})`;
     }
 
     return msg;

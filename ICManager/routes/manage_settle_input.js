@@ -432,6 +432,7 @@ router.post('/testinit', async (req, res) => {
     // await db.ShareCreditRecords.destroy({where:{}, truncate:true});
     // await db.ChargeRequest.destroy({where: {}, truncate:true});
     await db.SettleRecords.destroy({where: {}, truncate: true});
+    await db.SettleSubRecords.destroy({where: {}, truncate:true});
 
     res.send({result:'OK'});
 });

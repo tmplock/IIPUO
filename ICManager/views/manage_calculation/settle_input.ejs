@@ -44,10 +44,11 @@
 							<th scope="col">부본사</th>
 							<th scope="col" style="background-color:#78bfdb;color:white;">바카라 베팅</th>
 							<th scope="col" style="background-color:#78bfdb;color:white;">바카라 승리</th>
-							<th scope="col" style="background-color:#78bfdb;color:white;">언오버 베팅</th>
-							<th scope="col" style="background-color:#78bfdb;color:white;">언오버 승리</th>
-							<th scope="col" style="background-color:#78bfdb;color:white;">슬롯 베팅</th>
-							<th scope="col" style="background-color:#78bfdb;color:white;">슬롯 승리</th>
+							<th scope="col" style="background-color:#b2b070;color:white;">언오버 베팅</th>
+							<th scope="col" style="background-color:#b2b070;color:white;">언오버 승리</th>
+							<th scope="col" style="background-color:#7782be;color:white;">슬롯 베팅</th>
+							<th scope="col" style="background-color:#7782be;color:white;">슬롯 승리</th>
+							<th scope="col">적용</th>
 						</tr>
 					</thead>
 					<tbody id="list_agents">
@@ -143,94 +144,81 @@
 		// 대본
 		subtag += `<td>${aObject.strNickname4 ?? ''}</td>`;
 		subtag += `
-				<td style="background-color:${color};"  class="parent_row_31">
+				<td class="parent_row_31">
 					<a href="#" onclick="OnClickNickname('${aObject.strNickname}')" style="color:blue;">${aObject.strNickname}</a>
 				</td>
 		`;
 
 		// 바카라 베팅
 		subtag += `
-				<td style="background-color:${color};" class="parent_row_31">
-					<input type="number" style='width:80%;height:20px;text-align:center;color:black;' value='${aObject.iAgentBetB}' id='input_b_${aObject.strNickname}'/>
+				<td class="parent_row_31">
+					<input type="number" style='width:80%;height:20px;text-align:center;color:black;' value='${aObject.iAgentBetB}' id='input_b_${aObject.id}'/>
 				</td>`;
 		subtag += `
-				<td style="background-color:${color};" class="parent_row_31">
-					<input type="number" style='width:80%;height:20px;text-align:center;color:black;' value='${aObject.iAgentWinB}' id='input_bwin_${aObject.strNickname}'/>
+				<td class="parent_row_31">
+					<input type="number" style='width:80%;height:20px;text-align:center;color:black;' value='${aObject.iAgentWinB}' id='input_bwin_${aObject.id}'/>
 				</td>`;
 		//언오버
 		subtag += `
-				<td style="background-color:${color};" class="parent_row_31">
-					<input type="number" style='width:80%;height:20px;text-align:center;color:black;' value='${aObject.iAgentBetUO}' id='input_uo_${aObject.strNickname}'/>
+				<td class="parent_row_31">
+					<input type="number" style='width:80%;height:20px;text-align:center;color:black;' value='${aObject.iAgentBetUO}' id='input_uo_${aObject.id}'/>
 				</td>`;
 		subtag += `
-				<td style="background-color:${color};" class="parent_row_31">
-					<input type="number" style='width:80%;height:20px;text-align:center;color:black;' value='${aObject.iAgentWinUO}' id='input_uowin_${aObject.strNickname}'/>
+				<td class="parent_row_31">
+					<input type="number" style='width:80%;height:20px;text-align:center;color:black;' value='${aObject.iAgentWinUO}' id='input_uowin_${aObject.id}'/>
 				</td>`;
 		// 슬롯
 		subtag += `
-				<td style="background-color:${color};" class="parent_row_31">
-					<input type="number" style='width:80%;height:20px;text-align:center;color:black;' value='${aObject.iAgentBetS}' id='input_s_${aObject.strNickname}'/>
+				<td class="parent_row_31">
+					<input type="number" style='width:80%;height:20px;text-align:center;color:black;' value='${aObject.iAgentBetS}' id='input_s_${aObject.id}'/>
 				</td>`;
 		subtag += `
-				<td style="background-color:${color};" class="parent_row_31">
-					<input type="number" style='width:80%;height:20px;text-align:center;color:black;' value='${aObject.iAgentWinS}' id='input_wins_${aObject.strNickname}'/>
+				<td class="parent_row_31">
+					<input type="number" style='width:80%;height:20px;text-align:center;color:black;' value='${aObject.iAgentWinS}' id='input_wins_${aObject.id}'/>
 				</td>`;
-
+		subtag += `
+				<td class="parent_row_31">
+					<button id=${aObject.id} onclick="OnClickApplySettleInput(${aObject.id}, '${aObject.strNickname}')"> 적 용 </button>
+				</td>`;
 		subtag += `</tr>`;
 		return subtag;
 	}
 
-	let OnClickApplySettleInput = () => {
+	let OnClickApplySettleInput = (id, strNickname) => {
 		if (bSending) {
 			alert('처리중입니다.');
 			return;
 		}
 		bSending = true;
 
-		let ok = confirm('입력 내용을 적용 하시겠습니까?');
+		let ok = confirm(`${strNickname} 입력 내용을 적용 하시겠습니까?`);
 		if (ok != true) {
 			bSending = false;
 			return;
 		}
 
 		console.log('OnClickApplySettleInput');
-
-		let list = [];
-		for (let i in settleList) {
-			list.push(settleList[i].strNickname);
-			list.push(settleList[i].strID);
-			list.push(settleList[i].fSettleBaccarat4 ?? 0);
-			list.push(settleList[i].fSettleSlot4 ?? 0);
-			let winloseB = settleList[i].iBaccaratWinLose ?? 0;
-			let winloseUO = settleList[i].iUnderOverWinLose ?? 0;
-			if (winloseB + winloseUO < 0) {
-				list.push(0);
-				list.push(0);
-			} else {
-				list.push(winloseB);
-				list.push(winloseUO);
-			}
-			let winloseSlot = settleList[i].iSlotWinLose ?? 0;
-			if (winloseSlot < 0) {
-				list.push(0);
-			} else {
-				list.push(winloseSlot);
-			}
-			list.push(settleList[i].iCommissionBaccarat ?? 0);
-			list.push(settleList[i].iCommissionSlot ?? 0);
-			list.push(settleList[i].iSettle ?? 0);
-			list.push(settleList[i].iTotal4 ?? 0);
+		let data = {
+			id: 0,
+			iAgentBetB: 0, iAgentBetUO: 0, iAgentBetS: 0,
+			iAgentWinB: 0, iAgentWinUO: 0, iAgentWinS: 0
 		}
 
-		let data = list.join(',');
+		data.id = id;
+		data.iAgentBetB = $(`#input_b_${id}`).val();
+		data.iAgentBetUO = $(`#input_uo_${id}`).val();
+		data.iAgentBetS = $(`#input_s_${id}`).val();
+
+		data.iAgentWinB = $(`#input_bwin_${id}`).val();
+		data.iAgentWinUO = $(`#input_uowin_${id}`).val();
+		data.iAgentWinS = $(`#input_wins_${id}`).val();
+
 		console.log(data);
 
 		$.ajax({
-			url:'/manage_settle_input/input_apply',
+			url:'/manage_settle_input/request_input',
 			type:"POST",
-			data:{
-				data:data,
-			},
+			data:data,
 			dataType: "json",
 			success: function (obj) {
 				bSending = false;

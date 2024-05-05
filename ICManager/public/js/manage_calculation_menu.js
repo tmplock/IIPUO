@@ -83,6 +83,47 @@ $(document).on('click', '#calculation_settle_input', ()=> {
     $form.submit();
 });
 
+
+let bSendingTest = false;
+$(document).on('click', '#calculation_settle_init', ()=> {
+    if (bSendingTest == true) {
+        alert('처리중');
+        return;
+    }
+    bSendingTest = true;
+
+    $.ajax({
+        type:'post',
+        url: "/manage_settle_input/testinit",
+        context: document.body,
+        data:{},
+        success: (data) => {
+            bSendingTest = false;
+            if (data.result == 'OK') {
+                alert('죽장 초기화 완료');
+            }
+        },
+        error:function(request,status,error){
+            bSendingTest = false;
+            alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+        }
+    });
+
+    // var $form = $('<form></form>');
+    // $form.attr('action', '/manage_settle_input/testinit');
+    // $form.attr('method', 'post');
+    // $form.appendTo('body');
+    //
+    // var strNickname = $(`<input type="hidden" value="${user.strNickname}" name="strNickname">`);
+    // var strGroupID = $(`<input type="hidden" value="${user.strGroupID}" name="strGroupID">`);
+    // var iClass = $(`<input type="hidden" value=${user.iClass} name="iClass">`);
+    // var iPermission = $(`<input type="hidden" value=${user.iPermission} name="iPermission">`);
+    //
+    // $form.append(strNickname).append(strGroupID).append(iClass).append(iPermission);
+    // $form.submit();
+
+});
+
 $(document).on('click', '#calculation_settle_credits', ()=> {
     window.open('', 'popupChkCreditsSub', 'width=1280, height=720, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
     var $form = $('<form></form>');
@@ -190,6 +231,9 @@ let SetCalculationHeader = (iSection, iClass) => {
                 <li class=${GetCalculationSectionClass(iSection, 111)}>
                     <a href="#" style="color:${GetCalculationSectionColor(iSection, 111)};" id="calculation_settle_input">죽장 데이터 입력</a>
                 </li>
+                <li class=${GetCalculationSectionClass(iSection, 112)}>
+                    <a href="#" style="color:${GetCalculationSectionColor(iSection, 112)};" id="calculation_settle_init">죽장 초기화</a>
+                </li>
             `;
             tag += subtag1;
         }
@@ -205,6 +249,9 @@ let SetCalculationHeader = (iSection, iClass) => {
                 </li>
                 <li class=${GetCalculationSectionClass(iSection, 111)}>
                     <a href="#" style="color:${GetCalculationSectionColor(iSection, 111)};" id="calculation_settle_input">죽장 데이터 입력</a>
+                </li>
+                <li class=${GetCalculationSectionClass(iSection, 112)}>
+                    <a href="#" style="color:${GetCalculationSectionColor(iSection, 112)};" id="calculation_settle_init">죽장 초기화</a>
                 </li>
             `;
             tag += subtag1;

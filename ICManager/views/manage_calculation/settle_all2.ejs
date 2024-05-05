@@ -937,7 +937,7 @@
 		aObject.iUnderOverWinLose = data.iUnderOverWinLose;
 		aObject.iSlotWinLose = data.iSlotWinLose;
 		aObject.iTotal = data.iTotal;
-		aObject.iResult = data.iResult;
+		aObject.iResult = data.iResult ?? 0;
 		aObject.iSettleTotal = data.iSettleTotal;
 		aObject.iSettleAccTotal = data.iSettleAccTotal;
 		aObject.iSettleBeforeAcc = data.iSettleBeforeAcc;
@@ -1100,6 +1100,7 @@
 		subtag += `<input type='hidden' id='quatersettle_${aObject.strNickname}' value='${parseInt(aObject.iSettleOrigin)}'/>`;
 		subtag += `<input type='hidden' id='class_${aObject.strNickname}' value='${aObject.iClass}'/>`;
 		subtag += `<input type='hidden' id='rolling_${aObject.strNickname}' value='${parseInt(aObject.iRollingMoney)}'/>`;
+		subtag += `<input type='hidden' id='result_${aObject.strNickname}' value='${parseInt(data.iResult)}'/>`;
 
 		// 죽장 적립(입력창)
 		if ( isShowSettleAcc && user.iPermission != 100 )
@@ -1425,7 +1426,7 @@
 			let iSWinlose = $(`#swinlose_${settleList[i].strNickname}`).text();
 			let iPWinlose = $(`#pwinlose_${settleList[i].strNickname}`).text();
 			let iRolling = $(`#rolling_${settleList[i].strNickname}`).text();
-			let iResult = settleList[i].iResult ?? 0;
+			let iResult = $(`#result_${settleList[i].strNickname}`).text();
 
 			let fSettleBarccarat = parseFloat($(`#fSettleBaccarat${settleList[i].strNickname}`).val());
 			let fSettleSlot = parseFloat($(`#fSettleSlot${settleList[i].strNickname}`).val());
@@ -1440,6 +1441,7 @@
 			iSWinlose = iSWinlose?.replace(/,/g, '') ?? '0';
 			iPWinlose = iPWinlose?.replace(/,/g, '') ?? '0';
 			iRolling = iRolling?.replace(/,/g, '') ?? '0';
+			iResult = iResult?.replace(/,/g, '') ?? '0';
 			iInputSettle = parseInt(iInputSettle);
 
 			if ( iQuaterSettle > 0 && iQuaterSettle < iInputSettle )
@@ -1505,7 +1507,7 @@
 		console.log(data);
 
 		$.ajax({
-			url:'/manage_calculation/request_applysettle_all',
+			url:'/manage_calculation_settle/request_applysettle_all',
 			type:"POST",
 			data:{
 				data:data,

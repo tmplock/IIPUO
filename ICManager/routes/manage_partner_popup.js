@@ -1188,16 +1188,20 @@ router.post('/request_agentinfo_modify',isLoggedIn, async (req, res) => {
                     res.send({result:'ERROR', code:strErrorCode});
                     return;
                 }
-                if (
-                    parent.fSettleBaccarat < req.body.fSettleBaccarat ||
-                    parent.fSettleSlot < req.body.fSettleSlot
-                )
-                {
-                    console.log(`########## ModifyAgentInfo : Error Parent`);
-                    bUpdate = false;
-                    strErrorCode = 'GreaterThanParent';
-                    res.send({result:'ERROR', code:strErrorCode});
-                    return;
+
+                // 죽장은 본사 ~ 대본만 체크
+                if (parent.iClass == 3 || parent.iClass == 4) {
+                    if (
+                        parent.fSettleBaccarat < req.body.fSettleBaccarat ||
+                        parent.fSettleSlot < req.body.fSettleSlot
+                    )
+                    {
+                        console.log(`########## ModifyAgentInfo : Error Parent`);
+                        bUpdate = false;
+                        strErrorCode = 'GreaterThanParent';
+                        res.send({result:'ERROR', code:strErrorCode});
+                        return;
+                    }
                 }
             }
         }
@@ -1229,16 +1233,19 @@ router.post('/request_agentinfo_modify',isLoggedIn, async (req, res) => {
                     return;
                 }
 
-                if (
-                    child.fSettleBaccarat > req.body.fSettleBaccarat ||
-                    child.fSettleSlot > req.body.fSettleSlot
-                )
-                {
-                    console.log(`########## ModifyAgentInfo : Error Children`);
-                    bUpdate = false;
-                    strErrorCode = 'LessThanChild';
-                    res.send({result:'ERROR', code:strErrorCode});
-                    return;
+                // 죽장은 본사 ~ 대본만 체크
+                if (child.iClass == 4 || child.iClass == 5 || child.iClass == 6) {
+                    if (
+                        child.fSettleBaccarat > req.body.fSettleBaccarat ||
+                        child.fSettleSlot > req.body.fSettleSlot
+                    )
+                    {
+                        console.log(`########## ModifyAgentInfo : Error Children`);
+                        bUpdate = false;
+                        strErrorCode = 'LessThanChild';
+                        res.send({result:'ERROR', code:strErrorCode});
+                        return;
+                    }
                 }
             }
         }

@@ -111,6 +111,52 @@
 			</td>
 		</tr>
 	</table>
+
+	<% if (agent.iClass >= 3 && agent.iClass <= 5) { %>
+	<table>
+		<colgroup>
+			<col style="width:15%">
+			<col style="width:35%">
+			<col style="width:15%">
+			<col style="width:35%">
+		</colgroup>
+		<p style="background-repeat:no-repeat; background-position:left center; font-size:16px; color:#454545; padding-left:22px;">죽장 설정</p>
+		<tr>
+			<th scope="row">바카라 죽장</th>
+			<td>
+				<input type="text" style="width:30%;" name="bank_password" id="fSettleBaccarat" required="no"  message="" value="">
+			</td>
+			<th scope="row">슬롯 죽장</th>
+			<td>
+				<input type="text" style="width:30%;" name="bank_password" id="fSettleSlot" required="no"  message="" value="">
+			</td>
+		</tr>
+	</table>
+	<% } else { %>
+	<div style="display: none">
+		<table>
+			<colgroup>
+				<col style="width:15%">
+				<col style="width:35%">
+				<col style="width:15%">
+				<col style="width:35%">
+			</colgroup>
+			<p style="background-repeat:no-repeat; background-position:left center; font-size:16px; color:#454545; padding-left:22px;">죽장 설정</p>
+			<tr>
+				<th scope="row">바카라 죽장</th>
+				<td>
+					<input type="text" style="width:30%;" name="settle" id="fSettleBaccarat" required="no"  message="" value="" disabled>
+				</td>
+				<th scope="row">슬롯 죽장</th>
+				<td>
+					<input type="text" style="width:30%;" name="settle" id="fSettleSlot" required="no"  message="" value="" disabled>
+				</td>
+			</tr>
+		</table>
+	</div>
+	<% } %>
+
+
 	<% if (agent.iClass == 8) { %>
 		<div>
 			<table>
@@ -245,6 +291,11 @@
 			}
 		});
 
+		if (agent.iClass >= 3 && agent.iClass <= 5) {
+			$('#fSettleBaccarat').val(agent.fSettleBaccarat ?? 0);
+			$('#fSettleSlot').val(agent.fSettleSlot ?? 0);
+		}
+
 		if ( cUsingInput == 1 )
 			$('#using_input').attr('checked', true);
 		else
@@ -261,7 +312,7 @@
 		if (agent.iPermission == 100) {
 			["#member_nick", "#member_id",
 				"#member_password", '#member_password2', '#bank_owner', '#bank_name', '#bank_num', '#cell'
-				, '#fBaccaratR', '#fUnderOverR', '#fSlotR'
+				, '#fBaccaratR', '#fUnderOverR', '#fSlotR', '#fSettleBaccarat', '#fSettleSlot'
 				, '#using_input', '#using_output', '#using_pc'
 			].forEach(item => {
 				$(item).get(0).disabled = true;
@@ -270,7 +321,7 @@
 		} else if ( parseInt(agent.iRootClass) == parseInt(agent.iClass) ) {
 			[
 				"#member_password", '#member_password2', '#bank_owner', '#bank_name', '#bank_num', '#cell'
-				, '#fBaccaratR', '#fUnderOverR', '#fSlotR'
+				, '#fBaccaratR', '#fUnderOverR', '#fSlotR', '#fSettleBaccarat', '#fSettleSlot'
 				, '#using_input', '#using_output', '#using_pc'
 			].forEach(item => {
 				$(item).get(0).disabled = true;
@@ -333,6 +384,9 @@
 		checkBlockNum(`#fBaccaratR`);
 		checkBlockNum(`#fUnderOverR`);
 		checkBlockNum(`#fSlotR`);
+
+		checkBlockNum('#fSettleBaccarat');
+		checkBlockNum('#fSettleSlot');
 	});
 
 	let CheckID = () => {

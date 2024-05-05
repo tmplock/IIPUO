@@ -183,6 +183,50 @@
 				</table>
 				<%}%>
 
+			<% if (parent.iAgentClass == 3 || parent.iAgentClass == 4 || parent.iAgentClass == 5) { %>
+				<table>
+					<colgroup>
+						<col style="width:15%">
+						<col style="width:35%">
+						<col style="width:15%">
+						<col style="width:35%">
+					</colgroup>
+					<p style="background-repeat:no-repeat; background-position:left center; font-size:16px; color:#454545; padding-left:22px;">죽장 설정</p>
+					<tr>
+						<th scope="row">바카라 죽장</th>
+						<td>
+							<input type="text" style="width:30%;" name="bank_password" id="fSettleBaccarat" required="no"  message=""> %
+						</td>
+						<th scope="row">슬롯 죽장</th>
+						<td>
+							<input type="text" style="width:30%;" name="bank_password" id="fSettleSlot" required="no"  message=""> %
+						</td>
+					</tr>
+				</table>
+			<% } else { %>
+				<div style="display: none">
+					<table>
+						<colgroup>
+							<col style="width:15%">
+							<col style="width:35%">
+							<col style="width:15%">
+							<col style="width:35%">
+						</colgroup>
+						<p style="background-repeat:no-repeat; background-position:left center; font-size:16px; color:#454545; padding-left:22px;">죽장 설정</p>
+						<tr>
+							<th scope="row">바카라 죽장</th>
+							<td>
+								<input type="text" style="width:30%;" name="settle" id="fSettleBaccarat" required="no"  message="" value="" disabled> %
+							</td>
+							<th scope="row">슬롯 죽장</th>
+							<td>
+								<input type="text" style="width:30%;" name="settle" id="fSettleSlot" required="no"  message="" value="" disabled> %
+							</td>
+						</tr>
+					</table>
+				</div>
+			<% } %>
+
 			<% if (parent.iAgentClass == 8) { %>
 				<table>
 					<colgroup>
@@ -347,7 +391,8 @@
 		checkBlockNum(`#fRollingUnderOver`);
 		checkBlockNum(`#fRollingSlot`);
 
-
+		checkBlockNum(`#fSettleBaccarat`);
+		checkBlockNum(`#fSettleSlot`);
 
 		$(document).ready(() => {
 			if (parent.iAgentClass == 8) {

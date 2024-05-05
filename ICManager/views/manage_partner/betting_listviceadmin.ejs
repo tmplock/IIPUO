@@ -37,7 +37,7 @@
 			<div class="list_tit">
 				<h3><%=__('SubMenuViceAdminList')%>
 					<% if ( user.iRootClass <= 3 && user.iPermission != 100 ) { %>
-						<button class="btn_blue" style="margin-left:15%;width:200px;text-align:center;background-color: #f0d17e;color:black" onclick="javascript:DoApplyRolling(user);"><%=__('Rolling')%> <%=__('Apply')%></button>
+					<button class="btn_blue" style="margin-left:15%;width:200px;text-align:center;background-color: #f0d17e;color:black" onclick="javascript:DoApplyRolling(user);"><%=__('Rolling')%>/<%=__('Settle')%> <%=__('Apply')%></button>
 					<%}%>
 					<% if ( user.iClass > 3 ) { %>
 						<div style="text-align:right;margin-top:-55px;">

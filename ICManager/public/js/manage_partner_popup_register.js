@@ -104,6 +104,9 @@ let SetParentValues = (strNickname) => {
                 $('#fRollingBaccarat').val(0);
                 $('#fRollingUnderOver').val(0);
 
+                $('#fSettleBaccarat').val(0);
+                $('#fSettleSlot').val(0);
+
                 // $('#fRollingPB').val(0);
                 // $('#fRollingPBSingle').val(0);
                 // $('#fRollingPBDouble').val(0);

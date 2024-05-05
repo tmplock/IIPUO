@@ -669,7 +669,7 @@ router.post('/request_modify_settle_group', isLoggedIn, async(req, res) => {
                 // 죽장은 상부를 넘을 수 없음
                 let parent = await db.Users.findOne({where:{id:user.iParentID}});
 
-                if ( null != parent && parent.iClass > 1 )
+                if ( null != parent && parent.iClass == 3 || parent.iClass == 4 )
                 {
                     if (
                         parent.fSettleBaccarat < fSettleBaccarat ||
@@ -696,14 +696,17 @@ router.post('/request_modify_settle_group', isLoggedIn, async(req, res) => {
                     for ( let i in children )
                     {
                         let child = children[i];
-                        if (
-                            child.fSettleBaccarat > fSettleBaccarat ||
-                            child.fSettleSlot > fSettleSlot
-                        )
-                        {
-                            console.log(`########## ModifyAgentInfo : Error Children`);
-                            res.send({result:'ERROR', msg:'하위보다 값이 작아 변경 할 수 없습니다.'});
-                            return;
+
+                        if (child.iClass == 3 || child.iClass == 4 || child.iClass == 5) {
+                            if (
+                                child.fSettleBaccarat > fSettleBaccarat ||
+                                child.fSettleSlot > fSettleSlot
+                            )
+                            {
+                                console.log(`########## ModifyAgentInfo : Error Children`);
+                                res.send({result:'ERROR', msg:'하위보다 값이 작아 변경 할 수 없습니다.'});
+                                return;
+                            }
                         }
                     }
                 }

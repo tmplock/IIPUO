@@ -125,6 +125,7 @@
 						<col style="width:2%">
 						<col style="width:2%">
 						<col style="width:2%">
+						<col style="width:2%">
 
 						<col style="width:4%">
 						<col style="width:4%">
@@ -150,6 +151,7 @@
 					</colgroup>
 					<thead>
 					<tr>
+						<th scope="col">순번</th>
 						<th scope="col">본사</th>
 						<th scope="col">닉네임</th>
 						<th scope="col"><%=__('ID')%></th>
@@ -714,14 +716,14 @@
 			if (obj.iClass == 4) {
 				// 대본사 죽장 계산
 				CalculateSettle(obj);
-				let tag = AddPartner(4, obj, !ExistSettle(obj.strID));
+				let tag = AddPartner(4, obj, !ExistSettle(obj.strID), i);
 				$('#list_agents').append(tag);
 				dataList.push(obj);
 			} else if (obj.iClass == 5) {
 				CalculateSettle(obj);
 				obj.parentID = obj.strAdminID;
 				obj.parentNickname = obj.strAdminNickname;
-				let tag = AddPartner(5, obj, !ExistSettle(obj.strID));
+				let tag = AddPartner(5, obj, !ExistSettle(obj.strID), i);
 				$('#list_agents').append(tag);
 				dataList.push(obj);
 			}
@@ -930,7 +932,7 @@
 	 * @returns {string}
 	 * @constructor
 	 */
-	let AddPartner = (iRootClass, aObject, bEnableSettle) => {
+	let AddPartner = (iRootClass, aObject, bEnableSettle, index) => {
 		let data = CalculateSendData(aObject, bEnableSettle);
 		// 정산 처리를 위해서 추가
 		aObject.iBaccaratWinLose = data.iBaccaratWinLose;
@@ -956,12 +958,12 @@
 		let isShowSettleAcc = true;
 
 		if (aObject.iRootClass == EAgent.eAdmin || aObject.iClass == EAgent.eProAdmin) {
-			headtag = `<td>${aObject.parentID ?? ''}</td><td>${aObject.parentNickname ?? ''}`;
+			headtag += `<td>${parseInt(index) + 1}</td>`;
+			headtag += `<td>${aObject.parentID ?? ''}</td><td>${aObject.parentNickname ?? ''}`;
 			isShowWinlose = true;
 		} else {
-			// headtag = `<td>┗</td><td>─</td>`;
-			// color = '#EEEEE9';
-			headtag = `<td>${aObject.parentID ?? ''}</td><td>${aObject.parentNickname ?? ''}`;
+			headtag += `<td>${parseInt(index) + 1}</td>`;
+			headtag += `<td>${aObject.parentID ?? ''}</td><td>${aObject.parentNickname ?? ''}`;
 			isShowWinlose = false;
 		}
 
@@ -1148,7 +1150,7 @@
 
 	let AddTotal = (aObject) => {
 		let color = '#ffffff';
-		let subtag = '<td colspan="6">합계</td>';
+		let subtag = '<td colspan="7">합계</td>';
 		subtag += `<td style="background-color:${color};"  class="parent_row_31"><a><font color="${GetColor(aObject.iTotal)}" id='total_${aObject.strNickname}'>${GetNumber(aObject.iTotal)}</font></a></td>`;
 		subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetColor(aObject.iBaccaratWinLose+aObject.iUnderOverWinLose)}" id='bwinlose_${aObject.strNickname}'>${GetNumber((aObject.iBaccaratWinLose+aObject.iUnderOverWinLose))}</font></td>`;
 		subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetColor(aObject.iSlotWinLose)}" id='swinlose_${aObject.strNickname}'>${GetNumber((aObject.iSlotWinLose))}</font></td>`;

@@ -38,6 +38,7 @@
 					<caption><%=__('SearchResult')%></caption>
 					<thead>
 						<tr>
+							<th scope="col">순번</th>
 							<th scope="col">본사</th>
 							<th scope="col">대본사</th>
 							<th scope="col">부본사</th>
@@ -129,15 +130,17 @@
 
 		for (let i in list) {
 			let obj = list[i];
-			let tag = AddPartner(5, obj);
+			let tag = AddPartner(5, obj, i);
 			$('#list_agents').append(tag);
 		}
 	}
 
-	let AddPartner = (iRootClass, aObject) => {
+	let AddPartner = (iRootClass, aObject, index) => {
 		let color = '#ffffff';
 
 		var subtag = `<tr>`;
+		// 순번
+		subtag += `<td>${parseInt(index) + 1}</td>`;
 		// 본사
 		subtag += `<td>${aObject.strNickname3 ?? ''}</td>`;
 		// 대본

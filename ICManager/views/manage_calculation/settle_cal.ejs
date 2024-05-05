@@ -15,6 +15,7 @@
 					<caption><%=__('SearchResult')%></caption>
 					<thead>
 						<tr>
+							<th scope="col">순번</th>
 							<th scope="col">본사</th>
 							<th scope="col">대본사</th>
 							<th scope="col" style="background-color:#78bfdb;color:white;">대본 <%=__('Baccarat')%><br><%=__('Settle')%></th>
@@ -168,7 +169,7 @@
 			obj.parentID = obj.strAdminID;
 			obj.parentNickname = obj.strAdminNickname;
 			// let tag = AddPartner(5, obj, !ExistSettle(obj.strID));
-			let tag = AddPartner(5, obj, !ExistSettle(obj.strID));
+			let tag = AddPartner(5, obj, !ExistSettle(obj.strID), i);
 			$('#list_agents').append(tag);
 			dataList.push(obj);
 		}
@@ -341,7 +342,7 @@
 	 * @returns {string}
 	 * @constructor
 	 */
-	let AddPartner = (iRootClass, aObject, bEnableSettle) => {
+	let AddPartner = (iRootClass, aObject, bEnableSettle, index) => {
 		aObject.iBaccaratWinLose = parseFloat(aObject.iBaccaratWinLose ?? 0);
 		aObject.iUnderOverWinLose = parseFloat(aObject.iUnderOverWinLose ?? 0);
 		aObject.iSlotWinLose = parseFloat(aObject.iSlotWinLose ?? 0);
@@ -376,8 +377,8 @@
 		let headtag = '';
 		let isShowTotal = true;
 		let isShowSettleRate = true;
-
-		headtag = `<td>${aObject.strNickname3 ?? ''}</td><td>${aObject.strNickname4 ?? ''}</td>`;
+		headtag += `<td>${parseInt(index) + 1}</td>`;
+		headtag += `<td>${aObject.strNickname3 ?? ''}</td><td>${aObject.strNickname4 ?? ''}</td>`;
 		headtag += `<td style="background-color:${color};"  class="parent_row_31" id="fSettleBaccarat${aObject.strNickname4}" >${aObject.fSettleBaccarat4 ?? 0}%</td>
 					<td style="background-color:${color};"  class="parent_row_31" id="fSettleSlot${aObject.strNickname4}">${aObject.fSettleSlot4 ?? 0}%</td>`
 
@@ -482,7 +483,7 @@
 
 	let AddTotal = (aObject) => {
 		let color = '#ffffff';
-		let subtag = '<td colspan="8">합계</td>';
+		let subtag = '<td colspan="9">합계</td>';
 		subtag += `<td style="background-color:${color};"  class="parent_row_31"><a><font color="${GetColor(aObject.iTotal)}" id='total_${aObject.strNickname}'>${GetNumber(aObject.iTotal)}</font></a></td>`;
 		subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetColor(aObject.iBaccaratWinLose+aObject.iUnderOverWinLose)}" id='bwinlose_${aObject.strNickname}'>${GetNumber((aObject.iBaccaratWinLose+aObject.iUnderOverWinLose))}</font></td>`;
 		subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetColor(aObject.iSlotWinLose)}" id='swinlose_${aObject.strNickname}'>${GetNumber((aObject.iSlotWinLose))}</font></td>`;

@@ -100,9 +100,9 @@ router.post('/request_input', async (req, res) => {
     let user = await db.Users.findOne({where: {strID: obj.strID}});
     // 부본 롤링 계산해서 넣기
     {
-        iAgentRollingB = iAgentBetB * user.fBaccaratR * 0.01;
-        iAgentRollingUO = iAgentBetUO * user.fUnderOverR * 0.01;
-        iAgentRollingS = iAgentBetS * user.fSlotR * 0.01;
+        // iAgentRollingB = iAgentBetB * user.fBaccaratR * 0.01;
+        // iAgentRollingUO = iAgentBetUO * user.fUnderOverR * 0.01;
+        // iAgentRollingS = iAgentBetS * user.fSlotR * 0.01;
 
         await db.RecordDailyOverviews.update({
             iAgentBetB: iAgentBetB,

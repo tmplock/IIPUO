@@ -24,10 +24,11 @@
 							<th scope="col"><%=__('Nickname')%></th>
 							<th scope="col" style="background-color:#78bfdb;color:white;">부본 <%=__('Baccarat')%><br><%=__('Settle')%></th>
 							<th scope="col" style="background-color:#78bfdb;color:white;">부본 <%=__('Slot')%><br><%=__('Settle')%></th>
-							<th scope="col">합계</th>
+							<th scope="col">부본 합계</th>
+							<th scope="col">부본 죽장</th>
+							<th scope="col">롤링</th>
 							<th scope="col">B<%=__('WinLose')%></th>
 							<th scope="col">S<%=__('WinLose')%></th>
-							<th scope="col">부본 죽장</th>
 							<th scope="col">대본 B 알값</th>
 							<th scope="col">대본 S 알값</th>
 							<th scope="col">대본 죽장</th>
@@ -175,11 +176,12 @@
 		}
 
 		if ( user.iClass > 1 && user.iClass <= 3 ) {
-			let totalObj = {iTotal: 0, iBaccaratWinLose: 0, iUnderOverWinLose: 0, iSlotWinLose: 0, iSettleVice: 0,
+			let totalObj = {iTotal: 0, iSettleVice: 0, iRolling: 0, iBaccaratWinLose: 0, iUnderOverWinLose: 0, iSlotWinLose: 0,
 				iCommissionBaccarat:0, iCommissionSlot: 0, iSettle: 0, iResult4: 0
 			};
 			for (let i in dataList) {
 				totalObj.iTotal += dataList[i].iTotal ?? 0;
+				totalObj.iRolling += ((dataList[i].iRollingB ?? 0) + (dataList[i].iRollingUO ?? 0) + (dataList[i].iRollingS ?? 0));
 				totalObj.iBaccaratWinLose += dataList[i].iBaccaratWinLose ?? 0;
 				totalObj.iUnderOverWinLose += dataList[i].iUnderOverWinLose ?? 0;
 				totalObj.iSlotWinLose += dataList[i].iSlotWinLose ?? 0;
@@ -221,30 +223,33 @@
 		// 전체 죽장 계산
 		let iBTotal = parseFloat(obj.iBaccaratTotal) + parseFloat(obj.iUnderOverTotal);
 		let iSTotal = parseFloat(obj.iSlotTotal);
-		// 선행조건 확인
+
+		obj.iTotal5 = parseFloat(iBTotal + iSTotal);
+
+		// 선행조건 확인(삭제)
 		// 1. 두개의 죽장률이 다를 경우 2. 두개의 합계가 서로 부호가 다를 경우
 		// 3-1. 플러스로 이긴경우 해당 게임의 죽장비율 적용
 		// 3-2. 마이너스로 이긴경우 해당 게임의 죽장비율 적용
-		if (obj.fSettleBaccarat4 != obj.fSettleSlot4) {
-			if ((iBTotal > 0 && iSTotal < 0) || (iBTotal < 0 && iSTotal > 0)) {
-				if (Math.abs(iBTotal) > Math.abs(iSTotal)) {
-					fSettleBaccarat4 = obj.fSettleBaccarat4 ?? 0;
-					fSettleSlot4 = obj.fSettleBaccarat4 ?? 0;
-					fSettleBaccarat5 = obj.fSettleBaccarat ?? 0;
-					fSettleSlot5 = obj.fSettleBaccarat ?? 0;
-				} else if (Math.abs(iSTotal) > Math.abs(iBTotal)) {
-					fSettleBaccarat4 = obj.fSettleSlot4 ?? 0;
-					fSettleSlot4 = obj.fSettleSlot4 ?? 0;
-					fSettleBaccarat5 = obj.fSettleSlot ?? 0;
-					fSettleSlot5 = obj.fSettleSlot ?? 0;
-				}
-			}
-		} else {
-			fSettleBaccarat4 = obj.fSettleBaccarat4 ?? 0;
-			fSettleSlot4 = obj.fSettleSlot4 ?? 0;
-			fSettleBaccarat5 = obj.fSettleBaccarat ?? 0;
-			fSettleSlot5 = obj.fSettleSlot ?? 0;
-		}
+		// if (obj.fSettleBaccarat4 != obj.fSettleSlot4) {
+		// 	if ((iBTotal > 0 && iSTotal < 0) || (iBTotal < 0 && iSTotal > 0)) {
+		// 		if (Math.abs(iBTotal) > Math.abs(iSTotal)) {
+		// 			fSettleBaccarat4 = obj.fSettleBaccarat4 ?? 0;
+		// 			fSettleSlot4 = obj.fSettleBaccarat4 ?? 0;
+		// 			fSettleBaccarat5 = obj.fSettleBaccarat ?? 0;
+		// 			fSettleSlot5 = obj.fSettleBaccarat ?? 0;
+		// 		} else if (Math.abs(iSTotal) > Math.abs(iBTotal)) {
+		// 			fSettleBaccarat4 = obj.fSettleSlot4 ?? 0;
+		// 			fSettleSlot4 = obj.fSettleSlot4 ?? 0;
+		// 			fSettleBaccarat5 = obj.fSettleSlot ?? 0;
+		// 			fSettleSlot5 = obj.fSettleSlot ?? 0;
+		// 		}
+		// 	}
+		// } else {
+		// 	fSettleBaccarat4 = obj.fSettleBaccarat4 ?? 0;
+		// 	fSettleSlot4 = obj.fSettleSlot4 ?? 0;
+		// 	fSettleBaccarat5 = obj.fSettleBaccarat ?? 0;
+		// 	fSettleSlot5 = obj.fSettleSlot ?? 0;
+		// }
 
 		// iBTotal = parseFloat(obj.iBaccaratTotal) + parseFloat(obj.iUnderOverTotal) - parseFloat(obj.iCommissionBaccarat ?? 0);
 		// iSTotal = parseFloat(obj.iSlotTotal) - parseFloat(obj.iCommissionSlot);
@@ -256,36 +261,40 @@
 
 		// 대본 롤링 계산(바카라,슬롯 * 롤링)
 		// 부본 바카라 * 롤링 차이
-		let brolling4 = parseFloat(obj.iBaccarat ?? 0) * parseFloat(obj.fBaccaratR4 - obj.fBaccaratR) * 0.01;
+		let rollingB4 = parseFloat(obj.iBaccarat ?? 0) * parseFloat(obj.fBaccaratR4 - obj.fBaccaratR) * 0.01;
 		// 부본 언오버 * 롤링 차이
-		let uorolling4 = parseFloat(obj.iUnderOver ?? 0) * parseFloat(obj.fUnderOverR4 - obj.fUnderOverR) * 0.01;
+		let rollingUO4 = parseFloat(obj.iUnderOver ?? 0) * parseFloat(obj.fUnderOverR4 - obj.fUnderOverR) * 0.01;
 		// 부본 슬롯 * 롤링 차이
-		let srolling4 = parseFloat(obj.iSlot ?? 0) * parseFloat(obj.fSlotR4 - obj.fSlotR) * 0.01;
+		let rollingS4 = parseFloat(obj.iSlot ?? 0) * parseFloat(obj.fSlotR4 - obj.fSlotR) * 0.01;
 
-		// 대본 죽장률 차이 계산
+		obj.rollingB = rollingB4 + parseFloat(obj.iBaccaratRollingMoney ?? 0);
+		obj.rollingUO = rollingUO4 + parseFloat(obj.iUnderOverRollingMoney ?? 0);
+		obj.rollingS = rollingS4 + parseFloat(obj.iSlotRollingMoney ?? 0);
+
+
+		//
+		// // 대본 합계 재계산
+		// const iBaccaratTotal4 = parseFloat(obj.iBaccaratTotal ?? 0) - rollingB4;
+		// const iUnderOverTotal4 = parseFloat(obj.iUnderOverTotal ?? 0) - rollingUO4;
+		// const iSlotTotal4 = parseFloat(obj.iSlotTotal ?? 0) - rollingS4;
+		// obj.iBaccaratTotal4 = iBaccaratTotal4;
+		// obj.iUnderOverTotal4 = iUnderOverTotal4;
+		// obj.iSlotTotal4 = iSlotTotal4;
+		//
+		// obj.iTotal4 = parseFloat(iBaccaratTotal4 + iUnderOverTotal4 + iSlotTotal4);
+
+
+		// 대본 죽장률 차이 계산(바카라 설정값만 사용함)
 		const fSettleBaccaratCal = obj.fSettleBaccarat4 - obj.fSettleBaccarat;
 		const fSettleSlotCal = obj.fSettleSlot4 - obj.fSettleSlot;
 		obj.fSettleBaccaratCal = fSettleBaccaratCal;
 		obj.fSettleSlotCal = fSettleSlotCal;
 
-		// 대본 합계 재계산
-		const iBaccaratTotal4 = parseFloat(obj.iBaccaratTotal ?? 0) - brolling4;
-		const iUnderOverTotal4 = parseFloat(obj.iUnderOverTotal ?? 0) - uorolling4;
-		const iSlotTotal4 = parseFloat(obj.iSlotTotal ?? 0) - srolling4;
-		obj.iBaccaratTotal4 = iBaccaratTotal4;
-		obj.iUnderOverTotal4 = iUnderOverTotal4;
-		obj.iSlotTotal4 = iSlotTotal4;
-
-		obj.iTotal4 = parseFloat(iBaccaratTotal4 + iUnderOverTotal4 + iSlotTotal4);
-
 		// 대본 죽장 계산
-		const iSettleBaccarat4 = (iBaccaratTotal4 + iUnderOverTotal4 - obj.iCommissionBaccarat) * fSettleBaccaratCal * 0.01;
-		const iSettleSlot4 = (iSlotTotal4 - obj.iCommissionSlot) * fSettleSlotCal * 0.01;
-		obj.iSettle = parseFloat(iSettleBaccarat4 + iSettleSlot4);
+		obj.iSettle = (parseFloat(obj.iTotal5 ?? 0) - parseFloat(obj.iSettleVice ?? 0) - parseFloat((obj.iRollingB ?? 0) + (obj.iRollingUO ?? 0) + (obj.iRollingS ?? 0)) - parseFloat((obj.iCommissionBaccarat ?? 0) + (obj.iCommissionSlot ?? 0))) * fSettleBaccaratCal * 0.01;
 
 		// 합계
-		// obj.iResult4 = obj.iTotal4 - obj.iSettleVice - obj.iCommissionBaccarat - obj.iCommissionSlot - obj.iSettle;
-		obj.iResult4 = parseInt(obj.iTotal4 ?? 0) - parseInt(obj.iSettleVice ?? 0) - parseInt(obj.iCommissionBaccarat ?? 0) - parseInt(obj.iCommissionSlot ?? 0) - parseInt(obj.iSettle ?? 0);
+		obj.iResult4 = parseFloat(obj.iTotal5 ?? 0) - parseFloat(obj.iSettleVice ?? 0) - parseFloat((obj.iRollingB ?? 0) + (obj.iRollingUO ?? 0) + (obj.iRollingS ?? 0)) - parseFloat((obj.iCommissionBaccarat ?? 0) + (obj.iCommissionSlot ?? 0)) - parseFloat(obj.iSettle ?? 0);
 
 		console.log(obj);
 	}
@@ -348,7 +357,7 @@
 		aObject.iSlotWinLose = parseFloat(aObject.iSlotWinLose ?? 0);
 
 		aObject.iTotal = parseFloat(aObject.iBaccaratTotal) + parseFloat(aObject.iUnderOverTotal) + parseFloat(aObject.iSlotTotal);
-		aObject.iRolling = parseFloat(aObject.iRollingMoney);
+		aObject.iRolling = parseFloat(aObject.iRollingB + aObject.iRollingUO + aObject.iRollingS);
 		aObject.iResult = aObject.iTotal - parseFloat(aObject.iSettleVice ?? 0) - parseFloat(aObject.iCommissionBaccarat) - parseFloat(aObject.iCommissionSlot) - parseFloat(aObject.iSettle);
 		aObject.iSettleQuater = parseFloat(aObject.iSettle ?? 0);
 		aObject.iSettle = parseFloat(aObject.iSettle);
@@ -378,7 +387,7 @@
 		let isShowTotal = true;
 		let isShowSettleRate = true;
 		headtag += `<td>${parseInt(index) + 1}</td>`;
-		headtag += `<td>${aObject.strNickname3 ?? ''}</td><td>${aObject.strNickname4 ?? ''}</td>`;
+		headtag += `<td>${aObject.strNickname3 ?? ''}</td><td><a href="#" onclick="OnClickNickname('${aObject.strNickname4}')" style="color:blue;">${aObject.strNickname4}</a></td>`;
 		headtag += `<td style="background-color:${color};"  class="parent_row_31" id="fSettleBaccarat${aObject.strNickname4}" >${aObject.fSettleBaccarat4 ?? 0}%</td>
 					<td style="background-color:${color};"  class="parent_row_31" id="fSettleSlot${aObject.strNickname4}">${aObject.fSettleSlot4 ?? 0}%</td>`
 
@@ -446,12 +455,18 @@
 
 		if ( isShowTotal )
 		{
-			subtag += `<td style="background-color:${color};"  class="parent_row_31"><a><font color="${GetColor(aObject.iTotal4)}" id='total_${aObject.strNickname}'>${GetNumber(aObject.iTotal4)}</font></a></td>`;
+			subtag += `<td style="background-color:${color};"  class="parent_row_31"><a><font color="${GetColor(aObject.iTotal5)}" id='total_${aObject.strNickname}'>${GetNumber(aObject.iTotal5)}</font></a></td>`;
 		}
 		else
 		{
 			subtag += `<td style="background-color:${color};"  class="parent_row_31"></td>`;
 		}
+
+		// 부본 죽장
+		subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetInversedColor(aObject.iSettleVice)}" id='settleevice_${aObject.strNickname}'>${GetNumber((aObject.iSettleVice))}</font></td>`;
+
+		// 대본 롤링
+		subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetInversedColor(aObject.iRolling)}" id='settleevice_${aObject.strNickname}'>${GetNumber((aObject.iRolling))}</font></td>`;
 
 		if ( aObject.iClass > 4 )
 		{
@@ -464,9 +479,6 @@
 			subtag += `<td style="background-color:${color};"  class="parent_row_31"></td>`;
 		}
 
-		// 부본 죽장
-		// 죽장
-		subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetInversedColor(aObject.iSettleVice)}" id='settleevice_${aObject.strNickname}'>${GetNumber((aObject.iSettleVice))}</font></td>`;
 		// B알값
 		subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetInversedColor(aObject.iCommissionBaccarat)}" id='commissionb_${aObject.strNickname}'>${GetNumber(aObject.iCommissionBaccarat)}</font></td>`;
 		// S알값
@@ -485,10 +497,14 @@
 		let color = '#ffffff';
 		let subtag = '<td colspan="9">합계</td>';
 		subtag += `<td style="background-color:${color};"  class="parent_row_31"><a><font color="${GetColor(aObject.iTotal)}" id='total_${aObject.strNickname}'>${GetNumber(aObject.iTotal)}</font></a></td>`;
-		subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetColor(aObject.iBaccaratWinLose+aObject.iUnderOverWinLose)}" id='bwinlose_${aObject.strNickname}'>${GetNumber((aObject.iBaccaratWinLose+aObject.iUnderOverWinLose))}</font></td>`;
-		subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetColor(aObject.iSlotWinLose)}" id='swinlose_${aObject.strNickname}'>${GetNumber((aObject.iSlotWinLose))}</font></td>`;
 		// 부본 죽장
 		subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetInversedColor((aObject.iSettleVice))}" id='settleevice_${aObject.strNickname}'>${GetNumber((aObject.iSettleVice))}</font></td>`;
+		// 대본 롤링
+		subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetInversedColor((aObject.iRolling))}" id='settleevice_${aObject.strNickname}'>${GetNumber((aObject.iRolling))}</font></td>`;
+		// 바카라 윈로스
+		subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetColor(aObject.iBaccaratWinLose+aObject.iUnderOverWinLose)}" id='bwinlose_${aObject.strNickname}'>${GetNumber((aObject.iBaccaratWinLose+aObject.iUnderOverWinLose))}</font></td>`;
+		// 슬롯 윈로스
+		subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetColor(aObject.iSlotWinLose)}" id='swinlose_${aObject.strNickname}'>${GetNumber((aObject.iSlotWinLose))}</font></td>`;
 		// 대본 B알값
 		subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetInversedColor(aObject.iCommissionBaccarat)}" id='commissionb_${aObject.strNickname}'>${GetNumber(aObject.iCommissionBaccarat)}</font></td>`;
 		// 대본 S알값

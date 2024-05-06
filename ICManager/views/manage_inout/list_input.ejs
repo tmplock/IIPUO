@@ -269,7 +269,11 @@
     }
 
     let OnClickRequestInout = (charge) => {
-        let input = prompt('암호입력');
+        var input = prompt('암호입력');
+        showRequestInoutPopup(input, charge);
+    }
+
+    function showRequestInoutPopup(input, charge) {
         if (input == null) {
             return;
         } else if (input.length == 0) {
@@ -299,7 +303,11 @@
     }
 
     let OnClickRequestBank = () => {
-        let input = prompt('암호입력');
+        var input = prompt('암호입력');
+        showRequestBankPopup(input);
+    }
+
+    function showRequestBankPopup(input) {
         if (input == null) {
             return;
         } else if (input.length == 0) {

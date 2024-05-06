@@ -407,10 +407,16 @@ let SetSlotBettingList = (records, startIndex) => {
 }
 
 let OnClickCancel = (betId) => {
-    let password = prompt('취소 비밀번호를 입력해주세요');
+    var password = prompt('취소 비밀번호를 입력해주세요');
+    showCancelPopup(betId, password);
+}
 
+function showCancelPopup(betId, password) {
     if (password == '') {
         alert('취소 비밀번호를 입력해주세요');
+        return;
+    }
+    if (password == null || password == undefined) {
         return;
     }
 

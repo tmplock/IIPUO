@@ -815,6 +815,11 @@
 		let fSettleBaccarat5 = 0.0;
 		let fSettleSlot5 = 0.0;
 
+		fSettleBaccarat4 = obj.fSettleBaccarat4 ?? 0;
+		fSettleSlot4 = obj.fSettleBaccarat4 ?? 0;
+		fSettleBaccarat5 = obj.fSettleBaccarat5 ?? 0;
+		fSettleSlot5 = obj.fSettleBaccarat5 ?? 0;
+
 		// 전체 죽장 계산
 		let iBTotal = parseFloat(obj.iBaccaratTotal) + parseFloat(obj.iUnderOverTotal);
 		let iSTotal = parseFloat(obj.iSlotTotal);
@@ -822,29 +827,29 @@
 		// 1. 두개의 죽장률이 다를 경우 2. 두개의 합계가 서로 부호가 다를 경우
 		// 3-1. 플러스로 이긴경우 해당 게임의 죽장비율 적용
 		// 3-2. 마이너스로 이긴경우 해당 게임의 죽장비율 적용
-		if (obj.fSettleBaccarat4 != obj.fSettleSlot4) {
-			if ((iBTotal > 0 && iSTotal < 0) || (iBTotal < 0 && iSTotal > 0)) {
-				if (Math.abs(iBTotal) > Math.abs(iSTotal)) {
-					fSettleBaccarat4 = obj.fSettleBaccarat4;
-					fSettleSlot4 = obj.fSettleBaccarat4;
-					fSettleBaccarat5 = obj.fSettleBaccarat5 ?? 0;
-					fSettleSlot5 = obj.fSettleBaccarat5 ?? 0;
-				} else if (Math.abs(iSTotal) > Math.abs(iBTotal)) {
-					fSettleBaccarat4 = obj.fSettleSlot4;
-					fSettleSlot4 = obj.fSettleSlot4;
-					fSettleBaccarat5 = obj.fSettleSlot5 ?? 0;
-					fSettleSlot5 = obj.fSettleSlot5 ?? 0;
-				}
-			}
-		} else {
-			fSettleBaccarat4 = obj.fSettleBaccarat4;
-			fSettleSlot4 = obj.fSettleSlot4;
-			fSettleBaccarat5 = obj.fSettleBaccarat5 ?? 0;
-			fSettleSlot5 = obj.fSettleSlot5 ?? 0;
-		}
+		// if (obj.fSettleBaccarat4 != obj.fSettleSlot4) {
+		// 	if ((iBTotal > 0 && iSTotal < 0) || (iBTotal < 0 && iSTotal > 0)) {
+		// 		if (Math.abs(iBTotal) > Math.abs(iSTotal)) {
+		// 			fSettleBaccarat4 = obj.fSettleBaccarat4;
+		// 			fSettleSlot4 = obj.fSettleBaccarat4;
+		// 			fSettleBaccarat5 = obj.fSettleBaccarat5 ?? 0;
+		// 			fSettleSlot5 = obj.fSettleBaccarat5 ?? 0;
+		// 		} else if (Math.abs(iSTotal) > Math.abs(iBTotal)) {
+		// 			fSettleBaccarat4 = obj.fSettleSlot4;
+		// 			fSettleSlot4 = obj.fSettleSlot4;
+		// 			fSettleBaccarat5 = obj.fSettleSlot5 ?? 0;
+		// 			fSettleSlot5 = obj.fSettleSlot5 ?? 0;
+		// 		}
+		// 	}
+		// } else {
+		// 	fSettleBaccarat4 = obj.fSettleBaccarat4;
+		// 	fSettleSlot4 = obj.fSettleSlot4;
+		// 	fSettleBaccarat5 = obj.fSettleBaccarat5 ?? 0;
+		// 	fSettleSlot5 = obj.fSettleSlot5 ?? 0;
+		// }
 
-		iBTotal = parseFloat(obj.iBaccaratTotal) + parseFloat(obj.iUnderOverTotal) - parseFloat(obj.iCommissionBaccarat ?? 0);
-		iSTotal = parseFloat(obj.iSlotTotal) - parseFloat(obj.iCommissionSlot);
+		iBTotal = parseFloat(obj.iBaccaratTotal) + parseFloat(obj.iUnderOverTotal) - parseFloat(obj.iCommissionBaccarat ?? 0) - parseFloat(iSettleBaccarat);
+		iSTotal = (parseFloat(obj.iSlotTotal) - parseFloat(obj.iCommissionSlot) - parseFloat(iSettleSlot));
 
 		// 전체 죽장 계산((배팅-알값) * 대본죽장률)
 		iSettleBaccarat = iBTotal * fSettleBaccarat4 * 0.01;
@@ -1236,11 +1241,13 @@
 				data.fSettleSlot = parseFloat(aObject.fSettleSlot4 ?? 0);
 				data.fSettlePBA = 0;
 				data.fSettlePBB = 0;
+				data.iSettleVice = parseFloat(aObject.iSettleVice ?? 0);
 			} else if (aObject.iClass == 5) {
 				data.fSettleBaccarat = parseFloat(aObject.fSettleBaccarat5 ?? 0);
 				data.fSettleSlot = parseFloat(aObject.fSettleSlot5 ?? 0);
 				data.fSettlePBA = 0;
 				data.fSettlePBB = 0;
+				data.iSettleVice = parseFloat(aObject.iSettle ?? 0);
 			}
 		} else {  // 죽장 완료
 			data.iTotal = parseFloat(aObject.iBaccaratTotal) + parseFloat(aObject.iUnderOverTotal) + parseFloat(aObject.iSlotTotal) + parseFloat(aObject.iPBATotal) + parseFloat(aObject.iPBBTotal);
@@ -1264,17 +1271,14 @@
 				data.fSettleSlot = parseFloat(aObject.fSettleSlot42 ?? 0);
 				data.fSettlePBA = 0;
 				data.fSettlePBB = 0;
+				data.iSettleVice = parseFloat(aObject.iSettleVice ?? 0);
 			} else if (aObject.iClass == 5) {
 				data.fSettleBaccarat = parseFloat(aObject.fSettleBaccarat52 ?? 0);
 				data.fSettleSlot = parseFloat(aObject.fSettleSlot52 ?? 0);
 				data.fSettlePBA = 0;
 				data.fSettlePBB = 0;
+				data.iSettleVice = parseFloat(aObject.iSettle ?? 0);
 			}
-		}
-
-		data.iSettle = parseFloat(aObject.iSettle);
-		if (aObject.iClass == 5) {
-			data.iSettleVice = parseFloat(aObject.iSettle ?? 0);
 		}
 
 		data.iCommissionBaccarat = parseFloat(aObject.iCommissionBaccarat ?? 0);

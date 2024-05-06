@@ -49,7 +49,11 @@ module.exports = (sequelize, DataTypes) => {
         fSettleSlot: {
             type: DataTypes.FLOAT,
         },
+        // 부본 합계
         iTotal: {
+            type:DataTypes.INTEGER,
+        },
+        iRolling: {
             type:DataTypes.INTEGER,
         },
         iBWinlose: {
@@ -61,8 +65,12 @@ module.exports = (sequelize, DataTypes) => {
         iSWinlose: {
             type:DataTypes.INTEGER,
         },
-        // 부본죽장
+        // 대본죽장
         iSettle: {
+            type:DataTypes.INTEGER,
+        },
+        // 부본죽장
+        iSettleVice: {
             type:DataTypes.INTEGER,
         },
         // 대본 B알값

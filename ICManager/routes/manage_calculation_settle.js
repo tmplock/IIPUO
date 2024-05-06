@@ -48,14 +48,17 @@ router.post('/request_apply_sub_settle', isLoggedIn, async (req, res) => {
 
     let list = [];
     let array = req.body.data.split(',');
-    for ( let i = 0; i < array.length/11; ++ i )
+    for ( let i = 0; i < array.length/14; ++ i )
     {
-        let idx = i*11;
+        let idx = i*14;
         list.push({strNickname:array[idx+0], strID:array[idx+1],
             fSettleBaccaratViceAdmin:parseFloat(array[idx+2]), fSettleSlotViceAdmin:parseFloat(array[idx+3]),
             iBWinlose:parseFloat(array[idx+4]), iUWinlose:parseFloat(array[idx+5]), iSWinlose:parseFloat(array[idx+6]),
             iCommissionB:parseInt(array[idx+7]), iCommissionS: parseInt(array[idx+8]),
-            iSettleViceAdmin: parseInt(array[idx+9]), iTotalViceAdmin: parseInt(array[idx+10])});
+            iSettleViceAdmin: parseInt(array[idx+9]), iSettleVice:parseFloat(array[idx+10]),
+            iTotalViceAdmin: parseFloat(array[idx+11]), iTotal: parseFloat(array[idx+12]),
+            iRolling: parseFloat(array[idx + 13])
+        });
     }
 
     if ( list.length > 0 )
@@ -98,15 +101,17 @@ router.post('/request_apply_sub_settle', isLoggedIn, async (req, res) => {
                     strID:obj.strID,
                     iClass:settle.iClass,
                     strGroupID:settle.strGroupID,
+                    fSettleBaccaratViceAdmin:obj.fSettleBaccaratViceAdmin ?? 0,
+                    fSettleSlotViceAdmin:obj.fSettleSlotViceAdmin ?? 0,
                     fSettleBaccarat:settle.fSettleBaccarat,
                     fSettleSlot:settle.fSettleSlot,
                     iTotal:settle.iTotal,
-                    iSettle:settle.iSettle,
-                    fSettleBaccaratViceAdmin:obj.fSettleBaccaratViceAdmin ?? 0,
-                    fSettleSlotViceAdmin:obj.fSettleSlotViceAdmin ?? 0,
+                    iRolling:obj.iRolling ?? 0,
                     iBWinlose:obj.iBWinlose ?? 0,
                     iUWinlose:obj.iUWinlose ?? 0,
                     iSWinlose:obj.iSWinlose ?? 0,
+                    iSettle:settle.iSettle,
+                    iSettleVice:settle.iSettleVice,
                     iCommissionB:obj.iCommissionB ?? 0,
                     iCommissionS:obj.iCommissionS ?? 0,
                     iSettleViceAdmin:obj.iSettleViceAdmin ?? 0,
@@ -119,15 +124,17 @@ router.post('/request_apply_sub_settle', isLoggedIn, async (req, res) => {
                     strID:obj.strID,
                     iClass:settle.iClass,
                     strGroupID:settle.strGroupID,
+                    fSettleBaccaratViceAdmin:obj.fSettleBaccaratViceAdmin ?? 0,
+                    fSettleSlotViceAdmin:obj.fSettleSlotViceAdmin ?? 0,
                     fSettleBaccarat:settle.fSettleBaccarat,
                     fSettleSlot:settle.fSettleSlot,
                     iTotal:settle.iTotal,
-                    iSettle:settle.iSettle,
-                    fSettleBaccaratViceAdmin:obj.fSettleBaccaratViceAdmin ?? 0,
-                    fSettleSlotViceAdmin:obj.fSettleSlotViceAdmin ?? 0,
+                    iRolling:obj.iRolling ?? 0,
                     iBWinlose:obj.iBWinlose ?? 0,
                     iUWinlose:obj.iUWinlose ?? 0,
                     iSWinlose:obj.iSWinlose ?? 0,
+                    iSettle:settle.iSettle,
+                    iSettleVice:settle.iSettleVice,
                     iCommissionB:obj.iCommissionB ?? 0,
                     iCommissionS:obj.iCommissionS ?? 0,
                     iSettleViceAdmin:obj.iSettleViceAdmin ?? 0,
@@ -279,8 +286,10 @@ let GetSettlePartnerList = async (strGroupID, iClass, strQuater, dateStart, date
                 IFNULL((SELECT sum(iAgentBetB - iAgentWinB) FROM RecordDailyOverviews WHERE strID = t5.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iBaccaratWinLose,
                 IFNULL((SELECT sum(iAgentBetUO - iAgentWinUO) FROM RecordDailyOverviews WHERE strID = t5.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iUnderOverWinLose,
                 IFNULL((SELECT sum(iAgentBetS - iAgentWinS) FROM RecordDailyOverviews WHERE strID = t5.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iSlotWinLose,
-                sr.iSettle AS iSettleVice
-                
+                CASE 
+                    WHEN sub.id IS NOT NULL THEN sub.iSettleVice
+                    ELSE sr.iSettle
+                END AS iSettleVice
             FROM Users t5
                 LEFT JOIN Users t4 ON t4.id = t5.iParentID
                 LEFT JOIN Users t3 ON t3.id = t4.iParentID

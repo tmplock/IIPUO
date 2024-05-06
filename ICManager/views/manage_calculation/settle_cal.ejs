@@ -181,7 +181,7 @@
 			};
 			for (let i in dataList) {
 				totalObj.iTotal += dataList[i].iTotal ?? 0;
-				totalObj.iRolling += ((dataList[i].iRollingB ?? 0) + (dataList[i].iRollingUO ?? 0) + (dataList[i].iRollingS ?? 0));
+				totalObj.iRolling += (dataList[i].iRolling ?? 0);
 				totalObj.iBaccaratWinLose += dataList[i].iBaccaratWinLose ?? 0;
 				totalObj.iUnderOverWinLose += dataList[i].iUnderOverWinLose ?? 0;
 				totalObj.iSlotWinLose += dataList[i].iSlotWinLose ?? 0;
@@ -267,9 +267,14 @@
 		// 부본 슬롯 * 롤링 차이
 		let rollingS4 = parseFloat(obj.iSlot ?? 0) * parseFloat(obj.fSlotR4 - obj.fSlotR) * 0.01;
 
-		obj.rollingB = rollingB4 + parseFloat(obj.iBaccaratRollingMoney ?? 0);
-		obj.rollingUO = rollingUO4 + parseFloat(obj.iUnderOverRollingMoney ?? 0);
-		obj.rollingS = rollingS4 + parseFloat(obj.iSlotRollingMoney ?? 0);
+		obj.iRollingB = rollingB4;
+		obj.iRollingUO = rollingUO4;
+		obj.iRollingS = rollingS4;
+		obj.iRolling = rollingB4 + rollingUO4 + rollingS4;
+
+		// obj.rollingB = rollingB4 + parseFloat(obj.iBaccaratRollingMoney ?? 0);
+		// obj.rollingUO = rollingUO4 + parseFloat(obj.iUnderOverRollingMoney ?? 0);
+		// obj.rollingS = rollingS4 + parseFloat(obj.iSlotRollingMoney ?? 0);
 
 
 		//
@@ -291,10 +296,10 @@
 		obj.fSettleSlotCal = fSettleSlotCal;
 
 		// 대본 죽장 계산
-		obj.iSettle = (parseFloat(obj.iTotal5 ?? 0) - parseFloat(obj.iSettleVice ?? 0) - parseFloat((obj.iRollingB ?? 0) + (obj.iRollingUO ?? 0) + (obj.iRollingS ?? 0)) - parseFloat((obj.iCommissionBaccarat ?? 0) + (obj.iCommissionSlot ?? 0))) * fSettleBaccaratCal * 0.01;
+		obj.iSettle = (parseFloat(obj.iTotal5 ?? 0) - parseFloat(obj.iSettleVice ?? 0) - parseFloat(obj.iRolling ?? 0) - parseFloat((obj.iCommissionBaccarat ?? 0) + (obj.iCommissionSlot ?? 0))) * fSettleBaccaratCal * 0.01;
 
 		// 합계
-		obj.iResult4 = parseFloat(obj.iTotal5 ?? 0) - parseFloat(obj.iSettleVice ?? 0) - parseFloat((obj.iRollingB ?? 0) + (obj.iRollingUO ?? 0) + (obj.iRollingS ?? 0)) - parseFloat((obj.iCommissionBaccarat ?? 0) + (obj.iCommissionSlot ?? 0)) - parseFloat(obj.iSettle ?? 0);
+		obj.iResult4 = parseFloat(obj.iTotal5 ?? 0) - parseFloat(obj.iSettleVice ?? 0) - parseFloat(obj.iRolling ?? 0) - parseFloat((obj.iCommissionBaccarat ?? 0) + (obj.iCommissionSlot ?? 0)) - parseFloat(obj.iSettle ?? 0);
 
 		console.log(obj);
 	}
@@ -357,7 +362,7 @@
 		aObject.iSlotWinLose = parseFloat(aObject.iSlotWinLose ?? 0);
 
 		aObject.iTotal = parseFloat(aObject.iBaccaratTotal) + parseFloat(aObject.iUnderOverTotal) + parseFloat(aObject.iSlotTotal);
-		aObject.iRolling = parseFloat(aObject.iRollingB + aObject.iRollingUO + aObject.iRollingS);
+		// aObject.iRolling = parseFloat(aObject.iRollingB + aObject.iRollingUO + aObject.iRollingS);
 		aObject.iResult = aObject.iTotal - parseFloat(aObject.iSettleVice ?? 0) - parseFloat(aObject.iCommissionBaccarat) - parseFloat(aObject.iCommissionSlot) - parseFloat(aObject.iSettle);
 		aObject.iSettleQuater = parseFloat(aObject.iSettle ?? 0);
 		aObject.iSettle = parseFloat(aObject.iSettle);
@@ -366,7 +371,7 @@
 
 		aObject.iSettleAccTotal = bEnableSettle ? 0 :  parseFloat(aObject.iSettleAfter ?? 0);
 		aObject.iSettleBeforeAcc = bEnableSettle ? parseFloat(aObject.iSettleAccUser ?? 0) : parseFloat(aObject.iSettleBeforeAcc ?? 0);
-		aObject.iSettleVice = bEnableSettle ? parseFloat(aObject.iSettleVice ?? 0) : 0;
+		aObject.iSettleVice = bEnableSettle ? parseFloat(aObject.iSettleVice ?? 0) : parseFloat(aObject.iSettleVice ?? 0);
 		aObject.iSettleAfter = bEnableSettle ? 0 : parseFloat(aObject.iSettleAfter ?? 0);
 		aObject.iSettleAcc = bEnableSettle ? 0 : parseFloat(aObject.iSettleAcc ?? 0);
 
@@ -583,7 +588,10 @@
 			list.push(settleList[i].iCommissionBaccarat ?? 0);
 			list.push(settleList[i].iCommissionSlot ?? 0);
 			list.push(settleList[i].iSettle ?? 0);
-			list.push(settleList[i].iTotal4 ?? 0);
+			list.push(settleList[i].iSettleVice ?? 0);
+			list.push(settleList[i].iResult4 ?? 0);
+			list.push(settleList[i].iTotal5 ?? 0);
+			list.push(settleList[i].iRolling ?? 0);
 		}
 
 		let data = list.join(',');

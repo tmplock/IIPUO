@@ -459,6 +459,9 @@
 					{
 						alert('하위보다 값이 작아 변경 할 수 없습니다.');
 					}
+					else if (data.msg != null && data.msg != '' ) {
+						alert(data.msg);
+					}
 					else
 					{
 						alert(strAlertError);

@@ -176,6 +176,20 @@ var inline_ModifySettleForce = async (array)=> {
 
     ret.data = list;
 
+    // 입력값 체크
+    for (let i in list) {
+        if (list[i].fSettleBaccarat < 0) {
+            ret.result = 'Error';
+            ret.name = '바카라 죽장값을 확인해주세요';
+            break;
+        } else if (list[i].fSettleSlot < 0) {
+            ret.result = 'Error';
+            ret.name = '슬롯 죽장값을 확인해주세요';
+            break;
+        }
+    }
+
+
     return ret;
 }
 exports.ModifySettleForce = inline_ModifySettleForce;

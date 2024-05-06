@@ -739,17 +739,17 @@ function AddPartner(iRootClass, aObject, bDisableRolling, iPermission)
 			</td>
 	
 			<td style="background-color:${color};"  class="parent_row_31">
-				<input type="number" style="width:40%;" name="slot_slot_31" id="fSlot${aObject.strNickname}" required="no" message="슬롯 로링비" value=${aObject.fSlotR} ${tagoption}>
+				<input type="number" step="0.01" style="width:40%;" name="slot_slot_31" id="fSlot${aObject.strNickname}" required="no" message="슬롯 로링비" value=${aObject.fSlotR} ${tagoption}>
 				%
 			</td>
 	
 			<td style="background-color:${color};"  class="parent_row_31">
-				<input type="number" style="width:50%;" name="bakara_bakara_31" id="fBaccarat${aObject.strNickname}" required="no" message="바카라 로링비" value=${aObject.fBaccaratR} ${tagoption}>
+				<input type="number" step="0.01" style="width:50%;" name="bakara_bakara_31" id="fBaccarat${aObject.strNickname}" required="no" message="바카라 로링비" value=${aObject.fBaccaratR} ${tagoption}>
 				%
 			</td>
 	
 			<td style="background-color:${color};"  class="parent_row_31">
-				<input type="number" style="width:50%;" name="bakara_over_31" id="fUnderOver${aObject.strNickname}" required="no" message="언오버 로링비" value=${aObject.fUnderOverR} ${tagoption}>
+				<input type="number" step="0.01" style="width:50%;" name="bakara_over_31" id="fUnderOver${aObject.strNickname}" required="no" message="언오버 로링비" value=${aObject.fUnderOverR} ${tagoption}>
 				%
 			</td>
 			`;
@@ -769,17 +769,17 @@ function AddPartner(iRootClass, aObject, bDisableRolling, iPermission)
 			</td>
 
 			<td style="background-color:${color};"  class="parent_row_31">
-				<input type="text" style="width:40%;" name="slot_slot_31" id="fSlot${aObject.strNickname}" required="no" message="슬롯 로링비" value=${aObject.fSlotR} ${tagoption} disabled>
+				<input type="number" step="0.01" style="width:40%;" name="slot_slot_31" id="fSlot${aObject.strNickname}" required="no" message="슬롯 로링비" value=${aObject.fSlotR} ${tagoption} disabled>
 				%
 			</td>
 	
 			<td style="background-color:${color};"  class="parent_row_31">
-				<input type="text" style="width:50%;" name="bakara_bakara_31" id="fBaccarat${aObject.strNickname}" required="no" message="바카라 로링비" value=${aObject.fBaccaratR} ${tagoption} disabled>
+				<input type="number" step="0.01" style="width:50%;" name="bakara_bakara_31" id="fBaccarat${aObject.strNickname}" required="no" message="바카라 로링비" value=${aObject.fBaccaratR} ${tagoption} disabled>
 				%
 			</td>
 	
 			<td style="background-color:${color};"  class="parent_row_31">
-				<input type="text" style="width:50%;" name="bakara_over_31" id="fUnderOver${aObject.strNickname}" required="no" message="언오버 로링비" value=${aObject.fUnderOverR} ${tagoption} disabled>
+				<input type="number" step="0.01" style="width:50%;" name="bakara_over_31" id="fUnderOver${aObject.strNickname}" required="no" message="언오버 로링비" value=${aObject.fUnderOverR} ${tagoption} disabled>
 				%
 			</td>
 			`;
@@ -787,11 +787,11 @@ function AddPartner(iRootClass, aObject, bDisableRolling, iPermission)
 
 	subtag += `
 		<td style="background-color:${color};"  class="parent_row_31">
-			<input type="text" style="width:50%;" name="bakara_over_31" id="fSettleBaccarat${aObject.strNickname}" required="no" message="바카라 죽장" value=${aObject.fSettleBaccarat ?? 0} ${tagoption} disabled>%
+			<input type="number" step="0.01" style="width:50%;" name="bakara_over_31" id="fSettleBaccarat${aObject.strNickname}" required="no" message="바카라 죽장" value=${aObject.fSettleBaccarat ?? 0} ${tagoption} disabled>%
 		</td>
 	
 		<td style="background-color:${color};"  class="parent_row_31">
-			<input type="text" style="width:50%;" name="bakara_over_31" id="fSettleSlot${aObject.strNickname}" required="no" message="슬롯 죽장" value=${aObject.fSettleSlot ?? 0} ${tagoption} disabled>%
+			<input type="number" step="0.01" style="width:50%;" name="bakara_over_31" id="fSettleSlot${aObject.strNickname}" required="no" message="슬롯 죽장" value=${aObject.fSettleSlot ?? 0} ${tagoption} disabled>%
 		</td>
 	`;
 
@@ -1668,6 +1668,16 @@ let RequestAgentList = (iTargetClass, strGroupID, iClass) => {
 				SetPartnerList(obj.iRootClass, "#vadmin_list", obj.list, false, obj.iPermission, obj.overview);
 			else
 				SetPartnerList(obj.iRootClass, "#vadmin_list", obj.list, false, obj.iPermission, obj.overview);
+
+			let list = obj.list;
+			for ( let i in list)
+			{
+				checkBlockFloat(`#fSlot${list[i].strNickname}`);
+				checkBlockFloat(`#fBaccarat${list[i].strNickname}`);
+				checkBlockFloat(`#fUnderOver${list[i].strNickname}`);
+				checkBlockFloat(`#fSettleBaccarat${list[i].strNickname}`);
+				checkBlockFloat(`#fSettleSlot${list[i].strNickname}`);
+			}
 		},
 		error:function(request,status,error)
 		{

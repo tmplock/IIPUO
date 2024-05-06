@@ -644,6 +644,21 @@ function checkBlockNum(id) {
 	});
 }
 
+function checkBlockFloat(id) {
+	var regExp = /[^\.0-9]/g;
+	$(id).keypress(function(event) {
+		var charCode = (event.which) ? event.which : event.keyCode;
+		if (charCode != 46 && charCode > 31 && (charCode < 48 || charCode > 57)) {
+			event.preventDefault();
+		} else {
+			// 소수점(.)이 두 번 이상 입력되지 않도록 막음
+			var inputValue = $(this).val();
+			if (charCode == 46 && inputValue.indexOf('.') != -1) {
+				event.preventDefault();
+			}
+		}
+	});
+}
 
 /**
  * 한글+숫자만 입력 가능함

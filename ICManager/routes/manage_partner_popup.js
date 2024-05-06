@@ -643,6 +643,17 @@ let CalculateGroupID = async (strParentGroupID, iParentClass) => {
 router.post('/request_register', isLoggedIn, async(req, res) => {
     console.log(req.body);
     try {
+        if (parseFloat(req.body.fSlotR) < 0 || parseFloat(req.body.fBaccaratR) < 0 || parseFloat(req.body.fUnderOverR) < 0) {
+            res.send({result:'Error', error:'Rolling', string:'롤링 설정값을 확인해주세요'});
+            return;
+        }
+
+        if (parseFloat(req.body.fSettleSlot) < 0 || parseFloat(req.body.fSettleBaccarat) < 0) {
+            res.send({result:'Error', error:'Settle', string:'죽장 설정값을 확인해주세요'});
+            return;
+        }
+
+
         let strGroupID = await CalculateGroupID(req.body.strParentGroupID, req.body.iParentClass);
         console.log(`parent : ${req.body.strParentGroupID}, child : ${strGroupID}`);
 
@@ -1058,6 +1069,12 @@ router.post('/request_agentinfo_modify',isLoggedIn, async (req, res) => {
     let user = await db.Users.findOne({where:{strNickname:req.body.strOriginNickname}});
 
     let strErrorCode = '';
+
+    if (parseFloat(req.body.fSlotR) < 0 || parseFloat(req.body.fBaccaratR) < 0 || parseFloat(req.body.fUnderOverR) < 0) {
+        strErrorCode = 'ERRORMSG';
+        res.send({result:'ERROR', code:strErrorCode, msg: '롤링 설정값을 확인해주세요'});
+        return;
+    }
 
     if ( null != user )
     {

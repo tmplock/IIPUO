@@ -739,17 +739,17 @@ function AddPartner(iRootClass, aObject, bDisableRolling, iPermission)
 			</td>
 	
 			<td style="background-color:${color};"  class="parent_row_31">
-				<input type="number" style="width:40%;" name="slot_slot_31" id="fSlot${aObject.strNickname}" required="no" message="슬롯 로링비" value=${aObject.fSlotR} ${tagoption}>
+				<input type="number" step="0.01" style="width:40%;" name="slot_slot_31" id="fSlot${aObject.strNickname}" required="no" message="슬롯 로링비" value=${aObject.fSlotR} ${tagoption}>
 				%
 			</td>
 	
 			<td style="background-color:${color};"  class="parent_row_31">
-				<input type="number" style="width:50%;" name="bakara_bakara_31" id="fBaccarat${aObject.strNickname}" required="no" message="바카라 로링비" value=${aObject.fBaccaratR} ${tagoption}>
+				<input type="number" step="0.01" style="width:50%;" name="bakara_bakara_31" id="fBaccarat${aObject.strNickname}" required="no" message="바카라 로링비" value=${aObject.fBaccaratR} ${tagoption}>
 				%
 			</td>
 	
 			<td style="background-color:${color};"  class="parent_row_31">
-				<input type="number" style="width:50%;" name="bakara_over_31" id="fUnderOver${aObject.strNickname}" required="no" message="언오버 로링비" value=${aObject.fUnderOverR} ${tagoption}>
+				<input type="number" step="0.01" style="width:50%;" name="bakara_over_31" id="fUnderOver${aObject.strNickname}" required="no" message="언오버 로링비" value=${aObject.fUnderOverR} ${tagoption}>
 				%
 			</td>
 			`;
@@ -769,17 +769,17 @@ function AddPartner(iRootClass, aObject, bDisableRolling, iPermission)
 			</td>
 
 			<td style="background-color:${color};"  class="parent_row_31">
-				<input type="text" style="width:40%;" name="slot_slot_31" id="fSlot${aObject.strNickname}" required="no" message="슬롯 로링비" value=${aObject.fSlotR} ${tagoption} disabled>
+				<input type="number" step="0.01" style="width:40%;" name="slot_slot_31" id="fSlot${aObject.strNickname}" required="no" message="슬롯 로링비" value=${aObject.fSlotR} ${tagoption} disabled>
 				%
 			</td>
 	
 			<td style="background-color:${color};"  class="parent_row_31">
-				<input type="text" style="width:50%;" name="bakara_bakara_31" id="fBaccarat${aObject.strNickname}" required="no" message="바카라 로링비" value=${aObject.fBaccaratR} ${tagoption} disabled>
+				<input type="number" step="0.01" style="width:50%;" name="bakara_bakara_31" id="fBaccarat${aObject.strNickname}" required="no" message="바카라 로링비" value=${aObject.fBaccaratR} ${tagoption} disabled>
 				%
 			</td>
 	
 			<td style="background-color:${color};"  class="parent_row_31">
-				<input type="text" style="width:50%;" name="bakara_over_31" id="fUnderOver${aObject.strNickname}" required="no" message="언오버 로링비" value=${aObject.fUnderOverR} ${tagoption} disabled>
+				<input type="number" step="0.01" style="width:50%;" name="bakara_over_31" id="fUnderOver${aObject.strNickname}" required="no" message="언오버 로링비" value=${aObject.fUnderOverR} ${tagoption} disabled>
 				%
 			</td>
 			`;
@@ -787,11 +787,11 @@ function AddPartner(iRootClass, aObject, bDisableRolling, iPermission)
 
 	subtag += `
 		<td style="background-color:${color};"  class="parent_row_31">
-			<input type="text" style="width:50%;" name="bakara_over_31" id="fSettleBaccarat${aObject.strNickname}" required="no" message="바카라 죽장" value=${aObject.fSettleBaccarat ?? 0} ${tagoption}>%
+			<input type="number" step="0.01" style="width:50%;" name="bakara_over_31" id="fSettleBaccarat${aObject.strNickname}" required="no" message="바카라 죽장" value=${aObject.fSettleBaccarat ?? 0} ${tagoption} disabled>%
 		</td>
 	
 		<td style="background-color:${color};"  class="parent_row_31">
-			<input type="text" style="width:50%;" name="bakara_over_31" id="fSettleSlot${aObject.strNickname}" required="no" message="슬롯 죽장" value=${aObject.fSettleSlot ?? 0} ${tagoption}>%
+			<input type="number" step="0.01" style="width:50%;" name="bakara_over_31" id="fSettleSlot${aObject.strNickname}" required="no" message="슬롯 죽장" value=${aObject.fSettleSlot ?? 0} ${tagoption} disabled>%
 		</td>
 	`;
 
@@ -1481,6 +1481,43 @@ function DoApplyRolling(user)
 		var fSettleSlot = parseFloat($(`#fSettleSlot${element.id}`).val());
 
 		var iClass = parseInt($(`#iClass${element.id}`).val());
+		//
+		// if (fSlotParent < fSlot) {
+		// 	alert(`[${element.id}] 슬롯 롤링값은 상위보다 높을 수 없습니다`);
+		// 	return;
+		// }
+		// if (fBaccaratParent < fBaccarat) {
+		// 	alert(`[${element.id}] 바카라 롤링값은 상위보다 높을 수 없습니다`);
+		// 	return;
+		// }
+		// if (fUnderOverParent < fUnderOver) {
+		// 	alert(`[${element.id}] 언더오버 롤링값은 상위보다 높을 수 없습니다`);
+		// 	return;
+		// }
+		// if (fPBParent < fPB) {
+		// 	alert(`[${element.id}] 파워A 롤링값은 상위보다 높을 수 없습니다`);
+		// 	return;
+		// }
+		// if (fPBSingleParent < fPBSingle) {
+		// 	alert(`[${element.id}] 파워B 단폴 롤링값은 상위보다 높을 수 없습니다`);
+		// 	return;
+		// }
+		// if (fPBDoubleParent < fPBDouble) {
+		// 	alert(`[${element.id}] 파워B 투폴 롤링값은 상위보다 높을 수 없습니다`);
+		// 	return;
+		// }
+		// if (fPBTripleParent < fPBTriple) {
+		// 	alert(`[${element.id}] 파워B 쓰리폴 롤링값은 상위보다 높을 수 없습니다`);
+		// 	return;
+		// }
+		//
+		// fSlotParent = fSlot;
+		// fBaccaratParent = fBaccarat;
+		// fUnderOverParent = fUnderOver;
+		// fPBParent = fPB;
+		// fPBSingleParent = fPBSingle;
+		// fPBDoubleParent = fPBDouble;
+		// fPBTripleParent = fPBTriple;
 
 		if ( element != null )
 		{
@@ -1638,6 +1675,16 @@ let RequestAgentList = (iTargetClass, strGroupID, iClass) => {
 				SetPartnerList(obj.iRootClass, "#vadmin_list", obj.list, false, obj.iPermission, obj.overview);
 			else
 				SetPartnerList(obj.iRootClass, "#vadmin_list", obj.list, false, obj.iPermission, obj.overview);
+
+			let list = obj.list;
+			for ( let i in list)
+			{
+				checkBlockFloat(`#fSlot${list[i].strNickname}`);
+				checkBlockFloat(`#fBaccarat${list[i].strNickname}`);
+				checkBlockFloat(`#fUnderOver${list[i].strNickname}`);
+				checkBlockFloat(`#fSettleBaccarat${list[i].strNickname}`);
+				checkBlockFloat(`#fSettleSlot${list[i].strNickname}`);
+			}
 		},
 		error:function(request,status,error)
 		{

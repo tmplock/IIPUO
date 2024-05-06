@@ -266,6 +266,26 @@ var inline_ModifyRollingGroup = async (array)=> {
 
     ret.data = list;
 
+    // 입력값 마이너스 확인
+    for (let i in list) {
+        if (list[i].fBaccarat < 0) {
+            ret.result = 'FAIL';
+            ret.name = `[${list[i].strNickname}] 바카라 롤링값을 확인해주세요`;
+            break;
+        } else if (list[i].fSlot  < 0) {
+            ret.result = 'FAIL';
+            ret.name = `[${list[i].strNickname}] 슬롯 롤링값을 확인해주세요`;
+            break;
+        } else if (list[i].fUnderOver < 0) {
+            ret.result = 'FAIL';
+            ret.name = `[${list[i].strNickname}] 언더오버 롤링값을 확인해주세요`;
+            break;
+        }
+    }
+
+    if (ret.result == 'FAIL')
+        return ret;
+
     for ( let i in list )
     {
         console.log(list[i]);

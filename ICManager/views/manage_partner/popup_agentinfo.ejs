@@ -551,6 +551,15 @@
 			}
 		}
 
+		if (parseFloat(fSlotR) < 0 || parseFloat(fBaccaratR) < 0 || parseFloat(fUnderOverR) < 0) {
+			alert('롤링 설정값을 확인해주세요');
+			return;
+		}
+		if (parseFloat(fSettleBaccarat) < 0 || parseFloat(fSettleSlot) < 0) {
+			alert('죽장 설정값을 확인해주세요');
+			return;
+		}
+
 		objectData.strNickname = strNickname;
 		objectData.strMobile = strMobile;
 		objectData.strID = strID;
@@ -606,6 +615,13 @@
 					else if ( data.code == 'LessThanChild' )
 					{
 						alert('하위보다 값이 작아 변경 할 수 없습니다.');
+					}
+					else if (data.msg != null && data.msg != '' ) {
+						alert(data.msg);
+					}
+					else
+					{
+						alert(strAlertError);
 					}
 				}
 			}

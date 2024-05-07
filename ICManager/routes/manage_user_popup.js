@@ -301,7 +301,7 @@ router.post('/request_targetclassagentlist', isLoggedIn, async(req, res) => {
                             }
                         }
                         if ( false == bFound )
-                            return_array.push({strNickname:list[j].strNickname});
+                            return_array.push({strNickname:list[j].strNickname, iCash:list[j].iCash, iRolling:list[j].iRolling, iSettle:list[j].iSettle});
                     }
                 }
             }

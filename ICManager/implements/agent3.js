@@ -1042,7 +1042,9 @@ var inline_GetComputedAgentList = async (strGroupID, iClass, dateStart, dateEnd,
         IFNULL((SELECT SUM(iSettleOrigin) FROM SettleRecords WHERE strGroupID LIKE CONCAT(t2.strGroupID,'%') AND iClass > 3 AND date(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iSettle
         FROM Users AS t1
         LEFT JOIN Users AS t2 ON t2.iParentID = t1.id
-        WHERE t2.iPermission != 100 AND t2.iClass=${iClass} AND t1.strGroupID LIKE CONCAT('${strGroupID}', '%')${tagSearch};
+        WHERE t2.iPermission != 100 AND t2.iClass=${iClass} AND t1.strGroupID LIKE CONCAT('${strGroupID}', '%')${tagSearch}
+        ORDER BY t2.strNickname ASC
+        ;
     `);
     return list;
 };

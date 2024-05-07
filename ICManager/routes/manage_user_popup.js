@@ -248,7 +248,7 @@ router.post('/request_targetclassagentlist', isLoggedIn, async(req, res) => {
         if ( req.body.iClass == 7 )
         {
             let list = await db.Users.findAll({
-                attributes:['strNickname', db.sequelize.col('strNickname')],
+                attributes:['strNickname', db.sequelize.col('strNickname'), 'iCash', db.sequelize.col('iCash'), 'iRolling', db.sequelize.col('iRolling'), 'iSettle', db.sequelize.col('iSettle')],
                 where:{
                     strGroupID:{
                         [Op.like]:req.body.strGroupID+'%'
@@ -273,7 +273,7 @@ router.post('/request_targetclassagentlist', isLoggedIn, async(req, res) => {
             console.log(temp);
     
             let list = await db.Users.findAll({
-                attributes:['strNickname', db.sequelize.col('strNickname')],
+                attributes:['strNickname', db.sequelize.col('strNickname'), 'iCash', db.sequelize.col('iCash'), 'iRolling', db.sequelize.col('iRolling'), 'iSettle', db.sequelize.col('iSettle')],
                 where:{
                     strGroupID:{
                         [Op.like]:req.body.strGroupID+'%'

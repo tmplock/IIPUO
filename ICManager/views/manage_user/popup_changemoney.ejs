@@ -377,7 +377,9 @@
 			}
 
 			if (confirm(strConfirm)) {
-				await sleep(10000);
+				if (eGTType == 'TAKE') {
+					await sleep(10000);
+				}
 				$.ajax({
 					type: 'post',
 					url: "/manage_user_popup/request_gt",

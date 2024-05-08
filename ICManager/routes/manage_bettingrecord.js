@@ -444,6 +444,14 @@ router.post('/request_betting_cancel', isLoggedIn, async (req, res) => {
 
     try {
         if (bet.eState == 'STANDBY') {
+            if (iCash < 0 && cash == 1) {
+                let user = await db.Users.findOne({where: {strID: bet.strID}});
+                let userCash = parseInt(user.iCash ?? 0) + iCash;
+                if (userCash < 0) {
+                    res.send({result: 'FAIL', msg:'처리 실패(보유 캐시 부족)'});
+                    return;
+                }
+            }
 
             await db.RecordBets.update({
                 eType: 'CANCEL_BET', eState: 'COMPLETE'
@@ -477,6 +485,33 @@ router.post('/request_betting_cancel', isLoggedIn, async (req, res) => {
             let listOdds = await ODDS.FullCalculteOdds(listBetDB);
             const listCancelBet = [bet];
             Processor.ProcessCancel('ALL', listCancelBet, listOverview, listOdds, listUpdateDB);
+
+
+            // 1. 보유 캐시 체크
+            if (iCash < 0 && cash == 1) {
+                let user = await db.Users.findOne({where: {strID: bet.strID}});
+                let userCash = parseInt(user.iCash ?? 0) + iCash;
+                if (userCash < 0) {
+                    res.send({result: 'FAIL', msg:'처리 실패(보유 캐시 부족)'});
+                    return;
+                }
+            }
+
+            // 2. 상부 롤링 체크
+            if (betting == 1) {
+                for (let i in listOverview) {
+                    const t = listOverview[i];
+                    const cRolling = t.iRollingB + t.iRollingUO + t.iRollingS + t.iRollingPBA + t.iRollingPBB; // 요게 맞음
+                    if (cRolling < 0) {
+                        let user = await db.Users.findOne({where: {strID:t.strID}});
+                        let userRolling = parseInt(user.iRolling ?? 0) + cRolling;
+                        if (userRolling < 0) {
+                            res.send({result: 'FAIL', msg:`처리 실패(${user.strNickname} 보유 롤링 부족)`});
+                            return;
+                        }
+                    }
+                }
+            }
 
             // 배팅 처리
             await db.RecordBets.update({

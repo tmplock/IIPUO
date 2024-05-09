@@ -131,12 +131,11 @@ router.post('/request_searchby', isLoggedIn, async(req, res) => {
             SELECT i.id, i.strID, i.strAdminNickname, i.strPAdminNickname, i.strVAdminNickname, i.strAgentNickname, i.strShopNickname,
                    i.iClass, i.strName, i.strGroupID, i.strAccountOwner,
                    i.strBankName, i.strAccountNumber, i.iPreviousCash, i.iAmount, i.strMemo, i.eType, i.strRequestNickname, i.iRequestClass, i.strProcessNickname, i.iProcessClass, i.eState,
-                   u.strBankOwner AS strUserAccountOwner, u.strBankName AS strBankName,
+                   i.strBankType AS strBankType,
+                   u.strBankOwner AS strUserAccountOwner, u.strBankName AS strBankName, u.iPassCheckNewUser,
                    DATE_FORMAT(i.completedAt, '%Y-%m-%d %H:%i:%S') AS completedAt, DATE_FORMAT(i.createdAt, '%Y-%m-%d %H:%i:%S') AS createdAt, DATE_FORMAT(i.updatedAt, '%Y-%m-%d %H:%i:%S') AS updatedAt,
-                   DATE_FORMAT(u.createdAt, '%Y-%m-%d %H:%i:%S') AS userCreatedAt, su.iNewUserCheck, su.iNewUserDays
             FROM Inouts i
             LEFT JOIN Users u ON u.strNickname = i.strID
-            LEFT JOIN SubUsers su ON su.rId = u.id
             WHERE DATE(i.createdAt) BETWEEN '${req.body.dateStart}' AND '${req.body.dateEnd}'
             AND i.strGroupID LIKE '${req.body.strGroupID}%'
             AND i.eType = '${req.body.type}'
@@ -148,16 +147,8 @@ router.post('/request_searchby', isLoggedIn, async(req, res) => {
             for (let i in datas) {
                 let obj = datas[i];
                 obj.iNewUser = 0;
-
-                let userCreatedAt = obj.userCreatedAt;
-                let iNewUserCheck = obj.iNewUserCheck ?? true;
-                let iNewUserDays = obj.iNewUserDays ?? 15;
-                if (iNewUserCheck == true && iNewUserDays > 0) {
-                    let createdAt = moment(userCreatedAt).add(iNewUserDays, 'days'); // 신규가입자 확인용(가입 후 일정기간 확인)
-                    let now = moment();
-                    if (createdAt.isAfter(now)) {
-                        obj.iNewUser = 1;
-                    }
+                if (obj.strBankType == 'NEWUSER') {
+                    obj.iNewUser = 1;
                 }
                 list.push(obj);
             }

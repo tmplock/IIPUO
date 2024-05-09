@@ -144,6 +144,7 @@ router.post('/request_input', async (req, res) => {
     let strAccountOwner = req.body.strInputName;
     let strBankName = req.body.strBankName;
     let strAccountNumber = req.body.strAccountNumber;
+    let strBankType = req.body.strBankType;
 
     if ( userinfo != null )
     {
@@ -187,6 +188,7 @@ router.post('/request_input', async (req, res) => {
             strAccountOwner:strAccountOwner,
             strBankName:strBankName,
             strAccountNumber:strAccountNumber,
+            strBankType:strBankType,
             iPreviousCash:userinfo.iCash,
             iAmount:req.body.iAmount,
             eType:'INPUT',
@@ -514,24 +516,26 @@ router.post('/request_bank', async (req, res) => {
         //     LIMIT 1
         // `, {type: db.Sequelize.QueryTypes.SELECT});
         // }
+        let bankType = '';
         let bankname = '';
         let banknumber = '';
         let bankholder = '';
 
         if (bankList.length > 0) {
             let bank = bankList[0];
+            bankType = bank.eBankType;
             bankname = bank.strBankName;
             banknumber = bank.strBankNumber;
             bankholder = bank.strBankHolder;
             let msg = `입금신청을 해주시기 바랍니다`;
-            res.send({result: 'OK', msg: msg, bankname: bankname, banknumber: banknumber, bankholder:bankholder, iUpdateAccount:1});
+            res.send({result: 'OK', msg: msg, bankType:bankType, bankname: bankname, banknumber: banknumber, bankholder:bankholder, iUpdateAccount:1});
             return;
         }
 
-        res.send({result: 'FAIL', msg: '현재 계좌 준비 중입니다', bankname:'', banknumber:'', bankholder:''});
+        res.send({result: 'FAIL', msg: '현재 계좌 준비 중입니다', bankType: '', bankname:'', banknumber:'', bankholder:''});
     } catch (err) {
         console.log(err);
-        res.send({result: 'FAIL', msg: `오류가 발생했습니다(${err})`, bankname:'', banknumber:'', bankholder:''});
+        res.send({result: 'FAIL', msg: `오류가 발생했습니다(${err})`, bankType: '', bankname:'', banknumber:'', bankholder:''});
     }
 });
 

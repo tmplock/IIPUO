@@ -82,6 +82,7 @@
     let bRequestAccount = false;
     let strRequestAccountMsg = '';
 
+    let bankType = '';
     let bankname = '';
     let banknumber = '';
     let bankholder = '';
@@ -149,7 +150,7 @@
             url: "/inout/request_input",
             context: document.body,
             data:{strID:user.strID, strInputName:strName, iAmount:iAmount, strGroupID:user.strGroupID,
-                strAccountOwner: bankholder, strBankName: bankname, strAccountNumber: banknumber},
+                strAccountOwner: bankholder, strBankName: bankname, strAccountNumber: banknumber, strBankType:bankType},
     
             success:function(data) {
 
@@ -186,6 +187,7 @@
                 if (obj.result == 'OK') {
                     bRequestAccount = true;
                     strRequestAccountMsg = obj.msg;
+                    bankType = obj.bankType;
                     bankname = obj.bankname;
                     banknumber = obj.banknumber;
                     bankholder = obj.bankholder;

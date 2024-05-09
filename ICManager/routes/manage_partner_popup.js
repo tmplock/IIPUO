@@ -739,6 +739,9 @@ router.post('/request_register', isLoggedIn, async(req, res) => {
         let fUnderOverR = parseFloat(req.body.fUnderOverR ?? 0);
         fUnderOverR = Number.isNaN(fUnderOverR) ? 0 : fUnderOverR;
 
+        let iPassCheckNewUser = parseInt(req.body.iPassCheckNewUser ?? 0);
+        iPassCheckNewUser = Number.isNaN(iPassCheckNewUser) ? 0 : iPassCheckNewUser;
+
         if (fSlotR < 0 || fBaccaratR < 0 || fUnderOverR < 0) {
             res.send({result:'Error', error:'Rolling', string:'롤링 설정값을 확인해주세요'});
             return;
@@ -830,7 +833,8 @@ router.post('/request_register', isLoggedIn, async(req, res) => {
                 strSettleMemo:'',
                 iNumLoginFailed: 0,
                 iPermission:0,
-                iLoginMax:iLoginMax
+                iLoginMax:iLoginMax,
+                iPassCheckNewUser:iPassCheckNewUser
             });
         }
 
@@ -1032,10 +1036,20 @@ router.post('/request_settingodds', isLoggedIn, async (req, res) => {
     console.log(req.body);
 
     let fRollingBaccarat = parseFloat(req.body.fRollingBaccarat);
+    fRollingBaccarat = Number.isNaN(fRollingBaccarat) ? 0 : fRollingBaccarat;
+
     let fRollingSlot = parseFloat(req.body.fRollingSlot);
+    fRollingSlot = Number.isNaN(fRollingSlot) ? 0 : fRollingSlot;
+
     let fRollingUnderOver = parseFloat(req.body.fRollingUnderOver);
+    fRollingUnderOver = Number.isNaN(fRollingUnderOver) ? 0 : fRollingUnderOver;
+
     let fSettleSlot = parseFloat(req.body.fSettleSlot);
+    fSettleSlot = Number.isNaN(fSettleSlot) ? 0 : fSettleSlot;
+
     let fSettleBaccarat = parseFloat(req.body.fSettleBaccarat);
+    fSettleBaccarat = Number.isNaN(fSettleBaccarat) ? 0 : fSettleBaccarat;
+
     let iClass = parseInt(req.body.iClass);
     // 본사 밑에 부본사 비율 확인
     let subUsers = await db.Users.findAll({
@@ -1159,7 +1173,7 @@ router.post('/request_initoutputpass', isLoggedIn, async (req, res) => {
 });
 
 //에이전트 정보 수정
-router.post('/request_agentinfo_modify',isLoggedIn, async (req, res) => {
+router.post('/request_agentinfo_modify',async (req, res) => {
 
     console.log(`/request_agentinfo_modify`);
     console.log(req.body);
@@ -1182,6 +1196,9 @@ router.post('/request_agentinfo_modify',isLoggedIn, async (req, res) => {
 
     let fUnderOverR = parseFloat(req.body.fUnderOverR ?? 0);
     fUnderOverR = Number.isNaN(fUnderOverR) ? 0 : fUnderOverR;
+
+    let iPassCheckNewUser = parseInt(req.body.iPassCheckNewUser ?? 0);
+    iPassCheckNewUser = Number.isNaN(iPassCheckNewUser) ? 0 : iPassCheckNewUser;
 
     if (fSlotR < 0 || fBaccaratR < 0 || fUnderOverR < 0) {
         strErrorCode = 'ERRORMSG';
@@ -1306,10 +1323,10 @@ router.post('/request_agentinfo_modify',isLoggedIn, async (req, res) => {
             if ( null != parent && parent.iClass > 1 )
             {
                 console.log(`####################################################### ${parent.strID}, ${parent.iPBLimit}, ${req.body.iPBLimit}`);
-                if ( 
-                    parent.fSlotR < req.body.fSlotR ||
-                    parent.fBaccaratR < req.body.fBaccaratR ||
-                    parent.fUnderOverR < req.body.fUnderOverR
+                if (
+                    parent.fSlotR < fSlotR ||
+                    parent.fBaccaratR < fBaccaratR ||
+                    parent.fUnderOverR < fUnderOverR
                    )
                 {
                     console.log(`########## ModifyAgentInfo : Error Parent`);
@@ -1350,7 +1367,7 @@ router.post('/request_agentinfo_modify',isLoggedIn, async (req, res) => {
             for ( let i in children )
             {
                 let child = children[i];
-                if ( 
+                if (
                     child.fSlotR > fSlotR ||
                     child.fBaccaratR > fBaccaratR ||
                     child.fUnderOverR > fUnderOverR
@@ -1393,6 +1410,7 @@ router.post('/request_agentinfo_modify',isLoggedIn, async (req, res) => {
                 fSettleBaccarat:fSettleBaccarat,
                 fSettleSlot:fSettleSlot,
                 iPermission:req.body.iPermission,
+                iPassCheckNewUser:iPassCheckNewUser
             };
 
             if (req.body.strPassword != undefined && req.body.strPassword != '******') {
@@ -1497,7 +1515,7 @@ router.post('/request_agentinfo_modify',isLoggedIn, async (req, res) => {
     {
         res.send({result:'ERROR', code:strErrorCode});
     }
-});
+}, isLoggedIn);
 
 const logMessage = (source, data) => {
     let msg = '';

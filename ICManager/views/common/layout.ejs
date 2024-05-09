@@ -142,6 +142,39 @@
                                 <a href="#" class="btn_green" id="popup_writeletter">쪽지</a> &nbsp;
                             <% } %>
                         <% } %>
+                        <% if ( agent.iPermission != 100 && agent.iRootClass <= 3 ) { %>
+                            <% if (agent.iClass == 3) { %>
+                                <% if ( iHeaderFocus == 22 ) { %>
+                                    <a href="#" id="popup_register_agent" iagentclass="4" class="btn_blue">대본사 등록</a>
+                                <% } else { %>
+                                    <a href="#" id="popup_register_agent" iagentclass="4" class="btn_green">대본사 등록</a>
+                                <% } %>
+                            <% } else if (agent.iClass == 4) { %>
+                                <% if ( iHeaderFocus == 22 ) { %>
+                                    <a href="#" id="popup_register_agent" iagentclass="5" class="btn_blue">부본사 등록</a>
+                                <% } else { %>
+                                    <a href="#" id="popup_register_agent" iagentclass="5" class="btn_green">부본사 등록</a>
+                                <% } %>
+                            <% } else if (agent.iClass == 5) { %>
+                                <% if ( iHeaderFocus == 22 ) { %>
+                                    <a href="#" id="popup_register_agent" iagentclass="6" class="btn_blue">총판 등록</a>
+                                <% } else { %>
+                                    <a href="#" id="popup_register_agent" iagentclass="6" class="btn_green">총판 등록</a>
+                                <% } %>
+                            <% } else if (agent.iClass == 6) { %>
+                                <% if ( iHeaderFocus == 22 ) { %>
+                                    <a href="#" id="popup_register_agent" iagentclass="7" class="btn_blue">매장 등록</a>
+                                <% } else { %>
+                                    <a href="#" id="popup_register_agent" iagentclass="7" class="btn_green">매장 등록</a>
+                                <% } %>
+                            <% } else if (agent.iClass == 7) { %>
+                                <% if ( iHeaderFocus == 22 ) { %>
+                                    <a href="#" id="popup_register_agent" iagentclass="8" class="btn_blue">회원 등록</a>
+                                <% } else { %>
+                                    <a href="#" id="popup_register_agent" iagentclass="8" class="btn_green">회원 등록</a>
+                                <% } %>
+                            <% } %>
+                        <% } %>
                     <% } %>
                 </div>
 

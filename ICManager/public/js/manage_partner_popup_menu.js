@@ -336,3 +336,20 @@ $(document).on('click', '#popup_changemoney', ()=> {
     $form.append(idx).append(page).append(category);
     $form.submit();
 });
+
+$(document).on('click', '#popup_register_agent', (event)=> {
+    let eAgentType = $(event.target).attr('iAgentClass');
+    var $form = $('<form></form>');
+    $form.attr('action', '/manage_partner_popup/register_agent');
+    $form.attr('method', 'post');
+    $form.appendTo('body');
+
+    var strNickname = $(`<input type="hidden" value="${agent.strNickname}" name="strNickname">`);
+    var strGroupID = $(`<input type="hidden" value="${agent.strGroupID}" name="strGroupID">`);
+    var iClass = $(`<input type="hidden" value=${parseInt(agent.iClass)} name="iClass">`);
+    var iPermission = $(`<input type="hidden" value=${parseInt(agent.iPermission)} name="iPermission">`);
+    let iAgentClass = $(`<input type="hidden" value=${eAgentType} name="iAgentClass">`);
+
+    $form.append(strNickname).append(strGroupID).append(iClass).append(iPermission).append(iAgentClass);
+    $form.submit();
+});

@@ -312,6 +312,7 @@ let Submit = () => {
         try {
             iAutoRegisterNumber = $('#auto_register_number').val();
             iAutoRegisterNumber = parseInt(iAutoRegisterNumber);
+            iAutoRegisterNumber = Number.isNaN(iAutoRegisterNumber) ? 0 : iAutoRegisterNumber;
             if (iAutoRegisterNumber < 1) {
                 alert('자동생성 숫자는 0보다 커야합니다');
                 return;
@@ -453,7 +454,7 @@ let Submit = () => {
                 fSettleSlot:fSettleSlot,
                 strOptionCode:strOptionCode,
                 iPermission:strPermissionInput,
-                bCheckAutoRegister:bCheckAutoRegister,
+                iCheckAutoRegister:bCheckAutoRegister ? 1 : 0,
                 iAutoRegisterNumber:iAutoRegisterNumber
             },
     

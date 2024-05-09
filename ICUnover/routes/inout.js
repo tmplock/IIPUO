@@ -486,20 +486,10 @@ router.post('/request_bank', async (req, res) => {
         }
 
         let eBankType = 'NORMAL';
-        // 기본값
-        let bNewUserCheck = true;
-        let iNewUserDays = 15;
-
-        const subUser = await db.SubUsers.findOne({where: {rId: info.id}});
-        if (subUser != null) {
-            bNewUserCheck = subUser.iNewUserCheck == 1;
-            iNewUserDays = subUser.iNewUserDays ?? 0;
-        }
-
-        if (bNewUserCheck == true && iNewUserDays > 0) {
-            let createdAt = moment(info.createdAt).add(iNewUserDays, 'days'); // 신규가입자 확인용(가입 후 일정기간 확인)
-            let now = moment();
-            if (createdAt.isAfter(now)) {
+        let list = await db.Inouts.findAll({where: {strID: info.strNickname}});
+        if (list.length == 0) {
+            let iPassCheckNewUser = info.iPassCheckNewUser ?? 0;
+            if (iPassCheckNewUser != 1) {
                 eBankType = 'NEWUSER';
             }
         }
@@ -528,7 +518,6 @@ router.post('/request_bank', async (req, res) => {
         let banknumber = '';
         let bankholder = '';
 
-        // 등록된 신규자용 통자 정보 조회(없으면 일반 통장으로 전달됨)
         if (bankList.length > 0) {
             let bank = bankList[0];
             bankname = bank.strBankName;

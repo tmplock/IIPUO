@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
             primaryKey: true,
             type: DataTypes.INTEGER,
         },
+        // 유저 닉네임
         strID: {
             type:DataTypes.STRING,
             allowNull: false,

@@ -25,7 +25,6 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 db.Users = require('./models/user')(sequelize, Sequelize);
-db.SubUsers = require('./models/sub_user')(sequelize, Sequelize);
 db.BettingRecords = require('./models/betting_record')(sequelize, Sequelize);
 db.Inouts = require('./models/inout')(sequelize, Sequelize);
 db.GTs = require('./models/gt')(sequelize, Sequelize);

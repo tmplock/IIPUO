@@ -201,6 +201,10 @@ module.exports = (sequelize, DataTypes) => {
         fCommission: {
             type: DataTypes.FLOAT,
         },
+        // 신규자 체크 패스 여부(1:패스)
+        iPassCheckNewUser: {
+            type: DataTypes.INTEGER,
+        }
     }, {
         indexes: [
             { name: 'idx_users_id', fields: ['id'] },

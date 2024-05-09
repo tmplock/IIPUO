@@ -55,11 +55,10 @@
 							onchange="OnChangeParent();">
 							<option value="">선택하세요</option>
 						</select>
-						<input type="checkbox" id="checkAutoRegister" value="" onclick="OnClickAutoRegister();"> 자동생성 만들기
-						<div id="auto_register" style="display: none;">
-							<input type="number" style="width:50px; height: 25px;" required="yes" id="auto_register_number" message="" placeholder="" />
-							<a href="#" id="auto_register_msg"><font style="font-size: 15px; color: red; font-weight: bold;">* 입력 숫자만큼 자동으로 등록됩니다.(예시: 닉네임1, 닉네임2)</font></a>
-						</div>
+						<input type="checkbox" id="checkbox_auto_register" value="" onclick="OnClickAutoRegister();"> 자동생성 만들기
+						<input type="number" style="width:50px; height: 25px; display: none;" required="yes" id="auto_register_number" message="" placeholder="" />
+						<a href="#" class="btn_red" id="check_auto_register" style="display: none;" onclick="RequestConfirmAutoRegisterValue();"><%=__('Duplication')%><%=__('OK')%></a>
+						<a href="#" id="auto_register_msg" style="display: none;"><font style="font-size: 15px; color: red; font-weight: bold;">* 입력 숫자만큼 자동으로 등록됩니다.(예시: 닉네임1, 닉네임2)</font></a>
 						<input type="hidden" id="strParentGroupID" value="" />
 						<input type="hidden" id="iParentClass" value="" />
 						<input type="hidden" id="iParentID" value="" />
@@ -353,7 +352,6 @@
 			</div>
 		</div>
 	</div>
-	</div>
 
 	<script type="text/javascript" src="js/enum.js"></script>
 	<script type="text/javascript" src="js/manage_partner_popup_register.js"></script>
@@ -399,7 +397,7 @@
 
 		$(document).ready(() => {
 			SetUsingPC(parent.iAgentClass);
-			SetAutoRegister();
+			SetAutoRegister(false);
 		});
 	</script>
 

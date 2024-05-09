@@ -724,22 +724,33 @@ router.post('/request_register', isLoggedIn, async(req, res) => {
     }
 
     try {
-        if (parseFloat(req.body.fSlotR) < 0 || parseFloat(req.body.fBaccaratR) < 0 || parseFloat(req.body.fUnderOverR) < 0) {
+        let fSettleBaccarat = parseFloat(req.body.fSettleBaccarat ?? 0);
+        fSettleBaccarat = Number.isNaN(fSettleBaccarat) ? 0 : fSettleBaccarat;
+
+        let fSettleSlot = parseFloat(req.body.fSettleSlot ?? 0);
+        fSettleSlot = Number.isNaN(fSettleSlot) ? 0 : fSettleSlot;
+
+        let fBaccaratR = parseFloat(req.body.fBaccaratR ?? 0);
+        fBaccaratR = Number.isNaN(fBaccaratR) ? 0 : fBaccaratR;
+
+        let fSlotR = parseFloat(req.body.fSlotR ?? 0);
+        fSlotR = Number.isNaN(fSlotR) ? 0 : fSlotR;
+
+        let fUnderOverR = parseFloat(req.body.fUnderOverR ?? 0);
+        fUnderOverR = Number.isNaN(fUnderOverR) ? 0 : fUnderOverR;
+
+        if (fSlotR < 0 || fBaccaratR < 0 || fUnderOverR < 0) {
             res.send({result:'Error', error:'Rolling', string:'롤링 설정값을 확인해주세요'});
             return;
         }
 
-        if (parseFloat(req.body.fSettleSlot) < 0 || parseFloat(req.body.fSettleBaccarat) < 0) {
+        if (fSettleSlot < 0 || fSettleBaccarat < 0) {
             res.send({result:'Error', error:'Settle', string:'죽장 설정값을 확인해주세요'});
             return;
         }
 
-
         let strGroupID = await CalculateGroupID(req.body.strParentGroupID, req.body.iParentClass);
         console.log(`parent : ${req.body.strParentGroupID}, child : ${strGroupID}`);
-
-        let fSettleBaccarat = req.body.fSettleBaccarat ?? 0;
-        let fSettleSlot = req.body.fSettleSlot ?? 0;
 
         const parent = await db.Users.findOne({where:{id:req.body.iParentID}});
         if ( parent == null ) {
@@ -748,19 +759,14 @@ router.post('/request_register', isLoggedIn, async(req, res) => {
         }
         if ( parent != null )
         {
-            if ( parent.fSlotR < parseFloat(req.body.fSlotR) ||
-                parent.fBaccaratR < parseFloat(req.body.fBaccaratR) ||
-                parent.fUnderOverR < parseFloat(req.body.fUnderOverR) ||
-                parent.fPBR < parseFloat(req.body.fPBR) ||
-                parent.fPBSingleR < parseFloat(req.body.fPBSingleR) ||
-                parent.fPBDoubleR < parseFloat(req.body.fPBDoubleR) ||
-                parent.fPBTripleR < parseFloat(req.body.fPBTripleR) )
+            if ( parent.fSlotR < fSlotR ||
+                parent.fBaccaratR < fBaccaratR ||
+                parent.fUnderOverR < fUnderOverR )
             {
                 res.send({result:'Error', error:'Rolling', string:'롤링비(%)는 상위 에이전트 보다 클 수 없습니다.'});
                 return;
             }
-            else if (parent.fSettleBaccarat < parseFloat(fSettleBaccarat) ||
-                parent.fSettleSlot < parseFloat(fSettleSlot))
+            else if (parent.fSettleBaccarat < fSettleBaccarat || parent.fSettleSlot < fSettleSlot)
             {
                 res.send({result:'Error', error:'Settle', string:'죽장(%)은 상위 에이전트 보다 클 수 없습니다.'});
                 return;
@@ -768,8 +774,8 @@ router.post('/request_register', isLoggedIn, async(req, res) => {
         }
 
         let iAutoRegisterNumber = parseInt(req.body.iAutoRegisterNumber);
-        const bCheckAutoRegister = req.body.bCheckAutoRegister ?? false;
-        if (bCheckAutoRegister == true) {
+        let iCheckAutoRegister = parseInt(req.body.iCheckAutoRegister ?? 0);
+        if (iCheckAutoRegister == 1) {
             if (iAutoRegisterNumber < 1) {
                 res.send({result:'Error', error:'FAIL', string:'자동생성 입력값을 확인해주세요'});
                 return;
@@ -786,49 +792,6 @@ router.post('/request_register', isLoggedIn, async(req, res) => {
         } else if (iClass == 3) {
             iLoginMax = 1;
         }
-
-        await db.Users.create({
-            strID:req.body.strID,
-            strPassword:req.body.strPassword,
-            strNickname:req.body.strNickname,
-            strMobile:req.body.strMobileNo,
-            strBankname:req.body.strBankName,
-            strBankAccount:req.body.strAccountNumber,
-            strBankOwner:req.body.strAccountOwner,
-            strBankPassword:'',
-            strOutputPassowrd:'',
-            iClass:parseInt(req.body.iParentClass)+1,
-            strGroupID:strGroupID,
-            iParentID:req.body.iParentID,
-            iCash:0,
-            iLoan:0,
-            iRolling:0,
-            iSettle:0,
-            iSettleAcc:0,
-            fBaccaratR:req.body.fBaccaratR,
-            fSlotR:req.body.fSlotR,
-            fUnderOverR:req.body.fUnderOverR,
-            fPBR:req.body.fPBR,
-            fPBSingleR:req.body.fPBSingleR,
-            fPBDoubleR:req.body.fPBDoubleR,
-            fPBTripleR:req.body.fPBTripleR,
-            fSettleSlot:fSettleSlot,
-            fSettleBaccarat:fSettleBaccarat,
-            fSettlePBA:0,
-            fSettlePBB:0,
-            eState:'BLOCK',
-            //strOptionCode:'00000000',
-            strOptionCode:req.body.strOptionCode,
-            strPBOptionCode:req.body.strPBOptionCode,
-            iPBLimit:req.body.iPBLimit,
-            iPBSingleLimit:req.body.iPBSingleLimit,
-            iPBDoubleLimit:req.body.iPBDoubleLimit,
-            iPBTripleLimit:req.body.iPBTripleLimit,
-            strSettleMemo:'',
-            iNumLoginFailed: 0,
-            iPermission:0,
-            iLoginMax:iLoginMax
-        });
         for (let i = 0; i < iAutoRegisterNumber; i++) {
             let strID = req.body.strID;
             let strNickname = req.body.strNickname;
@@ -855,25 +818,15 @@ router.post('/request_register', isLoggedIn, async(req, res) => {
                 iRolling:0,
                 iSettle:0,
                 iSettleAcc:0,
-                fBaccaratR:req.body.fBaccaratR,
-                fSlotR:req.body.fSlotR,
-                fUnderOverR:req.body.fUnderOverR,
-                fPBR:req.body.fPBR,
-                fPBSingleR:req.body.fPBSingleR,
-                fPBDoubleR:req.body.fPBDoubleR,
-                fPBTripleR:req.body.fPBTripleR,
+                fBaccaratR:fBaccaratR,
+                fSlotR:fSlotR,
+                fUnderOverR:fUnderOverR,
                 fSettleSlot:fSettleSlot,
                 fSettleBaccarat:fSettleBaccarat,
-                fSettlePBA:0,
-                fSettlePBB:0,
                 eState:'BLOCK',
                 //strOptionCode:'00000000',
                 strOptionCode:req.body.strOptionCode,
                 strPBOptionCode:req.body.strPBOptionCode,
-                iPBLimit:req.body.iPBLimit,
-                iPBSingleLimit:req.body.iPBSingleLimit,
-                iPBDoubleLimit:req.body.iPBDoubleLimit,
-                iPBTripleLimit:req.body.iPBTripleLimit,
                 strSettleMemo:'',
                 iNumLoginFailed: 0,
                 iPermission:0,

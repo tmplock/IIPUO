@@ -488,7 +488,7 @@ router.post('/request_bank', async (req, res) => {
         }
 
         let eBankType = 'NORMAL';
-        let list = await db.Inouts.findAll({where: {strID: info.strNickname}});
+        let list = await db.Inouts.findAll({where: {strID: info.strNickname, eState: 'COMPLETE'}});
         if (list.length == 0) {
             let iPassCheckNewUser = info.iPassCheckNewUser ?? 0;
             if (iPassCheckNewUser != 1) {
@@ -500,7 +500,7 @@ router.post('/request_bank', async (req, res) => {
         console.log(obj);
 
         let bankList = await db.sequelize.query(`
-            SELECT b.strBankName AS strBankName, b.strBankNumber AS strBankNumber, b.strBankHolder AS strBankHolder, DATE_FORMAT(b.createdAt,'%Y-%m-%d %H:%i:%S') AS createdAt
+            SELECT b.eBankType,  b.strBankName AS strBankName, b.strBankNumber AS strBankNumber, b.strBankHolder AS strBankHolder, DATE_FORMAT(b.createdAt,'%Y-%m-%d %H:%i:%S') AS createdAt
             FROM BankRecords b
             LEFT JOIN Users u ON u.id = b.userId
             WHERE b.eType='ACTIVE' AND u.strNickname = '${obj.strAdmin}' AND b.eBankType = '${eBankType}'

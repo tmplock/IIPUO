@@ -225,6 +225,10 @@
 		});
 		<% if ( agent.iClass == 8 || agent.iClass == 7 ) { %>
 			$('#pass_check_new_user').show();
+			let iPassCheckNewUser = parseInt(agent.iPassCheckNewUser ?? 0);
+			iPassCheckNewUser = Number.isNaN(iPassCheckNewUser) ? 0 : iPassCheckNewUser;
+			bUsingPassNewUser = iPassCheckNewUser == 1;
+			$('#using_pass_new_user').attr('checked', bUsingPassNewUser);
 		<% } %>
 		/**
 		 * 수정 가능 여부에 대한 처리(비활성할 태그를 여기에 추가)
@@ -422,6 +426,8 @@
 		let strUsingPassNewUser = $('#using_pass_new_user').attr('checked');
 		if (strUsingPassNewUser != undefined) {
 			bUsingPassNewUser = true;
+		} else {
+			bUsingPassNewUser = false;
 		}
 
 		if ( strUsingPC != undefined ) {

@@ -328,6 +328,10 @@
 
 		<% if ( agent.iClass == 8 || agent.iClass == 7 ) { %>
 			$('#pass_check_new_user').show();
+			let iPassCheckNewUser = parseInt(agent.iPassCheckNewUser ?? 0);
+			iPassCheckNewUser = Number.isNaN(iPassCheckNewUser) ? 0 : iPassCheckNewUser;
+			bUsingPassNewUser = iPassCheckNewUser == 1;
+			$('#using_pass_new_user').attr('checked', bUsingPassNewUser);
 		<% } %>
 
 		if (agent.iClass >= 3 && agent.iClass <= 5) {
@@ -578,6 +582,8 @@
 			let strUsingPassNewUser = $('#using_pass_new_user').attr('checked');
 			if (strUsingPassNewUser != undefined) {
 				bUsingPassNewUser = true;
+			} else {
+				bUsingPassNewUser = false;
 			}
 
 			if ( strUsingPC != undefined ) {

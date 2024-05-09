@@ -1215,7 +1215,22 @@ router.post('/request_agentinfo_modify',isLoggedIn, async (req, res) => {
 
     let strErrorCode = '';
 
-    if (parseFloat(req.body.fSlotR) < 0 || parseFloat(req.body.fBaccaratR) < 0 || parseFloat(req.body.fUnderOverR) < 0) {
+    let fSettleBaccarat = parseFloat(req.body.fSettleBaccarat ?? 0);
+    fSettleBaccarat = Number.isNaN(fSettleBaccarat) ? 0 : fSettleBaccarat;
+
+    let fSettleSlot = parseFloat(req.body.fSettleSlot ?? 0);
+    fSettleSlot = Number.isNaN(fSettleSlot) ? 0 : fSettleSlot;
+
+    let fSlotR = parseFloat(req.body.fSlotR ?? 0);
+    fSlotR = Number.isNaN(fSlotR) ? 0 : fSlotR;
+
+    let fBaccaratR = parseFloat(req.body.fBaccaratR ?? 0);
+    fBaccaratR = Number.isNaN(fBaccaratR) ? 0 : fBaccaratR;
+
+    let fUnderOverR = parseFloat(req.body.fUnderOverR ?? 0);
+    fUnderOverR = Number.isNaN(fUnderOverR) ? 0 : fUnderOverR;
+
+    if (fSlotR < 0 || fBaccaratR < 0 || fUnderOverR < 0) {
         strErrorCode = 'ERRORMSG';
         res.send({result:'ERROR', code:strErrorCode, msg: '롤링 설정값을 확인해주세요'});
         return;
@@ -1354,8 +1369,8 @@ router.post('/request_agentinfo_modify',isLoggedIn, async (req, res) => {
                 // 죽장은 본사 ~ 대본만 체크
                 if (parent.iClass == 3 || parent.iClass == 4) {
                     if (
-                        parent.fSettleBaccarat < req.body.fSettleBaccarat ||
-                        parent.fSettleSlot < req.body.fSettleSlot
+                        parent.fSettleBaccarat < fSettleBaccarat ||
+                        parent.fSettleSlot < fSettleSlot
                     )
                     {
                         console.log(`########## ModifyAgentInfo : Error Parent`);
@@ -1383,9 +1398,9 @@ router.post('/request_agentinfo_modify',isLoggedIn, async (req, res) => {
             {
                 let child = children[i];
                 if ( 
-                    child.fSlotR > req.body.fSlotR ||
-                    child.fBaccaratR > req.body.fBaccaratR ||
-                    child.fUnderOverR > req.body.fUnderOverR
+                    child.fSlotR > fSlotR ||
+                    child.fBaccaratR > fBaccaratR ||
+                    child.fUnderOverR > fUnderOverR
                    )
                 {
                     console.log(`########## ModifyAgentInfo : Error Children`);
@@ -1398,8 +1413,8 @@ router.post('/request_agentinfo_modify',isLoggedIn, async (req, res) => {
                 // 죽장은 본사 ~ 대본만 체크
                 if (child.iClass == 4 || child.iClass == 5 || child.iClass == 6) {
                     if (
-                        child.fSettleBaccarat > req.body.fSettleBaccarat ||
-                        child.fSettleSlot > req.body.fSettleSlot
+                        child.fSettleBaccarat > fSettleBaccarat ||
+                        child.fSettleSlot > fSettleSlot
                     )
                     {
                         console.log(`########## ModifyAgentInfo : Error Children`);
@@ -1419,11 +1434,11 @@ router.post('/request_agentinfo_modify',isLoggedIn, async (req, res) => {
                 strNickname:req.body.strNickname,
                 strID:req.body.strID,
                 strOptionCode:req.body.strOptionCode,
-                fSlotR:req.body.fSlotR,
-                fBaccaratR:req.body.fBaccaratR,
-                fUnderOverR:req.body.fUnderOverR,
-                fSettleBaccarat:req.body.fSettleBaccarat ?? 0,
-                fSettleSlot:req.body.fSettleSlot ?? 0,
+                fSlotR:fSlotR,
+                fBaccaratR:fBaccaratR,
+                fUnderOverR:fUnderOverR,
+                fSettleBaccarat:fSettleBaccarat,
+                fSettleSlot:fSettleSlot,
                 iPermission:req.body.iPermission,
             };
 

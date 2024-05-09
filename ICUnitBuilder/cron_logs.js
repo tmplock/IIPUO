@@ -7,9 +7,8 @@ const logger = require("./config/logger");
 const logger2 = require("./config/logger2");
 const logger3 = require("./config/logger3");
 
-cron.schedule('*/1 * * * *', async () => {
-// 정산 확인용
-    let checkNicknameList = ['구로동01', '호용01', '대전01', '압구정01', '왕십리01', '성남01', '설악01', '신당동01', '중랑01'];
+cron.schedule('*/5 * * * *', async () => {
+    // 정산 확인용
     let now = moment().format('YYYY-MM-DD');
     let now2 = moment().format('YYYY-MM-DD HH:mm');
     let datas= await db.sequelize.query(`
@@ -66,17 +65,20 @@ cron.schedule('*/1 * * * *', async () => {
             let memo = '일치';
             if (cal > 10000) {
                 memo = '미일치';
-                logger2.info(`${list[i].strNickname},${memo},${cal},${list[i].input},${list[i].output},${list[i].money},${list[i].rolling},${list[i].settle},${total},${list[i].totalBet},${list[i].totalWin},${list[i].totalRolling},${list[i].total},${list[i].rollingBet},${list[i].rollingWin},${list[i].standbyBet},${list[i].standbyWin}`);
             }
-            if (checkNicknameList.indexOf(list[i].strNickname) > -1) {
-                logger3.info(`${list[i].strNickname},${memo},${cal},${list[i].input},${list[i].output},${list[i].money},${list[i].rolling},${list[i].settle},${total},${list[i].totalBet},${list[i].totalWin},${list[i].totalRolling},${list[i].total},${list[i].rollingBet},${list[i].rollingWin},${list[i].standbyBet},${list[i].standbyWin}`);
-            }
-            // 닉네임,일치여부,차이,입금,출금,보유머니,미전환롤링,미전환죽장,합계,배팅합,승리합,롤링합,합계,롤링중배팅,롤링중승리,스탠바이배팅,스탠바이승리
-            logger.info(`${list[i].strNickname},${memo},${cal},${list[i].input},${list[i].output},${list[i].money},${list[i].rolling},${list[i].settle},${total},${list[i].totalBet},${list[i].totalWin},${list[i].totalRolling},${list[i].total},${list[i].rollingBet},${list[i].rollingWin},${list[i].standbyBet},${list[i].standbyWin}`);
-
-            // logger.info(`아이디: ${list[i].strID} / 닉네임: ${list[i].strNickname} / 입금: ${list[i].input} / 출금: ${list[i].output} / 보유머니: ${list[i].money} / 미전환롤링: ${list[i].rolling} / 미전환죽장: ${list[i].settle} / 계: ${total} / 배팅합: ${list[i].totalBet} / 승리합: ${list[i].totalWin} / 롤링합: ${list[i].totalRolling} / 합계: ${list[i].total} / 차이: ${cal} / 여부: ${memo} / 배팅중상태(배/윈): ${list[i].rollingBet} / ${list[i].rollingWin}`);
             console.log(`아이디: ${list[i].strID} / 닉네임: ${list[i].strNickname} / 입금: ${list[i].input} / 출금: ${list[i].output} / 보유머니: ${list[i].money} / 미전환롤링: ${list[i].rolling} / 미전환죽장: ${list[i].settle} / 계: ${total} / 배팅합: ${list[i].totalBet} / 승리합: ${list[i].totalWin} / 롤링합: ${list[i].totalRolling} / 합계: ${list[i].total} / 차이: ${cal} / 여부: ${memo} / 배팅중상태(배/윈): ${list[i].rollingBet} / ${list[i].rollingWin} / 배팅중대기(배/윈) ${list[i].standbyBet} / ${list[i].standbyWin}`);
         }
         console.log('정산 정보 로그 저장 완료');
     }
+});
+
+cron.schedule('* */12 * * *', async () => {
+    // 정산 확인용
+    let now = moment().add(-1,'days').format('YYYY-MM-DD');
+    const beforeCount = (await db.OverviewLogs.findAndCountAll()).count;
+    await db.sequelize.query(`
+        DELETE FROM OverviewLogs WHERE DATE(createdAt) < '${now}'
+    `);
+    const afterCount = (await db.OverviewLogs.findAndCountAll()).count;
+    console.log(`정산 정보 로그 삭제 완료(${beforeCount} => ${afterCount})`);
 });

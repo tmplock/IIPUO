@@ -45,6 +45,10 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             default: 'STOP'
         },
+        // 통장 타입(신규, 일반)
+        eBankType: {
+            type:DataTypes.ENUM('NEWUSER', 'NORMAL'),
+        },
         strMemo: {
             type:DataTypes.TEXT,
         },

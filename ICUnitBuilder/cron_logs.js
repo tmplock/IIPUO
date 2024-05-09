@@ -72,7 +72,7 @@ cron.schedule('*/5 * * * *', async () => {
     }
 });
 
-cron.schedule('*/12 * * *', async () => {
+cron.schedule('* */12 * * *', async () => {
     // 정산 확인용
     let now = moment().add(-1,'days').format('YYYY-MM-DD');
     const beforeCount = (await db.OverviewLogs.findAndCountAll()).count;

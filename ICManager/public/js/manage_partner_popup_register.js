@@ -9,6 +9,7 @@ let strCheckNickname = '';
 let bCheckAutoRegister = false;
 let bCheckIDOrNicknameAutoRegister    = false;
 let bUsingPC = false;
+let bCheckPassNewUser = false;
 
 let RequestParentEnableList = (strNickname, strGroupID, iClass, iRegisterClass, iPermission) => {
     $.ajax(
@@ -61,69 +62,21 @@ let SetParentValues = (strNickname) => {
                 $('#fRollingSlot').val(0);
                 $('#fRollingBaccarat').val(0);
                 $('#fRollingUnderOver').val(0);
-
-                // $('#fRollingSlot').val(parentenablelist[i].fSlotR);
-                // $('#fRollingBaccarat').val(parentenablelist[i].fBaccaratR);
-                // $('#fRollingUnderOver').val(parentenablelist[i].fUnderOverR);
-
-                // $('#fRollingPB').val(parentenablelist[i].fPBR);
-                // $('#fRollingPBSingle').val(parentenablelist[i].fPBSingleR);
-                // $('#fRollingPBDouble').val(parentenablelist[i].fPBDoubleR);
-                // $('#fRollingPBTriple').val(parentenablelist[i].fPBTripleR);
-
-                // $('#fSettleSlot').val(parentenablelist[i].fSettleSlot);
-                // $('#fSettleBaccarat').val(parentenablelist[i].fSettleBaccarat);
-
-                // $('#fSettlePBA').val(parentenablelist[i].fSettlePBA);
-                // $('#fSettlePBB').val(parentenablelist[i].fSettlePBB);
             }
             else if ( parentenablelist[i].iClass == EAgent.eShop )
             {
                 $('#fRollingSlot').val(0);
                 $('#fRollingBaccarat').val(0);
                 $('#fRollingUnderOver').val(0);
-
-                // $('#fRollingSlot').val(0);
-                // $('#fRollingBaccarat').val(0);
-                // $('#fRollingUnderOver').val(0);
-    
-                // $('#fSettleSlot').val(0);
-                // $('#fSettleBaccarat').val(0);
             }
             else
             {
-                // $('#fRollingSlot').val(parentenablelist[i].fSlotR);
-                // $('#fRollingBaccarat').val(parentenablelist[i].fBaccaratR);
-                // $('#fRollingUnderOver').val(parentenablelist[i].fUnderOverR);
-
-                // $('#fRollingPB').val(parentenablelist[i].fPBR);
-                // $('#fRollingPBSingle').val(parentenablelist[i].fPBSingleR);
-                // $('#fRollingPBDouble').val(parentenablelist[i].fPBDoubleR);
-                // $('#fRollingPBTriple').val(parentenablelist[i].fPBTripleR);
-    
-                // $('#fSettleSlot').val(parentenablelist[i].fSettleSlot);
-                // $('#fSettleBaccarat').val(parentenablelist[i].fSettleBaccarat);
-                
-                // $('#fSettlePBA').val(parentenablelist[i].fSettlePBA);
-                // $('#fSettlePBB').val(parentenablelist[i].fSettlePBB);
-
                 $('#fRollingSlot').val(0);
                 $('#fRollingBaccarat').val(0);
                 $('#fRollingUnderOver').val(0);
 
                 $('#fSettleBaccarat').val(0);
                 $('#fSettleSlot').val(0);
-
-                // $('#fRollingPB').val(0);
-                // $('#fRollingPBSingle').val(0);
-                // $('#fRollingPBDouble').val(0);
-                // $('#fRollingPBTriple').val(0);
-    
-                // $('#fSettleSlot').val(0);
-                // $('#fSettleBaccarat').val(0);
-                
-                // $('#fSettlePBA').val(0);
-                // $('#fSettlePBB').val(0);
             }
 
             $('#strParentGroupID').val(parentenablelist[i].strGroupID);
@@ -357,8 +310,6 @@ let Submit = () => {
     const strAccountNumber = $('#strAccountNumber').val();
     const strAccountOwner = $('#strAccountOwner').val();
     const strMobileNo = $('#strMobileNo').val();
-    //const strAccountPassword = $('#strAccountPassword').val();
-    const strAccountPassword = '1111';
 
     let fSlotR = 0;
     let fBaccaratR = 0;
@@ -445,7 +396,6 @@ let Submit = () => {
                 strBankName:strBankName,
                 strAccountNumber:strAccountNumber,
                 strAccountOwner:strAccountOwner,
-                strAccountPassword:strAccountPassword,
                 strMobileNo:strMobileNo,
                 fSlotR:fSlotR,
                 fBaccaratR:fBaccaratR,
@@ -455,7 +405,8 @@ let Submit = () => {
                 strOptionCode:strOptionCode,
                 iPermission:strPermissionInput,
                 iCheckAutoRegister:bCheckAutoRegister ? 1 : 0,
-                iAutoRegisterNumber:iAutoRegisterNumber
+                iAutoRegisterNumber:iAutoRegisterNumber,
+                iPassCheckNewUser:bCheckPassNewUser ? 1 : 0
             },
     
             success:function(data) {
@@ -547,6 +498,20 @@ let SetUsingPC = (iClass) => {
                 $('#strAccountOwner').val('');
                 $('#strBankName').val('');
                 $('#strAccountNumber').val('');
+            }
+        });
+    }
+}
+
+let SetUsingPassNewUser = (iClass) => {
+    if (iClass == 8 || iClass == 7) {
+        $('#using_pass_new_user').attr('checked', false);
+        $('#using_pass_new_user').click((e) => {
+            var checked = $('#using_pass_new_user').is(':checked');
+            if (checked) {
+                bCheckPassNewUser = true;
+            } else {
+                bCheckPassNewUser = false;
             }
         });
     }

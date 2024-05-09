@@ -230,22 +230,7 @@
 				</div>
 			<% } %>
 
-			<% if (parent.iAgentClass == 8) { %>
-				<table>
-					<colgroup>
-						<col style="width:15%">
-						<col style="width:35%">
-						<col style="width:15%">
-						<col style="width:35%">
-					</colgroup>
-					<p style="background-repeat:no-repeat; background-position:left center; font-size:20px; font-weight: bold; color:#454545; padding-left:22px;">PC방 이용 설정</p>
-					<tr>
-						<th scope="row">PC방 이용 설정</th>
-						<td colspan="3">
-							<input type="checkbox" style="width:30px;height:30px;color: red" name="using_input" id="using_pc" required="no" message=""> <strong>체크시 이용자 사이트 입출금 기능을 사용할 수 없습니다</strong>
-						</td>
-					</tr>
-				</table>
+			<% if (parent.iAgentClass == 8 || parent.iAgentClass == 7) { %>
 				<div style="display: none">
 					<table>
 						<colgroup>
@@ -254,13 +239,8 @@
 							<col width="15%" />
 							<col width="35%" />
 						</colgroup>
-						<p
-								style="background-repeat:no-repeat; background-position:left center; font-size:16px; color:#454545; padding-left:22px;">
-							입출금 설정</p>
-
+						<p style="background-repeat:no-repeat; background-position:left center; font-size:16px; color:#454545; padding-left:22px;">입출금 설정</p>
 						<tr>
-
-
 							<th scope="row">
 								<%=__('UsingInput')%>
 							</th>
@@ -279,12 +259,78 @@
 									<%=__('DescUsingOutput')%>
 								</strong>
 							</td>
-
 						</tr>
-
 					</table>
 				</div>
+				<table>
+				<colgroup>
+					<col style="width:15%">
+					<col style="width:35%">
+					<col style="width:15%">
+					<col style="width:35%">
+				</colgroup>
+				<p style="background-repeat:no-repeat; background-position:left center; font-size:20px; font-weight: bold; color:#454545; padding-left:22px;">PC방 이용 설정</p>
+				<tr>
+					<th scope="row">PC방 이용 설정</th>
+					<td colspan="3">
+						<input type="checkbox" style="width:30px;height:30px;color: red" name="using_input" id="using_pc" required="no" message=""> <strong>체크시 이용자 사이트 입출금 기능을 사용할 수 없습니다</strong>
+					</td>
+				</tr>
+			</table>
+				<div style="">
+				<table>
+					<colgroup>
+						<col style="width:15%">
+						<col style="width:35%">
+						<col style="width:15%">
+						<col style="width:35%">
+					</colgroup>
+					<p style="background-repeat:no-repeat; background-position:left center; font-size:20px; font-weight: bold; color:#454545; padding-left:22px;">기타 옵션</p>
+					<tr>
+						<th scope="row">신규자 통장 체크 안함</th>
+						<td colspan="3">
+							<input type="checkbox" style="width:30px;height:30px;color: red" name="using_input" id="using_pass_new_user" required="no" message=""> <strong>체크시 입금 신청시 일반 계좌가 표시됩니다</strong>
+						</td>
+					</tr>
+				</table>
+			</div>
 			<% } else { %>
+				<table>
+				<colgroup>
+					<col width="15%" />
+					<col width="35%" />
+					<col width="15%" />
+					<col width="35%" />
+				</colgroup>
+				<p
+						style="background-repeat:no-repeat; background-position:left center; font-size:16px; color:#454545; padding-left:22px;">
+					입출금 설정</p>
+
+				<tr>
+
+
+					<th scope="row">
+						<%=__('UsingInput')%>
+					</th>
+					<td>
+						<input type="checkbox" style="width:30px;height:30px;" name="using_input"
+							   id="using_input" required="no" message="" checked> <strong>
+							<%=__('DescUsingInput')%>
+						</strong>
+					</td>
+					<th scope="row">
+						<%=__('UsingOutput')%>
+					</th>
+					<td>
+						<input type="checkbox" style="width:30px;height:30px;" name="using_output"
+							   id="using_output" required="no" message="" checked> <strong>
+							<%=__('DescUsingOutput')%>
+						</strong>
+					</td>
+
+				</tr>
+
+			</table>
 				<div style="display: none">
 					<table>
 						<colgroup>
@@ -302,42 +348,23 @@
 						</tr>
 					</table>
 				</div>
+				<div style="display: none">
 				<table>
 					<colgroup>
-						<col width="15%" />
-						<col width="35%" />
-						<col width="15%" />
-						<col width="35%" />
+						<col style="width:15%">
+						<col style="width:35%">
+						<col style="width:15%">
+						<col style="width:35%">
 					</colgroup>
-					<p
-							style="background-repeat:no-repeat; background-position:left center; font-size:16px; color:#454545; padding-left:22px;">
-						입출금 설정</p>
-
+					<p style="background-repeat:no-repeat; background-position:left center; font-size:20px; font-weight: bold; color:#454545; padding-left:22px;">기타 옵션</p>
 					<tr>
-
-
-						<th scope="row">
-							<%=__('UsingInput')%>
-						</th>
-						<td>
-							<input type="checkbox" style="width:30px;height:30px;" name="using_input"
-								   id="using_input" required="no" message="" checked> <strong>
-								<%=__('DescUsingInput')%>
-							</strong>
+						<th scope="row">신규자 통장 체크 안함</th>
+						<td colspan="3">
+							<input type="checkbox" style="width:30px;height:30px;color: red" name="using_input" id="using_pass_new_user" required="no" message=""> <strong>체크시 입금 신청시 일반 계좌가 표시됩니다</strong>
 						</td>
-						<th scope="row">
-							<%=__('UsingOutput')%>
-						</th>
-						<td>
-							<input type="checkbox" style="width:30px;height:30px;" name="using_output"
-								   id="using_output" required="no" message="" checked> <strong>
-								<%=__('DescUsingOutput')%>
-							</strong>
-						</td>
-
 					</tr>
-
 				</table>
+			</div>
 			<% } %>
 			<!-- </form> -->
 
@@ -398,6 +425,7 @@
 		$(document).ready(() => {
 			SetUsingPC(parent.iAgentClass);
 			SetAutoRegister(false);
+			SetUsingPassNewUser(parent.iAgentClass);
 		});
 	</script>
 

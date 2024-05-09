@@ -158,9 +158,15 @@
 <script>
 
 	let agent = JSON.parse('<%-JSON.stringify(agent)%>');
+
 	let bCheckID = false;
+	let strCheckID    = '';
+
 	let bCheckNickname = false;
+	let strCheckNickname = '';
+
 	let bUsingPC = false;
+	let bUsingPassNewUser = false;
 
 	$(document).ready( ()=> {
 		let cUsingInput = parseInt(agent.strOptionCode[0]);
@@ -278,6 +284,7 @@
 				{
 					alert(strAlertEnableToUse);
 					bCheckID = true;
+					strCheckID = strID;
 				}
 				else
 				{
@@ -306,6 +313,7 @@
 				{
 					alert(strAlertEnableToUse);
 					bCheckNickname = true;
+					strCheckNickname = strNickname;
 				}
 				else
 				{
@@ -363,6 +371,9 @@
 			}
 			if (bCheckNickname == false) {
 				alert(strAlertNeedToDuplicationCheckNickname);
+				return;
+			} else if (strCheckNickname != strNickname) {
+				alert('닉네임 중복');
 				return;
 			}
 		}

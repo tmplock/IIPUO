@@ -486,17 +486,21 @@ router.post('/request_bank', async (req, res) => {
         }
 
         let eBankType = 'NORMAL';
+        // 기본값
+        let bNewUserCheck = true;
+        let iNewUserDays = 15;
+
         const subUser = await db.SubUsers.findOne({where: {rId: info.id}});
         if (subUser != null) {
-            let bNewUserCheck = subUser.iNewUserCheck == 1;
-            let iNewUserDays = subUser.iNewUserDays ?? 0;
-            if (bNewUserCheck == true && iNewUserDays > 0) {
-                let createdAt = moment(info.createdAt); // 신규가입자 확인용(가입 후 일정기간 확인)
-                let now = moment();
-                let period = createdAt.add(iNewUserDays, 'days');
-                if (period.isBefore(now)) {
-                    eBankType = 'NEWUSER';
-                }
+            bNewUserCheck = subUser.iNewUserCheck == 1;
+            iNewUserDays = subUser.iNewUserDays ?? 0;
+        }
+
+        if (bNewUserCheck == true && iNewUserDays > 0) {
+            let createdAt = moment(info.createdAt).add(iNewUserDays, 'days'); // 신규가입자 확인용(가입 후 일정기간 확인)
+            let now = moment();
+            if (createdAt.isAfter(now)) {
+                eBankType = 'NEWUSER';
             }
         }
 

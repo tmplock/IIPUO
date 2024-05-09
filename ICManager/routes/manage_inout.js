@@ -261,23 +261,39 @@ router.post('/charge', isLoggedIn, async(req, res) => {
                 }
             }
         });
-        list = await db.Inouts.findAll({
-            where: {
-                createdAt:{
-                    [Op.between]:[now, end],
-                },
-                strGroupID:{
-                    [Op.like]:user.strGroupID+'%'
-                },
-                eType:'INPUT',
-                iClass: {
-                    [Op.gt]:parseInt(req.body.iClass)
-                }
-            },
-            offset:iOffset,
-            limit:iLimit,
-            order:[['createdAt','DESC']]
-        });
+        list = await db.sequelize.query(`
+            SELECT i.id, i.strID, i.strAdminNickname, i.strPAdminNickname, i.strVAdminNickname, i.strAgentNickname, i.strShopNickname,
+                   i.iClass, i.strName, i.strGroupID, i.strAccountOwner,
+                   i.strBankName, i.strAccountNumber, i.iPreviousCash, i.iAmount, i.strMemo, i.eType, i.strRequestNickname, i.iRequestClass, i.strProcessNickname, i.iProcessClass, i.eState,
+                   DATE_FORMAT(i.completedAt, '%Y-%m-%d %H:%i:%S') AS completedAt, DATE_FORMAT(i.createdAt, '%Y-%m-%d %H:%i:%S') AS createdAt, DATE_FORMAT(i.updatedAt, '%Y-%m-%d %H:%i:%S') AS updatedAt,
+                   DATE_FORMAT(u.createdAt, '%Y-%m-%d %H:%i:%S') AS userCreatedAt, su.iNewUserCheck, su.iNewUserDays
+            FROM Inouts i
+            LEFT JOIN Users u ON u.strNickname = i.strID
+            LEFT JOIN SubUsers su ON su.rId = u.id
+            WHERE DATE(i.createdAt) BETWEEN '${now}' AND '${end}' AND i.strGroupID LIKE '${user.strGroupID}%' AND i.eType = 'INPUT'
+            AND i.iClass > ${parseInt(req.body.iClass)}
+            ORDER BY i.createdAt DESC
+            LIMIT ${iLimit}
+            OFFSET ${iOffset}
+        `, {type: db.Sequelize.QueryTypes.SELECT});
+
+        // list = await db.Inouts.findAll({
+        //     where: {
+        //         createdAt:{
+        //             [Op.between]:[now, end],
+        //         },
+        //         strGroupID:{
+        //             [Op.like]:user.strGroupID+'%'
+        //         },
+        //         eType:'INPUT',
+        //         iClass: {
+        //             [Op.gt]:parseInt(req.body.iClass)
+        //         }
+        //     },
+        //     offset:iOffset,
+        //     limit:iLimit,
+        //     order:[['createdAt','DESC']]
+        // });
     }
 
     let iocount = await IInout.GetProcessing(dbuser.strGroupID, dbuser.strNickname, dbuser.iClass);
@@ -370,7 +386,6 @@ router.post('/exchange', isLoggedIn, async(req, res) => {
     res.render('manage_inout/list_output', {iLayout:0, iHeaderFocus:2, req_list:list, user:user, iocount:iocount, totalCount:totalCount});
 })
 
-//router.post('/updatechargestate', isLoggedIn, async (req, res) => {
 router.post('/request_inputstate', isLoggedIn, async (req, res) => {
 
     console.log(req.body);
@@ -786,8 +801,7 @@ router.post('/request_outputstate', isLoggedIn, async (req, res) => {
 });
 
 
-//router.post('/search_total_exchange', isLoggedIn, async (req, res) => {
-router.post('/request_outputlist', isLoggedIn, async (req, res) => {    
+router.post('/request_outputlist', isLoggedIn, async (req, res) => {
 
     console.log("****************************************************");
     console.log(req.body);
@@ -884,16 +898,6 @@ router.post('/request_outputlist', isLoggedIn, async (req, res) => {
         res.send(object);
     
     }
-});
-
-router.get('/popup_requestexchange', isLoggedIn, async (req, res) => {
-
-    // if ( req.user == undefined )
-    // {
-    //     res.redirect('/account/login');
-    // }
-    // else
-        res.render('manage_inout/popup_requestexchange', {iLayout:1, iHeaderFocus:1});
 });
 
 router.post('/request_savememo', isLoggedIn, async (req, res) => {
@@ -1200,14 +1204,25 @@ router.post('/request_change_bank_type', async (req, res) => {
 
     let id = req.body.id ?? 0;
     let eType = req.body.eType ?? '';
-    if (id == 0 || eType == '') {
+    let userId = req.body.userId ?? 0;
+    if (id == 0 || eType == '' || userId == 0) {
         res.send({result:'FAIL', msg: '필수값 없음'});
         return;
     }
+
     let obj = await db.BankRecords.findOne({where : {id:id}});
     if (obj == null) {
         res.send({result:'FAIL', msg: '해당 정보 없음'});
         return;
+    }
+
+    // 동일 항목 사용중 체크
+    if (eType == 'ACTIVE') {
+        let list = await db.BankRecords.findAll({where: {userId: userId, eType:eType, eBankType:obj.eBankType}});
+        if (list.length > 0) {
+            res.send({result:'FAIL', msg: '사용중인 계좌가 있습니다. 미사용으로 변경 후에 변경해주세요.'});
+            return;
+        }
     }
 
     await obj.update({
@@ -1263,8 +1278,9 @@ router.post('/request_bank_add', async (req, res) => {
     let bankNumber = req.body.bankNumber ?? '';
     let bankHolder = req.body.bankHolder ?? '';
     let strNickname = req.body.strNickname;
+    let eBankType = req.body.eBankType ?? '';
 
-    if (bankName == '' || bankName == '' || bankHolder == '' || strNickname == '') {
+    if (bankName == '' || bankName == '' || bankHolder == '' || strNickname == '' || eBankType == '') {
         res.send({result:'FAIL', msg: '입력값 부족'});
         return;
     }
@@ -1277,6 +1293,7 @@ router.post('/request_bank_add', async (req, res) => {
         strBankHolder: bankHolder,
         userId: user.id,
         eType:'STOP',
+        eBankType:eBankType
     });
     res.send({result:'OK', msg:'등록성공'});
 });

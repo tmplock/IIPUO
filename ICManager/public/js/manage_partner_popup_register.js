@@ -3,6 +3,13 @@ let parentenablelist = [];
 let bCheckID    = false;
 let bCheckNickname = false;
 
+let strCheckID    = '';
+let strCheckNickname = '';
+
+let bCheckAutoRegister = false;
+let bCheckIDOrNicknameAutoRegister    = false;
+let bUsingPC = false;
+
 let RequestParentEnableList = (strNickname, strGroupID, iClass, iRegisterClass, iPermission) => {
     $.ajax(
         {
@@ -164,11 +171,14 @@ let RequestConfirmAgentID = (strID) => {
                 console.log(data);
                 if ( data == 'OK' ) {
                     bCheckID = true;
+                    strCheckID = strID;
                     alert(strAlertEnableToUse);
                 }
                 else {
                     bCheckID = false;
+                    strCheckID = '';
                     alert(strAlertDisableToUse);
+
                 }
                 
             },
@@ -209,13 +219,62 @@ let RequestConfirmAgentNickname = (strNickname) => {
                 console.log(data);
                 if ( data == 'OK' ) {
                     bCheckNickname  = true;
+                    strCheckNickname = strNickname;
                     alert(strAlertEnableToUse);
                 }
                 else {
                     bCheckNickname  = false;
+                    strCheckNickname = '';
                     alert(strAlertDisableToUse);
                 }
                 
+            },
+            error:function(request,status,error){
+                alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+            }
+        }
+    );
+}
+
+let RequestConfirmAutoRegisterValue = () => {
+    let id = $('#strID').val();
+    let nickname = $('#strNickname').val();
+
+    if (nickname == null || nickname == '' || nickname == undefined) {
+        alert('닉네임을 먼저 입력해주세요');
+        return;
+    }
+    if (id == null || id == '' || id == undefined) {
+        alert('아이디를 먼저 입력해주세요');
+        return;
+    }
+    let number = $('#auto_register_number').val();
+    try {
+        number = parseInt(number);
+        if (number < 2) {
+            alert('자동생성 값은 1보다 커야 합니다');
+            return;
+        }
+    } catch (err) {
+        alert('자동생성 값을 확인해주세요');
+        return;
+    }
+    $.ajax(
+        {
+            type:'post',
+            url: "/manage_partner_popup/request_confirm_auto_register_value",
+            context: document.body,
+            data:{strNickname:nickname, strID:id, number:number},
+            success:function(data) {
+                if ( data.result == 'OK' ) {
+                    bCheckIDOrNicknameAutoRegister = true;
+                    alert(strAlertEnableToUse);
+                }
+                else {
+                    bCheckIDOrNicknameAutoRegister = false;
+                    alert(data.msg);
+                }
+
             },
             error:function(request,status,error){
                 alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
@@ -248,6 +307,26 @@ let Submit = () => {
         return;
     }
 
+    let iAutoRegisterNumber = 0;
+    if (bCheckAutoRegister == true) {
+        try {
+            iAutoRegisterNumber = $('#auto_register_number').val();
+            iAutoRegisterNumber = parseInt(iAutoRegisterNumber);
+            if (iAutoRegisterNumber < 1) {
+                alert('자동생성 숫자는 0보다 커야합니다');
+                return;
+            }
+        } catch (err) {
+            alert('자동생성 입력값을 확인해주세요');
+            return;
+        }
+    }
+
+    if (bCheckAutoRegister == true && bCheckIDOrNicknameAutoRegister == false) {
+        alert('자동 생성 중복 체크가 필요 합니다.');
+        return;
+    }
+
     const strParentNickname = $('#parentenable_list').val();
     const strParentGroupID = $('#strParentGroupID').val();
     const iParentClass = $('#iParentClass').val();
@@ -257,7 +336,22 @@ let Submit = () => {
     const strPassword = $('#strPassword').val();
     const strPasswordConfirm = $('#strPasswordConfirm').val();
     const strID = $('#strID').val();
+
+    if ( bCheckID == true && strCheckID != strID ) {
+        bCheckID == false;
+        bCheckIDOrNicknameAutoRegister = false;
+        alert('중복체크한 아이디가 틀립니다. 다시 중복체크를 해주세요');
+        return;
+    }
+
     const strNickname = $('#strNickname').val();
+    if ( bCheckNickname == true && strCheckNickname != strNickname ) {
+        bCheckNickname == false;
+        bCheckIDOrNicknameAutoRegister = false;
+        alert('중복체크한 닉네임이 틀립니다. 다시 중복체크를 해주세요');
+        return;
+    }
+
     const strBankName = $('#strBankName').val();
     const strAccountNumber = $('#strAccountNumber').val();
     const strAccountOwner = $('#strAccountOwner').val();
@@ -359,6 +453,8 @@ let Submit = () => {
                 fSettleSlot:fSettleSlot,
                 strOptionCode:strOptionCode,
                 iPermission:strPermissionInput,
+                bCheckAutoRegister:bCheckAutoRegister,
+                iAutoRegisterNumber:iAutoRegisterNumber
             },
     
             success:function(data) {
@@ -398,4 +494,59 @@ let Submit = () => {
             }
         }
     );
+}
+
+let OnClickAutoRegister = () => {
+    if (bCheckAutoRegister == true) {
+        bCheckAutoRegister = false;
+        bCheckIDOrNicknameAutoRegister = false;
+        SetAutoRegister(false);
+    } else {
+        bCheckAutoRegister = true;
+        SetAutoRegister(true);
+    }
+}
+
+let SetAutoRegister = (bEnable) => {
+    if (bEnable) {
+        $('#auto_register_number').show();
+        $('#auto_register_msg').show();
+        $('#check_auto_register').show();
+    } else {
+        $('#auto_register_number').hide();
+        $('#auto_register_msg').hide();
+        $('#check_auto_register').hide();
+
+        $('#auto_register_number').val('');
+        $('#auto_register_msg').val('');
+        $('#check_auto_register').val('');
+        $('#checkbox_auto_register').attr('checked', false);
+    }
+}
+
+let SetUsingPC = (iClass) => {
+    if (iClass == 8) {
+        $('#using_pc').attr('checked', false);
+        $('#using_pc').click((e) => {
+            var checked = $('#using_pc').is(':checked');
+
+            if (checked) {
+                bUsingPC = true;
+                ['#strAccountOwner', '#strBankName', '#strAccountNumber'].forEach(item => {
+                    $(item).get(0).disabled = true;
+                });
+                $('#strAccountOwner').val('PC방');
+                $('#strBankName').val('PC방');
+                $('#strAccountNumber').val('0000');
+            } else {
+                bUsingPC = false;
+                ['#strAccountOwner', '#strBankName', '#strAccountNumber'].forEach(item => {
+                    $(item).get(0).disabled = false;
+                });
+                $('#strAccountOwner').val('');
+                $('#strBankName').val('');
+                $('#strAccountNumber').val('');
+            }
+        });
+    }
 }

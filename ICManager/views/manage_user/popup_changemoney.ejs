@@ -246,6 +246,8 @@
 		const strAlertErrorNotEnoughMoney = '<%=__("AlertErrorNotEnoughMoney")%>';
 		const strAlertComplete = '<%=__("AlertComplete")%>';
 
+		let isSending = false;
+
 		$(document).ready(() => {
 			DatePicker();
 			if (parseInt(agent.iClass) == 1) {
@@ -351,38 +353,42 @@
 			});
 		}
 
-		let OnClickProcess = () => {
+		let OnClickProcess = async () => {
+			if (isSending) {
+				alert('처리중입니다');
+				return;
+			}
+			isSending = true;
 
 			let strTarget = $('#agent_list').val();
 			let iMoney = $('#GTMoney').val();
 			iMoney = parseInt(iMoney);
 
-			if ( strTarget == null || strTarget == '' || iMoney == null || iMoney == '' || iMoney < 0)
-			{
+			if (strTarget == null || strTarget == '' || iMoney == null || iMoney == '' || iMoney < 0) {
 				alert(strAlertIncorrectInputValue);
 				return;
 			}
 
 			let strConfirm = strConfirmGive;
 			let strGTType = strGive;
-			if ( eGTType == 'TAKE' )
-			{
+			if (eGTType == 'TAKE') {
 				strGTType = strTake;
 				strConfirm = strConfirmTake;
 			}
 
-			if ( confirm(strConfirm) )
-			{
+			if (confirm(strConfirm)) {
+				if (eGTType == 'TAKE') {
+					await sleep(10000);
+				}
 				$.ajax({
-					type:'post',
+					type: 'post',
 					url: "/manage_user_popup/request_gt",
 					context: document.body,
-					data:{strTo:strTarget, strFrom:agent.strNickname, iAmount:iMoney, eType:eGTType},
+					data: {strTo: strTarget, strFrom: agent.strNickname, iAmount: iMoney, eType: eGTType},
 
 					success: (obj) => {
-
-						if ( obj.result == 'OK' )
-						{
+						isSending = false;
+						if (obj.result == 'OK') {
 							RequestGTRecord('TO');
 							RequestGTRecord('FROM');
 
@@ -391,25 +397,26 @@
 							$('#settle').text(GetNumber((obj.settle)));
 
 							window.opener.location.reload(true);
-						}
-						else {
-							if ( obj.reason == 'NOTENOUGH' )
-							{
+						} else {
+							if (obj.reason == 'NOTENOUGH') {
 								alert(strAlertErrorNotEnoughMoney);
-							}
-							else
-							{
-								alert(strAlertComplete);		
-								window.opener.location.reload(true);						
+							} else {
+								alert(strAlertComplete);
+								window.opener.location.reload(true);
 							}
 						}
 						location.reload();
 					},
-					error:function(request,status,error){
-						alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+					error: function (request, status, error) {
+						isSending = false;
+						alert("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
 					}
 				});
 			}
+		}
+
+		function sleep(ms) {
+			return new Promise(resolve => setTimeout(resolve, ms));
 		}
 
 		let RequestGTRecord = (eType, strSearch) => {

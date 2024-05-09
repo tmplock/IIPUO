@@ -348,7 +348,16 @@ router.post('/registeragent', isLoggedIn, async(req, res) => {
 
     res.render('manage_partner/popup_registeragent', {iLayout:1, parent:user});
 
-})
+});
+
+router.post('/register_agent', isLoggedIn, async (req, res) => {
+    const agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
+    agent.iRootClass = req.user.iClass;
+    agent.iPermission = req.user.iPermission;
+    agent.iAgentClass = req.body.iAgentClass;
+    let parents = await IAgent.GetParentList(req.body.strGroupID, req.body.iClass, agent);
+    res.render('manage_partner/popup_register_agent', {iLayout:2, iHeaderFocus:22, agent:agent, strParent:parents.strParents, user:agent, parent:agent});
+});
 
 router.post('/popup_listadmin_view', isLoggedIn, async(req, res) => {
     console.log(req.body);
@@ -598,6 +607,71 @@ router.post('/request_confirmagentnickname', isLoggedIn, async(req, res) => {
         res.send('EXIST');
 })
 
+router.post('/request_confirm_auto_register_value', isLoggedIn, async(req, res) => {
+    console.log(req.body);
+
+    let strNickname = req.body.strNickname ?? '';
+    let strID = req.body.strID ?? '';
+    let number = parseInt(req.body.number ?? 0);
+
+    if (strID == '') {
+        res.send({result: 'FAIL', msg: '아이디을 입력해주세요'});
+        return;
+    }
+    if (strNickname == '') {
+        res.send({result: 'FAIL', msg: '닉네임을 입력해주세요'});
+        return;
+    }
+    if (number < 1) {
+        res.send({result: 'FAIL', msg: '자동생성 입력값을 확인해주세요'});
+        return;
+    }
+
+    // 체크 항목 리스트 만들기
+    let idList = [];
+    let nicknameList = [];
+    for (let i = 1; i<number; i++) {
+        idList.push(`${strID}${i}`);
+        nicknameList.push(`${strNickname}${i}`);
+    }
+
+    let listID = await db.Users.findAll({
+        where: {
+            strID: {
+                [Op.in]:idList
+            }
+        }
+    });
+    if (listID.length > 0) {
+        let msg = '';
+        for (let i in listID) {
+            msg = msg == '' ? `${listID[i].strID}` : `${msg}, ${listID[i].strID}`;
+        }
+        res.send({result: 'FAIL', msg: `중복된 아이디가 있습니다(${msg})`});
+        return;
+    }
+
+
+    let listNickname = await db.Users.findAll({
+        where: {
+            strNickname: {
+                [Op.in]:nicknameList
+            }
+        }
+    });
+    if (listNickname.length > 0) {
+        let msg = '';
+        for (let i in listNickname) {
+            msg = msg == '' ? `${listNickname[i].strNickname}` : `${msg}, ${listNickname[i].strNickname}`;
+        }
+        res.send({result: 'FAIL', msg: `중복된 닉네임이 있습니다(${msg})`});
+        return;
+    }
+
+    res.send({result:'OK' , msg: ''});
+})
+
+
 var leadingZeros = (n, digits) => {
     var zero = '';
     n = n.toString();
@@ -642,6 +716,13 @@ let CalculateGroupID = async (strParentGroupID, iParentClass) => {
 
 router.post('/request_register', isLoggedIn, async(req, res) => {
     console.log(req.body);
+    // 권한 체크
+    let iClass = parseInt(req.body.iParentClass)+1;
+    if (iClass <= req.user.iClass) {
+        res.send({result:'FAIL', string:`허가되지 않은 사용자입니다`});
+        return;
+    }
+
     try {
         if (parseFloat(req.body.fSlotR) < 0 || parseFloat(req.body.fBaccaratR) < 0 || parseFloat(req.body.fUnderOverR) < 0) {
             res.send({result:'Error', error:'Rolling', string:'롤링 설정값을 확인해주세요'});
@@ -684,6 +765,18 @@ router.post('/request_register', isLoggedIn, async(req, res) => {
                 res.send({result:'Error', error:'Settle', string:'죽장(%)은 상위 에이전트 보다 클 수 없습니다.'});
                 return;
             }
+        }
+
+        let iAutoRegisterNumber = parseInt(req.body.iAutoRegisterNumber);
+        const bCheckAutoRegister = req.body.bCheckAutoRegister ?? false;
+        if (bCheckAutoRegister == true) {
+            if (iAutoRegisterNumber < 1) {
+                res.send({result:'Error', error:'FAIL', string:'자동생성 입력값을 확인해주세요'});
+                return;
+            }
+            iAutoRegisterNumber = iAutoRegisterNumber + 1; // 원본 추가
+        } else {
+            iAutoRegisterNumber = 1;
         }
 
         let iLoginMax = 1;
@@ -736,6 +829,58 @@ router.post('/request_register', isLoggedIn, async(req, res) => {
             iPermission:0,
             iLoginMax:iLoginMax
         });
+        for (let i = 0; i < iAutoRegisterNumber; i++) {
+            let strID = req.body.strID;
+            let strNickname = req.body.strNickname;
+            if (i > 0) {
+                strID = `${req.body.strID}${i}`;
+                strNickname = `${req.body.strNickname}${i}`;
+            }
+
+            await db.Users.create({
+                strID:strID,
+                strNickname:strNickname,
+                strPassword:req.body.strPassword,
+                strMobile:req.body.strMobileNo,
+                strBankname:req.body.strBankName,
+                strBankAccount:req.body.strAccountNumber,
+                strBankOwner:req.body.strAccountOwner,
+                strBankPassword:'',
+                strOutputPassowrd:'',
+                iClass:parseInt(req.body.iParentClass)+1,
+                strGroupID:strGroupID,
+                iParentID:req.body.iParentID,
+                iCash:0,
+                iLoan:0,
+                iRolling:0,
+                iSettle:0,
+                iSettleAcc:0,
+                fBaccaratR:req.body.fBaccaratR,
+                fSlotR:req.body.fSlotR,
+                fUnderOverR:req.body.fUnderOverR,
+                fPBR:req.body.fPBR,
+                fPBSingleR:req.body.fPBSingleR,
+                fPBDoubleR:req.body.fPBDoubleR,
+                fPBTripleR:req.body.fPBTripleR,
+                fSettleSlot:fSettleSlot,
+                fSettleBaccarat:fSettleBaccarat,
+                fSettlePBA:0,
+                fSettlePBB:0,
+                eState:'BLOCK',
+                //strOptionCode:'00000000',
+                strOptionCode:req.body.strOptionCode,
+                strPBOptionCode:req.body.strPBOptionCode,
+                iPBLimit:req.body.iPBLimit,
+                iPBSingleLimit:req.body.iPBSingleLimit,
+                iPBDoubleLimit:req.body.iPBDoubleLimit,
+                iPBTripleLimit:req.body.iPBTripleLimit,
+                strSettleMemo:'',
+                iNumLoginFailed: 0,
+                iPermission:0,
+                iLoginMax:iLoginMax
+            });
+        }
+
         res.send({result:'OK', string:'에이전트 생성을 완료 하였습니다.'});
     } catch (err) {
         res.send({result:'FAIL', string:`에이전트 생성을 실패했습니다.(${err})`});

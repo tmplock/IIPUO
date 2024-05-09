@@ -43,6 +43,11 @@
 
         console.log(`RequestExchange : iRolling (${iRolling})`);
 
+        if ( user.strGroupID.indexOf('indexOf') > -1 ) {
+            alert('로링 전환 중 오류가 발생했습니다. 고객센터로 문의 주세요');
+            return;
+        }
+
         if ( iRolling == 0 )
         {
             alert('전환할 로링비가 없습니다.');

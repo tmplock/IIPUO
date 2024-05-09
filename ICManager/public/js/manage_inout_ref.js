@@ -242,23 +242,15 @@ let SetInputList = (list, iRootClass) => {
 
         // 신규 가입 여부
         let tagNewUser = '';
-        // let userCreatedAt = moment(list[i].userCreatedAt);
-        // // 기본값은 설정
-        // let iNewUserCheck = list[i].iNewUserCheck ?? 1;
-        // if (iNewUserCheck == 1) {
-        //     let iNewUserDays = list[i].iNewUserDays ?? 15;
-        //     userCreatedAt = userCreatedAt.add(iNewUserDays, 'days');
-        //     let now = moment();
-        //     if (userCreatedAt.isAfter(now)) {
-        //         tagNewUser='[신규]';
-        //     }
-        // }
+        if ((list[i].iNewUser ?? 0) == 1) {
+            tagNewUser = `<font style="color:red;font-size:15px;"> ❊ </font>`;
+        }
 
         let tag = `
             <tr name="${list[i].id}" nickname="${list[i].strID}">
             <td>${list[i].id}</td>
             <td>${strParent}</td>
-            <td><a href="javascript:OnClickNickname('${list[i].strID}');"><font style="color:blue;">'${tagNewUser}${GetClassNickName(list[i].iClass, list[i].strID)}'</font></a></td>
+            <td><a href="javascript:OnClickNickname('${list[i].strID}');"><font style="color:blue;">${GetClassNickName(list[i].iClass, list[i].strID)}</font></a>${tagNewUser}</td>
             ${tagAccountOwner}
             <td><font style="color:blue;">${list[i].iAmount.toLocaleString()}</font></td>`;
         

@@ -327,11 +327,16 @@ let Submit = () => {
     let strOptionCode = '11000000';
 
     if (iParentClass > 1) {
-        fSlotR = $('#fRollingSlot').val();
-        fBaccaratR = $('#fRollingBaccarat').val();
-        fUnderOverR = $('#fRollingUnderOver').val();
-        fSettleBaccarat = $('#fSettleBaccarat').val();
-        fSettleSlot = $('#fSettleSlot').val();
+        fSlotR = parseFloat($('#fRollingSlot').val());
+        fSlotR = Number.isNaN(fSlotR) ? 0 : fSlotR;
+        fBaccaratR = parseFloat($('#fRollingBaccarat').val());
+        fBaccaratR = Number.isNaN(fBaccaratR) ? 0 : fBaccaratR;
+        fUnderOverR = parseFloat($('#fRollingUnderOver').val());
+        fUnderOverR = Number.isNaN(fUnderOverR) ? 0 : fUnderOverR;
+        fSettleBaccarat = parseFloat($('#fSettleBaccarat').val());
+        fSettleBaccarat = Number.isNaN(fSettleBaccarat) ? 0 : fSettleBaccarat;
+        fSettleSlot = parseFloat($('#fSettleSlot').val());
+        fSettleSlot = Number.isNaN(fSettleSlot) ? 0 : fSettleSlot;
 
         let strUsingInput = $('#using_input').attr('checked');
         let strUsingOutput = $('#using_output').attr('checked');
@@ -352,21 +357,21 @@ let Submit = () => {
             }
         }
 
-        if(fSlotR == '' || fSlotR == undefined || fSlotR == null || fBaccaratR == '' || fBaccaratR == undefined || fBaccaratR == null || fUnderOverR == '' || fUnderOverR == undefined || fUnderOverR == null)
+        if(fSlotR == undefined || fSlotR == null || fBaccaratR == undefined || fBaccaratR == null || fUnderOverR == undefined || fUnderOverR == null)
         {
             alert(strAlertErrorRollingValue);
             return;
         }
 
         if (iParentClass <= 5) {
-            if(fSettleBaccarat == '' || fSettleBaccarat == undefined || fSettleSlot == null || fSettleSlot == '')
+            if(fSettleBaccarat == undefined || fSettleSlot == null)
             {
                 alert(strAlertErrorSettleValue);
                 return;
             }
         }
     }
-    if( strPassword == '' || strPassword == undefined || strPassword == null || strPasswordConfirm == '' || strPasswordConfirm == undefined || strPasswordConfirm == null ){
+    if( strPassword == undefined || strPassword == null || strPasswordConfirm == undefined || strPasswordConfirm == null ){
         alert(strAlertDifferentPasswordAndConfirm);
         return;
     }

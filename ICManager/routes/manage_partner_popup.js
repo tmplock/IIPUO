@@ -752,9 +752,6 @@ router.post('/request_register', isLoggedIn, async(req, res) => {
             return;
         }
 
-        let strGroupID = await CalculateGroupID(req.body.strParentGroupID, req.body.iParentClass);
-        console.log(`parent : ${req.body.strParentGroupID}, child : ${strGroupID}`);
-
         const parent = await db.Users.findOne({where:{id:req.body.iParentID}});
         if ( parent == null ) {
             res.send({result:'FAIL', error:'Rolling', string:'에이전트 생성을 실패했습니다.'});
@@ -802,6 +799,7 @@ router.post('/request_register', isLoggedIn, async(req, res) => {
                 strID = `${req.body.strID}${i}`;
                 strNickname = `${req.body.strNickname}${i}`;
             }
+            let strGroupID = await CalculateGroupID(req.body.strParentGroupID, req.body.iParentClass);
 
             await db.Users.create({
                 strID:strID,

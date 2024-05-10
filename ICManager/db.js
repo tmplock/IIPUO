@@ -49,4 +49,5 @@ db.Permissions = require('./models/permission')(sequelize, Sequelize);
 db.OverviewLogs = require('./models/OverviewLog')(sequelize, Sequelize);
 db.BettingLogs = require('./models/betting_log')(sequelize, Sequelize);
 db.CashLogs = require('./models/CashLog')(sequelize, Sequelize);
+db.SettingRecords = require('./models/setting_record')(sequelize, Sequelize);
 module.exports = db;

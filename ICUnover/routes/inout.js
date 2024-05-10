@@ -487,13 +487,24 @@ router.post('/request_bank', async (req, res) => {
             return;
         }
 
+        let iMin = 15;
+        // 총본용 strGroupID
+        let strKey = `${info.strGroupID}`.substring(0, 3);
+        let setting = await db.SettingRecords.findOne({where:{ strKey: strKey}});
+        if (setting != null) {
+            iMin = parseInt(setting.strValue ?? '15');
+            iMin = Number.isNaN(iMin) ? 0 : iMin;
+        }
+
         let eBankType = 'NORMAL';
         let list = await db.Inouts.findAll({where: {strID: info.strNickname, eState: 'COMPLETE'}});
-        if (list.length == 0) {
+        if (list.length < iMin) {
             let iPassCheckNewUser = info.iPassCheckNewUser ?? 0;
             if (iPassCheckNewUser != 1) {
                 eBankType = 'NEWUSER';
             }
+        } else {
+            await db.Users.update({iPassCheckNewUser:1}, {where: {id: info.id}});
         }
 
         let obj = await IHelper.GetParentList(info.strGroupID, info.iClass);

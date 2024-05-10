@@ -41,4 +41,6 @@ db.RecordDailyOverviews = require('./models/RecordDailyOverview')(sequelize, Seq
 
 db.RecordErrorCashes = require('./models/recorderrorcash')(sequelize, Sequelize);
 
+db.SettingRecords = require('./models/setting_record')(sequelize, Sequelize);
+
 module.exports = db;

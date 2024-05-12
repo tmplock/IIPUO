@@ -132,14 +132,13 @@ router.post('/pointrecord', isLoggedIn, async(req, res) => {
 
     console.log(req.body);
 
-    //const user = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
     const user = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
     user.iRootClass = req.user.iClass;
     user.iPermission = req.user.iPermission;
 
     let parents = await IAgent.GetParentList(req.body.strGroupID, req.body.iClass, user);
 
-    res.render('manage_partner/popup_points', {iLayout:3, iHeaderFocus:3, agent:user, parents:parents, strParent:parents.strParents});
+    res.render('manage_user/popup_pointrecord', {iLayout:3, iHeaderFocus:3, agent:user, parents:parents});
 });
 
 router.post('/bettingrecord', isLoggedIn, async(req, res) => {

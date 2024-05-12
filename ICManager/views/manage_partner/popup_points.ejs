@@ -26,7 +26,6 @@
 							<th width="16%" style="font-size:14px;">차감</th>
 							<th width="16%" style="font-size:14px;">롤링</th>
 							<th width="16%" style="font-size:14px;">합계</th>
-							<th width="15%" style="font-size:14px;"><%=__('Exchange')%><%=__('Type')%></th>
 							<th width="16%" style="font-size:14px;">닉네임</th>
 							<th width="16%" style="font-size:14px;">전환 일자</th>
 						</tr>
@@ -96,63 +95,84 @@
 			context: document.body,
 			data:{strNickname:agent.strNickname, dateStart:dateStart, dateEnd:dateEnd, strSearch:strSearch, iClass:iClass, searchType:searchType},
 			success: (list) => {
-				let giveColor = 'red';
-				let takeColor = 'blue';
-				if (list.length > 0) {
-					giveColor = (list[0].strTo == agent.strNickname) ? 'blue' : 'red';
-					takeColor = (list[0].strTo == agent.strNickname) ? 'red' : 'blue';
-				}
+
+				let totalGive = 0;
+				let totalTake = 0;
+				let totalRolling = 0;
 
 				for ( let i in list )
 				{
 					let objectType = GetType(list[i].eType);
-					let nickname = list[i].strTo;
-					let iClass = list[i].iClassTo;
+					let nickname = '';
+					let iClass = '';
 					let iAmountGive = 0;
 					let iAmountTake = 0;
 					let iAmountRolling = 0;
 					let iBeforeAmount = 0;
 					let iAfterAmount = 0;
+					let tagChar = '';
 
 					if (list[i].eType == 'ROLLING') {
 						iAmountRolling = list[i].iAmount;
 						iBeforeAmount = parseFloat(list[i].iBeforeAmountTo);
 						iAfterAmount = parseFloat(list[i].iAfterAmountTo);
-						// iBeforeAmount = parseFloat(list[i].iBeforeAmountFrom);
-						// iAfterAmount = parseFloat(list[i].iAfterAmountFrom);
-					} else if (list[i].eType == 'TAKE') {
-						iAmountTake = list[i].iAmount;
-						iBeforeAmount = parseFloat(list[i].iBeforeAmountTo);
-						iAfterAmount = parseFloat(list[i].iAfterAmountTo);
-
-					} else if (list[i].eType == 'GIVE') {
-						iAmountGive = list[i].iAmount;
-						iBeforeAmount = parseFloat(list[i].iBeforeAmountTo);
-						iAfterAmount = parseFloat(list[i].iAfterAmountTo);
-
+						nickname = list[i].strTo;
 					} else if (list[i].eType == 'GETSETTLE') {
 						iAmountTake = list[i].iAmount;
-						// iBeforeAmount = parseFloat(list[i].iBeforeAmountFrom);
-						// iAfterAmount = parseFloat(list[i].iAfterAmountFrom);
 						iBeforeAmount = parseFloat(list[i].iBeforeAmountTo);
 						iAfterAmount = parseFloat(list[i].iAfterAmountTo);
+						nickname = list[i].strTo;
+					} else if (list[i].eType == 'TAKE') { // 차감
+						// 상부(본인) -> 하부
+						if (agent.iClass == list[i].iClassFrom) {
+							iAmountTake = list[i].iAmount;
+							iBeforeAmount = parseFloat(list[i].iBeforeAmountFrom);
+							iAfterAmount = parseFloat(list[i].iAfterAmountFrom);
+							nickname = list[i].strTo;
+							tagChar = '(1)';
+						} else { // 상부 -> 하부(본인)
+							iAmountTake = -list[i].iAmount;
+							iBeforeAmount = parseFloat(list[i].iBeforeAmountTo);
+							iAfterAmount = parseFloat(list[i].iAfterAmountTo);
+							nickname = list[i].strFrom;
+							tagChar = '(11)';
+						}
+					} else if (list[i].eType == 'GIVE') { // 지급
+						// 상부(본인) -> 하부
+						if (agent.iClass == list[i].iClassFrom) {
+							iAmountGive = -list[i].iAmount
+							iBeforeAmount = parseFloat(list[i].iBeforeAmountFrom);
+							iAfterAmount = parseFloat(list[i].iAfterAmountFrom);
+							nickname = list[i].strTo;
+							tagChar = '(2)';
+						} else { // 상부 -> 하부(본인)
+							iAmountGive = list[i].iAmount
+							iBeforeAmount = parseFloat(list[i].iBeforeAmountTo);
+							iAfterAmount = parseFloat(list[i].iAfterAmountTo);
+							nickname = list[i].strFrom;
+							tagChar = '(22)';
+						}
 					}
+
+					totalTake += iAmountTake;
+					totalGive += iAmountGive;
+					totalRolling += iAmountRolling;
+
 
 					let tag = `	<tr>
 								<td>${list[i].id}</td>
 								<td>${GetNumberSign(iBeforeAmount)}</td>
-								<td style="color: ${giveColor}">${GetNumberSign(iAmountGive)}</td>
-								<td style="color: ${takeColor}">${GetNumberSign(iAmountTake)}</td>
-								<td style="color: blue">${GetNumberSign(iAmountRolling)}</td>
+								<td style="color: ${GetColor(iAmountGive)}">${GetNumber(iAmountGive)}</td>
+								<td style="color: ${GetColor(iAmountTake)}">${GetNumber(iAmountTake)}</td>
+								<td style="color: ${GetColor(iAmountRolling)}">${GetNumber(iAmountRolling)}</td>
 								<td>${GetNumberSign(iAfterAmount)}</td>
-								<td style='color:${objectType.color}'>${objectType.strType}</td>
 								<td><a href="#" onclick="OnClickNickname('${nickname}')">${GetClassNickName(iClass, nickname)}</a></td>
 								<td>${list[i].createdAtFormat}</td>
 								</tr>`;
 
 					$('#listGTRecord').append(tag);
 				}
-				SetTotal(list, giveColor, takeColor);
+				SetTotal(totalGive, totalTake, totalRolling);
 			},
 			error:function(request,status,error){
 				alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
@@ -160,25 +180,12 @@
 		});
 	}
 
-	let SetTotal = (list, giveColor, takeColor) => {
-		let giveTotal = 0;
-		let takeTotal = 0;
-		let rollingTotal = 0;
-		for (let i in list) {
-			if (list[i].eType == 'GIVE') {
-				giveTotal += list[i].iAmount;
-			} else if (list[i].eType == 'TAKE') {
-				takeTotal += list[i].iAmount;
-			} else if (list[i].eType == 'ROLLING') {
-				rollingTotal += list[i].iAmount;
-			}
-		}
+	let SetTotal = (give, take, rolling) => {
 		let tag = `	<tr>
 					<td colspan="2">합게</td>
-					<td style="color: ${giveColor}">${GetNumberSign(giveTotal)}</td>
-					<td style="color: ${takeColor}">${GetNumberSign(takeTotal)}</td>
-					<td style="color: blue">${GetNumberSign(rollingTotal)}</td>
-					<td></td>
+					<td style="color: ${GetColor(give)}">${GetNumber(give)}</td>
+					<td style="color: ${GetColor(take)}">${GetNumber(take)}</td>
+					<td style="color: ${GetColor(rolling)}">${GetNumber(rolling)}</td>
 					<td></td>
 					<td></td>
 					<td></td>

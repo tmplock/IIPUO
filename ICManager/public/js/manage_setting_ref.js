@@ -232,7 +232,7 @@ let OnAnnChangeState = (id) => {
 	});
 }
 
-let OnClickNickname = (strNickname) => {
+let OnClickNickname = (strNickname, menu) => {
 	$.ajax({
 		type:'post',
 		url: "/manage_setting/request_agentinfo",
@@ -241,7 +241,7 @@ let OnClickNickname = (strNickname) => {
 		success:function(data) {
 			if ( data.result == 'OK' )
 			{
-				OnClickUser(data.data.strNickname, data.data.strGroupID, data.data.iClass);
+				OnClickUser(data.data.strNickname, data.data.strGroupID, data.data.iClass, menu);
 			}
 			else if (data.result == 'FAIL')
 			{
@@ -251,23 +251,21 @@ let OnClickNickname = (strNickname) => {
 	});
 }
 
-let OnClickUser = (strNickname, strGroupID, iClass) => {
+let OnClickUser = (strNickname, strGroupID, iClass, menu) => {
 
 	if ( iClass == 8 )
 	{
 		//  User Popup
-
-		console.log(strNickname);
-		console.log(strGroupID);
-		console.log(iClass);
-
-		let strAddress = '/manage_user_popup/output';
-		window.open('', 'popupInoutAgent', 'width=1280, height=720, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
+		let target = `popupAgent${strNickname}`;
+		let strAddress = '/manage_user_popup/';
+		let url = menu ?? 'userinfo';
+		strAddress = `${strAddress}${url}`;
+		window.open('', target, 'width=1280, height=720, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
 
 		var $form = $('<form></form>');
 		$form.attr('action', strAddress);
 		$form.attr('method', 'post');
-		$form.attr('target', 'popupInoutAgent');
+		$form.attr('target', target);
 		$form.appendTo('body');
 
 		var idx = $(`<input type="hidden" value="${strNickname}" name="strNickname">`);
@@ -280,16 +278,16 @@ let OnClickUser = (strNickname, strGroupID, iClass) => {
 	else
 	{
 		//  Agent Popup
-		window.open('', 'popupInoutAgent', 'width=1280, height=720, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
-		// $("#Input1_"+strNickname).val(strNickname);
-		// $("#Form_"+strNickname).submit();
-		// console.log($("#Input1_"+strNickname).val());
+		let target = `popupAgent${strNickname}`;
+		let strAddress = '/manage_partner_popup/';
+		let url = menu ?? 'agentinfo';
+		strAddress = `${strAddress}${url}`;
+		window.open('', target, 'width=1280, height=720, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
 
 		var $form = $('<form></form>');
-		//$form.attr('action', '/manage_partner_popup/userlist');
-		$form.attr('action', '/manage_partner_popup/agentinfo');
+		$form.attr('action', strAddress);
 		$form.attr('method', 'post');
-		$form.attr('target', 'popupInoutAgent');
+		$form.attr('target', target);
 		$form.appendTo('body');
 
 		var idx = $(`<input type="hidden" value="${strNickname}" name="strNickname">`);

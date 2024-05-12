@@ -46,6 +46,7 @@
 <script type="text/javascript" src="js/manage_partner_ref.js"></script>
 <script type="text/javascript" src="js/manage_partner_popup_menu.js"></script>
 <script type="text/javascript" src="js/manage_partner_popup_ref.js"></script>
+<script type="text/javascript" src="js/manage_setting_ref.js"></script>
 <script type="text/javascript">
 	
 	let agent = JSON.parse('<%-JSON.stringify(agent)%>');
@@ -117,11 +118,13 @@
 						iBeforeAmount = parseFloat(list[i].iBeforeAmountTo);
 						iAfterAmount = parseFloat(list[i].iAfterAmountTo);
 						nickname = list[i].strTo;
+						iClass = list[i].iClassTo;
 					} else if (list[i].eType == 'GETSETTLE') {
 						iAmountTake = list[i].iAmount;
 						iBeforeAmount = parseFloat(list[i].iBeforeAmountTo);
 						iAfterAmount = parseFloat(list[i].iAfterAmountTo);
 						nickname = list[i].strTo;
+						iClass = list[i].iClassTo;
 					} else if (list[i].eType == 'TAKE') { // 차감
 						// 상부(본인) -> 하부
 						if (agent.iClass == list[i].iClassFrom) {
@@ -129,12 +132,14 @@
 							iBeforeAmount = parseFloat(list[i].iBeforeAmountFrom);
 							iAfterAmount = parseFloat(list[i].iAfterAmountFrom);
 							nickname = list[i].strTo;
+							iClass = list[i].iClassTo;
 							tagChar = '(1)';
 						} else { // 상부 -> 하부(본인)
 							iAmountTake = -list[i].iAmount;
 							iBeforeAmount = parseFloat(list[i].iBeforeAmountTo);
 							iAfterAmount = parseFloat(list[i].iAfterAmountTo);
 							nickname = list[i].strFrom;
+							iClass = list[i].iClassFrom;
 							tagChar = '(11)';
 						}
 					} else if (list[i].eType == 'GIVE') { // 지급
@@ -144,12 +149,14 @@
 							iBeforeAmount = parseFloat(list[i].iBeforeAmountFrom);
 							iAfterAmount = parseFloat(list[i].iAfterAmountFrom);
 							nickname = list[i].strTo;
+							iClass = list[i].iClassTo;
 							tagChar = '(2)';
 						} else { // 상부 -> 하부(본인)
 							iAmountGive = list[i].iAmount
 							iBeforeAmount = parseFloat(list[i].iBeforeAmountTo);
 							iAfterAmount = parseFloat(list[i].iAfterAmountTo);
 							nickname = list[i].strFrom;
+							iClass = list[i].iClassFrom;
 							tagChar = '(22)';
 						}
 					}
@@ -158,6 +165,10 @@
 					totalGive += iAmountGive;
 					totalRolling += iAmountRolling;
 
+					let linkTag = `<a style="color: blue" href="#" onclick="OnClickNickname('${nickname}')">${GetClassNickName(iClass, nickname)}</a>`;
+					if (nickname == agent.strNickname) {
+						linkTag = `<a style="color: blue" href="#">${GetClassNickName(iClass, nickname)}</a>`;
+					}
 
 					let tag = `	<tr>
 								<td>${list[i].id}</td>
@@ -166,7 +177,7 @@
 								<td style="color: ${GetColor(iAmountTake)}">${GetNumber(iAmountTake)}</td>
 								<td style="color: ${GetColor(iAmountRolling)}">${GetNumber(iAmountRolling)}</td>
 								<td>${GetNumberSign(iAfterAmount)}</td>
-								<td><a href="#" onclick="OnClickNickname('${nickname}')">${GetClassNickName(iClass, nickname)}</a></td>
+								<td>${linkTag}</td>
 								<td>${list[i].createdAtFormat}</td>
 								</tr>`;
 
@@ -198,24 +209,4 @@
 		$('#listGTRecord').empty();
 		RequestGTRecord('');
 	}
-
-	let OnClickNickname = (strNickname) => {
-		$.ajax({
-			type:'post',
-			url: "/manage_setting/request_agentinfo",
-			context: document.body,
-			data:{strNickname:strNickname},
-			success:function(data) {
-				if ( data.result == 'OK' )
-				{
-					OnClickUser(data.data.strNickname, data.data.strGroupID, data.data.iClass);
-				}
-				else if (data.result == 'FAIL')
-				{
-					alert(data.msg);
-				}
-			}
-		});
-	}
-
 </script>

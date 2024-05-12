@@ -274,7 +274,7 @@
                             <td><a href="#" onclick="OnClickNickname('${letters[i].strVAdminNickname}')">${letters[i].strVAdminNickname}</a></td>
                             <td><a href="#" onclick="OnClickNickname('${letters[i].strAgentNickname}')">${letters[i].strAgentNickname}</a></td>
                             <td><a href="#" onclick="OnClickNickname('${letters[i].strShopNickname}')">${letters[i].strShopNickname}</a></td>
-                            <td><a style="text-align:left;padding-left:10px;color:${color};" href="#" onclick="OnClickRead('${letters[i].id}','${letters[i].strTo}','${letters[i].eRead}');">${strModified}</a></td>
+                            <td><a id="content_${letters[i].id}" style="text-align:left;padding-left:10px;color:${color};" href="#" onclick="OnClickRead('${letters[i].id}','${letters[i].strTo}','${letters[i].eRead}');">${strModified}</a></td>
                             <td><a href="#" onclick="OnClickNickname('${letters[i].strTo}')">${GetClassNickName(letters[i].iClassTo, letters[i].strTo)}</a></td>
                         <% } else { %>
                             <td>${letters[i].strAdminNickname}</td>
@@ -285,10 +285,10 @@
                             <td><a style="text-align:left;padding-left:10px;color:${color};" href="#" onclick="OnClickRead('${letters[i].id}','${letters[i].strTo}','${letters[i].eRead}');">${strModified}</a></td>
                             <td>관리자</td>
                         <% } %>
-                        <td style="color: ${color2};">${eRead}</td>
+                        <td id="readState_${letters[i].id}" style="color: ${color2};">${eRead}</td>
                         <td style="color: ${color3};">${reply}</td>
                         <td>${letters[i].createdAt}</td>
-                        <td>${strRead2}</td>
+                        <td id="readDate_${letters[i].id}">${strRead2}</td>
                         <td>${eState}</td>
                         <% if ( parseInt(user.iRootClass) <= 3 && user.iPermission != 100 ) { %>
                             <td><a class="btn_red" href="#" onclick="OnClickRemoveLetters('${letters[i].id}');">${strRemove}</a></td>
@@ -322,6 +322,12 @@
     }
 
     let OnClickRead = (id, strTo, eRead) => {
+        // if (eRead == 'UNREAD') {
+        //     $(`#content_${id}`).css('color', 'blue');
+        //     $(`#readState_${id}`).css('color', 'black');
+        //     $(`#readState_${id}`).text('읽음')
+        //     $(`#readDate_${id}`).text(new Date());
+        // }
         ReadLetter(id, strTo, 1);
         if (eRead == 'UNREAD' || eRead == 'REPLY') {
             reload();

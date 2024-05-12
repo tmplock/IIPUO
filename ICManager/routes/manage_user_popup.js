@@ -139,7 +139,8 @@ router.post('/pointrecord', isLoggedIn, async(req, res) => {
 
     let parents = await IAgent.GetParentList(req.body.strGroupID, req.body.iClass, user);
 
-    res.render('manage_user/popup_pointrecord', {iLayout:3, iHeaderFocus:3, agent:user, parents:parents});
+    res.render('manage_partner/popup_points', {iLayout:3, iHeaderFocus:3, agent:user, parents:parents, strParent:parents.strParents});
+    // res.render('manage_user/popup_pointrecord', {iLayout:3, iHeaderFocus:3, agent:user, parents:parents});
 
 });
 

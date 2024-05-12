@@ -194,6 +194,21 @@
 	</div>
 </div>
 </div>
+<div class="modal" id="modal_alert">
+	<div class="modal_body" id="modal_body">
+		<h2>처리중입니다</h2>
+		<p style="font-size: 16px;">잠시만 기다려 주세요</p>
+	</div>
+</div>
+<script>
+	const modal = document.querySelector('.modal');
+	function openAlertModal() {
+		modal.style.display="flex";
+	}
+	function closeAlertModal() {
+		modal.style.display = "none";
+	}
+</script>
 <script type="text/javascript" src="js/constants.js"></script>
 <script type="text/javascript" src="js/enum.js"></script>
 <script type="text/javascript" src="js/time.js"></script>
@@ -851,23 +866,120 @@
 		iBTotal = parseFloat(obj.iBaccaratTotal) + parseFloat(obj.iUnderOverTotal) - parseFloat(obj.iCommissionBaccarat ?? 0) - parseFloat(iSettleBaccarat);
 		iSTotal = (parseFloat(obj.iSlotTotal) - parseFloat(obj.iCommissionSlot) - parseFloat(iSettleSlot));
 
-		// 전체 죽장 계산((배팅-알값) * 대본죽장률)
-		iSettleBaccarat = iBTotal * fSettleBaccarat4 * 0.01;
-		iSettleSlot = iSTotal * fSettleSlot4 * 0.01;
-
 		if (obj.iClass == 5) {
 			// 부본 죽장 계산
-			iSettleBaccarat5 = iBTotal * fSettleBaccarat5 * 0.01;
-			iSettleSlot5 = iSTotal * fSettleSlot5 * 0.01;
+			if (iBTotal + iSTotal > 0) {
+				iSettleBaccarat5 = iBTotal * fSettleBaccarat5 * 0.01;
+				iSettleSlot5 = iSTotal * fSettleSlot5 * 0.01;
+			} else {
+				iSettleBaccarat5 = 0;
+				iSettleSlot5 = 0;
+			}
 			obj.iSettle = parseFloat(iSettleBaccarat5 + iSettleSlot5);
 		} else if (obj.iClass == 4) {
-			// obj.iSettle = parseFloat(iSettleBaccarat + iSettleSlot - obj.iSettleVice);
-			obj.iSettle = parseInt(obj.iSettleTotal ?? 0);
+			if (iBTotal + iSTotal > 0) {
+				iSettleBaccarat = iBTotal * fSettleBaccarat4 * 0.01;
+				iSettleSlot = iSTotal * fSettleSlot4 * 0.01;
+			} else {
+				iSettleBaccarat = 0;
+				iSettleSlot = 0;
+			}
+			obj.iSettle = parseFloat(iSettleBaccarat5 + iSettleSlot5);
+			// obj.iSettle = parseInt(obj.iSettleTotal ?? 0);
 		}
 
 		console.log(obj);
 	}
 
+	let CalculateSettle4 = (obj) => {
+		// 수수료 계산 처리
+		CalculateCommission(obj);
+
+		// 전체 죽장 계산
+		let iSettleBaccarat = 0;
+		let iSettleSlot = 0;
+		let iSettlePBA = 0;
+		let iSettlePBB = 0;
+
+		// 부본
+		let iSettleBaccarat5 = 0;
+		let iSettleSlot5 = 0;
+		let iSettlePBA5 = 0;
+		let iSettlePBB5 = 0;
+
+		// 대본
+		let iSettleBaccarat4 = 0;
+		let iSettleSlot4 = 0;
+		let iSettlePBA4 = 0;
+		let iSettlePBB4 = 0;
+
+		// 죽장률 대본
+		let fSettleBaccarat4 = 0.0;
+		let fSettleSlot4 = 0.0;
+		// 죽장률 부본
+		let fSettleBaccarat5 = 0.0;
+		let fSettleSlot5 = 0.0;
+
+		fSettleBaccarat4 = obj.fSettleBaccarat4 ?? 0;
+		fSettleSlot4 = obj.fSettleBaccarat4 ?? 0;
+		fSettleBaccarat5 = obj.fSettleBaccarat5 ?? 0;
+		fSettleSlot5 = obj.fSettleBaccarat5 ?? 0;
+
+		// 전체 죽장 계산
+		let iBTotal = parseFloat(obj.iBaccaratTotal) + parseFloat(obj.iUnderOverTotal);
+		let iSTotal = parseFloat(obj.iSlotTotal);
+		// 선행조건 확인
+		// 1. 두개의 죽장률이 다를 경우 2. 두개의 합계가 서로 부호가 다를 경우
+		// 3-1. 플러스로 이긴경우 해당 게임의 죽장비율 적용
+		// 3-2. 마이너스로 이긴경우 해당 게임의 죽장비율 적용
+		// if (obj.fSettleBaccarat4 != obj.fSettleSlot4) {
+		// 	if ((iBTotal > 0 && iSTotal < 0) || (iBTotal < 0 && iSTotal > 0)) {
+		// 		if (Math.abs(iBTotal) > Math.abs(iSTotal)) {
+		// 			fSettleBaccarat4 = obj.fSettleBaccarat4;
+		// 			fSettleSlot4 = obj.fSettleBaccarat4;
+		// 			fSettleBaccarat5 = obj.fSettleBaccarat5 ?? 0;
+		// 			fSettleSlot5 = obj.fSettleBaccarat5 ?? 0;
+		// 		} else if (Math.abs(iSTotal) > Math.abs(iBTotal)) {
+		// 			fSettleBaccarat4 = obj.fSettleSlot4;
+		// 			fSettleSlot4 = obj.fSettleSlot4;
+		// 			fSettleBaccarat5 = obj.fSettleSlot5 ?? 0;
+		// 			fSettleSlot5 = obj.fSettleSlot5 ?? 0;
+		// 		}
+		// 	}
+		// } else {
+		// 	fSettleBaccarat4 = obj.fSettleBaccarat4;
+		// 	fSettleSlot4 = obj.fSettleSlot4;
+		// 	fSettleBaccarat5 = obj.fSettleBaccarat5 ?? 0;
+		// 	fSettleSlot5 = obj.fSettleSlot5 ?? 0;
+		// }
+
+		iBTotal = parseFloat(obj.iBaccaratTotal) + parseFloat(obj.iUnderOverTotal) - parseFloat(obj.iCommissionBaccarat ?? 0) - parseFloat(iSettleBaccarat);
+		iSTotal = (parseFloat(obj.iSlotTotal) - parseFloat(obj.iCommissionSlot) - parseFloat(iSettleSlot));
+
+		if (obj.iClass == 5) {
+			// 부본 죽장 계산
+			if (iBTotal + iSTotal > 0) {
+				iSettleBaccarat5 = iBTotal * fSettleBaccarat5 * 0.01;
+				iSettleSlot5 = iSTotal * fSettleSlot5 * 0.01;
+			} else {
+				iSettleBaccarat5 = 0;
+				iSettleSlot5 = 0;
+			}
+			obj.iSettle = parseFloat(iSettleBaccarat5 + iSettleSlot5);
+		} else if (obj.iClass == 4) {
+			if (iBTotal + iSTotal > 0) {
+				iSettleBaccarat = iBTotal * fSettleBaccarat4 * 0.01;
+				iSettleSlot = iSTotal * fSettleSlot4 * 0.01;
+			} else {
+				iSettleBaccarat = 0;
+				iSettleSlot = 0;
+			}
+			obj.iSettle = parseFloat(iSettleBaccarat5 + iSettleSlot5);
+			// obj.iSettle = parseInt(obj.iSettleTotal ?? 0);
+		}
+
+		console.log(obj);
+	}
 	/**
 	 * 수수료 계산
 	 * 윈로스 * 0.1(수수료)
@@ -1410,7 +1522,7 @@
 			bSending = false;
 			return;
 		}
-
+		openAlertModal();
 		console.log('RequestApplySettle');
 
 		let list = [];
@@ -1524,6 +1636,7 @@
 			dataType: "json",
 			success: function (obj) {
 				bSending = false;
+				closeAlertModal();
 
 				console.log(obj);
 				if ( obj.result == 'OK')

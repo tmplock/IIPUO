@@ -43,9 +43,23 @@
 				</div>
 			</div>
 		</div>
-        </div>
-    </div>
+	</div>
 </div>
+<div class="modal" id="modal_alert">
+	<div class="modal_body" id="modal_body">
+		<h2>처리중입니다</h2>
+		<p style="font-size: 16px;">잠시만 기다려 주세요</p>
+	</div>
+</div>
+<script>
+	const modal = document.querySelector('.modal');
+	function openAlertModal() {
+		modal.style.display="flex";
+	}
+	function closeAlertModal() {
+		modal.style.display = "none";
+	}
+</script>
 <script type="text/javascript" src="js/constants.js"></script>
 <script type="text/javascript" src="js/enum.js"></script>
 <script type="text/javascript" src="js/time.js"></script>
@@ -179,6 +193,7 @@
 			let totalObj = {iTotal: 0, iSettleVice: 0, iRolling: 0, iBaccaratWinLose: 0, iUnderOverWinLose: 0, iSlotWinLose: 0,
 				iCommissionBaccarat:0, iCommissionSlot: 0, iSettle: 0, iResult4: 0
 			};
+
 			for (let i in dataList) {
 				totalObj.iTotal += dataList[i].iTotal ?? 0;
 				totalObj.iRolling += (dataList[i].iRolling ?? 0);
@@ -295,12 +310,15 @@
 		obj.fSettleBaccaratCal = fSettleBaccaratCal;
 		obj.fSettleSlotCal = fSettleSlotCal;
 
-		// 대본 죽장 계산
-		obj.iSettle = (parseFloat(obj.iTotal5 ?? 0) - parseFloat(obj.iSettleVice ?? 0) - parseFloat(obj.iRolling ?? 0) - parseFloat((obj.iCommissionBaccarat ?? 0) + (obj.iCommissionSlot ?? 0))) * fSettleBaccaratCal * 0.01;
-
-		// 합계
-		obj.iResult4 = parseFloat(obj.iTotal5 ?? 0) - parseFloat(obj.iSettleVice ?? 0) - parseFloat(obj.iRolling ?? 0) - parseFloat((obj.iCommissionBaccarat ?? 0) + (obj.iCommissionSlot ?? 0)) - parseFloat(obj.iSettle ?? 0);
-
+		if (parseFloat(obj.iTotal5 ?? 0) > 0) {
+			// 대본 죽장 계산
+			obj.iSettle = (parseFloat(obj.iTotal5 ?? 0) - parseFloat(obj.iSettleVice ?? 0) - parseFloat(obj.iRolling ?? 0) - parseFloat((obj.iCommissionBaccarat ?? 0) + (obj.iCommissionSlot ?? 0))) * fSettleBaccaratCal * 0.01;
+			// 합계
+			obj.iResult4 = parseFloat(obj.iTotal5 ?? 0) - parseFloat(obj.iSettleVice ?? 0) - parseFloat(obj.iRolling ?? 0) - parseFloat((obj.iCommissionBaccarat ?? 0) + (obj.iCommissionSlot ?? 0)) - parseFloat(obj.iSettle ?? 0);
+		} else {
+			obj.iSettle = 0;
+			obj.iResult4 = 0;
+		}
 		console.log(obj);
 	}
 
@@ -563,6 +581,7 @@
 		}
 
 		console.log('OnClickApplySettleCal');
+		openAlertModal();
 
 		let list = [];
 		for (let i in settleList) {
@@ -608,6 +627,7 @@
 			dataType: "json",
 			success: function (obj) {
 				bSending = false;
+				closeAlertModal();
 
 				console.log(obj);
 				if ( obj.result == 'OK')
@@ -628,7 +648,5 @@
 				}
 			}
 		});
-
-
 	}
 </script>

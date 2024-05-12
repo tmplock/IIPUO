@@ -88,7 +88,7 @@
 
 		$.ajax({
 			type:'post',
-			url: "/manage_partner_popup/request_gtrecord_partner",
+			url: "/manage_user_popup/request_gtrecord_user",
 			context: document.body,
 			data:{strNickname:agent.strNickname, dateStart:dateStart, dateEnd:dateEnd, strSearch:strSearch, iClass:iClass, searchType:searchType},
 			success: (list) => {

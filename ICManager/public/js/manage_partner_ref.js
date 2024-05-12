@@ -1077,11 +1077,23 @@ let AddAdmin = (iRootClass, aObject, iPermission) => {
 		<a href="javascript:RequestPartnerInfo('${aObject.strNickname}', '${aObject.strGroupID}', '${aObject.iClass}');"  style="color:blue;">${aObject.strID}</a>
 		
 		</td>
-
-		<td style="background-color:${color};"  class="parent_row_31">
-			<a href="#"  style="color:blue;">${aObject.strNickname}</a>
-		</td>
 		`;
+
+	if (iPermission != 100) {
+		subtag += `
+			<td style="background-color:${color};"  class="parent_row_31">
+				<a href="#" style="color: blue" class="list_menu move" strNickname=${aObject.strNickname} strGroupID=${aObject.strGroupID} iClass=${aObject.iClass}>${aObject.strNickname}</a>
+			</td>
+		`;
+	} else {
+		subtag += `
+			<td style="background-color:${color};"  class="parent_row_31">
+				<a href="#" style="color:blue;"></a>
+			</td>
+		`;
+	}
+
+
 
 	let iWinLose = (parseFloat(aObject.iBaccaratTotal) + parseFloat(aObject.iUnderOverTotal) + parseFloat(aObject.iSlotTotal)) + (parseFloat(aObject.iBaccaratRollingMoney) + parseFloat(aObject.iUnderOverRollingMoney) + parseFloat(aObject.iSlotRollingMoney));
 	let iPBWinLose = parseFloat(aObject.iPBRollingMoney) + parseFloat(aObject.iPBTotal);

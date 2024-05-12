@@ -265,6 +265,10 @@ router.post('/listproadmin', isLoggedIn, async(req, res) => {
     console.log(req.body);
     const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
     let strID = dbuser.iPermission == 100 ? dbuser.strIDRel : dbuser.strID;
+    if (dbuser.iClass < req.user.iRootClass) {
+        res.send({result:'FAIL', msg: '허가되지 않은 사용자입니다'});
+        return;
+    }
 
     const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle,
         fBaccaratR: dbuser.fBaccaratR, fSlotR: dbuser.fSlotR, fUnderOverR: dbuser.fUnderOverR, fPBR: dbuser.fPBR, fPBSingleR: dbuser.fPBSingleR, fPBDoubleR: dbuser.fPBDoubleR, fPBTripleR: dbuser.fPBTripleR,

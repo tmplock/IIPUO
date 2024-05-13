@@ -461,15 +461,18 @@ router.post('/request_applysettle_all', isLoggedIn, async (req, res) => {
             }
 
             iSettleAcc = iSettle - iSettleGive;
+
+            // 수금 계산
+            // 죽장 지급액이 있을 경우 && 죽장 이월금액이 마이너스일 경우
             if (iSettleGive > 0) {
-                if (iSettleGive > iSettleBeforeAcc) {
+                if (iSettleGive > Math.abs(iSettleBeforeAcc)) {
                     iPayback = -iSettleBeforeAcc;
                 } else {
-                    iPayback = iSettleBeforeAcc - iSettleGive;
+                    iPayback = Math.abs(iSettleBeforeAcc) - iSettleGive;
                 }
             } else if (iSettle > 0) {
                 // 죽장은 발생했지만 수금할 금액이 많아서 죽장 지급이 없는 경우(이월금액 - 이번분기 죽장값)
-                iPayback = iSettleBeforeAcc - iSettle;
+                iPayback = Math.abs(iSettleBeforeAcc) - iSettle;
             }
 
             iSettleAccTotal = iSettleAccTotal + iSettleAcc;

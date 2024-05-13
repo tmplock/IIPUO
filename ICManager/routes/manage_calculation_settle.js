@@ -426,6 +426,9 @@ router.post('/request_applysettle_all', isLoggedIn, async (req, res) => {
 
     for ( let i in list )
     {
+        if (list[i].strNickname == '테떡림이') {
+            console.log('테떡림이');
+        }
         if (list[i].from != from.strNickname) {
             from = await db.Users.findOne({where:{strNickname:list[i].from}});
         }

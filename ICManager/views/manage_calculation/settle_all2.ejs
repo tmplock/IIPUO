@@ -756,17 +756,17 @@
 				iPayback:0
 			};
 			for (let i in dataList) {
-				totalObj.iTotal += dataList[i].iTotal ?? 0;
+				totalObj.iTotal += parseFloat(dataList[i].iTotal ?? 0);
 
 				let iClass = dataList[i].iClass ?? 0;
 				if (iClass == 4) {
-					totalObj.iBaccaratWinLose += dataList[i].iBaccaratWinLose ?? 0;
-					totalObj.iUnderOverWinLose += dataList[i].iUnderOverWinLose ?? 0;
-					totalObj.iSlotWinLose += dataList[i].iSlotWinLose ?? 0;
-					totalObj.iCommissionBaccarat += dataList[i].iCommissionBaccarat ?? 0;
-					let fSettleSlot = dataList[i].fSettleSlot ?? 0;
+					totalObj.iBaccaratWinLose += parseFloat(dataList[i].iBaccaratWinLose ?? 0);
+					totalObj.iUnderOverWinLose += parseFloat(dataList[i].iUnderOverWinLose ?? 0);
+					totalObj.iSlotWinLose += parseFloat(dataList[i].iSlotWinLose ?? 0);
+					totalObj.iCommissionBaccarat += parseFloat(dataList[i].iCommissionBaccarat ?? 0);
+					let fSettleSlot = parseFloat(dataList[i].fSettleSlot ?? 0);
 					if (fSettleSlot != 0) {
-						totalObj.iCommissionSlot += dataList[i].iCommissionSlot ?? 0;
+						totalObj.iCommissionSlot += parseFloat(dataList[i].iCommissionSlot ?? 0);
 					}
 				}
 				if (iClass == 5) {
@@ -779,18 +779,17 @@
 					totalObj.iQuarterSettle += parseFloat(dataList[i].iSettle ?? 0);
 				}
 
-				totalObj.iResult += dataList[i].iResult ?? 0;
-				totalObj.iSettleGive += dataList[i].iSettleGive ?? 0;
-				totalObj.iSettleAcc += dataList[i].iSettleAcc ?? 0;
-				totalObj.iSettleTotal += dataList[i].iSettleTotal ?? 0;
-				totalObj.iSettleBeforeAcc += dataList[i].iSettleBeforeAcc ?? 0;
-				totalObj.iSettleAccTotal += dataList[i].iSettleAccTotal ?? 0;
-				totalObj.iPayback += dataList[i].iPayback ?? 0;
+				totalObj.iResult += parseFloat(dataList[i].iResult ?? 0);
+				totalObj.iSettleGive += parseFloat(dataList[i].iSettleGive ?? 0);
+				totalObj.iSettleAcc += parseFloat(dataList[i].iSettleAcc ?? 0);
+				totalObj.iSettleTotal += parseFloat(dataList[i].iSettleTotal ?? 0);
+				totalObj.iSettleBeforeAcc += parseFloat(dataList[i].iSettleBeforeAcc ?? 0);
+				totalObj.iSettleAccTotal += parseFloat(dataList[i].iSettleAccTotal ?? 0);
+				totalObj.iPayback += parseFloat(dataList[i].iPayback ?? 0);
 			}
 			let tagTotal = AddTotal(totalObj);
 			$('#list_agents').append(tagTotal);
 		}
-
 
 		// 정산용 데이터
 		settleList = dataList;
@@ -1486,7 +1485,7 @@
 			data.iBaccaratWinLose = parseFloat(aObject.iBaccaratWinLose);
 			data.iUnderOverWinLose = parseFloat(aObject.iUnderOverWinLose);
 			data.iSlotWinLose = parseFloat(aObject.iSlotWinLose);
-			data.iPBWinLose = parseFloat(aObject.iPBWinLose);
+			data.iPBWinLose = 0;
 			data.iResult = data.iTotal - parseFloat(aObject.iSettleVice ?? 0) - parseFloat(aObject.iCommissionBaccarat) - parseFloat(aObject.iCommissionSlot) - parseFloat(aObject.iSettle);
 			data.iSettleBeforeAcc = parseFloat(aObject.iSettleAccUser ?? 0);
 			data.iSettleAccTotal = 0;
@@ -1513,7 +1512,7 @@
 			data.iBaccaratWinLose = parseFloat(aObject.iBaccaratWinLose);
 			data.iUnderOverWinLose = parseFloat(aObject.iUnderOverWinLose);
 			data.iSlotWinLose = parseFloat(aObject.iSlotWinLose);
-			data.iPBWinLose = parseFloat(aObject.iPBWinLose);
+			data.iPBWinLose = 0;
 			data.iResult = data.iTotal - parseFloat(aObject.iSettleVice ?? 0) - parseFloat(aObject.iCommissionBaccarat) - parseFloat(aObject.iCommissionSlot) - parseFloat(aObject.iSettle);
 			data.iSettleBeforeAcc = parseFloat(aObject.iSettleBeforeAcc ?? 0);
 			data.iSettleAfter = parseFloat(aObject.iSettleAfter ?? 0);
@@ -1542,7 +1541,6 @@
 		data.iCommissionBaccarat = parseFloat(aObject.iCommissionBaccarat ?? 0);
 		data.iCommissionSlot = parseFloat(aObject.iCommissionSlot ?? 0);
 		data.iSettleGive = parseFloat(aObject.iSettleGive ?? 0);
-		data.iSettleAcc = parseFloat(aObject.iSettleAcc ?? 0);
 		// 죽장 총합
 		data.iSettleTotal = (bEnableSettle == true) ? 0 : parseFloat(aObject.iSettleGive ?? 0) + parseFloat(aObject.iSettleAcc ?? 0) + parseFloat(aObject.iPayback ?? 0);
 
@@ -1653,59 +1651,62 @@
 		if (bEnableSettle) {
 			data.iTotal = parseFloat(aObject.iTotal);
 			data.iRolling = parseFloat(aObject.iRolling);
-			data.iBaccaratWinLose = parseFloat(aObject.iBWinlose);
-			data.iUnderOverWinLose = parseFloat(aObject.iUWinlose);
-			data.iSlotWinLose = parseFloat(aObject.iSWinlose);
+			data.iBaccaratWinLose = parseFloat(aObject.iBaccaratWinLose);
+			data.iUnderOverWinLose = parseFloat(aObject.iUnderOverWinLose);
+			data.iSlotWinLose = parseFloat(aObject.iSlotWinLose);
 			data.iPBWinLose = 0;
-			// data.iResult = data.iTotal - parseFloat(aObject.iSettleVice ?? 0) - parseFloat(aObject.iCommissionBaccarat) - parseFloat(aObject.iCommissionSlot) - parseFloat(aObject.iSettle);
 			data.iResult = parseFloat(aObject.iTotalViceAdmin ?? 0);
 			data.iSettleBeforeAcc = parseFloat(aObject.iSettleAccUser ?? 0);
 			data.iSettleAccTotal = 0;
 			// 부본 죽장
 			data.iSettleVice = parseFloat(aObject.iSettleVice ?? 0);
-			data.iSettleQuater = parseFloat(aObject.iSettleTotal ?? 0);
+			// 해당 분기 죽장
+			data.iSettleQuater = parseFloat(aObject.iSettle ?? 0);
 			data.iSettleAcc = parseFloat(aObject.iSettleAcc ?? 0);
+			// 죽장률
+			data.fSettleBaccarat = parseFloat(aObject.fSettleBaccarat4 ?? 0);
+			data.fSettleSlot = parseFloat(aObject.fSettleSlot4 ?? 0);
+
 			// 대본 죽장
 			data.iSettle = parseFloat(aObject.iSettle ?? 0);
 
 			// 죽장 총합
-			data.iSettleTotal = parseFloat(aObject.iSettleTotal ?? 0);
-
-			data.iCommissionBaccarat = parseFloat(aObject.iCommissionB ?? 0);
-			data.iCommissionSlot = parseFloat(aObject.iCommissionS ?? 0);
+			// data.iSettleTotal = parseFloat(aObject.iSettleTotal ?? 0);
+			// 죽장률
+			data.fSettleBaccarat = parseFloat(aObject.fSettleBaccarat4 ?? 0);
+			data.fSettleSlot = parseFloat(aObject.fSettleSlot4 ?? 0);
 		} else {  // 죽장 완료
-			data.iTotal = parseFloat(aObject.iBaccaratTotal) + parseFloat(aObject.iUnderOverTotal) + parseFloat(aObject.iSlotTotal) + parseFloat(aObject.iPBATotal) + parseFloat(aObject.iPBBTotal);
-			data.iRolling = parseFloat(aObject.iRollingMoney);
+			data.iTotal = parseFloat(aObject.iTotal);
+			data.iRolling = parseFloat(aObject.iRolling);
 			data.iBaccaratWinLose = parseFloat(aObject.iBaccaratWinLose);
 			data.iUnderOverWinLose = parseFloat(aObject.iUnderOverWinLose);
 			data.iSlotWinLose = parseFloat(aObject.iSlotWinLose);
-			data.iPBWinLose = parseFloat(aObject.iPBWinLose);
-			data.iResult = data.iTotal - parseFloat(aObject.iSettleVice ?? 0) - parseFloat(aObject.iCommissionBaccarat) - parseFloat(aObject.iCommissionSlot) - parseFloat(aObject.iSettle);
+			data.iPBWinLose = 0;
+
+			data.iResult = parseFloat(aObject.iTotalViceAdmin ?? 0);
 			data.iSettleBeforeAcc = parseFloat(aObject.iSettleBeforeAcc ?? 0);
 			data.iSettleAfter = parseFloat(aObject.iSettleAfter ?? 0);
 			data.iSettleAccTotal = parseFloat(aObject.iSettleAfter ?? 0);
-			data.iSettle = parseFloat(aObject.iSettle);
+			// 대본 죽장
+			data.iSettle = parseFloat(aObject.iSettle ?? 0);
+			// 부본 죽장
 			data.iSettleVice = parseFloat(aObject.iSettleVice ?? 0);
 			data.iSettleQuater = parseFloat(aObject.iSettle ?? 0);
 			data.iPayback = parseFloat(aObject.iPayback ?? 0);
 			data.iSettleAcc = parseFloat(aObject.iSettleAcc ?? 0);
-
-			data.fSettleBaccarat = 0;
-			data.fSettleSlot = 0;
-			data.fSettlePBA = 0;
-			data.fSettlePBB = 0;
-			data.iSettleVice = 0;
-			// 죽장 총합
-			data.iSettleTotal = parseFloat(aObject.iSettleGive ?? 0) + parseFloat(aObject.iSettleAcc ?? 0) + parseFloat(aObject.iPayback ?? 0);
-			data.iCommissionBaccarat = parseFloat(aObject.iCommissionBaccarat ?? 0);
-			data.iCommissionSlot = parseFloat(aObject.iCommissionSlot ?? 0);
+			// 죽장률
+			data.fSettleBaccarat = parseFloat(aObject.fSettleBaccarat42 ?? 0);
+			data.fSettleSlot = parseFloat(aObject.fSettleSlot42 ?? 0);
 		}
+
+		data.iCommissionBaccarat = parseFloat(aObject.iCommissionBaccarat ?? 0);
+		data.iCommissionSlot = parseFloat(aObject.iCommissionSlot ?? 0);
 		data.iSettleGive = parseFloat(aObject.iSettleGive ?? 0);
-		data.iSettleAcc = parseFloat(aObject.iSettleAcc ?? 0);
+		// 죽장 총합
+		data.iSettleTotal = (bEnableSettle == true) ? 0 : parseFloat(aObject.iSettleGive ?? 0) + parseFloat(aObject.iSettleAcc ?? 0) + parseFloat(aObject.iPayback ?? 0);
 
 		// 적립 죽장비
 		if (bEnableSettle == true) {
-
 			if (true) {
 				let iSettle = parseFloat(aObject.iSettle ?? 0);
 				// 적립가능 금액 = 해당월 죽장 - 전월 죽장 이월
@@ -1714,7 +1715,6 @@
 					data.iInputQuaterSettle += data.iSettleBeforeAcc;
 				}
 				data.inputSettleOption = 'disabled="disabled"';
-
 
 				// 죽장이 플러스일 경우 자동 수금 처리 표시
 				let iPayback = parseFloat(data.iPayback ?? 0);
@@ -1729,44 +1729,6 @@
 					data.iPayback = iPayback;
 				}
 			}
-
-
-			if (false) {
-				let iSettle = parseFloat(aObject.iSettle ?? 0);
-				// 적립가능 금액 = 해당월 죽장 - 전월 죽장 이월
-				data.iInputQuaterSettle = iSettle;
-				if (data.iSettleAcc < 0) {
-					data.iInputQuaterSettle += data.iSettleAcc;
-				}
-				data.inputSettleOption = 'disabled="disabled"';
-
-
-				// 죽장이 플러스일 경우 자동 수금 처리 표시
-				let iPayback = parseFloat(data.iPayback ?? 0);
-				// 이용자가 가지고 있는 보유죽장
-				let iSettleAcc = parseFloat(data.iSettleAcc ?? 0) + iPayback;
-				if (iSettle > 0 && iSettleAcc < 0) {
-					// 이월 금액이 남아 있는 경우
-					if (-iSettleAcc > iSettle) {
-						iPayback = iPayback + iSettle;
-					} else {
-						iPayback = iPayback - iSettleAcc;
-					}
-					data.iPayback = iPayback;
-				}
-			}
-
-			// if (parseInt(aObject.iClass) == 4) {
-			// 	// 마이너스는 수정 불가
-			// 	if (data.iInputQuaterSettle < 0) {
-			// 		data.inputSettleOption = 'disabled="disabled"';
-			// 	}
-			// } else if (parseInt(aObject.iClass) == 5) {
-			// 	// 마이너스는 수정 불가
-			// 	if (data.iInputQuaterSettle < 0) {
-			// 		data.inputSettleOption = 'disabled="disabled"';
-			// 	}
-			// }
 		} else {
 			data.inputSettleOption = 'disabled="disabled"';
 			data.iInputQuaterSettle = 0;

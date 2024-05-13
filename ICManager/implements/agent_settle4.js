@@ -360,11 +360,11 @@ exports.GetSettleClass = async (strGroupID, iClass, strQuater, dateStart, dateEn
                 IFNULL((SELECT sum(iTotal) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}' AND iTotal < 0),0) as iTotalLose,
                 IFNULL((SELECT sum(iRolling) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}' AND iTotal > 0),0) as iRolling,
                 IFNULL((SELECT sum(iSettleVice) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}' AND iTotal > 0),0) as iSettleVice,
-                IFNULL((SELECT sum(iCommissionB) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}' AND iTotal > 0),0) as iCommissionB,
-                IFNULL((SELECT sum(iCommissionS) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}' AND iTotal > 0),0) as iCommissionS,
-                IFNULL((SELECT sum(iBWinlose) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}' AND iTotal > 0),0) as iBWinlose,
-                IFNULL((SELECT sum(iUWinlose) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}' AND iTotal > 0),0) as iUWinlose,
-                IFNULL((SELECT sum(iSWinlose) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}' AND iTotal > 0),0) as iSWinlose,
+                IFNULL((SELECT sum(iCommissionB) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}' AND iTotal > 0),0) as iCommissionBaccarat,
+                IFNULL((SELECT sum(iCommissionS) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}' AND iTotal > 0),0) as iCommissionSlot,
+                IFNULL((SELECT sum(iBWinlose) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}' AND iTotal > 0),0) as iBaccaratWinLose,
+                IFNULL((SELECT sum(iUWinlose) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}' AND iTotal > 0),0) as iUnderOverWinLose,
+                IFNULL((SELECT sum(iSWinlose) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}' AND iTotal > 0),0) as iSlotWinLose,
                 IFNULL((SELECT sum(iSettleViceAdmin) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}' AND iTotal > 0),0) as iSettle,
                 IFNULL((SELECT sum(iTotalViceAdmin) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}' AND iTotal > 0),0) as iTotalViceAdmin
             FROM Users t4

@@ -691,7 +691,7 @@ let GetSettleAll2 = async (strGroupID, strQuater, dateStart, dateEnd, iClass, iO
     for (let i in partnerList) {
         let obj = partnerList[i];
         if (obj.iClass == 4) {
-            obj.iSettleVice = GetSettleVice(obj);
+            // obj.iSettleVice = GetSettleVice(obj);
         } else {
             obj.iSettleVice = 0;
         }

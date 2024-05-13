@@ -730,8 +730,13 @@
 
 			if (obj.iClass == 4) {
 				// 대본사 죽장 계산
-				CalculateSettle(obj);
-				let tag = AddPartner(4, obj, !ExistSettle(obj.strID), i);
+				// CalculateSettle4(obj);
+				if (obj.strNickname == '테떡림이') {
+					console.log(obj.strNickname);
+					console.log(obj.iSettleVice);
+					console.log(obj);
+				}
+				let tag = AddPartner4(4, obj, !ExistSettle(obj.strID), i);
 				$('#list_agents').append(tag);
 				dataList.push(obj);
 			} else if (obj.iClass == 5) {
@@ -893,90 +898,16 @@
 
 	let CalculateSettle4 = (obj) => {
 		// 수수료 계산 처리
-		CalculateCommission(obj);
+		// CalculateCommission(obj);
 
-		// 전체 죽장 계산
-		let iSettleBaccarat = 0;
-		let iSettleSlot = 0;
-		let iSettlePBA = 0;
-		let iSettlePBB = 0;
-
-		// 부본
-		let iSettleBaccarat5 = 0;
-		let iSettleSlot5 = 0;
-		let iSettlePBA5 = 0;
-		let iSettlePBB5 = 0;
-
-		// 대본
-		let iSettleBaccarat4 = 0;
-		let iSettleSlot4 = 0;
-		let iSettlePBA4 = 0;
-		let iSettlePBB4 = 0;
-
-		// 죽장률 대본
-		let fSettleBaccarat4 = 0.0;
-		let fSettleSlot4 = 0.0;
-		// 죽장률 부본
-		let fSettleBaccarat5 = 0.0;
-		let fSettleSlot5 = 0.0;
-
-		fSettleBaccarat4 = obj.fSettleBaccarat4 ?? 0;
-		fSettleSlot4 = obj.fSettleBaccarat4 ?? 0;
-		fSettleBaccarat5 = obj.fSettleBaccarat5 ?? 0;
-		fSettleSlot5 = obj.fSettleBaccarat5 ?? 0;
-
-		// 전체 죽장 계산
-		let iBTotal = parseFloat(obj.iBaccaratTotal) + parseFloat(obj.iUnderOverTotal);
-		let iSTotal = parseFloat(obj.iSlotTotal);
-		// 선행조건 확인
-		// 1. 두개의 죽장률이 다를 경우 2. 두개의 합계가 서로 부호가 다를 경우
-		// 3-1. 플러스로 이긴경우 해당 게임의 죽장비율 적용
-		// 3-2. 마이너스로 이긴경우 해당 게임의 죽장비율 적용
-		// if (obj.fSettleBaccarat4 != obj.fSettleSlot4) {
-		// 	if ((iBTotal > 0 && iSTotal < 0) || (iBTotal < 0 && iSTotal > 0)) {
-		// 		if (Math.abs(iBTotal) > Math.abs(iSTotal)) {
-		// 			fSettleBaccarat4 = obj.fSettleBaccarat4;
-		// 			fSettleSlot4 = obj.fSettleBaccarat4;
-		// 			fSettleBaccarat5 = obj.fSettleBaccarat5 ?? 0;
-		// 			fSettleSlot5 = obj.fSettleBaccarat5 ?? 0;
-		// 		} else if (Math.abs(iSTotal) > Math.abs(iBTotal)) {
-		// 			fSettleBaccarat4 = obj.fSettleSlot4;
-		// 			fSettleSlot4 = obj.fSettleSlot4;
-		// 			fSettleBaccarat5 = obj.fSettleSlot5 ?? 0;
-		// 			fSettleSlot5 = obj.fSettleSlot5 ?? 0;
-		// 		}
-		// 	}
+		// if (iBTotal + iSTotal > 0) {
+		// 	iSettleBaccarat = iBTotal * fSettleBaccarat4 * 0.01;
+		// 	iSettleSlot = iSTotal * fSettleSlot4 * 0.01;
 		// } else {
-		// 	fSettleBaccarat4 = obj.fSettleBaccarat4;
-		// 	fSettleSlot4 = obj.fSettleSlot4;
-		// 	fSettleBaccarat5 = obj.fSettleBaccarat5 ?? 0;
-		// 	fSettleSlot5 = obj.fSettleSlot5 ?? 0;
+		// 	iSettleBaccarat = 0;
+		// 	iSettleSlot = 0;
 		// }
-
-		iBTotal = parseFloat(obj.iBaccaratTotal) + parseFloat(obj.iUnderOverTotal) - parseFloat(obj.iCommissionBaccarat ?? 0) - parseFloat(iSettleBaccarat);
-		iSTotal = (parseFloat(obj.iSlotTotal) - parseFloat(obj.iCommissionSlot) - parseFloat(iSettleSlot));
-
-		if (obj.iClass == 5) {
-			// 부본 죽장 계산
-			if (iBTotal + iSTotal > 0) {
-				iSettleBaccarat5 = iBTotal * fSettleBaccarat5 * 0.01;
-				iSettleSlot5 = iSTotal * fSettleSlot5 * 0.01;
-			} else {
-				iSettleBaccarat5 = 0;
-				iSettleSlot5 = 0;
-			}
-			obj.iSettle = parseFloat(iSettleBaccarat5 + iSettleSlot5);
-		} else if (obj.iClass == 4) {
-			if (iBTotal + iSTotal > 0) {
-				iSettleBaccarat = iBTotal * fSettleBaccarat4 * 0.01;
-				iSettleSlot = iSTotal * fSettleSlot4 * 0.01;
-			} else {
-				iSettleBaccarat = 0;
-				iSettleSlot = 0;
-			}
-			obj.iSettle = parseFloat(iSettleBaccarat5 + iSettleSlot5);
-			// obj.iSettle = parseInt(obj.iSettleTotal ?? 0);
-		}
+		// obj.iSettle = parseFloat(iSettleBaccarat5 + iSettleSlot5);
 
 		console.log(obj);
 	}
@@ -1265,6 +1196,221 @@
 		return subtag;
 	}
 
+	let AddPartner4 = (iRootClass, aObject, bEnableSettle, index) => {
+		if (aObject.strNickname == '테떡림이') {
+			console.log(aObject);
+		}
+		let data = CalculateSendData4(aObject, bEnableSettle);
+		// 정산 처리를 위해서 추가
+		aObject.iBaccaratWinLose = data.iBaccaratWinLose;
+		aObject.iUnderOverWinLose = data.iUnderOverWinLose;
+		aObject.iSlotWinLose = data.iSlotWinLose;
+		aObject.iTotal = data.iTotal;
+		aObject.iResult = data.iResult ?? 0;
+		aObject.iSettleTotal = data.iSettleTotal;
+		aObject.iSettleAccTotal = data.iSettleAccTotal;
+		aObject.iSettleBeforeAcc = data.iSettleBeforeAcc;
+		aObject.iInputQuaterSettle = data.iInputQuaterSettle;
+		aObject.iSettleQuater = data.iSettleQuater;
+		aObject.iPayback = data.iPayback;
+		aObject.fSettleBaccarat = data.fSettleBaccarat;
+		aObject.fSettleSlot = data.fSettleSlot;
+
+		let color = '#ffffff';
+		let headtag = '';
+		let isShowTotal = true;
+		let isShowSettleRate = true;
+		let isShowWinlose = true;
+		let isShowSettle = true;
+		let isShowSettleAcc = true;
+
+		if (aObject.iRootClass == EAgent.eAdmin || aObject.iClass == EAgent.eProAdmin) {
+			headtag += `<td>${parseInt(index) + 1}</td>`;
+			headtag += `<td>${aObject.parentID ?? ''}</td><td>${aObject.parentNickname ?? ''}`;
+			isShowWinlose = true;
+		} else {
+			headtag += `<td>${parseInt(index) + 1}</td>`;
+			headtag += `<td>${aObject.parentID ?? ''}</td><td>${aObject.parentNickname ?? ''}`;
+			isShowWinlose = false;
+		}
+
+		var tagoption = 'disabled="disabled"';
+		if ( bEnableSettle == true ) {
+			tagoption = '';
+		} else {
+			color = '#E8FCDE';
+		}
+
+
+		var subtag = `
+
+			<tr id=${aObject.strNickname} class='Agent' onmouseover="this.style.backgroundColor='#9FB6FF'" onmouseout="this.style.background='blue'">
+
+				${headtag}
+
+				<input type='hidden' id='iClass${aObject.strNickname}' value='${aObject.iClass}' >`
+
+		subtag += `
+
+				<td style="background-color:${color};"  class="parent_row_31">
+
+				<a href="#" onclick="OnClickNickname('${aObject.strNickname}')" style="color:blue;">${aObject.strID}</a>
+
+				</td>
+
+				<td style="background-color:${color};"  class="parent_row_31">
+					<a id="request_partneragents" href="#" onclick="OnClickNickname('${aObject.strNickname}')" style="color:blue;">${aObject.strNickname}</a>
+				</td>
+		`;
+
+
+		if ( user.iClass > 1 && user.iClass <= 3 && user.iPermission != 100 ) {
+			if ( isShowSettleRate )
+			{
+				subtag += `
+					<td style="background-color:${color};"  class="parent_row_31">
+				<input type="text" style="width:50%;" name="bakara_over_31" id="fSettleBaccarat${aObject.strNickname}" required="no" message="죽장" value=${aObject.fSettleBaccarat ?? 0} ${tagoption}>
+				%
+				</td>
+
+				<td style="background-color:${color};"  class="parent_row_31">
+				<input type="text" style="width:50%;" name="bakara_over_31" id="fSettleSlot${aObject.strNickname}" required="no" message="죽장" value=${aObject.fSettleSlot ?? 0} ${tagoption}>
+				%
+				</td>
+				`;
+			}
+			else
+			{
+				subtag += `
+					<td style="background-color:${color};"  class="parent_row_31"></td>
+					<td style="background-color:${color};"  class="parent_row_31"></td>
+				`;
+			}
+		} else {
+			if ( isShowSettleRate )
+			{
+				subtag += `
+					<td style="background-color:${color};"  class="parent_row_31">
+				<input type="text" disabled style="width:50%;" name="bakara_over_31" id="fSettleBaccarat${aObject.strNickname}" required="no" message="죽장" value=${parseInt(data.fSettleBaccarat ?? 0)} ${tagoption}>
+				%
+				</td>
+
+				<td style="background-color:${color};"  class="parent_row_31">
+				<input type="text" disabled style="width:50%;" name="bakara_over_31" id="fSettleSlot${aObject.strNickname}" required="no" message="죽장" value=${parseInt(data.fSettleSlot ?? 0)} ${tagoption}>
+				%
+				</td>
+				`;
+			}
+			else
+			{
+				subtag += `
+					<td style="background-color:${color};"  class="parent_row_31"></td>
+					<td style="background-color:${color};"  class="parent_row_31"></td>
+				`;
+			}
+		}
+
+		if ( isShowTotal )
+		{
+			subtag += `<td style="background-color:${color};"  class="parent_row_31"><a><font color="${GetColor(data.iTotal)}" id='total_${aObject.strNickname}'>${GetNumber(data.iTotal)}</font></a></td>`;
+		}
+		else
+		{
+			subtag += `<td style="background-color:${color};"  class="parent_row_31"></td>`;
+		}
+
+		if ( isShowWinlose )
+		{
+			subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetColor(data.iBaccaratWinLose+data.iUnderOverWinLose)}" id='bwinlose_${aObject.strNickname}'>${GetNumber((data.iBaccaratWinLose+data.iUnderOverWinLose))}</font></td>`;
+			subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetColor(data.iSlotWinLose)}" id='swinlose_${aObject.strNickname}'>${GetNumber((data.iSlotWinLose))}</font></td>`;
+		}
+		else // 대본사 하위는 윈로스 값 붎필요 비표시
+		{
+			subtag += `<td style="background-color:${color};"  class="parent_row_31"></td>`;
+			subtag += `<td style="background-color:${color};"  class="parent_row_31"></td>`;
+		}
+
+
+		if ( isShowSettle )
+		{
+			// 부본 죽장
+			subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetInversedColor(data.iSettleVice)}" id='settleevice_${aObject.strNickname}'>${GetNumber((data.iSettleVice))}</font></td>`;
+			// 대본 B알값
+			subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetInversedColor(data.iCommissionBaccarat)}" id='commissionb_${aObject.strNickname}'>${GetNumber(data.iCommissionBaccarat)}</font></td>`;
+			// 대본 S알값
+			subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetInversedColor(data.iCommissionSlot)}" id='commissions_${aObject.strNickname}'>${GetNumber(data.iCommissionSlot)}</font></td>`;
+			// 대본 죽장
+			subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetInversedColor(data.iSettle)}" id='settlepro_${aObject.strNickname}'>${GetSettleNumber(data.iSettle)}</font></td>`;
+			// 합계
+			subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetColor(data.iResult)}" id='result_${aObject.strNickname}'>${GetNumber(data.iResult)}</font></td>`;
+			// 죽장 지급
+			subtag += `<td style="background-color:${color};" class="parent_row_31"><font color="black">${GetNumberSign(data.iSettleGive)}</font></td>`;
+			// 죽장 이월
+			subtag += `<td style="background-color:${color};" class="parent_row_31"><font color="black">${GetNumberSign(data.iSettleAcc)}</font></td>`;
+			// 수금(전월죽장이월금액에 대한 수금 여부)
+			subtag += `<td style="background-color:${color};" class="parent_row_31"><font color="black" id="payback_${aObject.strNickname}">${GetNumberSign(data.iPayback)}</font></td>`;
+		}
+		else {
+			subtag += `<td style="background-color:${color};"  class="parent_row_31"></td>`;
+			subtag += `<td style="background-color:${color};"  class="parent_row_31"></td>`;
+			subtag += `<td style="background-color:${color};"  class="parent_row_31"></td>`;
+			subtag += `<td style="background-color:${color};"  class="parent_row_31"></td>`;
+			subtag += `<td style="background-color:${color};"  class="parent_row_31"></td>`;
+			subtag += `<td style="background-color:${color};" class="parent_row_31"></td>`;
+			subtag += `<td style="background-color:${color};" class="parent_row_31"></td>`;
+			subtag += `<td style="background-color:${color};" class="parent_row_31"></td>`;
+		}
+
+		// 죽장 적립(입력값 죽장 이월)
+		subtag += `<input type='hidden' id='quatersettle_${aObject.strNickname}' value='${parseInt(aObject.iSettleOrigin)}'/>`;
+		subtag += `<input type='hidden' id='class_${aObject.strNickname}' value='${aObject.iClass}'/>`;
+		subtag += `<input type='hidden' id='rolling_${aObject.strNickname}' value='${parseInt(aObject.iRollingMoney)}'/>`;
+		subtag += `<input type='hidden' id='result_${aObject.strNickname}' value='${parseInt(data.iResult)}'/>`;
+
+		// 죽장 적립(입력창)
+		if ( isShowSettleAcc && user.iPermission != 100 )
+		{
+			subtag += `
+				<td style="background-color:${color};" class="parent_row_31">
+					<input type="number" style='width:80%;height:20px;text-align:center;color:black;' value='${data.iTotal != 0 ? parseInt(data.iInputQuaterSettle) : 0}' id='input_${aObject.strNickname}' ${data.inputSettleOption}/>
+				</td>`;
+		}
+		else
+		{
+			subtag += `<td style="background-color:${color};" class="parent_row_31"></td>`;
+		}
+
+
+		if ( isShowSettle )
+		{
+			// 죽장 총합
+			subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="black">${GetNumberSign(data.iSettleTotal)}</font></td>`;
+			// 전월죽장 이월
+			subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="black">${GetNumberSign(data.iSettleBeforeAcc)}</font></td>`;
+			// 총 이월
+			subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="black"><a href="javascript:RequestPartnerCredits('${aObject.strNickname}', '${aObject.strGroupID}', '${aObject.iClass}');">${GetNumberSign(data.iSettleAccTotal)}</a></font></td>`;
+		}
+		else
+		{
+			subtag += `<td style="background-color:${color};"  class="parent_row_31"></td>`;
+			subtag += `<td style="background-color:${color};"  class="parent_row_31"></td>`;
+			subtag += `<td style="background-color:${color};"  class="parent_row_31"></td>`;
+		}
+
+		if ( user.iClass > 1 && user.iClass <= 3 && user.iPermission != 100 )
+		{
+			subtag += `<td style="background-color:${color};"  class="parent_row_31"><input style='width:70%;' type='text' id="memoinput_${aObject.strNickname}" value='${aObject.strSettleMemo ?? ''}'><button style='color:white;' class='menu4' onclick='OnClickMemo("${aObject.strNickname}");'>저장</button></td>`;
+		}
+		else
+		{
+			subtag += `<td style="background-color:${color};">${aObject.strSettleMemo ?? ''}</td>`;
+		}
+
+		subtag += `</tr>`;
+
+		return subtag;
+	}
+
 	let AddTotal = (aObject) => {
 		let color = '#ffffff';
 		let subtag = '<td colspan="7">합계</td>';
@@ -1399,6 +1545,163 @@
 		data.iSettleAcc = parseFloat(aObject.iSettleAcc ?? 0);
 		// 죽장 총합
 		data.iSettleTotal = (bEnableSettle == true) ? 0 : parseFloat(aObject.iSettleGive ?? 0) + parseFloat(aObject.iSettleAcc ?? 0) + parseFloat(aObject.iPayback ?? 0);
+
+		// 적립 죽장비
+		if (bEnableSettle == true) {
+
+			if (true) {
+				let iSettle = parseFloat(aObject.iSettle ?? 0);
+				// 적립가능 금액 = 해당월 죽장 - 전월 죽장 이월
+				data.iInputQuaterSettle = iSettle;
+				if (data.iSettleBeforeAcc < 0) {
+					data.iInputQuaterSettle += data.iSettleBeforeAcc;
+				}
+				data.inputSettleOption = 'disabled="disabled"';
+
+
+				// 죽장이 플러스일 경우 자동 수금 처리 표시
+				let iPayback = parseFloat(data.iPayback ?? 0);
+				let iSettleBeforeAcc = parseFloat(data.iSettleBeforeAcc ?? 0) + iPayback;
+				if (iSettle > 0 && iSettleBeforeAcc < 0) {
+					// 이월 금액이 남아 있는 경우
+					if (-iSettleBeforeAcc > iSettle) {
+						iPayback = iPayback + iSettle;
+					} else {
+						iPayback = iPayback - iSettleBeforeAcc;
+					}
+					data.iPayback = iPayback;
+				}
+			}
+
+
+			if (false) {
+				let iSettle = parseFloat(aObject.iSettle ?? 0);
+				// 적립가능 금액 = 해당월 죽장 - 전월 죽장 이월
+				data.iInputQuaterSettle = iSettle;
+				if (data.iSettleAcc < 0) {
+					data.iInputQuaterSettle += data.iSettleAcc;
+				}
+				data.inputSettleOption = 'disabled="disabled"';
+
+
+				// 죽장이 플러스일 경우 자동 수금 처리 표시
+				let iPayback = parseFloat(data.iPayback ?? 0);
+				// 이용자가 가지고 있는 보유죽장
+				let iSettleAcc = parseFloat(data.iSettleAcc ?? 0) + iPayback;
+				if (iSettle > 0 && iSettleAcc < 0) {
+					// 이월 금액이 남아 있는 경우
+					if (-iSettleAcc > iSettle) {
+						iPayback = iPayback + iSettle;
+					} else {
+						iPayback = iPayback - iSettleAcc;
+					}
+					data.iPayback = iPayback;
+				}
+			}
+
+			// if (parseInt(aObject.iClass) == 4) {
+			// 	// 마이너스는 수정 불가
+			// 	if (data.iInputQuaterSettle < 0) {
+			// 		data.inputSettleOption = 'disabled="disabled"';
+			// 	}
+			// } else if (parseInt(aObject.iClass) == 5) {
+			// 	// 마이너스는 수정 불가
+			// 	if (data.iInputQuaterSettle < 0) {
+			// 		data.inputSettleOption = 'disabled="disabled"';
+			// 	}
+			// }
+		} else {
+			data.inputSettleOption = 'disabled="disabled"';
+			data.iInputQuaterSettle = 0;
+		}
+		return data;
+	}
+
+	let CalculateSendData4 = (aObject, bEnableSettle) => {
+		if (aObject.strNickname == '테떡림이') {
+			console.log(aObject);
+		}
+		let data = {
+			iTotal: 0,
+			iRolling: 0,
+			iBaccaratWinLose: 0,
+			iUnderOverWinLose: 0,
+			iSlotWinLose: 0,
+			iPBWinLose: 0,
+			iResult: 0,
+			iResultB: 0,
+			iResultS: 0,
+			iSettle: 0,
+			iSettleVice: 0,
+			iSettleTotal: 0, // 죽장 총합(대본 죽장 + 부본 죽장 + 죽장 수금)
+			iSettleBeforeAcc: 0, // 전월죽장 이월(죽장 후에는 저장된 값으로 그전에는 이용자가 가지고 있는 이월 죽장값으로 표시)
+			iSettleAccTotal: 0, // 총이월(해당분기 보유 이월 금액-수시로 변경됨)
+			iInputQuaterSettle: 0, // 적립 죽장비
+			inputSettleOption: '',
+			iSettleAfter:0,
+			iCommissionBaccarat: 0,
+			iCommissionSlot: 0,
+			iSettleQuater: 0, // 대본은 iSettle, 부본은 iSettleVice
+			iSettleGive: 0,
+			iSettleAcc: 0,
+			iPayback: 0, // 수금액
+			fSettleBaccarat: 0,
+			fSettleSlot: 0,
+			fSettlePBA: 0,
+			fSettlePBB: 0,
+		};
+		if (bEnableSettle) {
+			data.iTotal = parseFloat(aObject.iTotal);
+			data.iRolling = parseFloat(aObject.iRolling);
+			data.iBaccaratWinLose = parseFloat(aObject.iBWinlose);
+			data.iUnderOverWinLose = parseFloat(aObject.iUWinlose);
+			data.iSlotWinLose = parseFloat(aObject.iSWinlose);
+			data.iPBWinLose = 0;
+			// data.iResult = data.iTotal - parseFloat(aObject.iSettleVice ?? 0) - parseFloat(aObject.iCommissionBaccarat) - parseFloat(aObject.iCommissionSlot) - parseFloat(aObject.iSettle);
+			data.iResult = parseFloat(aObject.iTotalViceAdmin ?? 0);
+			data.iSettleBeforeAcc = parseFloat(aObject.iSettleAccUser ?? 0);
+			data.iSettleAccTotal = 0;
+			// 부본 죽장
+			data.iSettleVice = parseFloat(aObject.iSettleVice ?? 0);
+			data.iSettleQuater = parseFloat(aObject.iSettleTotal ?? 0);
+			data.iSettleAcc = parseFloat(aObject.iSettleAcc ?? 0);
+			// 대본 죽장
+			data.iSettle = parseFloat(aObject.iSettle ?? 0);
+
+			// 죽장 총합
+			data.iSettleTotal = parseFloat(aObject.iSettleTotal ?? 0);
+
+			data.iCommissionBaccarat = parseFloat(aObject.iCommissionB ?? 0);
+			data.iCommissionSlot = parseFloat(aObject.iCommissionS ?? 0);
+		} else {  // 죽장 완료
+			data.iTotal = parseFloat(aObject.iBaccaratTotal) + parseFloat(aObject.iUnderOverTotal) + parseFloat(aObject.iSlotTotal) + parseFloat(aObject.iPBATotal) + parseFloat(aObject.iPBBTotal);
+			data.iRolling = parseFloat(aObject.iRollingMoney);
+			data.iBaccaratWinLose = parseFloat(aObject.iBaccaratWinLose);
+			data.iUnderOverWinLose = parseFloat(aObject.iUnderOverWinLose);
+			data.iSlotWinLose = parseFloat(aObject.iSlotWinLose);
+			data.iPBWinLose = parseFloat(aObject.iPBWinLose);
+			data.iResult = data.iTotal - parseFloat(aObject.iSettleVice ?? 0) - parseFloat(aObject.iCommissionBaccarat) - parseFloat(aObject.iCommissionSlot) - parseFloat(aObject.iSettle);
+			data.iSettleBeforeAcc = parseFloat(aObject.iSettleBeforeAcc ?? 0);
+			data.iSettleAfter = parseFloat(aObject.iSettleAfter ?? 0);
+			data.iSettleAccTotal = parseFloat(aObject.iSettleAfter ?? 0);
+			data.iSettle = parseFloat(aObject.iSettle);
+			data.iSettleVice = parseFloat(aObject.iSettleVice ?? 0);
+			data.iSettleQuater = parseFloat(aObject.iSettle ?? 0);
+			data.iPayback = parseFloat(aObject.iPayback ?? 0);
+			data.iSettleAcc = parseFloat(aObject.iSettleAcc ?? 0);
+
+			data.fSettleBaccarat = 0;
+			data.fSettleSlot = 0;
+			data.fSettlePBA = 0;
+			data.fSettlePBB = 0;
+			data.iSettleVice = 0;
+			// 죽장 총합
+			data.iSettleTotal = parseFloat(aObject.iSettleGive ?? 0) + parseFloat(aObject.iSettleAcc ?? 0) + parseFloat(aObject.iPayback ?? 0);
+			data.iCommissionBaccarat = parseFloat(aObject.iCommissionBaccarat ?? 0);
+			data.iCommissionSlot = parseFloat(aObject.iCommissionSlot ?? 0);
+		}
+		data.iSettleGive = parseFloat(aObject.iSettleGive ?? 0);
+		data.iSettleAcc = parseFloat(aObject.iSettleAcc ?? 0);
 
 		// 적립 죽장비
 		if (bEnableSettle == true) {

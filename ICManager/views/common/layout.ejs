@@ -30,7 +30,7 @@
                                 &nbsp;&nbsp;
                                 <font style="color:#00FFFF;font-size:15px;font-weight:bold;"><%=__('Settle')%> :</font>
                                 <font style="color:yellow;font-size:15px;font-weight:bold;"><%=parseInt(agent.iSettle).toLocaleString()%></font>
-                                <% if (agent.iClass == 4) { %>
+                                <% if (agent.iClass == 4 || agent.iClass == 5) { %>
                                     &nbsp;&nbsp;&nbsp;
                                     <font style="color:#00FFFF;font-size:15px;font-weight:bold;">죽장이월 :</font>
                                     <font style="color:yellow;font-size:15px;font-weight:bold;"><%=parseInt(agent.iSettleAcc ?? 0).toLocaleString()%></font>

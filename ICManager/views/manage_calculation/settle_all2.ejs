@@ -1121,7 +1121,11 @@
 				subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetInversedColor(aObject.iSettle)}" id='settlepro_${aObject.strNickname}'>${GetSettleNumber(data.iSettle)}</font></td>`;
 			}
 			// 합계
-			subtag += `<td style="background-color:${color};"  class="parent_row_31"><a href="#" onclick="OnClickHistory('${aObject.strNickname}', '${aObject.strGroupID}', ${aObject.iClass}, '${strQuater}');"><font color="${GetColor(data.iResult)}" id='result_${aObject.strNickname}'>${GetNumber(data.iResult)}</font></a></td>`;
+			if (iViewClass == 4) {
+				subtag += `<td style="background-color:${color};"  class="parent_row_31"><a href="#" onclick="OnClickHistory('${aObject.strNickname}', '${aObject.strGroupID}', ${aObject.iClass}, '${strQuater}');"><font color="${GetColor(data.iResult)}" id='result_${aObject.strNickname}'>${GetNumber(data.iResult)}</font></a></td>`;
+			} else {
+				subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetColor(data.iResult)}" id='result_${aObject.strNickname}'>${GetNumber(data.iResult)}</font></td>`;
+			}
 			// if ( aObject.iClass == 4 ) {
 			//
 			// } else {
@@ -1342,7 +1346,11 @@
 			// 대본 죽장
 			subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetInversedColor(data.iSettle)}" id='settlepro_${aObject.strNickname}'>${GetSettleNumber(data.iSettle)}</font></td>`;
 			// 합계
-			subtag += `<td style="background-color:${color};"  class="parent_row_31"><a href="#" onclick="OnClickHistory('${aObject.strNickname}', '${aObject.strGroupID}', ${aObject.iClass}, '${strQuater}');"><font color="${GetColor(data.iResult)}" id='result_${aObject.strNickname}'>${GetNumber(data.iResult)}</font></a></td>`;
+			if (iViewClass == 4) {
+				subtag += `<td style="background-color:${color};"  class="parent_row_31"><a href="#" onclick="OnClickHistory('${aObject.strNickname}', '${aObject.strGroupID}', ${aObject.iClass}, '${strQuater}');"><font color="${GetColor(data.iResult)}" id='result_${aObject.strNickname}'>${GetNumber(data.iResult)}</font></a></td>`;
+			} else {
+				subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetColor(data.iResult)}" id='result_${aObject.strNickname}'>${GetNumber(data.iResult)}</font></td>`;
+			}
 			// subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetColor(data.iResult)}" id='result_${aObject.strNickname}'>${GetNumber(data.iResult)}</font></td>`;
 			// 죽장 지급
 			subtag += `<td style="background-color:${color};" class="parent_row_31"><font color="black">${GetNumberSign(data.iSettleGive)}</font></td>`;

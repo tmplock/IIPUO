@@ -212,7 +212,11 @@
 				</td>
 			</tr>
 		</table>
+		<% if ( parseInt(parent.iRootClass) <= 3 ) {%>
+		<div style="">
+		<% } else { %>
 		<div style="display: none">
+		<% } %>
 			<table>
 				<colgroup>
 					<col style="width:15%">

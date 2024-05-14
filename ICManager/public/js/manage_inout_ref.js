@@ -224,6 +224,11 @@ let SetInputList = (list, iRootClass) => {
 
     for ( let i in list ) {
 
+        let bgColor = '#FFFFFF';
+        if ((list[i].iNewUser ?? 0) == 1) {
+            bgColor = '#E7AD6C';
+        }
+
         let strParent = list[i].strAdminNickname;
 
         if ( parseInt(user.iClass) == 3 )
@@ -247,7 +252,7 @@ let SetInputList = (list, iRootClass) => {
         }
 
         let tag = `
-            <tr name="${list[i].id}" nickname="${list[i].strID}">
+            <tr style="background-color:${bgColor};" name="${list[i].id}" nickname="${list[i].strID}">
             <td>${list[i].id}</td>
             <td>${strParent}</td>
             <td><a href="javascript:OnClickNickname('${list[i].strID}');"><font style="color:blue;">${GetClassNickName(list[i].iClass, list[i].strID)}</font></a>${tagNewUser}</td>

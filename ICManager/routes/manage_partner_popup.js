@@ -739,8 +739,8 @@ router.post('/request_register', isLoggedIn, async(req, res) => {
         let fUnderOverR = parseFloat(req.body.fUnderOverR ?? 0);
         fUnderOverR = Number.isNaN(fUnderOverR) ? 0 : fUnderOverR;
 
-        let iPassCheckNewUser = parseInt(req.body.iPassCheckNewUser ?? 0);
-        iPassCheckNewUser = Number.isNaN(iPassCheckNewUser) ? 0 : iPassCheckNewUser;
+        let iPassCheckNewUser = parseInt(req.body.iPassCheckNewUser ?? 1);
+        iPassCheckNewUser = Number.isNaN(iPassCheckNewUser) ? 1 : iPassCheckNewUser;
 
         if (fSlotR < 0 || fBaccaratR < 0 || fUnderOverR < 0) {
             res.send({result:'Error', error:'Rolling', string:'롤링 설정값을 확인해주세요'});
@@ -1195,8 +1195,8 @@ router.post('/request_agentinfo_modify',async (req, res) => {
     let fUnderOverR = parseFloat(req.body.fUnderOverR ?? 0);
     fUnderOverR = Number.isNaN(fUnderOverR) ? 0 : fUnderOverR;
 
-    let iPassCheckNewUser = parseInt(req.body.iPassCheckNewUser ?? 0);
-    iPassCheckNewUser = Number.isNaN(iPassCheckNewUser) ? 0 : iPassCheckNewUser;
+    let iPassCheckNewUser = parseInt(req.body.iPassCheckNewUser ?? 1);
+    iPassCheckNewUser = Number.isNaN(iPassCheckNewUser) ? 1 : iPassCheckNewUser;
 
     if (fSlotR < 0 || fBaccaratR < 0 || fUnderOverR < 0) {
         strErrorCode = 'ERRORMSG';

@@ -281,7 +281,7 @@
 	let bCheckID = false;
 	let bCheckNickname = false;
 	let bUsingPC = false;
-	let bUsingPassNewUser = false;
+	let bUsingPassNewUser = true;
 
 	$(document).ready( ()=> {
 
@@ -328,8 +328,8 @@
 
 		<% if ( agent.iClass == 8 || agent.iClass == 7 ) { %>
 			$('#pass_check_new_user').show();
-			let iPassCheckNewUser = parseInt(agent.iPassCheckNewUser ?? 0);
-			iPassCheckNewUser = Number.isNaN(iPassCheckNewUser) ? 0 : iPassCheckNewUser;
+			let iPassCheckNewUser = parseInt(agent.iPassCheckNewUser ?? 1);
+			iPassCheckNewUser = Number.isNaN(iPassCheckNewUser) ? 1 : iPassCheckNewUser;
 			bUsingPassNewUser = iPassCheckNewUser == 1;
 			$('#using_pass_new_user').attr('checked', bUsingPassNewUser);
 		<% } %>

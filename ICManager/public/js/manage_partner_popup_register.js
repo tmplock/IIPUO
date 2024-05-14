@@ -510,14 +510,22 @@ let SetUsingPC = (iClass) => {
 
 let SetUsingPassNewUser = (iClass) => {
     if (iClass == 8 || iClass == 7) {
-        $('#using_pass_new_user').attr('checked', false);
-        $('#using_pass_new_user').click((e) => {
-            var checked = $('#using_pass_new_user').is(':checked');
-            if (checked) {
-                bCheckPassNewUser = true;
-            } else {
-                bCheckPassNewUser = false;
-            }
-        });
+        try {
+            $('#using_pass_new_user').attr('checked', true);
+            $('#using_pass_new_user').click((e) => {
+                var checked = $('#using_pass_new_user').is(':checked');
+                if (checked) {
+                    bCheckPassNewUser = true;
+                } else {
+                    bCheckPassNewUser = false;
+                }
+            });
+        } catch (err) {
+            $('#using_pass_new_user').attr('checked', true);
+            bCheckPassNewUser = true;
+        }
+    } else {
+        $('#using_pass_new_user').attr('checked', true);
+        bCheckPassNewUser = true;
     }
 }

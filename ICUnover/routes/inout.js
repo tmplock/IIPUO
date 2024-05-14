@@ -497,14 +497,16 @@ router.post('/request_bank', async (req, res) => {
         }
 
         let eBankType = 'NORMAL';
-        let list = await db.Inouts.findAll({where: {strID: info.strNickname, eState: 'COMPLETE'}});
-        if (list.length < iMin) {
-            let iPassCheckNewUser = info.iPassCheckNewUser ?? 0;
-            if (iPassCheckNewUser != 1) {
-                eBankType = 'NEWUSER';
+        if (info.iPassCheckNewUser != 1) {
+            let list = await db.Inouts.findAll({where: {strID: info.strNickname, eState: 'COMPLETE'}});
+            if (list.length < iMin) {
+                let iPassCheckNewUser = info.iPassCheckNewUser ?? 1;
+                if (iPassCheckNewUser != 1) {
+                    eBankType = 'NEWUSER';
+                }
+            } else {
+                await db.Users.update({iPassCheckNewUser:1}, {where: {id: info.id}});
             }
-        } else {
-            await db.Users.update({iPassCheckNewUser:1}, {where: {id: info.id}});
         }
 
         let obj = await IHelper.GetParentList(info.strGroupID, info.iClass);

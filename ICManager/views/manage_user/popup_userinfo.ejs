@@ -146,22 +146,27 @@
 			</td>
 		</tr>
 	</table>
+
+	<% if ( parseInt(agent.iRootClass) <= 3 ) {%>
+	<div id="pass_check_new_user" style="">
+	<% } else { %>
 	<div id="pass_check_new_user" style="display: none">
-		<table>
-			<colgroup>
-				<col style="width:15%">
-				<col style="width:35%">
-				<col style="width:15%">
-				<col style="width:35%">
-			</colgroup>
-			<p style="background-repeat:no-repeat; background-position:left center; font-size:20px; font-weight: bold; color:#454545; padding-left:22px;">기타 옵션</p>
-			<tr>
-				<th scope="row">신규자 통장 체크 안함</th>
-				<td colspan="3">
-					<input type="checkbox" style="width:30px;height:30px;color: red" name="using_input" id="using_pass_new_user" required="no" message=""> <strong>체크시 입금 신청시 일반 계좌가 표시됩니다</strong>
-				</td>
-			</tr>
-		</table>
+	<% } %>
+			<table>
+				<colgroup>
+					<col style="width:15%">
+					<col style="width:35%">
+					<col style="width:15%">
+					<col style="width:35%">
+				</colgroup>
+				<p style="background-repeat:no-repeat; background-position:left center; font-size:20px; font-weight: bold; color:#454545; padding-left:22px;">기타 옵션</p>
+				<tr>
+					<th scope="row">신규자 통장 체크 안함</th>
+					<td colspan="3">
+						<input type="checkbox" style="width:30px;height:30px;color: red" name="using_input" id="using_pass_new_user" required="yes" message="" checked> <strong>체크시 입금 신청시 일반 계좌가 표시됩니다</strong>
+					</td>
+				</tr>
+			</table>
 	</div>
 	<div class="write_btn align_r" id="confirm">
 	</div>
@@ -180,7 +185,7 @@
 	let strCheckNickname = '';
 
 	let bUsingPC = false;
-	let bUsingPassNewUser = false;
+	let bUsingPassNewUser = true;
 
 	$(document).ready( ()=> {
 		let cUsingInput = parseInt(agent.strOptionCode[0]);
@@ -223,13 +228,9 @@
 				$('#bank_num').val(agent.strBankAccount);
 			}
 		});
-		<% if ( agent.iClass == 8 || agent.iClass == 7 ) { %>
-			$('#pass_check_new_user').show();
-			let iPassCheckNewUser = parseInt(agent.iPassCheckNewUser ?? 0);
-			iPassCheckNewUser = Number.isNaN(iPassCheckNewUser) ? 0 : iPassCheckNewUser;
-			bUsingPassNewUser = iPassCheckNewUser == 1;
-			$('#using_pass_new_user').attr('checked', bUsingPassNewUser);
-		<% } %>
+
+		SetUsingPassNewUser(agent.iClass);
+
 		/**
 		 * 수정 가능 여부에 대한 처리(비활성할 태그를 여기에 추가)
 		 */

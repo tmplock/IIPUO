@@ -338,6 +338,34 @@ router.post('/settle_cal', async (req, res) => {
 });
 
 
+router.post('/settle_cal_history', async (req, res) => {
+    console.log('settle_cal_history');
+    console.log(req.body);
+
+    const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
+
+    const user = {strNickname:dbuser.strNickname, strGroupID:dbuser.strGroupID, iClass:parseInt(dbuser.iClass), strID:dbuser.strID,
+        iRootClass: req.user.iClass, iPermission: req.user.iPermission};
+
+    // let list = await db.SettleSubRecords.findAll({where:{
+    //         strQuater:req.body.strQuater,
+    //         iClass:req.body.iClass,
+    //         strGroupID:{[Op.like]:req.body.strGroupID+'%'},
+    //     }, order: [['strNickname', 'DESC']]
+    // });
+
+    let list = await db.sequelize.query(`
+        SELECT ss.*, u.strNickname
+        FROM SettleSubRecords ss
+        LEFT JOIN Users u ON u.strID = ss.strID
+        WHERE ss.strQuater = '${req.body.strQuater}' 
+          AND ss.iClass = ${parseInt(req.body.iClass) + 1} 
+          AND ss.strGroupID LIKE '${req.body.strGroupID}%'
+    `);
+
+    res.render('manage_calculation/settle_cal_history', {iLayout:9, iHeaderFocus:0, user:user, list:list[0], strQuater:req.body.strQuater});
+});
+
 router.post('/request_applysettle_all', isLoggedIn, async (req, res) => {
 
     console.log(`/request_applysettle_all`);

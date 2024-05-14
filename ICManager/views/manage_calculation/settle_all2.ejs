@@ -1644,7 +1644,7 @@
 			fSettlePBB: 0,
 		};
 		if (bEnableSettle) {
-			data.iTotal = parseFloat(aObject.iTotal);
+			data.iTotal = parseFloat(aObject.iTotal) - parseFloat(aObject.iRolling);
 			data.iRolling = parseFloat(aObject.iRolling);
 			data.iBaccaratWinLose = parseFloat(aObject.iBaccaratWinLose);
 			data.iUnderOverWinLose = parseFloat(aObject.iUnderOverWinLose);
@@ -1671,7 +1671,7 @@
 			data.fSettleBaccarat = parseFloat(aObject.fSettleBaccarat4 ?? 0);
 			data.fSettleSlot = parseFloat(aObject.fSettleSlot4 ?? 0);
 		} else {  // 죽장 완료
-			data.iTotal = parseFloat(aObject.iTotal);
+			data.iTotal = parseFloat(aObject.iTotal) - parseFloat(aObject.iRolling);
 			data.iRolling = parseFloat(aObject.iRolling);
 			data.iBaccaratWinLose = parseFloat(aObject.iBaccaratWinLose);
 			data.iUnderOverWinLose = parseFloat(aObject.iUnderOverWinLose);

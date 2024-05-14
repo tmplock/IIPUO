@@ -310,15 +310,20 @@
 		obj.fSettleBaccaratCal = fSettleBaccaratCal;
 		obj.fSettleSlotCal = fSettleSlotCal;
 
-		if (parseFloat(obj.iTotal5 ?? 0) > 0) {
-			// 대본 죽장 계산
-			obj.iSettle = (parseFloat(obj.iTotal5 ?? 0) - parseFloat(obj.iSettleVice ?? 0) - parseFloat(obj.iRolling ?? 0) - parseFloat((obj.iCommissionBaccarat ?? 0) + (obj.iCommissionSlot ?? 0))) * fSettleBaccaratCal * 0.01;
-			// 합계
-			obj.iResult4 = parseFloat(obj.iTotal5 ?? 0) - parseFloat(obj.iSettleVice ?? 0) - parseFloat(obj.iRolling ?? 0) - parseFloat((obj.iCommissionBaccarat ?? 0) + (obj.iCommissionSlot ?? 0)) - parseFloat(obj.iSettle ?? 0);
-		} else {
-			obj.iSettle = 0;
-			obj.iResult4 = obj.iTotal5; // 부본의 합계가 마이너스일 경우 그대로 합계에 적용(상부에 해당 금액 책임)
-		}
+		// 대본 죽장 계산
+		obj.iSettle = (parseFloat(obj.iTotal5 ?? 0) - parseFloat(obj.iSettleVice ?? 0) - parseFloat(obj.iRolling ?? 0) - parseFloat((obj.iCommissionBaccarat ?? 0) + (obj.iCommissionSlot ?? 0))) * fSettleBaccaratCal * 0.01;
+		// 합계
+		obj.iResult4 = parseFloat(obj.iTotal5 ?? 0) - parseFloat(obj.iSettleVice ?? 0) - parseFloat(obj.iRolling ?? 0) - parseFloat((obj.iCommissionBaccarat ?? 0) + (obj.iCommissionSlot ?? 0)) - parseFloat(obj.iSettle ?? 0);
+
+		// if (parseFloat(obj.iTotal5 ?? 0) > 0) {
+		// 	// 대본 죽장 계산
+		// 	obj.iSettle = (parseFloat(obj.iTotal5 ?? 0) - parseFloat(obj.iSettleVice ?? 0) - parseFloat(obj.iRolling ?? 0) - parseFloat((obj.iCommissionBaccarat ?? 0) + (obj.iCommissionSlot ?? 0))) * fSettleBaccaratCal * 0.01;
+		// 	// 합계
+		// 	obj.iResult4 = parseFloat(obj.iTotal5 ?? 0) - parseFloat(obj.iSettleVice ?? 0) - parseFloat(obj.iRolling ?? 0) - parseFloat((obj.iCommissionBaccarat ?? 0) + (obj.iCommissionSlot ?? 0)) - parseFloat(obj.iSettle ?? 0);
+		// } else {
+		// 	obj.iSettle = 0;
+		// 	obj.iResult4 = obj.iTotal5; // 부본의 합계가 마이너스일 경우 그대로 합계에 적용(상부에 해당 금액 책임)
+		// }
 		console.log(obj);
 	}
 

@@ -124,10 +124,8 @@
 					<caption><%=__('SearchResult')%></caption>
 					<colgroup>
 						<col style="width:2%">
-						<col style="width:2%">
-						<col style="width:2%">
-						<col style="width:2%">
-						<col style="width:2%">
+						<col style="width:4%">
+						<col style="width:4%">
 
 						<col style="width:4%">
 						<col style="width:4%">
@@ -155,8 +153,6 @@
 					<tr>
 						<th scope="col">순번</th>
 						<th scope="col">본사</th>
-						<th scope="col">닉네임</th>
-						<th scope="col"><%=__('ID')%></th>
 						<th scope="col"><%=__('Nickname')%></th>
 
 						<th scope="col" style="background-color:#78bfdb;color:white;"><%=__('Baccarat')%><br><%=__('Settle')%></th>
@@ -989,11 +985,11 @@
 
 		if (aObject.iRootClass == EAgent.eAdmin || aObject.iClass == EAgent.eProAdmin) {
 			headtag += `<td>${parseInt(index) + 1}</td>`;
-			headtag += `<td>${aObject.parentID ?? ''}</td><td>${aObject.parentNickname ?? ''}`;
+			headtag += `<td>${aObject.parentNickname ?? ''}`;
 			isShowWinlose = true;
 		} else {
 			headtag += `<td>${parseInt(index) + 1}</td>`;
-			headtag += `<td>${aObject.parentID ?? ''}</td><td>${aObject.parentNickname ?? ''}`;
+			headtag += `<td>${aObject.parentNickname ?? ''}`;
 			isShowWinlose = false;
 		}
 
@@ -1005,26 +1001,13 @@
 		}
 
 
-		var subtag = `
-
-			<tr id=${aObject.strNickname} class='Agent' onmouseover="this.style.backgroundColor='#9FB6FF'" onmouseout="this.style.background='blue'">
-
+		var subtag = `<tr id=${aObject.strNickname} class='Agent' onmouseover="this.style.backgroundColor='#9FB6FF'" onmouseout="this.style.background='blue'">
 				${headtag}
-
-				<input type='hidden' id='iClass${aObject.strNickname}' value='${aObject.iClass}' >`
-
-		subtag += `
-
-				<td style="background-color:${color};"  class="parent_row_31">
-
-				<a href="#" onclick="OnClickNickname('${aObject.strNickname}')" style="color:blue;">${aObject.strID}</a>
-
-				</td>
-
+					<input type='hidden' id='iClass${aObject.strNickname}' value='${aObject.iClass}' >
 				<td style="background-color:${color};"  class="parent_row_31">
 					<a id="request_partneragents" href="#" onclick="OnClickNickname('${aObject.strNickname}')" style="color:blue;">${aObject.strNickname}</a>
 				</td>
-		`;
+			`;
 
 
 		if ( user.iClass > 1 && user.iClass <= 3 && user.iPermission != 100 ) {
@@ -1214,11 +1197,11 @@
 
 		if (aObject.iRootClass == EAgent.eAdmin || aObject.iClass == EAgent.eProAdmin) {
 			headtag += `<td>${parseInt(index) + 1}</td>`;
-			headtag += `<td>${aObject.parentID ?? ''}</td><td>${aObject.parentNickname ?? ''}`;
+			headtag += `<td>${aObject.parentNickname ?? ''}`;
 			isShowWinlose = true;
 		} else {
 			headtag += `<td>${parseInt(index) + 1}</td>`;
-			headtag += `<td>${aObject.parentID ?? ''}</td><td>${aObject.parentNickname ?? ''}`;
+			headtag += `<td>${aObject.parentNickname ?? ''}`;
 			isShowWinlose = false;
 		}
 
@@ -1230,27 +1213,12 @@
 		}
 
 
-		var subtag = `
-
-			<tr id=${aObject.strNickname} class='Agent' onmouseover="this.style.backgroundColor='#9FB6FF'" onmouseout="this.style.background='blue'">
-
+		var subtag = `<tr id=${aObject.strNickname} class='Agent' onmouseover="this.style.backgroundColor='#9FB6FF'" onmouseout="this.style.background='blue'">
 				${headtag}
-
-				<input type='hidden' id='iClass${aObject.strNickname}' value='${aObject.iClass}' >`
-
-		subtag += `
-
-				<td style="background-color:${color};"  class="parent_row_31">
-
-				<a href="#" onclick="OnClickNickname('${aObject.strNickname}')" style="color:blue;">${aObject.strID}</a>
-
-				</td>
-
+					<input type='hidden' id='iClass${aObject.strNickname}' value='${aObject.iClass}' >
 				<td style="background-color:${color};"  class="parent_row_31">
 					<a id="request_partneragents" href="#" onclick="OnClickNickname('${aObject.strNickname}')" style="color:blue;">${aObject.strNickname}</a>
-				</td>
-		`;
-
+				</td>`;
 
 		if ( user.iClass > 1 && user.iClass <= 3 && user.iPermission != 100 ) {
 			if ( isShowSettleRate )
@@ -1301,7 +1269,6 @@
 		if ( isShowTotal )
 		{
 			subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetColor(data.iTotal)}" id='total_${aObject.strNickname}'>${GetNumber(data.iTotal)}</font></td>`;
-			// subtag += `<td style="background-color:${color};"  class="parent_row_31"><a><font color="${GetColor(data.iTotal)}" id='total_${aObject.strNickname}'>${GetNumber(data.iTotal)}</font></a></td>`;
 		}
 		else
 		{
@@ -1332,15 +1299,10 @@
 			subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetInversedColor(data.iSettle)}" id='settlepro_${aObject.strNickname}'>${GetSettleNumber(data.iSettle)}</font></td>`;
 			// 합계
 			if (iViewClass == 4) {
-				if (parseInt(data.iResult) > 0) {
-					subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetColor(data.iResult)}" id='result_${aObject.strNickname}'>${GetNumber(data.iResult)}</font><button style="color:white;" class="menu1" onclick="OnClickHistory('${aObject.strNickname}', '${aObject.strGroupID}', ${aObject.iClass}, '${strQuater}');">상세보기</button></td>`;
-				} else {
-					subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetColor(data.iResult)}" id='result_${aObject.strNickname}'>${GetNumber(data.iResult)}</font></td>`;
-				}
+				subtag += `<td style="background-color:${color};"  class="parent_row_31"><a href="#" onclick="OnClickHistory('${aObject.strNickname}', '${aObject.strGroupID}', ${aObject.iClass}, '${strQuater}');"><font color="${GetColor(data.iResult)}" id='result_${aObject.strNickname}'>${GetNumber(data.iResult)}</font></a></td>`;
 			} else {
 				subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetColor(data.iResult)}" id='result_${aObject.strNickname}'>${GetNumber(data.iResult)}</font></td>`;
 			}
-			// subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetColor(data.iResult)}" id='result_${aObject.strNickname}'>${GetNumber(data.iResult)}</font></td>`;
 			// 죽장 지급
 			subtag += `<td style="background-color:${color};" class="parent_row_31"><font color="black">${GetNumberSign(data.iSettleGive)}</font></td>`;
 			// 죽장 이월
@@ -1397,7 +1359,7 @@
 
 		if ( user.iClass > 1 && user.iClass <= 3 && user.iPermission != 100 )
 		{
-			subtag += `<td style="background-color:${color};"  class="parent_row_31"><input style='width:70%;' type='text' id="memoinput_${aObject.strNickname}" value='${aObject.strSettleMemo ?? ''}'><button style='color:white;' class='menu4' onclick='OnClickMemo("${aObject.strNickname}");'>저장</button></td>`;
+			subtag += `<td style="background-color:${color};"  class="parent_row_31"><input style='width:70%;' type='text' id="memoinput_${aObject.strNickname}" value='${aObject.strSettleMemo ?? ''}'><button style='color:white;' class='menu4' onclick='OnClickMemo("${aObject.strNickname}");'>저장</button><button style="color:white;" class="menu1" onclick="OnClickHistory('${aObject.strNickname}', '${aObject.strGroupID}', ${aObject.iClass}, '${strQuater}');">상세보기</button></td>`;
 		}
 		else
 		{
@@ -1411,7 +1373,7 @@
 
 	let AddTotal = (aObject) => {
 		let color = '#ffffff';
-		let subtag = '<td colspan="7">합계</td>';
+		let subtag = '<td colspan="5">합계</td>';
 		subtag += `<td style="background-color:${color};"  class="parent_row_31"><a><font color="${GetColor(aObject.iTotal)}" id='total_${aObject.strNickname}'>${GetNumber(aObject.iTotal)}</font></a></td>`;
 		subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetColor(aObject.iBaccaratWinLose+aObject.iUnderOverWinLose)}" id='bwinlose_${aObject.strNickname}'>${GetNumber((aObject.iBaccaratWinLose+aObject.iUnderOverWinLose))}</font></td>`;
 		subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetColor(aObject.iSlotWinLose)}" id='swinlose_${aObject.strNickname}'>${GetNumber((aObject.iSlotWinLose))}</font></td>`;

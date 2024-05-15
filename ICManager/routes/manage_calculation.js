@@ -911,7 +911,9 @@ router.post('/request_proadmin_settle_list', isLoggedIn, async (req, res) => {
                  JOIN Users u2 ON u.iParentID = u2.id
         WHERE 1=1
           AND u.iClass=4
-          AND u.strGroupID LIKE CONCAT('${dbuser.strGroupID}', '%');
+          AND u.strGroupID LIKE CONCAT('${dbuser.strGroupID}', '%')
+        ORDER BY parentNickname ASC, u.strNickname ASC, parentGroupID ASC
+        ;
     `);
 
     res.send({result: 'OK', list: list[0]});

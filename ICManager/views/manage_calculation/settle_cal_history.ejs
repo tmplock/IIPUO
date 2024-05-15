@@ -32,9 +32,6 @@
 					<tbody id="list_agents">
 					</tbody>
 				</table>
-
-				<div class="pagination mt0" id="pagination">
-				</div>
 			</div>
 		</div>
 	</div>
@@ -82,30 +79,28 @@
 			dataList.push(obj);
 		}
 
-		if ( user.iClass > 1 && user.iClass <= 3 ) {
-			let totalObj = {iTotal: 0, iRolling: 0,
-				iBWinlose: 0, iUWinlose: 0, iSWinlose: 0,
-				iCommissionB:0, iCommissionS: 0,
-				iSettle: 0, iSettleVice: 0,
-				iSettleViceAdmin: 0, iTotalViceAdmin: 0
-			};
+		let totalObj = {iTotal: 0, iRolling: 0,
+			iBWinlose: 0, iUWinlose: 0, iSWinlose: 0,
+			iCommissionB:0, iCommissionS: 0,
+			iSettle: 0, iSettleVice: 0,
+			iSettleViceAdmin: 0, iTotalViceAdmin: 0
+		};
 
-			for (let i in dataList) {
-				totalObj.iTotal += dataList[i].iTotal ?? 0;
-				totalObj.iRolling += (dataList[i].iRolling ?? 0);
-				totalObj.iBWinlose += dataList[i].iBWinlose ?? 0;
-				totalObj.iUWinlose += dataList[i].iUWinlose ?? 0;
-				totalObj.iSWinlose += dataList[i].iSWinlose ?? 0;
-				totalObj.iCommissionB += dataList[i].iCommissionB ?? 0;
-				totalObj.iCommissionS += dataList[i].iCommissionS ?? 0;
-				totalObj.iSettle += dataList[i].iSettle ?? 0;
-				totalObj.iSettleVice += dataList[i].iSettleVice ?? 0;
-				totalObj.iSettleViceAdmin += dataList[i].iSettleViceAdmin ?? 0;
-				totalObj.iTotalViceAdmin += dataList[i].iTotalViceAdmin ?? 0;
-			}
-			let tagTotal = AddTotal(totalObj);
-			$('#list_agents').append(tagTotal);
+		for (let i in dataList) {
+			totalObj.iTotal += dataList[i].iTotal ?? 0;
+			totalObj.iRolling += (dataList[i].iRolling ?? 0);
+			totalObj.iBWinlose += dataList[i].iBWinlose ?? 0;
+			totalObj.iUWinlose += dataList[i].iUWinlose ?? 0;
+			totalObj.iSWinlose += dataList[i].iSWinlose ?? 0;
+			totalObj.iCommissionB += dataList[i].iCommissionB ?? 0;
+			totalObj.iCommissionS += dataList[i].iCommissionS ?? 0;
+			totalObj.iSettle += dataList[i].iSettle ?? 0;
+			totalObj.iSettleVice += dataList[i].iSettleVice ?? 0;
+			totalObj.iSettleViceAdmin += dataList[i].iSettleViceAdmin ?? 0;
+			totalObj.iTotalViceAdmin += dataList[i].iTotalViceAdmin ?? 0;
 		}
+		let tagTotal = AddTotal(totalObj);
+		$('#list_agents').append(tagTotal);
 
 		// 정산용 데이터
 		settleList = dataList;
@@ -161,7 +156,7 @@
 		// S알값
 		subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetInversedColor(aObject.iCommissionS)}" id='commissions_${aObject.strNickname}'>${GetNumber(aObject.iCommissionS)}</font></td>`;
 		// 대본죽장
-		subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetInversedColor(aObject.iSettle)}" id='settle_${aObject.strNickname}'>${GetNumber((aObject.iSettle))}</font></td>`;
+		subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetInversedColor(aObject.iSettleViceAdmin)}" id='settle_${aObject.strNickname}'>${GetNumber((aObject.iSettleViceAdmin))}</font></td>`;
 		// 합계
 		subtag += `<td style="background-color:${color};"  class="parent_row_31"><a><font color="${GetColor(aObject.iTotalViceAdmin)}" id='total_${aObject.strNickname}'>${GetNumber(aObject.iTotalViceAdmin)}</font></a></td>`;
 
@@ -172,7 +167,7 @@
 
 	let AddTotal = (aObject) => {
 		let color = '#ffffff';
-		let subtag = '<td colspan="9">합계</td>';
+		let subtag = '<td colspan="3">합계</td>';
 		subtag += `<td style="background-color:${color};"  class="parent_row_31"><a><font color="${GetColor(aObject.iTotal)}" id='total_${aObject.strNickname}'>${GetNumber(aObject.iTotal)}</font></a></td>`;
 		// 부본 죽장
 		subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetInversedColor((aObject.iSettleVice))}" id='settleevice_${aObject.strNickname}'>${GetNumber((aObject.iSettleVice))}</font></td>`;
@@ -187,7 +182,7 @@
 		// 대본 S알값
 		subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetInversedColor(aObject.iCommissionS)}" id='commissions_${aObject.strNickname}'>${GetNumber(aObject.iCommissionS)}</font></td>`;
 		// 대본 죽장
-		subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetInversedColor(aObject.iSettle)}" id='result_${aObject.strNickname}'>${GetNumber(aObject.iSettle)}</font></td>`;
+		subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetInversedColor(aObject.iSettleViceAdmin)}" id='result_${aObject.strNickname}'>${GetNumber(aObject.iSettleViceAdmin)}</font></td>`;
 		// 합계
 		subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetColor(aObject.iTotalViceAdmin)}" id='result_${aObject.strNickname}'>${GetNumber(aObject.iTotalViceAdmin)}</font></td>`;
 

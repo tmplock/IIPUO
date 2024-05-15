@@ -5,8 +5,10 @@
 			</ul>
 		</div>
 
-		<div style="overflow:auto; background-color:#727272;" id="view_class">
+		<div style="" id="view_class2">
+		</div>
 
+		<div style="overflow:auto; background-color:#727272;" id="view_class">
 		</div>
 
 		<div class="list">
@@ -193,7 +195,6 @@
 
 	</div>
 </div>
-</div>
 <div class="modal" id="modal_alert">
 	<div class="modal_body" id="modal_body">
 		<h2>처리중입니다</h2>
@@ -243,23 +244,11 @@
 	let date = new Date();
 
 	$(document).on('click', '#button_quater1', (e) => {
-		let iMonth = parseInt($('#quater_month').val());
-		// if (!ValidationSettleHalf1(iMonth)) {
-		// 	$(e.currentTarget).attr('class', 'menu1');
-		// 	alert('현재 해당 분기는 조회할 수 없습니다(16일부터 가능합니다)');
-		// 	return;
-		// }
 		$('.menu5').attr('class', 'menu1');
 		$(e.currentTarget).attr('class', 'menu5');
 	});
 
 	$(document).on('click', '#button_quater2', (e) => {
-		let iMonth = parseInt($('#quater_month').val());
-		// if (!ValidationSettleHalf2(iMonth)) {
-		// 	$(e.currentTarget).attr('class', 'menu1');
-		// 	alert('현재 해당 분기는 조회할 수 없습니다(1일부터 가능합니다)');
-		// 	return;
-		// }
 		$('.menu5').attr('class', 'menu1');
 		$(e.currentTarget).attr('class', 'menu5');
 	});
@@ -294,7 +283,28 @@
 
 		SetOverview(overview, '#overview', true, '', '');
 		SetOverviewShare(overviewShare, overview, '#overview_share');
+
+		$('#view_class2').empty();
+		$('#view_class2').append(`
+			<button id="button_settle_input" class="menu1" style="border:0px solid rgb(95, 93, 93);width:170px;height:25px;text-align:center;color:white" onclick="OnClickInput();">죽장 입력</button>
+		`);
 	});
+
+	let OnClickInput = () => {
+		window.open('', 'popupChkInput', 'width=1280, height=720, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
+		let $form = $('<form></form>');
+		$form.attr('action', '/manage_settle_input/settle_input');
+		$form.attr('method', 'post');
+		$form.attr('target', 'popupChkInput');
+		$form.appendTo('body');
+
+		let id = $(`<input type="hidden" value="${user.strID}" name="strID">`);
+		let idx = $(`<input type="hidden" value="${user.strNickname}" name="strNickname">`);
+		let page = $(`<input type="hidden" value="${user.strGroupID}" name="strGroupID">`);
+
+		$form.append(id).append(idx).append(page);
+		$form.submit();
+	}
 
 	let Request1stHalf = () => {
 		let iMonth = parseInt($('#quater_month').val());
@@ -729,13 +739,6 @@
 			obj.parentNickname = obj.strAdminNickname;
 
 			if (obj.iClass == 4) {
-				// 대본사 죽장 계산
-				// CalculateSettle4(obj);
-				if (obj.strNickname == '테떡림이') {
-					console.log(obj.strNickname);
-					console.log(obj.iSettleVice);
-					console.log(obj);
-				}
 				let tag = AddPartner4(4, obj, !ExistSettle(obj.strID), i);
 				$('#list_agents').append(tag);
 				dataList.push(obj);
@@ -890,21 +893,6 @@
 		console.log(obj);
 	}
 
-	let CalculateSettle4 = (obj) => {
-		// 수수료 계산 처리
-		// CalculateCommission(obj);
-
-		// if (iBTotal + iSTotal > 0) {
-		// 	iSettleBaccarat = iBTotal * fSettleBaccarat4 * 0.01;
-		// 	iSettleSlot = iSTotal * fSettleSlot4 * 0.01;
-		// } else {
-		// 	iSettleBaccarat = 0;
-		// 	iSettleSlot = 0;
-		// }
-		// obj.iSettle = parseFloat(iSettleBaccarat5 + iSettleSlot5);
-
-		console.log(obj);
-	}
 	/**
 	 * 수수료 계산
 	 * 윈로스 * 0.1(수수료)
@@ -1122,9 +1110,9 @@
 			}
 			// 합계
 			if (iViewClass == 4) {
-				subtag += `<td style="background-color:${color};"  class="parent_row_31"><a href="#" onclick="OnClickHistory('${aObject.strNickname}', '${aObject.strGroupID}', ${aObject.iClass}, '${strQuater}');"><font color="${GetColor(data.iResult)}" id='result_${aObject.strNickname}'>${GetNumber(data.iResult)}</font></a></td>`;
+				subtag += `<td style="background-color:${color};"  class="parent_row_31"><a href="#" onclick="OnClickHistory('${aObject.strNickname}', '${aObject.strGroupID}', ${aObject.iClass}, '${strQuater}');"><font color="${GetColor(data.iResult)}" id='result4_${aObject.strNickname}'>${GetNumber(data.iResult)}</font></a></td>`;
 			} else {
-				subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetColor(data.iResult)}" id='result_${aObject.strNickname}'>${GetNumber(data.iResult)}</font></td>`;
+				subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetColor(data.iResult)}" id='result4_${aObject.strNickname}'>${GetNumber(data.iResult)}</font></td>`;
 			}
 			// if ( aObject.iClass == 4 ) {
 			//
@@ -1200,9 +1188,6 @@
 	}
 
 	let AddPartner4 = (iRootClass, aObject, bEnableSettle, index) => {
-		if (aObject.strNickname == '테떡림이') {
-			console.log(aObject);
-		}
 		let data = CalculateSendData4(aObject, bEnableSettle);
 		// 정산 처리를 위해서 추가
 		aObject.iBaccaratWinLose = data.iBaccaratWinLose;
@@ -1315,7 +1300,7 @@
 
 		if ( isShowTotal )
 		{
-			subtag += `<td style="background-color:${color};"  class="parent_row_31"><a href="#" onclick="OnClickHistory('${aObject.strNickname}', '${aObject.strGroupID}', ${aObject.iClass}, '${strQuater}');"><font color="${GetColor(data.iTotal)}" id='result_${aObject.strNickname}'>${GetNumber(data.iTotal)}</font></a></td>`;
+			subtag += `<td style="background-color:${color};"  class="parent_row_31"><a href="#" onclick="OnClickHistory('${aObject.strNickname}', '${aObject.strGroupID}', ${aObject.iClass}, '${strQuater}');"><font color="${GetColor(data.iTotal)}" id='total_${aObject.strNickname}'>${GetNumber(data.iTotal)}</font></a></td>`;
 			// subtag += `<td style="background-color:${color};"  class="parent_row_31"><a><font color="${GetColor(data.iTotal)}" id='total_${aObject.strNickname}'>${GetNumber(data.iTotal)}</font></a></td>`;
 		}
 		else

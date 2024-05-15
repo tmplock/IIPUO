@@ -4,6 +4,9 @@
 			<ul class="list_tab" style="margin-bottom:10px;width:75%;z-index:10000;" id="calculation_header">
 			</ul>
         </div>
+		<div>
+			<button id="button_settle_init" class="menu1" style="border:0px solid rgb(95, 93, 93);width:170px;height:25px;text-align:center;color:white" onclick="OnClickSettleInit();">죽장 초기화</button>
+		</div>
 
         <div class="list">
 <!--			<div style="background-color:#ffffff;text-align:right;padding-right:5px;padding-top:0px;padding-bottom:0px;" colspan="19">-->
@@ -73,6 +76,7 @@
 <script>
 	let user = JSON.parse('<%-JSON.stringify(user)%>');
 	let vadminList = JSON.parse('<%-JSON.stringify(list)%>');
+    let msg = JSON.parse('<%-JSON.stringify(msg)%>');
 
 	let bEnableSettle = false;
 	let bSending = false;
@@ -80,25 +84,13 @@
 	let selectQuaterMonth = '';
 	let selectQuater = 0;
 
-
-	// $(document).on('click', '#button_quater1', (e) => {
-	// 	$('.menu5').attr('class', 'menu1');
-	// 	$(e.currentTarget).attr('class', 'menu5');
-	// });
-	//
-	// $(document).on('click', '#button_quater2', (e) => {
-	// 	$('.menu5').attr('class', 'menu1');
-	// 	$(e.currentTarget).attr('class', 'menu5');
-	// });
-	//
-	// $('#quater_month').on('change', () => {
-	// 	$('#button_quater1').attr('class', 'menu1');
-	// 	$('#button_quater2').attr('class', 'menu1');
-	// });
-
 	$(document).ready(() => {
-		// $('#quater_month').val(date.getMonth());
-		// selectQuaterMonth = date.getMonth();
+		if (msg != '') {
+            alert(msg);
+            popClose();
+            return;
+        }
+
 		SetList(vadminList);
 	});
 
@@ -266,5 +258,86 @@
 				}
 			}
 		});
+	}
+
+	//  이전
+	$(document).on('click', '#calculation_settle', ()=> {
+
+		var $form = $('<form></form>');
+			$form.attr('action', '/manage_calculation/settle');
+		$form.attr('method', 'post');
+		$form.appendTo('body');
+
+		var strNickname = $(`<input type="hidden" value="${user.strNickname}" name="strNickname">`);
+		var strGroupID = $(`<input type="hidden" value="${user.strGroupID}" name="strGroupID">`);
+		var iClass = $(`<input type="hidden" value=${user.iClass} name="iClass">`);
+		var iPermission = $(`<input type="hidden" value=${user.iPermission} name="iPermission">`);
+
+		$form.append(strNickname).append(strGroupID).append(iClass).append(iPermission);
+		$form.submit();
+
+	});
+
+	//  이전
+	$(document).on('click', '#calculation_settle_all', ()=> {
+
+		var $form = $('<form></form>');
+		$form.attr('action', '/manage_calculation/settle_all');
+		$form.attr('method', 'post');
+		$form.appendTo('body');
+
+		var strNickname = $(`<input type="hidden" value="${user.strNickname}" name="strNickname">`);
+		var strGroupID = $(`<input type="hidden" value="${user.strGroupID}" name="strGroupID">`);
+		var iClass = $(`<input type="hidden" value=${user.iClass} name="iClass">`);
+		var iPermission = $(`<input type="hidden" value=${user.iPermission} name="iPermission">`);
+
+		$form.append(strNickname).append(strGroupID).append(iClass).append(iPermission);
+		$form.submit();
+	});
+
+	// 입력 팝업
+	let OnClickInput = () => {
+		window.open('', 'popupChkInput', 'width=1280, height=720, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
+		let $form = $('<form></form>');
+		$form.attr('action', '/manage_settle_input/settle_input');
+		$form.attr('method', 'post');
+		$form.attr('target', 'popupChkInput');
+		$form.appendTo('body');
+
+		let id = $(`<input type="hidden" value="${user.strID}" name="strID">`);
+		let idx = $(`<input type="hidden" value="${user.strNickname}" name="strNickname">`);
+		let page = $(`<input type="hidden" value="${user.strGroupID}" name="strGroupID">`);
+
+		$form.append(id).append(idx).append(page);
+		$form.submit();
+	}
+
+	let bSendingTest = false;
+	let OnClickSettleInit = () => {
+		let ok = confirm('초기화하시겠습니까');
+		if (ok == true) {
+			if (bSendingTest == true) {
+				alert('처리중');
+				return;
+			}
+			bSendingTest = true;
+
+			$.ajax({
+				type:'post',
+				url: "/manage_settle_input/testinit",
+				context: document.body,
+				data:{},
+				success: (data) => {
+					bSendingTest = false;
+					if (data.result == 'OK') {
+						alert('죽장 초기화 완료');
+					}
+				},
+				error:function(request,status,error){
+					bSendingTest = false;
+					alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+				}
+			});
+		}
 	}
 </script>

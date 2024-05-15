@@ -25,6 +25,12 @@ const testData = require('./overview_4_2.json');
  */
 router.post('/settle_input', async (req, res) => {
     console.log('settle_input');
+
+    if(process.env.NODE_ENV === 'production') {
+        res.render('manage_calculation/settle_input', {iLayout:9, iHeaderFocus:0, user:{}, list:[], msg:'해당 페이지를 찾을수가 없습니다'});
+        return;
+    }
+
     console.log(req.body);
 
     const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
@@ -43,12 +49,17 @@ router.post('/settle_input', async (req, res) => {
            WHERE o.strGroupID LIKE '${dbuser.strGroupID}%' AND o.iClass = 5
     `);
 
-    res.render('manage_calculation/settle_input', {iLayout:9, iHeaderFocus:0, user:user, list:list[0]});
+    res.render('manage_calculation/settle_input', {iLayout:9, iHeaderFocus:0, user:user, list:list[0], msg:''});
 });
 
 
 router.post('/request_settle_input', async (req, res) => {
     console.log('request_settle_input');
+    if(process.env.NODE_ENV === 'production') {
+        res.send({result: 'FAIL', list: []});
+        return;
+    }
+
     console.log(req.body);
 
     const strNickname = req.body.strNickname;
@@ -75,6 +86,11 @@ router.post('/request_settle_input', async (req, res) => {
 
 router.post('/request_input', async (req, res) => {
     console.log('input_apply');
+    if(process.env.NODE_ENV === 'production') {
+        res.send({result: 'FAIL', msg:'처리오류'});
+        return;
+    }
+
     console.log(req.body);
 
     let id = req.body.id;
@@ -152,6 +168,11 @@ router.post('/request_input', async (req, res) => {
 
 router.post('/rollback', async (req, res) => {
     console.log('rollback');
+    if(process.env.NODE_ENV === 'production') {
+        res.send({result: 'FAIL', msg:'처리오류'});
+        return;
+    }
+
     console.log(req.body);
     // 유저 ID >= 86 이상부터 테스트임
 
@@ -404,6 +425,11 @@ let GetCalChildData = async (parent, child) => {
 
 // 죽장 전체 초기화
 router.post('/testinit', async (req, res) => {
+
+    if(process.env.NODE_ENV === 'production') {
+        res.send({result: 'FAIL', msg:'처리오류'});
+        return;
+    }
 
     let users = await db.Users.findAll();
     for ( let i in users )

@@ -753,6 +753,15 @@ function AddPartner(iRootClass, aObject, bDisableRolling, iPermission)
 				%
 			</td>
 			`;
+		subtag += `
+			<td style="background-color:${color};"  class="parent_row_31">
+				<input type="number" step="0.01" style="width:50%;" name="bakara_over_31" id="fSettleBaccarat${aObject.strNickname}" required="no" message="바카라 죽장" value=${aObject.fSettleBaccarat ?? 0} ${tagoption}>%
+			</td>
+		
+			<td style="background-color:${color};"  class="parent_row_31">
+				<input type="number" step="0.01" style="width:50%;" name="bakara_over_31" id="fSettleSlot${aObject.strNickname}" required="no" message="슬롯 죽장" value=${aObject.fSettleSlot ?? 0} ${tagoption}>%
+			</td>
+		`;
 	} else {
 		subtag += `
 		
@@ -781,19 +790,18 @@ function AddPartner(iRootClass, aObject, bDisableRolling, iPermission)
 			<td style="background-color:${color};"  class="parent_row_31">
 				<input type="number" step="0.01" style="width:50%;" name="bakara_over_31" id="fUnderOver${aObject.strNickname}" required="no" message="언오버 로링비" value=${aObject.fUnderOverR} ${tagoption} disabled>
 				%
-			</td>
-			`;
-	}
+			</td>`;
 
-	subtag += `
-		<td style="background-color:${color};"  class="parent_row_31">
-			<input type="number" step="0.01" style="width:50%;" name="bakara_over_31" id="fSettleBaccarat${aObject.strNickname}" required="no" message="바카라 죽장" value=${aObject.fSettleBaccarat ?? 0} ${tagoption} disabled>%
-		</td>
-	
-		<td style="background-color:${color};"  class="parent_row_31">
-			<input type="number" step="0.01" style="width:50%;" name="bakara_over_31" id="fSettleSlot${aObject.strNickname}" required="no" message="슬롯 죽장" value=${aObject.fSettleSlot ?? 0} ${tagoption} disabled>%
-		</td>
-	`;
+		subtag += `
+			<td style="background-color:${color};"  class="parent_row_31">
+				<input type="number" step="0.01" style="width:50%;" name="bakara_over_31" id="fSettleBaccarat${aObject.strNickname}" required="no" message="바카라 죽장" value=${aObject.fSettleBaccarat ?? 0} ${tagoption} disabled>%
+			</td>
+		
+			<td style="background-color:${color};"  class="parent_row_31">
+				<input type="number" step="0.01" style="width:50%;" name="bakara_over_31" id="fSettleSlot${aObject.strNickname}" required="no" message="슬롯 죽장" value=${aObject.fSettleSlot ?? 0} ${tagoption} disabled>%
+			</td>
+		`;
+	}
 
 	if ( aObject.iInput != 0)
 		subtag += `<td style="background-color:${color};"  class="parent_row_31">${GetNumber(aObject.iInput)}</td>`;

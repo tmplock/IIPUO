@@ -4,11 +4,11 @@
 const path = require('path')
 
 if(process.env.NODE_ENV === 'production') {
-  require('dotenv').config({ path: path.join(__dirname, '../.env.production') });
+  require('dotenv').config({ path: path.join(__dirname, '../.env.dev') });
   console.log('production mode');
 } else {
   // 로컬개발시
-  require('dotenv').config({path: path.join(__dirname, '../.env.local')});
+  require('dotenv').config({path: path.join(__dirname, '../.env.dev')});
   // 서버개발시
   // require('dotenv').config({ path: path.join(__dirname, '../.env.production') });
   console.log('development mode');

@@ -99,6 +99,7 @@ const {DATETIME} = require("mysql/lib/protocol/constants/types");
 const {Op} = require("sequelize");
 const moment = require("moment");
 const logger = require("./config/logger");
+const {prependListener} = require("process");
 app.use(i18na);
 
 
@@ -166,7 +167,10 @@ global.io = io;
 //global.strUserPageAddress = `https://unover000.com`;
 // global.strUserPageAddress = `http://165.22.102.70:3010`; // Unover001
 // global.strUserPageAddress = `http://165.22.102.70:3011`; // Unover000
-global.strUserPageAddress = `https://unover100.com`; // Unover000
+global.strUserPageAddress = `https://unover001.com`; // Unover000
+if(process.env.NODE_ENV === 'production') {
+    global.strUserPageAddress = 'https://unover100.com';
+}
 
 app.get('/', (req, res) => {
     //res.redirect('account/login');
@@ -211,7 +215,10 @@ app.get('/', (req, res) => {
 //     res.status(err.status||500);
 // });
 
-const cPort = 3031;
+let cPort = 3030;
+if(process.env.NODE_ENV === 'production') {
+    cPort = '3031';
+}
 server.listen(cPort, () => {
     console.log(`Unover CMS Server Started At ${cPort}`);
 });

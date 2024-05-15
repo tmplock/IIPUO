@@ -301,7 +301,7 @@ let GetSettlePartnerList = async (strGroupID, iClass, strQuater, dateStart, date
                 ) sub ON sub.strID = t5.strID
             WHERE t5.iClass = ${iClass} AND t5.strGroupID LIKE CONCAT('${strGroupID}', '%')
             ${lastDateQuery}
-            ORDER BY sub.createdAt ASC, t5.strGroupID ASC
+            ORDER BY strNickname3 ASC, strNickname4 ASC, t5.strGroupID ASC
             LIMIT ${limit}
             OFFSET ${offset}
         `);

@@ -493,14 +493,16 @@ router.post('/request_applysettle_all', isLoggedIn, async (req, res) => {
             // 수금 계산
             // 죽장 지급액이 있을 경우 && 죽장 이월금액이 마이너스일 경우
             if (iSettleGive > 0) {
+                // 수금액은 지난달 금액이 수금액임(죽장값이 더 클 경우)
                 if (iSettleGive > Math.abs(iSettleBeforeAcc)) {
                     iPayback = -iSettleBeforeAcc;
                 } else {
-                    iPayback = Math.abs(iSettleBeforeAcc) - iSettleGive;
+                    // 수금액은 이번달 지급한 죽장값이 수금액임(수금액이 더 클 경우)
+                    iPayback = iSettleGive;
                 }
             } else if (iSettle > 0) {
-                // 죽장은 발생했지만 수금할 금액이 많아서 죽장 지급이 없는 경우(이월금액 - 이번분기 죽장값)
-                iPayback = Math.abs(iSettleBeforeAcc) - iSettle;
+                // 수금액은 이번달 발생한 죽장값이 수금액임
+                iPayback = iSettle;
             }
 
             iSettleAccTotal = iSettleAccTotal + iSettleAcc;

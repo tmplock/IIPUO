@@ -1084,7 +1084,7 @@
 			// 죽장 지급
 			subtag += `<td style="background-color:${color};" class="parent_row_31"><font color="black">${GetNumberSign(data.iSettleGive)}</font></td>`;
 			// 죽장 이월
-			subtag += `<td style="background-color:${color};" class="parent_row_31"><font color="black">${GetNumberSign(data.iSettleAcc)}</font></td>`;
+			subtag += `<td style="background-color:${color};" class="parent_row_31"><font color="black">${GetNumberSign(data.iSettleAccTotal)}</font></td>`;
 			// 수금(전월죽장이월금액에 대한 수금 여부)
 			subtag += `<td style="background-color:${color};" class="parent_row_31"><font color="black" id="payback_${aObject.strNickname}">${GetNumberSign(data.iPayback)}</font></td>`;
 		}
@@ -1285,7 +1285,7 @@
 			// 죽장 지급
 			subtag += `<td style="background-color:${color};" class="parent_row_31"><font color="black">${GetNumberSign(data.iSettleGive)}</font></td>`;
 			// 죽장 이월
-			subtag += `<td style="background-color:${color};" class="parent_row_31"><font color="black">${GetNumberSign(data.iSettleAcc)}</font></td>`;
+			subtag += `<td style="background-color:${color};" class="parent_row_31"><font color="black">${GetNumberSign(data.iSettleAccTotal)}</font></td>`;
 			// 수금(전월죽장이월금액에 대한 수금 여부)
 			subtag += `<td style="background-color:${color};" class="parent_row_31"><font color="black" id="payback_${aObject.strNickname}">${GetNumberSign(data.iPayback)}</font></td>`;
 		}

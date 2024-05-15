@@ -1713,11 +1713,13 @@
 		if ( bEnableSettle == false )
 		{
 			alert('이미 정산 되었습니다.');
+			closeAlertModal();
 			return;
 		}
 
 		if (bSending) {
 			alert('처리중입니다.');
+			closeAlertModal();
 			return;
 		}
 		bSending = true;
@@ -1770,12 +1772,14 @@
 			if ( iQuaterSettle > 0 && iQuaterSettle < iInputSettle )
 			{
 				alert('지급 금액이 올바르지 않습니다.');
+				closeAlertModal();
 				return;
 			}
 
 			let iInputQuaterSettle = parseInt(settleList[i].iInputQuaterSettle ?? 0);
-			if (iInputSettle > iInputQuaterSettle) {
+			if (iInputSettle > 0 && iInputSettle > iInputQuaterSettle) {
 				alert('지급 금액이 올바르지 않습니다.');
+				closeAlertModal();
 				return;
 			}
 

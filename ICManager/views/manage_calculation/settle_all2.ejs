@@ -367,7 +367,7 @@
 					exist = obj.exist;
 					bEnableSettle = true;
 					RequestOverview(user.strGroupID, user.iClass, strQuater, dateQuaterStart, dateQuaterEnd, user.strID);
-					SetList(obj.list, iClass);
+					SetList(obj.list, iClass, true);
 				}
 				else
 				{
@@ -375,7 +375,7 @@
 					exist = obj.exist;
 					bEnableSettle = false;
 					RequestOverview(user.strGroupID, user.iClass, strQuater, dateQuaterStart, dateQuaterEnd, user.strID);
-					SetList(obj.list, iClass);
+					SetList(obj.list, iClass, false);
 				}
 
 				$('#pagination').empty();
@@ -638,7 +638,7 @@
 		$(strParentTag).append(tag);
 	}
 
-	let SetList = (list, iClass) => {
+	let SetList = (list, iClass, bEnable) => {
 		$('#list_agents').empty();
 
 		if ( user.iClass > 1 && user.iClass <= 4 ) {
@@ -669,7 +669,7 @@
 
 		let bVisible = false;
 		let now = new Date();
-		if (true || now.getDate() == 16 || now.getDate() == 1) {
+		if (bEnable && (now.getDate() == 16 || now.getDate() == 1)) {
 			bVisible = true;
 		}
 		if ( user.iClass > 1 && user.iClass <= 3 && user.iPermission != 100 && bEnableSettle) {

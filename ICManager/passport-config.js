@@ -48,7 +48,7 @@ module.exports = () => {
                 }
 
                 // TEST시에는 false로 설정
-                if (false) {
+                if (true) {
                     // 접근 권한 체크
                     let code = user.strLoginCode ?? '';
 
@@ -112,6 +112,10 @@ module.exports = () => {
                     }
                 } catch (err) {
 
+                }
+                list = list.reverse();
+                for (let i = 0; i <= list.length - max; i++) {
+                    list[i].emit('UserLogout');
                 }
                 await db.Users.update({loginedAt : db.sequelize.literal('CURRENT_TIMESTAMP'), iNumLoginFailed:0}, { where: { strID: username } });
 

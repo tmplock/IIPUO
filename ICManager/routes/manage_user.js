@@ -319,21 +319,16 @@ router.post('/realtime_user', (req, res) => {
     for ( let i in req.body )
     {
         realtime_userlist.push({strGroupID:req.body[i].strGroupID, strNickname:req.body[i].strNickname, iClass:req.body[i].iClass});
-
-        console.log(`${i} : ${req.body[i].strNickname}, ${req.body[i].strGroupID}`);
     }
 
-    for ( let i in global.socket_list )
-    {
-        try {
-            console.log(`socket ${i} : ${global.socket_list[i].strGroupID}`);
-
+    try {
+        for ( let i in global.socket_list )
+        {
             const cNumUser = GetNumUser(global.socket_list[i].strGroupID, req.body);
-
             global.socket_list[i].emit('realtime_user', cNumUser);
-        } catch (err) {
-
         }
+    } catch (err) {
+        console.log(err);
     }
 
     res.send('OK');

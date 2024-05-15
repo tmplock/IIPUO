@@ -247,11 +247,17 @@ cron.schedule('*/30 * * * * *', async () => {
         }
     });
     console.log(`당일 등록 유저 조회(승인대기) : ${todayUsers}`);
-    for ( let i in socket_list )
-    {
-        if ( socket_list[i].iClass == 2 )
-        {
-            socket_list[i].emit('alert_today_user', todayUsers);
+    if (todayUsers.length > 0) {
+        try {
+            for ( let i in socket_list )
+            {
+                if ( socket_list[i].iClass == 2 )
+                {
+                    socket_list[i].emit('alert_today_user', todayUsers);
+                }
+            }
+        } catch (err) {
+            console.log(err);
         }
     }
 });
@@ -317,41 +323,34 @@ process.on("uncaughtException", function (err) {
 });
 
 app.post('/AlertLetter', (req, res) => {
-
     console.log(`AlertLetter`);
-
-    console.log(req.body);
-
-    for ( let i in socket_list )
-    {
-        if ( socket_list[i].strNickname == req.body.strTo )
+    try {
+        console.log(req.body);
+        for ( let i in socket_list )
         {
-            let objectData = {strTo:req.body.strTo, strFrom:req.body.strFrom, strContents:req.body.strContents};
-
-            socket_list[i].emit('AlertLetter', objectData);
-            //socket_list[i].emit('AlertLetter', req.body.strContents);
-
-            console.log(`########### AlertLetter ${req.body.strContents}`);
+            if ( socket_list[i].strNickname == req.body.strTo )
+            {
+                let objectData = {strTo:req.body.strTo, strFrom:req.body.strFrom, strContents:req.body.strContents};
+                socket_list[i].emit('AlertLetter', objectData);
+            }
         }
+    } catch (err) {
+        console.log(err);
     }
-
     res.send('OK');
 });
 
 app.post('/force_logout', (req, res) => {
     console.log(`/force_logout`);
-    console.log(req.body);
-    console.log(socket_list);
-    for ( let i in socket_list )
-    {
-        console.log('1#####################');
-        console.log(socket_list[i]);
-        console.log('2#####################');
-        console.log(`${socket_list[i].strID} / ${req.body.strID}`);
-        if ( socket_list[i].strID == req.body.strID )
+    try {
+        for ( let i in socket_list )
         {
-            console.log(`일치 : ${socket_list[i].strID} / ${req.body.strID}`);
-            socket_list[i].emit('UserLogout');
+            if ( socket_list[i].strID == req.body.strID )
+            {
+                socket_list[i].emit('UserLogout');
+            }
         }
+    } catch (err) {
+        console.log(err);
     }
 });

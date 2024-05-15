@@ -111,7 +111,7 @@ module.exports = () => {
                         list[i].emit('UserLogout');
                     }
                 } catch (err) {
-
+                    console.log(err);
                 }
                 await db.Users.update({loginedAt : db.sequelize.literal('CURRENT_TIMESTAMP'), iNumLoginFailed:0}, { where: { strID: username } });
 

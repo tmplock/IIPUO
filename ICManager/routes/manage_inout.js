@@ -880,15 +880,17 @@ let IsSameGroup = (strGroupID1, strGroupID2) => {
 router.post('/input_alert', (req, res)=> {
 
     console.log(`input_alert`);
-    console.log(req.body);
-
-    for ( var i in global.socket_list)
-    {
-        if ( IsSameGroup(req.body.strGroupID, global.socket_list[i].strGroupID)) {
-            if (global.socket_list[i].iClass == 2 || global.socket_list[i].iClass == 3) {
-                global.socket_list[i].emit("alert_input");
+    try {
+        for ( var i in global.socket_list)
+        {
+            if ( IsSameGroup(req.body.strGroupID, global.socket_list[i].strGroupID)) {
+                if (global.socket_list[i].iClass == 2 || global.socket_list[i].iClass == 3) {
+                    global.socket_list[i].emit("alert_input");
+                }
             }
         }
+    } catch (err) {
+        console.log(err);
     }
     res.send("OK");
 });

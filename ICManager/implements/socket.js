@@ -39,62 +39,79 @@ let IsSameGroup = (strGroupID1, strGroupID2) => {
 }
 
 let inline_AlertUpdateByGroupID = (strGroupID, iocount) => {
-    for ( let i in global.socket_list )
-    {
-        if ( true == IsSameGroup(strGroupID, global.socket_list[i].strGroupID) ) {
-            if (global.socket_list[i].iClass == 2 || global.socket_list[i].iClass == 3) {
-                global.socket_list[i].emit('alert_update', iocount);
+    try {
+        for ( let i in global.socket_list )
+        {
+            if ( true == IsSameGroup(strGroupID, global.socket_list[i].strGroupID) ) {
+                if (global.socket_list[i].iClass == 2 || global.socket_list[i].iClass == 3) {
+                    global.socket_list[i].emit('alert_update', iocount);
+                }
             }
         }
+    } catch (err) {
+        console.log(err);
     }
 }
 exports.AlertUpdateByGroupID = inline_AlertUpdateByGroupID;
 
 let inline_AlertUpdateByNickname = (strNickname, iocount) => {
-    for ( let i in global.socket_list )
-    {
-        if ( strNickname == global.socket_list[i].strNickname ) {
-            global.socket_list[i].emit('alert_update', iocount);
+    try {
+        for ( let i in global.socket_list )
+        {
+            if ( strNickname == global.socket_list[i].strNickname ) {
+                global.socket_list[i].emit('alert_update', iocount);
+            }
         }
+    } catch (err) {
+        console.log(err);
     }
 }
 exports.AlertUpdateByNickname = inline_AlertUpdateByNickname;
 let inline_AlertByGroupID = (strGroupID, eAlertType) => {
-
-    for ( let i in global.socket_list )
-    {
-        if ( true == IsSameGroup(strGroupID, global.socket_list[i].strGroupID) )
+    try {
+        for ( let i in global.socket_list )
         {
-            global.socket_list[i].emit(eAlertType);
+            if ( true == IsSameGroup(strGroupID, global.socket_list[i].strGroupID) )
+            {
+                global.socket_list[i].emit(eAlertType);
+            }
         }
+    } catch (err) {
+        console.log(err);
     }
 }
 exports.AlertByGroupID = inline_AlertByGroupID;
 
 let inline_AlertByGroupIDExclusionOwner = (strGroupID, eAlertType, strNickname) => {
-
-    for ( let i in global.socket_list )
-    {
-        if ( true == IsSameGroup(strGroupID, global.socket_list[i].strGroupID) && strNickname != global.socket_list[i].strNickname )
+    try {
+        for ( let i in global.socket_list )
         {
-            global.socket_list[i].emit(eAlertType);
+            if ( true == IsSameGroup(strGroupID, global.socket_list[i].strGroupID) && strNickname != global.socket_list[i].strNickname )
+            {
+                global.socket_list[i].emit(eAlertType);
+            }
         }
+    } catch (err) {
+        console.log(err);
     }
 }
 exports.AlertByGroupIDExclusionOwner = inline_AlertByGroupIDExclusionOwner;
 let inline_AlertByNickname = async (strNickname, eAlertType) => {
-    for (let i in global.socket_list) {
-        if (global.socket_list[i].strNickname == strNickname) {
-            console.log(`SOCKET : ${strNickname}`);
-            global.socket_list[i].emit(eAlertType);
+    try {
+        for (let i in global.socket_list) {
+            if (global.socket_list[i].strNickname == strNickname) {
+                global.socket_list[i].emit(eAlertType);
+            }
         }
-    }
-    // 보는 본사에 대한 관리자문의 답변 알림 처리
-    if (eAlertType == 'alert_contact_reply') {
-        let user = await db.Users.findOne({where:{strNickname: strNickname, iClass:3}});
-        if (user != null) {
-            inline_AlertByViewGroupID(user.strNickname, user.strGroupID, user.iClass, eAlertType);
+        // 보는 본사에 대한 관리자문의 답변 알림 처리
+        if (eAlertType == 'alert_contact_reply') {
+            let user = await db.Users.findOne({where:{strNickname: strNickname, iClass:3}});
+            if (user != null) {
+                inline_AlertByViewGroupID(user.strNickname, user.strGroupID, user.iClass, eAlertType);
+            }
         }
+    } catch (err) {
+        console.log(err);
     }
 }
 exports.AlertByNickname = inline_AlertByNickname;
@@ -112,16 +129,20 @@ let inline_AlertByViewGroupID = async (strNickname, strGroupID, iClass, eAlertTy
         });
 
         if (userlist.length > 0) {
-            let list = [];
-            for (let i in userlist) {
-                list.push(userlist[i].strNickname);
-            }
-            for (let i in global.socket_list) {
-                let nick = global.socket_list[i].strNickname;
-                if (list.indexOf(nick) > -1) {
-                    console.log(`SOCKET : ${global.socket_list[i].strNickname}`);
-                    global.socket_list[i].emit(eAlertType);
+            try {
+                let list = [];
+                for (let i in userlist) {
+                    list.push(userlist[i].strNickname);
                 }
+
+                for (let i in global.socket_list) {
+                    let nick = global.socket_list[i].strNickname;
+                    if (list.indexOf(nick) > -1) {
+                        global.socket_list[i].emit(eAlertType);
+                    }
+                }
+            } catch (err) {
+                console.log(err);
             }
         }
     }

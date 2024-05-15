@@ -113,10 +113,6 @@ module.exports = () => {
                 } catch (err) {
 
                 }
-                list = list.reverse();
-                for (let i = 0; i <= list.length - max; i++) {
-                    list[i].emit('UserLogout');
-                }
                 await db.Users.update({loginedAt : db.sequelize.literal('CURRENT_TIMESTAMP'), iNumLoginFailed:0}, { where: { strID: username } });
 
                 return done(null, user);

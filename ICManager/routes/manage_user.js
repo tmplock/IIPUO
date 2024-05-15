@@ -325,11 +325,15 @@ router.post('/realtime_user', (req, res) => {
 
     for ( let i in global.socket_list )
     {
-        console.log(`socket ${i} : ${global.socket_list[i].strGroupID}`);
+        try {
+            console.log(`socket ${i} : ${global.socket_list[i].strGroupID}`);
 
-        const cNumUser = GetNumUser(global.socket_list[i].strGroupID, req.body);
+            const cNumUser = GetNumUser(global.socket_list[i].strGroupID, req.body);
 
-        global.socket_list[i].emit('realtime_user', cNumUser);
+            global.socket_list[i].emit('realtime_user', cNumUser);
+        } catch (err) {
+
+        }
     }
 
     res.send('OK');

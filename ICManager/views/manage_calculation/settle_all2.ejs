@@ -279,28 +279,7 @@
 
 		SetOverview(overview, '#overview', true, '', '');
 		SetOverviewShare(overviewShare, overview, '#overview_share');
-
-		$('#view_class2').empty();
-		$('#view_class2').append(`
-			<button id="button_settle_input" class="menu1" style="border:0px solid rgb(95, 93, 93);width:170px;height:25px;text-align:center;color:white" onclick="OnClickInput();">죽장 입력</button>
-		`);
 	});
-
-	let OnClickInput = () => {
-		window.open('', 'popupChkInput', 'width=1280, height=720, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
-		let $form = $('<form></form>');
-		$form.attr('action', '/manage_settle_input/settle_input');
-		$form.attr('method', 'post');
-		$form.attr('target', 'popupChkInput');
-		$form.appendTo('body');
-
-		let id = $(`<input type="hidden" value="${user.strID}" name="strID">`);
-		let idx = $(`<input type="hidden" value="${user.strNickname}" name="strNickname">`);
-		let page = $(`<input type="hidden" value="${user.strGroupID}" name="strGroupID">`);
-
-		$form.append(id).append(idx).append(page);
-		$form.submit();
-	}
 
 	let Request1stHalf = () => {
 		let iMonth = parseInt($('#quater_month').val());

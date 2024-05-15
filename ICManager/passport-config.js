@@ -48,7 +48,7 @@ module.exports = () => {
                 }
 
                 // TEST시에는 false로 설정
-                if (true) {
+                if (false) {
                     // 접근 권한 체크
                     let code = user.strLoginCode ?? '';
 

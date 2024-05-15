@@ -68,6 +68,7 @@
     let strChildes = JSON.parse('<%-JSON.stringify(strChildes)%>');
     let strChildes2 = JSON.parse('<%-JSON.stringify(strChildes2)%>');
     let strSelectNickname = user.strNickname;
+    let bCheckNewUser = false;
 
     $(document).ready( ()=> {
         checkBlockCharSpecial(`#bank_name`);
@@ -94,6 +95,7 @@
             $('#receiver').append(`
                 <input type="radio" name="mile_sect" required="yes" message="" value="" id="type3" onclick="OnClickClass(3);">
                 <label for="mile_sect_cash_1" style="color:blue;font-size:15px;">본사</label>  &nbsp;&nbsp;&nbsp;&nbsp;
+                <input type="checkbox" id="checkbox_newuser" value="" onclick="OnClickNewUser();">&nbsp;신규가입자용
             `);
         }
         OnClickClass(user.iClass);
@@ -142,6 +144,11 @@
         objectData.bankHolder = bankHolder;
         objectData.strNickname = strSelectNickname;
         objectData.iClass = user.iClass;
+        if (bCheckNewUser == true) {
+            objectData.eBankType = 'NEWUSER';
+        } else {
+            objectData.eBankType = 'NORMAL';
+        }
 
         $.ajax({
             type:'POST',
@@ -163,5 +170,13 @@
             }
         });
     };
+
+    let OnClickNewUser = () => {
+        if (bCheckNewUser == false) {
+            bCheckNewUser = true;
+        } else {
+            bCheckNewUser = false;
+        }
+    }
 
 </script>

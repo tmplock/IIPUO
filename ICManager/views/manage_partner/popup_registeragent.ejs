@@ -55,7 +55,10 @@
 							onchange="OnChangeParent();">
 							<option value="">선택하세요</option>
 						</select>
-
+						<input type="checkbox" id="checkbox_auto_register" value="" onclick="OnClickAutoRegister();"> 자동생성 만들기
+						<input type="number" style="width:50px; height: 25px; display: none;" required="yes" id="auto_register_number" message="" placeholder="" />
+						<a href="#" class="btn_red" id="check_auto_register" style="display: none;" onclick="RequestConfirmAutoRegisterValue();"><%=__('Duplication')%><%=__('OK')%></a>
+						<a href="#" id="auto_register_msg" style="display: none;"><font style="font-size: 15px; color: red; font-weight: bold;">* 입력 숫자만큼 자동으로 등록됩니다.(예시: 닉네임1, 닉네임2)</font></a>
 						<input type="hidden" id="strParentGroupID" value="" />
 						<input type="hidden" id="iParentClass" value="" />
 						<input type="hidden" id="iParentID" value="" />
@@ -183,7 +186,7 @@
 				</table>
 				<%}%>
 
-			<% if (parent.iAgentClass == 8) { %>
+			<% if (parent.iAgentClass == 3 || parent.iAgentClass == 4 || parent.iAgentClass == 5) { %>
 				<table>
 					<colgroup>
 						<col style="width:15%">
@@ -191,14 +194,43 @@
 						<col style="width:15%">
 						<col style="width:35%">
 					</colgroup>
-					<p style="background-repeat:no-repeat; background-position:left center; font-size:20px; font-weight: bold; color:#454545; padding-left:22px;">PC방 이용 설정</p>
+					<p style="background-repeat:no-repeat; background-position:left center; font-size:16px; color:#454545; padding-left:22px;">죽장 설정</p>
 					<tr>
-						<th scope="row">PC방 이용 설정</th>
-						<td colspan="3">
-							<input type="checkbox" style="width:30px;height:30px;color: red" name="using_input" id="using_pc" required="no" message=""> <strong>체크시 이용자 사이트 입출금 기능을 사용할 수 없습니다</strong>
+						<th scope="row">바카라 죽장</th>
+						<td>
+							<input type="text" style="width:30%;" name="bank_password" id="fSettleBaccarat" required="no"  message=""> %
+						</td>
+						<th scope="row">슬롯 죽장</th>
+						<td>
+							<input type="text" style="width:30%;" name="bank_password" id="fSettleSlot" required="no"  message=""> %
 						</td>
 					</tr>
 				</table>
+			<% } else { %>
+				<div style="display: none">
+					<table>
+						<colgroup>
+							<col style="width:15%">
+							<col style="width:35%">
+							<col style="width:15%">
+							<col style="width:35%">
+						</colgroup>
+						<p style="background-repeat:no-repeat; background-position:left center; font-size:16px; color:#454545; padding-left:22px;">죽장 설정</p>
+						<tr>
+							<th scope="row">바카라 죽장</th>
+							<td>
+								<input type="text" style="width:30%;" name="settle" id="fSettleBaccarat" required="no"  message="" value="" disabled> %
+							</td>
+							<th scope="row">슬롯 죽장</th>
+							<td>
+								<input type="text" style="width:30%;" name="settle" id="fSettleSlot" required="no"  message="" value="" disabled> %
+							</td>
+						</tr>
+					</table>
+				</div>
+			<% } %>
+
+			<% if (parent.iAgentClass == 8 || parent.iAgentClass == 7) { %>
 				<div style="display: none">
 					<table>
 						<colgroup>
@@ -207,13 +239,8 @@
 							<col width="15%" />
 							<col width="35%" />
 						</colgroup>
-						<p
-								style="background-repeat:no-repeat; background-position:left center; font-size:16px; color:#454545; padding-left:22px;">
-							입출금 설정</p>
-
+						<p style="background-repeat:no-repeat; background-position:left center; font-size:16px; color:#454545; padding-left:22px;">입출금 설정</p>
 						<tr>
-
-
 							<th scope="row">
 								<%=__('UsingInput')%>
 							</th>
@@ -232,12 +259,82 @@
 									<%=__('DescUsingOutput')%>
 								</strong>
 							</td>
-
 						</tr>
-
 					</table>
 				</div>
+				<table>
+				<colgroup>
+					<col style="width:15%">
+					<col style="width:35%">
+					<col style="width:15%">
+					<col style="width:35%">
+				</colgroup>
+				<p style="background-repeat:no-repeat; background-position:left center; font-size:20px; font-weight: bold; color:#454545; padding-left:22px;">PC방 이용 설정</p>
+				<tr>
+					<th scope="row">PC방 이용 설정</th>
+					<td colspan="3">
+						<input type="checkbox" style="width:30px;height:30px;color: red" name="using_input" id="using_pc" required="no" message=""> <strong>체크시 이용자 사이트 입출금 기능을 사용할 수 없습니다</strong>
+					</td>
+				</tr>
+			</table>
+				<% if ( parseInt(parent.iRootClass) <= 3 ) {%>
+					<div style="">
+				<% } else { %>
+					<div style="display: none">
+				<% } %>
+				<table>
+					<colgroup>
+						<col style="width:15%">
+						<col style="width:35%">
+						<col style="width:15%">
+						<col style="width:35%">
+					</colgroup>
+					<p style="background-repeat:no-repeat; background-position:left center; font-size:20px; font-weight: bold; color:#454545; padding-left:22px;">기타 옵션</p>
+					<tr>
+						<th scope="row">신규자 통장 체크 안함</th>
+						<td colspan="3">
+							<input type="checkbox" style="width:30px;height:30px;color: red" name="using_input" id="using_pass_new_user" required="no" message=""> <strong>체크시 입금 신청시 일반 계좌가 표시됩니다</strong>
+						</td>
+					</tr>
+				</table>
+			</div>
 			<% } else { %>
+				<table>
+				<colgroup>
+					<col width="15%" />
+					<col width="35%" />
+					<col width="15%" />
+					<col width="35%" />
+				</colgroup>
+				<p
+						style="background-repeat:no-repeat; background-position:left center; font-size:16px; color:#454545; padding-left:22px;">
+					입출금 설정</p>
+
+				<tr>
+
+
+					<th scope="row">
+						<%=__('UsingInput')%>
+					</th>
+					<td>
+						<input type="checkbox" style="width:30px;height:30px;" name="using_input"
+							   id="using_input" required="no" message="" checked> <strong>
+							<%=__('DescUsingInput')%>
+						</strong>
+					</td>
+					<th scope="row">
+						<%=__('UsingOutput')%>
+					</th>
+					<td>
+						<input type="checkbox" style="width:30px;height:30px;" name="using_output"
+							   id="using_output" required="no" message="" checked> <strong>
+							<%=__('DescUsingOutput')%>
+						</strong>
+					</td>
+
+				</tr>
+
+			</table>
 				<div style="display: none">
 					<table>
 						<colgroup>
@@ -255,42 +352,23 @@
 						</tr>
 					</table>
 				</div>
+				<div style="display: none">
 				<table>
 					<colgroup>
-						<col width="15%" />
-						<col width="35%" />
-						<col width="15%" />
-						<col width="35%" />
+						<col style="width:15%">
+						<col style="width:35%">
+						<col style="width:15%">
+						<col style="width:35%">
 					</colgroup>
-					<p
-							style="background-repeat:no-repeat; background-position:left center; font-size:16px; color:#454545; padding-left:22px;">
-						입출금 설정</p>
-
+					<p style="background-repeat:no-repeat; background-position:left center; font-size:20px; font-weight: bold; color:#454545; padding-left:22px;">기타 옵션</p>
 					<tr>
-
-
-						<th scope="row">
-							<%=__('UsingInput')%>
-						</th>
-						<td>
-							<input type="checkbox" style="width:30px;height:30px;" name="using_input"
-								   id="using_input" required="no" message="" checked> <strong>
-								<%=__('DescUsingInput')%>
-							</strong>
+						<th scope="row">신규자 통장 체크 안함</th>
+						<td colspan="3">
+							<input type="checkbox" style="width:30px;height:30px;color: red" name="using_input" id="using_pass_new_user" required="no" message=""> <strong>체크시 입금 신청시 일반 계좌가 표시됩니다</strong>
 						</td>
-						<th scope="row">
-							<%=__('UsingOutput')%>
-						</th>
-						<td>
-							<input type="checkbox" style="width:30px;height:30px;" name="using_output"
-								   id="using_output" required="no" message="" checked> <strong>
-								<%=__('DescUsingOutput')%>
-							</strong>
-						</td>
-
 					</tr>
-
 				</table>
+			</div>
 			<% } %>
 			<!-- </form> -->
 
@@ -305,14 +383,12 @@
 			</div>
 		</div>
 	</div>
-	</div>
 
 	<script type="text/javascript" src="js/enum.js"></script>
 	<script type="text/javascript" src="js/manage_partner_popup_register.js"></script>
 	<script type="text/javascript">
 		const parent = JSON.parse('<%-JSON.stringify(parent)%>');
 		console.log(parent);
-		let bUsingPC = false;
 
 		const strAlertComplete = '<%=__("AlertComplete")%>';
 		const strAlertEnableToUse = '<%=__("AlertEnableToUse")%>';
@@ -347,33 +423,13 @@
 		checkBlockNum(`#fRollingUnderOver`);
 		checkBlockNum(`#fRollingSlot`);
 
-
+		checkBlockNum(`#fSettleBaccarat`);
+		checkBlockNum(`#fSettleSlot`);
 
 		$(document).ready(() => {
-			if (parent.iAgentClass == 8) {
-				$('#using_pc').attr('checked', false);
-				$('#using_pc').click((e) => {
-					var checked = $('#using_pc').is(':checked');
-
-					if (checked) {
-						bUsingPC = true;
-						['#strAccountOwner', '#strBankName', '#strAccountNumber'].forEach(item => {
-							$(item).get(0).disabled = true;
-						});
-						$('#strAccountOwner').val('PC방');
-						$('#strBankName').val('PC방');
-						$('#strAccountNumber').val('0000');
-					} else {
-						bUsingPC = false;
-						['#strAccountOwner', '#strBankName', '#strAccountNumber'].forEach(item => {
-							$(item).get(0).disabled = false;
-						});
-						$('#strAccountOwner').val('');
-						$('#strBankName').val('');
-						$('#strAccountNumber').val('');
-					}
-				});
-			}
+			SetUsingPC(parent.iAgentClass);
+			SetAutoRegister(false);
+			SetUsingPassNewUser(parent.iAgentClass);
 		});
 	</script>
 

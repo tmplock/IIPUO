@@ -1,19 +1,5 @@
 const Sequelize = require('sequelize');
-//const sequelize = new Sequelize('iiplive', 'sss', '11111', {host:'103.60.126.54', dialect:'mysql'});
-//const sequelize = new Sequelize('iiplive', 'sss', 'Supersong37#', {host:'192.168.0.2', dialect:'mysql'});
 
-//const sequelize = new Sequelize('iiplive', 'sss', '1111', {host:'103.60.124.87', dialect:'mysql'});
-
-// const sequelize = new Sequelize({
-//     host: 'db-mysql-sgp1-27012-do-user-11246819-0.b.db.ondigitalocean.com',
-//     database: 'livecasino',
-//     username: 'doadmin',
-//     password: '8qGHgv3sI6qfmVO1',
-//     dialect: 'mysql',
-//     port:25060,
-//     timezone:'+09:00',
-//     logging: false
-// });
 const sequelize = new Sequelize({
     host:process.env.MYSQL_HOST,
     database:process.env.MYSQL_DATABASE,
@@ -45,6 +31,7 @@ db.Inouts = require('./models/inout')(sequelize, Sequelize);
 db.GTs = require('./models/gt')(sequelize, Sequelize);
 db.Letters = require('./models/letter')(sequelize, Sequelize);
 db.SettleRecords = require('./models/settle_record')(sequelize, Sequelize);
+db.SettleSubRecords = require('./models/settle_sub_record')(sequelize, Sequelize);
 db.CreditRecords = require('./models/credit_record')(sequelize, Sequelize);
 db.ChargeRequest = require('./models/charge_request')(sequelize, Sequelize);
 db.ContactLetter = require('./models/contact_letter')(sequelize, Sequelize);
@@ -62,4 +49,5 @@ db.Permissions = require('./models/permission')(sequelize, Sequelize);
 db.OverviewLogs = require('./models/OverviewLog')(sequelize, Sequelize);
 db.BettingLogs = require('./models/betting_log')(sequelize, Sequelize);
 db.CashLogs = require('./models/CashLog')(sequelize, Sequelize);
+db.SettingRecords = require('./models/setting_record')(sequelize, Sequelize);
 module.exports = db;

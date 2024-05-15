@@ -108,18 +108,23 @@
                 let aObject = list[i];
 
                 let tagType = `
-                    <select style="vertical-align:middle;width:100%;" id="type_${aObject.id}" onchange="OnChangeType(${aObject.id});">
+                    <select style="vertical-align:middle;width:100%;" id="type_${aObject.id}" onchange="OnChangeType(${aObject.id}, ${aObject.userId});">
                         <option value="STOP" selected>미사용</option>
                         <option value="ACTIVE">사용</option>
                     </select>
                 `;
                 if (aObject.eType == 'ACTIVE') {
                     tagType = `
-                    <select style="vertical-align:middle;width:100%;" id="type_${aObject.id}" onchange="OnChangeType(${aObject.id});">
+                    <select style="vertical-align:middle;width:100%;" id="type_${aObject.id}" onchange="OnChangeType(${aObject.id}, ${aObject.userId});">
                         <option value="STOP">미사용</option>
                         <option value="ACTIVE" selected>사용</option>
                     </select>
                     `;
+                }
+
+                let bankType = '';
+                if (aObject.eBankType == 'NEWUSER') {
+                    bankType = '(신규가입자용)';
                 }
 
                 let memoTag = `<input style="width:70%;" type="text" id="memoinput_${aObject.id}" value="${aObject.strMemo}"><button style="color:white;" class="menu4" onclick="OnClickMemo(${aObject.id});">저장</button>`;
@@ -128,7 +133,7 @@
                         <td>${i+1}</td>
                         <td style="font-weight:100;">${GetClassNickName(aObject.iClass, aObject.strNickname)}</td>
                         <td style="font-weight:100;">${aObject.strBankName}</td>
-                        <td style="font-weight:100;">${aObject.strBankHolder}</td>
+                        <td style="font-weight:100;">${aObject.strBankHolder}${bankType}</td>
                         <td style="font-weight:100;">${aObject.strBankNumber}</td>
                         <td style="font-weight:100;">${tagType}</td>
                         <td style="font-weight:100;">${aObject.createdAt}</td>
@@ -156,11 +161,11 @@
     }
 
     let OnClickAddBank = () => {
-        window.open('', 'popupChk223', 'width=680, height=520, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
+        window.open('', 'popupChkBankAdd', 'width=680, height=520, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
         var $form = $('<form></form>');
         $form.attr('action', '/manage_inout/popup_bank_add');
         $form.attr('method', 'post');
-        $form.attr('target', 'popupChk223');
+        $form.attr('target', 'popupChkBankAdd');
         $form.appendTo('body');
         var strNickname = $(`<input type="hidden" value="${user.strNickname}" name="strNickname">`);
         var iClass = $(`<input type="hidden" value=${parseInt(user.iClass)} name="iClass">`);
@@ -172,7 +177,7 @@
         location.reload();
     }
 
-    let OnChangeType = (id) => {
+    let OnChangeType = (id, userId) => {
         let item = $(`#type_${id}`);
         let msg = (item.val() == 'ACTIVE') ? '사용' : '미사용';
 
@@ -181,7 +186,7 @@
             $.ajax({
                 type:'post',
                 url: "/manage_inout/request_change_bank_type",
-                data:{id:id, eType:item.val()},
+                data:{id:id, eType:item.val(), userId:userId},
                 success:function(obj) {
                     if (obj.result == 'OK') {
                         // location.reload();

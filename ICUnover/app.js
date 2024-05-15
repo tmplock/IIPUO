@@ -1,12 +1,15 @@
 'use strict'
 
+// 환경변수 로드
+const config = require('./config/config');
+require("dotenv").config();
+
 const express = require('express');
 const app = express();
 const server = require('http').Server(app);
 const io = require('socket.io')(server, {});
 const layout = require('express-ejs-layouts');
 const cookieParser = require('cookie-parser');
-require("dotenv").config();
 
 const session = require('express-session');
 const passport = require('passport');

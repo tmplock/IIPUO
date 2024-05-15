@@ -71,3 +71,27 @@
 .pagination .prev,.pagination .next{height:32px; width:32px; border:1px solid #ccc;overflow:hidden;position:relative; font-size:0;}
 .pagination .prev{background:url(../images/common/btn_prev.png) no-repeat center center; margin-right:11px;}
 .pagination .next{background:url(../images/common/btn_next.png) no-repeat center center; margin-left:12px;}
+
+/* 처리 팝업 */
+.modal{
+    position:absolute;
+    display:none;
+    justify-content: center;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background-color: rgba(0,0,0,0.4);
+}
+.modal_body {
+    position: absolute;
+    top: 100px;
+    width: 200px;
+    height: 40px;
+    padding: 40px;
+    text-align: center;
+    background-color: rgb(255, 255, 255);
+    border-radius: 10px;
+    box-shadow: 0 2px 3px 0 rgba(34, 36, 38, 0.15);
+    transform: translateY(-50%);
+}

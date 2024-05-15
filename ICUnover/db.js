@@ -1,29 +1,22 @@
 const Sequelize = require('sequelize');
-//const sequelize = new Sequelize('iiplive', 'sss', '11111', {host:'103.60.126.54', dialect:'mysql'});
-//const sequelize = new Sequelize('iiplive', 'sss', 'Supersong37#', {host:'192.168.0.2', dialect:'mysql'});
-
-//const sequelize = new Sequelize('iiplive', 'sss', '1111', {host:'103.60.124.87', dialect:'mysql'});
-
-// const sequelize = new Sequelize({
-//     host: 'db-mysql-sgp1-27012-do-user-11246819-0.b.db.ondigitalocean.com',
-//     //database: 'iipcor',
-//     database:'livecasino',
-//     username: 'iiplive',
-//     password: 'oLOHJkiQACPGuAgj',
-//     dialect: 'mysql',
-//     port:25060,
-//     timezone:'Asia/Seoul'
-// });
 
 const sequelize = new Sequelize({
-    host: 'db-mysql-sgp1-78563-do-user-11246819-0.c.db.ondigitalocean.com',
-    //database: 'iipcor',
-    database:'iipc',
-    username: 'doadmin',
-    password: 'AVNS_M3_YxbEdNmi41c9HbLu',
+    // host: 'db-mysql-sgp1-78563-do-user-11246819-0.c.db.ondigitalocean.com',
+    // //database: 'iipcor',
+    // database:'iipc',
+    // username: 'doadmin',
+    // password: 'AVNS_M3_YxbEdNmi41c9HbLu',
+    // dialect: 'mysql',
+    // port:25060,
+    // timezone:'Asia/Seoul'
+
+    host:process.env.MYSQL_HOST,
+    database:process.env.MYSQL_DATABASE,
+    username:process.env.MYSQL_USERNAME,
+    password:process.env.MYSQL_PASSWORD,
     dialect: 'mysql',
-    port:25060,
-    timezone:'Asia/Seoul'
+    port:process.env.MYSQL_PORT,
+    timezone:'+09:00'
 });
 
 
@@ -47,5 +40,7 @@ db.RecordBets = require('./models/recordbet')(sequelize, Sequelize);
 db.RecordDailyOverviews = require('./models/RecordDailyOverview')(sequelize, Sequelize);
 
 db.RecordErrorCashes = require('./models/recorderrorcash')(sequelize, Sequelize);
+
+db.SettingRecords = require('./models/setting_record')(sequelize, Sequelize);
 
 module.exports = db;

@@ -300,6 +300,9 @@ let inline_CalculateOverviewShare = async (strGroupID, strQuater) => {
 };
 exports.CalculateOverviewShare = inline_CalculateOverviewShare;
 
+/**
+ * 죽장 정산 클래스 데이터 조회
+ */
 exports.GetSettleClass = async (strGroupID, iClass, strQuater, dateStart, dateEnd, iOffset, iLimit, lastDate) => {
     let offset = parseInt(iOffset ?? 0);
     let limit = parseInt(iLimit ?? 30);
@@ -333,7 +336,11 @@ exports.GetSettleClass = async (strGroupID, iClass, strQuater, dateStart, dateEn
                 t3.strID AS strAdminID, t3.strNickname AS strAdminNickname, 
                 t4.strID, t4.strNickname, t4.strGroupID, t4.iClass, t4.strSettleMemo,
                 t4.fBaccaratR, t4.fSlotR, t4.fUnderOverR, t4.fPBR, t4.fPBSingleR, t4.fPBDoubleR, t4.fPBTripleR,
-                t4.fSettleBaccarat, t4.fSettleSlot, t4.fSettlePBA, t4.fSettlePBB, IFNULL(t4.fCommission, ${cfCommission}) AS fCommission,
+                t4.fSettleBaccarat AS fSettleBaccarat4, t4.fSettleSlot AS fSettleSlot4, 0 AS fSettlePBA4, 0 AS fSettlePBB4,
+                sr4.fSettleBaccarat AS fSettleBaccarat42, sr4.fSettleSlot AS fSettleSlot42, 0 AS fSettlePBA42, 0 AS fSettlePBB42,
+                0 AS fSettleBaccarat5, 0 AS fSettleSlot5, 0 AS fSettlePBA5, 0 AS fSettlePBB5,
+                0 AS fSettleBaccarat52, 0 AS fSettleSlot52, 0 AS fSettlePBA52, 0 AS fSettlePBB52,
+                IFNULL(t4.fCommission, ${cfCommission}) AS fCommission,
                 t4.iSettleAcc AS iSettleAccUser, t4.iCash as iMyMoney,
                 IFNULL((SELECT SUM(iCash) FROM Users WHERE strGroupID LIKE CONCAT(t4.strGroupID,'%')),0) as iTotalMoney,
                 
@@ -348,52 +355,42 @@ exports.GetSettleClass = async (strGroupID, iClass, strQuater, dateStart, dateEn
                 IFNULL((SELECT iSettleOrigin FROM SettleRecords WHERE strNickname = t4.strNickname AND strQuater='${strQuater}'),0) as iSettleOrigin,
                 IFNULL((SELECT (iSettleAcc - iPayback) FROM SettleRecords WHERE strNickname = t4.strNickname AND strQuater='${strQuater}'),0) as iSettleAcc,
                 IFNULL((SELECT iPayback FROM SettleRecords WHERE strNickname = t4.strNickname AND strQuater='${strQuater}'),0) as iPayback,
-
-                IFNULL((SELECT sum(iAmount) FROM GTs WHERE eType='ROLLING' AND strGroupID LIKE CONCAT(t4.strGroupID, '%') AND date(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iRollingTranslate,
-                IFNULL((SELECT sum(iAmount) FROM GTs WHERE eType='SETTLE' AND strGroupID LIKE CONCAT(t4.strGroupID, '%') AND date(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iSettleTranslate,
-
-                IFNULL((SELECT sum(iAgentRollingB) FROM RecordDailyOverviews WHERE strID = t4.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iBaccaratRollingMoney,
-                IFNULL((SELECT sum(iAgentRollingUO) FROM RecordDailyOverviews WHERE strID = t4.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iUnderOverRollingMoney,
-                IFNULL((SELECT sum(iAgentRollingS) FROM RecordDailyOverviews WHERE strID = t4.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iSlotRollingMoney,
-                0 as iPBRollingMoney,
-                IFNULL((SELECT sum(iAgentRollingB + iAgentRollingUO + iAgentRollingS + iAgentRollingPBA + iAgentRollingPBB) FROM RecordDailyOverviews WHERE strID = t4.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iMyRollingMoney,
-                IFNULL((SELECT -sum(iAgentRollingB + iAgentRollingUO + iAgentRollingS + iAgentRollingPBA + iAgentRollingPBB) FROM RecordDailyOverviews WHERE strID = t4.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iRollingMoney,
-                IFNULL((SELECT -sum(-(iAgentBetB - iAgentWinB) + iAgentRollingB) FROM RecordDailyOverviews WHERE strID = t4.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iBaccaratTotal,
-                IFNULL((SELECT -sum(-(iAgentBetUO - iAgentWinUO) + iAgentRollingUO) FROM RecordDailyOverviews WHERE strID = t4.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iUnderOverTotal,
-                IFNULL((SELECT -sum(-(iAgentBetS - iAgentWinS) + iAgentRollingS) FROM RecordDailyOverviews WHERE strID = t4.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iSlotTotal,
-                0 as iPBATotal,
-                0 as iPBBTotal,
-                IFNULL((SELECT sum(iAgentBetB - iAgentWinB) FROM RecordDailyOverviews WHERE strID = t4.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iBaccaratWinLose,
-                IFNULL((SELECT sum(iAgentBetUO - iAgentWinUO) FROM RecordDailyOverviews WHERE strID = t4.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iUnderOverWinLose,
-                IFNULL((SELECT sum(iAgentBetS - iAgentWinS) FROM RecordDailyOverviews WHERE strID = t4.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iSlotWinLose,
-                0 as iPBWinLose,
-
-                IFNULL((SELECT -sum((-(r.iAgentBetB - r.iAgentWinB) + r.iAgentRollingB)*u.fSettleBaccarat*0.01) FROM RecordDailyOverviews r LEFT JOIN Users u ON u.strID = r.strID WHERE r.iClass = 5 AND r.strGroupID LIKE CONCAT(t4.strGroupID, '%') AND date(r.strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iBaccaratTotalVice,
-                IFNULL((SELECT -sum((-(r.iAgentBetUO - r.iAgentWinUO) + r.iAgentRollingUO)*u.fSettleBaccarat*0.01) FROM RecordDailyOverviews r LEFT JOIN Users u ON u.strID = r.strID WHERE r.iClass = 5 AND r.strGroupID LIKE CONCAT(t4.strGroupID, '%') AND date(r.strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iUnderOverTotalVice,
-                IFNULL((SELECT -sum((-(r.iAgentBetS - r.iAgentWinS) + r.iAgentRollingS)*u.fSettleSlot*0.01) FROM RecordDailyOverviews r LEFT JOIN Users u ON u.strID = r.strID WHERE r.iClass = 5 AND r.strGroupID LIKE CONCAT(t4.strGroupID, '%') AND date(r.strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iSlotTotalVice,
-                0 as iPBATotalVice,
-                0 as iPBBTotalVice,
-
-                IFNULL((SELECT sum(iAmount) FROM Inouts WHERE strGroupID LIKE CONCAT(t4.strGroupID,'%') AND eState = 'COMPLETE' AND eType = 'INPUT' AND date(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}' ),0) as iInput,
-                IFNULL((SELECT sum(iAmount) FROM Inouts WHERE strGroupID LIKE CONCAT(t4.strGroupID,'%') AND eState = 'COMPLETE' AND eType = 'OUTPUT' AND date(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iOutput,
-                IFNULL((SELECT sum(iAmount) FROM Inouts WHERE eState = 'COMPLETE' AND eType = 'INPUT' AND strID = t4.strNickname AND date(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}' ),0) as iInput,
-                IFNULL((SELECT sum(iAmount) FROM Inouts WHERE eState = 'COMPLETE' AND eType = 'OUTPUT' AND strID = t4.strNickname AND date(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iOutput
+                
+                IFNULL((SELECT sum(iTotal) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}'),0) as iTotal,
+                IFNULL((SELECT sum(iTotal) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}' AND iTotal < 0),0) as iTotalLose,
+                IFNULL((SELECT sum(iRolling) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}'),0) as iRolling,
+                IFNULL((SELECT sum(iSettleVice) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}'),0) as iSettleVice,
+                IFNULL((SELECT sum(iCommissionB) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}'),0) as iCommissionBaccarat,
+                IFNULL((SELECT sum(iCommissionS) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}'),0) as iCommissionSlot,
+                IFNULL((SELECT sum(iBWinlose) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}'),0) as iBaccaratWinLose,
+                IFNULL((SELECT sum(iUWinlose) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}'),0) as iUnderOverWinLose,
+                IFNULL((SELECT sum(iSWinlose) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}'),0) as iSlotWinLose,
+                IFNULL((SELECT sum(iSettleViceAdmin) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}'),0) as iSettle,
+                IFNULL((SELECT sum(iTotalViceAdmin) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}'),0) as iTotalViceAdmin
             FROM Users t4
                      LEFT JOIN Users t3 ON t3.id = t4.iParentID
+                     LEFT JOIN (
+                         SELECT fSettleBaccarat, fSettleSlot, fSettlePBA, fSettlePBB, strID FROM SettleRecords WHERE strQuater='${strQuater}'
+                     ) sr4 ON sr4.strID=t4.strID
             WHERE t4.iClass = ${iClass} AND t4.strGroupID LIKE CONCAT('${strGroupID}', '%')
             ${lastDateQuery}
             ORDER BY settleCount ASC, t4.strGroupID ASC
                 LIMIT ${limit}
             OFFSET ${offset}
-        `);
-        return list[0];
+        `, {type: db.Sequelize.QueryTypes.SELECT});
+
+        return list;
     } else if (iClass == 5) {
         let list = await db.sequelize.query(`
             SELECT
                 t3.strID AS strAdminID, t3.strNickname AS strAdminNickname,
                 t5.strID, t5.strNickname, t5.strGroupID, t5.iClass, t5.strSettleMemo,
                 t5.fBaccaratR, t5.fSlotR, t5.fUnderOverR, t5.fPBR, t5.fPBSingleR, t5.fPBDoubleR, t5.fPBTripleR,
-                t5.fSettleBaccarat, t5.fSettleSlot, t5.fSettlePBA, t5.fSettlePBB, IFNULL(t5.fCommission, ${cfCommission}) AS fCommission,
+                t5.fSettleBaccarat AS fSettleBaccarat5, t5.fSettleSlot AS fSettleSlot5, 0 AS fSettlePBA5, 0 AS fSettlePBB5,
+                sr5.fSettleBaccarat AS fSettleBaccarat52, sr5.fSettleSlot AS fSettleSlot52, 0 AS fSettlePBA52, 0 AS fSettlePBB52,
+                t4.fSettleBaccarat AS fSettleBaccarat4, t4.fSettleSlot AS fSettleSlot4, 0 AS fSettlePBA4, 0 AS fSettlePBB4,
+                sr4.fSettleBaccarat AS fSettleBaccarat42, sr4.fSettleSlot AS fSettleSlot42, 0 AS fSettlePBA42, 0 AS fSettlePBB42,
+                IFNULL(t5.fCommission, ${cfCommission}) AS fCommission,
                 t5.iSettleAcc AS iSettleAccUser, t5.iCash as iMyMoney,
                 IFNULL((SELECT SUM(iCash) FROM Users WHERE strGroupID LIKE CONCAT(t5.strGroupID,'%')),0) as iTotalMoney,
                 
@@ -435,6 +432,12 @@ exports.GetSettleClass = async (strGroupID, iClass, strQuater, dateStart, dateEn
             FROM Users t5
                 LEFT JOIN Users t4 ON t4.id = t5.iParentID
                 LEFT JOIN Users t3 ON t3.id = t4.iParentID
+                LEFT JOIN (
+                    SELECT fSettleBaccarat, fSettleSlot, fSettlePBA, fSettlePBB, strID FROM SettleRecords WHERE strQuater='${strQuater}'
+                ) sr5 ON sr5.strID=t5.strID
+                LEFT JOIN (
+                    SELECT fSettleBaccarat, fSettleSlot, fSettlePBA, fSettlePBB, strID FROM SettleRecords WHERE strQuater='${strQuater}'
+                ) sr4 ON sr4.strID=t4.strID
             WHERE t5.iClass = ${iClass} AND t5.strGroupID LIKE CONCAT('${strGroupID}', '%')
             ${lastDateQuery}
             ORDER BY settleCount ASC, t5.strGroupID ASC
@@ -475,7 +478,7 @@ let GetBeforeQuater = (strQuater) => {
     return strQuater2;
 }
 
-exports.GetQuaterEndDate = (quater) => {
+let GetQuaterEndDate = (quater) => {
     let endDate = '';
     let quaterList = quater.split('-');
     if (quaterList[1] == '1') {
@@ -485,4 +488,35 @@ exports.GetQuaterEndDate = (quater) => {
     }
     const date = moment(endDate).add(1, 'days').format('YYYY-MM-DD');
     return date;
+}
+exports.GetQuaterEndDate = GetQuaterEndDate;
+
+exports.GetSettleTargetUserCount = async (strQuater, iClass, strGroupID) => {
+    let lastDate = GetQuaterEndDate(strQuater);
+
+    if (lastDate != '') {
+        let count = await db.Users.count({
+            where: {
+                iClass: iClass,
+                iPermission: {
+                    [Op.notIn]: [100]
+                },
+                strGroupID: {[Op.like]: strGroupID + '%'},
+                createdAt: {[Op.lt]: lastDate}
+            }
+        });
+        return count;
+    } else {
+        let count = await db.Users.count({
+            where: {
+                iClass: iClass,
+                iPermission: {
+                    [Op.notIn]: [100]
+                },
+                strGroupID: {[Op.like]: strGroupID + '%'}
+            }
+        });
+        return count;
+    }
+    return 0;
 }

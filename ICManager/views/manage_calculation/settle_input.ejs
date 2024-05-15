@@ -1,0 +1,270 @@
+<div class="sub_wrap">
+    <div class="container clearfix">
+        <div class="content" style="position:relative; padding:0 10px 0 10px;">
+			<ul class="list_tab" style="margin-bottom:10px;width:75%;z-index:10000;" id="calculation_header">
+			</ul>
+        </div>
+
+        <div class="list">
+<!--			<div style="background-color:#ffffff;text-align:right;padding-right:5px;padding-top:0px;padding-bottom:0px;" colspan="19">-->
+<!--				<select id="quater_month" style="width:100px;">-->
+<!--					<option value="0">1</option>-->
+<!--					<option value="1">2</option>-->
+<!--					<option value="2">3</option>-->
+<!--					<option value="3">4</option>-->
+<!--					<option value="4">5</option>-->
+<!--					<option value="5">6</option>-->
+<!--					<option value="6">7</option>-->
+<!--					<option value="7">8</option>-->
+<!--					<option value="8">9</option>-->
+<!--					<option value="9">10</option>-->
+<!--					<option value="10">11</option>-->
+<!--					<option value="11">12</option>-->
+<!--				</select>월-->
+<!--				<button id="button_quater1" class="menu1" data-menu="2" style="border:1px solid rgb(95, 93, 93);width:170px;height:25px;text-align:center;color:white" onclick="Request1stHalf();"><%=__('Half1')%></button>-->
+<!--				<button id="button_quater2" class="menu1" data-menu="3" style="border:1px solid rgb(95, 93, 93);width:170px;height:25px;text-align:center;color:white" onclick="Request2ndHalf();"><%=__('Half2')%></button>-->
+<!--				<div id="testSettle" style="background-color:#ffffff;text-align:right;padding-right:5px;padding-top:0px;padding-bottom:0px;" colspan="19">-->
+<!--				</div>-->
+<!--			</div>-->
+			<div id = "list_tit" class="list_tit">
+				<h3>
+					<button id='button_rollback' style="margin-left:8%;width:200px;height:40px;text-align:center;background-color: rgb(82, 161, 206);color:white" onclick="OnClickApplySettleRollback();"><strong>이전 데이터로 초기화</strong></button>
+				</h3>
+			</div>
+
+			<div class="search_wrap" id="div_realtimebet">
+	
+				<table class="search_list">
+					<caption><%=__('SearchResult')%></caption>
+					<thead>
+						<tr>
+							<th scope="col">순번</th>
+							<th scope="col">본사</th>
+							<th scope="col">대본사</th>
+							<th scope="col">부본사</th>
+							<th scope="col" style="background-color:#78bfdb;color:white;">바카라 베팅</th>
+							<th scope="col" style="background-color:#78bfdb;color:white;">바카라 승리</th>
+							<th scope="col" style="background-color:#b2b070;color:white;">언오버 베팅</th>
+							<th scope="col" style="background-color:#b2b070;color:white;">언오버 승리</th>
+							<th scope="col" style="background-color:#7782be;color:white;">슬롯 베팅</th>
+							<th scope="col" style="background-color:#7782be;color:white;">슬롯 승리</th>
+							<th scope="col">적용</th>
+						</tr>
+					</thead>
+					<tbody id="list_agents">
+					</tbody>
+				</table>
+
+				<div class="pagination mt0" id="pagination">
+				</div>
+			</div>
+		</div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="js/constants.js"></script>
+<script type="text/javascript" src="js/enum.js"></script>
+<script type="text/javascript" src="js/time.js"></script>
+<script type="text/javascript" src="js/manage_calculation_menu.js"></script>
+<script type="text/javascript" src="js/manage_setting_ref.js"></script>
+<script type="text/javascript" src="js/manage_user_menu.js"></script>
+<script type="text/javascript" src="js/pagination.js"></script>
+<script type="text/javascript" src="js/util.js"></script>
+<script>
+	let user = JSON.parse('<%-JSON.stringify(user)%>');
+	let vadminList = JSON.parse('<%-JSON.stringify(list)%>');
+
+	let bEnableSettle = false;
+	let bSending = false;
+
+	let selectQuaterMonth = '';
+	let selectQuater = 0;
+
+
+	// $(document).on('click', '#button_quater1', (e) => {
+	// 	$('.menu5').attr('class', 'menu1');
+	// 	$(e.currentTarget).attr('class', 'menu5');
+	// });
+	//
+	// $(document).on('click', '#button_quater2', (e) => {
+	// 	$('.menu5').attr('class', 'menu1');
+	// 	$(e.currentTarget).attr('class', 'menu5');
+	// });
+	//
+	// $('#quater_month').on('change', () => {
+	// 	$('#button_quater1').attr('class', 'menu1');
+	// 	$('#button_quater2').attr('class', 'menu1');
+	// });
+
+	$(document).ready(() => {
+		// $('#quater_month').val(date.getMonth());
+		// selectQuaterMonth = date.getMonth();
+		SetList(vadminList);
+	});
+
+	let Request1stHalf = () => {
+		let iMonth = parseInt($('#quater_month').val());
+		dateQuaterStart = Get1QuaterStartDate(iMonth);
+		dateQuaterEnd = Get1QuaterEndDate(iMonth);
+		strQuater = `${parseInt(iMonth) + 1}-1`;
+		selectQuater = 1;
+	}
+
+	let Request2ndHalf = () => {
+		const iMonth = parseInt($('#quater_month').val());
+		dateQuaterStart = Get2QuaterStartDate(iMonth);
+		dateQuaterEnd = Get2QuaterEndDate(iMonth);
+		strQuater = `${parseInt(iMonth)+1}-2`;
+		selectQuater = 2;
+	}
+
+	let SetList = (list) => {
+		$('#list_agents').empty();
+
+		$(`#main_title`).empty();
+		$(`#main_title`).append(`
+					<h3>
+						<a class="btn_gray" style="font-weight:bold; font-size:18px; position:absolute; left:50px; top:25px;">죽장 데이터 입력</a>
+					</h3>
+				`);
+
+		for (let i in list) {
+			let obj = list[i];
+			let tag = AddPartner(5, obj, i);
+			$('#list_agents').append(tag);
+		}
+	}
+
+	let AddPartner = (iRootClass, aObject, index) => {
+		let color = '#ffffff';
+
+		var subtag = `<tr>`;
+		// 순번
+		subtag += `<td>${parseInt(index) + 1}</td>`;
+		// 본사
+		subtag += `<td>${aObject.strNickname3 ?? ''}</td>`;
+		// 대본
+		subtag += `<td>${aObject.strNickname4 ?? ''}</td>`;
+		subtag += `
+				<td class="parent_row_31">
+					<a href="#" onclick="OnClickNickname('${aObject.strNickname}')" style="color:blue;">${aObject.strNickname}</a>
+				</td>
+		`;
+
+		// 바카라 베팅
+		subtag += `
+				<td class="parent_row_31">
+					<input type="number" style='width:80%;height:20px;text-align:center;color:black;' value='${aObject.iAgentBetB}' id='input_b_${aObject.id}'/>
+				</td>`;
+		subtag += `
+				<td class="parent_row_31">
+					<input type="number" style='width:80%;height:20px;text-align:center;color:black;' value='${aObject.iAgentWinB}' id='input_bwin_${aObject.id}'/>
+				</td>`;
+		//언오버
+		subtag += `
+				<td class="parent_row_31">
+					<input type="number" style='width:80%;height:20px;text-align:center;color:black;' value='${aObject.iAgentBetUO}' id='input_uo_${aObject.id}'/>
+				</td>`;
+		subtag += `
+				<td class="parent_row_31">
+					<input type="number" style='width:80%;height:20px;text-align:center;color:black;' value='${aObject.iAgentWinUO}' id='input_uowin_${aObject.id}'/>
+				</td>`;
+		// 슬롯
+		subtag += `
+				<td class="parent_row_31">
+					<input type="number" style='width:80%;height:20px;text-align:center;color:black;' value='${aObject.iAgentBetS}' id='input_s_${aObject.id}'/>
+				</td>`;
+		subtag += `
+				<td class="parent_row_31">
+					<input type="number" style='width:80%;height:20px;text-align:center;color:black;' value='${aObject.iAgentWinS}' id='input_wins_${aObject.id}'/>
+				</td>`;
+		subtag += `
+				<td class="parent_row_31">
+					<button id=${aObject.id} onclick="OnClickApplySettleInput(${aObject.id}, '${aObject.strNickname}')"> 적 용 </button>
+				</td>`;
+		subtag += `</tr>`;
+		return subtag;
+	}
+
+	let OnClickApplySettleInput = (id, strNickname) => {
+		if (bSending) {
+			alert('처리중입니다.');
+			return;
+		}
+		bSending = true;
+
+		let ok = confirm(`${strNickname} 입력 내용을 적용 하시겠습니까?`);
+		if (ok != true) {
+			bSending = false;
+			return;
+		}
+
+		console.log('OnClickApplySettleInput');
+		let data = {
+			id: 0,
+			iAgentBetB: 0, iAgentBetUO: 0, iAgentBetS: 0,
+			iAgentWinB: 0, iAgentWinUO: 0, iAgentWinS: 0
+		}
+
+		data.id = id;
+		data.iAgentBetB = $(`#input_b_${id}`).val();
+		data.iAgentBetUO = $(`#input_uo_${id}`).val();
+		data.iAgentBetS = $(`#input_s_${id}`).val();
+
+		data.iAgentWinB = $(`#input_bwin_${id}`).val();
+		data.iAgentWinUO = $(`#input_uowin_${id}`).val();
+		data.iAgentWinS = $(`#input_wins_${id}`).val();
+
+		console.log(data);
+
+		$.ajax({
+			url:'/manage_settle_input/request_input',
+			type:"POST",
+			data:data,
+			dataType: "json",
+			success: function (obj) {
+				bSending = false;
+
+				console.log(obj);
+				if ( obj.result == 'OK')
+				{
+					alert('적용이 완료 되었습니다.');
+					opener.location.reload();
+				}
+				else
+				{
+					alert(obj.msg);
+				}
+			}
+		});
+	}
+
+	let OnClickApplySettleRollback = () => {
+		if (bSending) {
+			alert('처리중');
+			return;
+		}
+		bSending = true;
+		$.ajax({
+			url:'/manage_settle_input/rollback',
+			type:"POST",
+			data:{
+				strGroupID:user.strGroupID,
+			},
+			dataType: "json",
+			success: function (obj) {
+				bSending = false;
+				console.log(obj);
+				if ( obj.result == 'OK')
+				{
+					alert('이전 데이터로 초기화가 완료 되었습니다.');
+					location.reload();
+				}
+				else
+				{
+					alert(obj.msg);
+				}
+			}
+		});
+	}
+</script>

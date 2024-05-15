@@ -127,17 +127,28 @@ router.post('/request_searchby', isLoggedIn, async(req, res) => {
                 OFFSET ${iOffset}
             `, {type: db.Sequelize.QueryTypes.SELECT});
         } else {
-            list = await db.sequelize.query(`
-                SELECT i.*, DATE_FORMAT(i.createdAt,'%Y-%m-%d %H:%i:%S') AS createdAt, DATE_FORMAT(i.completedAt,'%Y-%m-%d %H:%i:%S') AS completedAt, DATE_FORMAT(i.updatedAt,'%Y-%m-%d %H:%i:%S') AS updatedAt, u.strBankOwner AS strUserAccountOwner, u.strBankName AS strBankName
-                FROM Inouts i
-                LEFT JOIN Users u ON u.strNickname = i.strID
-                WHERE DATE(i.createdAt) BETWEEN '${req.body.dateStart}' AND '${req.body.dateEnd}'
-                AND i.strGroupID LIKE '${req.body.strGroupID}%'
-                AND i.eType = '${req.body.type}'
-                ORDER BY i.createdAt DESC
-                LIMIT ${iLimit}
-                OFFSET ${iOffset}
-            `, {type: db.Sequelize.QueryTypes.SELECT});
+            let datas = await db.sequelize.query(`
+            SELECT i.*,
+                   u.strBankOwner AS strUserAccountOwner, u.strBankName AS strBankName, u.iPassCheckNewUser,
+                   DATE_FORMAT(i.completedAt, '%Y-%m-%d %H:%i:%S') AS completedAt, DATE_FORMAT(i.createdAt, '%Y-%m-%d %H:%i:%S') AS createdAt, DATE_FORMAT(i.updatedAt, '%Y-%m-%d %H:%i:%S') AS updatedAt
+            FROM Inouts i
+            LEFT JOIN Users u ON u.strNickname = i.strID
+            WHERE DATE(i.createdAt) BETWEEN '${req.body.dateStart}' AND '${req.body.dateEnd}'
+            AND i.strGroupID LIKE '${req.body.strGroupID}%'
+            AND i.eType = '${req.body.type}'
+            ORDER BY i.createdAt DESC
+            LIMIT ${iLimit}
+            OFFSET ${iOffset}
+        `, {type: db.Sequelize.QueryTypes.SELECT});
+
+            for (let i in datas) {
+                let obj = datas[i];
+                obj.iNewUser = 0;
+                if (obj.strBankType == 'NEWUSER') {
+                    obj.iNewUser = 1;
+                }
+                list.push(obj);
+            }
         }
         res.send({data: list, totalCount: totalCount, iRootClass: req.user.iClass});
     }
@@ -183,18 +194,29 @@ router.post('/request_searchby', isLoggedIn, async(req, res) => {
                 OFFSET ${iOffset}
             `, {type: db.Sequelize.QueryTypes.SELECT});
         } else {
-            list = await db.sequelize.query(`
-                SELECT i.*, DATE_FORMAT(i.createdAt,'%Y-%m-%d %H:%i:%S') AS createdAt, DATE_FORMAT(i.completedAt,'%Y-%m-%d %H:%i:%S') AS completedAt, DATE_FORMAT(i.updatedAt,'%Y-%m-%d %H:%i:%S') AS updatedAt, u.strBankOwner AS strUserAccountOwner, u.strBankName AS strBankName
-                FROM Inouts i
-                LEFT JOIN Users u ON u.strNickname = i.strID
-                WHERE DATE(i.createdAt) BETWEEN '${req.body.dateStart}' AND '${req.body.dateEnd}'
-                AND i.strGroupID LIKE '${req.body.strGroupID}%'
-                AND i.eType = '${req.body.type}'
-                AND i.strID = '${req.body.strSearchNickname}'
-                ORDER BY i.createdAt DESC
-                LIMIT ${iLimit}
-                OFFSET ${iOffset}
-            `, {type: db.Sequelize.QueryTypes.SELECT});
+            let datas = await db.sequelize.query(`
+            SELECT i.*,
+                   u.strBankOwner AS strUserAccountOwner, u.strBankName AS strBankName, u.iPassCheckNewUser,
+                   DATE_FORMAT(i.completedAt, '%Y-%m-%d %H:%i:%S') AS completedAt, DATE_FORMAT(i.createdAt, '%Y-%m-%d %H:%i:%S') AS createdAt, DATE_FORMAT(i.updatedAt, '%Y-%m-%d %H:%i:%S') AS updatedAt
+            FROM Inouts i
+            LEFT JOIN Users u ON u.strNickname = i.strID
+            WHERE DATE(i.createdAt) BETWEEN '${req.body.dateStart}' AND '${req.body.dateEnd}'
+            AND i.strGroupID LIKE '${req.body.strGroupID}%'
+            AND i.eType = '${req.body.type}'
+            AND i.strID = '${req.body.strSearchNickname}'
+            ORDER BY i.createdAt DESC
+            LIMIT ${iLimit}
+            OFFSET ${iOffset}
+        `, {type: db.Sequelize.QueryTypes.SELECT});
+
+            for (let i in datas) {
+                let obj = datas[i];
+                obj.iNewUser = 0;
+                if (obj.strBankType == 'NEWUSER') {
+                    obj.iNewUser = 1;
+                }
+                list.push(obj);
+            }
         }
 
         res.send({data : list, totalCount : totalCount, iRootClass:req.user.iClass});
@@ -210,79 +232,9 @@ router.post('/charge', isLoggedIn, async(req, res) => {
     const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle, strOptionCode:dbuser.strOptionCode,
         iRootClass: req.user.iClass, iPermission: req.user.iPermission};
 
-    const iLimit = 20;
-    const iOffset = 0;
-
-    let totalCount = 0;
-    let list = [];
-    let date = new Date();
-    let now = moment(date).format('YYYY-MM-DD');
-    let end = moment(date).add(1, 'days').format('YYYY-MM-DD');
-    if (parseInt(req.body.iClass) == 1) {
-        totalCount = await db.Inouts.count({
-            where: {
-                createdAt:{
-                    [Op.between]:[now, end],
-                },
-                strGroupID:{
-                    [Op.like]:user.strGroupID+'%'
-                },
-                eType:'INPUT',
-                iClass: 2
-            }
-        });
-        list = await db.Inouts.findAll({
-            where: {
-                createdAt:{
-                    [Op.between]:[now, end],
-                },
-                strGroupID:{
-                    [Op.like]:user.strGroupID+'%'
-                },
-                eType:'INPUT',
-                iClass: 2
-            },
-            offset:iOffset,
-            limit:iLimit,
-            order:[['createdAt','DESC']]
-        });
-    } else {
-        totalCount = await db.Inouts.count({
-            where: {
-                createdAt:{
-                    [Op.between]:[now, end],
-                },
-                strGroupID:{
-                    [Op.like]:user.strGroupID+'%'
-                },
-                eType:'INPUT',
-                iClass: {
-                    [Op.gt]:parseInt(req.body.iClass)
-                }
-            }
-        });
-        list = await db.Inouts.findAll({
-            where: {
-                createdAt:{
-                    [Op.between]:[now, end],
-                },
-                strGroupID:{
-                    [Op.like]:user.strGroupID+'%'
-                },
-                eType:'INPUT',
-                iClass: {
-                    [Op.gt]:parseInt(req.body.iClass)
-                }
-            },
-            offset:iOffset,
-            limit:iLimit,
-            order:[['createdAt','DESC']]
-        });
-    }
-
     let iocount = await IInout.GetProcessing(dbuser.strGroupID, dbuser.strNickname, dbuser.iClass);
 
-    res.render('manage_inout/list_input', {iLayout:0, iHeaderFocus:2, req_list:list, user:user, iocount:iocount, totalCount:totalCount});
+    res.render('manage_inout/list_input', {iLayout:0, iHeaderFocus:2, user:user, iocount:iocount});
 });
 
 router.post('/exchange', isLoggedIn, async(req, res) => {
@@ -370,7 +322,6 @@ router.post('/exchange', isLoggedIn, async(req, res) => {
     res.render('manage_inout/list_output', {iLayout:0, iHeaderFocus:2, req_list:list, user:user, iocount:iocount, totalCount:totalCount});
 })
 
-//router.post('/updatechargestate', isLoggedIn, async (req, res) => {
 router.post('/request_inputstate', isLoggedIn, async (req, res) => {
 
     console.log(req.body);
@@ -786,8 +737,7 @@ router.post('/request_outputstate', isLoggedIn, async (req, res) => {
 });
 
 
-//router.post('/search_total_exchange', isLoggedIn, async (req, res) => {
-router.post('/request_outputlist', isLoggedIn, async (req, res) => {    
+router.post('/request_outputlist', isLoggedIn, async (req, res) => {
 
     console.log("****************************************************");
     console.log(req.body);
@@ -884,16 +834,6 @@ router.post('/request_outputlist', isLoggedIn, async (req, res) => {
         res.send(object);
     
     }
-});
-
-router.get('/popup_requestexchange', isLoggedIn, async (req, res) => {
-
-    // if ( req.user == undefined )
-    // {
-    //     res.redirect('/account/login');
-    // }
-    // else
-        res.render('manage_inout/popup_requestexchange', {iLayout:1, iHeaderFocus:1});
 });
 
 router.post('/request_savememo', isLoggedIn, async (req, res) => {
@@ -1200,14 +1140,25 @@ router.post('/request_change_bank_type', async (req, res) => {
 
     let id = req.body.id ?? 0;
     let eType = req.body.eType ?? '';
-    if (id == 0 || eType == '') {
+    let userId = req.body.userId ?? 0;
+    if (id == 0 || eType == '' || userId == 0) {
         res.send({result:'FAIL', msg: '필수값 없음'});
         return;
     }
+
     let obj = await db.BankRecords.findOne({where : {id:id}});
     if (obj == null) {
         res.send({result:'FAIL', msg: '해당 정보 없음'});
         return;
+    }
+
+    // 동일 항목 사용중 체크
+    if (eType == 'ACTIVE') {
+        let list = await db.BankRecords.findAll({where: {userId: userId, eType:eType, eBankType:obj.eBankType}});
+        if (list.length > 0) {
+            res.send({result:'FAIL', msg: '사용중인 계좌가 있습니다. 미사용으로 변경 후에 변경해주세요.'});
+            return;
+        }
     }
 
     await obj.update({
@@ -1263,8 +1214,9 @@ router.post('/request_bank_add', async (req, res) => {
     let bankNumber = req.body.bankNumber ?? '';
     let bankHolder = req.body.bankHolder ?? '';
     let strNickname = req.body.strNickname;
+    let eBankType = req.body.eBankType ?? '';
 
-    if (bankName == '' || bankName == '' || bankHolder == '' || strNickname == '') {
+    if (bankName == '' || bankName == '' || bankHolder == '' || strNickname == '' || eBankType == '') {
         res.send({result:'FAIL', msg: '입력값 부족'});
         return;
     }
@@ -1277,6 +1229,7 @@ router.post('/request_bank_add', async (req, res) => {
         strBankHolder: bankHolder,
         userId: user.id,
         eType:'STOP',
+        eBankType:eBankType
     });
     res.send({result:'OK', msg:'등록성공'});
 });

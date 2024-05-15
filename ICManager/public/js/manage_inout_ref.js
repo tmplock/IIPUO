@@ -224,6 +224,11 @@ let SetInputList = (list, iRootClass) => {
 
     for ( let i in list ) {
 
+        let bgColor = '#FFFFFF';
+        if ((list[i].iNewUser ?? 0) == 1) {
+            bgColor = '#E7AD6C';
+        }
+
         let strParent = list[i].strAdminNickname;
 
         if ( parseInt(user.iClass) == 3 )
@@ -240,11 +245,17 @@ let SetInputList = (list, iRootClass) => {
             tagAccountOwner = `<td>${list[i].strAccountOwner}</td>`;
         }
 
+        // 신규 가입 여부
+        let tagNewUser = '';
+        if ((list[i].iNewUser ?? 0) == 1) {
+            tagNewUser = `<font style="color:red;font-size:15px;"> ❊ </font>`;
+        }
+
         let tag = `
-            <tr name="${list[i].id}" nickname="${list[i].strID}">
+            <tr style="background-color:${bgColor};" name="${list[i].id}" nickname="${list[i].strID}">
             <td>${list[i].id}</td>
             <td>${strParent}</td>
-            <td><a href="javascript:OnClickNickname('${list[i].strID}');"><font style="color:blue;">${GetClassNickName(list[i].iClass, list[i].strID)}</font></a></td>
+            <td><a href="javascript:OnClickNickname('${list[i].strID}');"><font style="color:blue;">${GetClassNickName(list[i].iClass, list[i].strID)}</font></a>${tagNewUser}</td>
             ${tagAccountOwner}
             <td><font style="color:blue;">${list[i].iAmount.toLocaleString()}</font></td>`;
         

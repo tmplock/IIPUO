@@ -1475,6 +1475,9 @@ function DoApplyRolling(user)
 	let fPBDoubleParent = user.fPBDoubleR;
 	let fPBTripleParent = user.fPBTripleR;
 
+	let fSettleBaccaratParent = user.fSettleBaccarat;
+	let fSettleSlotParent = user.fSettleSlot;
+
 	for ( var i = 0; i < agents.length; ++i)
 	{
 		const element = agents[i];
@@ -1486,6 +1489,8 @@ function DoApplyRolling(user)
 		var fPBSingle = 0.0;
 		var fPBDouble = 0.0;
 		var fPBTriple = 0.0;
+		var fSettleBaccarat = parseFloat($(`#fSettleBaccarat${element.id}`).val());
+		var fSettleSlot = parseFloat($(`#fSettleSlot${element.id}`).val());
 
 		var iClass = parseInt($(`#iClass${element.id}`).val());
 		//
@@ -1537,6 +1542,8 @@ function DoApplyRolling(user)
 			list.push(fPBSingle);
 			list.push(fPBDouble);
 			list.push(fPBTriple);
+			list.push(fSettleBaccarat);
+			list.push(fSettleSlot);
 		}
 	}
 

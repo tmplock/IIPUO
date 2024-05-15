@@ -53,6 +53,9 @@ module.exports = (sequelize, DataTypes) => {
         strAccountNumber: {
             type:DataTypes.STRING,
         },
+        strBankType: {
+            type:DataTypes.STRING,
+        },
         iPreviousCash: {
             type:DataTypes.INTEGER,
         },

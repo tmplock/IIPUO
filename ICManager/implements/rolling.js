@@ -220,14 +220,16 @@ let GetAgentFromParameter = (array, strNickname) => {
         if ( array[i].strNickname == strNickname )
         {
             return {strNickname:array[i].strNickname,
-            iClass:array[i].iClass,
-            fSlotR:array[i].fSlot,
-            fBaccaratR:array[i].fBaccarat,
-            fUnderOverR:array[i].fUnderOver,
-            fPBR:array[i].fPB,
-            fPBSingleR:array[i].fPBSingle,
-            fPBDoubleR:array[i].fPBDouble,
-            fPBTripleR:array[i].fPBTriple
+                iClass:array[i].iClass,
+                fSlotR:array[i].fSlot,
+                fBaccaratR:array[i].fBaccarat,
+                fUnderOverR:array[i].fUnderOver,
+                fPBR:array[i].fPB,
+                fPBSingleR:array[i].fPBSingle,
+                fPBDoubleR:array[i].fPBDouble,
+                fPBTripleR:array[i].fPBTriple,
+                fSettleBaccarat:array[i].fSettleBaccarat,
+                fSettleSlot:array[i].fSettleSlot,
             };
             //array[i];
         }
@@ -242,9 +244,9 @@ var inline_ModifyRollingGroup = async (array)=> {
     let ret = {result:"OK"};
     let list = [];
 
-    for ( var i = 0; i < array.length/9; ++i)
+    for ( var i = 0; i < array.length/11; ++i)
     {
-        const cDefault = parseInt(i*9);
+        const cDefault = parseInt(i*11);
 
         var object = {};
         object.strNickname = array[cDefault+0];
@@ -256,6 +258,8 @@ var inline_ModifyRollingGroup = async (array)=> {
         object.fPBSingle = array[cDefault+6];
         object.fPBDouble = array[cDefault+7];
         object.fPBTriple = array[cDefault+8];
+        object.fSettleBaccarat = array[cDefault+9];
+        object.fSettleSlot = array[cDefault+10];
 
         list.push(object);
     }
@@ -295,6 +299,8 @@ var inline_ModifyRollingGroup = async (array)=> {
                     t1.fPBSingleR as fParentPBSingleR,
                     t1.fPBDoubleR as fParentPBDoubleR,
                     t1.fPBTripleR as fParentPBTripleR,
+                    t1.fSettleBaccarat as fParentSettleBaccarat,
+                    t1.fSettleSlot as fParentSettleSlot,
                     t1.strNickname as strParentNickname
             FROM Users AS t1
             LEFT JOIN Users AS t2 ON t2.iParentID = t1.id
@@ -318,6 +324,12 @@ var inline_ModifyRollingGroup = async (array)=> {
         } else if ( list[i].fUnderOver > parent.fParentUnderOverR ) {
             ret.result = 'FAIL';
             ret.name = `[${list[i].strNickname}] 언더오버 롤링값은 상위보다 높을 수 없습니다`;
+        } else if ( list[i].fSettleBaccarat > parent.fParentSettleBaccarat ) {
+            ret.result = 'FAIL';
+            ret.name = `[${list[i].strNickname}] 바카라 죽장값은 상위보다 높을 수 없습니다`;
+        } else if ( list[i].fSettleSlot > parent.fParentSettleSlot ) {
+            ret.result = 'FAIL';
+            ret.name = `[${list[i].strNickname}] 슬롯 죽장값은 상위보다 높을 수 없습니다`;
         }
 
         if (ret.result == 'FAIL')
@@ -360,6 +372,12 @@ var inline_ModifyRollingGroup = async (array)=> {
                 } else if ( list[i].fUnderOver < child.fUnderOverR ) {
                     ret.result = "FAIL";
                     ret.name = `[${list[i].strNickname}] 언더오버 롤링값은 하위(${child.strNickname})보다 낮을 수 없습니다.`;
+                } else if ( list[i].fSettleBaccarat < child.fSettleBaccarat ) {
+                    ret.result = "FAIL";
+                    ret.name = `[${list[i].strNickname}] 바카라 죽장값은 하위(${child.strNickname})보다 낮을 수 없습니다.`;
+                } else if ( list[i].fSettleSlot < child.fSettleSlot) {
+                    ret.result = "FAIL";
+                    ret.name = `[${list[i].strNickname}] 슬롯 죽장값은 하위(${child.strNickname})보다 낮을 수 없습니다.`;
                 }
                 if (ret.result == 'FAIL')
                     return ret;

@@ -348,7 +348,16 @@ router.post('/registeragent', isLoggedIn, async(req, res) => {
 
     res.render('manage_partner/popup_registeragent', {iLayout:1, parent:user});
 
-})
+});
+
+router.post('/register_agent', isLoggedIn, async (req, res) => {
+    const agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
+    agent.iRootClass = req.user.iClass;
+    agent.iPermission = req.user.iPermission;
+    agent.iAgentClass = req.body.iAgentClass;
+    let parents = await IAgent.GetParentList(req.body.strGroupID, req.body.iClass, agent);
+    res.render('manage_partner/popup_register_agent', {iLayout:2, iHeaderFocus:22, agent:agent, strParent:parents.strParents, user:agent, parent:agent});
+});
 
 router.post('/popup_listadmin_view', isLoggedIn, async(req, res) => {
     console.log(req.body);
@@ -598,6 +607,71 @@ router.post('/request_confirmagentnickname', isLoggedIn, async(req, res) => {
         res.send('EXIST');
 })
 
+router.post('/request_confirm_auto_register_value', isLoggedIn, async(req, res) => {
+    console.log(req.body);
+
+    let strNickname = req.body.strNickname ?? '';
+    let strID = req.body.strID ?? '';
+    let number = parseInt(req.body.number ?? 0);
+
+    if (strID == '') {
+        res.send({result: 'FAIL', msg: '아이디을 입력해주세요'});
+        return;
+    }
+    if (strNickname == '') {
+        res.send({result: 'FAIL', msg: '닉네임을 입력해주세요'});
+        return;
+    }
+    if (number < 1) {
+        res.send({result: 'FAIL', msg: '자동생성 입력값을 확인해주세요'});
+        return;
+    }
+
+    // 체크 항목 리스트 만들기
+    let idList = [];
+    let nicknameList = [];
+    for (let i = 1; i<number; i++) {
+        idList.push(`${strID}${i}`);
+        nicknameList.push(`${strNickname}${i}`);
+    }
+
+    let listID = await db.Users.findAll({
+        where: {
+            strID: {
+                [Op.in]:idList
+            }
+        }
+    });
+    if (listID.length > 0) {
+        let msg = '';
+        for (let i in listID) {
+            msg = msg == '' ? `${listID[i].strID}` : `${msg}, ${listID[i].strID}`;
+        }
+        res.send({result: 'FAIL', msg: `중복된 아이디가 있습니다(${msg})`});
+        return;
+    }
+
+
+    let listNickname = await db.Users.findAll({
+        where: {
+            strNickname: {
+                [Op.in]:nicknameList
+            }
+        }
+    });
+    if (listNickname.length > 0) {
+        let msg = '';
+        for (let i in listNickname) {
+            msg = msg == '' ? `${listNickname[i].strNickname}` : `${msg}, ${listNickname[i].strNickname}`;
+        }
+        res.send({result: 'FAIL', msg: `중복된 닉네임이 있습니다(${msg})`});
+        return;
+    }
+
+    res.send({result:'OK' , msg: ''});
+})
+
+
 var leadingZeros = (n, digits) => {
     var zero = '';
     n = n.toString();
@@ -642,20 +716,41 @@ let CalculateGroupID = async (strParentGroupID, iParentClass) => {
 
 router.post('/request_register', isLoggedIn, async(req, res) => {
     console.log(req.body);
+    // 권한 체크
+    let iClass = parseInt(req.body.iParentClass)+1;
+    if (iClass <= req.user.iClass) {
+        res.send({result:'FAIL', string:`허가되지 않은 사용자입니다`});
+        return;
+    }
+
     try {
-        if (parseFloat(req.body.fSlotR) < 0 || parseFloat(req.body.fBaccaratR) < 0 || parseFloat(req.body.fUnderOverR) < 0) {
+        let fSettleBaccarat = parseFloat(req.body.fSettleBaccarat ?? 0);
+        fSettleBaccarat = Number.isNaN(fSettleBaccarat) ? 0 : fSettleBaccarat;
+
+        let fSettleSlot = parseFloat(req.body.fSettleSlot ?? 0);
+        fSettleSlot = Number.isNaN(fSettleSlot) ? 0 : fSettleSlot;
+
+        let fBaccaratR = parseFloat(req.body.fBaccaratR ?? 0);
+        fBaccaratR = Number.isNaN(fBaccaratR) ? 0 : fBaccaratR;
+
+        let fSlotR = parseFloat(req.body.fSlotR ?? 0);
+        fSlotR = Number.isNaN(fSlotR) ? 0 : fSlotR;
+
+        let fUnderOverR = parseFloat(req.body.fUnderOverR ?? 0);
+        fUnderOverR = Number.isNaN(fUnderOverR) ? 0 : fUnderOverR;
+
+        let iPassCheckNewUser = parseInt(req.body.iPassCheckNewUser ?? 1);
+        iPassCheckNewUser = Number.isNaN(iPassCheckNewUser) ? 1 : iPassCheckNewUser;
+
+        if (fSlotR < 0 || fBaccaratR < 0 || fUnderOverR < 0) {
             res.send({result:'Error', error:'Rolling', string:'롤링 설정값을 확인해주세요'});
             return;
         }
 
-        if (parseFloat(req.body.fSettleSlot) < 0 || parseFloat(req.body.fSettleBaccarat) < 0) {
+        if (fSettleSlot < 0 || fSettleBaccarat < 0) {
             res.send({result:'Error', error:'Settle', string:'죽장 설정값을 확인해주세요'});
             return;
         }
-
-
-        let strGroupID = await CalculateGroupID(req.body.strParentGroupID, req.body.iParentClass);
-        console.log(`parent : ${req.body.strParentGroupID}, child : ${strGroupID}`);
 
         const parent = await db.Users.findOne({where:{id:req.body.iParentID}});
         if ( parent == null ) {
@@ -664,25 +759,30 @@ router.post('/request_register', isLoggedIn, async(req, res) => {
         }
         if ( parent != null )
         {
-            if ( parent.fSlotR < parseFloat(req.body.fSlotR) ||
-                parent.fBaccaratR < parseFloat(req.body.fBaccaratR) ||
-                parent.fUnderOverR < parseFloat(req.body.fUnderOverR) ||
-                parent.fPBR < parseFloat(req.body.fPBR) ||
-                parent.fPBSingleR < parseFloat(req.body.fPBSingleR) ||
-                parent.fPBDoubleR < parseFloat(req.body.fPBDoubleR) ||
-                parent.fPBTripleR < parseFloat(req.body.fPBTripleR) )
+            if ( parent.fSlotR < fSlotR ||
+                parent.fBaccaratR < fBaccaratR ||
+                parent.fUnderOverR < fUnderOverR )
             {
                 res.send({result:'Error', error:'Rolling', string:'롤링비(%)는 상위 에이전트 보다 클 수 없습니다.'});
                 return;
             }
-            else if (parent.fSettleBaccarat < parseFloat(req.body.fSettleBaccarat) ||
-                parent.fSettleSlot < parseFloat(req.body.fSettleSlot) ||
-                parent.fSettlePBA < parseFloat(req.body.fSettlePBA) ||
-                parent.fSettlePBB < parseFloat(req.body.fSettlePBB) )
+            else if (parent.fSettleBaccarat < fSettleBaccarat || parent.fSettleSlot < fSettleSlot)
             {
                 res.send({result:'Error', error:'Settle', string:'죽장(%)은 상위 에이전트 보다 클 수 없습니다.'});
                 return;
             }
+        }
+
+        let iAutoRegisterNumber = parseInt(req.body.iAutoRegisterNumber);
+        let iCheckAutoRegister = parseInt(req.body.iCheckAutoRegister ?? 0);
+        if (iCheckAutoRegister == 1) {
+            if (iAutoRegisterNumber < 1) {
+                res.send({result:'Error', error:'FAIL', string:'자동생성 입력값을 확인해주세요'});
+                return;
+            }
+            iAutoRegisterNumber = iAutoRegisterNumber + 1; // 원본 추가
+        } else {
+            iAutoRegisterNumber = 1;
         }
 
         let iLoginMax = 1;
@@ -692,49 +792,50 @@ router.post('/request_register', isLoggedIn, async(req, res) => {
         } else if (iClass == 3) {
             iLoginMax = 1;
         }
+        for (let i = 0; i < iAutoRegisterNumber; i++) {
+            let strID = req.body.strID;
+            let strNickname = req.body.strNickname;
+            if (i > 0) {
+                strID = `${req.body.strID}${i}`;
+                strNickname = `${req.body.strNickname}${i}`;
+            }
+            let strGroupID = await CalculateGroupID(req.body.strParentGroupID, req.body.iParentClass);
 
-        await db.Users.create({
-            strID:req.body.strID,
-            strPassword:req.body.strPassword,
-            strNickname:req.body.strNickname,
-            strMobile:req.body.strMobileNo,
-            strBankname:req.body.strBankName,
-            strBankAccount:req.body.strAccountNumber,
-            strBankOwner:req.body.strAccountOwner,
-            strBankPassword:'',
-            strOutputPassowrd:'',
-            iClass:parseInt(req.body.iParentClass)+1,
-            strGroupID:strGroupID,
-            iParentID:req.body.iParentID,
-            iCash:0,
-            iLoan:0,
-            iRolling:0,
-            iSettle:0,
-            iSettleAcc:0,
-            fBaccaratR:req.body.fBaccaratR,
-            fSlotR:req.body.fSlotR,
-            fUnderOverR:req.body.fUnderOverR,
-            fPBR:req.body.fPBR,
-            fPBSingleR:req.body.fPBSingleR,
-            fPBDoubleR:req.body.fPBDoubleR,
-            fPBTripleR:req.body.fPBTripleR,
-            fSettleSlot:req.body.fSettleBaccarat,
-            fSettleBaccarat:req.body.fSettleSlot,
-            fSettlePBA:req.body.fSettlePBA,
-            fSettlePBB:req.body.fSettlePBB,
-            eState:'BLOCK',
-            //strOptionCode:'00000000',
-            strOptionCode:req.body.strOptionCode,
-            strPBOptionCode:req.body.strPBOptionCode,
-            iPBLimit:req.body.iPBLimit,
-            iPBSingleLimit:req.body.iPBSingleLimit,
-            iPBDoubleLimit:req.body.iPBDoubleLimit,
-            iPBTripleLimit:req.body.iPBTripleLimit,
-            strSettleMemo:'',
-            iNumLoginFailed: 0,
-            iPermission:0,
-            iLoginMax:iLoginMax
-        });
+            await db.Users.create({
+                strID:strID,
+                strNickname:strNickname,
+                strPassword:req.body.strPassword,
+                strMobile:req.body.strMobileNo,
+                strBankname:req.body.strBankName,
+                strBankAccount:req.body.strAccountNumber,
+                strBankOwner:req.body.strAccountOwner,
+                strBankPassword:'',
+                strOutputPassowrd:'',
+                iClass:parseInt(req.body.iParentClass)+1,
+                strGroupID:strGroupID,
+                iParentID:req.body.iParentID,
+                iCash:0,
+                iLoan:0,
+                iRolling:0,
+                iSettle:0,
+                iSettleAcc:0,
+                fBaccaratR:fBaccaratR,
+                fSlotR:fSlotR,
+                fUnderOverR:fUnderOverR,
+                fSettleSlot:fSettleSlot,
+                fSettleBaccarat:fSettleBaccarat,
+                eState:'BLOCK',
+                //strOptionCode:'00000000',
+                strOptionCode:req.body.strOptionCode,
+                strPBOptionCode:req.body.strPBOptionCode,
+                strSettleMemo:'',
+                iNumLoginFailed: 0,
+                iPermission:0,
+                iLoginMax:iLoginMax,
+                iPassCheckNewUser:iPassCheckNewUser
+            });
+        }
+
         res.send({result:'OK', string:'에이전트 생성을 완료 하였습니다.'});
     } catch (err) {
         res.send({result:'FAIL', string:`에이전트 생성을 실패했습니다.(${err})`});
@@ -933,10 +1034,20 @@ router.post('/request_settingodds', isLoggedIn, async (req, res) => {
     console.log(req.body);
 
     let fRollingBaccarat = parseFloat(req.body.fRollingBaccarat);
+    fRollingBaccarat = Number.isNaN(fRollingBaccarat) ? 0 : fRollingBaccarat;
+
     let fRollingSlot = parseFloat(req.body.fRollingSlot);
+    fRollingSlot = Number.isNaN(fRollingSlot) ? 0 : fRollingSlot;
+
     let fRollingUnderOver = parseFloat(req.body.fRollingUnderOver);
+    fRollingUnderOver = Number.isNaN(fRollingUnderOver) ? 0 : fRollingUnderOver;
+
     let fSettleSlot = parseFloat(req.body.fSettleSlot);
+    fSettleSlot = Number.isNaN(fSettleSlot) ? 0 : fSettleSlot;
+
     let fSettleBaccarat = parseFloat(req.body.fSettleBaccarat);
+    fSettleBaccarat = Number.isNaN(fSettleBaccarat) ? 0 : fSettleBaccarat;
+
     let iClass = parseInt(req.body.iClass);
     // 본사 밑에 부본사 비율 확인
     let subUsers = await db.Users.findAll({
@@ -1060,7 +1171,7 @@ router.post('/request_initoutputpass', isLoggedIn, async (req, res) => {
 });
 
 //에이전트 정보 수정
-router.post('/request_agentinfo_modify',isLoggedIn, async (req, res) => {
+router.post('/request_agentinfo_modify',async (req, res) => {
 
     console.log(`/request_agentinfo_modify`);
     console.log(req.body);
@@ -1069,7 +1180,25 @@ router.post('/request_agentinfo_modify',isLoggedIn, async (req, res) => {
 
     let strErrorCode = '';
 
-    if (parseFloat(req.body.fSlotR) < 0 || parseFloat(req.body.fBaccaratR) < 0 || parseFloat(req.body.fUnderOverR) < 0) {
+    let fSettleBaccarat = parseFloat(req.body.fSettleBaccarat ?? 0);
+    fSettleBaccarat = Number.isNaN(fSettleBaccarat) ? 0 : fSettleBaccarat;
+
+    let fSettleSlot = parseFloat(req.body.fSettleSlot ?? 0);
+    fSettleSlot = Number.isNaN(fSettleSlot) ? 0 : fSettleSlot;
+
+    let fSlotR = parseFloat(req.body.fSlotR ?? 0);
+    fSlotR = Number.isNaN(fSlotR) ? 0 : fSlotR;
+
+    let fBaccaratR = parseFloat(req.body.fBaccaratR ?? 0);
+    fBaccaratR = Number.isNaN(fBaccaratR) ? 0 : fBaccaratR;
+
+    let fUnderOverR = parseFloat(req.body.fUnderOverR ?? 0);
+    fUnderOverR = Number.isNaN(fUnderOverR) ? 0 : fUnderOverR;
+
+    let iPassCheckNewUser = parseInt(req.body.iPassCheckNewUser ?? 1);
+    iPassCheckNewUser = Number.isNaN(iPassCheckNewUser) ? 1 : iPassCheckNewUser;
+
+    if (fSlotR < 0 || fBaccaratR < 0 || fUnderOverR < 0) {
         strErrorCode = 'ERRORMSG';
         res.send({result:'ERROR', code:strErrorCode, msg: '롤링 설정값을 확인해주세요'});
         return;
@@ -1189,13 +1318,13 @@ router.post('/request_agentinfo_modify',isLoggedIn, async (req, res) => {
         if ( user.iParentID != null )
         {
             let parent = await db.Users.findOne({where:{id:user.iParentID}});
-            if ( null != parent )
+            if ( null != parent && parent.iClass > 1 )
             {
                 console.log(`####################################################### ${parent.strID}, ${parent.iPBLimit}, ${req.body.iPBLimit}`);
-                if ( 
-                    parent.fSlotR < req.body.fSlotR ||
-                    parent.fBaccaratR < req.body.fBaccaratR ||
-                    parent.fUnderOverR < req.body.fUnderOverR
+                if (
+                    parent.fSlotR < fSlotR ||
+                    parent.fBaccaratR < fBaccaratR ||
+                    parent.fUnderOverR < fUnderOverR
                    )
                 {
                     console.log(`########## ModifyAgentInfo : Error Parent`);
@@ -1203,6 +1332,21 @@ router.post('/request_agentinfo_modify',isLoggedIn, async (req, res) => {
                     strErrorCode = 'GreaterThanParent';
                     res.send({result:'ERROR', code:strErrorCode});
                     return;
+                }
+
+                // 죽장은 본사 ~ 대본만 체크
+                if (parent.iClass == 3 || parent.iClass == 4) {
+                    if (
+                        parent.fSettleBaccarat < fSettleBaccarat ||
+                        parent.fSettleSlot < fSettleSlot
+                    )
+                    {
+                        console.log(`########## ModifyAgentInfo : Error Parent`);
+                        bUpdate = false;
+                        strErrorCode = 'GreaterThanParent';
+                        res.send({result:'ERROR', code:strErrorCode});
+                        return;
+                    }
                 }
             }
         }
@@ -1221,10 +1365,10 @@ router.post('/request_agentinfo_modify',isLoggedIn, async (req, res) => {
             for ( let i in children )
             {
                 let child = children[i];
-                if ( 
-                    child.fSlotR > req.body.fSlotR ||
-                    child.fBaccaratR > req.body.fBaccaratR ||
-                    child.fUnderOverR > req.body.fUnderOverR
+                if (
+                    child.fSlotR > fSlotR ||
+                    child.fBaccaratR > fBaccaratR ||
+                    child.fUnderOverR > fUnderOverR
                    )
                 {
                     console.log(`########## ModifyAgentInfo : Error Children`);
@@ -1232,7 +1376,22 @@ router.post('/request_agentinfo_modify',isLoggedIn, async (req, res) => {
                     strErrorCode = 'LessThanChild';
                     res.send({result:'ERROR', code:strErrorCode});
                     return;
-                }               
+                }
+
+                // 죽장은 본사 ~ 대본만 체크
+                if (child.iClass == 4 || child.iClass == 5 || child.iClass == 6) {
+                    if (
+                        child.fSettleBaccarat > fSettleBaccarat ||
+                        child.fSettleSlot > fSettleSlot
+                    )
+                    {
+                        console.log(`########## ModifyAgentInfo : Error Children`);
+                        bUpdate = false;
+                        strErrorCode = 'LessThanChild';
+                        res.send({result:'ERROR', code:strErrorCode});
+                        return;
+                    }
+                }
             }
         }
 
@@ -1243,10 +1402,13 @@ router.post('/request_agentinfo_modify',isLoggedIn, async (req, res) => {
                 strNickname:req.body.strNickname,
                 strID:req.body.strID,
                 strOptionCode:req.body.strOptionCode,
-                fSlotR:req.body.fSlotR,
-                fBaccaratR:req.body.fBaccaratR,
-                fUnderOverR:req.body.fUnderOverR,
+                fSlotR:fSlotR,
+                fBaccaratR:fBaccaratR,
+                fUnderOverR:fUnderOverR,
+                fSettleBaccarat:fSettleBaccarat,
+                fSettleSlot:fSettleSlot,
                 iPermission:req.body.iPermission,
+                iPassCheckNewUser:iPassCheckNewUser
             };
 
             if (req.body.strPassword != undefined && req.body.strPassword != '******') {
@@ -1279,7 +1441,8 @@ router.post('/request_agentinfo_modify',isLoggedIn, async (req, res) => {
                 });
             }
 
-            await user.update(data);
+            await db.Users.update(data, {where: {id:user.id}});
+            // await user.update(data);
 
             //  현재 정책상 본사일 경우만 롤링을 수정할 수 있다. 아래의 코드는 하위 에이전트 전체를 같은 값으로 세팅 하는 것이다.
             if ( req.user.iClass == 3 && user.iClass != 8 )
@@ -1350,7 +1513,7 @@ router.post('/request_agentinfo_modify',isLoggedIn, async (req, res) => {
     {
         res.send({result:'ERROR', code:strErrorCode});
     }
-});
+}, isLoggedIn);
 
 const logMessage = (source, data) => {
     let msg = '';
@@ -1413,6 +1576,18 @@ const logMessage = (source, data) => {
             msg = `슬롯롤링 변경(${source.fSlotR}=>${data.fSlotR})`;
         else
             msg = `${msg} | 슬롯롤링 변경(${source.fSlotR}=>${data.fSlotR})`;
+    }
+    if (source.fSettleBaccarat != data.fSettleBaccarat) {
+        if (msg == '')
+            msg = `바카라 죽장 변경(${source.fSettleBaccarat}=>${data.fSettleBaccarat})`;
+        else
+            msg = `${msg} | 바카라 죽장 변경(${source.fSettleBaccarat}=>${data.fSettleBaccarat})`;
+    }
+    if (source.fSettleSlot != data.fSettleSlot) {
+        if (msg == '')
+            msg = `슬롯 죽장 변경(${source.fSettleSlot}=>${data.fSettleSlot})`;
+        else
+            msg = `${msg} | 슬롯 죽장 변경(${source.fSettleSlot}=>${data.fSettleSlot})`;
     }
 
     return msg;

@@ -208,17 +208,18 @@ router.post('/request_share_apply', isLoggedIn, async  (req, res) => {
         }
 
         let list = [];
-        for ( let i = 0; i < json.length/8; ++i)
+        for ( let i = 0; i < json.length/9; ++i)
         {
-            const cDefault = parseInt(i*8);
+            const cDefault = parseInt(i*9);
             var obj = {};
             obj.strNickname = json[cDefault+0];
             obj.iShareOrgin = json[cDefault+1]; // 순이익
             obj.iSlotCommission = json[cDefault+2]; // 슬롯알값
-            // obj.iPayback = json[cDefault+3];
+            obj.iShareReceive = json[cDefault+3];
+            // obj.iPayback = json[cDefault+4];
             obj.iPayback = 0;
-            obj.iSum = json[cDefault+4]; // 합계(순이익 - 슬롯알값)
-            obj.fShareR = json[cDefault+5];  // 지분율
+            obj.iSum = json[cDefault+5]; // 합계(순이익 - 슬롯알값)
+            obj.fShareR = json[cDefault+6];  // 지분율
             let tempShare = parseInt(obj.iSum) * parseFloat(parseInt(obj.fShareR) * 0.01); // 배당금
             if (tempShare > 0) {
                 obj.iShare = Math.floor(tempShare);
@@ -226,7 +227,7 @@ router.post('/request_share_apply', isLoggedIn, async  (req, res) => {
                 obj.iShare = parseInt(tempShare);
             }
 
-            obj.iShareAccBefore = json[cDefault+7];  // 전월 이월 금액
+            obj.iShareAccBefore = json[cDefault+8];  // 전월 이월 금액
             obj.iCreditBefore = parseInt(obj.iShare) + parseInt(obj.iShareAccBefore);
             list.push(obj);
         }
@@ -251,6 +252,7 @@ router.post('/request_share_apply', isLoggedIn, async  (req, res) => {
                             strNickname: obj.strNickname,
                             iShareOrgin: obj.iShareOrgin,
                             iSlotCommission: obj.iSlotCommission,
+                            iShareReceive: obj.iShareReceive,
                             iPayback: obj.iPayback,
                             fShareR: obj.fShareR,
                             iShare: obj.iShare,
@@ -549,6 +551,7 @@ router.post('/request_share_list', isLoggedIn, async(req, res) => {
     let list = await db.sequelize.query(`
             SELECT u.strNickname AS parentNickname, su.strNickname AS strNickname, su.fShareR AS fShareR, su.strID AS strID, su.iShareAccBefore AS iShareAccBefore,
                 IFNULL((SELECT sum(iResult) FROM SettleRecords WHERE strGroupID LIKE CONCAT(su.strGroupID,'%') AND strQuater = '${strQuater}' AND iClass = 4),0) as iShareOrgin,
+                IFNULL((SELECT sum(iSettle) FROM SettleRecords WHERE strGroupID LIKE CONCAT(su.strGroupID,'%') AND strQuater = '${strQuater}' AND iClass = 4 AND iSettle < 0),0) as iShareReceive,
                 IFNULL((SELECT sum(iPayback) FROM SettleRecords WHERE strGroupID LIKE CONCAT(su.strGroupID,'%') AND strQuater = '${strQuater}' AND iClass IN (4, 5)),0) as iPayback,
                 IFNULL((SELECT sum(iSWinlose) FROM SettleRecords WHERE strGroupID LIKE CONCAT(su.strGroupID,'%') AND strQuater = '${strQuater}' AND iClass = 4 AND fSettleSlot = 0),0) as iSWinlose,
                 0 AS iShare,
@@ -563,6 +566,7 @@ router.post('/request_share_list', isLoggedIn, async(req, res) => {
                         WHERE strQuater = '${strQuater2}'
                 ) sr ON su.strNickname = sr.strNickname
             WHERE su.strGroupID LIKE CONCAT('${strGroupID}', '%')
+            ORDER BY parentNickname ASC, strNickname ASC
         `);
     // 완료여부
     let complete = true;

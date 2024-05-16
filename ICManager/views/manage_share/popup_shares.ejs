@@ -45,7 +45,9 @@
                         <col style="width:7%">
                         <col style="width:7%">
                         <col style="width:7%">
-                        <col style="width:30%">
+                        <col style="width:7%">
+                        <col style="width:7%">
+                        <col style="width:16%">
                     </colgroup>
                     <thead>
                     <tr>
@@ -54,6 +56,8 @@
                         <th scope="col">지분자</th>
                         <th scope="col">순이익</th>
                         <th scope="col">슬롯 알값</th>
+                        <th scope="col">미수</th>
+                        <th scope="col">수금</th>
                         <th scope="col">합계</th>
                         <th scope="col">지분율%</th>
                         <th scope="col">배당금</th>
@@ -148,20 +152,18 @@
                 let strNickname = aObject.strNickname ?? '';
                 let iShareOrgin = parseFloat(aObject.iShareOrgin ?? '0'); // 순이익
                 let iSlotCommission = parseFloat(aObject.iSlotCommission ?? 0);
-                // let iPayback = parseFloat(aObject.iPayback ?? 0);
+                let iShareReceive = parseFloat(aObject.iShareReceive ?? 0); // 미수금(마이너스 죽장)
+                // let iPayback = parseFloat(aObject.iPayback ?? 0); // 수금
                 let iPayback = 0;
-                let iSum = iShareOrgin + iSlotCommission + iPayback;
+                let iSum = iShareOrgin + iSlotCommission + iPayback + iShareReceive;
                 let fShareR = parseFloat(aObject.fShareR ?? 0); // 지분율
                 let iShare =parseFloat (aObject.iShare ?? 0); // 배당금
                 if (enable) {
                     iSlotCommission = -parseFloat(aObject.iSWinlose ?? 0) * 0.1; // 슬롯 알값(슬롯 죽장이 0일 경우 슬롯에 대한 수수료를 지분자들이 부담)
-                    iSum = iShareOrgin + iSlotCommission + iPayback;
                     // 서버 전송용
                     aObject.iSlotCommission = iSlotCommission;
                     aObject.iSum = iSum;
                     aObject.iShare = 0; // 배당금은 서버에서 계산 처리
-                } else {
-                    aObject.iSum = iSum;
                 }
 
                 let iShareAccBefore = parseFloat(aObject.iShareAccBefore ?? 0); // 전월 이월금액
@@ -188,6 +190,12 @@
                         </td>
                         <td id='iShareCommision_${strNickname}' style="font-size: 12px; padding: 10px; line-height: 1.5; color:${GetColor(iSlotCommission)};">
                             <label id='iShareCommisionS_${strNickname}' for="mile_sect_cash_2" style="font-size:12px;">${GetNumberSign(iSlotCommission, '0')}</label>
+                        </td>
+                        <td id='iShareReceive_${strNickname}' style="font-size: 12px; padding: 10px; line-height: 1.5; color:${GetColor(iShareReceive)};">
+                            <label id='iShareReceive_${strNickname}' for="mile_sect_cash_2" style="font-size:12px;">${GetNumberSign(iShareReceive, '0')}</label>
+                        </td>
+                        <td id='iPayback_${strNickname}' style="font-size: 12px; padding: 10px; line-height: 1.5; color:${GetColor(iPayback)};">
+                            <label id='iPayback_${strNickname}' for="mile_sect_cash_2" style="font-size:12px;">${GetNumberSign(iPayback, '0')}</label>
                         </td>
                         <td id='iShareTotal_${strNickname}' style="font-size: 12px; padding: 10px; line-height: 1.5; color:${GetColor(iSum)};">
                             <label id='iShareTotal_${strNickname}' for="mile_sect_cash_2" style="font-size:12px;">${GetNumberSign(iSum, '0')}</label>
@@ -238,6 +246,8 @@
                 strIDs.push(strID);
                 data.iShareOrgin += parseFloat(shareList[i].iShareOrgin ?? 0);
                 data.iSlotCommission += parseFloat(shareList[i].iSlotCommission ?? 0);
+                data.iShareReceive += parseFloat(shareList[i].iShareReceive ?? 0);
+                data.iPayback += parseFloat(shareList[i].iPayback ?? 0);
                 data.iSum += parseFloat(shareList[i].iSum ?? 0);
                 if (!enable) {
                     data.iShare += parseFloat(shareList[i].iShare ?? 0);
@@ -252,6 +262,8 @@
                         <td colspan="3">합계</td>
                         <td style="font-size: 12px; padding: 10px; line-height: 1.5; color:${GetColor(data.iShareOrgin)};">${GetNumberSign(data.iShareOrgin, '0')}</td>
                         <td style="font-size: 12px; padding: 10px; line-height: 1.5; color:${GetColor(data.iSlotCommission)};">${GetNumberSign(data.iSlotCommission, '0')}</td>
+                        <td style="font-size: 12px; padding: 10px; line-height: 1.5; color:${GetColor(data.iShareReceive)};">${GetNumberSign(data.iShareReceive, '0')}</td>
+                        <td style="font-size: 12px; padding: 10px; line-height: 1.5; color:${GetColor(data.iPayback)};">${GetNumberSign(data.iPayback, '0')}</td>
                         <td style="font-size: 12px; padding: 10px; line-height: 1.5; color:${GetColor(data.iSum)};">${GetNumberSign(data.iSum, '0')}</td>
                         <td></td>
                         <td style="font-size: 12px; padding: 10px; line-height: 1.5; color:${GetColor(data.iShare)};">${GetNumberSign(data.iShare, '0')}</td>
@@ -265,6 +277,8 @@
             console.log('else');
             $('#list_agents').append(`
                     <tr>
+                        <td></td>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -342,6 +356,7 @@
             let obj = shareList[i];
             let iShareOrgin = obj.iShareOrgin ?? 0;
             let iSlotCommission = obj.iSlotCommission ?? 0;
+            let iShareReceive = obj.iShareReceive ?? 0;
             // let iPayback = obj.iPayback ?? 0;
             let iPayback = 0;
             let iSum = obj.iSum ?? 0;
@@ -351,8 +366,9 @@
 
             list.push(obj.strNickname);
             list.push(iShareOrgin);
-            list.push(iSlotCommission)
-            list.push(iPayback)
+            list.push(iSlotCommission);
+            list.push(iShareReceive);
+            list.push(iPayback);
             list.push(iSum);
             list.push(fShareR);
             list.push(iShare);

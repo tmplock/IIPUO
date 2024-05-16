@@ -288,7 +288,7 @@ $(document).on('click', '#popup_proadmin_settle', ()=> {
 });
 
 $(document).on('click', '#popup_share', ()=> {
-    window.open('', 'popupChk_share', 'width=1280, height=720, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
+    window.open('', 'popupChk_share', 'width=1080, height=720, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
     let $form = $('<form></form>');
     $form.attr('action', '/manage_share/popup_shares');
     $form.attr('method', 'post');

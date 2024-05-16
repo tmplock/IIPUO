@@ -165,7 +165,7 @@ $(document).on('click', "#manage_contact", (event) => {
 })
 
 $(document).on('click', "#manage_share", (event) => {
-    window.open('', 'popupChk_share', 'width=2200, height=720, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
+    window.open('', 'popupChk_share', 'width=1280, height=720, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
     let $form = $('<form></form>');
     $form.attr('action', '/manage_share/popup_shares');
     $form.attr('method', 'post');

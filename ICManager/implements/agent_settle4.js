@@ -374,7 +374,7 @@ exports.GetSettleClass = async (strGroupID, iClass, strQuater, dateStart, dateEn
                      ) sr4 ON sr4.strID=t4.strID
             WHERE t4.iClass = ${iClass} AND t4.strGroupID LIKE CONCAT('${strGroupID}', '%')
             ${lastDateQuery}
-            ORDER BY settleCount ASC, t4.strGroupID ASC
+            ORDER BY settleCount ASC, strAdminNickname ASC, t4.strNickname ASC, t4.strGroupID ASC
                 LIMIT ${limit}
             OFFSET ${offset}
         `, {type: db.Sequelize.QueryTypes.SELECT});
@@ -440,7 +440,7 @@ exports.GetSettleClass = async (strGroupID, iClass, strQuater, dateStart, dateEn
                 ) sr4 ON sr4.strID=t4.strID
             WHERE t5.iClass = ${iClass} AND t5.strGroupID LIKE CONCAT('${strGroupID}', '%')
             ${lastDateQuery}
-            ORDER BY settleCount ASC, t5.strGroupID ASC
+            ORDER BY settleCount ASC, strAdminNickname ASC, t5.strNickname ASC, t5.strGroupID ASC
             LIMIT ${limit}
             OFFSET ${offset}
         `);

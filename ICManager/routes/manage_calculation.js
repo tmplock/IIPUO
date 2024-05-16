@@ -408,14 +408,16 @@ router.post('/request_applysettle_all', isLoggedIn, async (req, res) => {
 
             iSettleAcc = iSettle - iSettleGive;
             if (iSettleGive > 0) {
-                if (iSettleGive > iSettleBeforeAcc) {
+                // 수금액은 지난달 금액이 수금액임(죽장값이 더 클 경우)
+                if (iSettleGive > Math.abs(iSettleBeforeAcc)) {
                     iPayback = -iSettleBeforeAcc;
                 } else {
-                    iPayback = iSettleBeforeAcc - iSettleGive;
+                    // 수금액은 이번달 지급한 죽장값이 수금액임(수금액이 더 클 경우)
+                    iPayback = iSettleGive;
                 }
             } else if (iSettle > 0) {
-                // 죽장은 발생했지만 수금할 금액이 많아서 죽장 지급이 없는 경우(이월금액 - 이번분기 죽장값)
-                iPayback = iSettleBeforeAcc - iSettle;
+                // 수금액은 이번달 발생한 죽장값이 수금액임
+                iPayback = iSettle;
             }
 
             iSettleAccTotal = iSettleAccTotal + iSettleAcc;
@@ -909,7 +911,9 @@ router.post('/request_proadmin_settle_list', isLoggedIn, async (req, res) => {
                  JOIN Users u2 ON u.iParentID = u2.id
         WHERE 1=1
           AND u.iClass=4
-          AND u.strGroupID LIKE CONCAT('${dbuser.strGroupID}', '%');
+          AND u.strGroupID LIKE CONCAT('${dbuser.strGroupID}', '%')
+        ORDER BY parentNickname ASC, u.strNickname ASC, parentGroupID ASC
+        ;
     `);
 
     res.send({result: 'OK', list: list[0]});

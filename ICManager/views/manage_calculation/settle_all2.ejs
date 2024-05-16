@@ -223,7 +223,7 @@
 	let bSending = false;
 
 	let iCurrentPage = 1;
-	let iLimit = 200;
+	let iLimit = 300;
 
 	let settleList = [];
 	let exist = [];
@@ -367,7 +367,7 @@
 					exist = obj.exist;
 					bEnableSettle = true;
 					RequestOverview(user.strGroupID, user.iClass, strQuater, dateQuaterStart, dateQuaterEnd, user.strID);
-					SetList(obj.list, iClass);
+					SetList(obj.list, iClass, true);
 				}
 				else
 				{
@@ -375,7 +375,7 @@
 					exist = obj.exist;
 					bEnableSettle = false;
 					RequestOverview(user.strGroupID, user.iClass, strQuater, dateQuaterStart, dateQuaterEnd, user.strID);
-					SetList(obj.list, iClass);
+					SetList(obj.list, iClass, false);
 				}
 
 				$('#pagination').empty();
@@ -638,7 +638,7 @@
 		$(strParentTag).append(tag);
 	}
 
-	let SetList = (list, iClass) => {
+	let SetList = (list, iClass, bEnable) => {
 		$('#list_agents').empty();
 
 		if ( user.iClass > 1 && user.iClass <= 4 ) {
@@ -669,7 +669,7 @@
 
 		let bVisible = false;
 		let now = new Date();
-		if (true || now.getDate() == 16 || now.getDate() == 1) {
+		if (bEnable && (now.getDate() == 16 || now.getDate() == 1)) {
 			bVisible = true;
 		}
 		if ( user.iClass > 1 && user.iClass <= 3 && user.iPermission != 100 && bEnableSettle) {
@@ -1084,7 +1084,7 @@
 			// 죽장 지급
 			subtag += `<td style="background-color:${color};" class="parent_row_31"><font color="black">${GetNumberSign(data.iSettleGive)}</font></td>`;
 			// 죽장 이월
-			subtag += `<td style="background-color:${color};" class="parent_row_31"><font color="black">${GetNumberSign(data.iSettleAcc)}</font></td>`;
+			subtag += `<td style="background-color:${color};" class="parent_row_31"><font color="black">${GetNumberSign(data.iSettleAccTotal)}</font></td>`;
 			// 수금(전월죽장이월금액에 대한 수금 여부)
 			subtag += `<td style="background-color:${color};" class="parent_row_31"><font color="black" id="payback_${aObject.strNickname}">${GetNumberSign(data.iPayback)}</font></td>`;
 		}
@@ -1285,7 +1285,7 @@
 			// 죽장 지급
 			subtag += `<td style="background-color:${color};" class="parent_row_31"><font color="black">${GetNumberSign(data.iSettleGive)}</font></td>`;
 			// 죽장 이월
-			subtag += `<td style="background-color:${color};" class="parent_row_31"><font color="black">${GetNumberSign(data.iSettleAcc)}</font></td>`;
+			subtag += `<td style="background-color:${color};" class="parent_row_31"><font color="black">${GetNumberSign(data.iSettleAccTotal)}</font></td>`;
 			// 수금(전월죽장이월금액에 대한 수금 여부)
 			subtag += `<td style="background-color:${color};" class="parent_row_31"><font color="black" id="payback_${aObject.strNickname}">${GetNumberSign(data.iPayback)}</font></td>`;
 		}
@@ -1713,11 +1713,13 @@
 		if ( bEnableSettle == false )
 		{
 			alert('이미 정산 되었습니다.');
+			closeAlertModal();
 			return;
 		}
 
 		if (bSending) {
 			alert('처리중입니다.');
+			closeAlertModal();
 			return;
 		}
 		bSending = true;
@@ -1770,12 +1772,14 @@
 			if ( iQuaterSettle > 0 && iQuaterSettle < iInputSettle )
 			{
 				alert('지급 금액이 올바르지 않습니다.');
+				closeAlertModal();
 				return;
 			}
 
 			let iInputQuaterSettle = parseInt(settleList[i].iInputQuaterSettle ?? 0);
-			if (iInputSettle > iInputQuaterSettle) {
+			if (iInputSettle > 0 && iInputSettle > iInputQuaterSettle) {
 				alert('지급 금액이 올바르지 않습니다.');
+				closeAlertModal();
 				return;
 			}
 

@@ -63,6 +63,14 @@ module.exports = (sequelize, DataTypes) => {
         strQuater: {
             type: DataTypes.STRING,
         },
+        // 해당 분기 미수금
+        iShareReceive : {
+            type:DataTypes.INTEGER,
+        },
+        // 미수금 이월
+        iShareReceiveAcc : {
+            type:DataTypes.INTEGER,
+        },
         createdAt:{
             type:DataTypes.DATE,
             get() {

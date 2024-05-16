@@ -382,7 +382,7 @@ exports.GetSettleClass = async (strGroupID, iClass, strQuater, dateStart, dateEn
                      LEFT JOIN Users t3 ON t3.id = t4.iParentID
             WHERE t4.iClass = ${iClass} AND t4.strGroupID LIKE CONCAT('${strGroupID}', '%')
             ${lastDateQuery}
-            ORDER BY settleCount ASC, t4.strGroupID ASC
+            ORDER BY settleCount ASC, strAdminNickname ASC, t4.strNickname ASC, t4.strGroupID ASC
                 LIMIT ${limit}
             OFFSET ${offset}
         `);
@@ -437,7 +437,7 @@ exports.GetSettleClass = async (strGroupID, iClass, strQuater, dateStart, dateEn
                 LEFT JOIN Users t3 ON t3.id = t4.iParentID
             WHERE t5.iClass = ${iClass} AND t5.strGroupID LIKE CONCAT('${strGroupID}', '%')
             ${lastDateQuery}
-            ORDER BY settleCount ASC, t5.strGroupID ASC
+            ORDER BY settleCount ASC, strAdminNickname ASC, t5.strNickname ASC, t5.strGroupID ASC
             LIMIT ${limit}
             OFFSET ${offset}
         `);

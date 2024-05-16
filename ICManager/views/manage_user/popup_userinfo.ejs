@@ -515,6 +515,28 @@
 		});
 	};
 
+	let SetUsingPassNewUser = (iClass) => {
+		if (iClass == 8 || iClass == 7) {
+			try {
+				$('#using_pass_new_user').attr('checked', true);
+				$('#using_pass_new_user').click((e) => {
+					var checked = $('#using_pass_new_user').is(':checked');
+					if (checked) {
+						bCheckPassNewUser = true;
+					} else {
+						bCheckPassNewUser = false;
+					}
+				});
+			} catch (err) {
+				$('#using_pass_new_user').attr('checked', true);
+				bCheckPassNewUser = true;
+			}
+		} else {
+			$('#using_pass_new_user').attr('checked', true);
+			bCheckPassNewUser = true;
+		}
+	}
+
 </script>
 	
 <script type="text/javascript" src="js/manage_partner_popup_menu.js"></script>

@@ -76,7 +76,7 @@
 	let dateQuaterEnd = JSON.parse('<%-JSON.stringify(dateQuaterEnd)%>');
 
 	let iCurrentPage = 1;
-	let iLimit = 200;
+	let iLimit = 300;
 
 	let settleList = [];
 	let exist = [];
@@ -134,13 +134,13 @@
 					adminList = obj.list;
 					exist = obj.exist;
 					bEnableSettle = true;
-					SetList(obj.list, iClass);
+					SetList(obj.list, iClass, true);
 				}
 				else {
 					adminList = obj.list;
 					exist = obj.exist;
 					bEnableSettle = false;
-					SetList(obj.list, iClass);
+					SetList(obj.list, iClass, false);
 				}
 
 				$('#pagination').empty();
@@ -149,12 +149,12 @@
 		});
 	};
 
-	let SetList = (list, iClass) => {
+	let SetList = (list, iClass, bEnable) => {
 		$('#list_agents').empty();
 
 		let bVisible = false;
 		let now = new Date();
-		if (true || now.getDate() == 16 || now.getDate() == 1) {
+		if (bEnable && (now.getDate() == 16 || now.getDate() == 1)) {
 			bVisible = true;
 		}
 		if ( user.iClass > 1 && user.iClass <= 3 && user.iPermission != 100 && bEnableSettle) {

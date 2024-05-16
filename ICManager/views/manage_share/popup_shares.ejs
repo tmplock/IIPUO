@@ -163,6 +163,8 @@
                     aObject.iSlotCommission = iSlotCommission;
                     aObject.iSum = iSum;
                     aObject.iShare = 0; // 배당금은 서버에서 계산 처리
+                } else {
+                    aObject.iSum = iSum;
                 }
 
                 let iShareAccBefore = parseFloat(aObject.iShareAccBefore ?? 0); // 전월 이월금액

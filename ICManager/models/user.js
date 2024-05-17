@@ -201,8 +201,8 @@ module.exports = (sequelize, DataTypes) => {
         fCommission: {
             type: DataTypes.FLOAT,
         },
-        // 신규자 체크 패스 여부(1:패스)
-        iPassCheckNewUser: {
+        // 신규자 통장 기능 사용
+        iCheckNewUser: {
             type: DataTypes.INTEGER,
         }
     }, {

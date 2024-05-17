@@ -189,9 +189,9 @@
 				</colgroup>
 				<p style="background-repeat:no-repeat; background-position:left center; font-size:20px; font-weight: bold; color:#454545; padding-left:22px;">PC방 이용 설정</p>
 				<tr>
-					<th scope="row">PC방 이용 설정</th>
+					<th scope="row">PC방 사용</th>
 					<td colspan="3">
-						<input type="checkbox" style="width:30px;height:30px;color: red" name="using_input" id="using_pc" required="no" message=""> <strong>체크시 이용자 사이트 입출금 기능을 사용할 수 없습니다</strong>
+						<input type="checkbox" style="width:30px;height:30px;color: red" name="using_input" id="using_pc" required="no" message=""> <font style="font-size: 18px;">이용자 사이트 입출금 사용 불가</font>
 					</td>
 				</tr>
 			</table>
@@ -206,9 +206,9 @@
 				</colgroup>
 				<p style="background-repeat:no-repeat; background-position:left center; font-size:20px; font-weight: bold; color:#454545; padding-left:22px;">기타 옵션</p>
 				<tr>
-					<th scope="row">신규자 통장 체크 안함</th>
+					<th scope="row">신규자 통장 사용</th>
 					<td colspan="3">
-						<input type="checkbox" style="width:30px;height:30px;color: red" name="using_input" id="using_pass_new_user" required="no" message=""> <strong>체크시 입금 신청시 일반 계좌가 표시됩니다</strong>
+						<input type="checkbox" style="width:30px;height:30px;color: red" name="using_input" id="using_check_new_user" required="no" message=""> <font style="font-size: 18px;">신규자 통장 사용</font>
 					</td>
 				</tr>
 			</table>
@@ -245,9 +245,9 @@
 				</colgroup>
 				<p style="background-repeat:no-repeat; background-position:left center; font-size:20px; font-weight: bold; color:#454545; padding-left:22px;">PC방 이용 설정</p>
 				<tr>
-					<th scope="row">PC방 이용 설정</th>
+					<th scope="row">PC방 사용</th>
 					<td colspan="3">
-						<input type="checkbox" style="width:30px;height:30px;color: red" name="using_input" id="using_pc" required="no" message=""> <strong>체크시 이용자 사이트 입출금 기능을 사용할 수 없습니다</strong>
+						<input type="checkbox" style="width:30px;height:30px;color: red" name="using_input" id="using_pc" required="no" message=""><font style="font-size: 18px;">이용자 사이트 입출금 사용 불가</font>
 					</td>
 				</tr>
 			</table>
@@ -262,9 +262,9 @@
 				</colgroup>
 				<p style="background-repeat:no-repeat; background-position:left center; font-size:20px; font-weight: bold; color:#454545; padding-left:22px;">기타 옵션</p>
 				<tr>
-					<th scope="row">신규자 통장 체크 안함</th>
+					<th scope="row">신규자 통장 사용</th>
 					<td colspan="3">
-						<input type="checkbox" style="width:30px;height:30px;color: red" name="using_input" id="using_pass_new_user" required="no" message=""> <strong>체크시 입금 신청시 일반 계좌가 표시됩니다</strong>
+						<input type="checkbox" style="width:30px;height:30px;color: red" name="using_input" id="using_check_new_user" required="no" message=""> <font style="font-size: 18px;">신규자 통장 사용</font>
 					</td>
 				</tr>
 			</table>
@@ -281,7 +281,7 @@
 	let bCheckID = false;
 	let bCheckNickname = false;
 	let bUsingPC = false;
-	let bUsingPassNewUser = true;
+	let bUsingCheckNewUser = false;
 
 	$(document).ready( ()=> {
 
@@ -327,11 +327,11 @@
 		});
 
 		<% if ( agent.iClass == 8 || agent.iClass == 7 ) { %>
-			$('#pass_check_new_user').show();
-			let iPassCheckNewUser = parseInt(agent.iPassCheckNewUser ?? 1);
-			iPassCheckNewUser = Number.isNaN(iPassCheckNewUser) ? 1 : iPassCheckNewUser;
-			bUsingPassNewUser = iPassCheckNewUser == 1;
-			$('#using_pass_new_user').attr('checked', bUsingPassNewUser);
+			$('#using_check_new_user').show();
+			let iCheckNewUser = parseInt(agent.iCheckNewUser ?? 0);
+			iCheckNewUser = Number.isNaN(iCheckNewUser) ? 0 : iCheckNewUser;
+			bUsingCheckNewUser = (iCheckNewUser == 1) ? true : false;
+			$('#using_check_new_user').attr('checked', bUsingCheckNewUser);
 		<% } %>
 
 		if (agent.iClass >= 3 && agent.iClass <= 5) {
@@ -358,7 +358,7 @@
 			["#member_nick", "#member_id",
 				"#member_password", '#member_password2', '#bank_owner', '#bank_name', '#bank_num', '#cell'
 				, '#fBaccaratR', '#fUnderOverR', '#fSlotR', '#fSettleBaccarat', '#fSettleSlot'
-				, '#using_input', '#using_output', '#using_pc', '#using_pass_new_user'
+				, '#using_input', '#using_output', '#using_pc', '#using_check_new_user'
 			].forEach(item => {
 				$(item).get(0).disabled = true;
 			});
@@ -367,21 +367,21 @@
 			[
 				"#member_password", '#member_password2', '#bank_owner', '#bank_name', '#bank_num', '#cell'
 				, '#fBaccaratR', '#fUnderOverR', '#fSlotR', '#fSettleBaccarat', '#fSettleSlot'
-				, '#using_input', '#using_output', '#using_pc', '#using_pass_new_user'
+				, '#using_input', '#using_output', '#using_pc', '#using_check_new_user'
 			].forEach(item => {
 				$(item).get(0).disabled = true;
 			});
 			$('#btn_red').hide();
 		} else if ( parseInt(agent.iRootClass) == 4 && parseInt(agent.iClass) == 5 ) {
 			["#member_password", '#member_password2', '#bank_owner', '#bank_name', '#bank_num', '#cell'
-				, '#using_input', '#using_output', '#using_pc', '#using_pass_new_user'
+				, '#using_input', '#using_output', '#using_pc', '#using_check_new_user'
 			].forEach(item => {
 				$(item).get(0).disabled = true;
 			});
 			$('#btn_red').hide();
 		} else if ( parseInt(agent.iRootClass) > 3 ) {
 			["#member_password", '#member_password2', '#bank_name', '#bank_num', '#bank_owner', '#cell'
-				, '#using_input', '#using_output', '#using_pc', '#using_pass_new_user'
+				, '#using_input', '#using_output', '#using_pc', '#using_check_new_user'
 			].forEach(item => {
 				$(item).get(0).disabled = true;
 			});
@@ -579,11 +579,11 @@
 			let strUsingInput = $('#using_input').attr('checked');
 			let strUsingOutput = $('#using_output').attr('checked');
 			let strUsingPC = $('#using_pc').attr('checked');
-			let strUsingPassNewUser = $('#using_pass_new_user').attr('checked');
-			if (strUsingPassNewUser != undefined) {
-				bUsingPassNewUser = true;
+			let strUsingCheckNewUser = $('#using_check_new_user').attr('checked');
+			if (strUsingCheckNewUser != undefined) {
+				bUsingCheckNewUser = true;
 			} else {
-				bUsingPassNewUser = false;
+				bUsingCheckNewUser = false;
 			}
 
 			if ( strUsingPC != undefined ) {
@@ -631,7 +631,7 @@
 		objectData.fSettlePBA = fSettlePBA;
 		objectData.fSettlePBB = fSettlePBB;
 		objectData.strEditorNickname = agent.iRootNickname;
-		objectData.iPassCheckNewUser = bUsingPassNewUser ? 1 : 0;
+		objectData.iCheckNewUser = bUsingCheckNewUser ? 1 : 0;
 
 		if ( strPassword != strPasswordConfirm ){
 			alert(strAlertDifferentPasswordAndConfirm);

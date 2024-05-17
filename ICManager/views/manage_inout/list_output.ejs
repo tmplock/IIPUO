@@ -46,7 +46,7 @@
         <div style="background-color:#ffffff;text-align:right;padding-right:5px;padding-top:0px;padding-bottom:0px;" colspan="19">
             <input style="margin-left:180px;width:100px;" type="text" id="datepicker1" class="datepicker"/>~
             <input style="width:100px;" type="text" id="datepicker2" class="datepicker" />
-            <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearchByOutput(1);"><%=__('Search')%></button>
+            <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearchByOutput(1, false);"><%=__('Search')%></button>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <%=__('Search')%>
             <select id="select_search" style="width:80px;">
@@ -54,7 +54,7 @@
             </select>
 
             <input type="text" value="" style="width:10%;" id="strSearchNickname">
-            <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearchByOutput(1);"><%=__('Search')%></button>
+            <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearchByOutput(1, false);"><%=__('Search')%></button>
 
             <select id="select_limit" style="width:80px;">
                 <option value="20">20개씩</option>
@@ -214,10 +214,10 @@
             `);
         }
 
-        OnClickSearchByOutput(1);
+        OnClickSearchByOutput(1, true);
     });
 
-    let OnClickSearchByOutput = (iPage) => {
+    let OnClickSearchByOutput = (iPage, bInit) => {
         let date1 = $("#datepicker1").val();
         let date2 = $("#datepicker2").val();
         let limit = $("#select_limit").val();
@@ -241,7 +241,11 @@
                         list = data;
                     }
                     SetOutputList(data, obj.iRootClass);
-                    RequestOverview(false);
+                    if (bInit == true) {
+                        RequestOverviewInout(GetCurrentDate(), GetCurrentDate(), strNickname);
+                    } else {
+                        RequestOverviewInout(date1, date2, strNickname);
+                    }
 
                     $("#pagination").empty();
                     $("#pagination").append(getPagination(limit, obj.totalCount, iPage));
@@ -260,7 +264,7 @@
             return;
         }
         iCurrentPage = iPage;
-        OnClickSearchByOutput(iCurrentPage);
+        OnClickSearchByOutput(iCurrentPage, false);
     }
 
     let OnClickRequestInout = (charge) => {

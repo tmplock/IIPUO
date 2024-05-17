@@ -1,9 +1,5 @@
 
-let RequestOverview = (bInput) => {
-
-    const dateStart = $("#datepicker1").val();
-    const dateEnd = $("#datepicker2").val();
-    const strNickname = $("#strSearchNickname").val();
+let RequestOverviewInout = (dateStart, dateEnd, strNickname) => {
     const strAddress = '/manage_inout/request_inoutoverview';
 
     $.ajax({
@@ -33,11 +29,6 @@ let RequestOverview = (bInput) => {
             $('#inout_overview').append(tag);
         }
     });
-}
-
-let OnDocumentReady = (bInput) => {
-
-    RequestOverview(bInput);
 }
 
 let OnCancel = (bInput, event) => {

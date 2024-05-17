@@ -44,7 +44,7 @@
             <input style="margin-left:180px;width:100px;" type="text" id="datepicker1" class="datepicker"/>~
             <input style="width:100px;" type="text" id="datepicker2" class="datepicker" />
 
-            <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearchByInput(1);"><%=__('Search')%></button>
+            <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearchByInput(1, false);"><%=__('Search')%></button>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <%=__('Search')%>
             <select id="select_search" style="width:80px;">
@@ -52,7 +52,7 @@
             </select>
 
             <input type="text" value="" style="width:10%;" id="strSearchNickname">
-            <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearchByInput(1);"><%=__('Search')%></button>
+            <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearchByInput(1, false);"><%=__('Search')%></button>
 
             <select id="select_limit" style="width:80px;">
                 <option value="100">100개씩</option>
@@ -203,7 +203,7 @@
 
         Alert(iocount, "<%=__('RequestInput')%>", "<%=__('RequestOutput')%>,","<%=__('LetterSend')%>");
 
-        OnClickSearchByInput(1);
+        OnClickSearchByInput(1, true);
     });
 
     $(document).on('click', '.cancel', (event)=> {
@@ -220,7 +220,7 @@
         event.target.reset();
     });
 
-    let OnClickSearchByInput = (iPage) => {
+    let OnClickSearchByInput = (iPage, bInit) => {
 
         let date1 = $("#datepicker1").val();
         let date2 = $("#datepicker2").val();
@@ -246,7 +246,11 @@
                         list = data;
                     }
                     SetInputList(data, obj.iRootClass);
-                    RequestOverview(true);
+                    if (bInit == true) {
+                        RequestOverviewInout(GetCurrentDate(), GetCurrentDate(), strNickname);
+                    } else {
+                        RequestOverviewInout(date1, date2, strNickname);
+                    }
 
                     $("#pagination").empty();
                     $("#pagination").append(getPagination(limit, obj.totalCount, iPage));
@@ -265,7 +269,7 @@
             return;
         }
         iCurrentPage = iPage;
-        OnClickSearchByInput(iCurrentPage);
+        OnClickSearchByInput(iCurrentPage, false);
     }
 
     let OnClickRequestInout = (charge) => {

@@ -216,8 +216,7 @@ router.post('/request_share_apply', isLoggedIn, async  (req, res) => {
             obj.iShareOrgin = json[cDefault+1]; // 순이익
             obj.iSlotCommission = json[cDefault+2]; // 슬롯알값
             obj.iShareReceive = json[cDefault+3];
-            // obj.iPayback = json[cDefault+4];
-            obj.iPayback = 0;
+            obj.iPayback = json[cDefault+4];
             obj.iSum = json[cDefault+5]; // 합계(순이익 - 슬롯알값)
             obj.fShareR = json[cDefault+6];  // 지분율
             let tempShare = parseInt(obj.iSum) * parseFloat(parseInt(obj.fShareR) * 0.01); // 배당금
@@ -367,27 +366,11 @@ router.post('/popup_shares', isLoggedIn, async (req, res) => {
 router.post('/popup_shares_history', isLoggedIn, async (req, res) => {
     console.log(req.body);
 
-    let parent = await IAgent.GetParentNickname();
     let strParent = await IAgent.GetParentNickname(req.body.strNickname);
-    let strParentGroupID = await IAgent.GetParentGroupID(req.body.strNickname);
-
     let user = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
-
-    let strGroupID = user.strGroupID;
-
     const agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
 
-    const list = await db.sequelize.query(`
-        SELECT u.strNickname AS parentNickname, DATE_FORMAT(sc.createdAt,'%Y-%m-%d %H:%i:%S') AS createdAt, 
-        sc.strID, sc.strNickname, sc.strGroupID, sc.iIncrease, sc.writer, sc.strMemo, sc.iCreditBefore, sc.eType
-        FROM ShareCreditRecords sc
-        LEFT JOIN ShareUsers su ON su.strNickname = sc.strNickname
-        LEFT JOIN Users u ON u.strID = su.strID
-        WHERE sc.strGroupID LIKE CONCAT('${strGroupID}', '%')
-        ORDER BY sc.createdAt DESC
-    `);
-
-    res.render('manage_share/popup_shares_history', {iLayout:6, iHeaderFocus:1, user:user, agent:agent, list:list[0], strParent:strParent});
+    res.render('manage_share/popup_shares_history', {iLayout:6, iHeaderFocus:1, user:user, agent:agent, list:[], strParent:strParent});
 });
 
 router.post('/request_share_history_list', isLoggedIn, async (req, res) => {
@@ -398,6 +381,9 @@ router.post('/request_share_history_list', isLoggedIn, async (req, res) => {
     let dateStart = req.body.dateStart;
     let dateEnd = req.body.dateEnd;
     let strNickname = req.body.strNickname;
+    if (strNickname != '') {
+
+    }
 
     const list = await db.sequelize.query(`
         SELECT u.strNickname AS parentNickname, DATE_FORMAT(sc.createdAt,'%Y-%m-%d %H:%i:%S') AS createdAt, 
@@ -551,7 +537,8 @@ router.post('/request_share_list', isLoggedIn, async(req, res) => {
     let list = await db.sequelize.query(`
             SELECT u.strNickname AS parentNickname, su.strNickname AS strNickname, su.fShareR AS fShareR, su.strID AS strID, su.iShareAccBefore AS iShareAccBefore,
                 IFNULL((SELECT SUM(iTotalViceAdmin) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(su.strGroupID,'%') AND strQuater = '${strQuater}'),0) as iShareOrgin,
-                IFNULL((SELECT sum(iSettle) FROM SettleRecords WHERE strGroupID LIKE CONCAT(su.strGroupID,'%') AND strQuater = '${strQuater}' AND iClass = 4 AND iSettle < 0),0) as iShareReceive,
+                IFNULL((SELECT sum(iSettleAccTotal) FROM SettleRecords WHERE strGroupID LIKE CONCAT(su.strGroupID,'%') AND strQuater = '${strQuater}' AND iClass IN (4, 5)),0) as iShareReceive,
+                IFNULL((SELECT sum(iSettle) FROM SettleRecords WHERE strGroupID LIKE CONCAT(su.strGroupID,'%') AND strQuater = '${strQuater}' AND iClass = 4 AND iSettle < 0),0) as iShareReceive2,
                 IFNULL((SELECT sum(iPayback) FROM SettleRecords WHERE strGroupID LIKE CONCAT(su.strGroupID,'%') AND strQuater = '${strQuater}' AND iClass IN (4, 5)),0) as iPayback,
                 IFNULL((SELECT sum(iSWinlose) FROM SettleRecords WHERE strGroupID LIKE CONCAT(su.strGroupID,'%') AND strQuater = '${strQuater}' AND iClass = 4 AND fSettleSlot = 0),0) as iSWinlose,
                 0 AS iShare,

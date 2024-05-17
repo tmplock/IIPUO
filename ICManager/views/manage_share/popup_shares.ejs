@@ -35,19 +35,19 @@
                     <caption><%=__('SearchResult')%></caption>
                     <colgroup>
                         <col style="width:3%">
-                        <col style="width:7%">
-                        <col style="width:7%">
-                        <col style="width:7%">
-                        <col style="width:7%">
-                        <col style="width:7%">
-                        <col style="width:7%">
-                        <col style="width:7%">
-                        <col style="width:7%">
-                        <col style="width:7%">
-                        <col style="width:7%">
-                        <col style="width:7%">
-                        <col style="width:7%">
-                        <col style="width:16%">
+                        <col style="width:5%">
+                        <col style="width:5%">
+                        <col style="width:5%">
+                        <col style="width:5%">
+                        <col style="width:5%">
+                        <col style="width:5%">
+                        <col style="width:5%">
+                        <col style="width:5%">
+                        <col style="width:5%">
+                        <col style="width:5%">
+                        <col style="width:5%">
+                        <col style="width:5%">
+                        <col style="width:38%">
                     </colgroup>
                     <thead>
                     <tr>
@@ -56,7 +56,7 @@
                         <th scope="col">지분자</th>
                         <th scope="col">순이익</th>
                         <th scope="col">슬롯 알값</th>
-                        <th scope="col">미수</th>
+                        <th scope="col">대본미수</th>
                         <th scope="col">수금</th>
                         <th scope="col">합계</th>
                         <th scope="col">지분율%</th>
@@ -153,8 +153,7 @@
                 let iShareOrgin = parseFloat(aObject.iShareOrgin ?? '0'); // 순이익
                 let iSlotCommission = parseFloat(aObject.iSlotCommission ?? 0);
                 let iShareReceive = parseFloat(aObject.iShareReceive ?? 0); // 미수금(마이너스 죽장)
-                // let iPayback = parseFloat(aObject.iPayback ?? 0); // 수금
-                let iPayback = 0;
+                let iPayback = parseFloat(aObject.iPayback ?? 0); // 수금
                 let iSum = iShareOrgin + iSlotCommission + iPayback + iShareReceive;
                 let fShareR = parseFloat(aObject.fShareR ?? 0); // 지분율
                 let iShare =parseFloat (aObject.iShare ?? 0); // 배당금
@@ -164,6 +163,8 @@
                     aObject.iSlotCommission = iSlotCommission;
                     aObject.iSum = iSum;
                     aObject.iShare = 0; // 배당금은 서버에서 계산 처리
+                } else {
+                    aObject.iSum = iSum;
                 }
 
                 let iShareAccBefore = parseFloat(aObject.iShareAccBefore ?? 0); // 전월 이월금액
@@ -237,7 +238,7 @@
 
             // total
             let strIDs = [];
-            let data = {strID:'', iShareOrgin:0, iSlotCommission:0, iSum:0, iShare:0, iShareAccBefore: 0, iCreditBefore: 0, iCreditAfter: 0, iPayback: 0};
+            let data = {strID:'', iShareOrgin:0, iSlotCommission:0, iSum:0, iShare:0, iShareAccBefore: 0, iCreditBefore: 0, iCreditAfter: 0, iPayback: 0, iShareReceive:0};
             for (let i in shareList) {
                 let strID = shareList[i].strID;
                 if (strIDs.includes(strID)) {
@@ -293,8 +294,6 @@
                     </tr>
             `);
         }
-
-
     }
 
     // 지분자 비율 적용
@@ -357,8 +356,7 @@
             let iShareOrgin = obj.iShareOrgin ?? 0;
             let iSlotCommission = obj.iSlotCommission ?? 0;
             let iShareReceive = obj.iShareReceive ?? 0;
-            // let iPayback = obj.iPayback ?? 0;
-            let iPayback = 0;
+            let iPayback = obj.iPayback ?? 0;
             let iSum = obj.iSum ?? 0;
             let fShareR = obj.fShareR ?? 0;
             let iShare = obj.iShare ?? 0;

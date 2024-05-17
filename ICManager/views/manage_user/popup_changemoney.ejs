@@ -65,13 +65,13 @@
 					<span style="margin-left:10px;">[<%=__('Shop')%>]<span style="color:#f56868;"><%=agent.strNickname%></span></span>
 				<% } %>
 
-				<% if ( agent.iClass == 4 ) { %>
+				<% if ( agent.iClass > 3 && agent.iClass == 4 ) { %>
 					<span style="float:right; margin-left:10px;">죽장이월 : <span id="settleacc" style="color:#ffffff;"></span></span>
 				<% } %>
-				<% if ( agent.iClass <= 5 ) { %>
+				<% if ( agent.iClass > 3 && agent.iClass <= 5 ) { %>
 					<span style="float:right; margin-left:10px;"><%=__('Settle')%> : <span id="settle" style="color:#f56868;"></span></span>
 				<% } %>
-				<% if ( agent.iClass <= 7 ) { %>
+				<% if ( agent.iClass > 3 && agent.iClass <= 7 ) { %>
 					<span style="float:right; margin-left:10px;"><%=__('Rolling')%> : <span id="rolling" style="color:#7fbe18;"></span></span>
 				<% } %>
 				<span style="float:right; margin-left:10px;"><%=__('Cash')%> : <span id="cash" style="color:#ffffff;"></span></span>

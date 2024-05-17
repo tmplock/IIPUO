@@ -138,11 +138,11 @@
 			<col style="width:15%">
 			<col style="width:35%">
 		</colgroup>
-		<p style="background-repeat:no-repeat; background-position:left center; font-size:20px; font-weight: bold; color:#454545; padding-left:22px;">PC방 이용 설정</p>
+		<p style="background-repeat:no-repeat; background-position:left center; font-size:20px; font-weight: bold; color:#454545; padding-left:22px;">PC방 사용</p>
 		<tr>
-			<th scope="row">PC방 이용 설정</th>
+			<th scope="row">PC방 사용</th>
 			<td colspan="3">
-				<input type="checkbox" style="width:30px;height:30px;color: red" name="using_input" id="using_pc" required="no" message=""> <strong>체크시 이용자 사이트 입출금 기능을 사용할 수 없습니다</strong>
+				<input type="checkbox" style="width:30px;height:30px;color: red" name="using_input" id="using_pc" required="no" message=""> <font style="font-size: 18px;">이용자 사이트 입출금 사용 불가</font>
 			</td>
 		</tr>
 	</table>
@@ -161,9 +161,10 @@
 				</colgroup>
 				<p style="background-repeat:no-repeat; background-position:left center; font-size:20px; font-weight: bold; color:#454545; padding-left:22px;">기타 옵션</p>
 				<tr>
-					<th scope="row">신규자 통장 체크 안함</th>
+					<th scope="row">신규자 통장 사용</th>
 					<td colspan="3">
-						<input type="checkbox" style="width:30px;height:30px;color: red" name="using_input" id="using_pass_new_user" required="yes" message="" checked> <strong>체크시 입금 신청시 일반 계좌가 표시됩니다</strong>
+						<input type="checkbox" style="width:30px;height:30px;color: red" name="using_input" id="using_check_new_user"
+							   required="yes" message=""> <font style="font-size: 18px;">신규자 통장 사용</font>
 					</td>
 				</tr>
 			</table>
@@ -185,7 +186,7 @@
 	let strCheckNickname = '';
 
 	let bUsingPC = false;
-	let bUsingPassNewUser = true;
+	let bUsingCheckNewUser = false;
 
 	$(document).ready( ()=> {
 		let cUsingInput = parseInt(agent.strOptionCode[0]);
@@ -229,7 +230,9 @@
 			}
 		});
 
-		SetUsingPassNewUser(agent.iClass);
+		bUsingCheckNewUser = ((agent.iCheckNewUser ?? 0) == 1) ? true : false;
+
+		SetUsingCheckNewUser(agent.iClass);
 
 		/**
 		 * 수정 가능 여부에 대한 처리(비활성할 태그를 여기에 추가)
@@ -238,7 +241,7 @@
 			["#member_nick", "#member_id",
 				"#member_password", '#member_password2', '#bank_owner', '#bank_name', '#bank_num', '#cell'
 				, '#fBaccaratR', '#fUnderOverR', '#fSlotR'
-				,'#using_input', '#using_output', '#using_pc', '#using_pass_new_user'
+				,'#using_input', '#using_output', '#using_pc', '#using_check_new_user'
 			].forEach(item => {
 				$(item).get(0).disabled = true;
 			});
@@ -247,7 +250,7 @@
 			[
 				"#member_password", '#member_password2', '#bank_owner', '#bank_name', '#bank_num', '#cell'
 				, '#fBaccaratR', '#fUnderOverR', '#fSlotR'
-				, '#using_input', '#using_output', '#using_pc', '#using_pass_new_user'
+				, '#using_input', '#using_output', '#using_pc', '#using_check_new_user'
 			].forEach(item => {
 				$(item).get(0).disabled = true;
 			});
@@ -262,7 +265,7 @@
 		<% } else if ( parseInt(agent.iRootClass) > 3 ) { %>
 			// 관리 권한이 없을 경우 수정 불가한 태그 id 추가
 			["#member_password", '#member_password2', '#bank_owner', '#bank_name', '#bank_num', '#cell'
-				, '#using_input', '#using_output', '#using_pc', '#using_pass_new_user'
+				, '#using_input', '#using_output', '#using_pc', '#using_check_new_user'
 			].forEach(item => {
 				$(item).get(0).disabled = true;
 			});
@@ -424,11 +427,11 @@
 		let strUsingInput = $('#using_input').attr('checked');
 		let strUsingOutput = $('#using_output').attr('checked');
 		let strUsingPC = $('#using_pc').attr('checked');
-		let strUsingPassNewUser = $('#using_pass_new_user').attr('checked');
-		if (strUsingPassNewUser != undefined) {
-			bUsingPassNewUser = true;
+		let strUsingCheckNewUser = $('#using_check_new_user').attr('checked');
+		if (strUsingCheckNewUser != undefined) {
+			bUsingCheckNewUser = true;
 		} else {
-			bUsingPassNewUser = false;
+			bUsingCheckNewUser = false;
 		}
 
 		if ( strUsingPC != undefined ) {
@@ -464,8 +467,7 @@
 		objectData.fUnderOverR = fUnderOverR;
 		objectData.fSettleBaccarat = fSettleBaccarat;
 		objectData.fSettleSlot = fSettleSlot;
-
-		objectData.iPassCheckNewUser = bUsingPassNewUser ? 1 : 0;
+		objectData.iCheckNewUser = bUsingCheckNewUser ? 1 : 0;
 
 		if ( strPassword != strPasswordConfirm ){
 			alert(strAlertDifferentPasswordAndConfirm);
@@ -481,8 +483,7 @@
 				if ( data.result == 'OK' )
 				{
 					alert(strAlertComplete);
-
-					opener.location.reload();
+					opener.parent.refresh(data);
 					self.close();
 				}
 				else
@@ -515,25 +516,23 @@
 		});
 	};
 
-	let SetUsingPassNewUser = (iClass) => {
+	let SetUsingCheckNewUser = (iClass) => {
 		if (iClass == 8 || iClass == 7) {
 			try {
-				$('#using_pass_new_user').attr('checked', true);
-				$('#using_pass_new_user').click((e) => {
-					var checked = $('#using_pass_new_user').is(':checked');
+				$('#using_check_new_user').attr('checked', bUsingCheckNewUser);
+				$('#using_check_new_user').click((e) => {
+					var checked = $('#using_check_new_user').is(':checked');
 					if (checked) {
-						bCheckPassNewUser = true;
+						bUsingCheckNewUser = true;
 					} else {
-						bCheckPassNewUser = false;
+						bUsingCheckNewUser = false;
 					}
 				});
 			} catch (err) {
-				$('#using_pass_new_user').attr('checked', true);
-				bCheckPassNewUser = true;
+				$('#using_check_new_user').attr('checked', bUsingCheckNewUser);
 			}
 		} else {
-			$('#using_pass_new_user').attr('checked', true);
-			bCheckPassNewUser = true;
+			$('#using_check_new_user').attr('checked', bUsingCheckNewUser);
 		}
 	}
 

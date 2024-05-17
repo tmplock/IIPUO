@@ -206,9 +206,9 @@
 			</colgroup>
 			<p style="background-repeat:no-repeat; background-position:left center; font-size:20px; font-weight: bold; color:#454545; padding-left:22px;">PC방 이용 설정</p>
 			<tr>
-				<th scope="row">PC방 이용 설정</th>
+				<th scope="row">PC방 사용</th>
 				<td colspan="3">
-					<input type="checkbox" style="width:30px;height:30px;color: red" name="using_input" id="using_pc" required="no" message=""> <strong>체크시 이용자 사이트 입출금 기능을 사용할 수 없습니다</strong>
+					<input type="checkbox" style="width:30px;height:30px;color: red" name="using_input" id="using_pc" required="no" message=""> <font style="font-size: 18px;">이용자 사이트 입출금 사용 불가</font>
 				</td>
 			</tr>
 		</table>
@@ -226,9 +226,9 @@
 				</colgroup>
 				<p style="background-repeat:no-repeat; background-position:left center; font-size:20px; font-weight: bold; color:#454545; padding-left:22px;">기타 옵션</p>
 				<tr>
-					<th scope="row">신규자 통장 체크 안함</th>
+					<th scope="row">신규자 통장 사용</th>
 					<td colspan="3">
-						<input type="checkbox" style="width:30px;height:30px;color: red" name="using_input" id="using_pass_new_user" required="no" message=""> <strong>체크시 입금 신청시 일반 계좌가 표시됩니다</strong>
+						<input type="checkbox" style="width:30px;height:30px;color: red" name="using_input" id="using_check_new_user" required="no" message=""> <font style="font-size: 18px;">신규자 통장 사용</font>
 					</td>
 				</tr>
 			</table>
@@ -273,9 +273,9 @@
 				</colgroup>
 				<p style="background-repeat:no-repeat; background-position:left center; font-size:20px; font-weight: bold; color:#454545; padding-left:22px;">PC방 이용 설정</p>
 				<tr>
-					<th scope="row">PC방 이용 설정</th>
+					<th scope="row">PC방 사용</th>
 					<td colspan="3">
-						<input type="checkbox" style="width:30px;height:30px;color: red" name="using_input" id="using_pc" required="no" message=""> <strong>체크시 이용자 사이트 입출금 기능을 사용할 수 없습니다</strong>
+						<input type="checkbox" style="width:30px;height:30px;color: red" name="using_input" id="using_pc" required="no" message=""><font style="font-size: 18px;">이용자 사이트 입출금 사용 불가</font>
 					</td>
 				</tr>
 			</table>
@@ -290,9 +290,9 @@
 				</colgroup>
 				<p style="background-repeat:no-repeat; background-position:left center; font-size:20px; font-weight: bold; color:#454545; padding-left:22px;">기타 옵션</p>
 				<tr>
-					<th scope="row">신규자 통장 체크 안함</th>
+					<th scope="row">신규자 통장 사용</th>
 					<td colspan="3">
-						<input type="checkbox" style="width:30px;height:30px;color: red" name="using_input" id="using_pass_new_user" required="no" message=""> <strong>체크시 입금 신청시 일반 계좌가 표시됩니다</strong>
+						<input type="checkbox" style="width:30px;height:30px;color: red" name="using_input" id="using_check_new_user" required="no" message=""><font style="font-size: 18px;">신규자 통장 사용</font>
 					</td>
 				</tr>
 			</table>
@@ -352,7 +352,7 @@
 	$(document).ready(() => {
 		SetUsingPC(parent.iAgentClass);
 		SetAutoRegister(false);
-		SetUsingPassNewUser(parent.iAgentClass);
+		SetUsingCheckNewUser(parent.iAgentClass);
 	});
 
 	let OnClickRemoveInput = () => {

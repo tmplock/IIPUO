@@ -200,9 +200,9 @@ module.exports = (sequelize, DataTypes) => {
         fCommission: {
             type: DataTypes.FLOAT,
         },
-        iPassCheckNewUser: {
+        iCheckNewUser: {
             type: DataTypes.INTEGER,
-        }
+        },
     }, {
         indexes: [
             { name: 'idx_users_id', fields: ['id'] },

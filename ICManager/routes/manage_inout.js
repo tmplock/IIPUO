@@ -129,7 +129,7 @@ router.post('/request_searchby', isLoggedIn, async(req, res) => {
         } else {
             let datas = await db.sequelize.query(`
             SELECT i.*,
-                   u.strBankOwner AS strUserAccountOwner, u.strBankName AS strBankName, u.iPassCheckNewUser,
+                   u.strBankOwner AS strUserAccountOwner, u.strBankName AS strBankName, u.iCheckNewUser,
                    DATE_FORMAT(i.completedAt, '%Y-%m-%d %H:%i:%S') AS completedAt, DATE_FORMAT(i.createdAt, '%Y-%m-%d %H:%i:%S') AS createdAt, DATE_FORMAT(i.updatedAt, '%Y-%m-%d %H:%i:%S') AS updatedAt
             FROM Inouts i
             LEFT JOIN Users u ON u.strNickname = i.strID
@@ -196,7 +196,7 @@ router.post('/request_searchby', isLoggedIn, async(req, res) => {
         } else {
             let datas = await db.sequelize.query(`
             SELECT i.*,
-                   u.strBankOwner AS strUserAccountOwner, u.strBankName AS strBankName, u.iPassCheckNewUser,
+                   u.strBankOwner AS strUserAccountOwner, u.strBankName AS strBankName, u.iCheckNewUser,
                    DATE_FORMAT(i.completedAt, '%Y-%m-%d %H:%i:%S') AS completedAt, DATE_FORMAT(i.createdAt, '%Y-%m-%d %H:%i:%S') AS createdAt, DATE_FORMAT(i.updatedAt, '%Y-%m-%d %H:%i:%S') AS updatedAt
             FROM Inouts i
             LEFT JOIN Users u ON u.strNickname = i.strID

@@ -9,7 +9,7 @@ let strCheckNickname = '';
 let bCheckAutoRegister = false;
 let bCheckIDOrNicknameAutoRegister    = false;
 let bUsingPC = false;
-let bCheckPassNewUser = false;
+let bUsingCheckNewUser = false;
 
 let RequestParentEnableList = (strNickname, strGroupID, iClass, iRegisterClass, iPermission) => {
     $.ajax(
@@ -411,7 +411,7 @@ let Submit = () => {
                 iPermission:strPermissionInput,
                 iCheckAutoRegister:bCheckAutoRegister ? 1 : 0,
                 iAutoRegisterNumber:iAutoRegisterNumber,
-                iPassCheckNewUser:bCheckPassNewUser ? 1 : 0
+                iCheckNewUser:bUsingCheckNewUser ? 1 : 0,
             },
     
             success:function(data) {
@@ -508,24 +508,24 @@ let SetUsingPC = (iClass) => {
     }
 }
 
-let SetUsingPassNewUser = (iClass) => {
+let SetUsingCheckNewUser = (iClass) => {
     if (iClass == 8 || iClass == 7) {
         try {
-            $('#using_pass_new_user').attr('checked', true);
-            $('#using_pass_new_user').click((e) => {
-                var checked = $('#using_pass_new_user').is(':checked');
+            $('#using_check_new_user').attr('checked', false);
+            $('#using_check_new_user').click((e) => {
+                var checked = $('#using_check_new_user').is(':checked');
                 if (checked) {
-                    bCheckPassNewUser = true;
+                    bUsingCheckNewUser = true;
                 } else {
-                    bCheckPassNewUser = false;
+                    bUsingCheckNewUser = false;
                 }
             });
         } catch (err) {
-            $('#using_pass_new_user').attr('checked', true);
-            bCheckPassNewUser = true;
+            $('#using_check_new_user').attr('checked', false);
+            bUsingCheckNewUser = false;
         }
     } else {
-        $('#using_pass_new_user').attr('checked', true);
-        bCheckPassNewUser = true;
+        $('#using_check_new_user').attr('checked', false);
+        bUsingCheckNewUser = false;
     }
 }

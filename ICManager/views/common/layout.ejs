@@ -604,7 +604,7 @@
                             </li>
                         <% } %>
                     <% } %>
-                    <% if (parseInt(user.iClass) == 3) { %>
+                    <% if (parseInt(user.iClass) == 3 && false) { %>
                         <li>
                             <p style="margin-top:-15px; margin-bottom:-16px; color:rgb(255, 251, 0);font-size:17px;">롤링/죽장전환<span style="color:white;" id="MainLayoutMyChip"><br><%=parseInt(user.iRolling ?? 0).toLocaleString()%>/<%=parseInt(user.iSettle ?? 0).toLocaleString()%></span></p>
                         </li>

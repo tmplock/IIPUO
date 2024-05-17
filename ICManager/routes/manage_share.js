@@ -366,27 +366,11 @@ router.post('/popup_shares', isLoggedIn, async (req, res) => {
 router.post('/popup_shares_history', isLoggedIn, async (req, res) => {
     console.log(req.body);
 
-    let parent = await IAgent.GetParentNickname();
     let strParent = await IAgent.GetParentNickname(req.body.strNickname);
-    let strParentGroupID = await IAgent.GetParentGroupID(req.body.strNickname);
-
     let user = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
-
-    let strGroupID = user.strGroupID;
-
     const agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
 
-    const list = await db.sequelize.query(`
-        SELECT u.strNickname AS parentNickname, DATE_FORMAT(sc.createdAt,'%Y-%m-%d %H:%i:%S') AS createdAt, 
-        sc.strID, sc.strNickname, sc.strGroupID, sc.iIncrease, sc.writer, sc.strMemo, sc.iCreditBefore, sc.eType
-        FROM ShareCreditRecords sc
-        LEFT JOIN ShareUsers su ON su.strNickname = sc.strNickname
-        LEFT JOIN Users u ON u.strID = su.strID
-        WHERE sc.strGroupID LIKE CONCAT('${strGroupID}', '%')
-        ORDER BY sc.createdAt DESC
-    `);
-
-    res.render('manage_share/popup_shares_history', {iLayout:6, iHeaderFocus:1, user:user, agent:agent, list:list[0], strParent:strParent});
+    res.render('manage_share/popup_shares_history', {iLayout:6, iHeaderFocus:1, user:user, agent:agent, list:[], strParent:strParent});
 });
 
 router.post('/request_share_history_list', isLoggedIn, async (req, res) => {
@@ -397,6 +381,9 @@ router.post('/request_share_history_list', isLoggedIn, async (req, res) => {
     let dateStart = req.body.dateStart;
     let dateEnd = req.body.dateEnd;
     let strNickname = req.body.strNickname;
+    if (strNickname != '') {
+
+    }
 
     const list = await db.sequelize.query(`
         SELECT u.strNickname AS parentNickname, DATE_FORMAT(sc.createdAt,'%Y-%m-%d %H:%i:%S') AS createdAt, 

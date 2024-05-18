@@ -9,7 +9,7 @@ let strCheckNickname = '';
 let bCheckAutoRegister = false;
 let bCheckIDOrNicknameAutoRegister    = false;
 let bUsingPC = false;
-let bCheckPassNewUser = false;
+let bCheckPassNewUser = true;
 
 let RequestParentEnableList = (strNickname, strGroupID, iClass, iRegisterClass, iPermission) => {
     $.ajax(
@@ -246,7 +246,7 @@ let replaceCharacter = (str, index, char) => {
     return ret.replace(/,/g, "");
 }
 
-let Submit = () => {
+let Submit = (bClose) => {
 
     if ( false == bCheckID )
     {
@@ -424,7 +424,8 @@ let Submit = () => {
                     alert(strAlertComplete);
 
                     opener.location.reload();
-                    window.close();
+
+                    OnClickRemoveInput(true);
                 }
                 else
                 {

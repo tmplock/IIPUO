@@ -414,6 +414,7 @@
 			<% if (agent.iPermission != 100) { %>
 				<button class="btn_red" onclick="ModifyAgentInfo();"><%=__('Confirm')%></button>
 			<% } %>
+			<button class="btn_modify" onclick="OnClickClose();">닫기</button>
 		`);
 
 		checkBlockCharNickname(`#member_nick`);
@@ -647,7 +648,7 @@
 				if ( data.result == 'OK' )
 				{
 					alert(strAlertComplete);
-					opener.location.reload();
+					// opener.location.reload();
 					self.close();
 				}
 				else
@@ -679,6 +680,10 @@
 			}
 		});
 	};
+
+	let OnClickClose = () => {
+		window.close();
+	}
 </script>
 	
 <script type="text/javascript" src="js/manage_partner_popup_menu.js"></script>

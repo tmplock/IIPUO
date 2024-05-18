@@ -800,6 +800,12 @@ router.post('/request_register', isLoggedIn, async(req, res) => {
                 strNickname = `${req.body.strNickname}${i}`;
             }
             let strGroupID = await CalculateGroupID(req.body.strParentGroupID, req.body.iParentClass);
+            let eState = 'BLOCK';
+            // PC방 설정은 바로 승인처리
+            let strOptionCode = req.body.strOptionCode ?? '';
+            if (strOptionCode == "00100000") {
+                eState = 'NORMAL';
+            }
 
             await db.Users.create({
                 strID:strID,
@@ -824,7 +830,7 @@ router.post('/request_register', isLoggedIn, async(req, res) => {
                 fUnderOverR:fUnderOverR,
                 fSettleSlot:fSettleSlot,
                 fSettleBaccarat:fSettleBaccarat,
-                eState:'BLOCK',
+                eState:eState,
                 //strOptionCode:'00000000',
                 strOptionCode:req.body.strOptionCode,
                 strPBOptionCode:req.body.strPBOptionCode,

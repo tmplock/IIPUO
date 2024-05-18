@@ -68,6 +68,12 @@
             return;
         }
 
+        if ( strGame == 'SM_RELAX' )
+        {
+            alert('점검중 입니다.');
+            return;
+        }
+
         window.open('','popupGame','height=' + screen.height + ',width=' + screen.width + 'fullscreen=yes');
 
         var $form = $('<form></form>');

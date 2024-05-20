@@ -710,6 +710,23 @@ function isValidationOnlyEngOrNumber(x) {
 	return false;
 }
 
+//영문, 한글, 숫자만 입력가능한 keyup 이벤트 함수
+function isValidationOnlyEngOrKrOrNumber(x) {
+	var regExp = /[^a-z0-9ㄱ-ㅎ가-힣]/gi;
+	let text = "";
+	if (x.length > 0) {
+		if (x.match(regExp)) {
+			text = x.replace(regExp, "");
+		} else {
+			text = x;
+		}
+	}
+	if (text === x) {
+		return true;
+	}
+	return false;
+}
+
 /**
  * 영문 + 숫자
  */

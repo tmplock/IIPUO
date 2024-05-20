@@ -103,12 +103,8 @@ $(document).on('click', '#check_id', (event) => {
 })
 
 let RequestConfirmAgentID = (strID) => {
-
-    var input = document.getElementById('strID');
-    var re = /^[a-zA-Z0-9]{5,12}$/;  // 정규 표현식: 5자 이상의 알파벳 대소문자와 숫자만 허용
-    if (!re.test(input.value)) {  // 입력된 값이 정규 표현식에 맞지 않으면
-        alert('아이디는 영문/숫자로 5~12 자리로 설정해주시고 특수문자는 사용할 수 없습니다.');
-        input.value = '';
+    if (!isValidationOnlyEngOrKrOrNumber(strID)) {
+        alert('아이디는 한글, 영문, 숫자만 가능합니다');
         return;
     }
 
@@ -151,12 +147,8 @@ $(document).on('click', '#check_nickname', (event) => {
 })
 
 let RequestConfirmAgentNickname = (strNickname) => {
-
-    var input = document.getElementById('strNickname');
-    var re = /^[A-Za-z0-9가-힣]{2,10}$/;  // 정규 표현식: 2자 이상~10자 이하 알파벳 대소문자,한글,숫자만 허용
-    if (!re.test(input.value)) {  // 입력된 값이 정규 표현식에 맞지 않으면
-        alert('닉네임은 영문/한글/숫자로 2~10자리수로 설정해주시고 특수문자는 사용할 수 없습니다.');
-        input.value = '';
+    if (!isValidationOnlyEngOrKrOrNumber(strNickname)) {
+        alert('닉네임은 한글, 영문, 숫자만 가능합니다');
         return;
     }
 

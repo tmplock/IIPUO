@@ -437,8 +437,9 @@
 
 	let CheckID = () => {
 		let strID = $('#member_id').val();
-		if (!isValidationOnlyEngOrNumber(strID)) {
-			alert('아이디는 영문,숫자만 입력가능합니다');
+
+		if (!isValidationOnlyEngOrKrOrNumber(strID)) {
+			alert('아이디는 한글, 영어, 숫자만 가능합니다');
 			return;
 		}
 
@@ -464,10 +465,11 @@
 	
 	let CheckNickname = () => {
 		let strNickname = $('#member_nick').val();
-		// if (!(isValidationOnlyKrOrNumber(strNickname) || isValidationOnlyEngOrNumber(strNickname))) {
-		// 	alert('닉네임은 한글,숫자만 입력가능합니다');
-		// 	return;
-		// }
+
+		if (!isValidationOnlyEngOrKrOrNumber(strNickname)) {
+			alert('닉네임은 한글, 영어, 숫자만 가능합니다');
+			return;
+		}
 
 		$.ajax({
 			type : "POST",
@@ -529,8 +531,8 @@
 		const strBankOwner = (bUsingPC == true) ? agent.strBankOwner : $('#bank_owner').val();
 
 		if (strNickname != agent.strNickname) {
-			if (!isValidationOnlyKrOrNumber(strNickname)) {
-				alert('닉네임은 한글, 숫자만 가능합니다');
+			if (!isValidationOnlyEngOrKrOrNumber(strNickname)) {
+				alert('닉네임은 한글, 영어, 숫자만 가능합니다');
 				return;
 			}
 			if (bCheckNickname == false) {
@@ -539,8 +541,8 @@
 			}
 		}
 		if (strID != agent.strID) {
-			if (!isValidationOnlyEngOrNumber(strID)) {
-				alert('아이디는 영문, 숫자만 가능합니다');
+			if (!isValidationOnlyEngOrKrOrNumber(strID)) {
+				alert('아이디는 한글, 영어, 숫자만 가능합니다');
 				return;
 			}
 			if (bCheckID == false) {

@@ -68,7 +68,7 @@ cron.schedule('0,5,10,15,20,25,30,35,40,45,50,55 * * * *', async () => {
             }
             console.log(`아이디: ${list[i].strID} / 닉네임: ${list[i].strNickname} / 입금: ${list[i].input} / 출금: ${list[i].output} / 보유머니: ${list[i].money} / 미전환롤링: ${list[i].rolling} / 미전환죽장: ${list[i].settle} / 계: ${total} / 배팅합: ${list[i].totalBet} / 승리합: ${list[i].totalWin} / 롤링합: ${list[i].totalRolling} / 합계: ${list[i].total} / 차이: ${cal} / 여부: ${memo} / 배팅중상태(배/윈): ${list[i].rollingBet} / ${list[i].rollingWin} / 배팅중대기(배/윈) ${list[i].standbyBet} / ${list[i].standbyWin}`);
         }
-        console.log('정산 정보 로그 저장 완료');
+        console.log(`정산 정보 로그 저장 완료 : ${now2}`);
     }
 });
 

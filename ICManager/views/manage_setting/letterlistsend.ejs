@@ -330,8 +330,8 @@
 
     let OnClickRead = (id, strTo, eRead) => {
         if (eRead == 'REPLY') {
-            $(`#content_${id}`).css('color', 'blue');
-            $(`#readState_${id}`).css('color', 'blue');
+            $(`#content_${id}`).css('color', 'black');
+            $(`#readState_${id}`).css('color', 'black');
             $(`#readState_${id}`).textContent = '읽음';
             $(`#readDate_${id}`).val(new Date());
         }

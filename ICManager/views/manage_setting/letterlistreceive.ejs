@@ -326,13 +326,13 @@
 
 	let OnClickRead = (id, strFrom, eRead) => {
 		if (eRead == 'UNREAD') {
-			$(`#content_${id}`).css('color', 'blue');
-			$(`#readState_${id}`).css('color', 'blue');
+			$(`#content_${id}`).css('color', 'black');
+			$(`#readState_${id}`).css('color', 'black');
 			$(`#readState_${id}`).text('읽음');
 			$(`#readDate_${id}`).val(new Date());
 		} else if (eRead == 'REPLY') {
-			$(`#content_${id}`).css('color', 'blue');
-			$(`#readState_${id}`).css('color', 'blue');
+			$(`#content_${id}`).css('color', 'black');
+			$(`#readState_${id}`).css('color', 'black');
 			$(`#readState_${id}`).text('읽음');
 			$(`#readDate_${id}`).val(new Date());
 		}

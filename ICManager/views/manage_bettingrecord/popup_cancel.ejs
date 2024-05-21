@@ -46,6 +46,10 @@
                 <td style="text-align: center;"><input type="checkbox" id="chk" class="chkGrp" value="cash" checked></td>
                 <td>보유머니 롤백(이용자에게 취소 금액만큼 캐시가 증가됩니다)</td>
             </tr>
+            <tr height="40px;">
+                <td style="text-align: center;"><input type="checkbox" id="chk" class="chkGrp" value="rolling" checked></td>
+                <td>보유롤링 롤백(이용자에게 롤링 금액만큼 롤링이 차감됩니다)</td>
+            </tr>
             </tbody>
         </table>
         <br>
@@ -85,6 +89,7 @@
         isSending = true;
         let cash = 0;
         let betting = 0;
+        let rolling = 0;
         let msg = '';
         $(".chkGrp:checked").each((idx, item) => {
             if (item.value == 'cash') {
@@ -93,6 +98,9 @@
             } else if (item.value == 'betting') {
                 betting = 1;
                 msg = msg == '' ? '배팅금액 롤백' : `${msg}, 배팅금액 롤백`;
+            } else if (item.value == 'rolling') {
+                rolling = 1;
+                msg = msg == '' ? '롤링금액 롤백' : `${msg}, 롤링금액 롤백`;
             }
         });
         if (msg == '') {
@@ -102,7 +110,7 @@
 
         if ( confirm(`배팅금액을 롤백 하시겠습니까?\r\n${msg}`) )
         {
-            const data = {cash: cash, betting: betting, betId: bet.id};
+            const data = {cash: cash, betting: betting, rolling:rolling, betId: bet.id};
 
             $.ajax({
                 type:'post',

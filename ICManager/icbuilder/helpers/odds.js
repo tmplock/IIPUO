@@ -1160,7 +1160,7 @@ let ProcessGroupDailyOverview = (objectRolling, objectArg, strDate) => {
     return listFinal;    
 }
 
-exports.UpdateOverview = async (list) => {
+exports.UpdateOverview = async (list, rolling) => {
 
     if ( list.length > 0 )
     {
@@ -1174,12 +1174,12 @@ exports.UpdateOverview = async (list) => {
 
             const dbdata = await db.RecordDailyOverviews.findOne({where:{strID:t.strID, strDate:t.strDate}});
             console.log('db');
-            //console.log(dbdata);
 
-            // 소수점 정리
-            // const cRolling = parseInt(t.iRollingB) + parseInt(t.iRollingUO) + parseInt(t.iRollingS) + parseInt(t.iRollingPBA) + parseInt(t.iRollingPBB);
-            const cRolling = t.iRollingB + t.iRollingUO + t.iRollingS + t.iRollingPBA + t.iRollingPBB; // 요게 맞음
-            await db.Users.increment({iRolling:cRolling}, {where:{strID:t.strID}});
+            // 보유롤링은 체크될 경우에만 업데이트
+            if (rolling == 1) {
+                const cRolling = t.iRollingB + t.iRollingUO + t.iRollingS + t.iRollingPBA + t.iRollingPBB; // 요게 맞음
+                await db.Users.increment({iRolling:cRolling}, {where:{strID:t.strID}});
+            }
 
             if ( dbdata == null )
             {

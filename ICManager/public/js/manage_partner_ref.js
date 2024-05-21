@@ -1082,7 +1082,7 @@ let AddAdmin = (iRootClass, aObject, iPermission) => {
 		
 		<td style="background-color:${color};"  class="parent_row_31">
 		
-		<a href="javascript:RequestPartnerInfo('${aObject.strNickname}', '${aObject.strGroupID}', '${aObject.iClass}');"  style="color:blue;">${aObject.strID}</a>
+		<a href="#" onclick="RequestPartnerInfo('${aObject.strNickname}', '${aObject.strGroupID}', '${aObject.iClass}'); return false;"  style="color:blue;">${aObject.strID}</a>
 		
 		</td>
 		`;
@@ -1090,7 +1090,7 @@ let AddAdmin = (iRootClass, aObject, iPermission) => {
 	if (iPermission != 100) {
 		subtag += `
 			<td style="background-color:${color};"  class="parent_row_31">
-				<a href="#" style="color: blue" class="list_menu move" strNickname=${aObject.strNickname} strGroupID=${aObject.strGroupID} iClass=${aObject.iClass}>${aObject.strNickname}</a>
+				<a href="#" onclick="OnClickMove('${aObject.strNickname}', '${aObject.strGroupID}', '${aObject.iClass}'); return false;" style="color: blue" class="list_menu">${aObject.strNickname}</a>
 			</td>
 		`;
 	} else {
@@ -1466,6 +1466,62 @@ function RequestRollingOdds(strNickname, iClass)
 
 		}
 	});
+}
+
+function OnClickMove(strNickname, strGroupID, iClass) {
+
+	let strWindowName = 'popupVAdmin';
+	let strAddress = '/manage_partner/listshop';
+
+	if ( aiClass == 2 )
+	{
+		strWindowName = 'popupViceHQ';
+		strAddress = '/manage_partner/listadmin';
+	}
+	else if ( aiClass == 3 )
+	{
+		strWindowName = 'popupAdmin';
+		strAddress = '/manage_partner/listproadmin';
+	}
+	else if ( aiClass == 4 )
+	{
+		strWindowName = 'popupPAdmin';
+		strAddress = '/manage_partner/listviceadmin';
+	}
+	else if ( aiClass == 5 )
+	{
+		strWindowName = 'popupVAdmin';
+		strAddress = '/manage_partner/listagent';
+
+	}
+	else if ( aiClass == 6 )
+	{
+		strWindowName = 'popupAgent';
+		strAddress = '/manage_partner/listshop';
+
+	}
+	else if ( aiClass == 7 )
+	{
+		strWindowName = 'popupShop';
+		strAddress = '/manage_user/userlist';
+	}
+
+	var scLeft = window.screenLeft + 50;
+	var scTop = window.screenTop + 50;
+	window.open('', strWindowName, `width=1380, height=720, top=${scTop}, left=${scLeft}, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no`);
+
+	var $form = $('<form></form>');
+	$form.attr('action', strAddress);
+	$form.attr('method', 'post');
+	$form.attr('target', strWindowName);
+	$form.appendTo('body');
+
+	var strNicknameV = $(`<input type="hidden" value=${strNickname} name="strNickname">`);
+	var strGroupIDV = $(`<input type="hidden" value=${strGroupID} name="strGroupID">`);
+	var iClassV = $(`<input type="hidden" value=${parseInt(iClass)} name="iClass">`);
+
+	$form.append(strNicknameV).append(strGroupIDV).append(iClassV);
+	$form.submit();
 }
 
 function DoApplyRolling(user)

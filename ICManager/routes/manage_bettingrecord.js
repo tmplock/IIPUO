@@ -413,8 +413,9 @@ router.post('/request_betting_cancel', isLoggedIn, async (req, res) => {
     const betId = req.body.betId ?? 0;
     const cash = req.body.cash ?? 0;
     const betting = req.body.betting ?? 0;
+    const rolling = req.body.rolling ?? 0; // 롤링 롤백 여부
 
-    if (betId == 0 || (cash == 0 && betting == 0)) {
+    if (betId == 0 || (cash == 0 && betting == 0 && rolling == 0)) {
         res.send({result: 'FAIL', msg:'잘못된 요청입니다'});
         return;
     }
@@ -439,6 +440,9 @@ router.post('/request_betting_cancel', isLoggedIn, async (req, res) => {
     }
     if (betting == 1) {
         log = `${log} | 배팅금액롤백`;
+    }
+    if (rolling == 1) {
+        log = `${log} | 유저 보유 롤링 롤백`;
     }
     log = `${log} | 벤더(게임) : ${bet.strVender}(${bet.strGameID}) | BetID : ${bet.id}`;
 
@@ -497,8 +501,8 @@ router.post('/request_betting_cancel', isLoggedIn, async (req, res) => {
                 }
             }
 
-            // 2. 상부 롤링 체크
-            if (betting == 1) {
+            // 유저 보유 롤링 롤백시에만 보유 롤링 체크(마이너스 안되도록)
+            if (rolling == 1) {
                 for (let i in listOverview) {
                     const t = listOverview[i];
                     const cRolling = t.iRollingB + t.iRollingUO + t.iRollingS + t.iRollingPBA + t.iRollingPBB; // 요게 맞음
@@ -520,7 +524,7 @@ router.post('/request_betting_cancel', isLoggedIn, async (req, res) => {
 
             // 정산데이터 롤백
             if (betting == 1) {
-                await ODDS.UpdateOverview(listOverview);
+                await ODDS.UpdateOverview(listOverview, rolling);
             }
 
             // 유저 보유머니

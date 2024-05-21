@@ -7,7 +7,7 @@ const logger = require("./config/logger");
 const logger2 = require("./config/logger2");
 const logger3 = require("./config/logger3");
 
-cron.schedule('*/5 * * * *', async () => {
+cron.schedule('0,5,10,15,20,25,30,35,40,45,50,55 * * * *', async () => {
     // 정산 확인용
     let now = moment().format('YYYY-MM-DD');
     let now2 = moment().format('YYYY-MM-DD HH:mm');

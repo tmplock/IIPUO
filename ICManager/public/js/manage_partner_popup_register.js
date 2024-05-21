@@ -411,13 +411,13 @@ let Submit = (bClose) => {
                 //alert(data.string);
                 if ( data.result == 'OK' )
                 {
-                    // self.close();
-                    // opener.location.reload();
                     alert(strAlertComplete);
-
                     opener.location.reload();
-
-                    OnClickRemoveInput(true);
+                    if (bClose == true) {
+                        self.close();
+                    } else {
+                        OnClickRemoveInput(true);
+                    }
                 }
                 else
                 {

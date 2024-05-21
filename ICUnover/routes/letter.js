@@ -183,7 +183,23 @@ router.post('/request_listallletter', async (req, res) => {
 
     const list = await db.Letters.findAll({
         where:{
-            [Op.or]:[{strFrom: strFrom}, {strTo:strTo}]
+            [Op.or]:[{
+                strFrom: strFrom,
+                iDelFrom: {
+                    [Op.or]:{
+                        [Op.is]: null,
+                        [Op.not]:1
+                    }
+                }
+            }, {
+                strTo:strTo,
+                iDelTo: {
+                    [Op.or]:{
+                        [Op.is]: null,
+                        [Op.not]:1
+                    }
+                }
+            }]
         },
         limit:10,
         order:[['createdAt','DESC']]
@@ -199,6 +215,12 @@ router.post('/request_listsendingletter', async (req, res) => {
     const list = await db.Letters.findAll({
         where:{
             strFrom:strFrom,
+            iDelFrom: {
+                [Op.or]:{
+                    [Op.is]: null,
+                    [Op.not]:1
+                }
+            }
         },
         limit:10,
         order:[['createdAt','DESC']]
@@ -214,6 +236,12 @@ router.post('/request_listreceivingletter', async (req, res) => {
     const list = await db.Letters.findAll({
         where:{
             strTo:strTo,
+            iDelTo: {
+                [Op.or]:{
+                    [Op.is]: null,
+                    [Op.not]:1
+                }
+            }
         },
         limit:10,
         order:[['createdAt','DESC']]
@@ -224,9 +252,12 @@ router.post('/request_listreceivingletter', async (req, res) => {
 
 router.post('/request_removeletter', async(req, res) => {
     console.log(req.body);
-
-    await db.Letters.destroy({where:{id:req.body.id}});
-
+    let letter = await db.Letters.findOne({where: {id:req.body.id}});
+    if (req.user.strID == letter.strTo) {
+        await db.Letters.update({iDelTo:1}, {where:{id:req.body.id}});
+    } else if (req.user.strID == letter.strFrom) {
+        await db.Letters.update({iDelFrom:1}, {where:{id:req.body.id}});
+    }
     res.send({result:'OK'});
 });
 

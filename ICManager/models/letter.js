@@ -79,6 +79,12 @@ module.exports = (sequelize, DataTypes) => {
                 return moment(this.getDataValue('updatedAt')).format('YYYY-MM-DD HH:mm:ss');
             }
         },
+        iDelFrom: {
+            type: DataTypes.INTEGER,
+        },
+        iDelTo: {
+            type: DataTypes.INTEGER,
+        }
     }, {
         indexes: [
             { name: 'idx_letters_createdat', fields: ['createdAt'] },

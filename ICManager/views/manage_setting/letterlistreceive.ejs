@@ -133,7 +133,7 @@
 			alert('삭제할 항목을 선택해주세요');
 			return;
 		}
-		if (confirm('선택 항목을 완전히 삭제하시겠습니까?')) {
+		if (confirm('선택 항목을 삭제하시겠습니까?')) {
 			OnClickRemoveLetters(groupIds);
 		}
 	});
@@ -148,6 +148,7 @@
 				strNickname:user.strNickname,
 				iClass:user.iClass,
 				strGroupID:user.strGroupID,
+				type:'RECEIVE'
 			},
 			success: function (obj) {
 				console.log(obj);
@@ -270,23 +271,23 @@
 							<td><a href="#" onclick="OnClickNickname('${letters[i].strAgentNickname}')">${letters[i].strAgentNickname}</a></td>
 							<td><a href="#" onclick="OnClickNickname('${letters[i].strShopNickname}')">${letters[i].strShopNickname}</a></td>
 							<td><a id='content_${letters[i].id}' style="text-align:left;padding-left:10px;color:${color};" href="#" onclick="OnClickRead('${letters[i].id}','${letters[i].strFrom}', '${letters[i].eRead}');">${strModified}</a></td>
-                        	<td><a href="#" onclick="OnClickNickname('${letters[i].strFrom}')">${GetClassNickName(letters[i].iClassFrom, letters[i].strFrom)}</a></td>
+                        	<td><a href="#" onclick="OnClickNickname('${letters[i].strFrom}'); return false;">${GetClassNickName(letters[i].iClassFrom, letters[i].strFrom)}</a></td>
                         <% } else { %>
 							<td>${letters[i].strAdminNickname}</td>
 							<td>${letters[i].strPAdminNickname}</td>
 							<td>${letters[i].strVAdminNickname}</td>
 							<td>${letters[i].strAgentNickname}</td>
 							<td>${letters[i].strShopNickname}</td>
-							<td><a id=${letters[i].id} style="text-align:left;padding-left:10px;color:${color};" href="#" onclick="OnClickRead('${letters[i].id}','${letters[i].strFrom}', '${letters[i].eRead}');">${strModified}</a></td>
+							<td><a id=${letters[i].id} style="text-align:left;padding-left:10px;color:${color};" href="#" onclick="OnClickRead('${letters[i].id}','${letters[i].strFrom}', '${letters[i].eRead}'); return false;">${strModified}</a></td>
                         	<td><a here="#">관리자</a></td>
                         <% } %>
                         <td><font id='readState_${letters[i].id}' style="color: ${color2};">${eRead}</font></td>
-                        <td style="color: ${color3};">${reply}</td>
+                        <td><font id='replyState_${letters[i].id}' style="color: ${color3};">${reply}</font></td>
                         <td>${letters[i].createdAt}</td>
                         <td><font id='readDate_${letters[i].id}'>${strRead2}</font></td>
                         <td>${eState}</td>
 						<% if ( parseInt(user.iClass) <= 3 && user.iPermission != 100 ) { %>
-                        	<td><a class="btn_red" href="#" onclick="OnClickRemoveLetters('${letters[i].id}');">${strRemove}</a></td>
+                        	<td><a class="btn_red" href="#" onclick="OnClickDel('${letters[i].id}');">${strRemove}</a></td>
 						<% } %>
                     </tr>
                     `;
@@ -313,21 +314,29 @@
 		});
 	}
 
+	let OnClickDel = (id) => {
+		if (confirm('선택 항목을 삭제하시겠습니까?')) {
+			OnClickRemoveLetters(id);
+		}
+	}
+
 	function reload() {
 		RequestLetterList(iCurrentPage);
 	}
 
 	let OnClickRead = (id, strFrom, eRead) => {
-		// if (eRead == 'UNREAD') {
-		// 	$(`#content_${id}}`).style.color = 'blue';
-		// 	$(`#readState_${id}}`).style.color = 'blue';
-		// 	$(`#readState_${id}}`).val('읽음')
-		// 	$(`#readDate_${id}}`).val(new Date());
-		// }
-		ReadLetter(id, strFrom, 0);
-		if (eRead == 'UNREAD' || eRead == 'REPLY') {
-			reload();
+		if (eRead == 'UNREAD') {
+			$(`#content_${id}`).css('color', 'blue');
+			$(`#readState_${id}`).css('color', 'blue');
+			$(`#readState_${id}`).text('읽음');
+			$(`#readDate_${id}`).val(new Date());
+		} else if (eRead == 'REPLY') {
+			$(`#content_${id}`).css('color', 'blue');
+			$(`#readState_${id}`).css('color', 'blue');
+			$(`#readState_${id}`).text('읽음');
+			$(`#readDate_${id}`).val(new Date());
 		}
+		ReadLetter(id, strFrom, 0);
 	}
 
 	let OnClickPage = (iPage) => {

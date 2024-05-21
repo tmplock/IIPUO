@@ -156,9 +156,6 @@
     checkBlockCharSpecial2(`#answer`);
 
     let Close = () => {
-        if (typeof(opener) != 'undefined') {
-            window.opener.parent.reload();
-        }
         self.close();
     }
 

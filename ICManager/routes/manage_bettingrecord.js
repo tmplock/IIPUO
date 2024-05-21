@@ -501,8 +501,8 @@ router.post('/request_betting_cancel', isLoggedIn, async (req, res) => {
                 }
             }
 
-            // 유저 보유 롤링 롤백시에만 보유 롤링 체크(마이너스 안되도록)
-            if (rolling == 1) {
+            // 롤백시에 보유 롤링 체크(마이너스 안되도록)
+            if (betting == 1 || rolling == 1) {
                 for (let i in listOverview) {
                     const t = listOverview[i];
                     const cRolling = t.iRollingB + t.iRollingUO + t.iRollingS + t.iRollingPBA + t.iRollingPBB; // 요게 맞음

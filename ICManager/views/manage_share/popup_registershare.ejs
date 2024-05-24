@@ -31,8 +31,31 @@
         <form name="frm" action="member_write_action.php" target="_fra_admin" method="post"  enctype="multipart/form-data">
             <input type="hidden" name="vmode" value="popup"/>
 
-            <p style="background-repeat:no-repeat; background-position:left center; font-size:16px; color:#454545; padding-left:22px;">지분자 정보</p>
+            <div id="agent">
+                <% if (agent.iClass <= 2) { %>
+                    <p style="background-repeat:no-repeat; background-position:left center; font-size:16px; color:#454545; padding-left:22px;">본사 정보</p>
+                    <table>
+                        <caption><%=__('BoardWrite')%> <%=__('Register')%></caption>
+                        <colgroup>
+                            <col style="width:15%;">
+                            <col style="width:25%;">
+                            <col style="width:15%;">
+                            <col style="width:15%;">
+                        </colgroup>
+                        <tr>
+                            <th>본사 선택</th>
+                            <td>
+                                <select style="margin-left:0px; width:100px; display: none" id="agent_list"></select>
+                            </td>
+                            <th scope="row"></th>
+                            <td>
+                            </td>
+                        </tr>
+                    </table>
+                <% } %>
+            </div>
 
+            <p style="background-repeat:no-repeat; background-position:left center; font-size:16px; color:#454545; padding-left:22px;">지분자 정보</p>
             <table>
                 <caption><%=__('BoardWrite')%> <%=__('Register')%></caption>
                 <colgroup>
@@ -66,6 +89,8 @@
 <script type="text/javascript">
     var agent = JSON.parse('<%-JSON.stringify(agent)%>');
 
+    let strParentNickname = '';
+
     let SubmitShareUser = () => {
         const strID = agent.strID;
         const strGroupID = agent.strGroupID;
@@ -74,6 +99,17 @@
         if (strNickname == '' || strNickname == undefined) {
             alert("닉네임을 입력해주세요.");
             return;
+        }
+
+        if (!isValidationOnlyEngOrKrOrNumber(strNickname)) {
+            alert("닉네임은 한글, 영어, 숫자만 가능합니다");
+            return;
+        }
+        if (agent.iClass <= 2) {
+            if (strParentNickname == '') {
+                alert("본사를 선택해주세요.");
+                return;
+            }
         }
 
         $.ajax(
@@ -86,6 +122,7 @@
                     strNickname:strNickname,
                     fShareR:fShareR,
                     strGroupID:strGroupID,
+                    strParentNickname: strParentNickname,
                 },
                 success:function(data) {
                     if ( data.result == 'OK' )
@@ -105,6 +142,28 @@
             }
         );
     }
+
+    $(document).ready(() => {
+        strGroupID = agent.strGroupID;
+
+        if (agent.iClass <= 2) {
+            strGroupID = '';
+
+            var list = JSON.parse('<%- JSON.stringify(list) %>');
+
+            $('#agent_list').empty();
+            $('#agent_list').append(`<option value="">본사선택</option>`);
+            for (let i in list) {
+                $('#agent_list').append(`<option value="${list[i]}">${list[i]}</option>`);
+            }
+            $('#agent_list').css("display", "");
+
+            $('select').on('change', function () {
+                strParentNickname = this.value;
+            });
+        }
+    });
+
 </script>
 
 <div id="top_payment_alarm_area" style="text-align:right;top:15px;left:85%;width:10%;z-index:1000;position:absolute;">

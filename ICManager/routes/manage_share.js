@@ -405,8 +405,9 @@ router.post('/popup_registershare', isLoggedIn, async(req, res) => {
     const user = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
     console.log(`######################################################################## popup_registershare`);
     console.log(user);
-    let agent = {strNickname:user.strNickname, strID:user.strID, strGroupID:user.strGroupID};
-    res.render('manage_share/popup_registershare', {iLayout:1, iHeaderFocus:0, agent:agent});
+    let agent = {strNickname:user.strNickname, strID:user.strID, strGroupID:user.strGroupID, iClass: user.iClass};
+    let list = await IAgent.GetChildNicknameList(req.user.strGroupID, 3);
+    res.render('manage_share/popup_registershare', {iLayout:1, iHeaderFocus:0, agent:agent, list: list});
 });
 
 // 지분자 등록
@@ -416,13 +417,35 @@ router.post('/reqister_share', isLoggedIn, async(req, res) => {
     const dbuser = await db.ShareUsers.findOne({where:{strNickname:req.body.strNickname}});
     if ( dbuser != null ) {
         res.send({result:'FAIL', msg: '이미 있는 닉네임입니다'});
+        return;
+    }
+
+    let strID = req.body.strID ?? '';
+    let strNickname = req.body.strNickname ?? '';
+    let strGroupID = req.body.strGroupID ?? '';
+    let fShareR = parseFloat(req.body.fShareR ?? 0);
+    if (Number.isNaN(fShareR)) {
+        res.send({result:'FAIL', msg: '생성 중 오류가 발생했습니다(지분율 확인)'});
+        return;
+    }
+
+    let strParentNickname = req.body.strParentNickname ?? '';
+    if (strParentNickname != '') {
+        const parent = await db.Users.findOne({where:{strNickname:strParentNickname}});
+        strID = parent.strID;
+        strGroupID = parent.strGroupID;
+    }
+
+    if (strID == '' || strNickname == '' || strGroupID == '') {
+        res.send({result:'FAIL', msg: '생성 중 오류가 발생했습니다'});
+        return;
     }
 
     await db.ShareUsers.create({
-        strID: req.body.strID,
-        strNickname: req.body.strNickname,
-        fShareR:req.body.fShareR,
-        strGroupID: req.body.strGroupID,
+        strID: strID,
+        strNickname: strNickname,
+        fShareR: req.body.fShareR,
+        strGroupID: strGroupID,
     });
     res.send({result: 'OK', msg: '저장되었습니다'});
 });

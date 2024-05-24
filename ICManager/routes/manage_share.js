@@ -301,8 +301,8 @@ router.post('/request_share_credit_apply', isLoggedIn, async  (req, res) => {
     await db.ShareCreditRecords.create(
         {
             strNickname: strNickname,
-            strID: strID,
-            strGroupID: strGroupID,
+            strID: user.strID,
+            strGroupID: user.strGroupID,
             iIncrease: iIncrease,
             writer: writer,
             strMemo: strMemo,

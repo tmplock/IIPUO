@@ -162,7 +162,7 @@ router.post('/request_register', async (req, res) => {
         let user2 = await db.Users.findOne({where:{strNickname:req.body.strRegisterNickname}});
         if ( user != null || user2 != null )
         {
-            res.send({result:'Error'});
+            res.send({result:'Error', eCode:'ExistUser'});
             return;
         }
 
@@ -185,6 +185,8 @@ router.post('/request_register', async (req, res) => {
                 return;
             }
         }
+
+        console.log(`##### Error Registration`);
 
         await db.Users.create({
             strID:req.body.strRegisterID,

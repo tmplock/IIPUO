@@ -69,7 +69,7 @@
 						<%=__('ID')%>
 					</th>
 					<td>
-						<input type="text" style="width:50%;" required="yes" id="strID" message="" placeholder="한글,영어,숫자만 가능" />&nbsp;<a href="#"
+						<input type="text" style="width:50%;" required="yes" id="strID" message="" placeholder="영어,숫자만 가능" />&nbsp;<a href="#"
 																											  class="btn_red" id="check_id">
 							<%=__('Duplication')%>
 							<%=__('OK')%>
@@ -182,8 +182,8 @@
 			const strNickname = $('#strNickname').val();
 
 			if (iRelUserID == 0) {
-				if (!isValidationOnlyEngOrKrOrNumber(strID)) {
-					alert('아이디는 한글, 영어, 숫자만 가능합니다');
+				if (!isValidationOnlyEngOrNumber(strID)) {
+					alert('아이디는 영어, 숫자만 가능합니다');
 					return;
 				}
 
@@ -205,8 +205,8 @@
 				}
 			} else {
 				if (strID != agent.strID) {
-					if (!isValidationOnlyEngOrKrOrNumber(strID)) {
-						alert('아이디는 한글, 영어, 숫자만 가능합니다');
+					if (!isValidationOnlyEngOrNumber(strID)) {
+						alert('아이디는 영어, 숫자만 가능합니다');
 						return;
 					}
 

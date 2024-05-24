@@ -438,8 +438,8 @@
 	let CheckID = () => {
 		let strID = $('#member_id').val();
 
-		if (!isValidationOnlyEngOrKrOrNumber(strID)) {
-			alert('아이디는 한글, 영어, 숫자만 가능합니다');
+		if (!isValidationOnlyEngOrNumber(strID)) {
+			alert('아이디는 영어, 숫자만 가능합니다');
 			return;
 		}
 
@@ -541,8 +541,8 @@
 			}
 		}
 		if (strID != agent.strID) {
-			if (!isValidationOnlyEngOrKrOrNumber(strID)) {
-				alert('아이디는 한글, 영어, 숫자만 가능합니다');
+			if (!isValidationOnlyEngOrNumber(strID)) {
+				alert('아이디는 영어, 숫자만 가능합니다');
 				return;
 			}
 			if (bCheckID == false) {

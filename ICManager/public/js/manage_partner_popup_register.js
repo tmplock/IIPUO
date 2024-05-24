@@ -103,8 +103,8 @@ $(document).on('click', '#check_id', (event) => {
 })
 
 let RequestConfirmAgentID = (strID) => {
-    if (!isValidationOnlyEngOrKrOrNumber(strID)) {
-        alert('아이디는 한글, 영문, 숫자만 가능합니다');
+    if (!isValidationOnlyEngOrNumber(strID)) {
+        alert('아이디는 영문, 숫자만 가능합니다');
         return;
     }
 

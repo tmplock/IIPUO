@@ -178,7 +178,12 @@ router.post('/request_register', async (req, res) => {
         }
         else
         {
-            parent = await db.Users.findOne({where:{strID:'wnrqo04'}});
+            parent = await db.Users.findOne({where:{strID:'rhkddksfl4'}});
+            if ( parent == null )
+            {
+                res.send({result:'Error', eCode:'InvalidParent'});
+                return;
+            }
         }
 
         await db.Users.create({

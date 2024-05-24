@@ -275,7 +275,9 @@
         else
         {
             let strModified = strContents.replace(/(\n|\r\n)/g, '<br>');
+            strModified = strModified.replace(/(\t)/g, '  ');
             let strModifiedSubject = strSubjects.replace(/(\n|\r\n)/g, '<br>');
+            strModifiedSubject = strModifiedSubject.replace(/(\t)/g, '  ');
 
             $.ajax({
                 url:"/manage_setting_popup/request_writeletter_partner",

@@ -238,7 +238,7 @@
                         <td><input type="checkbox" id="chk" class="chkGrp" value="${list[i].id}"></td>
                         <td>${iIndex}</td>
 						<td><a href="#" onclick="OnClickNickname('${list[i].strTo}')">${GetClassNickName(list[i].iClass, list[i].strTo)}</a></td>
-						<td><a style="text-align:left;padding-left:10px;color:${color};" href="#" onclick="OnClickRead('${list[i].id}', '${list[i].eRead}');">${strSubject}</a></td>
+						<td><a style="text-align:left;padding-left:10px;color:${color};" href="#" onclick="OnClickRead('${list[i].id}', '${list[i].eRead}'); return false;">${strSubject}</a></td>
                         <td style="color:${color2};">${eRead}</td>
                         <td>${list[i].createdAt}</td>
                         <td>${strReadDate}</td>
@@ -274,10 +274,19 @@
     }
 
     let OnClickRead = (id, eRead) => {
-        OnClickReadContact(id);
-        if (eRead == 'UNREAD' || eRead == 'REPLY') {
-            reload();
+        if (eRead == 'UNREAD') {
+            $(`#content_${id}`).css('color', 'blue');
+            $(`#readState_${id}`).css('color', 'black');
+            $(`#readState_${id}`).text('읽음');
+            $(`#readDate_${id}`).val(new Date());
+        } else if (eRead == 'REPLY') {
+            $(`#content_${id}`).css('color', 'blue');
+            $(`#readState_${id}`).css('color', 'black');
+            $(`#readState_${id}`).text('읽음');
+            $(`#readDate_${id}`).val(new Date());
         }
+
+        OnClickReadContact(id);
     }
 
     let OnClickPage = (iPage) => {

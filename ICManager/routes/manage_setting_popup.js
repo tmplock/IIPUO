@@ -840,13 +840,51 @@ router.post('/request_letter_select_remove', async(req, res) => {
     console.log(req.body);
     try {
         let ids = req.body.ids.split(',');
-        await db.Letters.destroy({
-            where:{
-                id: {
-                    [Op.in] : ids
+        if (ids.length > 0) {
+            await db.Letters.destroy({
+                where:{
+                    id: {
+                        [Op.in] : ids
+                    }
                 }
-            }
-        });
+            });
+        }
+
+        //TODO: 이용자 업데이트 후에 관리자 업데이트 필요(위에 destory 삭제 후 아래 주석 풀기)
+        // let ids = req.body.ids.split(',');
+        // let type = req.body.type ?? '';
+        // if (type == '' || ids.length == 0) {
+        //     res.send({result: 'FAIL', msg:'삭제 오류(타입없음)'});
+        //     return;
+        // }
+        // if (type == 'RECEIVE') {
+        //     await db.Letters.update(
+        //         {
+        //             iDelTo:1
+        //         },
+        //         {
+        //         where:{
+        //             id: {
+        //                 [Op.in] : ids
+        //             }
+        //         }
+        //     });
+        // } else if (type == 'SEND') {
+        //     await db.Letters.update(
+        //         {
+        //             iDelFrom:1
+        //         },
+        //         {
+        //             where:{
+        //                 id: {
+        //                     [Op.in] : ids
+        //                 }
+        //             }
+        //         });
+        // } else {
+        //     res.send({result: 'FAIL', msg:`삭제 오류(${type})`});
+        //     return;
+        // }
         res.send({result:'OK'});
     } catch (err) {
         res.send({result: 'FAIL', msg:'삭제 오류'});

@@ -91,6 +91,7 @@
         }
 
         let strMemo = $('#strMemo').val().replace(/(\n|\r\n)/g, '<br>');
+        strMemo = strMemo.replace(/(\t)/g, '  ');
 
         if ( strTo == '' )
         {

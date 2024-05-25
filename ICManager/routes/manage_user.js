@@ -10,6 +10,7 @@ router.use(express.static(path.join(__dirname, '../', 'public')));
 router.use(express.static(path.join(__dirname, '../', 'objects')));
 
 let realtime_userlist = [];
+let realtime_site_map = new Map();
 
 const db = require('../models');
 const ITime = require('../utils/time');
@@ -315,12 +316,25 @@ router.post('/realtime_user', (req, res) => {
         console.log(`/manage_user/realtime_user ${req.user.strGroupID}`);
     }
 
-    realtime_userlist = [];
-    for ( let i in req.body )
-    {
-        realtime_userlist.push({strGroupID:req.body[i].strGroupID, strNickname:req.body[i].strNickname, iClass:req.body[i].iClass});
+    try {
+        let userlist = [];
+        for ( let i in req.body )
+        {
+            userlist.push({strURL:req.headers.host, strGroupID:req.body[i].strGroupID, strNickname:req.body[i].strNickname, iClass:req.body[i].iClass});
+        }
 
-        console.log(`${i} : ${req.body[i].strNickname}, ${req.body[i].strGroupID}`);
+        let key = req.headers.host ?? '';
+        realtime_site_map[key] = userlist;
+
+        // 재 계산
+        realtime_userlist = [];
+        for (let i in realtime_site_map) {
+            for (let j in realtime_site_map[i]) {
+                realtime_userlist.push(realtime_site_map[i][j]);
+            }
+        }
+    } catch (err) {
+
     }
 
     for ( let i in global.socket_list )
@@ -328,7 +342,7 @@ router.post('/realtime_user', (req, res) => {
         try {
             console.log(`socket ${i} : ${global.socket_list[i].strGroupID}`);
 
-            const cNumUser = GetNumUser(global.socket_list[i].strGroupID, req.body);
+            const cNumUser = GetNumUser(global.socket_list[i].strGroupID, realtime_userlist);
 
             global.socket_list[i].emit('realtime_user', cNumUser);
         } catch (err) {

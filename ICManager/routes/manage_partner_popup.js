@@ -29,6 +29,9 @@ router.post('/agentinfo', isLoggedIn, async (req, res) => {
     user.iRootClass = req.user.iClass;
     user.iRootNickname = req.user.strNickname;
     user.iPermission = req.user.iPermission;
+    user.strBankOwner = '';
+    user.strBankAccount = '';
+    user.strBankname = '';
 
     const sid = req.user.strID
     let iC = await db.Users.findOne({where:{strID:req.user.strID}});
@@ -36,27 +39,6 @@ router.post('/agentinfo', isLoggedIn, async (req, res) => {
     let parents = await IAgent.GetParentList(req.body.strGroupID, req.body.iClass, user);
     let iClass = user.iClass;
     let iRootClass = iC.iClass;
-
-    // if (req.user.iClass > 3) {
-    //     if (user.strBankname != null && user.strBankname != '') {
-    //         user.strBankname = '******';
-    //     }
-    //     if (user.strBankAccount != null && user.strBankAccount != '') {
-    //         user.strBankAccount = '******';
-    //     }
-    //     if (user.strBankOwner != null && user.strBankOwner != '') {
-    //         user.strBankOwner = '******';
-    //     }
-    //     if (user.strMobile != null && user.strMobile != '') {
-    //         user.strMobile = '******';
-    //     }
-    //     let pass = '';
-    //     for (var i = 0;  i<user.strPassword.length; i++) {
-    //         pass = pass + '*';
-    //     }
-    //     user.strPassword = pass;
-    //     user.strPasswordConfirm = pass;
-    // }
 
     res.render('manage_partner/popup_agentinfo', {iLayout:2, iHeaderFocus:0, agent:user, sid:sid, pw_auth:iC.pw_auth, iClass:iClass, iRootClass: iRootClass, strParent:parents.strParents, iPermission:iC.iPermission});
 });
@@ -1176,6 +1158,53 @@ router.post('/request_initoutputpass', isLoggedIn, async (req, res) => {
     res.send({result:'OK'});
 });
 
+// 에이전트 계좌 보기
+router.post('/request_bank', isLoggedIn, async (req, res) => {
+    let input = req.body.input ?? '';
+    if (input == '') {
+        res.send({result:'FAIL', msg:'암호를 입력해주세요'});
+        return;
+    }
+
+    // 총본 조회(GroupID 앞3자리)
+    let user = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
+    if (user == null) {
+        res.send({result:'FAIL', msg:'조회 불가'});
+        return;
+    }
+
+    if (req.user.iClass == 8 || req.user.iClass == 7) {
+        // 접근 가능
+    } else if (req.user.iClass > 3) {
+        // 접근권한 없음
+        res.send({result:'FAIL', msg:'접근권한 없음'});
+        return;
+    }
+
+    let strGroupID = (user.strGroupID ?? '').substring(0, 3);
+    let partner = await db.Users.findAll({
+        where: {
+            strGroupID: strGroupID,
+            iClass:2,
+            iPermission: {
+                [Op.notIn]: [100]
+            },
+        }
+    });
+    if (partner.length == 0) {
+        res.send({result:'FAIL', msg:'조회 불가'});
+        return;
+    }
+
+    let pass = partner[0].strOddPassword ?? '';
+    if (pass != input) {
+        res.send({result:'FAIL', msg:'암호 불일치'});
+        return;
+    }
+
+    res.send({result:'OK', msg:'정상 조회', bankname: user.strBankname, bankAccount:user.strBankAccount, bankOwner:user.strBankOwner, cell:user.strMobile});
+});
+
 //에이전트 정보 수정
 router.post('/request_agentinfo_modify',async (req, res) => {
 
@@ -1434,6 +1463,16 @@ router.post('/request_agentinfo_modify',async (req, res) => {
             }
             if (req.body.strMobile != undefined && req.body.strMobile != '******') {
                 data['strMobile'] = req.body.strMobile;
+            }
+
+            // 은행정보 수정 가능 권한 체크
+            if (user.strBankname != data.strBankname || user.strBankAccount != data.strBankAccount || user.strBankOwner != data.strBankOwner) {
+                if (req.user.iClass == 8 || req.user.iClass == 7) {
+                } else if (req.user.iClass > 3) {
+                    strErrorCode = 'ERRORMSG';
+                    res.send({result:'ERROR', code:strErrorCode, msg: '접근권한 없음'});
+                    return;
+                }
             }
 
             if (user.strBankname != data.strBankname) {

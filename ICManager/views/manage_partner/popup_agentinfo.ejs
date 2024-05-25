@@ -22,9 +22,10 @@
 				<th scope="row"><%=__('BankName')%></th>
 				<td>
 					<% if (agent.iRootClass > 3) { %>
-						<input type="password" style="width:50%;" name="bank_name" id="bank_name" required="no" message="" value="<%=agent.strBankname%>">
+						<input type="password" style="width:50%;" name="bank_name" id="bank_name" required="no" message="" value="" disabled>
 					<% } else { %>
-						<input type="text" style="width:50%;" name="bank_name" id="bank_name" required="no" message="" value="<%=agent.strBankname%>">
+						<input type="text" style="width:50%;" name="bank_name" id="bank_name" required="no" message="" value="" disabled>
+						<a href="#" onclick="OnClickBankInfo(`${agent.strNickname}`);" class="btn_blue">은행정보 조회</a>
 					<% } %>
 				</td>
 			</tr>
@@ -39,9 +40,9 @@
 				<th scope="row"><%=__('BankAccount')%></th>
 				<td>
 					<% if (agent.iRootClass > 3) { %>
-						<input type="password" style="width:50%;" name="bank_num" id="bank_num" required="no" message="" value="<%=agent.strBankAccount%>">
+						<input type="password" style="width:50%;" name="bank_num" id="bank_num" required="no" message="" value="" disabled>
 					<% } else { %>
-						<input type="text" style="width:50%;" name="bank_num" id="bank_num" required="no" message="" value="<%=agent.strBankAccount%>">
+						<input type="text" style="width:50%;" name="bank_num" id="bank_num" required="no" message="" value="" disabled>
 					<% } %>
 				</td>
 			</tr>
@@ -57,9 +58,9 @@
 				<th scope="row"><%=__('BankAccountHolderName')%></th>
 				<td>
 					<% if (agent.iRootClass > 3) { %>
-						<input type="password" style="width:50%;" name="bank_owner" id="bank_owner" required="no"  message="" value="<%=agent.strBankOwner%>">
+						<input type="password" style="width:50%;" name="bank_owner" id="bank_owner" required="no"  message="" value="" disabled>
 					<% } else { %>
-						<input type="text" style="width:50%;" name="bank_owner" id="bank_owner" required="no"  message="" value="<%=agent.strBankOwner%>">
+						<input type="text" style="width:50%;" name="bank_owner" id="bank_owner" required="no"  message="" value="" disabled>
 					<% } %>
 				</td>
 			</tr>
@@ -75,9 +76,9 @@
 				<th scope="row"><%=__('Contact')%></th>
 				<td>
 					<% if (agent.iRootClass > 3) { %>
-						<input type="password" style="width:50%;" name="cell" id="cell" required="no"  message="" value="<%=agent.strMobile%>">
+						<input type="password" style="width:50%;" name="cell" id="cell" required="no"  message="" value="" disabled>
 					<% } else { %>
-						<input type="text" style="width:50%;" name="cell" id="cell" required="no"  message="" value="<%=agent.strMobile%>">
+						<input type="text" style="width:50%;" name="cell" id="cell" required="no"  message="" value="" disabled>
 					<% } %>
 				</td>
 			</tr>
@@ -516,6 +517,43 @@
 
 		let ret = array.toString();
 		return ret.replace(/,/g, "");
+	}
+
+	let OnClickBankInfo = (strNickname) => {
+		let input = prompt('비밀번호를 입력해주세요');
+		if (input == null) {
+			return;
+		} else if (input.length == 0) {
+			alert(`비밀번호를 입력하지 않았습니다`);
+			return;
+		}
+		RequestBankInfo(strNickname, input);
+	}
+
+	let RequestBankInfo = (strNickname, input) => {
+		$.ajax({
+			type:'POST',
+			url:'/manage_partner_popup/request_bank',
+			data: {strNickname: strNickname, input: input},
+			success: (data) => {
+
+				if ( data.result == 'OK' )
+				{
+					$("#bank_owner").removeAttr("disabled");
+					$('#bank_owner').val(data.bankOwner);
+					$("#bank_name").removeAttr("disabled");
+					$('#bank_name').val(data.bankname);
+					$("#bank_num").removeAttr("disabled");
+					$('#bank_num').val(data.bankAccount);
+					$("#cell").removeAttr("disabled");
+					$('#cell').val(data.cell);
+				}
+				else
+				{
+					alert(data.msg);
+				}
+			}
+		});
 	}
 	
 	let ModifyAgentInfo = () => {

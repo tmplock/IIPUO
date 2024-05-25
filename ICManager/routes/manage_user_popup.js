@@ -26,6 +26,9 @@ router.post('/userinfo', isLoggedIn, async(req, res) => {
     let user = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
     user.iRootClass = req.user.iClass;
     user.iPermission = req.user.iPermission;
+    user.strBankOwner = '';
+    user.strBankAccount = '';
+    user.strBankname = '';
 
     const sid = req.user.strID;
     let iC = await db.Users.findOne({where:{strID:req.user.strID}});
@@ -36,47 +39,6 @@ router.post('/userinfo', isLoggedIn, async(req, res) => {
 
     const iRootClass = req.user.iClass;
 
-    // 매장일 경우에는 모두 표시
-    // if (iRootClass > 3 && iRootClass != 7) {
-    //     if (user.strBankname != null && user.strBankname != '') {
-    //         user.strBankname = '******';
-    //     }
-    //     if (user.strBankAccount != null && user.strBankAccount != '') {
-    //         user.strBankAccount = '******';
-    //     }
-    //     if (user.strBankOwner != null && user.strBankOwner != '') {
-    //         user.strBankOwner = '******';
-    //     }
-    //     if (user.strMobile != null && user.strMobile != '') {
-    //         user.strMobile = '******';
-    //     }
-    //
-    //     let pass = '';
-    //     for (var i = 0;  i<user.strPassword.length; i++) {
-    //         pass = pass + '*';
-    //     }
-    //     user.strPassword = pass;
-    //     user.strPasswordConfirm = pass;
-    // } else if (iRootClass == 7) {
-    //     if (user.strBankname != null && user.strBankname != '') {
-    //         user.strBankname = '******';
-    //     }
-    //     if (user.strBankAccount != null && user.strBankAccount != '') {
-    //         user.strBankAccount = '******';
-    //     }
-    //     if (user.strBankOwner != null && user.strBankOwner != '') {
-    //         user.strBankOwner = '******';
-    //     }
-    //     if (user.strMobile != null && user.strMobile != '') {
-    //         user.strMobile = '******';
-    //     }
-    //     let pass = '';
-    //     for (var i = 0;  i<user.strPassword.length; i++) {
-    //         pass = pass + '*';
-    //     }
-    //     user.strPassword = pass;
-    //     user.strPasswordConfirm = pass;
-    // }
     res.render('manage_user/popup_userinfo', {iLayout:3, iHeaderFocus:0, agent:user, iClass:iC.iClass, pw_auth:iC.pw_auth, parents:parents, iPermission: iC.iPermission, iRootClass: iRootClass});
 });
 

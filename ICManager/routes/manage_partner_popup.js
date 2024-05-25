@@ -1452,43 +1452,47 @@ router.post('/request_agentinfo_modify',async (req, res) => {
             if (req.body.strPasswordConfirm != undefined && req.body.strPasswordConfirm != '******') {
                 data['strPasswordConfirm'] = req.body.strPasswordConfirm;
             }
-            if (req.body.strBankname != undefined && req.body.strBankname != '******') {
+            if (req.body.strBankname != undefined && req.body.strBankname != '******' && req.body.strBankname != '') {
                 data['strBankname'] = req.body.strBankname;
             }
-            if (req.body.strBankOwner != undefined && req.body.strBankOwner != '******') {
+            if (req.body.strBankOwner != undefined && req.body.strBankOwner != '******' && req.body.strBankOwner != '') {
                 data['strBankOwner'] = req.body.strBankOwner;
             }
-            if (req.body.strBankAccount != undefined && req.body.strBankAccount != '******') {
+            if (req.body.strBankAccount != undefined && req.body.strBankAccount != '******' && req.body.strBankAccount != '') {
                 data['strBankAccount'] = req.body.strBankAccount;
             }
-            if (req.body.strMobile != undefined && req.body.strMobile != '******') {
+            if (req.body.strMobile != undefined && req.body.strMobile != '******' && req.body.strMobile != '') {
                 data['strMobile'] = req.body.strMobile;
             }
 
             // 은행정보 수정 가능 권한 체크
-            if (user.strBankname != data.strBankname || user.strBankAccount != data.strBankAccount || user.strBankOwner != data.strBankOwner) {
-                if (req.user.iClass == 8 || req.user.iClass == 7) {
-                } else if (req.user.iClass > 3) {
+            if (data.hasOwnProperty('strBankname') || data.hasOwnProperty('strBankOwner') || data.hasOwnProperty('strBankAccount')) {
+                if (user.strBankname != data.strBankname || user.strBankAccount != data.strBankAccount || user.strBankOwner != data.strBankOwner) {
+                    if (data.strBankname != '' || data.strBankAccount != '' || data.strBankOwner != '') {
+                        if (req.user.iClass == 8 || req.user.iClass == 7) {
+                        } else if (req.user.iClass > 3) {
+                            strErrorCode = 'ERRORMSG';
+                            res.send({result:'ERROR', code:strErrorCode, msg: '접근권한 없음'});
+                            return;
+                        }
+                    }
+                }
+
+                if (user.strBankname != data.strBankname) {
                     strErrorCode = 'ERRORMSG';
-                    res.send({result:'ERROR', code:strErrorCode, msg: '접근권한 없음'});
+                    res.send({result:'ERROR', code:strErrorCode, msg: '계좌 변경은 고객센터로 문의주세요'});
                     return;
                 }
-            }
-
-            if (user.strBankname != data.strBankname) {
-                strErrorCode = 'ERRORMSG';
-                res.send({result:'ERROR', code:strErrorCode, msg: '계좌 변경은 고객센터로 문의주세요'});
-                return;
-            }
-            if (user.strBankAccount != data.strBankAccount) {
-                strErrorCode = 'ERRORMSG';
-                res.send({result:'ERROR', code:strErrorCode, msg: '계좌 변경은 고객센터로 문의주세요'});
-                return;
-            }
-            if (user.strBankOwner != data.strBankOwner) {
-                strErrorCode = 'ERRORMSG';
-                res.send({result:'ERROR', code:strErrorCode, msg: '계좌 변경은 고객센터로 문의주세요'});
-                return;
+                if (user.strBankAccount != data.strBankAccount) {
+                    strErrorCode = 'ERRORMSG';
+                    res.send({result:'ERROR', code:strErrorCode, msg: '계좌 변경은 고객센터로 문의주세요'});
+                    return;
+                }
+                if (user.strBankOwner != data.strBankOwner) {
+                    strErrorCode = 'ERRORMSG';
+                    res.send({result:'ERROR', code:strErrorCode, msg: '계좌 변경은 고객센터로 문의주세요'});
+                    return;
+                }
             }
 
             let logMsg = logMessage(user, data);
@@ -1595,29 +1599,33 @@ const logMessage = (source, data) => {
             msg = `${msg} | 비밀번호 변경`;
     }
 
-    let bankMsg = '';
-
-    if (source.strBankname != data.strBankname) {
-        bankMsg = `계좌정보 변경`;
-    }
-    if (source.strBankAccount != data.strBankAccount) {
-        bankMsg = `계좌정보 변경`;
-    }
-    if (source.strBankOwner != data.strBankOwner) {
-        bankMsg = `계좌정보 변경`;
-    }
-    if (bankMsg != '') {
-        if (msg == '') {
-            msg = bankMsg;
-        } else {
-            msg = `${msg} | ${bankMsg}`;
+    if (data.hasOwnProperty('strBankname') || data.hasOwnProperty('strBankOwner') || data.hasOwnProperty('strBankAccount')) {
+        let bankMsg = '';
+        if (source.strBankname != data.strBankname) {
+            bankMsg = `계좌정보 변경`;
+        }
+        if (source.strBankAccount != data.strBankAccount) {
+            bankMsg = `계좌정보 변경`;
+        }
+        if (source.strBankOwner != data.strBankOwner) {
+            bankMsg = `계좌정보 변경`;
+        }
+        if (bankMsg != '') {
+            if (msg == '') {
+                msg = bankMsg;
+            } else {
+                msg = `${msg} | ${bankMsg}`;
+            }
         }
     }
-    if (source.strMobile != data.strMobile) {
-        if (msg == '')
-            msg = `연락처 변경(${source.strMobile}=>${data.strMobile})`;
-        else
-            msg = `${msg} | 연락처 변경(${source.strMobile}=>${data.strMobile})`;
+
+    if (data.hasOwnProperty('strMobile')) {
+        if (source.strMobile != data.strMobile) {
+            if (msg == '')
+                msg = `연락처 변경(${source.strMobile}=>${data.strMobile})`;
+            else
+                msg = `${msg} | 연락처 변경(${source.strMobile}=>${data.strMobile})`;
+        }
     }
 
     if (source.fBaccaratR != data.fBaccaratR) {

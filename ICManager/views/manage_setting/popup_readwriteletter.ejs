@@ -48,7 +48,7 @@
 
 <script>
     let user = JSON.parse('<%-JSON.stringify(agent)%>');
-    let contents = <%-JSON.stringify(contents)%>;
+    let contents = JSON.parse('<%-JSON.stringify(contents)%>');
     let iocount = JSON.parse('<%-JSON.stringify(iocount)%>');
     Alert(iocount, "<%=__('RequestInput')%>", "<%=__('RequestOutput')%>,","<%=__('LetterSend')%>");
 

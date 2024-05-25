@@ -30,7 +30,7 @@
 <script type="text/javascript" src="js/manage_contact_ref.js"></script>
 <script>
     let user = JSON.parse('<%-JSON.stringify(user)%>');
-    let letter = <%-JSON.stringify(letter)%>;
+    let letter = JSON.parse('<%-JSON.stringify(letter)%>');
 
     const strType = '<%=__("Type")%>';
     const strDateSend = '<%=__("DateSend")%>';

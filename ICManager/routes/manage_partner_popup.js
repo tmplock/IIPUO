@@ -1478,21 +1478,21 @@ router.post('/request_agentinfo_modify',async (req, res) => {
                     }
                 }
 
-                if (user.strBankname != data.strBankname) {
-                    strErrorCode = 'ERRORMSG';
-                    res.send({result:'ERROR', code:strErrorCode, msg: '계좌 변경은 고객센터로 문의주세요'});
-                    return;
-                }
-                if (user.strBankAccount != data.strBankAccount) {
-                    strErrorCode = 'ERRORMSG';
-                    res.send({result:'ERROR', code:strErrorCode, msg: '계좌 변경은 고객센터로 문의주세요'});
-                    return;
-                }
-                if (user.strBankOwner != data.strBankOwner) {
-                    strErrorCode = 'ERRORMSG';
-                    res.send({result:'ERROR', code:strErrorCode, msg: '계좌 변경은 고객센터로 문의주세요'});
-                    return;
-                }
+                // if (user.strBankname != data.strBankname) {
+                //     strErrorCode = 'ERRORMSG';
+                //     res.send({result:'ERROR', code:strErrorCode, msg: '계좌 변경은 고객센터로 문의주세요'});
+                //     return;
+                // }
+                // if (user.strBankAccount != data.strBankAccount) {
+                //     strErrorCode = 'ERRORMSG';
+                //     res.send({result:'ERROR', code:strErrorCode, msg: '계좌 변경은 고객센터로 문의주세요'});
+                //     return;
+                // }
+                // if (user.strBankOwner != data.strBankOwner) {
+                //     strErrorCode = 'ERRORMSG';
+                //     res.send({result:'ERROR', code:strErrorCode, msg: '계좌 변경은 고객센터로 문의주세요'});
+                //     return;
+                // }
             }
 
             let logMsg = logMessage(user, data);

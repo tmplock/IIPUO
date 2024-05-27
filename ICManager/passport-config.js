@@ -6,6 +6,7 @@ var db = require('./models');
 const {where} = require("sequelize");
 //var User = require('../models/user')(seq.sequelize, seq.Sequelize);
 // var User = seq.Users;
+var requestIp = require('request-ip');
 
 module.exports = () => {
 
@@ -61,6 +62,24 @@ module.exports = () => {
                     // 보기 전용 계정
                     if (user.iPermission == 100) {
                         strURL = permission.strViewURL;
+                    } else {
+                        let strIPs = permission.strIPs ?? '';
+                        if (strIPs != '') {
+                            let ipList = strIPs.replaceAll(' ', '').split(',');
+                            let ip = requestIp.getClientIp(req);
+                            console.log(`IP : ${ip}`);
+                            let hasIp = false;
+                            for (let i in ipList) {
+                                if (ip == ipList[i]) {
+                                    hasIp = true;
+                                    break;
+                                }
+                            }
+                            if (hasIp == false) {
+                                console.log(`Access Not IP`);
+                                return done(null, false, { message: '접근 권한이 없는 IP 입니다.' });
+                            }
+                        }
                     }
                     // 모바일 http로 접속되는 경우가 있음
                     let host = `https://${req.headers.host}`;

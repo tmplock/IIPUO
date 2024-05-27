@@ -22,6 +22,10 @@ module.exports = (sequelize, DataTypes) => {
         eState: {
             type:DataTypes.ENUM('NORMAL', 'BLOCK'),
         },
+        // 허용 IP리스트
+        strIPs: {
+            type: DataTypes.STRING,
+        },
         createdAt:{
             type:DataTypes.DATE,
             get() {

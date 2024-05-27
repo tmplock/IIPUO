@@ -81,29 +81,6 @@ let ReadLetter = (id, target, type) => {
 	$form.submit();
 }
 
-let RemoveLetter = (id) => {
-
-	if ( confirm(strConfirmRemove) )
-	{
-		$.ajax({
-			url:"/manage_setting_popup/request_removeletter",
-			type:"POST",
-			context: document.body,
-			data: {
-				id:id
-			},
-			success: function (obj) {
-	
-				if( obj.result == 'OK' )
-				{
-					alert(strAlertComplete);
-					location.reload();					
-				}
-			}
-		});
-	}
-}
-
 let ReadAnnouncement = (id) => {
 
 	console.log(`ReadAnnouncement : ${id}`);

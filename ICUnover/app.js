@@ -78,7 +78,7 @@ app.use(session({
     secret: 'administrator#',
     resave: false,
     saveUninitialized: false,
-    store: sessionStore
+    store: sessionStore,
     cookie: { secure: false, httpOnly: true, maxAge: (4 * 60 * 60 * 1000) },
     passport: {}
 }));

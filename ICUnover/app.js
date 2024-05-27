@@ -31,7 +31,7 @@ let mysqlsession = require('express-mysql-session')(session);
 // }
 // host:'db-mysql-sgp1-62759-do-user-11246819-0.c.db.ondigitalocean.com',
 // database:'iipc',
-// username:'doadmin',
+// username:'doadmin', 
 // password:'AVNS_FYsbSxfV0ADzDF4IiRJ',
 // dialect: 'mysql',
 // port:'25060',
@@ -79,8 +79,8 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     store: sessionStore
-    // cookie: { secure: false, httpOnly: true, maxAge: (4 * 60 * 60 * 1000) },
-    // passport: {}
+    cookie: { secure: false, httpOnly: true, maxAge: (4 * 60 * 60 * 1000) },
+    passport: {}
 }));
 
 const path = require('path');

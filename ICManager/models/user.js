@@ -204,6 +204,9 @@ module.exports = (sequelize, DataTypes) => {
         // 신규자 체크 패스 여부(1:패스)
         iPassCheckNewUser: {
             type: DataTypes.INTEGER,
+        },
+        strInoutPassword: {
+            type: DataTypes.STRING,
         }
     }, {
         indexes: [

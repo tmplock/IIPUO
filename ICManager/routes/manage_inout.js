@@ -1016,7 +1016,7 @@ router.post('/request_bank', async (req, res) => {
     const strNickname = req.user.strNickname;
     const input = req.body.input;
 
-    const info = await db.Users.findOne({where: {strNickname: strNickname, strPassword: input}});
+    const info = await db.Users.findOne({where: {strNickname: strNickname, strInoutPassword: input}});
     if (info == null) {
         res.send({result: 'FAIL', msg:'비밀번호가 틀립니다'});
         return;

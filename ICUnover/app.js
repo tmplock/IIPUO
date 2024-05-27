@@ -60,28 +60,28 @@ let session_option = {
 
 let sessionStore = new mysqlsession(session_option);
 
-app.use(session({
-    secret: 'administrator#',
-    resave: false,
-    saveUninitialized: false,
-    cookie: { secure: false, httpOnly: true, maxAge: (4 * 60 * 60 * 1000) },
-    passport: {}
-}));
-// app.use(session({
-//     secret: process.env.secret,
-//     resave: false,
-//     saveUninitialized: true,
-//     store: sessionStore
-// }));
-
 // app.use(session({
 //     secret: 'administrator#',
 //     resave: false,
 //     saveUninitialized: false,
-//     store: sessionStore
-//     // cookie: { secure: false, httpOnly: true, maxAge: (4 * 60 * 60 * 1000) },
-//     // passport: {}
+//     cookie: { secure: false, httpOnly: true, maxAge: (4 * 60 * 60 * 1000) },
+//     passport: {}
 // }));
+// // app.use(session({
+// //     secret: process.env.secret,
+// //     resave: false,
+// //     saveUninitialized: true,
+// //     store: sessionStore
+// // }));
+
+app.use(session({
+    secret: 'administrator#',
+    resave: false,
+    saveUninitialized: false,
+    store: sessionStore
+    // cookie: { secure: false, httpOnly: true, maxAge: (4 * 60 * 60 * 1000) },
+    // passport: {}
+}));
 
 const path = require('path');
 const axios = require('axios');

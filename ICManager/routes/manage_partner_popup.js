@@ -614,13 +614,8 @@ router.post('/request_confirm_auto_register_value', isLoggedIn, async(req, res) 
 
     let listID = await db.Users.findAll({
         where: {
-            [Op.or]: {
-                strID: {
-                    [Op.in]:idList
-                },
-                strNickname: {
-                    [Op.in]:nicknameList
-                }
+            strID: {
+                [Op.in]:idList
             }
         }
     });
@@ -805,17 +800,38 @@ router.post('/request_register', isLoggedIn, async(req, res) => {
 
         let iAutoRegisterNumber = parseInt(req.body.iAutoRegisterNumber);
         let iCheckAutoRegister = parseInt(req.body.iCheckAutoRegister ?? 0);
+        let idList = [];
+        let nicknameList = [];
         if (iCheckAutoRegister == 1) {
             if (iAutoRegisterNumber <= 1) {
                 res.send({result:'Error', error:'FAIL', string:'자동생성 입력값을 확인해주세요(1보다 커야합니다)'});
                 return;
             }
-            // 아이디, 닉네임 숫자부분 제거한 값
-            strID = req.body.strAutoID;
-            strNickname = req.body.strAutoNickname;
-
+            idList = GetIDList(strID, iAutoRegisterNumber);
+            nicknameList = GetNicknameList(strNickname, iAutoRegisterNumber);
         } else {
             iAutoRegisterNumber = 1;
+            idList = [strID];
+            nicknameList = [strNickname];
+        }
+
+        // 아이디, 비번 중복 체크
+        let listID = await db.Users.findAll({
+            where: {
+                [Op.in]:{
+                    strID: {
+                        [Op.in]:idList
+                    },
+                    strNickname: {
+                        [Op.in]:nicknameList
+                    }
+                }
+            }
+        });
+
+        if (listID.length > 0) {
+            res.send({result:'FAIL', string:`에이전트 생성을 실패했습니다.(중복된 아이디 또는 닉네임이 있습니다)`});
+            return;
         }
 
         let iLoginMax = 1;
@@ -854,13 +870,8 @@ router.post('/request_register', isLoggedIn, async(req, res) => {
         }
 
         for (let i = 0; i < iAutoRegisterNumber; i++) {
-            let newID = strID;
-            let newNickname = strNickname;
-
-            if (iCheckAutoRegister == 1) {
-                newID = `${strID}${i+1}`;
-                newNickname = `${strNickname}${i+1}`;
-            }
+            let newID = idList[i];
+            let newNickname = nicknameList[i];
 
             let strGroupID = await CalculateGroupID(req.body.strParentGroupID, req.body.iParentClass);
 

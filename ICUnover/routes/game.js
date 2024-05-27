@@ -63,9 +63,18 @@ router.post('/sm', async (req, res) => {
     console.log(res_axios.data);
     let listGames = res_axios.data.data;
     let newListGames = [];
-    for (let i in listGames) {
-        if (listGames[i].type == 'slot') {
+    if(objectData == 'LIVE_ALLBET')
+    {
+        for (let i in listGames) {
             newListGames.push(listGames[i]);
+        }
+    }
+    else
+    {
+        for (let i in listGames) {
+            if (listGames[i].type == 'slot') {
+                newListGames.push(listGames[i]);
+            }
         }
     }
     let count = parseInt(newListGames.length);

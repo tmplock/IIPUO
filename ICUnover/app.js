@@ -29,13 +29,20 @@ let mysqlsession = require('express-mysql-session')(session);
 //     checkExpirationInterval:10000,
 //     expiration:10000    
 // }
+// host:'db-mysql-sgp1-62759-do-user-11246819-0.c.db.ondigitalocean.com',
+// database:'iipc',
+// username:'doadmin',
+// password:'AVNS_FYsbSxfV0ADzDF4IiRJ',
+// dialect: 'mysql',
+// port:'25060',
+// timezone:'+09:00'
 
 let session_option = {
-    host: 'db-mysql-sgp1-78563-do-user-11246819-0.c.db.ondigitalocean.com',
+    host: 'db-mysql-sgp1-62759-do-user-11246819-0.c.db.ondigitalocean.com',
     database: 'iipc',
     user: 'doadmin',
     port:25060,
-    password: 'AVNS_M3_YxbEdNmi41c9HbLu',
+    password: 'AVNS_FYsbSxfV0ADzDF4IiRJ',
     clearExpired:true,
     checkExpirationInterval:10000,
     expiration:10000    

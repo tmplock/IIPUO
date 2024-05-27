@@ -29,13 +29,20 @@ let mysqlsession = require('express-mysql-session')(session);
 //     checkExpirationInterval:10000,
 //     expiration:10000    
 // }
+// host:'db-mysql-sgp1-62759-do-user-11246819-0.c.db.ondigitalocean.com',
+// database:'iipc',
+// username:'doadmin', 
+// password:'AVNS_FYsbSxfV0ADzDF4IiRJ',
+// dialect: 'mysql',
+// port:'25060',
+// timezone:'+09:00'
 
 let session_option = {
-    host: 'db-mysql-sgp1-78563-do-user-11246819-0.c.db.ondigitalocean.com',
+    host: 'db-mysql-sgp1-62759-do-user-11246819-0.c.db.ondigitalocean.com',
     database: 'iipc',
     user: 'doadmin',
     port:25060,
-    password: 'AVNS_M3_YxbEdNmi41c9HbLu',
+    password: 'AVNS_FYsbSxfV0ADzDF4IiRJ',
     clearExpired:true,
     checkExpirationInterval:10000,
     expiration:10000    
@@ -53,28 +60,28 @@ let session_option = {
 
 let sessionStore = new mysqlsession(session_option);
 
-app.use(session({
-    secret: 'administrator#',
-    resave: false,
-    saveUninitialized: false,
-    cookie: { secure: false, httpOnly: true, maxAge: (4 * 60 * 60 * 1000) },
-    passport: {}
-}));
-// app.use(session({
-//     secret: process.env.secret,
-//     resave: false,
-//     saveUninitialized: true,
-//     store: sessionStore
-// }));
-
 // app.use(session({
 //     secret: 'administrator#',
 //     resave: false,
 //     saveUninitialized: false,
-//     store: sessionStore
-//     // cookie: { secure: false, httpOnly: true, maxAge: (4 * 60 * 60 * 1000) },
-//     // passport: {}
+//     cookie: { secure: false, httpOnly: true, maxAge: (4 * 60 * 60 * 1000) },
+//     passport: {}
 // }));
+// // app.use(session({
+// //     secret: process.env.secret,
+// //     resave: false,
+// //     saveUninitialized: true,
+// //     store: sessionStore
+// // }));
+
+app.use(session({
+    secret: 'administrator#',
+    resave: false,
+    saveUninitialized: false,
+    store: sessionStore,
+    cookie: { secure: false, httpOnly: true, maxAge: (4 * 60 * 60 * 1000) },
+    passport: {}
+}));
 
 const path = require('path');
 const axios = require('axios');
@@ -112,8 +119,8 @@ global.io = io;
 // global.strAdminAddress = 'https://admintest.unover001.com';
 global.strAdminAddress = 'http://188.166.231.104:3031';
 ///global.strVenderAddress = 'http://174.138.23.187:3001';
-//global.strVenderAddress = 'https://iipgame.uk';
-global.strVenderAddress = 'https://iipgame.com';
+global.strVenderAddress = 'https://iipgame.uk';
+//global.strVenderAddress = 'https://iipgame.com';
 
  global.ePublishing = 'ON';
 //global.ePublishing = 'OFF';

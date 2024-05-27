@@ -64,9 +64,7 @@ router.post('/sm', async (req, res) => {
     let listGames = res_axios.data.data;
     let newListGames = [];
     for (let i in listGames) {
-        if (listGames[i].type == 'slot') {
             newListGames.push(listGames[i]);
-        }
     }
     let count = parseInt(newListGames.length);
     res.render('sm', {iLayout:1, strVender:req.body.strGame, listGames:newListGames, data: res_axios.data, count:count, ePublishing:global.ePublishing});

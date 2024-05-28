@@ -130,8 +130,14 @@ exports.ProcessWin = async (strID, strNickname, strGroupID, iClass, iBalance, iG
                 }
                 else
                 {
-                    //const cWin = parseFloat(bet.iWin) + iWin;
-                    await db.RecordBets.update({iWin:iWin, eType:'BETWIN', eState:'STANDBY', strUniqueID:strUniqueID}, {where:{id:bet.id}});
+                    if ( bet.strVender == 'EZUGI' )
+                    {
+                        await db.RecordBets.update({iWin:iWin, eType:'BETWIN', eState:'STANDBY', strUniqueID:strUniqueID, strDetail:strDetail, strResult:strResult}, {where:{id:bet.id}});
+                    }
+                    else
+                    {
+                        await db.RecordBets.update({iWin:iWin, eType:'BETWIN', eState:'STANDBY', strUniqueID:strUniqueID}, {where:{id:bet.id}});
+                    }
                 }
                 await UpdateUserCash(strID, iWin, `WIN:${strVender},${strGameID},${strTableID}`);
             }

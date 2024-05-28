@@ -111,25 +111,30 @@ exports.RemoveCache = (key) => {
 
 exports.GetAllKeys = async () => {
 
-    const keys = await redis.keys('*');
-    console.log(keys);
-    
-    const values = await redis.mget(keys);
-
-    console.log(`################################################## REDIS GET ALL KEYS`);
-    
-
-    console.log(values);
-
     let list = [];
 
-    for ( let i in values )
+    const keys = await redis.keys('*');
+    console.log(keys);
+
+    if ( keys.length > 0 )
     {
-        list.push(JSON.parse(values[i]))
+        const values = await redis.mget(keys);
+
+        console.log(`################################################## REDIS GET ALL KEYS`);
+        
+    
+        console.log(values);
+    
+    
+        for ( let i in values )
+        {
+            list.push(JSON.parse(values[i]))
+        }
     }
 
     console.log(list);
     //console.log(values);
+    return list;
 }
 
 

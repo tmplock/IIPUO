@@ -96,7 +96,9 @@ router.post('/popup', isLoggedIn, async(req, res) => {
 router.post('/request_agentinfo', isLoggedIn, async(req, res) => {
     console.log(req.body);
     let dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
-    dbuser.strPassword = null;
+    if (req.user.iClass != 7) {
+        dbuser.strPassword = null;
+    }
     dbuser.strOddPassword = null;
     dbuser.strInoutPassword = null;
     dbuser.strMobile = null;

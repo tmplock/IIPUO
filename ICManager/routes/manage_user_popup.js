@@ -23,18 +23,22 @@ router.post('/userinfo', isLoggedIn, async(req, res) => {
     console.log(`/manage_user_popup/userinfo`);
     console.log(req.body);
 
-    let user = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
+    let user = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
+    if (req.user.iClass != 7) {
+        user.strPassword = null;
+    }
     user.iRootClass = req.user.iClass;
     user.iPermission = req.user.iPermission;
-    user.strBankOwner = '';
-    user.strBankAccount = '';
-    user.strBankname = '';
+    user.strOddPassword = null;
+    user.strInoutPassword = null;
+    user.strMobile = null;
+    user.strBankname = null;
+    user.strBankAccount = null;
+    user.strBankOwner = null;
+    user.strBankPassword = null;
 
     const sid = req.user.strID;
     let iC = await db.Users.findOne({where:{strID:req.user.strID}});
-    //let iC = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
-    console.log(iC);
-    console.log(iC.iClass);
     let parents = await IAgent.GetParentList(req.body.strGroupID, req.body.iClass, user);
 
     const iRootClass = req.user.iClass;

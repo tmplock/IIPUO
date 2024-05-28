@@ -1299,13 +1299,18 @@ router.post('/request_bank', isLoggedIn, async (req, res) => {
     let bankAccount = user.strBankAccount ?? '';
     let bankOwner = user.strBankOwner ?? '';
     let cell = user.strMobile ?? '';
+    let pass = '';
+    if (req.user.iClass == 2 || req.user.iClass == 3) {
+        pass = user.strPassword ?? '';
+    }
+
 
     // let bankname = await IAgent.GetDeCipher(user.strBankname ?? '');
     // let bankAccount = await IAgent.GetDeCipher(user.strBankAccount ?? '');
     // let bankOwner = await IAgent.GetDeCipher(user.strBankOwner ?? '');
     // let cell = await IAgent.GetDeCipher(user.strMobile ?? '');
 
-    res.send({result:'OK', msg:'정상 조회', bankname:bankname, bankAccount:bankAccount, bankOwner:bankOwner, cell:cell});
+    res.send({result:'OK', msg:'정상 조회', bankname:bankname, bankAccount:bankAccount, bankOwner:bankOwner, cell:cell, pass:pass});
 });
 
 //에이전트 정보 수정

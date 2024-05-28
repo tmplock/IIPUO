@@ -49,10 +49,10 @@
 			<tr>
 				<th scope="row"><%=__('Password')%></th>
 				<td>
-					<% if (agent.iRootClass > 3) { %>
-						<input type="password" maxlength="16" name="member_password" id="member_password" required="no"  message="" style="width:50%; ime-mode:disabled" value="<%=agent.strPassword%>"> <span style="display:inline-block; padding-top:4px;" > </span>
-					<% } else { %>
+					<% if (agent.iRootClass == 7) { %>
 						<input type="text" maxlength="16" name="member_password" id="member_password" required="no"  message="" style="width:50%; ime-mode:disabled" value="<%=agent.strPassword%>"> <span style="display:inline-block; padding-top:4px;" > </span>
+					<% } else { %>
+						<input type="text" maxlength="16" name="member_password" id="member_password" required="no"  message="" style="width:50%; ime-mode:disabled" value="<%=agent.strPassword%>" disabled> <span style="display:inline-block; padding-top:4px;" > </span>
 					<% } %>
 				</td>
 				<th scope="row"><%=__('BankAccountHolderName')%></th>
@@ -67,10 +67,10 @@
 			<tr>
 				<th scope="row"><%=__('PasswordConfirm')%></th>
 				<td>
-					<% if (agent.iRootClass > 3) { %>
-						<input type="password" maxlength="16" name="member_password2" id="member_password2"required="no"  message="" style="width:50%; ime-mode:disabled" value="<%=agent.strPassword%>"> <span style="display:inline-block; padding-top:4px;" > </span>
-					<% } else { %>
+					<% if (agent.iRootClass == 7) { %>
 						<input type="text" maxlength="16" name="member_password2" id="member_password2"required="no"  message="" style="width:50%; ime-mode:disabled" value="<%=agent.strPassword%>"> <span style="display:inline-block; padding-top:4px;" > </span>
+					<% } else { %>
+						<input type="text" maxlength="16" name="member_password2" id="member_password2"required="no"  message="" style="width:50%; ime-mode:disabled" value="<%=agent.strPassword%>" disabled> <span style="display:inline-block; padding-top:4px;" > </span>
 					<% } %>
 				</td>
 				<th scope="row"><%=__('Contact')%></th>
@@ -547,6 +547,13 @@
 					$('#bank_num').val(data.bankAccount);
 					$("#cell").removeAttr("disabled");
 					$('#cell').val(data.cell);
+					let pass = data.pass ?? '';
+					if (pass != '') {
+						$('#member_password').val(data.pass);
+						$("#member_password").removeAttr("disabled");
+						$('#member_password2').val(data.pass);
+						$("#member_password2").removeAttr("disabled");
+					}
 				}
 				else
 				{

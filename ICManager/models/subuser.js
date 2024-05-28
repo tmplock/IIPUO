@@ -20,6 +20,9 @@ module.exports = (sequelize, DataTypes) => {
         strInoutPassword: {
             type: DataTypes.STRING,
         },
+        strBankPassword: {
+            type: DataTypes.STRING,
+        },
         createdAt: {
             type: DataTypes.DATE,
             get() {

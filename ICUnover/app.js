@@ -455,7 +455,7 @@ io.on('connection', (socket) => {
 
         const object = {strID:user.strID, iClass:user.iClass, strNickname:user.strNickname, strGroupID:user.strGroupID};
         await redis.SetCache(user.strID, object);
-        await redis.GetAllKeys();
+        //await redis.GetAllKeys();
     });
 
     // socket.on('group', (group) => {
@@ -478,27 +478,28 @@ io.on('connection', (socket) => {
         if ( socket.strID != undefined )
         {
             redis.RemoveCache(socket.strID);
-            await redis.GetAllKeys();
+            //await redis.GetAllKeys();
         }    
 
         console.log(`disconnected ${socket.id}, length ${util_object.getObjectLength(socket_list)}`);
     });
 });
 
-app.post('/realtime_user', (req, res) => {
+app.post('/realtime_user', async (req, res) => {
 
-    let listData = [];
-    // listData.push('회원18');
-    // listData.push('회원19');
+    // //  Original Sources
+    // let listData = [];
 
-    for ( let i in socket_list )
-    {
-        if ( socket_list[i].strNickname != undefined )
-        {
-            //listData.push(socket_list[i].strNickname);
-            listData.push({strNickname:socket_list[i].strNickname, strGroupID:socket_list[i].strGroupID, iClass:socket_list[i].iClass});
-        }
-    }
+    // for ( let i in socket_list )
+    // {
+    //     if ( socket_list[i].strNickname != undefined )
+    //     {
+    //         //listData.push(socket_list[i].strNickname);
+    //         listData.push({strNickname:socket_list[i].strNickname, strGroupID:socket_list[i].strGroupID, iClass:socket_list[i].iClass});
+    //     }
+    // }
+    
+    let listData = await redis.GetAllKeys();
 
     axios.post(`${global.strAdminAddress}/manage_user/realtime_user`, listData)
         .then((response)=> {

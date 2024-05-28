@@ -115,14 +115,18 @@ exports.GetAllKeys = async () => {
     const values = await redis.mget(keys);
 
     console.log(`################################################## REDIS GET ALL KEYS`);
-    console.log(keys);
+    //console.log(keys);
 
     console.log(values);
 
-    for ( let i in keys )
-    {
+    let list = [];
 
+    for ( let i in values )
+    {
+        list.push(JSON.parse(values[i]))
     }
+
+    console.log(list);
     //console.log(values);
 }
 

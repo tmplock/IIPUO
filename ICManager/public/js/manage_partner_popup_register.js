@@ -6,6 +6,9 @@ let bCheckNickname = false;
 let strCheckID    = '';
 let strCheckNickname = '';
 
+let strAutoID = '';
+let strAutoNickname = '';
+
 let bCheckAutoRegister = false;
 let bCheckIDOrNicknameAutoRegister    = false;
 let bUsingPC = false;
@@ -204,6 +207,24 @@ let RequestConfirmAutoRegisterValue = () => {
         alert('자동생성 값을 확인해주세요');
         return;
     }
+
+    let idList = GetIDList(id, number);
+    let nicknameList = GetNicknameList(nickname, number);
+
+    let msg = '';
+    for (let i = 0; i<idList.length; i++) {
+        if (msg == '') {
+            msg = `${idList[i]}(${nicknameList[i]})`;
+        } else {
+            msg = `${msg}, ${idList[i]}(${nicknameList[i]})`;
+        }
+    }
+
+    let ok = confirm(`생성될 아이디(닉네임)을 확인해주세요\n${msg}\n중복확인을 위해서 확인을 눌러주세요`);
+    if (ok == null || ok == false) {
+        return;
+    }
+
     $.ajax(
         {
             type:'post',
@@ -212,6 +233,9 @@ let RequestConfirmAutoRegisterValue = () => {
             data:{strNickname:nickname, strID:id, number:number},
             success:function(data) {
                 if ( data.result == 'OK' ) {
+                    strAutoID = id;
+                    strAutoNickname = nickname;
+
                     bCheckIDOrNicknameAutoRegister = true;
                     alert(strAlertEnableToUse);
                 }
@@ -227,6 +251,53 @@ let RequestConfirmAutoRegisterValue = () => {
         }
     );
 }
+
+
+let GetIDList = (id, number) => {
+    let numberId = "";
+    for (let i = id.length - 1; i >= 0; i--) {
+        if (Number.isNaN(parseInt(id[i]))) {
+            if (numberId == '') {
+                numberId = '1';
+            }
+            break;
+        } else {
+            numberId = `${id[i]}${numberId}`;
+        }
+    }
+    let strID = id.replace(numberId, '');
+    numberId = parseInt(numberId);
+
+    // 체크 항목 리스트 만들기
+    let idList = [];
+    for (let i = 0; i<number; i++) {
+        idList.push(`${strID}${numberId+i}`);
+    }
+    return idList;
+}
+let GetNicknameList = (nickname, number) => {
+    let numberNickname = '';
+    for (let i = nickname.length - 1; i >= 0; i--) {
+        if (Number.isNaN(parseInt(nickname[i]))) {
+            if (numberNickname == '') {
+                numberNickname = '1';
+            }
+            break;
+        } else {
+            numberNickname = `${nickname[i]}${numberNickname}`;
+        }
+    }
+    let strNickname = nickname.replace(numberNickname, '');
+    numberNickname = parseInt(numberNickname);
+
+    // 체크 항목 리스트 만들기
+    let nicknameList = [];
+    for (let i = 0; i<number; i++) {
+        nicknameList.push(`${strNickname}${numberNickname+i}`);
+    }
+    return nicknameList;
+}
+
 
 let replaceCharacter = (str, index, char) => {
 
@@ -258,8 +329,8 @@ let Submit = (bClose) => {
             iAutoRegisterNumber = $('#auto_register_number').val();
             iAutoRegisterNumber = parseInt(iAutoRegisterNumber);
             iAutoRegisterNumber = Number.isNaN(iAutoRegisterNumber) ? 0 : iAutoRegisterNumber;
-            if (iAutoRegisterNumber < 1) {
-                alert('자동생성 숫자는 0보다 커야합니다');
+            if (iAutoRegisterNumber <= 1) {
+                alert('자동생성 숫자는 1보다 커야합니다');
                 return;
             }
         } catch (err) {

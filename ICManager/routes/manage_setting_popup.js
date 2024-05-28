@@ -595,6 +595,12 @@ router.post('/request_letterrecord', async (req, res) => {
                 },
                 strFrom:strFrom,
                 eRead:{[Op.or]:listState},
+                iDelFrom: {
+                    [Op.or]:{
+                        [Op.is]: null,
+                        [Op.not]:1
+                    }
+                }
             },
         }) : await db.Letters.count({
             where:{
@@ -604,6 +610,12 @@ router.post('/request_letterrecord', async (req, res) => {
                 strFrom:strFrom,
                 strTo:{[Op.like]:'%'+strKeyword+'%'},
                 eRead:{[Op.or]:listState},
+                iDelFrom: {
+                    [Op.or]:{
+                        [Op.is]: null,
+                        [Op.not]:1
+                    }
+                }
             },
         });
     } else {
@@ -614,6 +626,12 @@ router.post('/request_letterrecord', async (req, res) => {
                 },
                 strFrom:strFrom,
                 eRead:{[Op.or]:listState},
+                iDelFrom: {
+                    [Op.or]:{
+                        [Op.is]: null,
+                        [Op.not]:1
+                    }
+                }
             },
         }) : await db.Letters.count({
             where:{
@@ -623,6 +641,12 @@ router.post('/request_letterrecord', async (req, res) => {
                 strFrom:strFrom,
                 strTo:{[Op.like]:'%'+strKeyword+'%'},
                 eRead:{[Op.or]:listState},
+                iDelFrom: {
+                    [Op.or]:{
+                        [Op.is]: null,
+                        [Op.not]:1
+                    }
+                }
             },
         });
     }
@@ -640,6 +664,12 @@ router.post('/request_letterrecord', async (req, res) => {
                 },
                 strFrom:strFrom,
                 eRead:{[Op.or]:listState},
+                iDelFrom: {
+                    [Op.or]:{
+                        [Op.is]: null,
+                        [Op.not]:1
+                    }
+                }
             },
             limit:iLimit,
             offset:iOffset,
@@ -652,6 +682,12 @@ router.post('/request_letterrecord', async (req, res) => {
                 strFrom:strFrom,
                 strTo:{[Op.like]:'%'+strKeyword+'%'},
                 eRead:{[Op.or]:listState},
+                iDelFrom: {
+                    [Op.or]:{
+                        [Op.is]: null,
+                        [Op.not]:1
+                    }
+                }
             },
             limit:iLimit,
             offset:iOffset,
@@ -665,6 +701,12 @@ router.post('/request_letterrecord', async (req, res) => {
                 },
                 strFrom:strFrom,
                 eRead:{[Op.or]:listState},
+                iDelFrom: {
+                    [Op.or]:{
+                        [Op.is]: null,
+                        [Op.not]:1
+                    }
+                }
             },
             limit:iLimit,
             offset:iOffset,
@@ -677,6 +719,12 @@ router.post('/request_letterrecord', async (req, res) => {
                 strFrom:strFrom,
                 strTo:{[Op.like]:'%'+strKeyword+'%'},
                 eRead:{[Op.or]:listState},
+                iDelFrom: {
+                    [Op.or]:{
+                        [Op.is]: null,
+                        [Op.not]:1
+                    }
+                }
             },
             limit:iLimit,
             offset:iOffset,
@@ -723,7 +771,13 @@ router.post('/request_letterlist', async (req, res) => {
                 },
                 iClassTo: {[Op.in]:[3,2]},
                 iClassFrom: {[Op.notIn]:[2]}, // 총본이 보낸것은 제외
-                eRead:{[Op.or]:listState}
+                eRead:{[Op.or]:listState},
+                iDelTo: {
+                    [Op.or]:{
+                        [Op.is]: null,
+                        [Op.not]:1
+                    }
+                }
             },
         }) : await db.Letters.count({
             where:{
@@ -736,7 +790,13 @@ router.post('/request_letterlist', async (req, res) => {
                 iClassTo: {[Op.in]:[3,2]},
                 iClassFrom: {[Op.notIn]:[2]}, // 총본이 보낸것은 제외
                 strFrom:{[Op.like]:'%'+strKeyword+'%'},
-                eRead:{[Op.or]:listState}
+                eRead:{[Op.or]:listState},
+                iDelTo: {
+                    [Op.or]:{
+                        [Op.is]: null,
+                        [Op.not]:1
+                    }
+                }
             },
         });
     } else {
@@ -746,7 +806,13 @@ router.post('/request_letterlist', async (req, res) => {
                     [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
                 },
                 strTo:strTo,
-                eRead:{[Op.or]:listState}
+                eRead:{[Op.or]:listState},
+                iDelTo: {
+                    [Op.or]:{
+                        [Op.is]: null,
+                        [Op.not]:1
+                    }
+                }
             },
         }) :  await db.Letters.count({
             where:{
@@ -755,7 +821,13 @@ router.post('/request_letterlist', async (req, res) => {
                 },
                 strTo:strTo,
                 strFrom:{[Op.like]:'%'+strKeyword+'%'},
-                eRead:{[Op.or]:listState}
+                eRead:{[Op.or]:listState},
+                iDelTo: {
+                    [Op.or]:{
+                        [Op.is]: null,
+                        [Op.not]:1
+                    }
+                }
             },
         });
     }
@@ -776,7 +848,13 @@ router.post('/request_letterlist', async (req, res) => {
                 },
                 iClassTo: {[Op.in]:[3,2]},
                 iClassFrom: {[Op.notIn]:[2]}, // 총본이 보낸것은 제외
-                eRead:{[Op.or]:listState}
+                eRead:{[Op.or]:listState},
+                iDelTo: {
+                    [Op.or]:{
+                        [Op.is]: null,
+                        [Op.not]:1
+                    }
+                }
             },
             limit:iLimit,
             offset:iOffset,
@@ -792,7 +870,13 @@ router.post('/request_letterlist', async (req, res) => {
                 iClassTo: {[Op.in]:[3,2]},
                 iClassFrom: {[Op.notIn]:[2]}, // 총본이 보낸것은 제외
                 strFrom:{[Op.like]:'%'+strKeyword+'%'},
-                eRead:{[Op.or]:listState}
+                eRead:{[Op.or]:listState},
+                iDelTo: {
+                    [Op.or]:{
+                        [Op.is]: null,
+                        [Op.not]:1
+                    }
+                }
             },
             limit:iLimit,
             offset:iOffset,
@@ -805,7 +889,13 @@ router.post('/request_letterlist', async (req, res) => {
                     [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
                 },
                 strTo: strTo,
-                eRead:{[Op.or]:listState}
+                eRead:{[Op.or]:listState},
+                iDelTo: {
+                    [Op.or]:{
+                        [Op.is]: null,
+                        [Op.not]:1
+                    }
+                }
             },
             limit:iLimit,
             offset:iOffset,
@@ -817,7 +907,13 @@ router.post('/request_letterlist', async (req, res) => {
                 },
                 strTo: strTo,
                 strFrom:{[Op.like]:'%'+strKeyword+'%'},
-                eRead:{[Op.or]:listState}
+                eRead:{[Op.or]:listState},
+                iDelTo: {
+                    [Op.or]:{
+                        [Op.is]: null,
+                        [Op.not]:1
+                    }
+                }
             },
             limit:iLimit,
             offset:iOffset,
@@ -830,9 +926,7 @@ router.post('/request_letterlist', async (req, res) => {
 
 router.post('/request_removeletter', async(req, res) => {
     console.log(req.body);
-
-    await db.Letters.destroy({where:{id:req.body.id}});
-
+    // await db.Letters.destroy({where:{id:req.body.id}});
     res.send({result:'OK'});
 });
 

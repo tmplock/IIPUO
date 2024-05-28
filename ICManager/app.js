@@ -256,12 +256,7 @@ cron.schedule('*/30 * * * * *', async () => {
     }
 });
 
-// 처음 시작시에 한번 기동되도록 수정
-// daily =  await IAgent3.CreateOrUpdateDailyRecord(daily);
-
-
 var socket_list = {};
-
 global.socket_list = socket_list;
 
 // Object.size = (obj) => {
@@ -284,25 +279,12 @@ io.on('connection', (socket) => {
     console.log(`connected ${socket.id}, length ${util_object.getObjectLength(socket_list)}`);
 
     socket.on('request_login', (user) => {
-
-        console.log(`############################################################################`);
-        
-        console.log(`socket packet request_login ${user.strNickname}, ${user.strGroupID}, ${user.iClass}, ${user.iPermission}`);
-
-        console.log(`############################################################################`);
-
         socket.strGroupID = user.strGroupID;
         socket.iClass = user.iClass;
         socket.strNickname = user.strNickname;
         socket.iPermission = user.iPermission;
 
     });
-
-    // socket.on('group', (group) => {
-    //     console.log(`group : ${group}`);
-
-    //     socket.group = group;
-    // })
 
     socket.on('disconnect', () => {
         delete socket_list[socket.id];

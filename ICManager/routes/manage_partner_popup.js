@@ -592,30 +592,25 @@ router.post('/request_confirmagentnickname', isLoggedIn, async(req, res) => {
 router.post('/request_confirm_auto_register_value', isLoggedIn, async(req, res) => {
     console.log(req.body);
 
-    let strNickname = req.body.strNickname ?? '';
-    let strID = req.body.strID ?? '';
+    let nickname = req.body.strNickname ?? '';
+    let id = req.body.strID ?? '';
     let number = parseInt(req.body.number ?? 0);
 
-    if (strID == '') {
+    if (id == '') {
         res.send({result: 'FAIL', msg: '아이디을 입력해주세요'});
         return;
     }
-    if (strNickname == '') {
+    if (nickname == '') {
         res.send({result: 'FAIL', msg: '닉네임을 입력해주세요'});
         return;
     }
-    if (number < 1) {
-        res.send({result: 'FAIL', msg: '자동생성 입력값을 확인해주세요'});
+    if (number < 2) {
+        res.send({result: 'FAIL', msg: '자동생성 입력값을 1보다 커야 합니다'});
         return;
     }
 
-    // 체크 항목 리스트 만들기
-    let idList = [];
-    let nicknameList = [];
-    for (let i = 1; i<number; i++) {
-        idList.push(`${strID}${i}`);
-        nicknameList.push(`${strNickname}${i}`);
-    }
+    let idList = GetIDList(id, number);
+    let nicknameList = GetNicknameList(nickname, number);
 
     let listID = await db.Users.findAll({
         where: {
@@ -651,7 +646,52 @@ router.post('/request_confirm_auto_register_value', isLoggedIn, async(req, res) 
     }
 
     res.send({result:'OK' , msg: ''});
-})
+});
+
+let GetIDList = (id, number) => {
+    let numberId = "";
+    for (let i = id.length - 1; i >= 0; i--) {
+        if (Number.isNaN(parseInt(id[i]))) {
+            if (numberId == '') {
+                numberId = '1';
+            }
+            break;
+        } else {
+            numberId = `${id[i]}${numberId}`;
+        }
+    }
+    let strID = id.replace(numberId, '');
+    numberId = parseInt(numberId);
+
+    // 체크 항목 리스트 만들기
+    let idList = [];
+    for (let i = 0; i<number; i++) {
+        idList.push(`${strID}${numberId+i}`);
+    }
+    return idList;
+}
+let GetNicknameList = (nickname, number) => {
+    let numberNickname = '';
+    for (let i = nickname.length - 1; i >= 0; i--) {
+        if (Number.isNaN(parseInt(nickname[i]))) {
+            if (numberNickname == '') {
+                numberNickname = '1';
+            }
+            break;
+        } else {
+            numberNickname = `${nickname[i]}${numberNickname}`;
+        }
+    }
+    let strNickname = nickname.replace(numberNickname, '');
+    numberNickname = parseInt(numberNickname);
+
+    // 체크 항목 리스트 만들기
+    let nicknameList = [];
+    for (let i = 0; i<number; i++) {
+        nicknameList.push(`${strNickname}${numberNickname+i}`);
+    }
+    return nicknameList;
+}
 
 
 var leadingZeros = (n, digits) => {
@@ -706,6 +746,9 @@ router.post('/request_register', isLoggedIn, async(req, res) => {
     }
 
     try {
+        let strID = req.body.strID;
+        let strNickname = req.body.strNickname;
+
         let fSettleBaccarat = parseFloat(req.body.fSettleBaccarat ?? 0);
         fSettleBaccarat = Number.isNaN(fSettleBaccarat) ? 0 : fSettleBaccarat;
 
@@ -757,14 +800,38 @@ router.post('/request_register', isLoggedIn, async(req, res) => {
 
         let iAutoRegisterNumber = parseInt(req.body.iAutoRegisterNumber);
         let iCheckAutoRegister = parseInt(req.body.iCheckAutoRegister ?? 0);
+        let idList = [];
+        let nicknameList = [];
         if (iCheckAutoRegister == 1) {
-            if (iAutoRegisterNumber < 1) {
-                res.send({result:'Error', error:'FAIL', string:'자동생성 입력값을 확인해주세요'});
+            if (iAutoRegisterNumber <= 1) {
+                res.send({result:'Error', error:'FAIL', string:'자동생성 입력값을 확인해주세요(1보다 커야합니다)'});
                 return;
             }
-            iAutoRegisterNumber = iAutoRegisterNumber + 1; // 원본 추가
+            idList = GetIDList(strID, iAutoRegisterNumber);
+            nicknameList = GetNicknameList(strNickname, iAutoRegisterNumber);
         } else {
             iAutoRegisterNumber = 1;
+            idList = [strID];
+            nicknameList = [strNickname];
+        }
+
+        // 아이디, 비번 중복 체크
+        let listID = await db.Users.findAll({
+            where: {
+                [Op.in]:{
+                    strID: {
+                        [Op.in]:idList
+                    },
+                    strNickname: {
+                        [Op.in]:nicknameList
+                    }
+                }
+            }
+        });
+
+        if (listID.length > 0) {
+            res.send({result:'FAIL', string:`에이전트 생성을 실패했습니다.(중복된 아이디 또는 닉네임이 있습니다)`});
+            return;
         }
 
         let iLoginMax = 1;
@@ -774,29 +841,48 @@ router.post('/request_register', isLoggedIn, async(req, res) => {
         } else if (iClass == 3) {
             iLoginMax = 1;
         }
+
+        let eState = 'BLOCK';
+        // PC방 설정은 바로 승인처리
+        let strOptionCode = req.body.strOptionCode ?? '';
+        if (strOptionCode == "00100000") {
+            eState = 'NORMAL';
+        }
+
+        let strMobileNo = req.body.strMobileNo ?? '';
+        if (strMobileNo != '') {
+            strMobileNo = await IAgent.GetCipher(strMobileNo);
+        }
+
+        let strBankName = req.body.strBankName ?? '';
+        if (strBankName != '') {
+            strBankName = await IAgent.GetCipher(strBankName);
+        }
+
+        let strAccountNumber = req.body.strAccountNumber ?? '';
+        if (strAccountNumber != '') {
+            strAccountNumber = await IAgent.GetCipher(strAccountNumber);
+        }
+
+        let strAccountOwner = req.body.strAccountOwner ?? '';
+        if (strAccountOwner != '') {
+            strAccountOwner = await IAgent.GetCipher(strAccountOwner);
+        }
+
         for (let i = 0; i < iAutoRegisterNumber; i++) {
-            let strID = req.body.strID;
-            let strNickname = req.body.strNickname;
-            if (i > 0) {
-                strID = `${req.body.strID}${i}`;
-                strNickname = `${req.body.strNickname}${i}`;
-            }
+            let newID = idList[i];
+            let newNickname = nicknameList[i];
+
             let strGroupID = await CalculateGroupID(req.body.strParentGroupID, req.body.iParentClass);
-            let eState = 'BLOCK';
-            // PC방 설정은 바로 승인처리
-            let strOptionCode = req.body.strOptionCode ?? '';
-            if (strOptionCode == "00100000") {
-                eState = 'NORMAL';
-            }
 
             await db.Users.create({
-                strID:strID,
-                strNickname:strNickname,
+                strID:newID,
+                strNickname:newNickname,
                 strPassword:req.body.strPassword,
-                strMobile:req.body.strMobileNo,
-                strBankname:req.body.strBankName,
-                strBankAccount:req.body.strAccountNumber,
-                strBankOwner:req.body.strAccountOwner,
+                strMobile:strMobileNo,
+                strBankname:strBankName,
+                strBankAccount:strAccountNumber,
+                strBankOwner:strAccountOwner,
                 strBankPassword:'',
                 strOutputPassowrd:'',
                 iClass:parseInt(req.body.iParentClass)+1,
@@ -1202,7 +1288,12 @@ router.post('/request_bank', isLoggedIn, async (req, res) => {
         return;
     }
 
-    res.send({result:'OK', msg:'정상 조회', bankname: user.strBankname, bankAccount:user.strBankAccount, bankOwner:user.strBankOwner, cell:user.strMobile});
+    let bankname = await IAgent.GetDeCipher(user.strBankname ?? '');
+    let bankAccount = await IAgent.GetDeCipher(user.strBankAccount ?? '');
+    let bankOwner = await IAgent.GetDeCipher(user.strBankOwner ?? '');
+    let cell = await IAgent.GetDeCipher(user.strMobile ?? '');
+
+    res.send({result:'OK', msg:'정상 조회', bankname:bankname, bankAccount:bankAccount, bankOwner:bankOwner, cell:cell});
 });
 
 //에이전트 정보 수정
@@ -1446,23 +1537,34 @@ router.post('/request_agentinfo_modify',async (req, res) => {
                 iPassCheckNewUser:iPassCheckNewUser
             };
 
-            if (req.body.strPassword != undefined && req.body.strPassword != '******') {
-                data['strPassword'] = req.body.strPassword;
+            let strPassword = req.body.strPassword ?? '';
+            if (strPassword != '') {
+                data['strPassword'] = strPassword;
             }
-            if (req.body.strPasswordConfirm != undefined && req.body.strPasswordConfirm != '******') {
-                data['strPasswordConfirm'] = req.body.strPasswordConfirm;
+
+            let strPasswordConfirm = req.body.strPasswordConfirm ?? '';
+            if (strPasswordConfirm != '') {
+                data['strPasswordConfirm'] = strPasswordConfirm;
             }
-            if (req.body.strBankname != undefined && req.body.strBankname != '******' && req.body.strBankname != '') {
-                data['strBankname'] = req.body.strBankname;
+
+            let strBankname = req.body.strBankname ?? '';
+            if (strBankname != '') {
+                data['strBankname'] = await IAgent.GetCipher(strBankname);
             }
-            if (req.body.strBankOwner != undefined && req.body.strBankOwner != '******' && req.body.strBankOwner != '') {
-                data['strBankOwner'] = req.body.strBankOwner;
+
+            let strBankOwner = req.body.strBankOwner ?? '';
+            if (strBankOwner != '') {
+                data['strBankOwner'] = await IAgent.GetCipher(strBankOwner);
             }
-            if (req.body.strBankAccount != undefined && req.body.strBankAccount != '******' && req.body.strBankAccount != '') {
-                data['strBankAccount'] = req.body.strBankAccount;
+
+            let strBankAccount = req.body.strBankAccount ?? '';
+            if (strBankAccount != '') {
+                data['strBankAccount'] = await IAgent.GetCipher(strBankAccount);
             }
-            if (req.body.strMobile != undefined && req.body.strMobile != '******' && req.body.strMobile != '') {
-                data['strMobile'] = req.body.strMobile;
+
+            let strMobile = req.body.strMobile ?? '';
+            if (strMobile != '') {
+                data['strMobile'] = await IAgent.GetCipher(strMobile);
             }
 
             // 은행정보 수정 가능 권한 체크

@@ -96,7 +96,10 @@ cron.schedule('*/1 * * * * ', async ()=> {
         console.log(`##### listDBUpdate : ${i} db.id : ${listUpdateDB[i].id}`);
 
         const cData = listUpdateDB[i];
-        await db.RecordBets.update({strDetail:cData.strDetail, strResult:cData.strResult, eState:'ROLLING'}, {where:{id:cData.id}});
+        if ( cData.strResult != '' && cData.strDetail != '' )
+            await db.RecordBets.update({strDetail:cData.strDetail, strResult:cData.strResult, eState:'ROLLING'}, {where:{id:cData.id}});
+        else
+            await db.RecordBets.update({eState:'ROLLING'}, {where:{id:cData.id}});
     }
 
     console.log(`DBLength : ${listDB.length}, UpdateDBLength : ${listUpdateDB.length}`);

@@ -112,10 +112,17 @@ exports.RemoveCache = (key) => {
 exports.GetAllKeys = async () => {
 
     const keys = await redis.keys('*');
-    //const values = await redis.collection.mget(keys);
+    const values = await redis.collection.mget(keys);
 
     console.log(`################################################## REDIS GET ALL KEYS`);
     console.log(keys);
+
+    console.log(values);
+
+    for ( let i in keys )
+    {
+
+    }
     //console.log(values);
 }
 

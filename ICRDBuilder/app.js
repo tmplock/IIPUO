@@ -27,11 +27,12 @@ let GetEachDB = (listDB, listHL, listCQ9, listEzugi, listEtc) => {
     {
         const cDB = listDB[i];
 
-        if ( cDB.strVender == 'EZUGI' && cDB.iGameCode == 0 && cDB.eType == 'BETWIN' && (cDB.strTableID == '101' || cDB.strTableID == '100' || cDB.strTableID == '102') )
-        {
-            listEzugi.push(cDB);
-        }
-        else if ( cDB.strVender =='CQ9' && cDB.eType == 'BETWIN' )
+        // if ( cDB.strVender == 'EZUGI' && cDB.iGameCode == 0 && cDB.eType == 'BETWIN' && (cDB.strTableID == '101' || cDB.strTableID == '100' || cDB.strTableID == '102') )
+        // {
+        //     listEzugi.push(cDB);
+        // }
+        // else if ( cDB.strVender =='CQ9' && cDB.eType == 'BETWIN' )
+        if ( cDB.strVender =='CQ9' && cDB.eType == 'BETWIN' )
         {
             listCQ9.push(cDB);
         }
@@ -83,7 +84,7 @@ cron.schedule('*/1 * * * * ', async ()=> {
 
     await Processor.ProcessHLink(listHLDB, listUpdateDB);
     await Processor.ProcessCQ9(listCQ9DB, listUpdateDB);
-    await Processor.ProcessEzugi(listEzugiDB, listUpdateDB);
+    //await Processor.ProcessEzugi(listEzugiDB, listUpdateDB);
     await Processor.ProcessEtc(listEtc, listUpdateDB);
 
 
@@ -95,7 +96,10 @@ cron.schedule('*/1 * * * * ', async ()=> {
         console.log(`##### listDBUpdate : ${i} db.id : ${listUpdateDB[i].id}`);
 
         const cData = listUpdateDB[i];
-        await db.RecordBets.update({strDetail:cData.strDetail, strResult:cData.strResult, eState:'ROLLING'}, {where:{id:cData.id}});
+        if ( cData.strResult != '' && cData.strDetail != '' )
+            await db.RecordBets.update({strDetail:cData.strDetail, strResult:cData.strResult, eState:'ROLLING'}, {where:{id:cData.id}});
+        else
+            await db.RecordBets.update({eState:'ROLLING'}, {where:{id:cData.id}});
     }
 
     console.log(`DBLength : ${listDB.length}, UpdateDBLength : ${listUpdateDB.length}`);

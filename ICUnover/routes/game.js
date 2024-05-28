@@ -288,8 +288,12 @@ router.post('/win', async (req, res) => {
 
     res.send({result:'OK', iCash:iCash});
 
+    // await IBettingManager.ProcessWin(user.strID, user.strNickname, user.strGroupID, user.iClass, user.iCash, req.body.iGameCode, req.body.strVender, req.body.strGameID,
+    //     req.body.strTableID, req.body.strRoundID, req.body.strTransactionID, req.body.strDesc, '', 0, cWinAmount, cURL);
+
     await IBettingManager.ProcessWin(user.strID, user.strNickname, user.strGroupID, user.iClass, user.iCash, req.body.iGameCode, req.body.strVender, req.body.strGameID,
-        req.body.strTableID, req.body.strRoundID, req.body.strTransactionID, req.body.strDesc, '', 0, cWinAmount, cURL);
+        req.body.strTableID, req.body.strRoundID, req.body.strTransactionID, req.body.strTarget, req.body.strDesc, 0, cWinAmount, cURL);
+
 
     UpdateUserPageCash(req.body.strID, iCash);
 });

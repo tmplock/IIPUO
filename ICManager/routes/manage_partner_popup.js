@@ -357,8 +357,18 @@ router.post('/popup_listadmin_view', isLoggedIn, async(req, res) => {
         return;
     }
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:req.body.iClass, iAgentClass:req.body.iAgentClass,
+    let user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:req.body.iClass, iAgentClass:req.body.iAgentClass,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission};
+
+    // 비밀번호 체크
+    let pass = req.body.pass ?? '';
+    let u = await db.Users.findOne({where: {strNickname:req.body.strNickname}});
+    let sub = await db.SubUsers.findOne({where: {rId: u.id, strRegisterPassword:pass}});
+    if (sub == null) {
+        user.msg = '비밀번호가 틀립니다';
+        res.render('manage_partner/popup_listadmin_view', {iLayout:7, iHeaderFocus:0, agent:user, list:[], strParent: ''});
+        return;
+    }
 
     let list = await db.sequelize.query(
         `
@@ -380,8 +390,18 @@ router.post('/popup_listvice_view', isLoggedIn, async(req, res) => {
         return;
     }
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:req.body.iClass, iAgentClass:req.body.iAgentClass,
+    let user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:req.body.iClass, iAgentClass:req.body.iAgentClass,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission};
+
+    // 비밀번호 체크
+    let pass = req.body.pass ?? '';
+    let u = await db.Users.findOne({where: {strNickname:req.body.strNickname}});
+    let sub = await db.SubUsers.findOne({where: {rId: u.id, strRegisterPassword:pass}});
+    if (sub == null) {
+        user.msg = '비밀번호가 틀립니다';
+        res.render('manage_partner/popup_listvice_view', {iLayout:7, iHeaderFocus:0, agent:user, list:[], strParent: ''});
+        return;
+    }
 
     let list = await db.sequelize.query(
         `

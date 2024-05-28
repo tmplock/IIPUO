@@ -52,6 +52,12 @@
 	let list = JSON.parse('<%-JSON.stringify(list)%>');
 
 	$(document).ready( ()=> {
+		let msg = agent.msg ?? '';
+		if (msg != '') {
+			alert(msg);
+			self.close();
+			return;
+		}
 		SetList(list, false);
 	});
 

@@ -23,6 +23,13 @@ $(document).on('click', '#register_agent', (event) => {
 })
 
 $(document).on('click', '#register_agent_view', (event) => {
+    let input = prompt('암호입력');
+    if (input == null) {
+        return;
+    } else if (input.length == 0) {
+        alert(`암호 미입력`);
+        return;
+    }
 
     let eAgentType = $(event.target).attr('iAgentClass');
 
@@ -44,8 +51,9 @@ $(document).on('click', '#register_agent_view', (event) => {
     let category = $(`<input type="hidden" value=${parseInt(user.iClass)} name="iClass">`);
     var iPermission = $(`<input type="hidden" value=${parseInt(user.iPermission)} name="iPermission">`);
     let iAgentClass = $(`<input type="hidden" value=${eAgentType} name="iAgentClass">`);
+    var pass = $(`<input type="hidden" value=${input} name="pass">`);
 
-    $form.append(id).append(idx).append(page).append(category).append(iPermission).append(iAgentClass);
+    $form.append(id).append(idx).append(page).append(category).append(iPermission).append(iAgentClass).append(pass);
     $form.submit();
 })
 

@@ -178,6 +178,8 @@ app.use('/faq', require('./routes/faq'));
 
 //const cron = require('./cron');
 
+const redis = require('./redis');
+
 const {isLoggedIn, isNotLoggedIn} = require('./routes/middleware');
 const user = require('./models/user');
 const { Letters } = require('./db');
@@ -440,7 +442,7 @@ io.on('connection', (socket) => {
 
     console.log(`connected ${socket.id}, length ${util_object.getObjectLength(socket_list)}`);
 
-    socket.on('request_login', (user) => {
+    socket.on('request_login', async (user) => {
 
         console.log(`############################################# socket packet request_login ${user.strNickname}, ${user.strGroupID}, ${user.iClass}`);
 
@@ -450,6 +452,10 @@ io.on('connection', (socket) => {
         socket.strID = user.strID;
 
         socket.emit('response_login', "responsedata");
+
+        const object = {strID:user.strID, iClass:user.iClass, strNickname:user.strNickname, strGroupID:user.strGroupID};
+        await redis.SetCache(user.strID, object);
+        await redis.GetAllKeys();
     });
 
     // socket.on('group', (group) => {
@@ -468,6 +474,12 @@ io.on('connection', (socket) => {
         // }
 
         delete socket_list[socket.id];
+
+        if ( socket.strID != undefined )
+        {
+            redis.RemoveCache(socket.strID);
+            await redis.GetAllKeys();
+        }    
 
         console.log(`disconnected ${socket.id}, length ${util_object.getObjectLength(socket_list)}`);
     });

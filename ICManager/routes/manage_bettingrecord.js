@@ -580,8 +580,8 @@ router.post('/popup_cancel', isLoggedIn, async (req, res) => {
     }
 
     let dbuser = await db.Users.findOne({where: {strID: strID}});
-    let dbPassword = dbuser.strOddPassword ?? '';
-    if (dbPassword != password) {
+    let subUser = await db.SubUsers.findOne({where: dbuser.id, strOddPassword: password});
+    if (subUser == null) {
         res.send({result: 'FAIL', msg:'취소 비밀번호를 확인해주세요'});
         return;
     }

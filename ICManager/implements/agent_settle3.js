@@ -24,7 +24,11 @@ var inline_GetAdminForSettle = async (strGroupID, strQuater, iClass) => {
 
     const [list] = await db.sequelize.query(`
         SELECT IFNULL((SELECT COUNT(id) FROM SettleRecords WHERE iClass=4 AND strQuater='${strQuater}' AND strGroupID like CONCAT(u.strGroupID, '%')),0) AS iSettleCount,
-               u.*
+               u.id, u.strID, u.strNickname, u.iClass, u.iPermission, u.strGroupID, u.iParentID,
+               u.iCash, u.iRolling, u.iSettle, u.iSettleAcc, u.iSettleAccBefore,
+               u.fBaccaratR, u.fSlotR, u.fUnderOverR, u.fPBR, u.fPBSingleR, u.fPBDoubleR, u.fPBTripleR,
+               u.fSettleBaccarat, u.fSettleSlot, u.fSettlePBA, u.fSettlePBB, u.createdAt, u.updatedAt,
+               u.eState, u.strIP, u.strOptionCode, u.strSettleMemo, u.iRelUserID, u.fCommission, u.iPassCheckNewUser
         FROM Users u
         WHERE u.iClass = ${iClass} AND u.iPermission != 100 AND u.strGroupID like CONCAT('${strGroupID}', '%')
         `);
@@ -91,7 +95,12 @@ var inline_GetAgentListForSettle = async (strGroupID, iClass, strQuater, dateSta
 
     const [list] = await db.sequelize.query(`
         SELECT
-        t2.*, t2.iSettleAcc AS iSettleAccUser, t2.iCash as iMyMoney,
+            t2.id, t2.strID, t2.strNickname, t2.iClass, t2.iPermission, t2.strGroupID, t2.iParentID,
+            t2.iCash, t2.iRolling, u.iSettle, u.iSettleAcc, u.iSettleAccBefore,
+            t2.fBaccaratR, t2.fSlotR, t2.fUnderOverR, t2.fPBR, t2.fPBSingleR, t2.fPBDoubleR, t2.fPBTripleR,
+            t2.fSettleBaccarat, t2.fSettleSlot, t2.fSettlePBA, t2.fSettlePBB, t2.createdAt, t2.updatedAt,
+            t2.eState, t2.strIP, t2.strOptionCode, u.strSettleMemo, u.iRelUserID, u.fCommission, u.iPassCheckNewUser,
+            t2.iSettleAcc AS iSettleAccUser, t2.iCash as iMyMoney,
         IFNULL((SELECT iSettleAccTotal FROM SettleRecords WHERE strNickname = t2.strNickname AND strQuater='${strQuater2}'),0) as iSettleAccTotalBefore,
         IFNULL((SELECT SUM(iCash) FROM Users WHERE strGroupID LIKE CONCAT(t2.strGroupID,'%')),0) as iTotalMoney,
         IFNULL((SELECT iSettleAcc FROM SettleRecords WHERE strNickname ='${strNickname}' AND strQuater='${strQuater}'),0) as iSettleAccQuater,
@@ -117,7 +126,11 @@ var inline_GetAgentListForSettleRecord = async (strGroupID, iClass, strQuater, d
     console.log(`############################################################################################### inline_GetAgentListForSettleRecord : strNickname = ${strNickname}, strQuater : ${strQuater}`);
 
     const [list] = await  db.sequelize.query(`
-        SELECT s1.*, u.*
+        SELECT s1.*, u.id, u.strID, u.strNickname, u.iClass, u.iPermission, u.strGroupID, u.iParentID,
+               u.iCash, u.iRolling, u.iSettle, u.iSettleAcc, u.iSettleAccBefore,
+               u.fBaccaratR, u.fSlotR, u.fUnderOverR, u.fPBR, u.fPBSingleR, u.fPBDoubleR, u.fPBTripleR,
+               u.fSettleBaccarat, u.fSettleSlot, u.fSettlePBA, u.fSettlePBB, u.createdAt, u.updatedAt,
+               u.eState, u.strIP, u.strOptionCode, u.strSettleMemo, u.iRelUserID, u.fCommission, u.iPassCheckNewUser,
         FROM SettleRecords s1
         JOIN Users u on  s1.strNickname = u.strNickname
         WHERE s1.strNickname = '${strNickname}' AND s1.strQuater = '${strQuater}';

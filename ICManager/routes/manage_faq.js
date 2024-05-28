@@ -21,13 +21,17 @@ router.get('/list', isLoggedIn, async (req, res) => {
         where:{eState:'ENABLE'},
         order:[['createdAt','DESC']]
     });
-    res.render('faq/list', {iLayout:0, bLogin:bLogin, user:req.user, messages:null, listFaq:listFaq});
+    let agent = {strNickname:req.user.strNickname, iClass:req.user.iClass, strGroupID:req.user.strGroupID, iCash:req.user.iCash,
+        iRootClass:req.user.iClass, iPermission:req.user.iPermission, iRootNickname:req.user.strNickname};
+    res.render('faq/list', {iLayout:0, bLogin:bLogin, user:agent, messages:null, listFaq:listFaq});
 });
 
 router.get('/read', isLoggedIn, async (req, res) => {
     console.log(`#####/faq/view`);
     const obj = await db.Faqs.findOne({where:{id:req.query.id}});
-    res.render('faq/popup_read', {iLayout:0, user:req.user, messages:null, obj:obj});
+    let agent = {strNickname:req.user.strNickname, iClass:req.user.iClass, strGroupID:req.user.strGroupID, iCash:req.user.iCash,
+        iRootClass:req.user.iClass, iPermission:req.user.iPermission, iRootNickname:req.user.strNickname};
+    res.render('faq/popup_read', {iLayout:0, user:agent, messages:null, obj:obj});
 });
 
 router.post('/popup_write', isLoggedIn, async (req, res) => {
@@ -35,7 +39,9 @@ router.post('/popup_write', isLoggedIn, async (req, res) => {
     console.log(req.query);
 
     const obj = await db.Faqs.findOne({where:{id:req.query.id}});
-    res.render('faq/popup_write', {iLayout:0, user:req.user, messages:null, obj:obj, eDocumentType:'FAQ'});
+    let agent = {strNickname:req.user.strNickname, iClass:req.user.iClass, strGroupID:req.user.strGroupID, iCash:req.user.iCash,
+        iRootClass:req.user.iClass, iPermission:req.user.iPermission, iRootNickname:req.user.strNickname};
+    res.render('faq/popup_write', {iLayout:0, user:agent, messages:null, obj:obj, eDocumentType:'FAQ'});
 });
 
 router.get('/request_list', isLoggedIn, async (req, res) => {

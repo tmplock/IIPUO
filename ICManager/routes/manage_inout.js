@@ -1016,7 +1016,8 @@ router.post('/request_bank', async (req, res) => {
     const strNickname = req.user.strNickname;
     const input = req.body.input;
 
-    const info = await db.Users.findOne({where: {strNickname: strNickname, strInoutPassword: input}});
+    const user = await db.Users.findOne({where: {strNickname: strNickname}});
+    const info = await db.SubUsers.findOne({where: {rId: user.id, strInoutPassword: input}});
     if (info == null) {
         res.send({result: 'FAIL', msg:'비밀번호가 틀립니다'});
         return;
@@ -1125,6 +1126,16 @@ router.post('/request_bank_list', async (req, res) => {
     `, {type: db.Sequelize.QueryTypes.SELECT});
 
     res.send({result: 'OK', data: list});
+
+    // let newList = [];
+    // for (let i in list) {
+    //     let obj = list[i];
+    //     obj.bankHolder = IAgent.GetDeCipher(obj.bankHolder);
+    //     obj.banknumber = IAgent.GetDeCipher(obj.banknumber);
+    //     newList.push(obj);
+    // }
+    //
+    // res.send({result: 'OK', data: newList});
 });
 
 router.post('/request_change_bank_type', async (req, res) => {
@@ -1220,6 +1231,10 @@ router.post('/request_bank_add', async (req, res) => {
         res.send({result:'FAIL', msg: '입력값 부족'});
         return;
     }
+
+    // 암호화
+    // bankNumber = IAgent.GetCipher(bankNumber);
+    // bankHolder = IAgent.GetCipher(bankHolder);
 
     const user = await db.Users.findOne({where: {strNickname: strNickname}});
 

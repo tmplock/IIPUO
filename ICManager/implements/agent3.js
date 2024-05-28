@@ -31,7 +31,11 @@ let inline_GetPopupAgentInfo = async (strGroupID, iClass, strNickname) => {
         const [users] = await db.sequelize.query(
             `
         SELECT              
-        *
+            id, strID, strNickname, iClass, iPermission, strGroupID, iParentID,
+            iCash, iRolling, iSettle, iSettleAcc, iSettleAccBefore, 
+            fBaccaratR, fSlotR, fUnderOverR, fPBR, fPBSingleR, fPBDoubleR, fPBTripleR,
+            fSettleBaccarat, fSettleSlot, fSettlePBA, fSettlePBB, createdAt, updatedAt,
+            eState, strIP, strOptionCode, strSettleMemo, iRelUserID, fCommission, iPassCheckNewUser
         FROM Users
         WHERE strNickname='${strNickname}';
         `
@@ -40,12 +44,14 @@ let inline_GetPopupAgentInfo = async (strGroupID, iClass, strNickname) => {
     } else {
         const [users] = await db.sequelize.query(
             `
-        SELECT              
-        u.*,
-        0 AS iRolling,
-        0 AS iSettle
-        FROM Users u
-        WHERE u.strNickname='${strNickname}';
+        SELECT
+            id, strID, strNickname, iClass, iPermission, strGroupID, iParentID,
+            iCash, 0 AS iRolling, 0 AS iSettle, iSettleAcc, iSettleAccBefore,
+            fBaccaratR, fSlotR, fUnderOverR, fPBR, fPBSingleR, fPBDoubleR, fPBTripleR,
+            fSettleBaccarat, fSettleSlot, fSettlePBA, fSettlePBB, createdAt, updatedAt,
+            eState, strIP, strOptionCode, strSettleMemo, iRelUserID, fCommission, iPassCheckNewUser
+        FROM Users
+        WHERE strNickname='${strNickname}';
         `
         );
         return users[0];
@@ -58,8 +64,12 @@ let inline_GetPopupAgentInfo = async (strGroupID, iClass, strNickname) => {
         {
             const [users] = await db.sequelize.query(
                 `
-                    SELECT              
-                    *
+                    SELECT
+                        id, strID, strNickname, iClass, iPermission, strGroupID, iParentID,
+                        iCash, iRolling, iSettle, iSettleAcc, iSettleAccBefore,
+                        fBaccaratR, fSlotR, fUnderOverR, fPBR, fPBSingleR, fPBDoubleR, fPBTripleR,
+                        fSettleBaccarat, fSettleSlot, fSettlePBA, fSettlePBB, createdAt, updatedAt,
+                        eState, strIP, strOptionCode, strSettleMemo, iRelUserID, fCommission, iPassCheckNewUser
                     FROM Users
                     WHERE strNickname='${strNickname}';
                     `
@@ -72,8 +82,12 @@ let inline_GetPopupAgentInfo = async (strGroupID, iClass, strNickname) => {
         {
             const [users] = await db.sequelize.query(
                 `
-                    SELECT              
-                    u.*,
+                    SELECT
+                        u.id, u.strID, u.strNickname, u.iClass, u.iPermission, u.strGroupID, u.iParentID,
+                        u.iCash, u.iRolling, u.iSettle, u.iSettleAcc, u.iSettleAccBefore,
+                        u.fBaccaratR, u.fSlotR, u.fUnderOverR, u.fPBR, u.fPBSingleR, u.fPBDoubleR, u.fPBTripleR,
+                        u.fSettleBaccarat, u.fSettleSlot, u.fSettlePBA, u.fSettlePBB, u.createdAt, u.updatedAt,
+                        u.eState, u.strIP, u.strOptionCode, u.strSettleMemo, u.iRelUserID, u.fCommission, u.iPassCheckNewUser,
                     IFNULL((SELECT sum(iRollingB+iRollingUO+iRollingS+iRollingPBA+iRollingPBB) FROM RecordDailyOverviews WHERE strID = u.strID),0) as iRolling
                     FROM Users u
                     WHERE u.strGroupID='${strGroupID}';
@@ -88,8 +102,12 @@ let inline_GetPopupAgentInfo = async (strGroupID, iClass, strNickname) => {
             const [users] = await db.sequelize.query(
                 `
                     SELECT
-                    u.*,
-                    IFNULL((SELECT sum(iRollingB+iRollingUO+iRollingS+iRollingPBA+iRollingPBB) FROM RecordDailyOverviews WHERE strID = u.strID),0) as iRolling
+                        u.id, u.strID, u.strNickname, u.iClass, u.iPermission, u.strGroupID, u.iParentID,
+                        u.iCash, u.iRolling, u.iSettle, u.iSettleAcc, u.iSettleAccBefore,
+                        u.fBaccaratR, u.fSlotR, u.fUnderOverR, u.fPBR, u.fPBSingleR, u.fPBDoubleR, u.fPBTripleR,
+                        u.fSettleBaccarat, u.fSettleSlot, u.fSettlePBA, u.fSettlePBB, u.createdAt, u.updatedAt,
+                        u.eState, u.strIP, u.strOptionCode, u.strSettleMemo, u.iRelUserID, u.fCommission, u.iPassCheckNewUser,
+                        IFNULL((SELECT sum(iRollingB+iRollingUO+iRollingS+iRollingPBA+iRollingPBB) FROM RecordDailyOverviews WHERE strID = u.strID),0) as iRolling
                     FROM Users u
                     WHERE u.strGroupID='${strGroupID}';
                     `
@@ -102,9 +120,13 @@ let inline_GetPopupAgentInfo = async (strGroupID, iClass, strNickname) => {
         {
             const [users] = await db.sequelize.query(
                 `
-                    SELECT              
-                    u.*,
-                    IFNULL((SELECT sum(iRollingB+iRollingUO+iRollingS+iRollingPBA+iRollingPBB) FROM RecordDailyOverviews WHERE strID = u.strID),0) as iRolling
+                    SELECT
+                        u.id, u.strID, u.strNickname, u.iClass, u.iPermission, u.strGroupID, u.iParentID,
+                        u.iCash, u.iRolling, u.iSettle, u.iSettleAcc, u.iSettleAccBefore,
+                        u.fBaccaratR, u.fSlotR, u.fUnderOverR, u.fPBR, u.fPBSingleR, u.fPBDoubleR, u.fPBTripleR,
+                        u.fSettleBaccarat, u.fSettleSlot, u.fSettlePBA, u.fSettlePBB, u.createdAt, u.updatedAt,
+                        u.eState, u.strIP, u.strOptionCode, u.strSettleMemo, u.iRelUserID, u.fCommission, u.iPassCheckNewUser,
+                        IFNULL((SELECT sum(iRollingB+iRollingUO+iRollingS+iRollingPBA+iRollingPBB) FROM RecordDailyOverviews WHERE strID = u.strID),0) as iRolling
                     FROM Users u
                     WHERE u.strGroupID='${strGroupID}';
                     `
@@ -117,9 +139,13 @@ let inline_GetPopupAgentInfo = async (strGroupID, iClass, strNickname) => {
         {
             const [users] = await db.sequelize.query(
                 `
-                    SELECT              
-                    u.*,
-                    IFNULL((SELECT sum(iRollingB+iRollingUO+iRollingS+iRollingPBA+iRollingPBB) FROM RecordDailyOverviews WHERE strID = u.strID),0) as iRolling
+                    SELECT
+                        u.id, u.strID, u.strNickname, u.iClass, u.iPermission, u.strGroupID, u.iParentID,
+                        u.iCash, u.iRolling, u.iSettle, u.iSettleAcc, u.iSettleAccBefore,
+                        u.fBaccaratR, u.fSlotR, u.fUnderOverR, u.fPBR, u.fPBSingleR, u.fPBDoubleR, u.fPBTripleR,
+                        u.fSettleBaccarat, u.fSettleSlot, u.fSettlePBA, u.fSettlePBB, u.createdAt, u.updatedAt,
+                        u.eState, u.strIP, u.strOptionCode, u.strSettleMemo, u.iRelUserID, u.fCommission, u.iPassCheckNewUser,
+                        IFNULL((SELECT sum(iRollingB+iRollingUO+iRollingS+iRollingPBA+iRollingPBB) FROM RecordDailyOverviews WHERE strID = u.strID),0) as iRolling
                     FROM Users u
                     WHERE u.strGroupID='${strGroupID}';
                     `
@@ -132,9 +158,13 @@ let inline_GetPopupAgentInfo = async (strGroupID, iClass, strNickname) => {
         {
             const [users] = await db.sequelize.query(
                 `
-                    SELECT              
-                    u.*,
-                    IFNULL((SELECT sum(iRollingB+iRollingUO+iRollingS+iRollingPBA+iRollingPBB) FROM RecordDailyOverviews WHERE strID = u.strID),0) as iRolling
+                    SELECT
+                        u.id, u.strID, u.strNickname, u.iClass, u.iPermission, u.strGroupID, u.iParentID,
+                        u.iCash, u.iRolling, u.iSettle, u.iSettleAcc, u.iSettleAccBefore,
+                        u.fBaccaratR, u.fSlotR, u.fUnderOverR, u.fPBR, u.fPBSingleR, u.fPBDoubleR, u.fPBTripleR,
+                        u.fSettleBaccarat, u.fSettleSlot, u.fSettlePBA, u.fSettlePBB, u.createdAt, u.updatedAt,
+                        u.eState, u.strIP, u.strOptionCode, u.strSettleMemo, u.iRelUserID, u.fCommission, u.iPassCheckNewUser,
+                        IFNULL((SELECT sum(iRollingB+iRollingUO+iRollingS+iRollingPBA+iRollingPBB) FROM RecordDailyOverviews WHERE strID = u.strID),0) as iRolling
                     FROM Users u
                     WHERE u.strGroupID='${strGroupID}';
                     `
@@ -147,9 +177,13 @@ let inline_GetPopupAgentInfo = async (strGroupID, iClass, strNickname) => {
         {
             const [users] = await db.sequelize.query(
                 `
-                    SELECT              
-                    u.*,
-                    IFNULL((SELECT sum(iRollingB+iRollingUO+iRollingS+iRollingPBA+iRollingPBB) FROM RecordDailyOverviews WHERE strID = u.strID),0) as iRolling
+                    SELECT
+                        u.id, u.strID, u.strNickname, u.iClass, u.iPermission, u.strGroupID, u.iParentID,
+                        u.iCash, u.iRolling, u.iSettle, u.iSettleAcc, u.iSettleAccBefore,
+                        u.fBaccaratR, u.fSlotR, u.fUnderOverR, u.fPBR, u.fPBSingleR, u.fPBDoubleR, u.fPBTripleR,
+                        u.fSettleBaccarat, u.fSettleSlot, u.fSettlePBA, u.fSettlePBB, u.createdAt, u.updatedAt,
+                        u.eState, u.strIP, u.strOptionCode, u.strSettleMemo, u.iRelUserID, u.fCommission, u.iPassCheckNewUser,
+                        IFNULL((SELECT sum(iRollingB+iRollingUO+iRollingS+iRollingPBA+iRollingPBB) FROM RecordDailyOverviews WHERE strID = u.strID),0) as iRolling
                     FROM Users u
                     WHERE u.strGroupID='${strGroupID}' AND u.iClass='${EAgent.eUser}' AND u.strNickname='${strNickname}';
                     `
@@ -1022,7 +1056,11 @@ var inline_GetComputedAgentList = async (strGroupID, iClass, dateStart, dateEnd,
         SELECT
         ${subQuery},
         ${subQuery2},
-        t2.*,
+        t2.id, t2.strID, t2.strNickname, t2.iClass, t2.iPermission, t2.strGroupID, t2.iParentID,
+        t2.iCash, t2.iRolling, t2.iSettle, t2.iSettleAcc, t2.iSettleAccBefore,
+        t2.fBaccaratR, t2.fSlotR, t2.fUnderOverR, t2.fPBR, t2.fPBSingleR, t2.fPBDoubleR, t2.fPBTripleR,
+        t2.fSettleBaccarat, t2.fSettleSlot, t2.fSettlePBA, t2.fSettlePBB, t2.createdAt, t2.updatedAt,
+        t2.eState, t2.strIP, t2.strOptionCode, t2.strSettleMemo, t2.iRelUserID, t2.fCommission, t2.iPassCheckNewUser,
         t2.iCash as iMyMoney,
         CASE
             WHEN t2.iClass > 3 THEN t2.iRolling
@@ -1044,15 +1082,7 @@ var inline_GetComputedAgentList = async (strGroupID, iClass, dateStart, dateEnd,
         ORDER BY t2.strNickname ASC
         ;
     `);
-    let newList = [];
-    for (let i in list) {
-        let obj = list[i];
-        obj.strBankname = '';
-        obj.strAccountNumber = '';
-        obj.strBankHolder = '';
-        newList.push(obj);
-    }
-    return newList;
+    return list;
 };
 exports.GetComputedAgentList = inline_GetComputedAgentList;
 
@@ -1654,6 +1684,7 @@ exports.GetPopupGetShareInfo = inline_GetPopupGetShareInfo;
 var inline_GetChildNicknameList = async (strGroupID, iClass) => {
 
     let children = await db.Users.findAll({
+        attributes: ['strNickname'],
         where:{
             strGroupID:{
                 [Op.like]:strGroupID+'%'

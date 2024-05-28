@@ -94,14 +94,17 @@ router.post('/popup', isLoggedIn, async(req, res) => {
 });
 
 router.post('/request_agentinfo', isLoggedIn, async(req, res) => {
-
     console.log(req.body);
-    const dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
+    let dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
+    dbuser.strPassword = null;
+    dbuser.strOddPassword = null;
+    dbuser.strInoutPassword = null;
+    dbuser.strMobile = null;
+    dbuser.strBankname = null;
+    dbuser.strBankAccount = null;
+    dbuser.strBankOwner = null;
+    dbuser.strBankPassword = null;
     if (req.user.iClass <= dbuser.iClass) {
-        let iCash = 0;
-        if ( dbuser != null )
-            iCash = dbuser.iCash;
-
         res.send({result:'OK', data:dbuser});
     } else {
         res.send({result:'FAIL', msg: '잘못된 접근입니다'});

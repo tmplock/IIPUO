@@ -24,6 +24,7 @@ const db = {};
 db.sequelize = sequelize;
 
 db.Users = require('./models/user')(sequelize, Sequelize);
+db.SubUsers = require('./models/subuser')(sequelize, Sequelize);
 db.BettingRecords = require('./models/betting_record')(sequelize, Sequelize);
 db.Announcements = require('./models/announcement')(sequelize, Sequelize);
 db.Faqs = require('./models/faq')(sequelize, Sequelize);

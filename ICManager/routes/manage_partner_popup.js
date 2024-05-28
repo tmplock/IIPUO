@@ -29,9 +29,6 @@ router.post('/agentinfo', isLoggedIn, async (req, res) => {
     user.iRootClass = req.user.iClass;
     user.iRootNickname = req.user.strNickname;
     user.iPermission = req.user.iPermission;
-    user.strBankOwner = '';
-    user.strBankAccount = '';
-    user.strBankname = '';
 
     const sid = req.user.strID
     let iC = await db.Users.findOne({where:{strID:req.user.strID}});
@@ -275,8 +272,9 @@ router.post('/settingodds', isLoggedIn, async (req, res) => {
 
     const input = req.body.pass ?? '';
 
-    const info = await db.Users.findOne({where: {strNickname: req.user.strNickname, strOddPassword: input}});
-    if (info == null) {
+    const info = await db.Users.findOne({where: {strNickname: req.user.strNickname}});
+    const sub = await db.SubUsers.findOne({where: {rId: info.id, strOddPassword: input}});
+    if (sub == null) {
         res.send({result: 'FAIL', msg:'비밀번호가 틀립니다'});
         return;
     }
@@ -311,6 +309,11 @@ router.post('/removedb', isLoggedIn, async (req, res) => {
         return;
     }
 
+    if (input != '' || true) {
+        res.send({result: 'FAIL', msg:'비밀번호가 틀립니다'});
+        return;
+    }
+
     const agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
     agent.iRootClass = req.user.iClass;
     agent.iPermission = req.user.iPermission;
@@ -333,6 +336,12 @@ router.post('/registeragent', isLoggedIn, async(req, res) => {
 });
 
 router.post('/register_agent', isLoggedIn, async (req, res) => {
+    let input = req.body.input ?? '';
+    if (input == '') {
+
+        return;
+    }
+
     const agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
     agent.iRootClass = req.user.iClass;
     agent.iPermission = req.user.iPermission;
@@ -389,18 +398,17 @@ router.post('/registeragent_view', isLoggedIn, async(req, res) => {
     console.log(req.body);
     const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:req.body.iClass, iAgentClass:req.body.iAgentClass,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission};
-    let list = await db.Users.findAll({
-        where: {
-            iClass:req.body.iAgentClass,
-            strGroupID:{
-                [Op.like]:req.body.strGroupID+'%'
-            },
-            iPermission: {
-                [Op.notIn]: [100]
-            },
-        }
-    });
-
+    let [list] = await db.sequelize.query(`
+        SELECT u.id, u.strID, u.strNickname, u.iClass, u.iPermission, u.strGroupID, u.iParentID,
+            u.iCash, u.iRolling, u.iSettle, u.iSettleAcc, u.iSettleAccBefore,
+            u.fBaccaratR, u.fSlotR, u.fUnderOverR, u.fPBR, u.fPBSingleR, u.fPBDoubleR, u.fPBTripleR,
+            u.fSettleBaccarat, u.fSettleSlot, u.fSettlePBA, u.fSettlePBB, u.createdAt, u.updatedAt,
+            u.eState, u.strIP, u.strOptionCode, u.strSettleMemo, u.iRelUserID, u.fCommission, u.iPassCheckNewUser
+        FROM Users u
+        WHERE u.iClass = ${req.body.iAgentClass}
+            AND u.strGroupID LIKE '${req.body.strGroupID}%'
+            AND u.iPermission != 100
+    `);
     res.render('manage_partner/popup_registeragent_view', {iLayout:1, agent:user, list:list, iAgentClass:user.iAgentClass});
 });
 
@@ -416,19 +424,18 @@ router.post('/readagent_view', isLoggedIn, async(req, res) => {
     const user = {strNickname:dbUser.strNickname, strID:dbUser.strID, strPassword:dbUser.strPassword, strGroupID:dbUser.strGroupID, iClass:dbUser.iClass, iAgentClass:dbUser.iClass,
         iRootClass:req.user.iClass, iPermission:dbUser.iPermission, iRelUserID: dbUser.iRelUserID};
 
-    let list = await db.Users.findAll({
-        where: {
-            iClass:user.iClass,
-            strGroupID:{
-                [Op.like]:user.strGroupID+'%'
-            },
-            iPermission: {
-                [Op.notIn]: [100]
-            },
-        }
-    });
-
-    res.render('manage_partner/popup_registeragent_view', {iLayout:1, agent:user, list:list});
+    let list = await db.sequelize.query(`
+        SELECT u.id, u.strID, u.strNickname, u.iClass, u.iPermission, u.strGroupID, u.iParentID,
+            u.iCash, u.iRolling, u.iSettle, u.iSettleAcc, u.iSettleAccBefore,
+            u.fBaccaratR, u.fSlotR, u.fUnderOverR, u.fPBR, u.fPBSingleR, u.fPBDoubleR, u.fPBTripleR,
+            u.fSettleBaccarat, u.fSettleSlot, u.fSettlePBA, u.fSettlePBB, u.createdAt, u.updatedAt,
+            u.eState, u.strIP, u.strOptionCode, u.strSettleMemo, u.iRelUserID, u.fCommission, u.iPassCheckNewUser
+        FROM Users u
+        WHERE u.iClass = ${user.iClass}
+            AND u.strGroupID LIKE '${user.strGroupID}%'
+            AND u.iPermission != 100
+    `);
+    res.render('manage_partner/popup_registeragent_view', {iLayout:1, agent:user, list:list[0]});
 });
 
 router.post('/request_register_view', isLoggedIn, async(req, res) => {
@@ -551,18 +558,18 @@ router.post('/request_removeagent_view', async (req, res) => {
 router.post('/request_parentenablelist', isLoggedIn, async(req, res) => {
     console.log(req.body);
 
-    let list = await db.Users.findAll({
-        where: {
-            iClass:parseInt(req.body.iRegisterClass)-1,
-            strGroupID:{
-                [Op.like]:req.body.strGroupID+'%'
-            },
-            iPermission: {
-                [Op.notIn]: [100]
-            },
-        }
-    });
-    res.send(list);
+    let list = await db.sequelize.query(`
+        SELECT u.id, u.strID, u.strNickname, u.iClass, u.iPermission, u.strGroupID, u.iParentID,
+            u.iCash, u.iRolling, u.iSettle, u.iSettleAcc, u.iSettleAccBefore,
+            u.fBaccaratR, u.fSlotR, u.fUnderOverR, u.fPBR, u.fPBSingleR, u.fPBDoubleR, u.fPBTripleR,
+            u.fSettleBaccarat, u.fSettleSlot, u.fSettlePBA, u.fSettlePBB, u.createdAt, u.updatedAt,
+            u.eState, u.strIP, u.strOptionCode, u.strSettleMemo, u.iRelUserID, u.fCommission, u.iPassCheckNewUser
+        FROM Users u
+        WHERE u.iClass = ${parseInt(req.body.iRegisterClass)-1}
+            AND u.strGroupID LIKE '${req.body.strGroupID}%'
+            AND u.iPermission != 100 
+    `);
+    res.send(list[0]);
 })
 
 router.post('/request_confirmagentid', isLoggedIn, async(req, res) => {
@@ -851,22 +858,22 @@ router.post('/request_register', isLoggedIn, async(req, res) => {
 
         let strMobileNo = req.body.strMobileNo ?? '';
         if (strMobileNo != '') {
-            strMobileNo = await IAgent.GetCipher(strMobileNo);
+            // strMobileNo = await IAgent.GetCipher(strMobileNo);
         }
 
         let strBankName = req.body.strBankName ?? '';
         if (strBankName != '') {
-            strBankName = await IAgent.GetCipher(strBankName);
+            // strBankName = await IAgent.GetCipher(strBankName);
         }
 
         let strAccountNumber = req.body.strAccountNumber ?? '';
         if (strAccountNumber != '') {
-            strAccountNumber = await IAgent.GetCipher(strAccountNumber);
+            // strAccountNumber = await IAgent.GetCipher(strAccountNumber);
         }
 
         let strAccountOwner = req.body.strAccountOwner ?? '';
         if (strAccountOwner != '') {
-            strAccountOwner = await IAgent.GetCipher(strAccountOwner);
+            // strAccountOwner = await IAgent.GetCipher(strAccountOwner);
         }
 
         for (let i = 0; i < iAutoRegisterNumber; i++) {
@@ -1282,16 +1289,21 @@ router.post('/request_bank', isLoggedIn, async (req, res) => {
         return;
     }
 
-    let pass = partner[0].strOddPassword ?? '';
-    if (pass != input) {
+    let sub = await db.SubUsers.findOne({where: {rId: partner[0].id, strOddPassword:input}});
+    if (sub == null) {
         res.send({result:'FAIL', msg:'암호 불일치'});
         return;
     }
 
-    let bankname = await IAgent.GetDeCipher(user.strBankname ?? '');
-    let bankAccount = await IAgent.GetDeCipher(user.strBankAccount ?? '');
-    let bankOwner = await IAgent.GetDeCipher(user.strBankOwner ?? '');
-    let cell = await IAgent.GetDeCipher(user.strMobile ?? '');
+    let bankname = user.strBankname ?? '';
+    let bankAccount = user.strBankAccount ?? '';
+    let bankOwner = user.strBankOwner ?? '';
+    let cell = user.strMobile ?? '';
+
+    // let bankname = await IAgent.GetDeCipher(user.strBankname ?? '');
+    // let bankAccount = await IAgent.GetDeCipher(user.strBankAccount ?? '');
+    // let bankOwner = await IAgent.GetDeCipher(user.strBankOwner ?? '');
+    // let cell = await IAgent.GetDeCipher(user.strMobile ?? '');
 
     res.send({result:'OK', msg:'정상 조회', bankname:bankname, bankAccount:bankAccount, bankOwner:bankOwner, cell:cell});
 });
@@ -1549,22 +1561,26 @@ router.post('/request_agentinfo_modify',async (req, res) => {
 
             let strBankname = req.body.strBankname ?? '';
             if (strBankname != '') {
-                data['strBankname'] = await IAgent.GetCipher(strBankname);
+                // data['strBankname'] = await IAgent.GetCipher(strBankname);
+                data['strBankname'] = strBankname;
             }
 
             let strBankOwner = req.body.strBankOwner ?? '';
             if (strBankOwner != '') {
-                data['strBankOwner'] = await IAgent.GetCipher(strBankOwner);
+                // data['strBankOwner'] = await IAgent.GetCipher(strBankOwner);
+                data['strBankOwner'] = strBankOwner;
             }
 
             let strBankAccount = req.body.strBankAccount ?? '';
             if (strBankAccount != '') {
-                data['strBankAccount'] = await IAgent.GetCipher(strBankAccount);
+                // data['strBankAccount'] = await IAgent.GetCipher(strBankAccount);
+                data['strBankAccount'] = strBankAccount;
             }
 
             let strMobile = req.body.strMobile ?? '';
             if (strMobile != '') {
-                data['strMobile'] = await IAgent.GetCipher(strMobile);
+                // data['strMobile'] = await IAgent.GetCipher(strMobile);
+                data['strMobile'] = strMobile;
             }
 
             // 은행정보 수정 가능 권한 체크
@@ -1867,17 +1883,19 @@ router.post('/popup_credits', isLoggedIn, async (req, res) => {
 });
 
 let GetViceHQs = async (strGroupID) => {
-
-    let list = await db.Users.findAll({where:{iClass:2,
-            strGroupID:{
-                [Op.like]:strGroupID+'%'
-            },
-            iPermission: {
-                [Op.notIn]: [100]
-            },
-        }})
-
-    return list;
+    let list = await db.sequelize.query(`
+        SELECT              
+            id, strID, strNickname, iClass, iPermission, strGroupID, iParentID,
+            iCash, iRolling, iSettle, iSettleAcc, iSettleAccBefore, 
+            fBaccaratR, fSlotR, fUnderOverR, fPBR, fPBSingleR, fPBDoubleR, fPBTripleR,
+            fSettleBaccarat, fSettleSlot, fSettlePBA, fSettlePBB, createdAt, updatedAt,
+            eState, strIP, strOptionCode, strSettleMemo, iRelUserID, fCommission, iPassCheckNewUser
+        FROM Users
+        WHERE iClass = 2 
+            AND strGroupID LIKE '${strGroupID}%'
+            AND iPermission != 100
+    `);
+    return list[0];
 };
 
 let GetAdmins = async (strGroupID, strQuater) => {
@@ -1886,16 +1904,19 @@ let GetAdmins = async (strGroupID, strQuater) => {
         return list;
     }
 
-    let list = await db.Users.findAll({where:{iClass:3,
-            strGroupID:{
-                [Op.like]:strGroupID+'%'
-            },
-            iPermission: {
-                [Op.notIn]: [100]
-            },
-        }})
-
-    return list;
+    let list = await db.sequelize.query(`
+        SELECT              
+            id, strID, strNickname, iClass, iPermission, strGroupID, iParentID,
+            iCash, iRolling, iSettle, iSettleAcc, iSettleAccBefore, 
+            fBaccaratR, fSlotR, fUnderOverR, fPBR, fPBSingleR, fPBDoubleR, fPBTripleR,
+            fSettleBaccarat, fSettleSlot, fSettlePBA, fSettlePBB, createdAt, updatedAt,
+            eState, strIP, strOptionCode, strSettleMemo, iRelUserID, fCommission, iPassCheckNewUser
+        FROM Users
+        WHERE iClass = 3 
+            AND strGroupID LIKE '${strGroupID}%'
+            AND iPermission != 100
+    `);
+    return list[0];
 };
 
 let GetProAdmins = async (strGroupID, strQuater) => {
@@ -1905,24 +1926,35 @@ let GetProAdmins = async (strGroupID, strQuater) => {
         return list;
     }
 
-    let list = await db.Users.findAll({where:{iClass:4,
-            strGroupID:{
-                [Op.like]:strGroupID+'%'
-            },
-        }})
-
-    return list;
+    let list = await db.sequelize.query(`
+        SELECT              
+            id, strID, strNickname, iClass, iPermission, strGroupID, iParentID,
+            iCash, iRolling, iSettle, iSettleAcc, iSettleAccBefore, 
+            fBaccaratR, fSlotR, fUnderOverR, fPBR, fPBSingleR, fPBDoubleR, fPBTripleR,
+            fSettleBaccarat, fSettleSlot, fSettlePBA, fSettlePBB, createdAt, updatedAt,
+            eState, strIP, strOptionCode, strSettleMemo, iRelUserID, fCommission, iPassCheckNewUser
+        FROM Users
+        WHERE iClass = 4
+            AND strGroupID LIKE '${strGroupID}%'
+            AND iPermission != 100
+    `);
+    return list[0];
 };
 
 let GetAgent = async (strNickname, iClass) => {
-
-    let list = await db.Users.findAll({where:{iClass:iClass,
-            strNickname:strNickname,
-            iPermission: {
-                [Op.notIn]: [100]
-            },
-        }})
-    return list;
+    let list = await db.sequelize.query(`
+        SELECT              
+            id, strID, strNickname, iClass, iPermission, strGroupID, iParentID,
+            iCash, iRolling, iSettle, iSettleAcc, iSettleAccBefore, 
+            fBaccaratR, fSlotR, fUnderOverR, fPBR, fPBSingleR, fPBDoubleR, fPBTripleR,
+            fSettleBaccarat, fSettleSlot, fSettlePBA, fSettlePBB, createdAt, updatedAt,
+            eState, strIP, strOptionCode, strSettleMemo, iRelUserID, fCommission, iPassCheckNewUser
+        FROM Users
+        WHERE iClass = ${iClass}
+            AND strNickname = '${strNickname}'
+            AND iPermission != 100
+    `);
+    return list[0];
 };
 
 

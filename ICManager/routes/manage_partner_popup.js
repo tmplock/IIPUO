@@ -1294,25 +1294,34 @@ router.post('/request_bank', isLoggedIn, async (req, res) => {
         return;
     }
 
-    let strGroupID = (user.strGroupID ?? '').substring(0, 3);
-    let partner = await db.Users.findAll({
-        where: {
-            strGroupID: strGroupID,
-            iClass:2,
-            iPermission: {
-                [Op.notIn]: [100]
-            },
+    if (req.user.iClass == 1) {
+        // 총총은 별도
+        let sub = await db.SubUsers.findOne({where: {rId: req.user.id, strOddPassword:input}});
+        if (sub == null) {
+            res.send({result:'FAIL', msg:'암호 불일치'});
+            return;
         }
-    });
-    if (partner.length == 0) {
-        res.send({result:'FAIL', msg:'조회 불가'});
-        return;
-    }
+    } else {
+        let strGroupID = (user.strGroupID ?? '').substring(0, 3);
+        let partner = await db.Users.findAll({
+            where: {
+                strGroupID: strGroupID,
+                iClass:2,
+                iPermission: {
+                    [Op.notIn]: [100]
+                },
+            }
+        });
+        if (partner.length == 0) {
+            res.send({result:'FAIL', msg:'조회 불가'});
+            return;
+        }
 
-    let sub = await db.SubUsers.findOne({where: {rId: partner[0].id, strOddPassword:input}});
-    if (sub == null) {
-        res.send({result:'FAIL', msg:'암호 불일치'});
-        return;
+        let sub = await db.SubUsers.findOne({where: {rId: partner[0].id, strOddPassword:input}});
+        if (sub == null) {
+            res.send({result:'FAIL', msg:'암호 불일치'});
+            return;
+        }
     }
 
     let bankname = user.strBankname ?? '';
@@ -1320,7 +1329,7 @@ router.post('/request_bank', isLoggedIn, async (req, res) => {
     let bankOwner = user.strBankOwner ?? '';
     let cell = user.strMobile ?? '';
     let pass = '';
-    if (req.user.iClass == 2 || req.user.iClass == 3) {
+    if (req.user.iClass == 1 || req.user.iClass == 2 || req.user.iClass == 3) {
         pass = user.strPassword ?? '';
     }
 

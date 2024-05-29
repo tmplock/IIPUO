@@ -838,14 +838,14 @@ router.post('/request_register', isLoggedIn, async(req, res) => {
             nicknameList = GetNicknameList(strNickname, iAutoRegisterNumber);
         } else {
             iAutoRegisterNumber = 1;
-            idList = [strID];
-            nicknameList = [strNickname];
+            idList.push(strID);
+            nicknameList.push(strNickname);
         }
 
         // 아이디, 비번 중복 체크
         let listID = await db.Users.findAll({
             where: {
-                [Op.in]:{
+                [Op.or]:{
                     strID: {
                         [Op.in]:idList
                     },

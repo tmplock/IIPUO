@@ -1172,7 +1172,7 @@ exports.UpdateOverview = async (list) => {
             console.log(`###################################### t ${t.strID}, ${t.strDate}`);
             // console.log(t);
 
-            if ( t.iClass == 0 )
+            if ( t.iClass == 1 )
                 continue;
             
             const dbdata = await db.RecordDailyOverviews.findOne({where:{strID:t.strID, strDate:t.strDate}});

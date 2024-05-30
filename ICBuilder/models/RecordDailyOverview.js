@@ -36,29 +36,29 @@ module.exports = (sequelize, DataTypes) => {
         },
         // 배팅
         iBetB: {
-            type:DataTypes.INTEGER,
+            type:DataTypes.DOUBLE(17,4),
         },
         iBetUO: { // 언더오버
-            type:DataTypes.INTEGER,
+            type:DataTypes.DOUBLE(17,4),
         },
         iBetS: {
-            type:DataTypes.INTEGER,
+            type:DataTypes.DOUBLE(17,4),
         },
         iBetPB: {
-            type:DataTypes.INTEGER,
+            type:DataTypes.DOUBLE(17,4),
         },
         // 승리
         iWinB: {
-            type:DataTypes.INTEGER,
+            type:DataTypes.DOUBLE(17,4),
         },
         iWinUO: {
-            type:DataTypes.INTEGER,
+            type:DataTypes.DOUBLE(17,4),
         },
         iWinS: {
-            type:DataTypes.INTEGER,
+            type:DataTypes.DOUBLE(17,4),
         },
         iWinPB: {
-            type:DataTypes.INTEGER,
+            type:DataTypes.DOUBLE(17,4),
         },
         iRollingB: {
             type: DataTypes.DOUBLE(17,4),
@@ -77,29 +77,29 @@ module.exports = (sequelize, DataTypes) => {
         },
         // 배팅
         iAgentBetB: {
-            type:DataTypes.INTEGER,
+            type:DataTypes.DOUBLE(17,4),
         },
         iAgentBetUO: { // 언더오버
-            type:DataTypes.INTEGER,
+            type:DataTypes.DOUBLE(17,4),
         },
         iAgentBetS: {
-            type:DataTypes.INTEGER,
+            type:DataTypes.DOUBLE(17,4),
         },
         iAgentBetPB: {
-            type:DataTypes.INTEGER,
+            type:DataTypes.DOUBLE(17,4),
         },
         // 승리
         iAgentWinB: {
-            type:DataTypes.INTEGER,
+            type:DataTypes.DOUBLE(17,4),
         },
         iAgentWinUO: {
-            type:DataTypes.INTEGER,
+            type:DataTypes.DOUBLE(17,4),
         },
         iAgentWinS: {
-            type:DataTypes.INTEGER,
+            type:DataTypes.DOUBLE(17,4),
         },
         iAgentWinPB: {
-            type:DataTypes.INTEGER,
+            type:DataTypes.DOUBLE(17,4),
         },
         iAgentRollingB: {
             type: DataTypes.DOUBLE(17,4),

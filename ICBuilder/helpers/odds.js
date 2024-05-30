@@ -1172,6 +1172,9 @@ exports.UpdateOverview = async (list) => {
             console.log(`###################################### t ${t.strID}, ${t.strDate}`);
             // console.log(t);
 
+            if ( t.iClass == 0 )
+                continue;
+            
             const dbdata = await db.RecordDailyOverviews.findOne({where:{strID:t.strID, strDate:t.strDate}});
             // console.log('db');
             //console.log(dbdata);
@@ -1180,8 +1183,6 @@ exports.UpdateOverview = async (list) => {
             // const cRolling = parseInt(t.iRollingB) + parseInt(t.iRollingUO) + parseInt(t.iRollingS) + parseInt(t.iRollingPBA) + parseInt(t.iRollingPBB);
             const cRolling = t.iRollingB + t.iRollingUO + t.iRollingS + t.iRollingPBA + t.iRollingPBB; // 요게 맞음
 
-            if ( t.iClass == 0 )
-                continue;
 
             //continue;
 

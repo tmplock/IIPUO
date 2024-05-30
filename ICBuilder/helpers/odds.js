@@ -1169,16 +1169,19 @@ exports.UpdateOverview = async (list) => {
         for ( let index in list )
         {
             const t = list[index];
-            console.log(`###################################### t ${t.strID}, ${t.strDate}`);
-            console.log(t);
+            console.log(`###################################### t ${t.strID}, ${t.strDate}, ID : ${t.id}`);
+            // console.log(t);
 
             const dbdata = await db.RecordDailyOverviews.findOne({where:{strID:t.strID, strDate:t.strDate}});
-            console.log('db');
+            // console.log('db');
             //console.log(dbdata);
 
             // 소수점 정리
             // const cRolling = parseInt(t.iRollingB) + parseInt(t.iRollingUO) + parseInt(t.iRollingS) + parseInt(t.iRollingPBA) + parseInt(t.iRollingPBB);
             const cRolling = t.iRollingB + t.iRollingUO + t.iRollingS + t.iRollingPBA + t.iRollingPBB; // 요게 맞음
+
+            continue;
+
             await db.Users.increment({iRolling:cRolling}, {where:{strID:t.strID}});
 
             if ( dbdata == null )

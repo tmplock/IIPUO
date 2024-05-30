@@ -1180,7 +1180,7 @@ exports.UpdateOverview = async (list) => {
             // const cRolling = parseInt(t.iRollingB) + parseInt(t.iRollingUO) + parseInt(t.iRollingS) + parseInt(t.iRollingPBA) + parseInt(t.iRollingPBB);
             const cRolling = t.iRollingB + t.iRollingUO + t.iRollingS + t.iRollingPBA + t.iRollingPBB; // 요게 맞음
 
-            continue;
+            //continue;
 
             await db.Users.increment({iRolling:cRolling}, {where:{strID:t.strID}});
 

@@ -1271,7 +1271,7 @@ router.post('/request_initoutputpass', isLoggedIn, async (req, res) => {
     res.send({result:'OK'});
 });
 
-// 에이전트 계좌 보기
+// 파트너정보 내 은행정보 보기 체크
 router.post('/request_bank', isLoggedIn, async (req, res) => {
     let input = req.body.input ?? '';
     if (input == '') {
@@ -1296,7 +1296,7 @@ router.post('/request_bank', isLoggedIn, async (req, res) => {
 
     if (req.user.iClass == 1) {
         // 총총은 별도
-        let sub = await db.SubUsers.findOne({where: {rId: req.user.id, strOddPassword:input}});
+        let sub = await db.SubUsers.findOne({where: {rId: req.user.id, strBankPassword:input}});
         if (sub == null) {
             res.send({result:'FAIL', msg:'암호 불일치'});
             return;
@@ -1317,7 +1317,7 @@ router.post('/request_bank', isLoggedIn, async (req, res) => {
             return;
         }
 
-        let sub = await db.SubUsers.findOne({where: {rId: partner[0].id, strOddPassword:input}});
+        let sub = await db.SubUsers.findOne({where: {rId: partner[0].id, strBankPassword:input}});
         if (sub == null) {
             res.send({result:'FAIL', msg:'암호 불일치'});
             return;

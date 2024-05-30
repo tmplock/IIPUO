@@ -1172,8 +1172,8 @@ exports.UpdateOverview = async (list) => {
             console.log(`###################################### t ${t.strID}, ${t.strDate}`);
             // console.log(t);
 
-            if ( t.iClass == 1 )
-                continue;
+            // if ( t.iClass == 1 )
+            //     continue;
             
             const dbdata = await db.RecordDailyOverviews.findOne({where:{strID:t.strID, strDate:t.strDate}});
             // console.log('db');
@@ -1185,6 +1185,7 @@ exports.UpdateOverview = async (list) => {
 
 
             //continue;
+            console.log(`##### cRolling : ${cRolling}, strID : ${t.strID}`);
 
             await db.Users.increment({iRolling:cRolling}, {where:{strID:t.strID}});
 

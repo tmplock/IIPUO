@@ -157,39 +157,6 @@ let lProcessID = -1;
 //     console.log(`##### END OF CRON`);
 // });
 
-let Find = (strID, list) => {
-
-    for ( let i in list )
-    {
-        if ( list[i].strID == strID )
-            return list[i];
-    }
-    return null;
-}
-
-let Compare = (objectNormal, objectExist) => {
-
-    let object = {strID:objectNormal.strID, iB:0, iS:0, iAgentB:0, iAgentS:0};
-
-    if ( objectNormal.iRollingB != objectExist.iRollingB )
-    {
-        object.iB = parseFloat(objectNormal.iRollingB) - parseFloat(objectExist.iRollingB);
-    }
-    if ( objectNormal.iRollingS != objectExist.iRollingS )
-    {
-        object.iS = parseFloat(objectNormal.iRollingS) - parseFloat(objectExist.iRollingS);
-    }
-    if ( objectNormal.iAgentRollingB != objectExist.iAgentRollingB )
-    {
-        object.iAgentB = parseFloat(objectNormal.iAgentRollingB) - parseFloat(objectExist.iAgentRollingB);
-    }
-    if ( objectNormal.iAgentRollingS != objectExist.iAgentRollingS )
-    {
-        object.iAgentS = parseFloat(objectNormal.iAgentRollingS) - parseFloat(objectExist.iAgentRollingS);
-    }
-    return object;
-}
-
 let start = async () => {
     console.log(`##### CRON ROLLING`);
 
@@ -205,24 +172,25 @@ let start = async () => {
     let listGroupUser = [];
 
     let strDate = '2024-05-30';
+    let strID = 'jjg1218';
 
-    let listDBData = await db.RecordDailyOverviews.findAll({where:
-        {
-            strDate:strDate,
+    let listDBData = await db.RecordBets.findAll({
+        where: {
+            createdAt:{
+                [Op.between]:[ strDate, require('moment')(strDate).add(1, 'days').format('YYYY-MM-DD')],
+            },
+            strID:strID,
         }
     });
-    let list2 = [];
-
-    for ( let i in listDBData )
-    {
-        const cData = listDBData[i];
-        if ( cData.iBetB > 0 || cData.iBetUO > 0 || cData.iBetS > 0 )
-        {
-            list2.push(cData);
-        }
-    }
 
     console.log(`listDBData : ${listDBData.length}`);
+
+    for (let i in listID) 
+    {
+        await Overview.CalculateOverview(listID[i].strID, listID[i].iClass, strDate, listOverview);
+    }
+
+    return;
 
     let listID = [];
 
@@ -245,29 +213,16 @@ let start = async () => {
         await Overview.CalculateOverview(listID[i].strID, listID[i].iClass, strDate, listOverview);
     }
 
-    let index = 1;
     for ( let i in listOverview )
     {
         //console.log(listOverview[i]);
 
-        // console.log(`########## strID : ${listOverview[i].strID}, iClass : ${listOverview[i].iClass}`);
-        // if ( listOverview[i].strID == 'jjg1218')
-        // {
-        //     //console.log(listOverview[i]);
-        //     logHeader(listOverview[i]);
-        // }
-        let found = Find(listOverview[i].strID, listDBData);
-        if ( found != null )
+        console.log(`########## strID : ${listOverview[i].strID}, iClass : ${listOverview[i].iClass}`);
+        if ( listOverview[i].strID == 'tkqnr01')
         {
-            let object = Compare(listOverview[i], found);
-            if ( object.iB != 0 || object.iS != 0 || object.iAgentB != 0 || object.iAgentS != 0 )
-            {
-                console.log(`${index++} - ${object}`);
-            }
+            console.log(listOverview[i]);
         }
     }
-
-
 
     // for ( let i in listOverview )
     // {

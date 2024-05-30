@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": false,
+        "amount": 30
+    },
+    "auditLog": "E:\\Git2024\\IIPUO\\ICUnitBuilder\\logs\\.53fabac8cc4613402ec091c27b7a0643d6550905-audit.json",
+    "files": [
+        {
+            "date": 1717071088906,
+            "name": "E:\\Git2024\\IIPUO\\ICUnitBuilder\\logs\\2024-05-30-2.log",
+            "hash": "22b85efe5ba4eddf31f83992a79815d7235a685aa5af82b56fe1947f8e41af20"
+        }
+    ],
+    "hashType": "sha256"
+}

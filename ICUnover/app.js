@@ -450,7 +450,7 @@ io.on('connection', (socket) => {
         socket.emit('response_login', "responsedata");
 
         const object = {strID:user.strID, iClass:user.iClass, strNickname:user.strNickname, strGroupID:user.strGroupID};
-        await redis.SetCache(user.strID, object);
+        //await redis.SetCache(user.strID, object);
         //await redis.GetAllKeys();
     });
 
@@ -473,7 +473,7 @@ io.on('connection', (socket) => {
 
         if ( socket.strID != undefined )
         {
-            redis.RemoveCache(socket.strID);
+            //redis.RemoveCache(socket.strID);
             //await redis.GetAllKeys();
         }    
 
@@ -495,7 +495,8 @@ app.post('/realtime_user', async (req, res) => {
     //     }
     // }
     
-    let listData = await redis.GetAllKeys();
+    //let listData = await redis.GetAllKeys();
+    let listData = [];
 
     axios.post(`${global.strAdminAddress}/manage_user/realtime_user`, listData)
         .then((response)=> {

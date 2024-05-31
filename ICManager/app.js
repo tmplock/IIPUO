@@ -211,7 +211,7 @@ app.get('/', (req, res) => {
 //     res.status(err.status||500);
 // });
 
-const cPort = 3031;
+const cPort = process.env.PORT;
 server.listen(cPort, () => {
     console.log(`Unover CMS Server Started At ${cPort}`);
 });

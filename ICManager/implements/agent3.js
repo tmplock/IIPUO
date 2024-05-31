@@ -1672,6 +1672,7 @@ let inline_GetPopupShareInfo = async (strID, strGroupID) => {
         FROM ShareUsers su
         LEFT JOIN Users u ON u.strID = su.strID
         WHERE su.strGroupID LIKE CONCAT('${strGroupID}', '%')
+        ORDER BY parentNickname ASC
     `);
     return list[0];
 }
@@ -1694,6 +1695,7 @@ let inline_GetPopupGetShareInfo = async (strID, strGroupID, strQuater) => {
         LEFT JOIN ShareUsers su ON su.strNickname = sr.strNickname
         LEFT JOIN Users u ON u.strID = su.strID
         WHERE sr.strQuater = '${strQuater}' AND sr.strGroupID LIKE CONCAT('${strGroupID}', '%')
+        ORDER BY parentNickname ASC
     `);
     return list[0];
 }

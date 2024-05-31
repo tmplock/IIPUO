@@ -61,8 +61,8 @@
 	var agent = JSON.parse('<%-JSON.stringify(agent)%>');
 	
 	DatePicker();
-	$("#datepicker1").val(GetYearlyStartDate());
-    $("#datepicker2").val(GetYearlyEndDate());
+	$("#datepicker1").val(GetCurrentDateBefore(30));
+    $("#datepicker2").val(GetCurrentDate());
 
 	let iLimit = 30;
 	let iCurrentPage = 1;

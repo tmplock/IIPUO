@@ -167,10 +167,32 @@ let Find = (strID, list) => {
     return null;
 }
 
+
+let FindNickname = (strID, list) => {
+    for (let i in list) {
+        if (list[i].strID == strID) {
+            return list[i].strNickname;
+        }
+    }
+    return 'none';
+}
+
 let Compare = (objectNormal, objectExist) => {
 
-    let object = {strID:objectNormal.strID, iB:0, iS:0, iAgentB:0, iAgentS:0};
+    let object = {strID:objectNormal.strID, iB:0, iS:0, iAgentB:0, iAgentS:0, iAgentWinB:0, iAgentWinS:0};
 
+    if ( objectNormal.iAgentBetB != objectExist.iAgentBetB ) {
+        object.iAgentB = parseFloat(objectNormal.iAgentBetB) - parseFloat(objectExist.iAgentBetB);
+    }
+    if ( objectNormal.iAgentBetS != objectExist.iAgentBetS ) {
+        object.iAgentS = parseFloat(objectNormal.iAgentBetS) - parseFloat(objectExist.iAgentBetS);
+    }
+    if ( objectNormal.iAgentWinB != objectExist.iAgentWinB ) {
+        object.iAgentWinB = parseFloat(objectNormal.iAgentWinB) - parseFloat(objectExist.iAgentWinB);
+    }
+    if ( objectNormal.iAgentWinS != objectExist.iAgentWinS ) {
+        object.iAgentWinS = parseFloat(objectNormal.iAgentWinS) - parseFloat(objectExist.iAgentWinS);
+    }
     if ( objectNormal.iRollingB != objectExist.iRollingB )
     {
         object.iB = parseFloat(objectNormal.iRollingB) - parseFloat(objectExist.iRollingB);
@@ -179,19 +201,11 @@ let Compare = (objectNormal, objectExist) => {
     {
         object.iS = parseFloat(objectNormal.iRollingS) - parseFloat(objectExist.iRollingS);
     }
-    if ( objectNormal.iAgentRollingB != objectExist.iAgentRollingB )
-    {
-        object.iAgentB = parseFloat(objectNormal.iAgentRollingB) - parseFloat(objectExist.iAgentRollingB);
-    }
-    if ( objectNormal.iAgentRollingS != objectExist.iAgentRollingS )
-    {
-        object.iAgentS = parseFloat(objectNormal.iAgentRollingS) - parseFloat(objectExist.iAgentRollingS);
-    }
     return object;
 }
 
 let start = async () => {
-    console.log(`##### CRON ROLLING`);
+    console.log(`##### 오버뷰 계산 및 롤링 차이 계산`);
 
     if (lProcessID != -1) {
         console.log(`##### CRON IS PROCESSING`);
@@ -224,31 +238,64 @@ let start = async () => {
 
     console.log(`listDBData : ${listDBData.length}`);
 
-    let listID = [];
-
-    for ( let i in list2 )
-    {
-        console.log(`${list2[i].strID}, iBetB : ${list2[i].iBetB}, iBetUO : ${list2[i].iBetUO}, iBetS : ${list2[i].iBetS}`);
-        listID.push({strID:list2[i].strID, iClass:list2[i].iClass});
-    }
-
-    console.log(listID);
-
-//    return;
-
-
     // let listID = [
-    //     {strID:'qwe01', iClass:8},
+    //     {strID:'cvcv1', iClass:6},
     // ];
+    let listID = [];
 
     for (let i in listID) {
         await Overview.CalculateOverview(listID[i].strID, listID[i].iClass, strDate, listOverview);
     }
 
+
+    let nicknameList = await db.Users.findAll();
+
     let index = 1;
+    let dataOverviewList = [];
+    let dataObjectList = [];
+
     for ( let i in listOverview )
     {
-        //console.log(listOverview[i]);
+        console.log(`${i}`);
+
+        // await db.RecordDailyOverviews.update({
+        //     iBetB:listOverview[i].iBetB,
+        //     iBetUO:listOverview[i].iBetUO,
+        //     iBetS:listOverview[i].iBetS,
+        //     iBetPB:listOverview[i].iBetPB,
+        //     iWinB:listOverview[i].iWinB,
+        //     iWinUO:listOverview[i].iWinUO,
+        //     iWinS:listOverview[i].iWinS,
+        //     iWinPB:listOverview[i].iWinPB,
+        //     iRollingB:listOverview[i].iRollingB,
+        //     iRollingUO:listOverview[i].iRollingUO,
+        //     iRollingS:listOverview[i].iRollingS,
+        //     iRollingPBA:listOverview[i].iRollingPBA,
+        //     iRollingPBB:listOverview[i].iRollingPBB,
+        //     iAgentBetB:listOverview[i].iAgentBetB,
+        //     iAgentBetUO:listOverview[i].iAgentBetUO,
+        //     iAgentBetS:listOverview[i].iAgentBetS,
+        //     iAgentBetPB:listOverview[i].iAgentBetPB,
+        //     iAgentWinB:listOverview[i].iAgentWinB,
+        //     iAgentWinUO:listOverview[i].iAgentWinUO,
+        //     iAgentWinS:listOverview[i].iAgentWinS,
+        //     iAgentWinPB:listOverview[i].iAgentWinPB,
+        //     iAgentRollingB:listOverview[i].iAgentRollingB,
+        //     iAgentRollingUO:listOverview[i].iAgentRollingUO,
+        //     iAgentRollingS:listOverview[i].iAgentRollingS,
+        //     iAgentRollingPBA:listOverview[i].iAgentRollingPBA,
+        //     iAgentRollingPBB:listOverview[i].iAgentRollingPBB,
+        // },
+        // {
+        //     where:{strID:listOverview[i].strID, strDate:listOverview[i].strDate}
+        // });
+    }
+
+
+
+    for ( let i in listOverview )
+    {
+        console.log(listOverview[i]);
 
         // console.log(`########## strID : ${listOverview[i].strID}, iClass : ${listOverview[i].iClass}`);
         // if ( listOverview[i].strID == 'jjg1218')
@@ -256,81 +303,74 @@ let start = async () => {
         //     //console.log(listOverview[i]);
         //     logHeader(listOverview[i]);
         // }
-        let found = Find(listOverview[i].strID, listDBData);
-        if ( found != null )
-        {
-            let object = Compare(listOverview[i], found);
-            if ( object.iB != 0 || object.iS != 0 || object.iAgentB != 0 || object.iAgentS != 0 )
-            {
-                console.log(`${index++} - ${object}`);
-            }
-        }
-    }
 
 
-
-    // for ( let i in listOverview )
-    // {
-    //     console.log(`${i}`);
-
-    //     await db.RecordDailyOverviews.update({
-    //         iBetB:listOverview[i].iBetB,
-    //         iBetUO:listOverview[i].iBetUO,
-    //         iBetS:listOverview[i].iBetS,
-    //         iBetPB:listOverview[i].iBetPB,
-    //         iWinB:listOverview[i].iWinB,
-    //         iWinUO:listOverview[i].iWinUO,
-    //         iWinS:listOverview[i].iWinS,
-    //         iWinPB:listOverview[i].iWinPB,
-    //         iRollingB:listOverview[i].iRollingB,
-    //         iRollingUO:listOverview[i].iRollingUO,
-    //         iRollingS:listOverview[i].iRollingS,
-    //         iRollingPBA:listOverview[i].iRollingPBA,
-    //         iRollingPBB:listOverview[i].iRollingPBB,
-    //         iAgentBetB:listOverview[i].iAgentBetB,
-    //         iAgentBetUO:listOverview[i].iAgentBetUO,
-    //         iAgentBetS:listOverview[i].iAgentBetS,
-    //         iAgentBetPB:listOverview[i].iAgentBetPB,
-    //         iAgentWinB:listOverview[i].iAgentWinB,
-    //         iAgentWinUO:listOverview[i].iAgentWinUO,
-    //         iAgentWinS:listOverview[i].iAgentWinS,
-    //         iAgentWinPB:listOverview[i].iAgentWinPB,
-    //         iAgentRollingB:listOverview[i].iAgentRollingB,
-    //         iAgentRollingUO:listOverview[i].iAgentRollingUO,
-    //         iAgentRollingS:listOverview[i].iAgentRollingS,
-    //         iAgentRollingPBA:listOverview[i].iAgentRollingPBA,
-    //         iAgentRollingPBB:listOverview[i].iAgentRollingPBB,
-    //     },
-    //     {
-    //         where:{strID:listOverview[i].strID, strDate:listOverview[i].strDate}
-    //     });
-    // }
-
-    return;
-
-    // 닉네임 설정하기
-    console.log('결과값 출력하기');
-    let targetID = '';
-    logHeader();
-    for (let i in listOverview) {
-        let strNickname = '';
-        for (let j in listGroupUser) {
-            if (listGroupUser[j].strID == listOverview[i].strID) {
-                strNickname = listGroupUser[j].strNickname;
-                break;
-            }
-        }
-        log(listOverview[i], strNickname);
-        // if (listOverview[i].strID == targetID) {
-        //     // console.log(listOverview[i]);
-        //     log(listOverview[i]);
-        // } else {
-        //     log(listOverview[i]);
-        //     // console.log(listOverview[i]);
+        // let found = Find(listOverview[i].strID, listDBData);
+        // if ( found != null )
+        // {
+        //     let object = Compare(listOverview[i], found);
+        //     if ( object.iB != 0 || object.iS != 0 || object.iAgentB != 0 || object.iAgentS != 0 || object.iAgentWinS != 0 || object.iAgentWinB != 0 )
+        //     {
+        //         dataObjectList.push(object);
+        //         dataOverviewList.push(listOverview[i]);
+        //
+        //         console.log(index+1);
+        //
+        //         await db.RecordDailyOverviews.update({
+        //             iBetB:listOverview[i].iBetB,
+        //             iBetUO:listOverview[i].iBetUO,
+        //             iBetS:listOverview[i].iBetS,
+        //             iBetPB:listOverview[i].iBetPB,
+        //             iWinB:listOverview[i].iWinB,
+        //             iWinUO:listOverview[i].iWinUO,
+        //             iWinS:listOverview[i].iWinS,
+        //             iWinPB:listOverview[i].iWinPB,
+        //             iRollingB:listOverview[i].iRollingB,
+        //             iRollingUO:listOverview[i].iRollingUO,
+        //             iRollingS:listOverview[i].iRollingS,
+        //             iRollingPBA:listOverview[i].iRollingPBA,
+        //             iRollingPBB:listOverview[i].iRollingPBB,
+        //             iAgentBetB:listOverview[i].iAgentBetB,
+        //             iAgentBetUO:listOverview[i].iAgentBetUO,
+        //             iAgentBetS:listOverview[i].iAgentBetS,
+        //             iAgentBetPB:listOverview[i].iAgentBetPB,
+        //             iAgentWinB:listOverview[i].iAgentWinB,
+        //             iAgentWinUO:listOverview[i].iAgentWinUO,
+        //             iAgentWinS:listOverview[i].iAgentWinS,
+        //             iAgentWinPB:listOverview[i].iAgentWinPB,
+        //             iAgentRollingB:listOverview[i].iAgentRollingB,
+        //             iAgentRollingUO:listOverview[i].iAgentRollingUO,
+        //             iAgentRollingS:listOverview[i].iAgentRollingS,
+        //             iAgentRollingPBA:listOverview[i].iAgentRollingPBA,
+        //             iAgentRollingPBB:listOverview[i].iAgentRollingPBB,
+        //         },
+        //         {
+        //             where:{strID:listOverview[i].strID, strDate:listOverview[i].strDate}
+        //         });
+        //
+        //         console.log(object);
+        //     }
         // }
     }
 
-    //console.log(listOverview);
+    if (dataObjectList.length > 0) {
+        logHeader();
+        for (let i = 0; i<dataObjectList.length; i++) {
+            let obj = dataOverviewList[i];
+            obj.index = i+1;
+            obj.strNickname = FindNickname(obj.strID, nicknameList);
+            obj.iB = dataObjectList[i].iB;
+            obj.iS = dataObjectList[i].iS;
+            obj.iAgentB = dataObjectList[i].iAgentB;
+            obj.iAgentS = dataObjectList[i].iAgentS;
+            obj.iAgentWB = dataObjectList[i].iAgentWinB;
+            obj.iAgentWS = dataObjectList[i].iAgentWinS;
+            log2(obj);
+        }
+    }
+
+
+    return;
 
     // for ( let i in listOverview )
     // {
@@ -403,6 +443,12 @@ let logHeader = (overview) => {
     logHeader += ', iRollingUO';
     logHeader += ', iRollingS';
     logHeader += ', strGroupID';
+    logHeader += ', B롤링차액';
+    logHeader += ', S롤링차액';
+    logHeader += ', B배팅차액';
+    logHeader += ', S배팅차액';
+    logHeader += ', B승리차액';
+    logHeader += ', S승리차액';
     console.log(logHeader);
 }
 let log = (overview, strNickname, strID) => {
@@ -505,6 +551,131 @@ let log = (overview, strNickname, strID) => {
     log += split;
 
     log += `'${overview.strGroupID}'`;
+
+    console.log(log);
+}
+
+let log2 = (overview) => {
+
+    let split = ', ';
+    let split2 = ' ';
+    let log = ``;
+
+    log += overview.index;
+    log += split2;
+
+    log += overview.strID;
+    log += split2;
+
+    log += overview.strDate;
+    log += split;
+
+    if (overview.iClass == 1) {
+        log += '총총';
+        log += split;
+    } else if (overview.iClass == 2) {
+        log += '총본';
+        log += split;
+    } else if (overview.iClass == 3) {
+        log += '본사';
+        log += split;
+    } else if (overview.iClass == 4) {
+        log += '대본';
+        log += split;
+    } else if (overview.iClass == 5) {
+        log += '부본';
+        log += split;
+    } else if (overview.iClass == 6) {
+        log += '총판';
+        log += split;
+    } else if (overview.iClass == 7) {
+        log += '매장';
+        log += split;
+    } else if (overview.iClass == 8) {
+        log += '유저';
+        log += split;
+    }
+
+    log += overview.strID;
+    log += split;
+
+    log += overview.strNickname;
+    log += split;
+
+    log += overview.iBetB;
+    log += split;
+
+    log += overview.iWinB;
+    log += split;
+
+    log += overview.iBetUO;
+    log += split;
+
+    log += overview.iWinUO;
+    log += split;
+
+    log += overview.iBetS;
+    log += split;
+
+    log += overview.iWinS;
+    log += split;
+
+    log += overview.iRollingB;
+    log += split;
+
+    log += overview.iRollingUO;
+    log += split;
+
+    log += overview.iRollingS;
+    log += split;
+
+    log += overview.iAgentBetB;
+    log += split;
+
+    log += overview.iAgentBetUO;
+    log += split;
+
+    log += overview.iAgentBetS;
+    log += split;
+
+    log += overview.iAgentWinB;
+    log += split;
+
+    log += overview.iAgentWinUO;
+    log += split;
+
+    log += overview.iAgentWinS;
+    log += split;
+
+    log += overview.iAgentRollingB;
+    log += split;
+
+    log += overview.iAgentRollingUO;
+    log += split;
+
+    log += overview.iAgentRollingS;
+    log += split;
+
+    log += `'${overview.strGroupID}'`;
+    log += split;
+
+    log += `'${overview.iB}'`;
+    log += split;
+
+    log += `'${overview.iS}'`;
+    log += split;
+
+    log += `'${overview.iAgentB}'`;
+    log += split;
+
+    log += `'${overview.iAgentS}'`;
+    log += split;
+
+    log += `'${overview.iAgentWB}'`;
+    log += split;
+
+    log += `'${overview.iAgentWS}'`;
+    log += split;
 
     console.log(log);
 }

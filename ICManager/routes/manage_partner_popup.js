@@ -120,19 +120,19 @@ router.post('/charges', isLoggedIn, async (req, res) => {
     const agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
     agent.iRootClass = req.user.iClass;
     agent.iPermission = req.user.iPermission;
-    let inputs = await db.Inouts.findAll({
-        where:{
-            strGroupID:{
-                [Op.like]:req.body.strGroupID+'%'
-            },
-            eType:'INPUT',
-            eState:'COMPLETE'
-        },
-        order:[['createdAt','DESC']]
-    });
+    // let inputs = await db.Inouts.findAll({
+    //     where:{
+    //         strGroupID:{
+    //             [Op.like]:req.body.strGroupID+'%'
+    //         },
+    //         eType:'INPUT',
+    //         eState:'COMPLETE'
+    //     },
+    //     order:[['createdAt','DESC']]
+    // });
     let parents = await IAgent.GetParentList(req.body.strGroupID, req.body.iClass, agent);
 
-    res.render('manage_partner/popup_charges', {iLayout:2, iHeaderFocus:5, agent:agent, inputs:inputs, strParent:parents.strParents});
+    res.render('manage_partner/popup_charges', {iLayout:2, iHeaderFocus:5, agent:agent, inputs:[], strParent:parents.strParents});
 });
 
 router.post('/exchanges', isLoggedIn, async (req, res) => {

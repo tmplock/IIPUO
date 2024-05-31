@@ -4,8 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "pm2 start ecosystem.config.js --only bluework-prod --env production",
+    "dev": "pm2 start ecosystem.config.js --only bluework-dev --env development",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon app.js"
+    "local": "NODE_ENV=local node app.js",
+    "localProd": "NODE_ENV=production node app.js"
   },
   "author": "",
   "license": "ISC",

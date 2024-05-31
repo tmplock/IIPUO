@@ -197,7 +197,8 @@ let GetRootInOutList = async (req, res) => {
     });
 
     let list = strSearchNickname == '' ? await db.sequelize.query(`
-                SELECT i.*, DATE_FORMAT(i.createdAt,'%Y-%m-%d %H:%i:%S') AS createdAt, DATE_FORMAT(i.completedAt,'%Y-%m-%d %H:%i:%S') AS completedAt, DATE_FORMAT(i.updatedAt,'%Y-%m-%d %H:%i:%S') AS updatedAt, u.strBankOwner AS strUserAccountOwner, u.strBankName AS strBankName
+                SELECT i.*, DATE_FORMAT(i.createdAt,'%Y-%m-%d %H:%i:%S') AS createdAt, DATE_FORMAT(i.completedAt,'%Y-%m-%d %H:%i:%S') AS completedAt, DATE_FORMAT(i.updatedAt,'%Y-%m-%d %H:%i:%S') AS updatedAt, u.strBankOwner AS strUserAccountOwner, u.strBankName AS strBankName,
+                       DATE_FORMAT(u.createdAt, '%Y-%m-%d %H:%i:%S') AS userCreatedAt
                 FROM Inouts i
                 LEFT JOIN Users u ON u.strNickname = i.strID
                 WHERE DATE(i.createdAt) BETWEEN '${req.body.dateStart}' AND '${req.body.dateEnd}'
@@ -283,7 +284,8 @@ let GetOutputList = async (req, res) => {
                 i.iAmount, i.strMemo, i.eType,
                 i.strRequestNickname, i.iRequestClass,
                 i.eState, i.strBankType,
-               DATE_FORMAT(i.completedAt, '%Y-%m-%d %H:%i:%S') AS completedAt, DATE_FORMAT(i.createdAt, '%Y-%m-%d %H:%i:%S') AS createdAt, DATE_FORMAT(i.updatedAt, '%Y-%m-%d %H:%i:%S') AS updatedAt
+                DATE_FORMAT(i.completedAt, '%Y-%m-%d %H:%i:%S') AS completedAt, DATE_FORMAT(i.createdAt, '%Y-%m-%d %H:%i:%S') AS createdAt, DATE_FORMAT(i.updatedAt, '%Y-%m-%d %H:%i:%S') AS updatedAt,
+                DATE_FORMAT(u.createdAt, '%Y-%m-%d %H:%i:%S') AS userCreatedAt
             FROM Inouts i
             LEFT JOIN Users u ON u.strNickname = i.strID
             WHERE DATE(i.createdAt) BETWEEN '${req.body.dateStart}' AND '${req.body.dateEnd}'
@@ -342,7 +344,8 @@ let GetInputList = async (req, res) => {
                 i.strRequestNickname, i.iRequestClass,
                 i.eState, i.strBankType, i.strAccountOwner, i.iPreviousCash,
                 u.strBankOwner AS strUserAccountOwner, u.strBankName AS strBankName, u.iPassCheckNewUser,
-                DATE_FORMAT(i.completedAt, '%Y-%m-%d %H:%i:%S') AS completedAt, DATE_FORMAT(i.createdAt, '%Y-%m-%d %H:%i:%S') AS createdAt, DATE_FORMAT(i.updatedAt, '%Y-%m-%d %H:%i:%S') AS updatedAt
+                DATE_FORMAT(i.completedAt, '%Y-%m-%d %H:%i:%S') AS completedAt, DATE_FORMAT(i.createdAt, '%Y-%m-%d %H:%i:%S') AS createdAt, DATE_FORMAT(i.updatedAt, '%Y-%m-%d %H:%i:%S') AS updatedAt,
+                DATE_FORMAT(u.createdAt, '%Y-%m-%d %H:%i:%S') AS userCreatedAt
             FROM Inouts i
             LEFT JOIN Users u ON u.strNickname = i.strID
             WHERE DATE(i.createdAt) BETWEEN '${req.body.dateStart}' AND '${req.body.dateEnd}'

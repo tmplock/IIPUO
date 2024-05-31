@@ -336,12 +336,6 @@ router.post('/registeragent', isLoggedIn, async(req, res) => {
 });
 
 router.post('/register_agent', isLoggedIn, async (req, res) => {
-    let input = req.body.input ?? '';
-    if (input == '') {
-
-        return;
-    }
-
     const agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
     agent.iRootClass = req.user.iClass;
     agent.iPermission = req.user.iPermission;

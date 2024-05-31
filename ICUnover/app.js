@@ -54,9 +54,6 @@ let session_option = {
     checkExpirationInterval:10000,
     expiration:10000    
 }
-console.log(`----------------------------------------------`);
-console.log(process.env.SESSIONSDB_HOST);
-
 
 let sessionStore = new mysqlsession(session_option);
 

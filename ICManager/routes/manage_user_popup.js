@@ -292,7 +292,7 @@ router.post('/request_gt', isLoggedIn, async(req, res) => {
 
     if ( req.body.eType == 'GIVE' )
     {
-        if (req.user.iClass == 3) {
+        if (req.user.iClass == 3 || req.user.iPermission == 100) {
             res.send({result:'FAIL', reason:''});
             return;
         }
@@ -356,7 +356,7 @@ router.post('/request_gt', isLoggedIn, async(req, res) => {
     }
     else if ( req.body.eType == 'TAKE' )
     {
-        if (req.user.iClass == 3) {
+        if (req.user.iClass == 3 || req.user.iPermission == 100) {
             res.send({result:'FAIL', reason:''});
             return;
         }

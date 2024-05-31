@@ -1,3 +1,10 @@
 
 ICUnover/public/img/12.jpg
 /ICManager/.env.local
+ICManager/package-lock.json
+ICManager/logs/error/2024-05-31.error.log
+ICManager/logs/error/.d3be6e295d8db65727ca0f7752179ad11bd8d9a2-audit.json
+ICManager/logs/2024-05-31.log
+ICManager/logs/2024-05-31.exception.log
+ICManager/logs/.96a200e6a5ff9c6a53695144ac75d5a129f25d69-audit.json
+ICManager/logs/.2b2d732b15411ba16c722c305b75252ff751b668-audit.json

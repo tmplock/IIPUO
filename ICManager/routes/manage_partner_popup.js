@@ -1324,13 +1324,14 @@ router.post('/request_bank', isLoggedIn, async (req, res) => {
         }
     }
 
-    let bankname = user.strBankname ?? '';
-    let bankAccount = user.strBankAccount ?? '';
-    let bankOwner = user.strBankOwner ?? '';
-    let cell = user.strMobile ?? '';
+    let dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
+    let bankname = dbuser.strBankname ?? '';
+    let bankAccount = dbuser.strBankAccount ?? '';
+    let bankOwner = dbuser.strBankOwner ?? '';
+    let cell = dbuser.strMobile ?? '';
     let pass = '';
     if (req.user.iClass == 1 || req.user.iClass == 2 || req.user.iClass == 3) {
-        pass = user.strPassword ?? '';
+        pass = dbuser.strPassword ?? '';
     }
 
 

@@ -279,7 +279,7 @@ let GetOutputList = async (req, res) => {
                     WHEN ${isShowBank} THEN i.strAccountNumber
                     ELSE '******'
                     END AS strAccountNumber,
-                i.strAccountOwner,
+                i.strAccountOwner,  i.iPreviousCash,
                 i.iAmount, i.strMemo, i.eType,
                 i.strRequestNickname, i.iRequestClass,
                 i.eState, i.strBankType,
@@ -340,7 +340,7 @@ let GetInputList = async (req, res) => {
                 i.iClass, i.strName, i.strGroupID,
                 i.iAmount, i.strMemo, i.eType,
                 i.strRequestNickname, i.iRequestClass,
-                i.eState, i.strBankType, i.strAccountOwner,
+                i.eState, i.strBankType, i.strAccountOwner, i.iPreviousCash,
                 u.strBankOwner AS strUserAccountOwner, u.strBankName AS strBankName, u.iPassCheckNewUser,
                 DATE_FORMAT(i.completedAt, '%Y-%m-%d %H:%i:%S') AS completedAt, DATE_FORMAT(i.createdAt, '%Y-%m-%d %H:%i:%S') AS createdAt, DATE_FORMAT(i.updatedAt, '%Y-%m-%d %H:%i:%S') AS updatedAt
             FROM Inouts i

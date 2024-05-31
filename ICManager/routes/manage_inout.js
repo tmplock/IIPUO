@@ -73,48 +73,130 @@ router.post('/request_page', isLoggedIn, async(req, res) => {
     }
 });
 
+// 출금관리 > 계좌 공개 처리
+router.post('/request_output_pass', isLoggedIn, async (req, res) => {
+    let input = req.body.input ?? '';
+    if (input == '') {
+        res.send({result:'FAIL', msg:'암호를 입력해주세요'});
+        return;
+    }
+
+    let iPage = parseInt(req.body.iPage ?? 0);
+    if (iPage == 0 || isNaN(iPage)) {
+        res.send({result:'FAIL', msg:'필수 파라메터 부족'});
+        return;
+    }
+
+    // 총본 조회(GroupID 앞3자리)
+    let user = await db.Users.findOne({where:{strNickname:req.user.strNickname}});
+    if (user == null) {
+        res.send({result:'FAIL', msg:'조회 불가'});
+        return;
+    }
+
+    if (req.user.iClass == 8 || req.user.iClass == 7) {
+        // 접근 가능
+    } else if (req.user.iClass > 3) {
+        // 접근권한 없음
+        res.send({result:'FAIL', msg:'접근권한 없음'});
+        return;
+    }
+
+    if (req.user.iClass == 1) {
+        // 총총은 별도
+        let sub = await db.SubUsers.findOne({where: {rId: req.user.id, strOutputPassword:input}});
+        if (sub == null) {
+            res.send({result:'FAIL', msg:'암호 불일치'});
+            return;
+        }
+    } else {
+        let strGroupID = (user.strGroupID ?? '').substring(0, 3);
+        let partner = await db.Users.findAll({
+            where: {
+                strGroupID: strGroupID,
+                iClass:2,
+                iPermission: {
+                    [Op.notIn]: [100]
+                },
+            }
+        });
+        if (partner.length == 0) {
+            res.send({result:'FAIL', msg:'조회 불가'});
+            return;
+        }
+
+        let sub = await db.SubUsers.findOne({where: {rId: partner[0].id, strOutputPassword:input}});
+        if (sub == null) {
+            res.send({result:'FAIL', msg:'암호 불일치'});
+            return;
+        }
+    }
+
+    let period = moment().add(10, "minute");
+
+    period = await IAgent.GetCipher(`${iPage}&&${period}`);
+    res.send({result:'OK', msg:'정상 조회', key:period});
+});
+
 router.post('/request_searchby', isLoggedIn, async(req, res) => {
-
     console.log(req.body);
+    const iRootClass = parseInt(req.user.iClass ?? 0);
+    const iClass = parseInt(req.body.iClass ?? 0);
+    const bRoot = (iRootClass == 1 && iClass == 1);
+    if (bRoot == true) {
+        return await GetRootInOutList(req, res);
+    }
 
+    let eType = req.body.type;
+    if (eType == 'OUTPUT') {
+        return await GetOutputList(req, res);
+    } else if (eType == 'INPUT') {
+        return await GetInputList(req, res);
+    } else {
+        res.send({result:'FAIL', msg:'허용되지 않은 접근입니다', data : [], totalCount : 0, iRootClass:req.user.iClass});
+    }
+});
+
+
+let GetRootInOutList = async (req, res) => {
     const iRootClass = parseInt(req.user.iClass ?? 0);
     const iClass = parseInt(req.body.iClass ?? 0);
     const bRoot = (iRootClass == 1 && iClass == 1);
 
-    let totalCount = 0;
-    let list = [];
-
     let iLimit = parseInt(req.body.iLimit);
     let iPage = parseInt(req.body.iPage);
     let iOffset = (iPage-1) * iLimit;
+    let eType = req.body.type;
 
-    if ( req.body.strSearchNickname == '' )
-    {
-        if (bRoot == true) {
-            totalCount = await db.Inouts.count({
-                where: {
-                    createdAt:{
-                        [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
-                    },
-                    strGroupID:{[Op.like]:req.body.strGroupID+'%'},
-                    eType:req.body.type,
-                    iClass: 2
-                }
-            });
-        } else {
-            totalCount = await db.Inouts.count({
-                where: {
-                    createdAt:{
-                        [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
-                    },
-                    strGroupID:{[Op.like]:req.body.strGroupID+'%'},
-                    eType:req.body.type,
-                }
-            });
+    if (eType != 'OUTPUT') {
+        res.send({result:'FAIL', data:[], totalCount:0, iRootClass:req.user.iClass});
+        return;
+    }
+
+    let strSearchNickname = req.body.strSearchNickname ?? '';
+
+    let totalCount = strSearchNickname == '' ? await db.Inouts.count({
+        where: {
+            createdAt:{
+                [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
+            },
+            strGroupID:{[Op.like]:req.body.strGroupID+'%'},
+            eType:req.body.type,
+            iClass: 2
         }
+    }) : await db.Inouts.count({
+        where: {
+            createdAt:{
+                [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
+            },
+            strGroupID:{[Op.like]:req.body.strGroupID+'%'},
+            strID:req.body.strSearchNickname,
+            eType:req.body.type,
+            iClass: 2
+        }
+    });
 
-        if (bRoot == true) {
-            list = await db.sequelize.query(`
+    let list = strSearchNickname == '' ? await db.sequelize.query(`
                 SELECT i.*, DATE_FORMAT(i.createdAt,'%Y-%m-%d %H:%i:%S') AS createdAt, DATE_FORMAT(i.completedAt,'%Y-%m-%d %H:%i:%S') AS completedAt, DATE_FORMAT(i.updatedAt,'%Y-%m-%d %H:%i:%S') AS updatedAt, u.strBankOwner AS strUserAccountOwner, u.strBankName AS strBankName
                 FROM Inouts i
                 LEFT JOIN Users u ON u.strNickname = i.strID
@@ -125,62 +207,7 @@ router.post('/request_searchby', isLoggedIn, async(req, res) => {
                 ORDER BY i.createdAt DESC
                 LIMIT ${iLimit}
                 OFFSET ${iOffset}
-            `, {type: db.Sequelize.QueryTypes.SELECT});
-        } else {
-            let datas = await db.sequelize.query(`
-            SELECT i.*,
-                   u.strBankOwner AS strUserAccountOwner, u.strBankName AS strBankName, u.iPassCheckNewUser,
-                   DATE_FORMAT(i.completedAt, '%Y-%m-%d %H:%i:%S') AS completedAt, DATE_FORMAT(i.createdAt, '%Y-%m-%d %H:%i:%S') AS createdAt, DATE_FORMAT(i.updatedAt, '%Y-%m-%d %H:%i:%S') AS updatedAt
-            FROM Inouts i
-            LEFT JOIN Users u ON u.strNickname = i.strID
-            WHERE DATE(i.createdAt) BETWEEN '${req.body.dateStart}' AND '${req.body.dateEnd}'
-            AND i.strGroupID LIKE '${req.body.strGroupID}%'
-            AND i.eType = '${req.body.type}'
-            ORDER BY i.createdAt DESC
-            LIMIT ${iLimit}
-            OFFSET ${iOffset}
-        `, {type: db.Sequelize.QueryTypes.SELECT});
-
-            for (let i in datas) {
-                let obj = datas[i];
-                obj.iNewUser = 0;
-                if (obj.strBankType == 'NEWUSER') {
-                    obj.iNewUser = 1;
-                }
-                list.push(obj);
-            }
-        }
-        res.send({data: list, totalCount: totalCount, iRootClass: req.user.iClass});
-    }
-    else
-    {
-        if (bRoot == true) {
-            totalCount = await db.Inouts.count({
-                where: {
-                    createdAt:{
-                        [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
-                    },
-                    strGroupID:{[Op.like]:req.body.strGroupID+'%'},
-                    strID:req.body.strSearchNickname,
-                    eType:req.body.type,
-                    iClass: 2
-                }
-            });
-        } else {
-            totalCount = await db.Inouts.count({
-                where: {
-                    createdAt:{
-                        [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
-                    },
-                    strGroupID:{[Op.like]:req.body.strGroupID+'%'},
-                    strID:req.body.strSearchNickname,
-                    eType:req.body.type,
-                }
-            });
-        }
-
-        if (bRoot == true) {
-            list = await db.sequelize.query(`
+            `, {type: db.Sequelize.QueryTypes.SELECT}) : await db.sequelize.query(`
                 SELECT i.*, DATE_FORMAT(i.createdAt,'%Y-%m-%d %H:%i:%S') AS createdAt, DATE_FORMAT(i.completedAt,'%Y-%m-%d %H:%i:%S') AS completedAt, DATE_FORMAT(i.updatedAt,'%Y-%m-%d %H:%i:%S') AS updatedAt, u.strBankOwner AS strUserAccountOwner, u.strBankName AS strBankName
                 FROM Inouts i
                 LEFT JOIN Users u ON u.strNickname = i.strID
@@ -193,35 +220,152 @@ router.post('/request_searchby', isLoggedIn, async(req, res) => {
                 LIMIT ${iLimit}
                 OFFSET ${iOffset}
             `, {type: db.Sequelize.QueryTypes.SELECT});
-        } else {
-            let datas = await db.sequelize.query(`
-            SELECT i.*,
-                   u.strBankOwner AS strUserAccountOwner, u.strBankName AS strBankName, u.iPassCheckNewUser,
-                   DATE_FORMAT(i.completedAt, '%Y-%m-%d %H:%i:%S') AS completedAt, DATE_FORMAT(i.createdAt, '%Y-%m-%d %H:%i:%S') AS createdAt, DATE_FORMAT(i.updatedAt, '%Y-%m-%d %H:%i:%S') AS updatedAt
+
+    res.send({result:'OK', msg:'조회성공', data : list, totalCount : totalCount, iRootClass:req.user.iClass});
+}
+
+let GetOutputList = async (req, res) => {
+    let iLimit = parseInt(req.body.iLimit);
+    let iPage = parseInt(req.body.iPage);
+    let iOffset = (iPage-1) * iLimit;
+    let eType = req.body.type;
+
+    let isShowBank = false;
+    let searchKey = req.body.searchKey ?? '';
+    if (searchKey != '') {
+        // 유효기간 확인
+        let period = await IAgent.GetDeCipher(searchKey);
+        let arr = period.split('&&');
+        if (arr.length == 2) {
+            if (arr[0] == iPage) {
+                if (moment(arr[1]).isAfter(Date.now())) {
+                    isShowBank = true;
+                }
+            }
+        }
+    }
+
+    let strSearchNickname = req.body.strSearchNickname ?? '';
+
+    let totalCount = strSearchNickname == '' ? await db.Inouts.count({
+        where: {
+            createdAt:{
+                [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
+            },
+            strGroupID:{[Op.like]:req.body.strGroupID+'%'},
+            eType:req.body.type,
+        }
+    }) : await db.Inouts.count({
+        where: {
+            createdAt:{
+                [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
+            },
+            strGroupID:{[Op.like]:req.body.strGroupID+'%'},
+            eType:req.body.type,
+            strID: strSearchNickname,
+        }
+    });
+
+    const subQuery = strSearchNickname == '' ? '' : `AND i.strID = '${strSearchNickname}'`;
+    let datas = await db.sequelize.query(`
+            SELECT
+                i.id, i.strID, i.strAdminNickname, i.strPAdminNickname, i.strVAdminNickname, i.strAgentNickname, i.strShopNickname,
+                i.iClass, i.strName, i.strGroupID,
+                CASE
+                    WHEN ${isShowBank} THEN i.strBankName
+                    ELSE '******'
+                    END AS strBankName,
+                CASE
+                    WHEN ${isShowBank} THEN i.strAccountNumber
+                    ELSE '******'
+                    END AS strAccountNumber,
+                i.strAccountOwner,
+                i.iAmount, i.strMemo, i.eType,
+                i.strRequestNickname, i.iRequestClass,
+                i.eState, i.strBankType,
+               DATE_FORMAT(i.completedAt, '%Y-%m-%d %H:%i:%S') AS completedAt, DATE_FORMAT(i.createdAt, '%Y-%m-%d %H:%i:%S') AS createdAt, DATE_FORMAT(i.updatedAt, '%Y-%m-%d %H:%i:%S') AS updatedAt
             FROM Inouts i
             LEFT JOIN Users u ON u.strNickname = i.strID
             WHERE DATE(i.createdAt) BETWEEN '${req.body.dateStart}' AND '${req.body.dateEnd}'
             AND i.strGroupID LIKE '${req.body.strGroupID}%'
             AND i.eType = '${req.body.type}'
-            AND i.strID = '${req.body.strSearchNickname}'
+            ${subQuery}
             ORDER BY i.createdAt DESC
             LIMIT ${iLimit}
             OFFSET ${iOffset}
         `, {type: db.Sequelize.QueryTypes.SELECT});
 
-            for (let i in datas) {
-                let obj = datas[i];
-                obj.iNewUser = 0;
-                if (obj.strBankType == 'NEWUSER') {
-                    obj.iNewUser = 1;
-                }
-                list.push(obj);
-            }
+    let list = [];
+    for (let i in datas) {
+        let obj = datas[i];
+        obj.iNewUser = 0;
+        if (obj.strBankType == 'NEWUSER') {
+            obj.iNewUser = 1;
         }
-
-        res.send({data : list, totalCount : totalCount, iRootClass:req.user.iClass});
+        list.push(obj);
     }
-});
+    res.send({result:'OK', msg:'조회성공', data : list, totalCount : totalCount, iRootClass:req.user.iClass});
+}
+
+let GetInputList = async (req, res) => {
+    let iLimit = parseInt(req.body.iLimit);
+    let iPage = parseInt(req.body.iPage);
+    let iOffset = (iPage-1) * iLimit;
+
+    const strSearchNickname = req.body.strSearchNickname ?? '';
+
+    let totalCount = strSearchNickname == '' ? await db.Inouts.count({
+        where: {
+            createdAt:{
+                [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
+            },
+            strGroupID:{[Op.like]:req.body.strGroupID+'%'},
+            eType:req.body.type,
+        }
+    }) : await db.Inouts.count({
+        where: {
+            createdAt:{
+                [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
+            },
+            strGroupID:{[Op.like]:req.body.strGroupID+'%'},
+            eType:req.body.type,
+            strID: strSearchNickname,
+        }
+    });
+
+    const subQuery = strSearchNickname == '' ? '' : `AND i.strID = '${strSearchNickname}'`;
+    let datas = await db.sequelize.query(`
+            SELECT
+                i.id, i.strID, i.strAdminNickname, i.strPAdminNickname, i.strVAdminNickname, i.strAgentNickname, i.strShopNickname,
+                i.iClass, i.strName, i.strGroupID,
+                i.iAmount, i.strMemo, i.eType,
+                i.strRequestNickname, i.iRequestClass,
+                i.eState, i.strBankType, i.strAccountOwner,
+                u.strBankOwner AS strUserAccountOwner, u.strBankName AS strBankName, u.iPassCheckNewUser,
+                DATE_FORMAT(i.completedAt, '%Y-%m-%d %H:%i:%S') AS completedAt, DATE_FORMAT(i.createdAt, '%Y-%m-%d %H:%i:%S') AS createdAt, DATE_FORMAT(i.updatedAt, '%Y-%m-%d %H:%i:%S') AS updatedAt
+            FROM Inouts i
+            LEFT JOIN Users u ON u.strNickname = i.strID
+            WHERE DATE(i.createdAt) BETWEEN '${req.body.dateStart}' AND '${req.body.dateEnd}'
+            AND i.strGroupID LIKE '${req.body.strGroupID}%'
+            AND i.eType = '${req.body.type}'
+            ${subQuery}
+            ORDER BY i.createdAt DESC
+            LIMIT ${iLimit}
+            OFFSET ${iOffset}
+        `, {type: db.Sequelize.QueryTypes.SELECT});
+
+    let list = [];
+    for (let i in datas) {
+        let obj = datas[i];
+        obj.iNewUser = 0;
+        if (obj.strBankType == 'NEWUSER') {
+            obj.iNewUser = 1;
+        }
+        list.push(obj);
+    }
+
+    res.send({result:'OK', msg:'조회성공', data : list, totalCount : totalCount, iRootClass:req.user.iClass});
+}
 
 // 입출금 진입시 호출됨
 router.post('/charge', isLoggedIn, async(req, res) => {
@@ -1021,6 +1165,7 @@ router.post('/request_inout_pass', async (req, res) => {
 /**
  * 계좌관리
  */
+// 계좌관리 비번 체크
 router.post('/request_bank', async (req, res) => {
     console.log(`request_bank`);
     console.log(req.body);
@@ -1044,27 +1189,64 @@ router.post('/request_bank', async (req, res) => {
     res.send({result: 'OK'});
 });
 
+// 입출금관리 > 계좌관리
 router.post('/popup_bank', async (req, res) => {
     console.log(`popup_bank`);
     console.log(req.body);
 
+    const input = req.body.input;
     let iClass = parseInt(req.user.iClass ?? 100);
     let iPermission = parseInt(req.user.iPermission ?? 0);
 
-    if (iClass > 3 || iPermission == 100) {
+    const user = await db.Users.findOne({where: {strNickname: req.user.strNickname}});
+    const info = await db.SubUsers.findOne({where: {rId: user.id, strInoutPassword: input}});
+    if (info == null) {
+        res.render('manage_inout/popup_bank', {iLayout:8, iHeaderFocus:0, user:{}, msg:'비밀번호 미일치'});
         return;
     }
-    let agent = {iClass:req.body.iClass, iRootClass: req.user.iClass, iPermission: req.user.iPermission, strNickname: req.body.strNickname};
-    res.render('manage_inout/popup_bank', {iLayout:8, iHeaderFocus:0, user:agent});
+
+    if (iClass > 2 || iPermission == 100) {
+        res.render('manage_inout/popup_bank', {iLayout:8, iHeaderFocus:0, user:{}, msg:'권한이 없습니다'});
+        return;
+    }
+
+    let period = moment().add(1, "minute");
+    let str = `${(req.user.strNickname ?? '')}&&${period}`;
+    let key = await IAgent.GetCipher(str);
+    let agent = {iClass:req.body.iClass, iRootClass: req.user.iClass, iPermission: req.user.iPermission, strNickname: req.body.strNickname, key:key};
+    res.render('manage_inout/popup_bank', {iLayout:8, iHeaderFocus:0, user:agent, msg:''});
 });
 
 router.post('/request_bank_list', async (req, res) => {
     console.log(`request_bank_list`);
     console.log(req.body);
+    let key = req.body.key ?? '';
+    if (key == '') {
+        res.send({result: 'FAIL', data: [], msg:'권한 없음'});
+        return;
+    }
+    let period = await IAgent.GetDeCipher(key);
+    let arr = period.split('&&');
+    if (arr.length != 2) {
+        res.send({result: 'FAIL', data: [], msg:'권한 없음'});
+        return;
+    }
+
+    if (arr[0] != req.user.strNickname) {
+        res.send({result: 'FAIL', data: [], msg:'권한 없음'});
+        return;
+    }
+
+    if (moment(arr[1]).isBefore(Date.now())) {
+        res.send({result: 'FAIL', data: [], msg:'권한 없음'});
+        return;
+    }
+
     let iRootClass = parseInt(req.user.iClass ?? 100);
     let iClass = parseInt(req.body.iClass ?? 0);
     let iPermission = parseInt(req.user.iPermission ?? 0);
-    if (iClass > 3 || iPermission == 100) {
+    if (iClass > 2 || iPermission == 100) {
+        res.send({result: 'FAIL', data: [], msg:'권한 없음'});
         return;
     }
 

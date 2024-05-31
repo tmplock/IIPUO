@@ -49,7 +49,8 @@ module.exports = () => {
                 }
 
                 // TEST시에는 false로 설정
-                if (true) {
+                let isCheckActive = true;
+                if (isCheckActive == true) {
                     // 접근 권한 체크
                     let code = user.strLoginCode ?? '';
 
@@ -118,16 +119,18 @@ module.exports = () => {
 
                 // 접속중인 소켓 카운트 체크하여 중복 로그인 처리하기
                 try {
-                    let max = user.iLoginMax ?? 1;
-                    let list = [];
-                    for (let i in socket_list) {
-                        if (socket_list[i].strNickname === user.strNickname) {
-                            list.push(socket_list[i]);
+                    if (isCheckActive == true) {
+                        let max = user.iLoginMax ?? 1;
+                        let list = [];
+                        for (let i in socket_list) {
+                            if (socket_list[i].strNickname === user.strNickname) {
+                                list.push(socket_list[i]);
+                            }
                         }
-                    }
-                    list = list.reverse();
-                    for (let i = 0; i <= list.length - max; i++) {
-                        list[i].emit('UserLogout');
+                        list = list.reverse();
+                        for (let i = 0; i <= list.length - max; i++) {
+                            list[i].emit('UserLogout');
+                        }
                     }
                 } catch (err) {
 

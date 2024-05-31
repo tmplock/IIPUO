@@ -318,25 +318,10 @@
             alert(`암호 미입력`);
             return;
         }
-
-        $.ajax({
-            type:'post',
-            url: "/manage_inout/request_bank",
-            data:{input:input, iClass: user.iClass, strNickname: user.strNickname},
-            success: (obj) => {
-                if (obj.result == 'OK') {
-                    OpenBankPopup();
-                } else if (obj.result == 'FAIL') {
-                    alert(obj.msg);
-                }
-            },
-            error:function(request,status,error){
-                alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
-            }
-        });
+        OpenBankPopup(input);
     }
 
-    let OpenBankPopup = () => {
+    let OpenBankPopup = (input) => {
         window.open('', 'popupChk22', 'width=1280, height=720, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
         var $form = $('<form></form>');
         $form.attr('action', '/manage_inout/popup_bank');
@@ -345,7 +330,8 @@
         $form.appendTo('body');
         var strNickname = $(`<input type="hidden" value="${user.strNickname}" name="strNickname">`);
         var iClass = $(`<input type="hidden" value=${parseInt(user.iClass)} name="iClass">`);
-        $form.append(strNickname).append(iClass);
+        var sInput = $(`<input type="hidden" value=${input} name="input">`);
+        $form.append(strNickname).append(iClass).append(sInput);
         $form.submit();
     }
 

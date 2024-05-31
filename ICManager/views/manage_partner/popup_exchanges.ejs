@@ -66,6 +66,7 @@
 
 	let iLimit = 30;
 	let iCurrentPage = 1;
+	let searchKey = '';
 
 	$(document).ready(() => {
 		OnClickSearchInput();
@@ -91,7 +92,8 @@
 					strSearchNickname:strNickname,
 					iClass:agent.iClass,
 					iLimit:iLimit,
-					iPage:iCurrentPage
+					iPage:iCurrentPage,
+					input:searchKey,
 				},
         
                 success:function(obj) {

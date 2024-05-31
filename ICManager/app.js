@@ -166,7 +166,7 @@ global.io = io;
 //global.strUserPageAddress = `https://unover000.com`;
 // global.strUserPageAddress = `http://165.22.102.70:3010`; // Unover001
 // global.strUserPageAddress = `http://165.22.102.70:3011`; // Unover000
-global.strUserPageAddress = `https://unover100.com`; // Unover000
+global.strUserPageAddress =  process.env.USER_URL; // Unover000
 
 app.get('/', (req, res) => {
     //res.redirect('account/login');

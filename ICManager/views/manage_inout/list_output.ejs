@@ -43,7 +43,7 @@
             </div>
 
             
-        <div style="background-color:#ffffff;text-align:right;padding-right:5px;padding-top:0px;padding-bottom:0px;" colspan="19">
+        <div style="background-color:#ffffff;text-align:right;padding-right:5px;padding-top:0px;padding-bottom:0px;" colspan="19" id="search_header">
             <input style="margin-left:180px;width:100px;" type="text" id="datepicker1" class="datepicker"/>~
             <input style="width:100px;" type="text" id="datepicker2" class="datepicker" />
             <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearchByOutput(1, false);"><%=__('Search')%></button>
@@ -61,6 +61,7 @@
                 <option value="50">50개씩</option>
                 <option value="100">100개씩</option>
             </select>
+            <button id="bank_info" class="btn_blue" style="display: none; border:1px solid rgb(95, 93, 93);width:90px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickBank();">은행정보보기</button>
         </div>
 
             <div class="search_wrap">
@@ -171,6 +172,7 @@
     let iCurrentPage = 1;
     let iLimit = 100;
     let bToggleRecord = false;
+    let searchKey = '';
 
     let list = [];
 
@@ -214,8 +216,43 @@
             `);
         }
 
+        if (user.iPermission <= 3) {
+            $('#bank_info').show();
+        }
+
         OnClickSearchByOutput(1, true);
     });
+
+    let OnClickBank = () => {
+        let input = prompt('암호입력');
+        if (input == null) {
+            return;
+        } else if (input.length == 0) {
+            alert(`암호 미입력`);
+            return;
+        }
+
+        $.ajax(
+            {
+                type:'post',
+                url: "/manage_inout/request_output_pass",
+                context: document.body,
+                data:{
+                    iPage:iCurrentPage,
+                    input:input,
+                },
+
+                success:function(obj) {
+                    if (obj.result == 'OK') {
+                        searchKey = obj.key;
+                        OnClickPage(iCurrentPage);
+                    } else {
+                        alert(obj.msg);
+                    }
+                }
+            }
+        );
+    }
 
     let OnClickSearchByOutput = (iPage, bInit) => {
         let date1 = $("#datepicker1").val();
@@ -231,7 +268,7 @@
                 type:'post',
                 url: "/manage_inout/request_searchby",
                 context: document.body,
-                data:{type:'OUTPUT', dateStart:date1, dateEnd:date2, strGroupID:user.strGroupID, strSearchNickname:strNickname, iLimit:limit, iPage:iPage, iClass:user.iClass},
+                data:{type:'OUTPUT', dateStart:date1, dateEnd:date2, strGroupID:user.strGroupID, strSearchNickname:strNickname, iLimit:limit, iPage:iPage, iClass:user.iClass, searchKey:searchKey},
 
                 success:function(obj) {
                     let data = obj.data;

@@ -28,9 +28,11 @@ npm run dev
 ```
 [실행하기]
 // 개발
-pm2 start ecosystem.config.js env-development
+npm run dev
 // 운영
-pm2 start ecosystem.config.js env-production
+npm start
+// 로컬
+npm run local
 ```
 
 

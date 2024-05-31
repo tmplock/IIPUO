@@ -319,7 +319,22 @@
             alert(`암호 미입력`);
             return;
         }
-        OpenBankPopup(input);
+
+        $.ajax({
+            type:'post',
+            url: "/manage_inout/request_bank",
+            data:{input:input, iClass: user.iClass, strNickname: user.strNickname},
+            success: (obj) => {
+                if (obj.result == 'OK') {
+                    OpenBankPopup(input);
+                } else if (obj.result == 'FAIL') {
+                    alert(obj.msg);
+                }
+            },
+            error:function(request,status,error){
+                alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+            }
+        });
     }
 
     let OpenBankPopup = (input) => {

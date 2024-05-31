@@ -230,20 +230,20 @@ let GetOutputList = async (req, res) => {
     let iOffset = (iPage-1) * iLimit;
     let eType = req.body.type;
 
-    let isShowBank = false;
-    let searchKey = req.body.searchKey ?? '';
-    if (searchKey != '') {
-        // 유효기간 확인
-        let period = await IAgent.GetDeCipher(searchKey);
-        let arr = period.split('&&');
-        if (arr.length == 2) {
-            if (arr[0] == iPage) {
-                if (moment(arr[1]).isAfter(Date.now())) {
-                    isShowBank = true;
-                }
-            }
-        }
-    }
+    let isShowBank = true;
+    // let searchKey = req.body.searchKey ?? '';
+    // if (searchKey != '') {
+    //     // 유효기간 확인
+    //     let period = await IAgent.GetDeCipher(searchKey);
+    //     let arr = period.split('&&');
+    //     if (arr.length == 2) {
+    //         if (arr[0] == iPage) {
+    //             if (moment(arr[1]).isAfter(Date.now())) {
+    //                 isShowBank = true;
+    //             }
+    //         }
+    //     }
+    // }
 
     let strSearchNickname = req.body.strSearchNickname ?? '';
 
@@ -1194,7 +1194,11 @@ router.post('/popup_bank', async (req, res) => {
     console.log(`popup_bank`);
     console.log(req.body);
 
-    const input = req.body.input;
+    const input = req.body.input ?? '';
+    if (input == '') {
+        res.render('manage_inout/popup_bank', {iLayout:8, iHeaderFocus:0, user:{}, msg:'비밀번호 미입력'});
+        return;
+    }
     let iClass = parseInt(req.user.iClass ?? 100);
     let iPermission = parseInt(req.user.iPermission ?? 0);
 

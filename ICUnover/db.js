@@ -1,14 +1,22 @@
 const Sequelize = require('sequelize');
 
 const sequelize = new Sequelize({
-    // host: 'db-mysql-sgp1-78563-do-user-11246819-0.c.db.ondigitalocean.com',
-    // //database: 'iipcor',
-    // database:'iipc',
-    // username: 'doadmin',
-    // password: 'AVNS_M3_YxbEdNmi41c9HbLu',
-    // dialect: 'mysql',
-    // port:25060,
-    // timezone:'Asia/Seoul'
+    host: 'db-mysql-sgp1-78563-do-user-11246819-0.c.db.ondigitalocean.com',
+    //database: 'iipcor',
+    database:'iipc',
+    username: 'doadmin',
+    password: 'AVNS_M3_YxbEdNmi41c9HbLu',
+    dialect: 'mysql',
+    port:25060,
+    timezone:'Asia/Seoul'
+
+    // // host:process.env.MYSQL_HOST,
+    // // database:process.env.MYSQL_DATABASE,
+    // // username:process.env.MYSQL_USERNAME,
+    // // password:process.env.MYSQL_PASSWORD,
+    // // dialect: 'mysql',
+    // // port:process.env.MYSQL_PORT,
+    // // timezone:'+09:00'
 
     // host:process.env.MYSQL_HOST,
     // database:process.env.MYSQL_DATABASE,
@@ -17,14 +25,6 @@ const sequelize = new Sequelize({
     // dialect: 'mysql',
     // port:process.env.MYSQL_PORT,
     // timezone:'+09:00'
-
-    host:process.env.MYSQL_HOST,
-    database:process.env.MYSQL_DATABASE,
-    username:process.env.MYSQL_USERNAME,
-    password:process.env.MYSQL_PASSWORD,
-    dialect: 'mysql',
-    port:process.env.MYSQL_PORT,
-    timezone:'+09:00'
 });
 
 

@@ -18,17 +18,24 @@ const flash = require('connect-flash');
 var cors = require('cors');
 
 let mysqlsession = require('express-mysql-session')(session);
-
-// let session_option = {
-//     host: 'db-mysql-sgp1-27012-do-user-11246819-0.b.db.ondigitalocean.com',
-//     database: 'iipcor',
-//     user: 'iiplive',
-//     port:25060,
-//     password: 'oLOHJkiQACPGuAgj',
-//     clearExpired:true,
-//     checkExpirationInterval:10000,
-//     expiration:10000    
-// }
+// host: 'db-mysql-sgp1-78563-do-user-11246819-0.c.db.ondigitalocean.com',
+// //database: 'iipcor',
+// database:'iipc',
+// username: 'doadmin',
+// password: 'AVNS_M3_YxbEdNmi41c9HbLu',
+// dialect: 'mysql',
+// port:25060,
+// timezone:'Asia/Seoul'
+let session_option = {
+    host: 'db-mysql-sgp1-78563-do-user-11246819-0.c.db.ondigitalocean.com',
+    database: 'iipc',
+    user: 'doadmin',
+    port:25060,
+    password: 'AVNS_M3_YxbEdNmi41c9HbLu',
+    clearExpired:true,
+    checkExpirationInterval:10000,
+    expiration:10000    
+}
 // host:'db-mysql-sgp1-62759-do-user-11246819-0.c.db.ondigitalocean.com',
 // database:'iipc',
 // username:'doadmin', 
@@ -37,26 +44,17 @@ let mysqlsession = require('express-mysql-session')(session);
 // port:'25060',
 // timezone:'+09:00'
 
-let session_option = {
-    host: process.env.SESSIONSDB_HOST,
-    database: process.env.SESSIONSDB_DB,
-    user: process.env.SESSIONSDB_USER,
-    port:25060,
-    password: process.env.SESSIONSDB_PASS,
-    clearExpired:true,
-    checkExpirationInterval:10000,
-    expiration:10000    
-}
-// const sequelize = new Sequelize({
-//     host: 'db-mysql-sgp1-78563-do-user-11246819-0.c.db.ondigitalocean.com',
-//     //database: 'iipcor',
-//     database:'iipc',
-//     username: 'doadmin',
-//     password: 'AVNS_M3_YxbEdNmi41c9HbLu',
-//     dialect: 'mysql',
+// let session_option = {
+//     host: process.env.SESSIONSDB_HOST,
+//     database: process.env.SESSIONSDB_DB,
+//     user: process.env.SESSIONSDB_USER,
 //     port:25060,
-//     timezone:'Asia/Seoul'
-// });
+//     password: process.env.SESSIONSDB_PASS,
+//     clearExpired:true,
+//     checkExpirationInterval:10000,
+//     expiration:10000    
+// }
+
 
 let sessionStore = new mysqlsession(session_option);
 

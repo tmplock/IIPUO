@@ -1,0 +1,35 @@
+2024-05-31 20:53:33 [ICManager] error: uncaughtException: connect ETIMEDOUT
+SequelizeConnectionError: connect ETIMEDOUT
+    at ConnectionManager.connect (E:\Git2024\IIPUO\ICUnitBuilder\node_modules\sequelize\lib\dialects\mysql\connection-manager.js:102:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async ConnectionManager._connect (E:\Git2024\IIPUO\ICUnitBuilder\node_modules\sequelize\lib\dialects\abstract\connection-manager.js:222:24)
+    at async E:\Git2024\IIPUO\ICUnitBuilder\node_modules\sequelize\lib\dialects\abstract\connection-manager.js:174:32
+    at async ConnectionManager.getConnection (E:\Git2024\IIPUO\ICUnitBuilder\node_modules\sequelize\lib\dialects\abstract\connection-manager.js:197:7)
+    at async E:\Git2024\IIPUO\ICUnitBuilder\node_modules\sequelize\lib\sequelize.js:305:26
+    at async MySQLQueryInterface.select (E:\Git2024\IIPUO\ICUnitBuilder\node_modules\sequelize\lib\dialects\abstract\query-interface.js:407:12)
+    at async Users.findAll (E:\Git2024\IIPUO\ICUnitBuilder\node_modules\sequelize\lib\model.js:1140:21)
+    at async Timeout.Transfer [as _onTimeout] (E:\Git2024\IIPUO\ICUnitBuilder\transfer.js:38:21)
+2024-05-31 21:05:53 [ICManager] error: uncaughtException: Unknown column 'Users.listIDs' in 'where clause'
+Error
+    at Query.run (E:\Git2024\IIPUO\ICUnitBuilder\node_modules\sequelize\lib\dialects\mysql\query.js:52:25)
+    at E:\Git2024\IIPUO\ICUnitBuilder\node_modules\sequelize\lib\sequelize.js:315:28
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async MySQLQueryInterface.select (E:\Git2024\IIPUO\ICUnitBuilder\node_modules\sequelize\lib\dialects\abstract\query-interface.js:407:12)
+    at async Users.findAll (E:\Git2024\IIPUO\ICUnitBuilder\node_modules\sequelize\lib\model.js:1140:21)
+    at async Timeout.Transfer [as _onTimeout] (E:\Git2024\IIPUO\ICUnitBuilder\transfer.js:42:21)
+2024-05-31 21:17:31 [ICManager] error: uncaughtException: Cannot read properties of undefined (reading 'findOne')
+TypeError: Cannot read properties of undefined (reading 'findOne')
+    at TransferAdmin (E:\Git2024\IIPUO\ICUnitBuilder\transfer.js:54:35)
+    at Timeout.Transfer [as _onTimeout] (E:\Git2024\IIPUO\ICUnitBuilder\transfer.js:72:15)
+    at listOnTimeout (node:internal/timers:573:17)
+    at process.processTimers (node:internal/timers:514:7)
+2024-05-31 21:18:10 [ICManager] error: uncaughtException: Cannot read properties of undefined (reading 'findOne')
+TypeError: Cannot read properties of undefined (reading 'findOne')
+    at TransferAdmin (E:\Git2024\IIPUO\ICUnitBuilder\transfer.js:54:35)
+    at Timeout.Transfer [as _onTimeout] (E:\Git2024\IIPUO\ICUnitBuilder\transfer.js:72:15)
+    at listOnTimeout (node:internal/timers:573:17)
+    at process.processTimers (node:internal/timers:514:7)
+2024-05-31 21:23:57 [ICManager] error: uncaughtException: list is not defined
+ReferenceError: list is not defined
+    at Timeout.Transfer [as _onTimeout] (E:\Git2024\IIPUO\ICUnitBuilder\transfer.js:86:20)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)

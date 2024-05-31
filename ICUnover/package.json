@@ -1,17 +1,4 @@
 {
-  "name": "unover",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "start": "pm2 start ecosystem.config.js --only unover-prod --env production",
-    "dev": "pm2 start ecosystem.config.js --only unover-dev --env development",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "local": "NODE_ENV=local node app.js",
-    "localProd": "NODE_ENV=production node app.js"
-  },
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "axios": "^1.5.0",
     "cheerio": "^1.0.0-rc.12",
@@ -26,6 +13,7 @@
     "express-session": "^1.17.3",
     "fast-xml-parser": "^4.3.1",
     "i18n": "^0.15.1",
+    "ioredis": "^5.4.1",
     "md5": "^2.3.0",
     "mysql2": "^3.6.1",
     "node-cron": "^3.0.2",

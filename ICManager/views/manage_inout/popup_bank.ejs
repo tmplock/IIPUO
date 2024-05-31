@@ -33,21 +33,28 @@
 <script type="text/javascript">
     let user = JSON.parse('<%-JSON.stringify(user)%>');
     let list = [];
+    let msg = JSON.parse('<%-JSON.stringify(msg)%>');
 
     $(document).ready( ()=> {
-        RequestList();
+        if (msg == '') {
+            RequestList();
+        } else {
+            alert(msg);
+            self.close();
+        }
     });
 
     let RequestList = () => {
         $.ajax({
             type:'post',
             url: "/manage_inout/request_bank_list",
-            data:{iClass: user.iClass, strNickname: user.strNickname},
+            data:{iClass: user.iClass, strNickname: user.strNickname, key:user.key},
             success: (obj) => {
                 if ( obj.result == 'OK' ) {
                     SetList(obj.data);
                 } else if ( obj.result == 'FAIL' ) {
                     alert(obj.msg);
+                    self.close();
                 }
             },
             error:function(request,status,error){

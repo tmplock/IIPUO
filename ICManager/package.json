@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "pm2 start ecosystem.config.js --only bluework-prod --env production",
-    "dev": "pm2 start ecosystem.config.js --only bluework-dev --env development",
+    "start": "pm2 start ecosystem.config.js --only cms-prod --env production",
+    "dev": "pm2 start ecosystem.config.js --only cms-dev --env development",
     "test": "echo \"Error: no test specified\" && exit 1",
     "local": "NODE_ENV=local node app.js",
     "localProd": "NODE_ENV=production node app.js"

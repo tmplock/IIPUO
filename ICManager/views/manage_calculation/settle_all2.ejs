@@ -271,8 +271,12 @@
 			autoclose : true
 		});
 
-		$('#quater_month').val(date.getMonth());
-		selectQuaterMonth = date.getMonth();
+		let month = date.getMonth();
+		if (date.getDate() == 1) {
+			month = month - 1;
+		}
+		$('#quater_month').val(month);
+		selectQuaterMonth = month;
 
 		$(`#list_tit`).empty();
 		$(`#list_tit`).append(`<h3>죽장 정산</h3>`);

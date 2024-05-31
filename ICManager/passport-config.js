@@ -49,8 +49,7 @@ module.exports = () => {
                 }
 
                 // TEST시에는 false로 설정
-                let isCheckActive = true;
-                if (isCheckActive == true) {
+                if (process.env.SOCKET_TEST != 1) {
                     // 접근 권한 체크
                     let code = user.strLoginCode ?? '';
 
@@ -119,7 +118,7 @@ module.exports = () => {
 
                 // 접속중인 소켓 카운트 체크하여 중복 로그인 처리하기
                 try {
-                    if (isCheckActive == true) {
+                    if (process.env.SOCKET_TEST != 1) {
                         let max = user.iLoginMax ?? 1;
                         let list = [];
                         for (let i in socket_list) {

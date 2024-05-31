@@ -33,6 +33,9 @@ module.exports = (sequelize, DataTypes) => {
         strExchangeBankPassword: {
             type: DataTypes.STRING,
         },
+        strAccessKey: {
+            type: DataTypes.STRING,
+        },
         createdAt: {
             type: DataTypes.DATE,
             get() {

@@ -18,13 +18,20 @@ const flash = require('connect-flash');
 var cors = require('cors');
 
 let mysqlsession = require('express-mysql-session')(session);
-
+// host: 'db-mysql-sgp1-78563-do-user-11246819-0.c.db.ondigitalocean.com',
+// //database: 'iipcor',
+// database:'iipc',
+// username: 'doadmin',
+// password: 'AVNS_M3_YxbEdNmi41c9HbLu',
+// dialect: 'mysql',
+// port:25060,
+// timezone:'Asia/Seoul'
 // let session_option = {
-//     host: 'db-mysql-sgp1-27012-do-user-11246819-0.b.db.ondigitalocean.com',
-//     database: 'iipcor',
-//     user: 'iiplive',
+//     host: 'db-mysql-sgp1-78563-do-user-11246819-0.c.db.ondigitalocean.com',
+//     database: 'iipc',
+//     user: 'doadmin',
 //     port:25060,
-//     password: 'oLOHJkiQACPGuAgj',
+//     password: 'AVNS_M3_YxbEdNmi41c9HbLu',
 //     clearExpired:true,
 //     checkExpirationInterval:10000,
 //     expiration:10000    
@@ -47,16 +54,6 @@ let session_option = {
     checkExpirationInterval:10000,
     expiration:10000    
 }
-// const sequelize = new Sequelize({
-//     host: 'db-mysql-sgp1-78563-do-user-11246819-0.c.db.ondigitalocean.com',
-//     //database: 'iipcor',
-//     database:'iipc',
-//     username: 'doadmin',
-//     password: 'AVNS_M3_YxbEdNmi41c9HbLu',
-//     dialect: 'mysql',
-//     port:25060,
-//     timezone:'Asia/Seoul'
-// });
 
 let sessionStore = new mysqlsession(session_option);
 
@@ -450,7 +447,7 @@ io.on('connection', (socket) => {
         socket.emit('response_login', "responsedata");
 
         const object = {strID:user.strID, iClass:user.iClass, strNickname:user.strNickname, strGroupID:user.strGroupID};
-        //await redis.SetCache(user.strID, object);
+        await redis.SetCache(user.strID, object);
         //await redis.GetAllKeys();
     });
 
@@ -473,7 +470,7 @@ io.on('connection', (socket) => {
 
         if ( socket.strID != undefined )
         {
-            //redis.RemoveCache(socket.strID);
+            redis.RemoveCache(socket.strID);
             //await redis.GetAllKeys();
         }    
 
@@ -495,8 +492,8 @@ app.post('/realtime_user', async (req, res) => {
     //     }
     // }
     
-    //let listData = await redis.GetAllKeys();
-    let listData = [];
+    let listData = await redis.GetAllKeys();
+    //let listData = [];
 
     axios.post(`${global.strAdminAddress}/manage_user/realtime_user`, listData)
         .then((response)=> {

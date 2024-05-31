@@ -10,13 +10,13 @@ const sequelize = new Sequelize({
     // port:25060,
     // timezone:'Asia/Seoul'
 
-    // host:process.env.MYSQL_HOST,
-    // database:process.env.MYSQL_DATABASE,
-    // username:process.env.MYSQL_USERNAME,
-    // password:process.env.MYSQL_PASSWORD,
-    // dialect: 'mysql',
-    // port:process.env.MYSQL_PORT,
-    // timezone:'+09:00'
+    // // host:process.env.MYSQL_HOST,
+    // // database:process.env.MYSQL_DATABASE,
+    // // username:process.env.MYSQL_USERNAME,
+    // // password:process.env.MYSQL_PASSWORD,
+    // // dialect: 'mysql',
+    // // port:process.env.MYSQL_PORT,
+    // // timezone:'+09:00'
 
     host:process.env.MYSQL_HOST,
     database:process.env.MYSQL_DATABASE,
@@ -27,6 +27,8 @@ const sequelize = new Sequelize({
     timezone:'+09:00'
 });
 
+console.log(`-----------------------------------------------`)
+console.log(process.env.MYSQL_HOST);
 
 const db = {};
 db.Sequelize = Sequelize;

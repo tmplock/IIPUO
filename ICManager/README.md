@@ -24,6 +24,16 @@ npx sequelize db:seed:all
 npm run dev
 ```
 
+
+```
+[실행하기]
+// 개발
+pm2 start ecosystem.config.js env-development
+// 운영
+pm2 start ecosystem.config.js env-production
+```
+
+
 ```
 [죽장 용어]
 - 배팅 : 실제 게임시에 배팅한 금액

@@ -362,7 +362,7 @@ router.post('/popup_listadmin_view', isLoggedIn, async(req, res) => {
 
     // 비밀번호 체크
     let pass = req.body.pass ?? '';
-    let u = await db.Users.findOne({where: {strNickname:req.body.strNickname}});
+    let u = await db.Users.findOne({where: {strNickname:req.user.strNickname}});
     let sub = await db.SubUsers.findOne({where: {rId: u.id, strRegisterPassword:pass}});
     if (sub == null) {
         user.msg = '비밀번호가 틀립니다';
@@ -395,7 +395,7 @@ router.post('/popup_listvice_view', isLoggedIn, async(req, res) => {
 
     // 비밀번호 체크
     let pass = req.body.pass ?? '';
-    let u = await db.Users.findOne({where: {strNickname:req.body.strNickname}});
+    let u = await db.Users.findOne({where: {strNickname:req.user.strNickname}});
     let sub = await db.SubUsers.findOne({where: {rId: u.id, strRegisterPassword:pass}});
     if (sub == null) {
         user.msg = '비밀번호가 틀립니다';
@@ -1280,7 +1280,7 @@ router.post('/request_bank', isLoggedIn, async (req, res) => {
     }
 
     // 총본 조회(GroupID 앞3자리)
-    let user = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
+    let user = await db.Users.findOne({where:{strNickname:req.user.strNickname}});
     if (user == null) {
         res.send({result:'FAIL', msg:'조회 불가'});
         return;

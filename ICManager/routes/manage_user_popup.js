@@ -292,6 +292,11 @@ router.post('/request_gt', isLoggedIn, async(req, res) => {
 
     if ( req.body.eType == 'GIVE' )
     {
+        if (req.user.iClass == 3) {
+            res.send({result:'FAIL', reason:''});
+            return;
+        }
+
         let to = await db.Users.findOne({where:{strNickname:req.body.strTo}});
         let from = await db.Users.findOne({where:{strNickname:req.body.strFrom}});
 
@@ -351,6 +356,11 @@ router.post('/request_gt', isLoggedIn, async(req, res) => {
     }
     else if ( req.body.eType == 'TAKE' )
     {
+        if (req.user.iClass == 3) {
+            res.send({result:'FAIL', reason:''});
+            return;
+        }
+
         let to = await db.Users.findOne({where:{strNickname:req.body.strTo}});
         let from = await db.Users.findOne({where:{strNickname:req.body.strFrom}});
 

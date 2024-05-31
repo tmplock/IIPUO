@@ -38,11 +38,11 @@ let mysqlsession = require('express-mysql-session')(session);
 // timezone:'+09:00'
 
 let session_option = {
-    host: 'db-mysql-sgp1-62759-do-user-11246819-0.c.db.ondigitalocean.com',
-    database: 'iipc',
-    user: 'doadmin',
+    host: process.env.SESSIONSDB_HOST,
+    database: process.env.SESSIONSDB_DB,
+    user: process.env.SESSIONSDB_USER,
     port:25060,
-    password: 'AVNS_FYsbSxfV0ADzDF4IiRJ',
+    password: process.env.SESSIONSDB_PASS,
     clearExpired:true,
     checkExpirationInterval:10000,
     expiration:10000    

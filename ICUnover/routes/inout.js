@@ -545,6 +545,14 @@ router.post('/request_bank', async (req, res) => {
             return;
         }
 
+        // 혹시 등록된 통장이 있는지 확인
+        // bankList = await db.sequelize.query(`
+        //     SELECT b.eBankType,  b.strBankName AS strBankName, b.strBankNumber AS strBankNumber, b.strBankHolder AS strBankHolder, DATE_FORMAT(b.createdAt,'%Y-%m-%d %H:%i:%S') AS createdAt
+        //     FROM BankRecords b
+        //     LEFT JOIN Users u ON u.id = b.userId
+        //     WHERE b.eType='STOP' AND u.strNickname = '${obj.strAdmin}' AND b.eBankType = '${eBankType}'
+        //     LIMIT 1
+        // `, {type: db.Sequelize.QueryTypes.SELECT});
         res.send({result: 'FAIL', msg: '현재 계좌 준비 중입니다', bankType: '', bankname:'', banknumber:'', bankholder:''});
     } catch (err) {
         console.log(err);

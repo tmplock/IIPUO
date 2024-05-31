@@ -34,7 +34,9 @@ let inline_GetPopupAgentInfo = async (strGroupID, iClass, strNickname) => {
             id, strID, strNickname, iClass, iPermission, strGroupID, iParentID,
             iCash, iRolling, iSettle, iSettleAcc, iSettleAccBefore, 
             fBaccaratR, fSlotR, fUnderOverR, fPBR, fPBSingleR, fPBDoubleR, fPBTripleR,
-            fSettleBaccarat, fSettleSlot, fSettlePBA, fSettlePBB, createdAt, updatedAt,
+            fSettleBaccarat, fSettleSlot, fSettlePBA, fSettlePBB,
+            DATE_FORMAT(createdAt,'%Y-%m-%d %H:%i:%S') AS createdAt,
+            DATE_FORMAT(updatedAt,'%Y-%m-%d %H:%i:%S') AS updatedAt,
             eState, strIP, strOptionCode, strSettleMemo, iRelUserID, fCommission, iPassCheckNewUser
         FROM Users
         WHERE strNickname='${strNickname}';
@@ -48,7 +50,9 @@ let inline_GetPopupAgentInfo = async (strGroupID, iClass, strNickname) => {
             id, strID, strNickname, iClass, iPermission, strGroupID, iParentID,
             iCash, 0 AS iRolling, 0 AS iSettle, iSettleAcc, iSettleAccBefore,
             fBaccaratR, fSlotR, fUnderOverR, fPBR, fPBSingleR, fPBDoubleR, fPBTripleR,
-            fSettleBaccarat, fSettleSlot, fSettlePBA, fSettlePBB, createdAt, updatedAt,
+            fSettleBaccarat, fSettleSlot, fSettlePBA, fSettlePBB,
+            DATE_FORMAT(createdAt,'%Y-%m-%d %H:%i:%S') AS createdAt,
+            DATE_FORMAT(updatedAt,'%Y-%m-%d %H:%i:%S') AS updatedAt,
             eState, strIP, strOptionCode, strSettleMemo, iRelUserID, fCommission, iPassCheckNewUser
         FROM Users
         WHERE strNickname='${strNickname}';
@@ -68,7 +72,9 @@ let inline_GetPopupAgentInfo = async (strGroupID, iClass, strNickname) => {
                         id, strID, strNickname, iClass, iPermission, strGroupID, iParentID,
                         iCash, iRolling, iSettle, iSettleAcc, iSettleAccBefore,
                         fBaccaratR, fSlotR, fUnderOverR, fPBR, fPBSingleR, fPBDoubleR, fPBTripleR,
-                        fSettleBaccarat, fSettleSlot, fSettlePBA, fSettlePBB, createdAt, updatedAt,
+                        fSettleBaccarat, fSettleSlot, fSettlePBA, fSettlePBB,
+                        DATE_FORMAT(createdAt,'%Y-%m-%d %H:%i:%S') AS createdAt,
+                        DATE_FORMAT(updatedAt,'%Y-%m-%d %H:%i:%S') AS updatedAt,
                         eState, strIP, strOptionCode, strSettleMemo, iRelUserID, fCommission, iPassCheckNewUser
                     FROM Users
                     WHERE strNickname='${strNickname}';
@@ -86,7 +92,9 @@ let inline_GetPopupAgentInfo = async (strGroupID, iClass, strNickname) => {
                         u.id, u.strID, u.strNickname, u.iClass, u.iPermission, u.strGroupID, u.iParentID,
                         u.iCash, u.iRolling, u.iSettle, u.iSettleAcc, u.iSettleAccBefore,
                         u.fBaccaratR, u.fSlotR, u.fUnderOverR, u.fPBR, u.fPBSingleR, u.fPBDoubleR, u.fPBTripleR,
-                        u.fSettleBaccarat, u.fSettleSlot, u.fSettlePBA, u.fSettlePBB, u.createdAt, u.updatedAt,
+                        u.fSettleBaccarat, u.fSettleSlot, u.fSettlePBA, u.fSettlePBB,
+                        DATE_FORMAT(u.createdAt,'%Y-%m-%d %H:%i:%S') AS createdAt,
+                        DATE_FORMAT(u.updatedAt,'%Y-%m-%d %H:%i:%S') AS updatedAt,
                         u.eState, u.strIP, u.strOptionCode, u.strSettleMemo, u.iRelUserID, u.fCommission, u.iPassCheckNewUser,
                     IFNULL((SELECT sum(iRollingB+iRollingUO+iRollingS+iRollingPBA+iRollingPBB) FROM RecordDailyOverviews WHERE strID = u.strID),0) as iRolling
                     FROM Users u
@@ -105,7 +113,9 @@ let inline_GetPopupAgentInfo = async (strGroupID, iClass, strNickname) => {
                         u.id, u.strID, u.strNickname, u.iClass, u.iPermission, u.strGroupID, u.iParentID,
                         u.iCash, u.iRolling, u.iSettle, u.iSettleAcc, u.iSettleAccBefore,
                         u.fBaccaratR, u.fSlotR, u.fUnderOverR, u.fPBR, u.fPBSingleR, u.fPBDoubleR, u.fPBTripleR,
-                        u.fSettleBaccarat, u.fSettleSlot, u.fSettlePBA, u.fSettlePBB, u.createdAt, u.updatedAt,
+                        u.fSettleBaccarat, u.fSettleSlot, u.fSettlePBA, u.fSettlePBB,
+                        DATE_FORMAT(u.createdAt,'%Y-%m-%d %H:%i:%S') AS createdAt,
+                        DATE_FORMAT(u.updatedAt,'%Y-%m-%d %H:%i:%S') AS updatedAt,
                         u.eState, u.strIP, u.strOptionCode, u.strSettleMemo, u.iRelUserID, u.fCommission, u.iPassCheckNewUser,
                         IFNULL((SELECT sum(iRollingB+iRollingUO+iRollingS+iRollingPBA+iRollingPBB) FROM RecordDailyOverviews WHERE strID = u.strID),0) as iRolling
                     FROM Users u
@@ -124,7 +134,9 @@ let inline_GetPopupAgentInfo = async (strGroupID, iClass, strNickname) => {
                         u.id, u.strID, u.strNickname, u.iClass, u.iPermission, u.strGroupID, u.iParentID,
                         u.iCash, u.iRolling, u.iSettle, u.iSettleAcc, u.iSettleAccBefore,
                         u.fBaccaratR, u.fSlotR, u.fUnderOverR, u.fPBR, u.fPBSingleR, u.fPBDoubleR, u.fPBTripleR,
-                        u.fSettleBaccarat, u.fSettleSlot, u.fSettlePBA, u.fSettlePBB, u.createdAt, u.updatedAt,
+                        u.fSettleBaccarat, u.fSettleSlot, u.fSettlePBA, u.fSettlePBB,
+                        DATE_FORMAT(u.createdAt,'%Y-%m-%d %H:%i:%S') AS createdAt,
+                        DATE_FORMAT(u.updatedAt,'%Y-%m-%d %H:%i:%S') AS updatedAt,
                         u.eState, u.strIP, u.strOptionCode, u.strSettleMemo, u.iRelUserID, u.fCommission, u.iPassCheckNewUser,
                         IFNULL((SELECT sum(iRollingB+iRollingUO+iRollingS+iRollingPBA+iRollingPBB) FROM RecordDailyOverviews WHERE strID = u.strID),0) as iRolling
                     FROM Users u
@@ -143,7 +155,9 @@ let inline_GetPopupAgentInfo = async (strGroupID, iClass, strNickname) => {
                         u.id, u.strID, u.strNickname, u.iClass, u.iPermission, u.strGroupID, u.iParentID,
                         u.iCash, u.iRolling, u.iSettle, u.iSettleAcc, u.iSettleAccBefore,
                         u.fBaccaratR, u.fSlotR, u.fUnderOverR, u.fPBR, u.fPBSingleR, u.fPBDoubleR, u.fPBTripleR,
-                        u.fSettleBaccarat, u.fSettleSlot, u.fSettlePBA, u.fSettlePBB, u.createdAt, u.updatedAt,
+                        u.fSettleBaccarat, u.fSettleSlot, u.fSettlePBA, u.fSettlePBB,
+                        DATE_FORMAT(u.createdAt,'%Y-%m-%d %H:%i:%S') AS createdAt,
+                        DATE_FORMAT(u.updatedAt,'%Y-%m-%d %H:%i:%S') AS updatedAt,
                         u.eState, u.strIP, u.strOptionCode, u.strSettleMemo, u.iRelUserID, u.fCommission, u.iPassCheckNewUser,
                         IFNULL((SELECT sum(iRollingB+iRollingUO+iRollingS+iRollingPBA+iRollingPBB) FROM RecordDailyOverviews WHERE strID = u.strID),0) as iRolling
                     FROM Users u
@@ -162,7 +176,9 @@ let inline_GetPopupAgentInfo = async (strGroupID, iClass, strNickname) => {
                         u.id, u.strID, u.strNickname, u.iClass, u.iPermission, u.strGroupID, u.iParentID,
                         u.iCash, u.iRolling, u.iSettle, u.iSettleAcc, u.iSettleAccBefore,
                         u.fBaccaratR, u.fSlotR, u.fUnderOverR, u.fPBR, u.fPBSingleR, u.fPBDoubleR, u.fPBTripleR,
-                        u.fSettleBaccarat, u.fSettleSlot, u.fSettlePBA, u.fSettlePBB, u.createdAt, u.updatedAt,
+                        u.fSettleBaccarat, u.fSettleSlot, u.fSettlePBA, u.fSettlePBB,
+                        DATE_FORMAT(u.createdAt,'%Y-%m-%d %H:%i:%S') AS createdAt,
+                        DATE_FORMAT(u.updatedAt,'%Y-%m-%d %H:%i:%S') AS updatedAt,
                         u.eState, u.strIP, u.strOptionCode, u.strSettleMemo, u.iRelUserID, u.fCommission, u.iPassCheckNewUser,
                         IFNULL((SELECT sum(iRollingB+iRollingUO+iRollingS+iRollingPBA+iRollingPBB) FROM RecordDailyOverviews WHERE strID = u.strID),0) as iRolling
                     FROM Users u
@@ -181,7 +197,9 @@ let inline_GetPopupAgentInfo = async (strGroupID, iClass, strNickname) => {
                         u.id, u.strID, u.strNickname, u.iClass, u.iPermission, u.strGroupID, u.iParentID,
                         u.iCash, u.iRolling, u.iSettle, u.iSettleAcc, u.iSettleAccBefore,
                         u.fBaccaratR, u.fSlotR, u.fUnderOverR, u.fPBR, u.fPBSingleR, u.fPBDoubleR, u.fPBTripleR,
-                        u.fSettleBaccarat, u.fSettleSlot, u.fSettlePBA, u.fSettlePBB, u.createdAt, u.updatedAt,
+                        u.fSettleBaccarat, u.fSettleSlot, u.fSettlePBA, u.fSettlePBB,
+                        DATE_FORMAT(u.createdAt,'%Y-%m-%d %H:%i:%S') AS createdAt,
+                        DATE_FORMAT(u.updatedAt,'%Y-%m-%d %H:%i:%S') AS updatedAt,
                         u.eState, u.strIP, u.strOptionCode, u.strSettleMemo, u.iRelUserID, u.fCommission, u.iPassCheckNewUser,
                         IFNULL((SELECT sum(iRollingB+iRollingUO+iRollingS+iRollingPBA+iRollingPBB) FROM RecordDailyOverviews WHERE strID = u.strID),0) as iRolling
                     FROM Users u

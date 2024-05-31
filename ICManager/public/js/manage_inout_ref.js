@@ -305,6 +305,8 @@ let SetInputList = (list, iRootClass) => {
                 <td>${list[i].createdAt ?? ''}</td>
                 <td>${cdate}</td>`;
 
+        tag += `<td>${list[i].userCreatedAt ?? ''}</td>`;
+
         if ( parseInt(user.iRootClass) <= 3 && user.iPermission != 100 ) {
             if ( list[i].eState == 'REQUEST' || list[i].eState == 'STANDBY' ) {
                 tag += `<td><a href="#" class="btn_red cancel" name="${list[i].id}" id="button_cancel_${list[i].id}">${strCancel}</a></td>`;
@@ -460,6 +462,8 @@ let SetOutputList = (list, iRootClass) => {
                     <td>${list[i].createdAt ?? ''}</td>
                     <td>${cdate}</td>`;
 
+            tag += `<td>${list[i].userCreatedAt ?? ''}</td>`;
+
             if ( user.iRootClass <= 3 && user.iPermission != 100 ) {
                 if ( list[i].eState == 'REQUEST' || list[i].eState == 'STANDBY' ) {
                     tag += `<td><a href="#" class="btn_red cancel" name="${list[i].id}" id="button_cancel_${list[i].id}">${strCancel}</a></td>`;
@@ -507,6 +511,7 @@ let SetOutputList = (list, iRootClass) => {
             <tr style="font-weight: bold;">
             <td colspan="${colspan}">${strTotal}</td>
             <td><font style="color:red;">${GetNumber(iTotal)}</font></td>
+            <td></td>
             <td></td>
             <td></td>
             <td></td>

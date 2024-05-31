@@ -23,6 +23,7 @@
 					<th width="9%"><%=__('BankAccountHolderName')%></th>
 					<th width="8%"><%=__('DateRequest')%></th>
 					<th width="8%"><%=__('DateProcess')%></th>
+					<th width="8%">가입일</th>
 				</tr>
 			</thead>
 			<tbody id="input_list">
@@ -120,6 +121,7 @@
 					<td>${data[i].strAccountOwner}</td>
 					<td>${data[i].createdAt}</td>
 					<td>${data[i].updatedAt}</td>
+					<td>${data[i].userCreatedAt}</td>
 				</tr>
 				`;
 				$('#input_list').append(tag);
@@ -134,6 +136,7 @@
 			<td></td>
 			<td></td>
 			<td>${iTotal.toLocaleString()}</td>
+			<td></td>
 			<td></td>
 			<td></td>
 			<td></td>

@@ -326,6 +326,12 @@ router.post('/request_inputstate', isLoggedIn, async (req, res) => {
 
     console.log(req.body);
 
+    // 권한체크
+    if (req.user.iPermission == 100 || req.user.iClass > 3) {
+        res.send({result:"FAIL"});
+        return;
+    }
+
     //let charge = await db.Charges.findOne({where:{id:req.body.id}});
     let charge = await db.Inouts.findOne({where:{id:req.body.id}});
 
@@ -658,6 +664,12 @@ router.post('/request_outputstate', isLoggedIn, async (req, res) => {
     console.log(`request_outputstate`);
     console.log(req.body);
 
+    // 권한체크
+    if (req.user.iPermission == 100 || req.user.iClass > 3) {
+        res.send({result:"FAIL"});
+        return;
+    }
+
     //let charge = await db.Exchanges.findOne({where:{id:req.body.id}});
     let charge = await db.Inouts.findOne({where:{id:req.body.id}});
 
@@ -945,7 +957,7 @@ router.post('/output_alert', (req, res)=> {
  * 입출금관리
  */
 router.post('/request_inout_pass', async (req, res) => {
-    console.log(`request_bank`);
+    console.log(`request_inout_pass`);
     console.log(req.body);
 
     const iClass = parseInt(req.body.iClass);
@@ -1016,7 +1028,7 @@ router.post('/request_bank', async (req, res) => {
     const strNickname = req.user.strNickname;
     const input = req.body.input;
 
-    const user = await db.Users.findOne({where: {strNickname: strNickname}});
+    const user = await db.Users.findOne({where: {strNickname: req.user.strNickname}});
     const info = await db.SubUsers.findOne({where: {rId: user.id, strInoutPassword: input}});
     if (info == null) {
         res.send({result: 'FAIL', msg:'비밀번호가 틀립니다'});

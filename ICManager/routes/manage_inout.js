@@ -282,7 +282,7 @@ let GetOutputList = async (req, res) => {
                     END AS strAccountNumber,
                 i.strAccountOwner,  i.iPreviousCash,
                 i.iAmount, i.strMemo, i.eType,
-                i.strRequestNickname, i.iRequestClass,
+                i.strRequestNickname, i.iRequestClass, i.strProcessNickname,
                 i.eState, i.strBankType,
                 DATE_FORMAT(i.completedAt, '%Y-%m-%d %H:%i:%S') AS completedAt, DATE_FORMAT(i.createdAt, '%Y-%m-%d %H:%i:%S') AS createdAt, DATE_FORMAT(i.updatedAt, '%Y-%m-%d %H:%i:%S') AS updatedAt,
                 DATE_FORMAT(u.createdAt, '%Y-%m-%d %H:%i:%S') AS userCreatedAt
@@ -341,7 +341,7 @@ let GetInputList = async (req, res) => {
                 i.id, i.strID, i.strAdminNickname, i.strPAdminNickname, i.strVAdminNickname, i.strAgentNickname, i.strShopNickname,
                 i.iClass, i.strName, i.strGroupID,
                 i.iAmount, i.strMemo, i.eType,
-                i.strRequestNickname, i.iRequestClass,
+                i.strRequestNickname, i.iRequestClass, i.strProcessNickname,
                 i.eState, i.strBankType, i.strAccountOwner, i.iPreviousCash,
                 u.strBankOwner AS strUserAccountOwner, u.strBankName AS strBankName, u.iPassCheckNewUser,
                 DATE_FORMAT(i.completedAt, '%Y-%m-%d %H:%i:%S') AS completedAt, DATE_FORMAT(i.createdAt, '%Y-%m-%d %H:%i:%S') AS createdAt, DATE_FORMAT(i.updatedAt, '%Y-%m-%d %H:%i:%S') AS updatedAt,

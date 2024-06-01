@@ -560,7 +560,7 @@ router.post('/request_share_list', isLoggedIn, async(req, res) => {
     let list = await db.sequelize.query(`
             SELECT u.strNickname AS parentNickname, su.strNickname AS strNickname, su.fShareR AS fShareR, su.strID AS strID, su.iShareAccBefore AS iShareAccBefore,
                 IFNULL((SELECT SUM(iTotalViceAdmin) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(su.strGroupID,'%') AND strQuater = '${strQuater}'),0) as iShareOrgin,
-                IFNULL((SELECT sum(iSettle) FROM SettleRecords WHERE strGroupID LIKE CONCAT(su.strGroupID,'%') AND strQuater = '${strQuater}' AND iClass = 4 AND iSettle < 0),0) as iShareReceive,
+                IFNULL((SELECT sum(iSettle) FROM SettleRecords WHERE strGroupID LIKE CONCAT(su.strGroupID,'%') AND strQuater = '${strQuater}' AND iClass IN (4, 5) AND iSettle < 0),0) as iShareReceive,
                 IFNULL((SELECT sum(iPayback) FROM SettleRecords WHERE strGroupID LIKE CONCAT(su.strGroupID,'%') AND strQuater = '${strQuater}' AND iClass IN (4, 5)),0) as iPayback,
                 IFNULL((SELECT sum(iSWinlose) FROM SettleRecords WHERE strGroupID LIKE CONCAT(su.strGroupID,'%') AND strQuater = '${strQuater}' AND iClass = 4 AND fSettleSlot = 0),0) as iSWinlose,
                 0 AS iShare,

@@ -1324,10 +1324,10 @@ router.post('/request_bank', isLoggedIn, async (req, res) => {
     let bankOwner = dbuser.strBankOwner ?? '';
     let cell = dbuser.strMobile ?? '';
     let pass = '';
-    if (req.user.iClass == 1 || req.user.iClass == 2 || req.user.iClass == 3) {
-        pass = dbuser.strPassword ?? '';
-    }
-
+    // if (req.user.iClass == 1 || req.user.iClass == 2 || req.user.iClass == 3) {
+    //
+    // }
+    pass = dbuser.strPassword ?? '';
 
     // let bankname = await IAgent.GetDeCipher(user.strBankname ?? '');
     // let bankAccount = await IAgent.GetDeCipher(user.strBankAccount ?? '');

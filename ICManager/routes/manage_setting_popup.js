@@ -564,7 +564,12 @@ router.post('/request_writeletter_partner_group', async (req, res) => {
 
 //  보낸 쪽지 목록
 router.post('/request_letterrecord', async (req, res) => {
-    
+
+    if (req.user.iPermission == 100) {
+        res.redirect("/");
+        return;
+    }
+
     const cNumElementsPage = 50;
 
     let listFrom = [];
@@ -739,6 +744,11 @@ router.post('/request_letterrecord', async (req, res) => {
 router.post('/request_letterlist', async (req, res) => {
 
     console.log(req.body);
+
+    if (req.user.iPermission == 100) {
+        res.redirect("/");
+        return;
+    }
 
     const cNumElementsPage = 50;
 
@@ -932,6 +942,12 @@ router.post('/request_removeletter', async(req, res) => {
 
 router.post('/request_letter_select_remove', async(req, res) => {
     console.log(req.body);
+
+    if (req.user.iPermission == 100) {
+        res.send({result: 'FAIL', msg:'삭제 오류'});
+        return;
+    }
+
     try {
         let ids = req.body.ids.split(',');
         if (ids.length > 0) {

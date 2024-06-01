@@ -231,20 +231,20 @@ let GetOutputList = async (req, res) => {
     let iOffset = (iPage-1) * iLimit;
     let eType = req.body.type;
 
-    let isShowBank = true;
-    // let searchKey = req.body.searchKey ?? '';
-    // if (searchKey != '') {
-    //     // 유효기간 확인
-    //     let period = await IAgent.GetDeCipher(searchKey);
-    //     let arr = period.split('&&');
-    //     if (arr.length == 2) {
-    //         if (arr[0] == iPage) {
-    //             if (moment(arr[1]).isAfter(Date.now())) {
-    //                 isShowBank = true;
-    //             }
-    //         }
-    //     }
-    // }
+    let isShowBank = false;
+    let searchKey = req.body.searchKey ?? '';
+    if (searchKey != '') {
+        // 유효기간 확인
+        let period = await IAgent.GetDeCipher(searchKey);
+        let arr = period.split('&&');
+        if (arr.length == 2) {
+            if (arr[0] == iPage) {
+                if (moment(arr[1]).isAfter(Date.now())) {
+                    isShowBank = true;
+                }
+            }
+        }
+    }
 
     let strSearchNickname = req.body.strSearchNickname ?? '';
 

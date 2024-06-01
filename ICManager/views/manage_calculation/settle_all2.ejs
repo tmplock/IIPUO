@@ -389,34 +389,20 @@
 	};
 
 
-	let SetOverviewShare = (aObject, overview, strParentTag) => {
-		console.log(`SetOverviewShare`);
-		console.log(aObject);
+	let SetOverviewShare = (overviewShare, overview, strParentTag) => {
 
 		$(strParentTag).empty();
 
 		// 지분자 정보
 		if ( user.iClass <= 3 ) {
-			// 순이익(순이익 - 슬롯 알값 + 수금)
-			let iTotalSum = parseFloat(overview.iTotal)  + parseFloat(overview.iTotalUnover) + parseFloat(overview.iTotalSlot) + parseFloat(overview.iTotalPB);
-			// 대본사 이하는 본인의 죽장만 표시(본사는 본인 이하의 죽장 모두 합산)
-			let iTotalSettle = parseFloat(overview.iTotalSettle ?? 0); // 죽장
-			let iTotalCommission = parseFloat(overview.iTotalCommission ?? 0); // 윈로스(알값)
-			let iShareCommission = parseFloat(overview.iSWinlose ?? 0) * parseFloat(overview.fCommission);
-			iTotalCommission += iShareCommission;
-			let iRealTotal = iTotalSum - iTotalSettle - iTotalCommission; // 순이익
-
-			let iShareOrgin = parseFloat(aObject.iShareOrgin ?? 0);
-			let iSlotCommission = parseFloat(aObject.iSlotCommission ?? 0);
-			let iPayback = parseFloat(aObject.iPayback ?? 0);
-			iShareOrgin = iShareOrgin + iSlotCommission + iPayback;
-			let iShare = parseFloat(aObject.iShare ?? 0); // 배당금
-			let iShareAccBefore = parseFloat(aObject.iShareAccBefore ?? 0); // 지분자 전월 이월
-			let iCreditBefore = parseFloat(aObject.iCreditBefore ?? 0); // 지분자 총 이월
+			let iRealTotal = parseFloat(overviewShare.iShareOrgin) + parseFloat(overviewShare.iSlotCommission) + parseFloat(overviewShare.iShareReceive) + parseFloat(overviewShare.iPayback); // 순이익
+			let iShare = parseFloat(overviewShare.iShare ?? 0); // 배당금
+			let iShareAccBefore = parseFloat(overviewShare.iShareAccBefore ?? 0); // 지분자 전월 이월
+			let iCreditBefore = parseFloat(overviewShare.iCreditBefore ?? 0); // 지분자 총 이월
 			let iShareTotal = iRealTotal - iShare; // 지분자 순이익 - 배당금
-			let iCurrentTotalShare = parseFloat(aObject.iCurrentTotalShare ?? 0); // 현재 잔여 지분금액
-			let iSharePlus = parseFloat(aObject.iSharePlus ?? 0);
-			let iShareMinus = parseFloat(aObject.iShareMinus ?? 0);
+			let iCurrentTotalShare = parseFloat(overviewShare.iCurrentTotalShare ?? 0); // 현재 잔여 지분금액
+			let iSharePlus = parseFloat(overviewShare.iSharePlus ?? 0);
+			let iShareMinus = parseFloat(overviewShare.iShareMinus ?? 0);
 
 			// 대본보관죽장
 			let iCurrentTotalSettle = parseFloat(overview.iCurrentTotalSettle ?? 0);

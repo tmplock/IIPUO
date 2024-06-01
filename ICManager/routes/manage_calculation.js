@@ -233,17 +233,15 @@ router.post('/request_applysettle_all', isLoggedIn, async (req, res) => {
             }
 
             iSettleAcc = iSettle - iSettleGive;
-            if (iSettleGive > 0) {
+            // 마이너스 죽장이 아닐경우 수금 및 이월 처리 하기
+            if (iSettle > 0) {
                 // 수금액은 지난달 금액이 수금액임(죽장값이 더 클 경우)
-                if (iSettleGive > Math.abs(iSettleBeforeAcc)) {
+                if (iSettle > Math.abs(iSettleBeforeAcc)) {
                     iPayback = -iSettleBeforeAcc;
                 } else {
                     // 수금액은 이번달 지급한 죽장값이 수금액임(수금액이 더 클 경우)
-                    iPayback = iSettleGive;
+                    iPayback = iSettle;
                 }
-            } else if (iSettle > 0) {
-                // 수금액은 이번달 발생한 죽장값이 수금액임
-                iPayback = iSettle;
             }
 
             iSettleAccTotal = iSettleAccTotal + iSettleAcc;

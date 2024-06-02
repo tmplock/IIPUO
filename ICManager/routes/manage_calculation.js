@@ -67,68 +67,6 @@ router.post('/calculation', isLoggedIn, async(req, res) => {
     res.render('manage_calculation/calculation', {iLayout:0, iHeaderFocus:6, user:user, data:bobj, agentinfo:agentinfo, iocount:iocount});
 });
 
-// 미사용
-router.post('/settle', isLoggedIn, async(req, res) => {
-
-    console.log(req.body);
-    const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
-
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle,
-        strID:dbuser.strID, iRootClass:req.user.iClass, iPermission:req.user.iPermission};
-
-    const agentinfo = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
-
-    let iocount = await IInout.GetProcessing(user.strGroupID, user.strNickname, dbuser.iClass);
-    console.log(`ic : ${iocount.input}, oc : ${iocount.output}`);
-
-    let listViceHQ = [];
-    let listAdmin = [];
-    let listProAdmin= [];
-    let listViceAdmin = [];
-    let listAgent = [];
-    if ( req.body.iClass == 1 )
-        listViceHQ = await GetViceHQs(req.body.strGroupID);
-    else if ( req.body.iClass == 2 )
-        listAdmin = await GetAdmins(req.body.strGroupID);
-    else if ( req.body.iClass == 3 )
-        listProAdmin = await GetProAdmins(req.body.strGroupID);
-    else if ( req.body.iClass == 4 )
-        listViceAdmin = await GetAgent(req.body.strNickname, 4);
-    else if ( req.body.iClass == 5 )
-        listAgent = await GetAgent(req.body.strNickname, 5);
-
-    // strQuater
-    let date = new Date();
-    let iMonth = date.getMonth();
-    let strQuater = '';
-    let dateStart = '';
-    let dateEnd = '';
-    if ( date.getDate() < 16 ) {
-        strQuater = `${iMonth+1}-1`;
-        dateStart = ITime.get1QuaterStartDate(iMonth);
-        dateEnd = ITime.get1QuaterEndDate(iMonth);
-    } else {
-        strQuater = `${iMonth+1}-2`;
-        dateStart = ITime.get2QuaterStartDate(iMonth);
-        dateEnd = ITime.get2QuaterEndDate(iMonth);
-    }
-
-    let overview = await IAgentSettle.CalculateOverviewSettle(req.body.strGroupID, req.body.iClass, strQuater, dateStart, dateEnd);
-    let settleCurrent = await IAgentSettle.CalculateOverviewSettleCurrent(req.body.strGroupID, strQuater);
-    overview.iSettlePlus = settleCurrent.iSettlePlus;
-    overview.iSettleMinus = settleCurrent.iSettleMinus;
-    overview.iCurrentTotalSettle = settleCurrent.iCurrentTotalSettle;
-
-    let overviewShare = await IAgentSettle.CalculateOverviewShare(req.body.strGroupID, strQuater);
-    let shareCurrent = await IAgentSettle.CalculateOverviewShareCurrent(req.body.strGroupID, strQuater);
-    overviewShare.iSharePlus = shareCurrent.iSharePlus;
-    overviewShare.iShareMinus = shareCurrent.iShareMinus;
-    overviewShare.iCurrentTotalShare = shareCurrent.iCurrentTotalShare;
-
-    res.render('manage_calculation/settle', {iLayout:0, iHeaderFocus:6, user:user, agentinfo:agentinfo, iocount:iocount, overview: overview[0], overviewShare: overviewShare[0],
-        listViceHQ: listViceHQ, listAdmin:listAdmin, listProAdmin:listProAdmin, listViceAdmin: listViceAdmin, listAgent:listAgent});
-});
-
 router.post('/request_applysettle_all', isLoggedIn, async (req, res) => {
 
     console.log(`/request_applysettle_all`);
@@ -398,69 +336,6 @@ router.post('/request_applysettle_all', isLoggedIn, async (req, res) => {
         return;
     }
     res.send({result:'EXIST'});
-});
-
-/**
- * 전체 죽장 조회
- */
-router.post('/settle_all', isLoggedIn, async(req, res) => {
-
-    console.log(req.body);
-
-    const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
-
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle, strID:dbuser.strID,
-        iRootClass:req.user.iClass, iPermission:req.user.iPermission};
-
-    const agentinfo = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
-
-    let iocount = await IInout.GetProcessing(user.strGroupID, user.strNickname, dbuser.iClass);
-    console.log(`ic : ${iocount.input}, oc : ${iocount.output}`);
-
-    let date = new Date();
-    let iMonth = date.getMonth();
-    let strQuater = '';
-    let dateStart = '';
-    let dateEnd = '';
-    if ( date.getDate() < 16 ) {
-        strQuater = `${iMonth+1}-1`;
-        dateStart = ITime.get1QuaterStartDate(iMonth);
-        dateEnd = ITime.get1QuaterEndDate(iMonth);
-    } else {
-        strQuater = `${iMonth+1}-2`;
-        dateStart = ITime.get2QuaterStartDate(iMonth);
-        dateEnd = ITime.get2QuaterEndDate(iMonth);
-    }
-
-
-    let overviewList = await IAgentSettle.CalculateOverviewSettle(req.body.strGroupID, req.body.iClass, strQuater, dateStart, dateEnd);
-    let overview = {};
-    if (overviewList.length > 0) {
-        overview = overviewList[0];
-    }
-
-    let overviewShare = {};
-
-    if (dbuser.iClass <= 3) {
-        // 대.부본 보관죽장*
-        let settleCurrent = await IAgentSettle.CalculateOverviewSettleCurrent(req.body.strGroupID, strQuater);
-        overview.iSettlePlus = settleCurrent.iSettlePlus;
-        overview.iSettleMinus = settleCurrent.iSettleMinus;
-        overview.iCurrentTotalSettle = settleCurrent.iCurrentTotalSettle;
-
-        // 순이익, 배당금, 지분자 전월 이월, 지분자 총이월, 합계
-        let overviewShareList = await IAgentSettle.CalculateOverviewShare(req.body.strGroupID, strQuater);
-        if (overviewShareList.length > 0) {
-            overviewShare = overviewShareList[0];
-        }
-        // 지분자보관죽장*
-        let shareCurrent = await IAgentSettle.CalculateOverviewShareCurrent(req.body.strGroupID, strQuater);
-        overviewShare.iSharePlus = shareCurrent.iSharePlus;
-        overviewShare.iShareMinus = shareCurrent.iShareMinus;
-        overviewShare.iCurrentTotalShare = shareCurrent.iCurrentTotalShare;
-    }
-
-    res.render('manage_calculation/settle_all', {iLayout:0, iHeaderFocus:6, user:user, agentinfo:agentinfo, iocount:iocount, list:[], overview:overview, overviewShare:overviewShare});
 });
 
 /**

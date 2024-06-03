@@ -250,6 +250,11 @@
                             if ( data.result == 'OK' )
                             {
                                 console.log(data.iLogout);
+
+                                if ( data.iLogout == 0 )
+                                {
+                                    location.href = '/account/logout';
+                                }
                             }
                         },
                         error:function(request,status,error){

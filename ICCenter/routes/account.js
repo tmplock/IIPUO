@@ -97,7 +97,7 @@ router.post('/logoutcomplete', (req, res) => {
     console.log(`/account/checklogout`);
     console.log(req.body);
 
-    let objectData = {strID:req.body.strID};
+    let objectData = {strID:req.body.strID, eType:req.body.eType};
 
     const user = FindUser(listLogout, objectData);
     if ( null != user )

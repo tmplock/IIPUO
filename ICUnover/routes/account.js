@@ -94,11 +94,17 @@ router.get('/logout', isLoggedIn, (req, res) => {
 
     console.log(`/account/logout`);
 
+
+
     req.logout(async function (err) {
         if (err) {
           return next(err);
         }
+
+        const objectResult = await IHelper.RequestAxios("http://165.22.102.70:3070/account/logoutcomplete", {eType:'USER', strID:req.session.uid});
+
         delete req.session.uid;
+
 
         // if you're using express-flash
         req.flash('success_msg', 'session terminated');

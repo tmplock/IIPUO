@@ -107,6 +107,7 @@ global.io = io;
 
 global.strAdminAddress = process.env.ADMIN_URL;
 global.strVenderAddress = process.env.VENDER_URL;
+global.strAPIAddress = "https://uogaming.org"
 
  global.ePublishing = 'OFF';
 //global.ePublishing = 'OFF';

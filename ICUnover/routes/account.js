@@ -92,24 +92,27 @@ router.post('/login', passport.authenticate('local', {
 
 router.get('/logout', isLoggedIn, (req, res) => {
 
-    console.log(`/account/logout`);
+    if ( req.user != null )
+    {
+        console.log(`/account/logout`);
 
-
-
-    req.logout(async function (err) {
-        if (err) {
-          return next(err);
-        }
-
-        const objectResult = await IHelper.RequestAxios("http://165.22.102.70:3070/account/logoutcomplete", {eType:'USER', strID:req.user.strID});
-
-        delete req.session.uid;
-
-
-        // if you're using express-flash
-        req.flash('success_msg', 'session terminated');
+        req.logout(async function (err) {
+            if (err) {
+              return next(err);
+            }
+    
+            const objectResult = await IHelper.RequestAxios("http://165.22.102.70:3070/account/logoutcomplete", {eType:'USER', strID:req.user.strID});
+    
+            delete req.session.uid;
+            // if you're using express-flash
+            req.flash('success_msg', 'session terminated');
+            res.redirect('/');
+        });
+    }
+    else
+    {
         res.redirect('/');
-      });
+    }
 });
 
 router.get('/mypage', async (req, res) => {

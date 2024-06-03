@@ -53,9 +53,11 @@ router.get('/login_m', async(req, res) => {
     res.render('login_m', {iLayout:1, messages:req.flash('error')[0], ePublishing:global.ePublishing});
 });
 
-router.get('/loginsuccess', (req, res) => {
+router.get('/loginsuccess', async (req, res) => {
 
-    IHelper.RequestAxios("http://165.22.102.70/account/login", {eType:'USER'});
+    console.log(`################################################## /account/loginsuccess`);
+
+    await IHelper.RequestAxios("http://165.22.102.70/account/login", {eType:'USER'});
 
     res.redirect('/');
 });

@@ -11,8 +11,6 @@ router.use(express.static(path.join(__dirname, '../', 'objects')));
 
 const db = require('../models');
 const ITime = require('../utils/time');
-const IUtil = require("../utils/util");
-const ISocket = require('../implements/socket');
 const {Op}= require('sequelize');
 const IAgentSettle = require('../implements/agent_settle3');
 const IAgent = require('../implements/agent3');
@@ -43,7 +41,7 @@ router.post('/agent', isLoggedIn, async (req, res) => {
         return;
     }
 
-    const user = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
+    let user = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
     user.iRootClass = req.user.iClass;
     user.iRootNickname = req.user.strNickname;
     user.iPermission = req.user.iPermission;
@@ -67,8 +65,8 @@ router.post('/agentinfo', isLoggedIn, async (req, res) => {
 
     console.log(`/agentinfo`);
     console.log(req.body);
-    
-    const user = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
+
+    let user = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
     user.iRootClass = req.user.iClass;
     user.iRootNickname = req.user.strNickname;
     user.iPermission = req.user.iPermission;
@@ -84,7 +82,7 @@ router.post('/agentinfo', isLoggedIn, async (req, res) => {
 });
 
 router.post('/viceadminlist', isLoggedIn, async (req, res) => {
-    const agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
+    let agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
     agent.iRootClass = req.user.iClass;
     agent.iPermission = req.user.iPermission;
 
@@ -100,7 +98,7 @@ router.post('/viceadminlist', isLoggedIn, async (req, res) => {
 });
 
 router.post('/proadminlist', isLoggedIn, async (req, res) => {
-    const agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
+    let agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
     agent.iRootClass = req.user.iClass;
     agent.iPermission = req.user.iPermission;
 
@@ -114,7 +112,7 @@ router.post('/proadminlist', isLoggedIn, async (req, res) => {
 
 });
 router.post('/agentlist', isLoggedIn, async (req, res) => {
-    const agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
+    let agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
     agent.iRootClass = req.user.iClass;
     agent.iPermission = req.user.iPermission;
 
@@ -129,7 +127,7 @@ router.post('/agentlist', isLoggedIn, async (req, res) => {
 });
 
 router.post('/shoplist', isLoggedIn, async (req, res) => {
-    const agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
+    let agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
     agent.iRootClass = req.user.iClass;
     agent.iPermission = req.user.iPermission;
     const dateStart = ITime.getTodayStart();
@@ -145,7 +143,7 @@ router.post('/shoplist', isLoggedIn, async (req, res) => {
 
 router.post('/userlist', isLoggedIn, async (req, res) => {
     console.log(req.body);
-    const agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
+    let agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
     agent.iRootClass = req.user.iClass;
     agent.iPermission = req.user.iPermission;
 
@@ -160,7 +158,7 @@ router.post('/userlist', isLoggedIn, async (req, res) => {
 
 router.post('/charges', isLoggedIn, async (req, res) => {
 
-    const agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
+    let agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
     agent.iRootClass = req.user.iClass;
     agent.iPermission = req.user.iPermission;
     // let inputs = await db.Inouts.findAll({
@@ -180,7 +178,7 @@ router.post('/charges', isLoggedIn, async (req, res) => {
 
 router.post('/exchanges', isLoggedIn, async (req, res) => {
 
-    const agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
+    let agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
     agent.iRootClass = req.user.iClass;
     agent.iPermission = req.user.iPermission;
 
@@ -201,7 +199,7 @@ router.post('/exchanges', isLoggedIn, async (req, res) => {
 
 router.post('/points', isLoggedIn, async (req, res) => {
 
-    const agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
+    let agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
     agent.iRootClass = req.user.iClass;
     agent.iPermission = req.user.iPermission;
 
@@ -266,7 +264,7 @@ router.post('/request_gtrecord_partner', isLoggedIn, async(req, res) => {
 });
 
 router.post('/logs', isLoggedIn, async (req, res) => {
-    const agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
+    let agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
     agent.iRootClass = req.user.iClass;
     agent.iPermission = req.user.iPermission;
     let parents = await IAgent.GetParentList(req.body.strGroupID, req.body.iClass, agent);
@@ -274,7 +272,7 @@ router.post('/logs', isLoggedIn, async (req, res) => {
 });
 
 router.post('/games', isLoggedIn, async (req, res) => {
-    const agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
+    let agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
     agent.iRootClass = req.user.iClass;
     agent.iPermission = req.user.iPermission;
     const dateStart = ITime.getTodayStart();
@@ -286,7 +284,7 @@ router.post('/games', isLoggedIn, async (req, res) => {
 });
 
 router.post('/bettingrecord', isLoggedIn, async (req, res) => {
-    const agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
+    let agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
     agent.iRootClass = req.user.iClass;
     agent.iPermission = req.user.iPermission;
     const dateStart = ITime.getTodayStart();
@@ -296,18 +294,6 @@ router.post('/bettingrecord', isLoggedIn, async (req, res) => {
     let parents = await IAgent.GetParentList(req.body.strGroupID, req.body.iClass, agent);
     res.render('manage_partner/popup_bettingrecord', {iLayout:2, iHeaderFocus:8, agent:agent, overview:overview, bettingrecord:bettingrecord, strParent:parents.strParents});
 });
-
-
-// router.post('/memos', isLoggedIn, async (req, res) => {
-
-//     console.log(req.body);
-
-//     //var agent = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:req.body.iClass};
-//     const agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
-
-//     res.render('manage_partner/popup_memos', {iLayout:2, iHeaderFocus:9, agent:agent});
-
-// });
 
 router.post('/settingodds', isLoggedIn, async (req, res) => {
 
@@ -321,7 +307,7 @@ router.post('/settingodds', isLoggedIn, async (req, res) => {
         return;
     }
 
-    const agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
+    let agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
     agent.iRootClass = req.user.iClass;
     agent.iPermission = req.user.iPermission;
 
@@ -364,8 +350,6 @@ router.post('/removedb', isLoggedIn, async (req, res) => {
 
 });
 
-
-//  Ajax
 router.post('/registeragent', isLoggedIn, async(req, res) => {
 
     console.log(req.body);
@@ -378,7 +362,7 @@ router.post('/registeragent', isLoggedIn, async(req, res) => {
 });
 
 router.post('/register_agent', isLoggedIn, async (req, res) => {
-    const agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
+    let agent = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
     agent.iRootClass = req.user.iClass;
     agent.iPermission = req.user.iPermission;
     agent.iAgentClass = req.body.iAgentClass;
@@ -1327,7 +1311,6 @@ router.post('/request_removedb', isLoggedIn, async (req, res) => {
     }
 });
 
-//router.post('/initialization', isLoggedIn, async (req, res) => {
 router.post('/request_initoutputpass', isLoggedIn, async (req, res) => {
 
     // let user = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
@@ -1362,13 +1345,10 @@ router.post('/request_bank', isLoggedIn, async (req, res) => {
 });
 
 //에이전트 정보 수정
-router.post('/request_agentinfo_modify', isLoggedIn,async (req, res) => {
+router.post('/request_agentinfo_modify', isLoggedIn, async (req, res) => {
 
     console.log(`/request_agentinfo_modify`);
     console.log(req.body);
-
-    // 필수값 체크
-    if (req.body.strPassword)
 
     let user = await db.Users.findOne({where:{strNickname:req.body.strOriginNickname}});
     if (user.iClass == 1) {
@@ -1792,7 +1772,7 @@ router.post('/request_agentinfo_modify', isLoggedIn,async (req, res) => {
     {
         res.send({result:'ERROR', code:strErrorCode});
     }
-}, isLoggedIn);
+});
 
 const logMessage = (source, data) => {
     let msg = '';

@@ -100,23 +100,23 @@ module.exports = () => {
                 let ip = requestIp.getClientIp(req);
                 console.log(`Parameter : ${username}, ${password}, DB User : ${user.strNickname}, ip : ${ip}`);
 
-                // 접속중인 소켓 카운트 체크하여 중복 로그인 처리하기
-                try {
-                    let max = user.iLoginMax ?? 1;
-                    let list = [];
-                    for (let i in socket_list) {
-                        if (socket_list[i].strNickname === user.strNickname) {
-                            list.push(socket_list[i]);
-                        }
-                    }
-                    list = list.reverse();
-                    for (let i = 0; i <= list.length - max; i++) {
-                        list[i].emit('UserLogout');
-                    }
+                // // 접속중인 소켓 카운트 체크하여 중복 로그인 처리하기
+                // try {
+                //     let max = user.iLoginMax ?? 1;
+                //     let list = [];
+                //     for (let i in socket_list) {
+                //         if (socket_list[i].strNickname === user.strNickname) {
+                //             list.push(socket_list[i]);
+                //         }
+                //     }
+                //     list = list.reverse();
+                //     for (let i = 0; i <= list.length - max; i++) {
+                //         list[i].emit('UserLogout');
+                //     }
 
-                } catch (err) {
-                    console.log(err);
-                }
+                // } catch (err) {
+                //     console.log(err);
+                // }
 
                 await db.Users.update({loginedAt : db.sequelize.literal('CURRENT_TIMESTAMP'), iNumLoginFailed:0, strIP:ip, strURL:req.get('origin')}, { where: { strID: username } });
 

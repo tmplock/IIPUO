@@ -1,13 +1,13 @@
 <!--slider-->
-<div style="width:100%; overflow: hidden;">
+<div style="width:100%; overflow: hidden;margin-top:100px;">
     <ul class="bxslider">
         <!-- <li><img src="/img/slider_01.jpg" /></li>
         <li><img src="/img/slider_02.jpg" /></li> -->
         <li><img src="/img/slider_03.jpg" /></li>
     </ul>
 </div>
-<script src="/js/jquery.cycle2.js"></script>
-<script src="/js/bxslider.js"></script>
+<!-- <script src="/js/jquery.cycle2.js"></script> -->
+<!-- <script src="/js/bxslider.js"></script> -->
 <script>
     $(document).ready(function(){
         $('.slider').bxSlider({auto: true,
@@ -207,12 +207,24 @@
                 <li onclick="GoGameSM('SM_BIGTIMEGAMING', 'BigTimeGaming');">
                     <span class="char01"><img src="/img/slot22.png"></span>
                 </li>
+                <li onclick="GoGameSM('SM_7MOJOS', 'BigTimeGaming');">
+                    <span class="char01"><img src="/img/slot24.png"></span>
+                </li>
+                <li onclick="GoGameSM('SM_PLATIPUS', 'BigTimeGaming');">
+                    <span class="char01"><img src="/img/slot25.png"></span>
+                </li>
+                <li onclick="GoGameSM('SM_MANCALA', 'BigTimeGaming');">
+                    <span class="char01"><img src="/img/slot26.png"></span>
+                </li>
+                <li onclick="GoGameSM('SM_RSG', 'BigTimeGaming');">
+                    <span class="char01"><img src="/img/slot27.png"></span>
+                </li>
             </ul>
         </div>
     </div>
     
     <!--게시판-->
-    <div class="board-wrap">
+    <!-- <div class="board-wrap">
         <div class="board-list">
             <div class="list-b">
                 <h1 onclick="location.href='/board/list'" style="cursor: hand;cursor: pointer;"><span>UNOVER</span><span>공지사항</span></h1>
@@ -254,7 +266,7 @@
                     </table>
             </div>
         </div>
-    </div>
+    </div> -->
 </div>
 
 <!--pop 배너영역-->
@@ -303,7 +315,7 @@
 
         let showPopupList = [];
         for (let i in popupList) {
-            if (bLogin) {
+            if (bLogin == 'true') {
                 let strID = user.strID;
                 if (getCookie(`${popupList[i]}_${strID}`) != 'done') {
                     showPopupList.push(popupList[i]);
@@ -378,7 +390,7 @@
 
         let showMovieList = [];
         for (let i in movieList) {
-            if (bLogin) {
+            if (bLogin == 'true') {
                 let strID = user.strID;
                 if (getCookie(`${movieList[i]}_${strID}`) != 'done') {
                     showMovieList.push(movieList[i]);
@@ -491,7 +503,7 @@
     {
         let id = getId ?? '';
         if (id.length > 0) {
-            if (bLogin) {
+            if (bLogin == 'true') {
                 let strID = user.strID;
                 setCookie(`${id}_${strID}`, "done" , 1 );
             } else {
@@ -513,7 +525,7 @@
     {
         let id = getId ?? '';
         if (id.length > 0) {
-            if (bLogin) {
+            if (bLogin == 'true') {
                 let strID = user.strID;
                 setCookie(`${id}_${strID}`, "done" , 1 );
             } else {

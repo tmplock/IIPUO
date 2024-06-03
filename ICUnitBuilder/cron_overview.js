@@ -225,14 +225,14 @@ let start = async () => {
             strDate:strDate,
         }
     });
-    let list2 = [];
+    let listID = [];
 
     for ( let i in listDBData )
     {
         const cData = listDBData[i];
         if ( cData.iBetB > 0 || cData.iBetUO > 0 || cData.iBetS > 0 )
         {
-            list2.push(cData);
+            listID.push(cData);
         }
     }
 
@@ -241,11 +241,21 @@ let start = async () => {
     // let listID = [
     //     {strID:'cvcv1', iClass:6},
     // ];
-    let listID = [];
+    //let listID = [];
 
     for (let i in listID) {
         await Overview.CalculateOverview(listID[i].strID, listID[i].iClass, strDate, listOverview);
     }
+
+    for ( let i in listOverview )
+    {
+        console.log(`${i}`);
+
+        if ( listOverview[i].iClass == '2' )
+            console.log(listOverview[i]);
+    }
+
+    return;
 
 
     let nicknameList = await db.Users.findAll();
@@ -257,6 +267,9 @@ let start = async () => {
     for ( let i in listOverview )
     {
         console.log(`${i}`);
+
+        if ( listOverview[i].iClass == '2' )
+            console.log(listOverview[i]);
 
         // await db.RecordDailyOverviews.update({
         //     iBetB:listOverview[i].iBetB,

@@ -67,7 +67,7 @@ exports.SetCache = async (key, data) => {
         console.log(`SetCache : ${key}`);
 
         await redis.set(key, JSON.stringify(data));
-        redis.expire(key, 300);
+        //redis.expire(key, 300);
 
         // redis.set(key, JSON.stringify(data), (error, data) => 
         // {

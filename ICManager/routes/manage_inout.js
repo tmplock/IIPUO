@@ -1176,19 +1176,24 @@ router.post('/request_bank', async (req, res) => {
     const strNickname = req.user.strNickname;
     const input = req.body.input;
 
-    const user = await db.Users.findOne({where: {strNickname: req.user.strNickname}});
-    const info = await db.SubUsers.findOne({where: {rId: user.id, strInoutPassword: input}});
-    if (info == null) {
-        res.send({result: 'FAIL', msg:'비밀번호가 틀립니다'});
+    let result = await IAgentSec.AccessInoutPassword(req.user.strNickname, input);
+    if (result.result != 'OK') {
+        res.send(result);
         return;
     }
-    let iClass = parseInt(req.user.iClass ?? 100);
-    let iPermission = parseInt(req.user.iPermission ?? 0);
-
-    if (iClass > 3 || iPermission == 100) {
-        res.send({result: 'FAIL', msg:'권한이 없습니다'});
-        return;
-    }
+    // const user = await db.Users.findOne({where: {strNickname: req.user.strNickname}});
+    // const info = await db.SubUsers.findOne({where: {rId: user.id, strInoutPassword: input}});
+    // if (info == null) {
+    //     res.send({result: 'FAIL', msg:'비밀번호가 틀립니다'});
+    //     return;
+    // }
+    // let iClass = parseInt(req.user.iClass ?? 100);
+    // let iPermission = parseInt(req.user.iPermission ?? 0);
+    //
+    // if (iClass > 3 || iPermission == 100) {
+    //     res.send({result: 'FAIL', msg:'권한이 없습니다'});
+    //     return;
+    // }
     res.send({result: 'OK'});
 });
 

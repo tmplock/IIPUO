@@ -34,10 +34,10 @@ let inline_GetPopupAgentInfo = async (strGroupID, iClass, strNickname) => {
             id, strID, strNickname, iClass, iPermission, strGroupID, iParentID,
             iCash, iRolling, iSettle, iSettleAcc, iSettleAccBefore, 
             fBaccaratR, fSlotR, fUnderOverR, fPBR, fPBSingleR, fPBDoubleR, fPBTripleR,
-            fSettleBaccarat, fSettleSlot, fSettlePBA, fSettlePBB,
+            fSettleBaccarat, fSettleSlot, fSettlePBA, fSettlePBB, iSettleDays, iSettleType,
             DATE_FORMAT(createdAt,'%Y-%m-%d %H:%i:%S') AS createdAt,
             DATE_FORMAT(updatedAt,'%Y-%m-%d %H:%i:%S') AS updatedAt,
-            eState, strIP, strOptionCode, strSettleMemo, iRelUserID, fCommission, iPassCheckNewUser
+            eState, strOptionCode, strSettleMemo, iRelUserID, fCommission, iPassCheckNewUser
         FROM Users
         WHERE strNickname='${strNickname}';
         `
@@ -50,7 +50,7 @@ let inline_GetPopupAgentInfo = async (strGroupID, iClass, strNickname) => {
             id, strID, strNickname, iClass, iPermission, strGroupID, iParentID,
             iCash, 0 AS iRolling, 0 AS iSettle, iSettleAcc, iSettleAccBefore,
             fBaccaratR, fSlotR, fUnderOverR, fPBR, fPBSingleR, fPBDoubleR, fPBTripleR,
-            fSettleBaccarat, fSettleSlot, fSettlePBA, fSettlePBB,
+            fSettleBaccarat, fSettleSlot, fSettlePBA, fSettlePBB, iSettleDays, iSettleType,
             DATE_FORMAT(createdAt,'%Y-%m-%d %H:%i:%S') AS createdAt,
             DATE_FORMAT(updatedAt,'%Y-%m-%d %H:%i:%S') AS updatedAt,
             eState, strIP, strOptionCode, strSettleMemo, iRelUserID, fCommission, iPassCheckNewUser
@@ -72,7 +72,7 @@ let inline_GetPopupAgentInfo = async (strGroupID, iClass, strNickname) => {
                         id, strID, strNickname, iClass, iPermission, strGroupID, iParentID,
                         iCash, iRolling, iSettle, iSettleAcc, iSettleAccBefore,
                         fBaccaratR, fSlotR, fUnderOverR, fPBR, fPBSingleR, fPBDoubleR, fPBTripleR,
-                        fSettleBaccarat, fSettleSlot, fSettlePBA, fSettlePBB,
+                        fSettleBaccarat, fSettleSlot, fSettlePBA, fSettlePBB, iSettleDays, iSettleType,
                         DATE_FORMAT(createdAt,'%Y-%m-%d %H:%i:%S') AS createdAt,
                         DATE_FORMAT(updatedAt,'%Y-%m-%d %H:%i:%S') AS updatedAt,
                         eState, strIP, strOptionCode, strSettleMemo, iRelUserID, fCommission, iPassCheckNewUser
@@ -92,7 +92,7 @@ let inline_GetPopupAgentInfo = async (strGroupID, iClass, strNickname) => {
                         u.id, u.strID, u.strNickname, u.iClass, u.iPermission, u.strGroupID, u.iParentID,
                         u.iCash, u.iRolling, u.iSettle, u.iSettleAcc, u.iSettleAccBefore,
                         u.fBaccaratR, u.fSlotR, u.fUnderOverR, u.fPBR, u.fPBSingleR, u.fPBDoubleR, u.fPBTripleR,
-                        u.fSettleBaccarat, u.fSettleSlot, u.fSettlePBA, u.fSettlePBB,
+                        u.fSettleBaccarat, u.fSettleSlot, u.fSettlePBA, u.fSettlePBB, u.iSettleDays, u.iSettleType,
                         DATE_FORMAT(u.createdAt,'%Y-%m-%d %H:%i:%S') AS createdAt,
                         DATE_FORMAT(u.updatedAt,'%Y-%m-%d %H:%i:%S') AS updatedAt,
                         u.eState, u.strIP, u.strOptionCode, u.strSettleMemo, u.iRelUserID, u.fCommission, u.iPassCheckNewUser,
@@ -113,7 +113,7 @@ let inline_GetPopupAgentInfo = async (strGroupID, iClass, strNickname) => {
                         u.id, u.strID, u.strNickname, u.iClass, u.iPermission, u.strGroupID, u.iParentID,
                         u.iCash, u.iRolling, u.iSettle, u.iSettleAcc, u.iSettleAccBefore,
                         u.fBaccaratR, u.fSlotR, u.fUnderOverR, u.fPBR, u.fPBSingleR, u.fPBDoubleR, u.fPBTripleR,
-                        u.fSettleBaccarat, u.fSettleSlot, u.fSettlePBA, u.fSettlePBB,
+                        u.fSettleBaccarat, u.fSettleSlot, u.fSettlePBA, u.fSettlePBB, u.iSettleDays, u.iSettleType,
                         DATE_FORMAT(u.createdAt,'%Y-%m-%d %H:%i:%S') AS createdAt,
                         DATE_FORMAT(u.updatedAt,'%Y-%m-%d %H:%i:%S') AS updatedAt,
                         u.eState, u.strIP, u.strOptionCode, u.strSettleMemo, u.iRelUserID, u.fCommission, u.iPassCheckNewUser,
@@ -134,7 +134,7 @@ let inline_GetPopupAgentInfo = async (strGroupID, iClass, strNickname) => {
                         u.id, u.strID, u.strNickname, u.iClass, u.iPermission, u.strGroupID, u.iParentID,
                         u.iCash, u.iRolling, u.iSettle, u.iSettleAcc, u.iSettleAccBefore,
                         u.fBaccaratR, u.fSlotR, u.fUnderOverR, u.fPBR, u.fPBSingleR, u.fPBDoubleR, u.fPBTripleR,
-                        u.fSettleBaccarat, u.fSettleSlot, u.fSettlePBA, u.fSettlePBB,
+                        u.fSettleBaccarat, u.fSettleSlot, u.fSettlePBA, u.fSettlePBB, u.iSettleDays, u.iSettleType,
                         DATE_FORMAT(u.createdAt,'%Y-%m-%d %H:%i:%S') AS createdAt,
                         DATE_FORMAT(u.updatedAt,'%Y-%m-%d %H:%i:%S') AS updatedAt,
                         u.eState, u.strIP, u.strOptionCode, u.strSettleMemo, u.iRelUserID, u.fCommission, u.iPassCheckNewUser,
@@ -155,7 +155,7 @@ let inline_GetPopupAgentInfo = async (strGroupID, iClass, strNickname) => {
                         u.id, u.strID, u.strNickname, u.iClass, u.iPermission, u.strGroupID, u.iParentID,
                         u.iCash, u.iRolling, u.iSettle, u.iSettleAcc, u.iSettleAccBefore,
                         u.fBaccaratR, u.fSlotR, u.fUnderOverR, u.fPBR, u.fPBSingleR, u.fPBDoubleR, u.fPBTripleR,
-                        u.fSettleBaccarat, u.fSettleSlot, u.fSettlePBA, u.fSettlePBB,
+                        u.fSettleBaccarat, u.fSettleSlot, u.fSettlePBA, u.fSettlePBB, 
                         DATE_FORMAT(u.createdAt,'%Y-%m-%d %H:%i:%S') AS createdAt,
                         DATE_FORMAT(u.updatedAt,'%Y-%m-%d %H:%i:%S') AS updatedAt,
                         u.eState, u.strIP, u.strOptionCode, u.strSettleMemo, u.iRelUserID, u.fCommission, u.iPassCheckNewUser,

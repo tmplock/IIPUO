@@ -44,7 +44,7 @@
 
     let RemoveLetter = (id) => {
 
-        console.log(`RemoveLetter : ${id}`);
+        //console.log(`RemoveLetter : ${id}`);
 
         if ( confirm(`쪽지를 삭제 하시겠습니까?`) )
         {
@@ -76,7 +76,7 @@
 
             success:function(data) {
 
-                console.log(data);
+                //console.log(data);
 
                 let tag = '';
                 if ( data.length > 0 )
@@ -130,7 +130,7 @@
             context: document.body,
             data:{strNickname:user.strNickname},
             success:function(obj) {
-                console.log(obj);
+                //console.log(obj);
                 if (obj.result == 'OK') {
                     location.reload();
                 } else {

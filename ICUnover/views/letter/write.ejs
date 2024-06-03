@@ -48,7 +48,7 @@
         let strSubject = $('#strSubject').val();
         let strContents = $('#strContents').val();
 
-        console.log(`WriteLetter : strSubject(${strSubject}), strContents(${strContents})`);
+        //console.log(`WriteLetter : strSubject(${strSubject}), strContents(${strContents})`);
         
         if (strSubject == "") {
             alert("제목을 입력해주세요");
@@ -61,7 +61,7 @@
         }
 
         if (isSending) {
-            console.log(`WriteLetter Sending`);
+            //console.log(`WriteLetter Sending`);
             return;
         }
         isSending = true;
@@ -79,7 +79,7 @@
 
                 if ( data.result == 'OK' ) {
                     alert('쪽지를 전송하였습니다.');
-                    console.log(data);
+                    //console.log(data);
                     window.location.href='/letter/listcs';
                 }
                 else

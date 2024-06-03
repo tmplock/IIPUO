@@ -57,7 +57,7 @@ router.get('/loginsuccess', async (req, res) => {
 
     console.log(`################################################## /account/loginsuccess`);
 
-    const objectResult = await IHelper.RequestAxios("http://165.22.102.70:3070/account/login", {eType:'USER', strID:req.user.strID});
+    const objectResult = await IHelper.RequestAxios(`${global.strAPIAddress}/account/login`, {eType:'USER', strID:req.user.strID});
 
     if ( objectResult.result == 'OK' )
     {
@@ -94,6 +94,8 @@ router.get('/logout', isLoggedIn, (req, res) => {
 
     if ( req.user != null )
     {
+        const strID = req.user.strID;
+
         console.log(`/account/logout`);
 
         req.logout(async function (err) {
@@ -101,7 +103,7 @@ router.get('/logout', isLoggedIn, (req, res) => {
               return next(err);
             }
     
-            const objectResult = await IHelper.RequestAxios("http://165.22.102.70:3070/account/logoutcomplete", {eType:'USER', strID:req.user.strID});
+            const objectResult = await IHelper.RequestAxios(`${global.strAPIAddress}/account/logoutcomplete`, {eType:'USER', strID:strID});
     
             delete req.session.uid;
             // if you're using express-flash

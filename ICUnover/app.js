@@ -107,6 +107,7 @@ global.io = io;
 
 global.strAdminAddress = process.env.ADMIN_URL;
 global.strVenderAddress = process.env.VENDER_URL;
+global.strAPIAddress = "https://uogaming.org"
 
  global.ePublishing = 'OFF';
 //global.ePublishing = 'OFF';
@@ -550,7 +551,7 @@ app.post('/request_checklogout', async (req, res) => {
 
     if ( req.user != null )
     {
-        const objectResult = await IHelper.RequestAxios("http://165.22.102.70:3070/account/checklogout", {eType:'USER', strID:req.user.strID});
+        const objectResult = await IHelper.RequestAxios(`${global.strAPIAddress}/account/checklogout`, {eType:'USER', strID:req.user.strID});
 
         console.log(objectResult);
     

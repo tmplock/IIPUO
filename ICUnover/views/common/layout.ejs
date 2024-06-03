@@ -195,7 +195,7 @@
 
         <script>
             const bLogin = '<%=bLogin%>';
-            console.log(bLogin);
+            //console.log(bLogin);
             let user = null;
             if ( bLogin == "true" )
             {
@@ -203,11 +203,11 @@
                 //RequestLogin(user);
             }
                 
-            console.log(user);
-            const listOutputRecent = JSON.parse('<%-JSON.stringify(listOutputRecent)%>');
-            console.log(listOutputRecent);
-            const listOutputRank = JSON.parse('<%-JSON.stringify(listOutputRank)%>');
-            console.log(listOutputRank);
+            // console.log(user);
+            // const listOutputRecent = JSON.parse('<%-JSON.stringify(listOutputRecent)%>');
+            // console.log(listOutputRecent);
+            // const listOutputRank = JSON.parse('<%-JSON.stringify(listOutputRank)%>');
+            // console.log(listOutputRank);
 
             
             setInterval( () => {
@@ -225,7 +225,7 @@
 
                             if ( data.result == 'OK' )
                             {
-                                console.log(data);
+                                //console.log(data);
 
                                 const cCash = parseInt(data.data.iCash);
 
@@ -249,9 +249,9 @@
 
                             if ( data.result == 'OK' )
                             {
-                                console.log(data.iLogout);
+                                //console.log(data.iLogout);
 
-                                if ( data.iLogout == 0 )
+                                if ( data.iLogout == 1 )
                                 {
                                     location.href = '/account/logout';
                                 }

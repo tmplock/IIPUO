@@ -69,7 +69,7 @@
 
     let RemoveLetter = (id) => {
 
-        console.log(`RemoveLetter : ${id}`);
+        //console.log(`RemoveLetter : ${id}`);
 
         if ( confirm(`쪽지를 삭제 하시겠습니까?`) )
         {
@@ -94,11 +94,11 @@
 
     let ToggleContents = (id) => {
 
-        console.log(`ToggleContents : ${id}`);
+        //console.log(`ToggleContents : ${id}`);
 
         
         const eState = $(`#${id}_state`).text();
-        console.log(eState);
+        //console.log(eState);
         if ( eState == '읽지않음' )
         {
             $.ajax({
@@ -109,7 +109,7 @@
 
                 success:function(data) {
 
-                    console.log(data);
+                    //console.log(data);
 
                     if ( data.result == 'OK' )
                     {
@@ -136,7 +136,7 @@
 
             success:function(data) {
 
-                console.log(data);
+                //console.log(data);
 
                 let tag = '';
                 if ( data.length > 0 )

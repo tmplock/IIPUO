@@ -22,40 +22,7 @@
 
 		<div class="list">
 
-			<div style="background-color:#ffffff;text-align:right;padding-right:5px;padding-top:0px;padding-bottom:0px;" colspan="19">
-				<button class="menu1" data-menu="10" style="border:1px solid rgb(95, 93, 93);width:50px;height:25px;text-align:center;" onclick="OnClickDayPeriod(1);">1분기</button>
-				&nbsp;
-				<button class="menu1" data-menu="11" style="border:1px solid rgb(95, 93, 93);width:50px;height:25px;text-align:center;" onclick="OnClickDayPeriod(6);">2분기</button>
-				&nbsp;
-				<button class="menu1" data-menu="12" style="border:1px solid rgb(95, 93, 93);width:50px;height:25px;text-align:center;" onclick="OnClickDayPeriod(11);">3분기</button>
-				&nbsp;
-				<button class="menu1" data-menu="13" style="border:1px solid rgb(95, 93, 93);width:50px;height:25px;text-align:center;" onclick="OnClickDayPeriod(16);">4분기</button>
-				&nbsp;
-				<button class="menu1" data-menu="14" style="border:1px solid rgb(95, 93, 93);width:50px;height:25px;text-align:center;" onclick="OnClickDayPeriod(21);">5분기</button>
-				&nbsp;
-				<button class="menu1" data-menu="15" style="border:1px solid rgb(95, 93, 93);width:50px;height:25px;text-align:center;" onclick="OnClickDayPeriod(26);">6분기</button>
-				&nbsp;
-				<input style="width:100px;" type="text" id="datepicker1" class="datepicker"/>~
-				<input style="width:100px;" type="text" id="datepicker2" class="datepicker" />
-				<button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearch(3, '<%=user.strGroupID%>', '<%=user.iClass%>', '<%=user.iPermission%>');"><%=__('Search')%></button>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<%=__('Search')%>
-				<select id="select_roomno" style="width:80px;">
-					<option><%=__('Nickname')%></option>
-				</select>
-				<input style="margin-left:0px;width:100px;" id="strSearchNickname" type="text"/>
-				<button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearchNickname();"><%=__('Search')%></button>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<button class="menu1" data-menu="0" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;" onclick="OnClickYesterdayRecord();">어제</button>
-				&nbsp;
-				<button class="menu5" data-menu="1" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;" onclick="OnClickTodayRecord();"><%=__('Today')%></button>
-				&nbsp;
-				<button class="menu1" data-menu="2" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;" onclick="OnClickMonthly1stRecord();"><%=__('Half1')%></button>
-				&nbsp;
-				<button class="menu1" data-menu="3" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;" onclick="OnClickMonthly2ndRecord();"><%=__('Half2')%></button>
-				&nbsp;
-				<button class="btn_blue search_btn" search_btn-index="3" id="button_toggle_record" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(136, 136, 248);color:white" onclick="OnClickOpen();"><%=__('Open')%></button>
-
+			<div id="search_date">
 			</div>
 
 			<div class="search_wrap" id="div_realtimebet_overview_record">
@@ -164,6 +131,7 @@
 <script type="text/javascript" src="js/manage_partner_menu.js"></script>
 <script type="text/javascript" src="js/manage_partner_ref.js"></script>
 <script type="text/javascript" src="js/manage_partner_register.js"></script>
+<script type="text/javascript" src="js/manage_search_date.js"></script>
 <script type="text/javascript" src="js/socket.js"></script>
 <script>
 
@@ -172,6 +140,15 @@
 	let objectVA = JSON.parse('<%-JSON.stringify(data.agents)%>');
 	let agentinfo = JSON.parse('<%-JSON.stringify(agentinfo)%>');
 	let iocount = JSON.parse('<%-JSON.stringify(iocount)%>');
+
+	var i18nTexts = {
+        Search: "<%=__('Search')%>",
+        Today : "<%=__('Today')%>",
+        Half1: "<%=__('Half1')%>",
+        Half2: "<%=__('Half2')%>",
+        Open: "<%=__('Open')%>",
+		Nickname: "<%=__('Nickname')%>",
+    };
 
 	const cTClass	= parseInt(user.iClass);
 	let bClickDateSelection = false;
@@ -189,10 +166,7 @@
 	});
 
 	$(document).ready(() => {
-		DatePicker();
-
-		$('#datepicker1').val(startDate);
-		$('#datepicker2').val(endDate);
+		SetSeachButtons("#search_date",0,i18nTexts,user,3);
 
 		$("#table_record_list").hide();
 
@@ -203,9 +177,14 @@
 		Init("#vadmin_list");
 		SetOverview(objectOverview, "#div_realtimebet_overview", true);
 		SetAdminList(EAgent.eAdmin, "#vadmin_list", objectVA, user.iPermission);
+		
+		DatePicker();
+
+		$('#datepicker1').val(startDate);
+		$('#datepicker2').val(endDate);
 	});
 
-	function OnClickOpen()
+	function OnClickRecord()
 	{
 		bToggleRecord = !bToggleRecord;
 		if ( bToggleRecord ) {

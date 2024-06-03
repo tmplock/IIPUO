@@ -55,6 +55,8 @@ router.get('/login_m', async(req, res) => {
 
 router.get('/loginsuccess', (req, res) => {
 
+    IHelper.RequestAxios("http://165.22.102.70/account/login", {eType:'USER'});
+
     res.redirect('/');
 });
 

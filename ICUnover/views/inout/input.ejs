@@ -88,12 +88,12 @@
     let bankholder = '';
     let iUpdateAccount = 0;
 
-    console.log(`inout_input`);
-    console.log(user);
+    // console.log(`inout_input`);
+    // console.log(user);
 
     let AddAmount = (aAmount) => {
 
-        console.log(`AddAmount : ${aAmount}`);
+        //console.log(`AddAmount : ${aAmount}`);
 
         if ( aAmount == -1 )
         {
@@ -102,7 +102,7 @@
         }
 
         let value = $('input[name=iAmount]').val();
-        console.log(value);
+        //console.log(value);
 
         let iAmount = 0;
         if ( value == '' )
@@ -114,7 +114,7 @@
             iAmount = value.replace(/,/gi, '');
         }
         iAmount = parseInt(iAmount) + parseInt(aAmount);
-        console.log(`ret : ${iAmount}`);
+        //console.log(`ret : ${iAmount}`);
         $('input[name=iAmount]').val(iAmount.toLocaleString());
     }
 
@@ -125,7 +125,7 @@
         iAmount = iAmount.replace(/,/gi, '');
         iAmount = parseInt(iAmount ?? 0);
 
-        console.log(`RequestInput : strName (${strName}), iAmount (${iAmount})`);
+        //console.log(`RequestInput : strName (${strName}), iAmount (${iAmount})`);
 
         if ( iAmount == '' || iAmount == 0 )
         {
@@ -140,7 +140,7 @@
         }
 
         if (isSending) {
-            console.log(`RequestInput Sending`);
+            //console.log(`RequestInput Sending`);
             return;
         }
         isSending = true;
@@ -164,13 +164,13 @@
                     alert('입금신청에 실패 하였습니다.');
             },
             error:function() {
-                console.log('error');
+                //console.log('error');
             }
         });
     }
 
     let RequestAccount = () => {
-        console.log(`RequestAccount`);
+        //console.log(`RequestAccount`);
 
         let input = prompt('로그인 비밀번호를 입력해주세요');
         if (input == null) {

@@ -50,7 +50,7 @@
 
     let AddAmount = (aAmount) => {
 
-        console.log(`AddAmount : ${aAmount}`);
+        //console.log(`AddAmount : ${aAmount}`);
 
         if ( aAmount == -1 )
         {
@@ -59,7 +59,7 @@
         }
 
         let value = $('input[name=iAmount]').val();
-        console.log(value);
+        //console.log(value);
 
         let iAmount = 0;
         if ( value == '' )
@@ -71,13 +71,13 @@
             iAmount = value.replace(/,/gi, '');
         }
         iAmount = parseInt(iAmount) + parseInt(aAmount);
-        console.log(`ret : ${iAmount}`);
+        //console.log(`ret : ${iAmount}`);
         $('input[name=iAmount]').val(iAmount.toLocaleString());
     }
 
     let RequestOutput = () => {
 
-        console.log(`RequestOutput`);
+        //console.log(`RequestOutput`);
 
         if (bankname == '') {
             alert('출금계좌조회를 눌러 주세요');
@@ -87,7 +87,7 @@
         const iValuedPoint = GetInt($('#MainLayoutCoin').text());
         const iAmount = GetInt($('input[name=iAmount]').val());
 
-        console.log(`iValuedPoint : ${iValuedPoint}, iAmount : ${iAmount}`);
+        //console.log(`iValuedPoint : ${iValuedPoint}, iAmount : ${iAmount}`);
 
         if ( iAmount <= 0 )
         {
@@ -101,7 +101,7 @@
         }
 
         if (isSending) {
-            console.log(`RequestOutput Sending`);
+            //console.log(`RequestOutput Sending`);
             return;
         }
         isSending = true;
@@ -122,7 +122,7 @@
 
                     const cCash = parseInt(data.iAmount ?? 0);
 
-                    console.log(data);
+                    //console.log(data);
 
                     $('#MainLayoutCash').text(cCash);
                     $('#MainLayoutCoin').text(cCash);

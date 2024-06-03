@@ -32,7 +32,7 @@
             return;
         }
 
-        console.log(bLogin);
+        //console.log(bLogin);
         if ( "false" == bLogin )
         {
             alert('로그인이 필요한 서비스 입니다.');
@@ -48,8 +48,8 @@
             data:objectData,
             success:function(data) {
                 
-                console.log('##### GAME OPEN')
-                console.log(data);
+                // console.log('##### GAME OPEN')
+                // console.log(data);
 
                 // //eval(data);
                 //window.open(data,strGame, 'popupGame', 'width=1920, height=1080, toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no');
@@ -389,7 +389,7 @@
                 }
             }
         }
-        console.log(`movieList: ${movieList.length}`);
+        //console.log(`movieList: ${movieList.length}`);
         $('#main_pop_play_movie').empty();
         if (showMovieList.length > 0) {
             // 모바일 여부 체크

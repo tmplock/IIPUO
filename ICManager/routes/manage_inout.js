@@ -1103,7 +1103,7 @@ router.post('/output_alert', (req, res)=> {
 /**
  * 입출금관리
  */
-router.post('/request_inout_pass', async (req, res) => {
+router.post('/request_inout_pass', isLoggedIn, async (req, res) => {
     console.log(`request_inout_pass`);
     console.log(req.body);
 
@@ -1169,7 +1169,7 @@ router.post('/request_inout_pass', async (req, res) => {
  * 계좌관리
  */
 // 계좌관리 비번 체크
-router.post('/request_bank', async (req, res) => {
+router.post('/request_bank', isLoggedIn, async (req, res) => {
     console.log(`request_bank`);
     console.log(req.body);
 
@@ -1193,7 +1193,7 @@ router.post('/request_bank', async (req, res) => {
 });
 
 // 입출금관리 > 계좌관리
-router.post('/popup_bank', async (req, res) => {
+router.post('/popup_bank', isLoggedIn, async (req, res) => {
     console.log(`popup_bank`);
     console.log(req.body);
 
@@ -1224,7 +1224,7 @@ router.post('/popup_bank', async (req, res) => {
     res.render('manage_inout/popup_bank', {iLayout:8, iHeaderFocus:0, user:agent, msg:''});
 });
 
-router.post('/request_bank_list', async (req, res) => {
+router.post('/request_bank_list', isLoggedIn, async (req, res) => {
     console.log(`request_bank_list`);
     console.log(req.body);
     let key = req.body.key ?? '';
@@ -1339,7 +1339,7 @@ router.post('/request_bank_list', async (req, res) => {
     // res.send({result: 'OK', data: newList});
 });
 
-router.post('/request_change_bank_type', async (req, res) => {
+router.post('/request_change_bank_type', isLoggedIn, async (req, res) => {
     console.log(`request_change_bank_type`);
     console.log(req.body);
 
@@ -1380,7 +1380,7 @@ router.post('/request_change_bank_type', async (req, res) => {
     res.send({result: 'OK'});
 });
 
-router.post('/popup_bank_add', async (req, res) => {
+router.post('/popup_bank_add', isLoggedIn,  async (req, res) => {
     console.log(`popup_bank_add`);
 
     let iClass = parseInt(req.body.iClass ?? 100);
@@ -1411,7 +1411,7 @@ router.post('/popup_bank_add', async (req, res) => {
     res.render('manage_inout/popup_bank_add', {iLayout:8, iHeaderFocus:0, user:agent, strChildes:strChildes, strChildes2:strChildes2});
 });
 
-router.post('/request_bank_add', async (req, res) => {
+router.post('/request_bank_add', isLoggedIn, async (req, res) => {
     console.log(`request_bank_add`);
 
     let iClass = parseInt(req.user.iClass ?? 100);
@@ -1450,7 +1450,7 @@ router.post('/request_bank_add', async (req, res) => {
     res.send({result:'OK', msg:'등록성공'});
 });
 
-router.post('/request_bank_memo_apply', async (req, res) => {
+router.post('/request_bank_memo_apply', isLoggedIn, async (req, res) => {
     console.log(`request_bank_add`);
 
     let iClass = parseInt(req.user.iClass ?? 100);
@@ -1482,8 +1482,7 @@ router.post('/request_bank_memo_apply', async (req, res) => {
     res.send({result:'OK', msg:'등록성공'});
 });
 
-
-router.post('/request_bank_del', async (req, res) => {
+router.post('/request_bank_del', isLoggedIn, async (req, res) => {
     console.log(`request_bank_del`);
 
     let iClass = parseInt(req.user.iClass ?? 100);

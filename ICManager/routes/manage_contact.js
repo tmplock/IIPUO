@@ -205,7 +205,7 @@ router.post('/list_charge_request', isLoggedIn, async(req, res) => {
     res.render('manage_contact/list_charge_request', {iLayout:0, iHeaderFocus:7, user:agent, agent:agent, iocount:iocount, list:[], page:1});
 });
 
-router.post('/popup_write_contact', async(req, res) => {
+router.post('/popup_write_contact', isLoggedIn, async(req, res) => {
     console.log(req.body);
     const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:req.body.iClass,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission};
@@ -222,7 +222,7 @@ router.post('/popup_write_contact', async(req, res) => {
     res.render('manage_contact/popup_write_contact', {iLayout:1, iHeaderFocus:1, user:user, strParent:strParent, strChildes:strChildes, strTo:'', directSend: false});
 });
 
-router.post('/request_writecontact', async(req, res) => {
+router.post('/request_writecontact', isLoggedIn, async(req, res) => {
     let user = await IAgent.GetUserInfo(req.body.strFrom);
     let strNickname = user.iPermission == 100 ? user.strNicknameRel : user.strNickname;
 
@@ -242,13 +242,13 @@ router.post('/request_writecontact', async(req, res) => {
     res.send({result:'OK'});
 });
 
-router.post('/request_removecontact', async(req, res) => {
+router.post('/request_removecontact', isLoggedIn, async(req, res) => {
     await db.ContactLetter.destroy({where:{id:req.body.id}});
     res.send({result:'OK'});
 });
 
 
-router.post('/request_replycontact', async(req, res) => {
+router.post('/request_replycontact', isLoggedIn, async(req, res) => {
     let obj = await db.ContactLetter.findByPk(req.body.id);
     if (obj != null ) {
         await obj.update({
@@ -267,7 +267,7 @@ router.post('/request_replycontact', async(req, res) => {
     }
 });
 
-router.post('/popup_read_contact', async(req, res) => {
+router.post('/popup_read_contact', isLoggedIn, async(req, res) => {
     const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:req.body.iClass,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission};
     let obj = await db.ContactLetter.findByPk(req.body.id);
@@ -309,7 +309,7 @@ router.post('/popup_read_contact', async(req, res) => {
 /**
  * 미사용 api
  */
-router.post('/popup_charge_request', async(req, res) => {
+router.post('/popup_charge_request', isLoggedIn, async(req, res) => {
     console.log(req.body);
     const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:req.body.iClass,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission};
@@ -318,7 +318,7 @@ router.post('/popup_charge_request', async(req, res) => {
 });
 
 
-router.post('/request_charge_request', async(req, res) => {
+router.post('/request_charge_request', isLoggedIn, async(req, res) => {
     await db.ChargeRequest.create({
         iClass:req.body.iClass,
         strTo:req.body.strTo,
@@ -398,7 +398,7 @@ router.post('/request_list_charge_request', isLoggedIn, async(req, res) => {
     }
 });
 
-router.post('/request_charge_apply', async (req, res) => {
+router.post('/request_charge_apply', isLoggedIn, async (req, res) => {
     let charge = await db.ChargeRequest.findOne({where:{id:req.body.id}});
 
     if ( charge != null ) {

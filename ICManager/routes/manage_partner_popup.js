@@ -543,7 +543,7 @@ router.post('/request_register_view', isLoggedIn, async(req, res) => {
     }
 });
 
-router.post('/request_removeagent_view', async (req, res) => {
+router.post('/request_removeagent_view', isLoggedIn, async (req, res) => {
 
     console.log(`/request_removeagent_view`);
     console.log(req.body);
@@ -1338,7 +1338,7 @@ router.post('/request_bank', isLoggedIn, async (req, res) => {
 });
 
 //에이전트 정보 수정
-router.post('/request_agentinfo_modify',async (req, res) => {
+router.post('/request_agentinfo_modify', isLoggedIn,async (req, res) => {
 
     console.log(`/request_agentinfo_modify`);
     console.log(req.body);

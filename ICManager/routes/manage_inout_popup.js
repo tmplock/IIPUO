@@ -80,7 +80,7 @@ router.post('/requestexchange', isLoggedIn, async (req, res) => {
     res.render('manage_inout/popup_requestexchange', {iLayout:1, iHeaderFocus:1, user:user, iForced:req.body.iForced});
 });
 
-router.post('/request_changeoutputpassword', async (req, res) => {
+router.post('/request_changeoutputpassword', isLoggedIn, async (req, res) => {
 
     console.log(`/request_changeoutputpassword`);
     console.log(req.body);

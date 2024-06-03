@@ -321,7 +321,7 @@ let GetSettleVice = (obj) => {
     return iBTotal + iSTotal + iPBATotal + iPBBTotal;
 }
 
-router.post('/settle_cal', async (req, res) => {
+router.post('/settle_cal', isLoggedIn, async (req, res) => {
     console.log('settle_cal');
     console.log(req.body);
 
@@ -338,7 +338,7 @@ router.post('/settle_cal', async (req, res) => {
 });
 
 
-router.post('/settle_cal_history', async (req, res) => {
+router.post('/settle_cal_history', isLoggedIn, async (req, res) => {
     console.log('settle_cal_history');
     console.log(req.body);
 

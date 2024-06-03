@@ -17,8 +17,9 @@ const {Op, where}= require('sequelize');
 
 const IAgent = require('../implements/agent3');
 const ISocket = require('../implements/socket');
+const {isLoggedIn} = require("./middleware");
 
-router.post('/writeannouncement', async (req, res) => {
+router.post('/writeannouncement', isLoggedIn, async (req, res) => {
     
     console.log(req.body);
 
@@ -29,7 +30,7 @@ router.post('/writeannouncement', async (req, res) => {
 
 });
 
-router.post('/writeletter', async (req, res) => {
+router.post('/writeletter', isLoggedIn, async (req, res) => {
     
     console.log(req.body);
 
@@ -60,7 +61,7 @@ router.post('/writeletter', async (req, res) => {
     res.render('manage_setting/popup_writeletter', {iLayout:1, iHeaderFocus:1, agent:user, strParent: '', strChildes:strChildes, strTo: strTo, directSend: false});
 });
 
-router.post('/direct_writeletter', async (req, res) => {
+router.post('/direct_writeletter', isLoggedIn, async (req, res) => {
 
     console.log(req.body);
 
@@ -91,7 +92,7 @@ router.post('/direct_writeletter', async (req, res) => {
     res.render('manage_setting/popup_writeletter', {iLayout:1, iHeaderFocus:1, agent:user, strParent: '', strChildes:strChildes, strTo: strTo, directSend: false});
 });
 
-router.post('/direct_writeletter', async (req, res) => {
+router.post('/direct_writeletter', isLoggedIn, async (req, res) => {
 
     console.log(req.body);
 
@@ -122,7 +123,7 @@ router.post('/direct_writeletter', async (req, res) => {
     res.render('manage_setting/popup_writeletter', {iLayout:1, iHeaderFocus:1, agent:user, strParent: '', strChildes:strChildes, strTo: strTo, directSend: false});
 });
 
-router.post('/group_writeletter', async (req, res) => {
+router.post('/group_writeletter', isLoggedIn, async (req, res) => {
 
     console.log(req.body);
 
@@ -135,7 +136,7 @@ router.post('/group_writeletter', async (req, res) => {
     res.render('manage_setting/popup_group_writeletter', {iLayout:1, iHeaderFocus:1, agent:user});
 });
 
-router.post('/readletter', async (req, res) => {
+router.post('/readletter', isLoggedIn, async (req, res) => {
 
     console.log(req.body);
 
@@ -173,7 +174,7 @@ router.post('/readletter', async (req, res) => {
     }
 });
 
-router.post('/request_replyletter', async (req, res) => {
+router.post('/request_replyletter', isLoggedIn, async (req, res) => {
 
     let letter = await db.Letters.findOne({where : {id: req.body.id}});
     if (letter == null) {
@@ -210,7 +211,7 @@ router.post('/request_replyletter', async (req, res) => {
 });
 
 //
-router.post('/request_letterreceiver', async (req, res) => {
+router.post('/request_letterreceiver', isLoggedIn, async (req, res) => {
     console.log(req.body);
 
     if ( req.body.strKeyword == '' )
@@ -291,7 +292,7 @@ router.post('/request_letterreceiver', async (req, res) => {
 });
 
 
-router.post('/request_receiver', async (req, res) => {
+router.post('/request_receiver', isLoggedIn, async (req, res) => {
     if (req.user.iClass > req.body.iClass) {
         res.send({'result' : 'FAIL'});
         return;
@@ -370,7 +371,7 @@ router.post('/request_writeletter', async (req, res) => {
 });
 
 //FIXME: 관리자 페이지에서 쪽지를 보낼 경우 아래 호출됨
-router.post('/request_writeletter_partner', async (req, res) => {
+router.post('/request_writeletter_partner', isLoggedIn, async (req, res) => {
     console.log(`################################################## /manage_setting_popup/request_writeletter_partner`);
     console.log(req.body);
 
@@ -436,7 +437,7 @@ router.post('/request_writeletter_partner', async (req, res) => {
     res.send({result:'OK'});
 });
 
-router.post('/request_writeletter_partner_group', async (req, res) => {
+router.post('/request_writeletter_partner_group', isLoggedIn, async (req, res) => {
     console.log(`################################################## /manage_setting_popup/request_writeletter_partner_group`);
     console.log(req.body);
 
@@ -563,7 +564,7 @@ router.post('/request_writeletter_partner_group', async (req, res) => {
 });
 
 //  보낸 쪽지 목록
-router.post('/request_letterrecord', async (req, res) => {
+router.post('/request_letterrecord', isLoggedIn, async (req, res) => {
 
     if (req.user.iPermission == 100) {
         res.redirect("/");
@@ -741,7 +742,7 @@ router.post('/request_letterrecord', async (req, res) => {
 });
 
 //  받은 쪽지 목록
-router.post('/request_letterlist', async (req, res) => {
+router.post('/request_letterlist', isLoggedIn, async (req, res) => {
 
     console.log(req.body);
 
@@ -934,13 +935,13 @@ router.post('/request_letterlist', async (req, res) => {
     res.send({letters:letters, currentPage:req.body.iPage, totalCount:totalCount});
 });
 
-router.post('/request_removeletter', async(req, res) => {
+router.post('/request_removeletter', isLoggedIn, async(req, res) => {
     console.log(req.body);
     // await db.Letters.destroy({where:{id:req.body.id}});
     res.send({result:'OK'});
 });
 
-router.post('/request_letter_select_remove', async(req, res) => {
+router.post('/request_letter_select_remove', isLoggedIn, async(req, res) => {
     console.log(req.body);
 
     if (req.user.iPermission == 100) {
@@ -1002,7 +1003,7 @@ router.post('/request_letter_select_remove', async(req, res) => {
 });
 
 //  Announcement
-router.post('/request_announcementlist', async (req, res) => {
+router.post('/request_announcementlist', isLoggedIn, async (req, res) => {
 
     console.log(req.body);
 
@@ -1015,7 +1016,7 @@ router.post('/request_announcementlist', async (req, res) => {
     res.send({anns:fullanns});
 });
 
-router.post('/request_removeannouncement', async (req, res) => {
+router.post('/request_removeannouncement', isLoggedIn, async (req, res) => {
 
     console.log(`request_removeannouncement`);
 
@@ -1026,7 +1027,7 @@ router.post('/request_removeannouncement', async (req, res) => {
     res.send({result:'OK'});
 });
 
-router.post('/request_writeannouncement', async (req, res) => {
+router.post('/request_writeannouncement', isLoggedIn, async (req, res) => {
 
     console.log(`request_writeannouncement`);
 
@@ -1037,7 +1038,7 @@ router.post('/request_writeannouncement', async (req, res) => {
     res.send({result:'OK'});
 });
 
-router.post('/readannouncement', async (req, res) => {
+router.post('/readannouncement', isLoggedIn, async (req, res) => {
 
     console.log(req.body);
 
@@ -1047,7 +1048,7 @@ router.post('/readannouncement', async (req, res) => {
     res.render('manage_setting/popup_readannouncement', {iLayout:1, iHeaderFocus:1, user:user, contents:contents});
 });
 
-router.post('/request_annchangestate', async (req, res) => {
+router.post('/request_annchangestate', isLoggedIn, async (req, res) => {
 
     console.log('/request_annchangestate');
     console.log(req.body);

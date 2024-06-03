@@ -804,7 +804,7 @@ router.post('/request_pending_record', isLoggedIn, async(req, res) => {
     res.send({result:'OK', data:records, totalCount: totalCount});
 });
 
-router.post('/request_incompletecancel', async (req, res) => {
+router.post('/request_incompletecancel', isLoggedIn, async (req, res) => {
 
     console.log('/request_incompletecancel');
     console.log(req.body);
@@ -832,7 +832,7 @@ router.post('/request_incompletecancel', async (req, res) => {
     res.send({result:'OK'});
 });
 
-router.post('/request_incompletedmanual', async (req, res) => {
+router.post('/request_incompletedmanual', isLoggedIn, async (req, res) => {
 
     console.log('/request_incompletedmanual');
     console.log(req.body);
@@ -959,7 +959,7 @@ router.post('/request_incompletedmanual', async (req, res) => {
 
 });
 
-router.post('/popup_round_detail', async (req, res) => {
+router.post('/popup_round_detail', isLoggedIn, async (req, res) => {
     console.log('/request_round_detail');
     console.log(req.body);
 

@@ -754,7 +754,7 @@ let GetAgent = async (strNickname, iClass) => {
     return list;
 };
 
-router.post('/request_credit_apply', async (req, res) => {
+router.post('/request_credit_apply', isLoggedIn, async (req, res) => {
 
     console.log(`request_credit_apply`);
     let array = req.body.data.split(',');
@@ -834,7 +834,7 @@ router.post('/request_credit_apply', async (req, res) => {
         res.send({result:'Exist', 'msg' : failStrIDs});
 });
 
-router.post('/request_savememo', async (req, res) => {
+router.post('/request_savememo', isLoggedIn, async (req, res) => {
 
     let user = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
     if ( user != null )
@@ -847,7 +847,7 @@ router.post('/request_savememo', async (req, res) => {
         res.send({result:'Error'});
 });
 
-router.post('/request_share_savememo', async (req, res) => {
+router.post('/request_share_savememo', isLoggedIn, async (req, res) => {
 
     let strQuater = req.body.strQuater;
     let strID = req.body.strID;
@@ -875,7 +875,7 @@ router.post('/request_share_savememo', async (req, res) => {
     res.send({result:'OK'});
 });
 
-router.post('/request_listvicehq', async (req, res) => {
+router.post('/request_listvicehq', isLoggedIn, async (req, res) => {
 
     console.log('/request_listvicehq');
     console.log(req.body);
@@ -885,7 +885,7 @@ router.post('/request_listvicehq', async (req, res) => {
     res.send({result:'OK', listData:listData});
 });
 
-router.post('/request_listadmin', async (req, res) => {
+router.post('/request_listadmin', isLoggedIn, async (req, res) => {
 
     console.log('/request_listadmin');
     console.log(req.body);
@@ -895,7 +895,7 @@ router.post('/request_listadmin', async (req, res) => {
     res.send({result:'OK', listData:listData});
 });
 
-router.post('/request_listpadmin', async (req, res) => {
+router.post('/request_listpadmin', isLoggedIn, async (req, res) => {
 
     console.log('/request_listpadmin');
     console.log(req.body);
@@ -907,7 +907,7 @@ router.post('/request_listpadmin', async (req, res) => {
     res.send({result:'OK', listData:listData});
 });
 
-router.post('/request_listsettle', async (req, res) => {
+router.post('/request_listsettle', isLoggedIn, async (req, res) => {
 
     console.log('/request_listsettle');
     console.log(req.body);
@@ -916,7 +916,7 @@ router.post('/request_listsettle', async (req, res) => {
     res.send({result:'OK', list:list});
 });
 
-router.post('/request_padmininfo', async (req, res) => {
+router.post('/request_padmininfo', isLoggedIn, async (req, res) => {
 
     console.log('/request_padmininfo');
     console.log(req.body);

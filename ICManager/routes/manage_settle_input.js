@@ -23,7 +23,7 @@ const testData = require('./overview_4_2.json');
 /**
  * 테스트
  */
-router.post('/settle_input', async (req, res) => {
+router.post('/settle_input', isLoggedIn, async (req, res) => {
     console.log('settle_input');
 
     if(process.env.NODE_ENV === 'production') {
@@ -53,7 +53,7 @@ router.post('/settle_input', async (req, res) => {
 });
 
 
-router.post('/request_settle_input', async (req, res) => {
+router.post('/request_settle_input', isLoggedIn, async (req, res) => {
     console.log('request_settle_input');
     if(process.env.NODE_ENV === 'production') {
         res.send({result: 'FAIL', list: []});
@@ -84,7 +84,7 @@ router.post('/request_settle_input', async (req, res) => {
 
 });
 
-router.post('/request_input', async (req, res) => {
+router.post('/request_input', isLoggedIn, async (req, res) => {
     console.log('input_apply');
     if(process.env.NODE_ENV === 'production') {
         res.send({result: 'FAIL', msg:'처리오류'});
@@ -166,7 +166,7 @@ router.post('/request_input', async (req, res) => {
 });
 
 
-router.post('/rollback', async (req, res) => {
+router.post('/rollback', isLoggedIn, async (req, res) => {
     console.log('rollback');
     if(process.env.NODE_ENV === 'production') {
         res.send({result: 'FAIL', msg:'처리오류'});
@@ -424,22 +424,23 @@ let GetCalChildData = async (parent, child) => {
 
 
 // 죽장 전체 초기화
-router.post('/testinit', async (req, res) => {
+router.post('/testinit', isLoggedIn, async (req, res) => {
 
     if(process.env.NODE_ENV === 'production') {
         res.send({result: 'FAIL', msg:'처리오류'});
         return;
     }
+    return;
 
-    let users = await db.Users.findAll();
-    for ( let i in users )
-    {
-        await users[i].update({
-            iSettle:0,
-            iSettleAcc:0,
-            iSettleAccBefore:0,
-        });
-    }
+    // let users = await db.Users.findAll();
+    // for ( let i in users )
+    // {
+    //     await users[i].update({
+    //         iSettle:0,
+    //         iSettleAcc:0,
+    //         iSettleAccBefore:0,
+    //     });
+    // }
 
     // let shares = await db.ShareUsers.findAll();
     // for ( let i in shares )
@@ -457,10 +458,10 @@ router.post('/testinit', async (req, res) => {
     // await db.ShareRecords.destroy({where:{}, truncate:true});
     // await db.ShareCreditRecords.destroy({where:{}, truncate:true});
     // await db.ChargeRequest.destroy({where: {}, truncate:true});
-    await db.SettleRecords.destroy({where: {}, truncate: true});
-    await db.SettleSubRecords.destroy({where: {}, truncate:true});
+    // await db.SettleRecords.destroy({where: {}, truncate: true});
+    // await db.SettleSubRecords.destroy({where: {}, truncate:true});
 
-    res.send({result:'OK'});
+    res.send({result:'FAIL'});
 });
 
 

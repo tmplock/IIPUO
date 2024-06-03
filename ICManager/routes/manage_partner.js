@@ -764,7 +764,7 @@ const logSettleMessage = (source, data) => {
     return msg;
 }
 
-router.post('/request_removeagent', async (req, res) => {
+router.post('/request_removeagent', isLoggedIn, async (req, res) => {
 
     console.log(`/request_removeagent`);
     console.log(req.body);

@@ -1,5 +1,29 @@
 const db = require('../db');
 
+
+const { default: axios2 } = require('axios');
+
+exports.RequestAxios = async (strAddress, objectData) =>
+{
+    console.log(`RequestAxios ${strAddress}`);
+    console.log(objectData);
+
+    try {
+
+        const customAxios = axios2.create({});
+        const response = await customAxios.post(strAddress, objectData, {headers:{ 'Content-type': 'application/json'}});
+        //console.log(response.data);
+        if ( response.data.eResult == 'OK' )
+            return {result:'OK', data:response.data};
+        else
+            return {result:'error', error:response.data.error};    
+    }
+    catch (error) {
+        console.log('axios error', error);
+        return {result:'error', error:'axios'};
+    }
+}
+
 exports.GetParentList = async (strGroupID, iClass) => {
 
     console.log(`GetParentList : ${strGroupID}, ${iClass}`);

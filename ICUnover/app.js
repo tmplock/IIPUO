@@ -111,28 +111,28 @@ global.strVenderAddress = process.env.VENDER_URL;
  global.ePublishing = 'OFF';
 //global.ePublishing = 'OFF';
 
-const { default: axios2 } = require('axios');
+// const { default: axios2 } = require('axios');
 
-let RequestAxios = async (strAddress, objectData) =>
-{
-    console.log(`RequestAxios ${strAddress}`);
-    console.log(objectData);
+// let RequestAxios = async (strAddress, objectData) =>
+// {
+//     console.log(`RequestAxios ${strAddress}`);
+//     console.log(objectData);
 
-    try {
+//     try {
 
-        const customAxios = axios2.create({});
-        const response = await customAxios.post(strAddress, objectData, {headers:{ 'Content-type': 'application/json'}});
-        //console.log(response.data);
-        if ( response.data.eResult == 'OK' )
-            return {result:'OK', data:response.data};
-        else
-            return {result:'error', error:response.data.error};    
-    }
-    catch (error) {
-        console.log('axios error', error);
-        return {result:'error', error:'axios'};
-    }
-}
+//         const customAxios = axios2.create({});
+//         const response = await customAxios.post(strAddress, objectData, {headers:{ 'Content-type': 'application/json'}});
+//         //console.log(response.data);
+//         if ( response.data.eResult == 'OK' )
+//             return {result:'OK', data:response.data};
+//         else
+//             return {result:'error', error:response.data.error};    
+//     }
+//     catch (error) {
+//         console.log('axios error', error);
+//         return {result:'error', error:'axios'};
+//     }
+// }
 // app.use(session({
 //     secret: 'administrator#',
 //     resave: false,
@@ -541,4 +541,30 @@ app.post('/request_updatestate', async (req, res) => {
         objectData.iNumLetters = letters.length;
 
     res.send({result:'OK', data:objectData});
+});
+
+app.post('/request_checklogout', async (req, res) => {
+
+    console.log(`/request_checklogout`);
+    console.log(req.body);
+
+    if ( req.user != null )
+    {
+        const objectResult = await IHelper.RequestAxios("http://165.22.102.70:3070/account/checklogout", {eType:'USER', strID:req.user.strID});
+
+        console.log(objectResult);
+    
+        if ( objectResult.result == 'OK' )
+        {
+            res.send({result:'OK', iLogout:objectResult.data.iLogout});
+        }
+        else
+        {
+            res.send({result:'OK', iLogout:0});
+        }
+    }
+    else
+    {
+        res.send({result:'OK', iLogout:0});
+    }
 });

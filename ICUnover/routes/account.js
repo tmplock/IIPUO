@@ -53,9 +53,20 @@ router.get('/login_m', async(req, res) => {
     res.render('login_m', {iLayout:1, messages:req.flash('error')[0], ePublishing:global.ePublishing});
 });
 
-router.get('/loginsuccess', (req, res) => {
+router.get('/loginsuccess', async (req, res) => {
 
-    res.redirect('/');
+    console.log(`################################################## /account/loginsuccess`);
+
+    const objectResult = await IHelper.RequestAxios("http://165.22.102.70:3070/account/login", {eType:'USER', strID:req.user.strID});
+
+    if ( objectResult.result == 'OK' )
+    {
+        res.redirect('/');        
+    }
+    else
+    {
+        res.redirect('/account/login');
+    }
 });
 
 router.get('/loginfail', (req, res) => {
@@ -81,18 +92,27 @@ router.post('/login', passport.authenticate('local', {
 
 router.get('/logout', isLoggedIn, (req, res) => {
 
-    console.log(`/account/logout`);
+    if ( req.user != null )
+    {
+        console.log(`/account/logout`);
 
-    req.logout(async function (err) {
-        if (err) {
-          return next(err);
-        }
-        delete req.session.uid;
-
-        // if you're using express-flash
-        req.flash('success_msg', 'session terminated');
+        req.logout(async function (err) {
+            if (err) {
+              return next(err);
+            }
+    
+            const objectResult = await IHelper.RequestAxios("http://165.22.102.70:3070/account/logoutcomplete", {eType:'USER', strID:req.user.strID});
+    
+            delete req.session.uid;
+            // if you're using express-flash
+            req.flash('success_msg', 'session terminated');
+            res.redirect('/');
+        });
+    }
+    else
+    {
         res.redirect('/');
-      });
+    }
 });
 
 router.get('/mypage', async (req, res) => {

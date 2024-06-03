@@ -122,7 +122,7 @@ exports.GetAllKeys = async () => {
     let list = [];
 
     const keys = await redis.keys('*');
-    console.log(keys);
+    //console.log(keys);
 
     if ( keys.length > 0 )
     {
@@ -140,7 +140,7 @@ exports.GetAllKeys = async () => {
         }
     }
 
-    console.log(list);
+    //console.log(list);
     //console.log(values);
     return list;
 }

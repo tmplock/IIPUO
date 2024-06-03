@@ -21,6 +21,7 @@ const ITime = require('../utils/time');
 const ISocket = require('../implements/socket');
 const IAgent = require("../implements/agent3");
 const moment = require("moment");
+const IAgentSec = require("../implements/agent_sec");
 
 router.post('/request_page', isLoggedIn, async(req, res) => {
 

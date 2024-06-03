@@ -101,7 +101,7 @@ router.get('/logout', isLoggedIn, (req, res) => {
           return next(err);
         }
 
-        const objectResult = await IHelper.RequestAxios("http://165.22.102.70:3070/account/logoutcomplete", {eType:'USER', strID:req.session.uid});
+        const objectResult = await IHelper.RequestAxios("http://165.22.102.70:3070/account/logoutcomplete", {eType:'USER', strID:req.user.strID});
 
         delete req.session.uid;
 

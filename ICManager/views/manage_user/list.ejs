@@ -17,30 +17,8 @@
         </div>
 
             <div class="list">
-                <div style="background-color:#ffffff;text-align:right;padding-right:5px;padding-top:0px;padding-bottom:0px;" colspan="19">
-                    <%=__('ProAdmin')%> <%=__('Search')%>
-                    <select id="select_roomno" style="width:80px;">
-                        <option><%=__('Nickname')%></option>
-                    </select>
-                    <input style="margin-left:0px;width:100px;" id="strAgentNickname" type="text"/>
-                    <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearchAgentNickname();"><%=__('Search')%></button>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <input style="margin-left:180px;width:100px;" type="text" id="datepicker1" class="datepicker"/>~
-                    <input style="width:100px;" type="text" id="datepicker2" class="datepicker" />
-
-                    <button class="btn_blue" id="button_search" style="border:1px solid rgb(95, 93, 93);width:70px;;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearch(4, '<%=user.strGroupID%>', '<%=user.iClass%>');"><%=__('Search')%></button>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <%=__('Search')%>
-                    <select id="select_roomno" style="width:80px;">
-                        <option><%=__('Nickname')%></option>
-                    </select>
-                    <input style="margin-left:0px;width:100px;" id="strSearchNickname" type="text"/>
-                    <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearchNickname();"><%=__('Search')%></button>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <button class="menu5" data-menu="1" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;color:white" onclick="OnClickTodayRecord();"><%=__('Today')%></button>
-                    <button class="menu1" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;color:white" onclick="OnClickMonthly1stRecord();"><%=__('Half1')%></button>
-                    <button class="menu1" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;color:white" onclick="OnClickMonthly2ndRecord();"><%=__('Half2')%></button>
-				</div>
+                <div id="search_date">
+                </div>
 
                 <div class="list_tit">
                     <h3><%=__('All')%> <%=__('User')%>
@@ -130,6 +108,7 @@
 <script type="text/javascript" src="js/manage_partner_menu.js"></script>
 <script type="text/javascript" src="js/manage_partner_register.js"></script>
 <script type="text/javascript" src="js/manage_user_menu.js"></script>
+<script type="text/javascript" src="js/manage_search_date.js"></script>
 <script type="text/javascript" src="js/socket.js"></script>
 <script>
     let user = JSON.parse('<%-JSON.stringify(user)%>');
@@ -139,6 +118,19 @@
     let vadminlist = JSON.parse('<%-JSON.stringify(vadminlist)%>');
     let proadminlist = JSON.parse('<%-JSON.stringify(proadminlist)%>');
     let iocount = JSON.parse('<%-JSON.stringify(iocount)%>');
+
+    var i18nTexts = {
+        Search: "<%=__('Search')%>",
+        Today : "<%=__('Today')%>",
+        Half1: "<%=__('Half1')%>",
+        Half2: "<%=__('Half2')%>",
+        Open: "<%=__('Open')%>",
+		Nickname: "<%=__('Nickname')%>",
+        ProAdmin: "<%=__('ProAdmin')%>"
+    };
+
+    let startDate = GetCurrentDate();
+	let endDate = GetCurrentDate();
 
     Alert(iocount, "<%=__('RequestInput')%>", "<%=__('RequestOutput')%>","<%=__('LetterSend')%>");
 
@@ -331,27 +323,43 @@
 
     let OnClickTodayRecord = () => {
 
-        $('#datepicker1').val(GetCurrentDate());
-        $('#datepicker2').val(GetCurrentDate());
+        startDate = GetCurrentDate();
+		endDate = GetCurrentDate();
+		$('#datepicker1').val(startDate);
+		$('#datepicker2').val(endDate);
 
         RequestUserList(user.iClass, user.strGroupID, user.iClass);
     }
 
     let OnClickMonthly1stRecord = () => {
 
-        $('#datepicker1').val(GetMonthly1stStartDate());
-        $('#datepicker2').val(GetMonthly1stEndDate());
+        startDate = GetMonthly1stStartDate();
+		endDate = GetMonthly1stEndDate();
+		$('#datepicker1').val(startDate);
+		$('#datepicker2').val(endDate);
 
         RequestUserList(user.iClass, user.strGroupID, user.iClass);
     }
 
     let OnClickMonthly2ndRecord = () => {
 
-        $('#datepicker1').val(GetMonthly2ndStartDate());
-        $('#datepicker2').val(GetMonthly2ndEndDate());
+        startDate = GetMonthly2ndStartDate();
+		endDate = GetMonthly2ndEndDate();
+		$('#datepicker1').val(startDate);
+		$('#datepicker2').val(endDate);
 
         RequestUserList(user.iClass, user.strGroupID, user.iClass);
     }
+
+    let OnClickDayPeriod = (startDay) => {
+		startDate = GetDateStart(startDate, startDay);
+		endDate = GetDateEnd(endDate, startDay+4);
+
+		$('#datepicker1').val(startDate);
+		$('#datepicker2').val(endDate);
+
+		RequestUserList(user.iClass, user.strGroupID, user.iClass);
+	}
 
     let OnClickSearch = (iTargetClass, strGroupID, iClass) => {
 		
@@ -454,6 +462,7 @@
     }
 
     $(document).ready(() => {
+        SetSeachButtons("#search_date",3,i18nTexts,user,4);
         DatePicker();
 
         $('#datepicker1').val(GetCurrentDate());

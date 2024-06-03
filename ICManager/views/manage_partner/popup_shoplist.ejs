@@ -6,19 +6,7 @@
 
 <div class="list">
 
-	<div style="background-color:#ffffff;text-align:right;padding-right:5px;padding-top:10px;padding-bottom:10px;" colspan="19">
-		<input style="margin-left:180px;width:100px;" type="text" id="datepicker1" class="datepicker"/>~
-		<input style="width:100px;" type="text" id="datepicker2" class="datepicker" />
-		
-		<button class="menu1" id="button_search" style="border:1px solid rgb(95, 93, 93);width:70px;;height:25px;text-align:center;" onclick="OnClickSearch(7, '<%=agent.strGroupID%>', '<%=agent.iClass%>');"><%=__('Search')%></button>
-		&nbsp;
-		<button class="menu5" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;" onclick="OnClickTodayRecord();"><%=__('Today')%></button>
-		&nbsp;
-		<button class="menu1" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;" onclick="OnClickMonthly1stRecord();"><%=__('Half1')%></button>
-		&nbsp;
-		<button class="menu1" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;" onclick="OnClickMonthly2ndRecord();"><%=__('Half2')%></button>
-		&nbsp;
-		<button class="btn_blue" id="button_toggle_record" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(136, 136, 248);" onclick="OnClickRecord();"><%=__('Open')%></button>
+	<div id="search_date">
 	</div>
 	<div class="search_wrap" id="div_realtimebet_overview_record">
 		<div id="table_record_list" class="day_tot_list_area" style="margin-top:20px;">
@@ -113,10 +101,23 @@
 <script type="text/javascript" src="js/manage_partner_ref.js"></script>
 <script type="text/javascript" src="js/manage_partner_popup_menu.js"></script>
 <script type="text/javascript" src="js/manage_partner_popup_ref.js"></script>
+<script type="text/javascript" src="js/manage_search_date.js"></script>
 <script type="text/javascript">
 	let agent = JSON.parse('<%-JSON.stringify(agent)%>');
 	let objectOverview = JSON.parse('<%-JSON.stringify(overview)%>');
 	let agentlist = JSON.parse('<%-JSON.stringify(agentlist)%>');
+
+	var i18nTexts = {
+        Search: "<%=__('Search')%>",
+        Today : "<%=__('Today')%>",
+        Half1: "<%=__('Half1')%>",
+        Half2: "<%=__('Half2')%>",
+        Open: "<%=__('Open')%>",
+		Nickname: "<%=__('Nickname')%>",
+    };
+
+    let startDate = GetCurrentDate();
+	let endDate = GetCurrentDate();
 
 	$(document).on('click', '.menu1', (e) => {
 		$('.menu5').attr('class', 'menu1');
@@ -127,6 +128,8 @@
 	let bClickDateSelection	= false;
 
 	$(document).ready(() => {
+		SetSeachButtons("#search_date",2,i18nTexts,agent,7);
+
 		DatePicker();
 		$('#datepicker1').val(GetCurrentDate());
 		$('#datepicker2').val(GetCurrentDate());
@@ -138,8 +141,11 @@
 
 	let OnClickTodayRecord = () => {
 
-		$('#datepicker1').val(GetCurrentDate());
-		$('#datepicker2').val(GetCurrentDate());
+		startDate = GetCurrentDate();
+		endDate = GetCurrentDate();
+
+		$('#datepicker1').val(startDate);
+		$('#datepicker2').val(endDate);
 
 		bClickDateSelection	= true;
 		bToggleRecord = true;
@@ -160,8 +166,10 @@
 
 			if ( false == bClickDateSelection )
 			{
-				$('#datepicker1').val(GetMonthlyStartDate());
-				$('#datepicker2').val(GetMonthlyEndDate());
+				startDate = GetMonthlyStartDate();
+                endDate = GetMonthlyEndDate();
+                $('#datepicker1').val(startDate);
+                $('#datepicker2').val(endDate);
 			}
 
 			RequestBettingRecord(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
@@ -174,8 +182,10 @@
 
 	let OnClickMonthly1stRecord = () => {
 
-		$('#datepicker1').val(GetMonthly1stStartDate());
-		$('#datepicker2').val(GetMonthly1stEndDate());
+        startDate = GetMonthly1stStartDate();
+		endDate = GetMonthly1stEndDate();
+		$('#datepicker1').val(startDate);
+		$('#datepicker2').val(endDate);
 
 		bClickDateSelection	= true;
 		bToggleRecord = true;
@@ -188,12 +198,26 @@
 
 	let OnClickMonthly2ndRecord = () => {
 
-		$('#datepicker1').val(GetMonthly2ndStartDate());
-		$('#datepicker2').val(GetMonthly2ndEndDate());
+        startDate = GetMonthly2ndStartDate();
+		endDate = GetMonthly2ndEndDate();
+		$('#datepicker1').val(startDate);
+		$('#datepicker2').val(endDate);
 
 		bClickDateSelection	= true;
 		bToggleRecord = true;
 		$("#button_toggle_record").text("닫기");
+
+		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
+		RequestAgentListOnPopup(EAgent.eShop, agent.strGroupID, agent.iClass, agent.iPermission, agent.strID);
+		RequestBettingRecord(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
+	}
+
+	let OnClickDayPeriod = (startDay) => {
+		startDate = GetDateStart(startDate, startDay);
+		endDate = GetDateEnd(endDate, startDay+4);
+
+		$('#datepicker1').val(startDate);
+		$('#datepicker2').val(endDate);
 
 		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
 		RequestAgentListOnPopup(EAgent.eShop, agent.strGroupID, agent.iClass, agent.iPermission, agent.strID);

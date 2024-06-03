@@ -28,22 +28,7 @@
             <div class="search_wrap" id="div_realtimebet_overview">
             </div>
 
-            <div style="background-color:#ffffff;text-align:right;padding-right:5px;padding-top:0px;padding-bottom:0px;" colspan="19">
-
-                <input style="margin-left:180px;width:100px;" type="text" id="datepicker1" class="datepicker"/>~
-                <input style="width:100px;" type="text" id="datepicker2" class="datepicker" />
-
-                <button class="menu1" id="button_search" style="border:1px solid rgb(95, 93, 93);width:70px;;height:25px;text-align:center;color:white" onclick="OnClickSearch(4, '<%=user.strGroupID%>', '<%=user.iClass%>');"><%=__('Search')%></button>
-
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-
-                <button class="menu1" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;color:white" onclick="OnClickTodayRecord();"><%=__('Today')%></button>
-                &nbsp;
-                <button class="menu1" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;" onclick="OnClickMonthly1stRecord();"><%=__('Half1')%></button>
-                &nbsp;
-                <button class="menu1" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;" onclick="OnClickMonthly2ndRecord();"><%=__('Half2')%></button>
-                &nbsp;
-                <button class="menu3" id="button_toggle_record" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(136, 136, 248);color:white" onclick="OnClickMonthlyRecord();"><%=__('Open')%></button>
+            <div id="search_date">
             </div>
 
             <div class="search_wrap" id="div_realtimebet_overview_record">
@@ -59,12 +44,25 @@
 <script type="text/javascript" src="js/manage_calculation_menu.js"></script>
 <script type="text/javascript" src="js/manage_setting_ref.js"></script>
 <script type="text/javascript" src="js/manage_user_menu.js"></script>
+<script type="text/javascript" src="js/manage_search_date.js"></script>
 <script type="text/javascript" src="js/socket.js"></script>
 <script>
 
     let user = JSON.parse('<%-JSON.stringify(user)%>');
     let iocount = JSON.parse('<%-JSON.stringify(iocount)%>');
     let objectOverview = JSON.parse('<%-JSON.stringify(data.overview)%>');
+
+    var i18nTexts = {
+        Search: "<%=__('Search')%>",
+        Today : "<%=__('Today')%>",
+        Half1: "<%=__('Half1')%>",
+        Half2: "<%=__('Half2')%>",
+        Open: "<%=__('Open')%>",
+		Nickname: "<%=__('Nickname')%>",
+    };
+
+    let startDate = GetCurrentDate();
+	let endDate = GetCurrentDate();
 
     let bToggleRecord = false;
     let bClickDateSelection	= false;
@@ -76,10 +74,12 @@
     });
 
     $(document).ready(() => {
+        SetSeachButtons("#search_date",2,i18nTexts,user,4);
+
         DatePicker();
 
-        $('#datepicker1').val(GetCurrentDate());
-        $('#datepicker2').val(GetCurrentDate());
+        $('#datepicker1').val(startDate);
+        $('#datepicker2').val(endDate);
         $("#table_record_list").hide();
 
         SetCalculationHeader(0, user.iClass);
@@ -91,8 +91,11 @@
 
         bClickDateSelection	= true;
 
-        $('#datepicker1').val(GetCurrentDate());
-        $('#datepicker2').val(GetCurrentDate());
+        startDate = GetCurrentDate();
+		endDate = GetCurrentDate();
+
+		$('#datepicker1').val(startDate);
+		$('#datepicker2').val(endDate);
 
         bToggleRecord = true;
         $("#button_toggle_record").text("<%=__('Close')%>");
@@ -100,7 +103,7 @@
         RequestOverview(cTClass, user.strGroupID, user.iClass, user.iPermission, user.strNickname, user.strID);
     }
 
-    function OnClickMonthlyRecord()
+    function OnClickRecord()
     {
         bToggleRecord = !bToggleRecord;
 
@@ -110,8 +113,10 @@
 
             if ( false == bClickDateSelection )
             {
-                $('#datepicker1').val(GetMonthlyStartDate());
-                $('#datepicker2').val(GetMonthlyEndDate());
+                startDate = GetMonthlyStartDate();
+                endDate = GetMonthlyEndDate();
+                $('#datepicker1').val(startDate);
+                $('#datepicker2').val(endDate);
             }
             RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
             RequestOverview(cTClass, user.strGroupID, user.iClass, user.iPermission, user.strNickname, user.strID);
@@ -126,8 +131,10 @@
 
         bClickDateSelection	= true;
 
-        $('#datepicker1').val(GetMonthly1stStartDate());
-        $('#datepicker2').val(GetMonthly1stEndDate());
+        startDate = GetMonthly1stStartDate();
+		endDate = GetMonthly1stEndDate();
+		$('#datepicker1').val(startDate);
+		$('#datepicker2').val(endDate);
 
         bToggleRecord = true;
         $("#button_toggle_record").text("<%=__('Close')%>");
@@ -138,14 +145,28 @@
 
     let OnClickMonthly2ndRecord = () => {
         bClickDateSelection	= true;
-        $('#datepicker1').val(GetMonthly2ndStartDate(true));
-        $('#datepicker2').val(GetMonthly2ndEndDate(true));
+
+        startDate = GetMonthly2ndStartDate();
+		endDate = GetMonthly2ndEndDate();
+		$('#datepicker1').val(startDate);
+		$('#datepicker2').val(endDate);
 
         bToggleRecord = true;
         $("#button_toggle_record").text("<%=__('Close')%>");
         RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
         RequestOverview(user.iClass, user.strGroupID, user.iClass, user.iPermission, user.strNickname, user.strID);
     }
+
+    let OnClickDayPeriod = (startDay) => {
+		startDate = GetDateStart(startDate, startDay);
+		endDate = GetDateEnd(endDate, startDay+4);
+
+		$('#datepicker1').val(startDate);
+		$('#datepicker2').val(endDate);
+
+        RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
+        RequestOverview(user.iClass, user.strGroupID, user.iClass, user.iPermission, user.strNickname, user.strID);
+	}
 
     let OnClickSearch = (iTargetClass, strGroupID, iClass) => {
 

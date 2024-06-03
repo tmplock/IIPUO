@@ -122,6 +122,11 @@
 		$('#current').val(user.iCash);
 
 		$(document).on('ready', ()=> {
+			if (user.msg != '') {
+				alert(user.msg);
+				window.close();
+				return;
+			}
 
 			$('#iAmount').val('');
 			checkBlockCharSpecial(`#strBankName`);

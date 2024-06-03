@@ -176,6 +176,11 @@ router.post('/readletter', isLoggedIn, async (req, res) => {
 
 router.post('/request_replyletter', isLoggedIn, async (req, res) => {
 
+    if (req.user.iClass != 2 || req.user.iPermission == 100) {
+        res.send({result : 'FAIL', msg : '권한없음'});
+        return;
+    }
+
     let letter = await db.Letters.findOne({where : {id: req.body.id}});
     if (letter == null) {
         res.send({'result' : 'FAIL', 'msg' : '해당 쪽지 없음'});

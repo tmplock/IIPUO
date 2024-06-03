@@ -18,23 +18,36 @@ const {Op}= require('sequelize');
 const {isLoggedIn, isNotLoggedIn} = require('./middleware');
 const { IAgentObject } = require('../objects/betting');
 const axios = require("axios");
+const IAgentSec = require("../implements/agent_sec");
 
 router.post('/requestcharge', isLoggedIn, async (req, res) => {
+
+    let input = req.body.input ?? '';
+    if (input == '') {
+        res.render('manage_inout/popup_requestcharge', {iLayout:1, iHeaderFocus:1, user: {msg: '권한없음'}, bank: {strBankName: '', strBankHolder:'', strBankNumber:''}});
+        return;
+    }
 
     const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass),
         iRootClass:req.user.iClass, iPermission:req.user.iPermission};
 
     const dbuser = await db.Users.findOne({where:{strNickname:user.strNickname}});
-    if( dbuser != null )
-    {
+    if( dbuser != null ) {
+        if (dbuser.strPassword != input) {
+            res.render('manage_inout/popup_requestcharge', {iLayout:1, iHeaderFocus:1, user: {msg: '조회오류'}, bank: {strBankName: '', strBankHolder:'', strBankNumber:''}});
+            return;
+        }
         user.iCash = dbuser.iCash;
         user.strBankOwner = dbuser.strBankOwner;
+    } else {
+        res.render('manage_inout/popup_requestcharge', {iLayout:1, iHeaderFocus:1, user: {msg: '조회오류'}, bank: {strBankName: '', strBankHolder:'', strBankNumber:''}});
+        return;
     }
 
     let iClass = parseInt(req.body.iClass);
     let strAdmin = '';
     if (iClass == 1 || iClass == 2 || iClass == 3) {
-        res.render('manage_inout/popup_requestcharge', {iLayout:1, iHeaderFocus:1, user:user, bank: {strBankName: '', strBankHolder:'', strBankNumber:''}});
+        res.render('manage_inout/popup_requestcharge', {iLayout:1, iHeaderFocus:1, user: {msg: '권한없음'}, bank: {strBankName: '', strBankHolder:'', strBankNumber:''}});
         return;
         // 총총에 등록된 계좌 조회
         // strAdmin = await IAgent.GetParentNickname(req.body.strNickname);
@@ -64,17 +77,28 @@ router.post('/requestcharge', isLoggedIn, async (req, res) => {
 
 router.post('/requestexchange', isLoggedIn, async (req, res) => {
 
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), strBankname:null, strBankAccount:null, strBankOwner:null,
+    let input = req.body.input ?? '';
+    if (input == '') {
+        res.render('manage_inout/popup_requestexchange', {iLayout:1, iHeaderFocus:1, user: {msg: '권한없음'}, bank: {strBankName: '', strBankHolder:'', strBankNumber:''}});
+        return;
+    }
+
+    let user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), strBankname:null, strBankAccount:null, strBankOwner:null,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission};
 
     const dbuser = await db.Users.findOne({where:{strNickname:user.strNickname}});
-    if( dbuser != null ){
+    if( dbuser != null ) {
+        res.render('manage_inout/popup_requestexchange', {iLayout:1, iHeaderFocus:1, user: {msg: '조회오류'}, iForced: req.body.iForced});
+        return;
 
         user.iCash = dbuser.iCash;
         user.pw_auth = dbuser.pw_auth;
         user.strBankname = dbuser.strBankname;
         user.strBankAccount = dbuser.strBankAccount;
         user.strBankOwner = dbuser.strBankOwner;
+    } else {
+        res.render('manage_inout/popup_requestexchange', {iLayout:1, iHeaderFocus:1, user: {msg: '조회오류'}, iForced: req.body.iForced});
+        return;
     }
 
     res.render('manage_inout/popup_requestexchange', {iLayout:1, iHeaderFocus:1, user:user, iForced:req.body.iForced});

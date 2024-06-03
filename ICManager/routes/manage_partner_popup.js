@@ -1297,6 +1297,10 @@ router.post('/request_agentinfo_modify', isLoggedIn,async (req, res) => {
     console.log(req.body);
 
     let user = await db.Users.findOne({where:{strNickname:req.body.strOriginNickname}});
+    if (user.iClass == 1) {
+        res.send({result:'ERROR', code:'ERRORMSG', msg: '접근권한 없음'});
+        return;
+    }
 
     let strErrorCode = '';
 

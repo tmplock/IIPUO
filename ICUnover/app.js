@@ -533,3 +533,11 @@ app.post('/request_changepassword', async (req, res) => {
     res.send({result:'OK'});
 });
 
+app.post('/request_updatestate', async (req, res) => {
+
+    console.log(`/request_updatestate`);
+    console.log(req.body);
+
+    res.send({result:'OK'});
+
+});

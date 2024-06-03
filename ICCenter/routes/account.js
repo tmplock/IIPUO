@@ -42,19 +42,16 @@ let AddOnlineUser = (strID, eType) => {
 
     const eTargetType = eType == 'USER' ? 'CMS' : 'USER';
 
-    let targetuser = FindUser(listOnlineUser, {strID:strID});
-    if ( null != targetuser )
+    let user = FindUser(listOnlineUser, {strID:strID});
+    if ( null != user )
     {
-        listLogout.push(targetuser);
-        //RemoveUser(listOnlineUser, targetuser);
-        targetuser.eType = eType;
+        listLogout.push({eType:eTargetType, strID:strID});
+        user.eType = eType;
     }
-
-    // const sameuser = FindUser(listOnlineUser, {eType:eType, strID:strID});
-    // if ( null == sameuser )
-    // {
-    //     listOnlineUser.push({eType:eType, strID:strID});
-    // }
+    else
+    {
+        listOnlineUser.push({eType:eType, strID:strID});
+    }
 }
 
 let PrintUsers = (list, strDesc) => {

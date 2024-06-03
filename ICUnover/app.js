@@ -548,13 +548,20 @@ app.post('/request_checklogout', async (req, res) => {
     console.log(`/request_checklogout`);
     console.log(req.body);
 
-    const objectResult = await IHelper.RequestAxios("http://165.22.102.70:3070/account/checklogout", {eType:'USER', strID:req.user.strID});
-
-    console.log(objectResult);
-
-    if ( objectResult.result == 'OK' )
+    if ( req.user != null )
     {
-        res.send({result:'OK', iLogout:objectResult.data.iLogout});
+        const objectResult = await IHelper.RequestAxios("http://165.22.102.70:3070/account/checklogout", {eType:'USER', strID:req.user.strID});
+
+        console.log(objectResult);
+    
+        if ( objectResult.result == 'OK' )
+        {
+            res.send({result:'OK', iLogout:objectResult.data.iLogout});
+        }
+        else
+        {
+            res.send({result:'OK', iLogout:0});
+        }
     }
     else
     {

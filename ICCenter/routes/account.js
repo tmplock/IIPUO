@@ -25,9 +25,12 @@ let RemoveUser = (list, objectData) => {
 
 let FindUser = (list, objectData) => {
 
+    console.log(`FindUser`);
+    console.log(objectData);
+
     for ( let i in list )
     {
-        if ( list[i].strID == objectData.strID && list[i].eType == objectData.eType )
+        if ( list[i].strID == objectData.strID )
         {
             return list[i];
         }
@@ -37,20 +40,21 @@ let FindUser = (list, objectData) => {
 
 let AddOnlineUser = (strID, eType) => {
 
-    const eTargetType = eType == 'USER' ? 'CMS' : 'WEB';
+    const eTargetType = eType == 'USER' ? 'CMS' : 'USER';
 
-    const targetuser = FindUser(listOnlineUser, {eType:eTargetType, strID:strID});
+    let targetuser = FindUser(listOnlineUser, {strID:strID});
     if ( null != targetuser )
     {
         listLogout.push(targetuser);
-        RemoveUser(listOnlineUser, targetuser);
+        //RemoveUser(listOnlineUser, targetuser);
+        targetuser.eType = eType;
     }
 
-    const sameuser = FindUser(listOnlineUser, {eType:eType, strID:strID});
-    if ( null == sameuser )
-    {
-        listOnlineUser.push({eType:eType, strID:strID});
-    }
+    // const sameuser = FindUser(listOnlineUser, {eType:eType, strID:strID});
+    // if ( null == sameuser )
+    // {
+    //     listOnlineUser.push({eType:eType, strID:strID});
+    // }
 }
 
 let PrintUsers = (list, strDesc) => {
@@ -76,9 +80,11 @@ router.post('/checklogout', (req, res) => {
     console.log(`/account/checklogout`);
     console.log(req.body);
 
-    PrintUsers(listLogout, 'LogoutUser Enter')
+    PrintUsers(listLogout, 'LogoutUser Enter');
 
-    const user = FindUser(listLogout, req.body);
+    let objectData = {strID:req.body.strID};
+
+    const user = FindUser(listLogout, objectData);
     if ( null != user )
     {
         RemoveUser(listLogout, user);

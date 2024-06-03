@@ -1,15 +1,24 @@
 const Redis = require('ioredis');
 
-// const redis = new Redis({
-//     host:process.env.REDIS_HOST,
-//     port:process.env.REDIS_PORT,
-//     password:process.env.REDIS_PASSWORD,
-//     username:process.env.REDIS_USERNAME,
-//     tls:{rejectUnauthorized: false}
-// });
+const redis = new Redis({
+    host:process.env.REDIS_HOST,
+    port:process.env.REDIS_PORT,
+    password:process.env.REDIS_PASSWORD,
+    username:process.env.REDIS_USERNAME,
+    tls:{rejectUnauthorized: false}
+});
 
 
-// //  Staging
+// // //  Staging
+// // const redis = new Redis({
+// //     host:'db-redis-sgp1-27745-do-user-11246819-0.c.db.ondigitalocean.com',  //Public
+// //     port:25061,
+// //     password:'AVNS_28fOYW-_4faUljQ7PjH',
+// //     username:'default',
+// //     tls:{rejectUnauthorized: false}
+// // });
+
+// //  Production
 // const redis = new Redis({
 //     host:'db-redis-sgp1-27745-do-user-11246819-0.c.db.ondigitalocean.com',  //Public
 //     port:25061,
@@ -17,15 +26,6 @@ const Redis = require('ioredis');
 //     username:'default',
 //     tls:{rejectUnauthorized: false}
 // });
-
-//  Production
-const redis = new Redis({
-    host:'db-redis-sgp1-27745-do-user-11246819-0.c.db.ondigitalocean.com',  //Public
-    port:25061,
-    password:'AVNS_28fOYW-_4faUljQ7PjH',
-    username:'default',
-    tls:{rejectUnauthorized: false}
-});
 
 
 exports.GetCache = async (key) => {

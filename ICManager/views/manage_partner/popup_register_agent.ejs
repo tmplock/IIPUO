@@ -154,7 +154,42 @@
 					<td style="background-color:beige">
 					</td>
 				</tr>
-
+				<tr>
+					<th scope="row">죽장일자</th>
+					<td>
+						<input type='radio'
+							   name='radio_settle_days'
+							   value='15'
+							   style='height: 32px; width: 20px; font-size: 15px; margin-right: 10px; padding-right: 10px;'
+							   onclick='OnClickSettleDays(15)'/>15일
+						&ensp;
+						<input type='radio'
+							   name='radio_settle_days'
+							   value='10'
+							   style='height: 32px; width: 20px; font-size: 15px; margin-right: 10px; padding-right: 10px;'
+							   onclick='OnClickSettleDays(10)'/>10일
+						&ensp;
+						<input type='radio'
+							   name='radio_settle_days'
+							   value='5'
+							   style='height: 32px; width: 20px; font-size: 15px; margin-right: 10px; padding-right: 10px;'
+							   onclick='OnClickSettleDays(5)'/>5일
+					</td>
+					<th scope="row">리셋여부</th>
+					<td>
+						<input type='radio'
+							   name='radio_settle_type'
+							   value='1'
+							   style='height: 32px; width: 20px; font-size: 15px; margin-right: 10px; padding-right: 10px;'
+							   onclick='OnClickSettleType(0)'/>누적
+						&ensp;
+						<input type='radio'
+							   name='radio_settle_type'
+							   value='0'
+							   style='height: 32px; width: 20px; font-size: 15px; margin-right: 10px; padding-right: 10px;'
+							   onclick='OnClickSettleType(1)'/>리셋
+					</td>
+				</tr>
 			</table>
 		<%}%>
 
@@ -350,6 +385,8 @@
 	checkBlockNum(`#fRollingSlot`);
 
 	$(document).ready(() => {
+		SetRadioSettleDays(-1);
+		SetRadioSettleType(-1);
 		SetUsingPC(parent.iAgentClass);
 		SetAutoRegister(false);
 		SetUsingPassNewUser(parent.iAgentClass);
@@ -375,6 +412,8 @@
 		$('#fRollingBaccarat').val('');
 		$('#fRollingUnderOver').val('');
 		$('#fRollingSlot').val('');
+		SetRadioSettleDays(-1);
+		SetRadioSettleType(-1);
 		bCheckAutoRegister = false;
 		bCheckIDOrNicknameAutoRegister = false;
 		SetUsingPC(parent.iAgentClass);

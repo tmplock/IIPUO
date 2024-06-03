@@ -502,6 +502,12 @@ router.post('/request_register_view', isLoggedIn, async(req, res) => {
             }
         });
 
+        // 권한 체크 확인(클래스 여부, 하위여부)
+        if (req.user.iClass >= user.iClass || user.strGroupID.indexOf(req.user.strGroupID) != 0) {
+            res.send({result:'FAIL', string:`권한이 없습니다`});
+            return;
+        }
+
         // 업데이트
         if (user != null) {
             // await user.update({
@@ -531,6 +537,13 @@ router.post('/request_register_view', isLoggedIn, async(req, res) => {
                 iLoginMax = 10;
             } else if (parseInt(user.iClass) == 3) {
                 iLoginMax = 2;
+            }
+
+            let iSettleDays = null;
+            let iSettleType = null;
+            if (user.iClass <= 5) {
+                iSettleDays = req.body.iSettleDays ?? 15;
+                iSettleType = req.body.iSettleType ?? 0;
             }
 
             await db.Users.create({
@@ -572,9 +585,11 @@ router.post('/request_register_view', isLoggedIn, async(req, res) => {
                 iPBTripleLimit:user.iPBTripleLimit,
                 strSettleMemo:'',
                 iNumLoginFailed: 0,
-                iPermission:100,
+                iPermission:100, // 읽기 전용
                 iRelUserID:iRelUserID,
                 iLoginMax:iLoginMax,
+                iSettleDays:iSettleDays,
+                iSettleType:iSettleType
             });
             res.send({result:'OK', string:'에이전트(보기용) 생성을 완료 하였습니다.'});
         }
@@ -601,6 +616,11 @@ router.post('/request_removeagent_view', isLoggedIn, async (req, res) => {
     }
 
     if (req.user.iClass >= target.iClass) {
+        res.send({result: 'ERROR', msg:'권한이 없습니다'});
+        return;
+    }
+
+    if (target.strGroupID.indexOf(req.user.strGroupID) != 0) {
         res.send({result: 'ERROR', msg:'권한이 없습니다'});
         return;
     }
@@ -799,10 +819,10 @@ let CalculateGroupID = async (strParentGroupID, iParentClass) => {
 
 router.post('/request_register', isLoggedIn, async(req, res) => {
     console.log(req.body);
-    // 권한 체크
+    // 권한 체크 확인(클래스 여부, 하위여부)
     let iClass = parseInt(req.body.iParentClass)+1;
-    if (iClass <= req.user.iClass) {
-        res.send({result:'FAIL', string:`허가되지 않은 사용자입니다`});
+    if (req.user.iClass >= iClass || req.body.strParentGroupID.indexOf(req.user.strGroupID) != 0) {
+        res.send({result:'FAIL', string:`권한이 없습니다`});
         return;
     }
 
@@ -930,6 +950,13 @@ router.post('/request_register', isLoggedIn, async(req, res) => {
             // strAccountOwner = await IAgent.GetCipher(strAccountOwner);
         }
 
+        let iSettleDays = null;
+        let iSettleType = null;
+        if (iClass <= 5) {
+            iSettleDays = req.body.iSettleDays ?? 15;
+            iSettleType = req.body.iSettleType ?? 0;
+        }
+
         for (let i = 0; i < iAutoRegisterNumber; i++) {
             let newID = idList[i];
             let newNickname = nicknameList[i];
@@ -946,7 +973,7 @@ router.post('/request_register', isLoggedIn, async(req, res) => {
                 strBankOwner:strAccountOwner,
                 strBankPassword:'',
                 strOutputPassowrd:'',
-                iClass:parseInt(req.body.iParentClass)+1,
+                iClass:iClass,
                 strGroupID:strGroupID,
                 iParentID:req.body.iParentID,
                 iCash:0,
@@ -967,7 +994,9 @@ router.post('/request_register', isLoggedIn, async(req, res) => {
                 iNumLoginFailed: 0,
                 iPermission:0,
                 iLoginMax:iLoginMax,
-                iPassCheckNewUser:iPassCheckNewUser
+                iPassCheckNewUser:iPassCheckNewUser,
+                iSettleDays:iSettleDays,
+                iSettleType:iSettleType,
             });
         }
 
@@ -1338,6 +1367,9 @@ router.post('/request_agentinfo_modify', isLoggedIn,async (req, res) => {
     console.log(`/request_agentinfo_modify`);
     console.log(req.body);
 
+    // 필수값 체크
+    if (req.body.strPassword)
+
     let user = await db.Users.findOne({where:{strNickname:req.body.strOriginNickname}});
     if (user.iClass == 1) {
         res.send({result:'ERROR', code:'ERRORMSG', msg: '접근권한 없음'});
@@ -1353,6 +1385,12 @@ router.post('/request_agentinfo_modify', isLoggedIn,async (req, res) => {
     // 소속 그룹 아님
     if (user.strGroupID.indexOf(req.user.strGroupID) != 0) {
         res.send({result:'ERROR', code:'ERRORMSG', msg: '접근권한 없음'});
+        return;
+    }
+
+    // 권한 체크 확인(클래스 여부, 하위여부)
+    if (req.user.iClass >= user.iClass || user.strGroupID.indexOf(req.user.strGroupID) != 0) {
+        res.send({result:'ERROR', code:'ERRORMSG', msg: '권한이 없습니다'});
         return;
     }
 
@@ -1375,6 +1413,11 @@ router.post('/request_agentinfo_modify', isLoggedIn,async (req, res) => {
 
     let iPassCheckNewUser = parseInt(req.body.iPassCheckNewUser ?? 1);
     iPassCheckNewUser = Number.isNaN(iPassCheckNewUser) ? 1 : iPassCheckNewUser;
+
+    let iSettleDays = parseInt(req.body.iSettleDays ?? 15);
+    iSettleDays = Number.isNaN(iSettleDays) ? null : iSettleDays;
+    let iSettleType = parseInt(req.body.iSettleType ?? 0);
+    iSettleType = Number.isNaN(iSettleType) ? null : iSettleType;
 
     if (fSlotR < 0 || fBaccaratR < 0 || fUnderOverR < 0) {
         strErrorCode = 'ERRORMSG';
@@ -1569,6 +1612,17 @@ router.post('/request_agentinfo_modify', isLoggedIn,async (req, res) => {
                         res.send({result:'ERROR', code:strErrorCode});
                         return;
                     }
+                    if (iSettleDays == null) {
+                        strErrorCode = 'ERRORMSG';
+                        res.send({result:'ERROR', code:strErrorCode, msg: '죽장일자를 확인해주세요'});
+                        return;
+                    }
+
+                    if (iSettleType == null) {
+                        strErrorCode = 'ERRORMSG';
+                        res.send({result:'ERROR', code:strErrorCode, msg: '죽장일자를 확인해주세요'});
+                        return;
+                    }
                 }
             }
         }
@@ -1585,8 +1639,10 @@ router.post('/request_agentinfo_modify', isLoggedIn,async (req, res) => {
                 fUnderOverR:fUnderOverR,
                 fSettleBaccarat:fSettleBaccarat,
                 fSettleSlot:fSettleSlot,
-                iPermission:req.body.iPermission,
-                iPassCheckNewUser:iPassCheckNewUser
+                iPermission:0,
+                iPassCheckNewUser:iPassCheckNewUser,
+                iSettleDays:iSettleDays,
+                iSettleType:iSettleType
             };
 
             let strPassword = req.body.strPassword ?? '';
@@ -1741,20 +1797,28 @@ router.post('/request_agentinfo_modify', isLoggedIn,async (req, res) => {
 const logMessage = (source, data) => {
     let msg = '';
 
-    if (source.strNickname != data.strNickname) {
-        msg = `닉네임 변경(${source.strNickname}=>${data.strNickname})`;
+    if (data.hasOwnProperty('strNickname')) {
+        if (source.strNickname != data.strNickname) {
+            msg = `닉네임 변경(${source.strNickname}=>${data.strNickname})`;
+        }
     }
-    if (source.strID != data.strID) {
-        if (msg == '')
-            msg = `아이디 변경(${source.strID}=>${data.strID})`;
-        else
-            msg = `${msg} | 아이디 변경(${source.strMobile}=>${data.strMobile})`;
+
+    if (data.hasOwnProperty('strID')) {
+        if (source.strID != data.strID) {
+            if (msg == '')
+                msg = `아이디 변경(${source.strID}=>${data.strID})`;
+            else
+                msg = `${msg} | 아이디 변경(${source.strMobile}=>${data.strMobile})`;
+        }
     }
-    if (source.strPassword != data.strPassword) {
-        if (msg == '')
-            msg = `비밀번호 변경`;
-        else
-            msg = `${msg} | 비밀번호 변경`;
+
+    if (data.hasOwnProperty('strID')) {
+        if (source.strPassword != data.strPassword) {
+            if (msg == '')
+                msg = `비밀번호 변경`;
+            else
+                msg = `${msg} | 비밀번호 변경`;
+        }
     }
 
     if (data.hasOwnProperty('strBankname') || data.hasOwnProperty('strBankOwner') || data.hasOwnProperty('strBankAccount')) {
@@ -1786,35 +1850,133 @@ const logMessage = (source, data) => {
         }
     }
 
-    if (source.fBaccaratR != data.fBaccaratR) {
-        if (msg == '')
-            msg = `바카라롤링 변경(${source.fBaccaratR}=>${data.fBaccaratR})`;
-        else
-            msg = `${msg} | 바카라롤링 변경(${source.fBaccaratR}=>${data.fBaccaratR})`;
+    if (data.hasOwnProperty('fBaccaratR')) {
+        if (source.fBaccaratR != data.fBaccaratR) {
+            if (msg == '')
+                msg = `바카라롤링 변경(${source.fBaccaratR}=>${data.fBaccaratR})`;
+            else
+                msg = `${msg} | 바카라롤링 변경(${source.fBaccaratR}=>${data.fBaccaratR})`;
+        }
     }
-    if (source.fUnderOverR != data.fUnderOverR) {
-        if (msg == '')
-            msg = `언오버롤링 변경(${source.fUnderOverR}=>${data.fUnderOverR})`;
-        else
-            msg = `${msg} | 언오버롤링 변경(${source.fUnderOverR}=>${data.fUnderOverR})`;
+
+    if (data.hasOwnProperty('fUnderOverR')) {
+        if (source.fUnderOverR != data.fUnderOverR) {
+            if (msg == '')
+                msg = `언오버롤링 변경(${source.fUnderOverR}=>${data.fUnderOverR})`;
+            else
+                msg = `${msg} | 언오버롤링 변경(${source.fUnderOverR}=>${data.fUnderOverR})`;
+        }
     }
-    if (source.fSlotR != data.fSlotR) {
-        if (msg == '')
-            msg = `슬롯롤링 변경(${source.fSlotR}=>${data.fSlotR})`;
-        else
-            msg = `${msg} | 슬롯롤링 변경(${source.fSlotR}=>${data.fSlotR})`;
+
+    if (data.hasOwnProperty('fSlotR')) {
+        if (source.fSlotR != data.fSlotR) {
+            if (msg == '')
+                msg = `슬롯롤링 변경(${source.fSlotR}=>${data.fSlotR})`;
+            else
+                msg = `${msg} | 슬롯롤링 변경(${source.fSlotR}=>${data.fSlotR})`;
+        }
     }
-    if (source.fSettleBaccarat != data.fSettleBaccarat) {
-        if (msg == '')
-            msg = `바카라 죽장 변경(${source.fSettleBaccarat}=>${data.fSettleBaccarat})`;
-        else
-            msg = `${msg} | 바카라 죽장 변경(${source.fSettleBaccarat}=>${data.fSettleBaccarat})`;
+
+    if (data.hasOwnProperty('fSettleBaccarat')) {
+        if (source.fSettleBaccarat != data.fSettleBaccarat) {
+            if (msg == '')
+                msg = `바카라 죽장 변경(${source.fSettleBaccarat}=>${data.fSettleBaccarat})`;
+            else
+                msg = `${msg} | 바카라 죽장 변경(${source.fSettleBaccarat}=>${data.fSettleBaccarat})`;
+        }
     }
-    if (source.fSettleSlot != data.fSettleSlot) {
-        if (msg == '')
-            msg = `슬롯 죽장 변경(${source.fSettleSlot}=>${data.fSettleSlot})`;
-        else
-            msg = `${msg} | 슬롯 죽장 변경(${source.fSettleSlot}=>${data.fSettleSlot})`;
+
+    if (data.hasOwnProperty('fSettleSlot')) {
+        if (source.fSettleSlot != data.fSettleSlot) {
+            if (msg == '')
+                msg = `슬롯 죽장 변경(${source.fSettleSlot}=>${data.fSettleSlot})`;
+            else
+                msg = `${msg} | 슬롯 죽장 변경(${source.fSettleSlot}=>${data.fSettleSlot})`;
+        }
+    }
+
+    if (data.hasOwnProperty('iSettleDays')) {
+        if (source.iSettleDays != data.iSettleDays) {
+            if (msg == '')
+                msg = `죽장일자 변경(${source.iSettleDays}=>${data.iSettleDays})`;
+            else
+                msg = `${msg} | 죽장일자 변경(${source.iSettleDays}=>${data.iSettleDays})`;
+        }
+    }
+
+    if (data.hasOwnProperty('iSettleType')) {
+        if (source.iSettleType != data.iSettleType) {
+            let sType = null;
+            let dType = null;
+            if (source.iSettleType == 1) {
+                sType = '리셋';
+            } else if (source.iSettleType == 0) {
+                sType = '누적';
+            }
+            if (data.iSettleType == 1) {
+                dType = '리셋';
+            } else if (data.iSettleType == 0) {
+                dType = '누적';
+            }
+            if (msg == '')
+                msg = `죽장타입 변경(${sType}=>${dType})`;
+            else
+                msg = `${msg} | 죽장타입 변경(${sType}=>${dType})`;
+        }
+    }
+
+    if (data.hasOwnProperty('iPassCheckNewUser')) {
+        if (source.iPassCheckNewUser != data.iPassCheckNewUser) {
+            let sType = '';
+            let dType = '';
+            if (source.iPassCheckNewUser == 1) {
+                sType = '체크안함';
+            } else if (source.iPassCheckNewUser == 0) {
+                sType = '신규체크';
+            }
+            if (data.iPassCheckNewUser == 1) {
+                dType = '체크안함';
+            } else if (data.iPassCheckNewUser == 0) {
+                dType = '신규체크';
+            }
+            if (msg == '')
+                msg = `신규유저체크 변경(${sType}=>${dType})`;
+            else
+                msg = `${msg} | 신규유저체크 변경(${sType}=>${dType})`;
+        }
+    }
+
+    if (data.hasOwnProperty('strOptionCode')) {
+        if (source.strOptionCode != data.strOptionCode) {
+            let sType = '';
+            let dType = '';
+            if (source.strOptionCode == '0000100000000') {
+                sType = 'PC방';
+            } else if (source.strOptionCode == '11000000') {
+                sType = '입금/출금 사용';
+            } else if (source.strOptionCode == '10000000') {
+                sType = '입금만 사용';
+            } else if (source.strOptionCode == '01000000') {
+                sType = '출금만 사용';
+            } else if (source.strOptionCode == '00000000') {
+                sType = '입출금 미사용';
+            }
+            if (data.strOptionCode == '0000100000000') {
+                dType = 'PC방';
+            } else if (data.strOptionCode == '11000000') {
+                dType = '입금/출금 사용';
+            } else if (data.strOptionCode == '10000000') {
+                dType = '입금만 사용';
+            } else if (data.strOptionCode == '01000000') {
+                dType = '출금만 사용';
+            } else if (data.strOptionCode == '00000000') {
+                dType = '입출금 미사용';
+            }
+            if (msg == '')
+                msg = `입출금설정 변경(${sType}=>${dType})`;
+            else
+                msg = `${msg} | 입출금설정 변경(${sType}=>${dType})`;
+        }
     }
 
     return msg;

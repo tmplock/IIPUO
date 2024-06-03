@@ -21,22 +21,11 @@ const axios = require("axios");
 const IAgentSec = require("../implements/agent_sec");
 
 router.post('/requestcharge', isLoggedIn, async (req, res) => {
-
-    let input = req.body.input ?? '';
-    if (input == '') {
-        res.render('manage_inout/popup_requestcharge', {iLayout:1, iHeaderFocus:1, user: {msg: '권한없음'}, bank: {strBankName: '', strBankHolder:'', strBankNumber:''}});
-        return;
-    }
-
     const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass),
         iRootClass:req.user.iClass, iPermission:req.user.iPermission};
 
     const dbuser = await db.Users.findOne({where:{strNickname:user.strNickname}});
     if( dbuser != null ) {
-        if (dbuser.strPassword != input) {
-            res.render('manage_inout/popup_requestcharge', {iLayout:1, iHeaderFocus:1, user: {msg: '조회오류'}, bank: {strBankName: '', strBankHolder:'', strBankNumber:''}});
-            return;
-        }
         user.iCash = dbuser.iCash;
         user.strBankOwner = dbuser.strBankOwner;
     } else {
@@ -72,25 +61,16 @@ router.post('/requestcharge', isLoggedIn, async (req, res) => {
         obj = bank[0];
     }
 
+    user.msg = '';
     res.render('manage_inout/popup_requestcharge', {iLayout:1, iHeaderFocus:1, user:user, bank:obj});
 });
 
 router.post('/requestexchange', isLoggedIn, async (req, res) => {
-
-    let input = req.body.input ?? '';
-    if (input == '') {
-        res.render('manage_inout/popup_requestexchange', {iLayout:1, iHeaderFocus:1, user: {msg: '권한없음'}, bank: {strBankName: '', strBankHolder:'', strBankNumber:''}});
-        return;
-    }
-
     let user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), strBankname:null, strBankAccount:null, strBankOwner:null,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission};
 
     const dbuser = await db.Users.findOne({where:{strNickname:user.strNickname}});
     if( dbuser != null ) {
-        res.render('manage_inout/popup_requestexchange', {iLayout:1, iHeaderFocus:1, user: {msg: '조회오류'}, iForced: req.body.iForced});
-        return;
-
         user.iCash = dbuser.iCash;
         user.pw_auth = dbuser.pw_auth;
         user.strBankname = dbuser.strBankname;
@@ -101,6 +81,7 @@ router.post('/requestexchange', isLoggedIn, async (req, res) => {
         return;
     }
 
+    user.msg = '';
     res.render('manage_inout/popup_requestexchange', {iLayout:1, iHeaderFocus:1, user:user, iForced:req.body.iForced});
 });
 

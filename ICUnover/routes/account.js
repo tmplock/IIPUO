@@ -57,9 +57,16 @@ router.get('/loginsuccess', async (req, res) => {
 
     console.log(`################################################## /account/loginsuccess`);
 
-    await IHelper.RequestAxios("http://165.22.102.70/account/login", {eType:'USER'});
+    const objectResult = await IHelper.RequestAxios("http://165.22.102.70/account/login", {eType:'USER'});
 
-    res.redirect('/');
+    if ( objectResult.result == 'OK' )
+    {
+        res.redirect('/');        
+    }
+    else
+    {
+        res.redirect('/account/login');
+    }
 });
 
 router.get('/loginfail', (req, res) => {

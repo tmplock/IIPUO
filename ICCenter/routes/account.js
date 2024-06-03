@@ -77,7 +77,7 @@ router.post('/checklogout', (req, res) => {
     console.log(`/account/checklogout`);
     console.log(req.body);
 
-    PrintUsers(listLogout, 'LogoutUser Enter');
+    PrintUsers(listLogout, 'LogoutUser');
 
     let objectData = {strID:req.body.strID};
 
@@ -103,7 +103,7 @@ router.post('/logoutcomplete', (req, res) => {
     if ( null != user )
     {
         RemoveUser(listLogout, user);
-        PrintUsers(listLogout, 'LogoutUser Complete')
+        PrintUsers(listLogout, 'LogoutUser')
     }
     else
     {

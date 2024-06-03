@@ -19,6 +19,8 @@ const IInout = require("../implements/inout");
 const IAgent = require('../implements/agent3');
 const Processor = require("../icbuilder/processor");
 const ODDS = require("../icbuilder/helpers/odds");
+const IAgentSec = require("../implements/agent_sec");
+const moment = require("moment/moment");
 
 const cPBGOdds = [
     [
@@ -410,6 +412,20 @@ router.post('/request_betting_cancel', isLoggedIn, async (req, res) => {
     console.log('/request_betting_cancel');
     console.log(req.body);
 
+    // 권한체크
+    let key = req.body.key ?? '';
+    if (req.user.iClass != 2 || req.user.iPermission == 100 || key == '') {
+        res.send({result: 'FAIL', msg:'잘못된 요청입니다'});
+        return;
+    }
+
+    let password = await IAgentSec.GetDeCipherAndPeriod(key);
+    let result = await IAgentSec.AccessBettingCancelPassword(req.user.strNickname, password);
+    if (result.result != 'OK') {
+        res.send({result: 'FAIL', msg:'잘못된 요청입니다'});
+        return;
+    }
+
     const betId = req.body.betId ?? 0;
     const cash = req.body.cash ?? 0;
     const betting = req.body.betting ?? 0;
@@ -566,29 +582,19 @@ router.post('/popup_cancel', isLoggedIn, async (req, res) => {
     const strID = req.user.strID ?? '';
     const betId = req.body.betId ?? 0;
     const password = req.body.password ?? '';
-    let iClass = parseInt(req.user.iClass ?? 100);
-    let iPermission = parseInt(req.user.iPermission ?? 0);
 
-    if (iClass > 3 || iPermission == 100) {
-        res.send({result: 'FAIL', msg:'권한이 없습니다'});
+    let result = await IAgentSec.AccessBettingCancelPassword(req.user.strNickname, password);
+    if (result.result != 'OK') {
+        res.render('manage_bettingrecord/popup_cancel', {iLayout:1, iHeaderFocus:0, agent:{}, user:{}, bet:{}, info:result});
         return;
-    }
-
-    if (betId == 0 || strID == '' || password == '') {
-        res.send({result: 'FAIL', msg:'잘못된 요청입니다'});
-        return;
-    }
-
-    let dbuser = await db.Users.findOne({where: {strNickname: req.user.strNickname}});
-    let subUser = await db.SubUsers.findOne({where: dbuser.id, strOddPassword: password});
-    if (subUser == null) {
-        res.send({result: 'FAIL', msg:'취소 비밀번호를 확인해주세요'});
+    } else if (betId == 0 || strID == '') {
+        res.render('manage_bettingrecord/popup_cancel', {iLayout:1, iHeaderFocus:0, agent:{}, user:{}, bet:{}, info:{result:'FAIL', msg:'잘못된 요청입니다'}});
         return;
     }
 
     const bet = await db.RecordBets.findOne({where: {id: betId}});
     if (bet.eType == 'CANCEL' || bet.eType == 'CANCEL_BET' || bet.eType == 'CANCEL_WIN') {
-        res.send({result: 'FAIL', msg:'이미 취소된 배팅입니다'});
+        res.render('manage_bettingrecord/popup_cancel', {iLayout:1, iHeaderFocus:0, agent:{}, user:{}, bet:{}, info:{result:'FAIL', msg:'이미 취소된 배팅입니다'}});
         return;
     }
 
@@ -607,7 +613,8 @@ router.post('/popup_cancel', isLoggedIn, async (req, res) => {
     }
 
     const info = await db.Users.findOne({where: {strID: strID}});
-    res.render('manage_bettingrecord/popup_cancel', {iLayout:1, iHeaderFocus:0, agent:info, user:info, bet:betInfo});
+    betInfo.key = await IAgentSec.GetCipherAndPeriod(password, 5);
+    res.render('manage_bettingrecord/popup_cancel', {iLayout:1, iHeaderFocus:0, agent:info, user:info, bet:betInfo, info:{result:'OK', msg:'성공'}});
 });
 
 

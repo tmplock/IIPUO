@@ -18,6 +18,7 @@ const IAgentSettle = require('../implements/agent_settle3');
 const IAgent = require('../implements/agent3');
 const {isLoggedIn, isNotLoggedIn} = require('./middleware');
 const IInout = require("../implements/inout");
+const IAgentSec = require("../implements/agent_sec");
 //////////////////////////////////////////////////////////////////////////////
 
 router.post('/agentinfo', isLoggedIn, async (req, res) => {
@@ -272,10 +273,9 @@ router.post('/settingodds', isLoggedIn, async (req, res) => {
 
     const input = req.body.pass ?? '';
 
-    const info = await db.Users.findOne({where: {strNickname: req.user.strNickname}});
-    const sub = await db.SubUsers.findOne({where: {rId: info.id, strOddPassword: input}});
-    if (sub == null) {
-        res.send({result: 'FAIL', msg:'비밀번호가 틀립니다'});
+    let result = await IAgentSec.AccessOddPassword(req.user.strNickname, input);
+    if (result.result != 'OK') {
+        res.send(result);
         return;
     }
 
@@ -356,10 +356,9 @@ router.post('/popup_listadmin_view', isLoggedIn, async(req, res) => {
 
     // 비밀번호 체크
     let pass = req.body.pass ?? '';
-    let u = await db.Users.findOne({where: {strNickname:req.user.strNickname}});
-    let sub = await db.SubUsers.findOne({where: {rId: u.id, strRegisterPassword:pass}});
-    if (sub == null) {
-        user.msg = '비밀번호가 틀립니다';
+    let result = await IAgentSec.AccessAdminRegisterPassword(req.user.strNickname, pass);
+    if (result.result != 'OK') {
+        user.msg = result.msg;
         res.render('manage_partner/popup_listadmin_view', {iLayout:7, iHeaderFocus:0, agent:user, list:[], strParent: ''});
         return;
     }
@@ -389,10 +388,9 @@ router.post('/popup_listvice_view', isLoggedIn, async(req, res) => {
 
     // 비밀번호 체크
     let pass = req.body.pass ?? '';
-    let u = await db.Users.findOne({where: {strNickname:req.user.strNickname}});
-    let sub = await db.SubUsers.findOne({where: {rId: u.id, strRegisterPassword:pass}});
-    if (sub == null) {
-        user.msg = '비밀번호가 틀립니다';
+    let result = await IAgentSec.AccessViceRegisterPassword(req.user.strNickname, pass);
+    if (result.result != 'OK') {
+        user.msg = result.msg;
         res.render('manage_partner/popup_listvice_view', {iLayout:7, iHeaderFocus:0, agent:user, list:[], strParent: ''});
         return;
     }
@@ -1125,6 +1123,10 @@ router.post('/request_bettinglist_page', isLoggedIn, async (req, res) => {
 
 router.post('/request_settingodds', isLoggedIn, async (req, res) => {
 
+    if (req.user.iClass > 2 || req.user.iPermission == 100) {
+        return;
+    }
+
     console.log(`request_settingodds`);
     console.log(req.body);
 
@@ -1268,54 +1270,9 @@ router.post('/request_initoutputpass', isLoggedIn, async (req, res) => {
 // 파트너정보 내 은행정보 보기 체크
 router.post('/request_bank', isLoggedIn, async (req, res) => {
     let input = req.body.input ?? '';
-    if (input == '') {
-        res.send({result:'FAIL', msg:'암호를 입력해주세요'});
-        return;
-    }
-
-    // 총본 조회(GroupID 앞3자리)
-    let user = await db.Users.findOne({where:{strNickname:req.user.strNickname}});
-    if (user == null) {
-        res.send({result:'FAIL', msg:'조회 불가'});
-        return;
-    }
-
-    if (req.user.iClass == 8 || req.user.iClass == 7) {
-        // 접근 가능
-    } else if (req.user.iClass > 3) {
-        // 접근권한 없음
-        res.send({result:'FAIL', msg:'접근권한 없음'});
-        return;
-    }
-
-    if (req.user.iClass == 1) {
-        // 총총은 별도
-        let sub = await db.SubUsers.findOne({where: {rId: req.user.id, strBankPassword:input}});
-        if (sub == null) {
-            res.send({result:'FAIL', msg:'암호 불일치'});
-            return;
-        }
-    } else {
-        let strGroupID = (user.strGroupID ?? '').substring(0, 3);
-        let partner = await db.Users.findAll({
-            where: {
-                strGroupID: strGroupID,
-                iClass:2,
-                iPermission: {
-                    [Op.notIn]: [100]
-                },
-            }
-        });
-        if (partner.length == 0) {
-            res.send({result:'FAIL', msg:'조회 불가'});
-            return;
-        }
-
-        let sub = await db.SubUsers.findOne({where: {rId: partner[0].id, strBankPassword:input}});
-        if (sub == null) {
-            res.send({result:'FAIL', msg:'암호 불일치'});
-            return;
-        }
+    let result = await IAgentSec.AccessPartnerBankAndPassword(req.user.strNickname, input);
+    if (result.result != 'OK') {
+        return res.send(result);
     }
 
     let dbuser = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
@@ -1323,11 +1280,7 @@ router.post('/request_bank', isLoggedIn, async (req, res) => {
     let bankAccount = dbuser.strBankAccount ?? '';
     let bankOwner = dbuser.strBankOwner ?? '';
     let cell = dbuser.strMobile ?? '';
-    let pass = '';
-    // if (req.user.iClass == 1 || req.user.iClass == 2 || req.user.iClass == 3) {
-    //
-    // }
-    pass = dbuser.strPassword ?? '';
+    let pass = dbuser.strPassword ?? '';
 
     // let bankname = await IAgent.GetDeCipher(user.strBankname ?? '');
     // let bankAccount = await IAgent.GetDeCipher(user.strBankAccount ?? '');

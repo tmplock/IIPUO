@@ -273,10 +273,9 @@ router.post('/settingodds', isLoggedIn, async (req, res) => {
 
     const input = req.body.pass ?? '';
 
-    const info = await db.Users.findOne({where: {strNickname: req.user.strNickname}});
-    const sub = await db.SubUsers.findOne({where: {rId: info.id, strOddPassword: input}});
-    if (sub == null) {
-        res.send({result: 'FAIL', msg:'비밀번호가 틀립니다'});
+    let result = await IAgentSec.AccessOddPassword(req.user.strNickname, input);
+    if (result.result != 'OK') {
+        res.send(result);
         return;
     }
 
@@ -357,10 +356,9 @@ router.post('/popup_listadmin_view', isLoggedIn, async(req, res) => {
 
     // 비밀번호 체크
     let pass = req.body.pass ?? '';
-    let u = await db.Users.findOne({where: {strNickname:req.user.strNickname}});
-    let sub = await db.SubUsers.findOne({where: {rId: u.id, strRegisterPassword:pass}});
-    if (sub == null) {
-        user.msg = '비밀번호가 틀립니다';
+    let result = await IAgentSec.AccessAdminRegisterPassword(req.user.strNickname, pass);
+    if (result.result != 'OK') {
+        user.msg = result.msg;
         res.render('manage_partner/popup_listadmin_view', {iLayout:7, iHeaderFocus:0, agent:user, list:[], strParent: ''});
         return;
     }
@@ -390,10 +388,9 @@ router.post('/popup_listvice_view', isLoggedIn, async(req, res) => {
 
     // 비밀번호 체크
     let pass = req.body.pass ?? '';
-    let u = await db.Users.findOne({where: {strNickname:req.user.strNickname}});
-    let sub = await db.SubUsers.findOne({where: {rId: u.id, strRegisterPassword:pass}});
-    if (sub == null) {
-        user.msg = '비밀번호가 틀립니다';
+    let result = await IAgentSec.AccessViceRegisterPassword(req.user.strNickname, pass);
+    if (result.result != 'OK') {
+        user.msg = result.msg;
         res.render('manage_partner/popup_listvice_view', {iLayout:7, iHeaderFocus:0, agent:user, list:[], strParent: ''});
         return;
     }
@@ -1273,7 +1270,7 @@ router.post('/request_initoutputpass', isLoggedIn, async (req, res) => {
 // 파트너정보 내 은행정보 보기 체크
 router.post('/request_bank', isLoggedIn, async (req, res) => {
     let input = req.body.input ?? '';
-    let reulst = await IAgentSec.AccessPartnerBankAndPassword(req.user.strNickname, input);
+    let result = await IAgentSec.AccessPartnerBankAndPassword(req.user.strNickname, input);
     if (result.result != 'OK') {
         return res.send(result);
     }

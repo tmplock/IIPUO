@@ -23,7 +23,7 @@
 
 <body style="font-family:'Spoqa Han Sans Neo';">
 
-<div class="content" style="position:relative; padding:0 10px 0 10px;">
+<div id="contents" class="content" style="position:relative; padding:0 10px 0 10px; display: none;">
     <div class="list_tit" id="registeragent_title">
         <h3 style="font-size:22px;color:yellow;font-weight:bold;">배팅내역 롤백</h3>
     </div>
@@ -67,9 +67,17 @@
 <script type="text/javascript" src="js/manage_partner_popup_register.js"></script>
 <script type="text/javascript">
     let bet = JSON.parse('<%-JSON.stringify(bet)%>');
+    let info = JSON.parse('<%-JSON.stringify(info)%>');
     let isSending = false;
 
     $(document).ready(() => {
+        if (info.result != 'OK') {
+            alert(info);
+            window.close();
+            return;
+        }
+
+        $('#contents').show();
         let strVender = bet.strVender;
         if (strVender == 'HONORLINK') {
             strVender = bet.strGameID;
@@ -110,7 +118,7 @@
 
         if ( confirm(`배팅금액을 롤백 하시겠습니까?\r\n${msg}`) )
         {
-            const data = {cash: cash, betting: betting, rolling:rolling, betId: bet.id};
+            const data = {cash: cash, betting: betting, rolling:rolling, betId: bet.id, key: bet.key};
 
             $.ajax({
                 type:'post',

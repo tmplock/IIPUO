@@ -200,7 +200,7 @@
             if ( bLogin == "true" )
             {
                 user = JSON.parse('<%-JSON.stringify(user)%>');
-                RequestLogin(user);
+                //RequestLogin(user);
             }
                 
             console.log(user);
@@ -208,6 +208,38 @@
             console.log(listOutputRecent);
             const listOutputRank = JSON.parse('<%-JSON.stringify(listOutputRank)%>');
             console.log(listOutputRank);
+
+            
+            setInterval( () => {
+
+                if ( bLogin == 'true' )
+                {
+                    $.ajax(
+                    {
+                        type:'post',
+                        url: "/request_updatestate",
+                        context: document.body,
+                        data:{strID:user.strID},
+                
+                        success:function(data) {
+
+                            if ( data.result == 'OK' )
+                            {
+                                console.log(data);
+
+                                const cCash = parseInt(data.data.iCash);
+
+                                $('#MainLayoutCoin').text(cCash.toLocaleString());
+                                $('#MainLayoutNumLetters').text(data.data.iNumLetters);
+                            }
+                        },
+                        error:function(request,status,error){
+                            //alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+                        }
+                    });
+                }
+
+            }, 5000);
 
         </script>
 

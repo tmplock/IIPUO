@@ -64,7 +64,7 @@ router.post('/login', (req, res) => {
     console.log(`/account/login`);
     console.log(req.body);
 
-    AddOnlineUser(req.strID, req.eType);
+    AddOnlineUser(req.body.strID, req.body.eType);
     console.log(`# AddOnlineUser`);
     PrintUsers(listOnlineUser, 'AddOnlineUser');
 

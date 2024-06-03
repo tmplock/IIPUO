@@ -49,6 +49,34 @@ let GetCurrentDate = () => {
     return res;
 }
 
+let GetDateStart = (dt, day) => {
+    let date = new Date(dt);
+    let res = new Date(date.getFullYear(), date.getMonth(), day);
+    res = new Date(+res + 3240 * 10000).toISOString().split("T")[0];
+    return res;
+}
+
+let GetDateEnd = (dt, day) => {
+    let date = new Date(dt);
+    let res = day == 26 ? new Date(date.getFullYear(), date.getMonth() + 1, 0) : new Date(date.getFullYear(), date.getMonth(), day);
+    res = new Date(+res + 3240 * 10000).toISOString().split("T")[0];
+    return res;
+}
+
+let GetCurrentDateStart = (day) => {
+    let date = new Date();
+    let res = new Date(date.getFullYear(), date.getMonth(), day);
+    res = new Date(+res + 3240 * 10000).toISOString().split("T")[0];
+    return res;
+}
+
+let GetCurrentDateEnd = (day) => {
+    let date = new Date();
+    let res = new Date(date.getFullYear(), date.getMonth(), day);
+    res = new Date(+res + 3240 * 10000).toISOString().split("T")[0];
+    return res;
+}
+
 let GetMonthlyStartDate = () => {
     let date = new Date();
     let res = new Date(date.getFullYear(), date.getMonth(), 1);

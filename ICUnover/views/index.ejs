@@ -1,13 +1,13 @@
 <!--slider-->
-<div style="width:100%; overflow: hidden;">
+<div style="width:100%; overflow: hidden;margin-top:100px;">
     <ul class="bxslider">
         <!-- <li><img src="/img/slider_01.jpg" /></li>
         <li><img src="/img/slider_02.jpg" /></li> -->
         <li><img src="/img/slider_03.jpg" /></li>
     </ul>
 </div>
-<script src="/js/jquery.cycle2.js"></script>
-<script src="/js/bxslider.js"></script>
+<!-- <script src="/js/jquery.cycle2.js"></script> -->
+<!-- <script src="/js/bxslider.js"></script> -->
 <script>
     $(document).ready(function(){
         $('.slider').bxSlider({auto: true,
@@ -491,7 +491,7 @@
     {
         let id = getId ?? '';
         if (id.length > 0) {
-            if (bLogin) {
+            if (bLogin == 'true') {
                 let strID = user.strID;
                 setCookie(`${id}_${strID}`, "done" , 1 );
             } else {
@@ -513,7 +513,7 @@
     {
         let id = getId ?? '';
         if (id.length > 0) {
-            if (bLogin) {
+            if (bLogin == 'true') {
                 let strID = user.strID;
                 setCookie(`${id}_${strID}`, "done" , 1 );
             } else {

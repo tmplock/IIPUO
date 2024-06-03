@@ -38,6 +38,10 @@ module.exports = (sequelize, DataTypes) => {
         strRegisterPassword: {
             type: DataTypes.STRING,
         },
+        // 파트너 조회 암호(총총)
+        strPartnerInfoPassword: {
+            type: DataTypes.STRING,
+        },
         strExchangeBankPassword: {
             type: DataTypes.STRING,
         },

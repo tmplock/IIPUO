@@ -20,6 +20,48 @@ const {isLoggedIn, isNotLoggedIn} = require('./middleware');
 const IInout = require("../implements/inout");
 const IAgentSec = require("../implements/agent_sec");
 //////////////////////////////////////////////////////////////////////////////
+// 총총에서만 조회
+router.post('/agent', isLoggedIn, async (req, res) => {
+
+    console.log(`/agent`);
+    console.log(req.body);
+
+    if (req.user.iClass != 1) {
+        res.send('조회에러');
+        return;
+    }
+
+    let input = req.body.input ?? '';
+    if (input == '') {
+        res.send('조회에러');
+        return;
+    }
+
+    let result = await IAgentSec.AccessPartnerInfoPassword(req.user.strNickname, input);
+    if (result.result != 'OK') {
+        res.send(result);
+        return;
+    }
+
+    const user = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
+    user.iRootClass = req.user.iClass;
+    user.iRootNickname = req.user.strNickname;
+    user.iPermission = req.user.iPermission;
+
+    if (user.iClass <= req.user.iClass || user.strGroupID.indexOf(req.user.strGroupID) != 0) {
+        res.send('권한없음');
+        return;
+    }
+
+    const sid = req.user.strID
+    let iC = await db.Users.findOne({where:{strID:req.user.strID}});
+
+    let parents = await IAgent.GetParentList(req.body.strGroupID, req.body.iClass, user);
+    let iClass = user.iClass;
+    let iRootClass = iC.iClass;
+
+    res.render('manage_partner/popup_agentinfo', {iLayout:2, iHeaderFocus:0, agent:user, sid:sid, pw_auth:iC.pw_auth, iClass:iClass, iRootClass: iRootClass, strParent:parents.strParents, iPermission:iC.iPermission});
+});
 
 router.post('/agentinfo', isLoggedIn, async (req, res) => {
 

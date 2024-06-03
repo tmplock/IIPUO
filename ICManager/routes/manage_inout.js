@@ -21,6 +21,7 @@ const ITime = require('../utils/time');
 const ISocket = require('../implements/socket');
 const IAgent = require("../implements/agent3");
 const moment = require("moment");
+const IAgentSec = require("../implements/agent_sec");
 
 router.post('/request_page', isLoggedIn, async(req, res) => {
 
@@ -87,49 +88,10 @@ router.post('/request_output_pass', isLoggedIn, async (req, res) => {
         return;
     }
 
-    // 총본 조회(GroupID 앞3자리)
-    let user = await db.Users.findOne({where:{strNickname:req.user.strNickname}});
-    if (user == null) {
-        res.send({result:'FAIL', msg:'조회 불가'});
+    let result = await IAgentSec.AccessOutputBankPassword(req.user.strNickname, input);
+    if (result.result != 'OK') {
+        res.send(result);
         return;
-    }
-
-    if (req.user.iClass == 8 || req.user.iClass == 7) {
-        // 접근 가능
-    } else if (req.user.iClass > 3) {
-        // 접근권한 없음
-        res.send({result:'FAIL', msg:'접근권한 없음'});
-        return;
-    }
-
-    if (req.user.iClass == 1) {
-        // 총총은 별도
-        let sub = await db.SubUsers.findOne({where: {rId: req.user.id, strOutputPassword:input}});
-        if (sub == null) {
-            res.send({result:'FAIL', msg:'암호 불일치'});
-            return;
-        }
-    } else {
-        let strGroupID = (user.strGroupID ?? '').substring(0, 3);
-        let partner = await db.Users.findAll({
-            where: {
-                strGroupID: strGroupID,
-                iClass:2,
-                iPermission: {
-                    [Op.notIn]: [100]
-                },
-            }
-        });
-        if (partner.length == 0) {
-            res.send({result:'FAIL', msg:'조회 불가'});
-            return;
-        }
-
-        let sub = await db.SubUsers.findOne({where: {rId: partner[0].id, strOutputPassword:input}});
-        if (sub == null) {
-            res.send({result:'FAIL', msg:'암호 불일치'});
-            return;
-        }
     }
 
     let period = moment().add(10, "minute");
@@ -1101,9 +1063,9 @@ router.post('/output_alert', (req, res)=> {
 });
 
 /**
- * 입출금관리
+ * 입출금관리 > 입금목록 > 입금신청
  */
-router.post('/request_inout_pass', async (req, res) => {
+router.post('/request_inout_pass', isLoggedIn, async (req, res) => {
     console.log(`request_inout_pass`);
     console.log(req.body);
 
@@ -1159,7 +1121,8 @@ router.post('/request_inout_pass', async (req, res) => {
     // }
     console.log(bank);
     if (bank.length > 0) {
-        res.send({result: 'OK', msg: '입금 계좌 조회 성공'});
+        let key = IAgentSec.GetCipherAndPeriod(req.user.strNickname, 10);
+        res.send({result: 'OK', msg: '입금 계좌 조회 성공', key:key});
     } else {
         res.send({result: 'FAIL', msg: '등록된 계좌가 없습니다'});
     }
@@ -1169,62 +1132,59 @@ router.post('/request_inout_pass', async (req, res) => {
  * 계좌관리
  */
 // 계좌관리 비번 체크
-router.post('/request_bank', async (req, res) => {
+router.post('/request_bank', isLoggedIn, async (req, res) => {
     console.log(`request_bank`);
     console.log(req.body);
 
-    const strNickname = req.user.strNickname;
-    const input = req.body.input;
-
-    const user = await db.Users.findOne({where: {strNickname: req.user.strNickname}});
-    const info = await db.SubUsers.findOne({where: {rId: user.id, strInoutPassword: input}});
-    if (info == null) {
-        res.send({result: 'FAIL', msg:'비밀번호가 틀립니다'});
+    let iRootClass = parseInt(req.user.iClass ?? 100);
+    let iPermission = parseInt(req.user.iPermission ?? 0);
+    if (iRootClass != 2 || iPermission == 100) {
+        res.send({result: 'FAIL', data: [], msg:'권한 없음'});
         return;
     }
-    let iClass = parseInt(req.user.iClass ?? 100);
-    let iPermission = parseInt(req.user.iPermission ?? 0);
 
-    if (iClass > 3 || iPermission == 100) {
-        res.send({result: 'FAIL', msg:'권한이 없습니다'});
+    const input = req.body.input;
+
+    let result = await IAgentSec.AccessInoutPassword(req.user.strNickname, input);
+    if (result.result != 'OK') {
+        res.send(result);
         return;
     }
     res.send({result: 'OK'});
 });
 
 // 입출금관리 > 계좌관리
-router.post('/popup_bank', async (req, res) => {
+router.post('/popup_bank', isLoggedIn, async (req, res) => {
     console.log(`popup_bank`);
     console.log(req.body);
+
+    let iRootClass = parseInt(req.user.iClass ?? 100);
+    let iPermission = parseInt(req.user.iPermission ?? 0);
+    if (iRootClass != 2 || iPermission == 100) {
+        res.send({result: 'FAIL', data: [], msg:'권한 없음'});
+        return;
+    }
 
     const input = req.body.input ?? '';
     if (input == '') {
         res.render('manage_inout/popup_bank', {iLayout:8, iHeaderFocus:0, user:{}, msg:'비밀번호 미입력'});
         return;
     }
-    let iClass = parseInt(req.user.iClass ?? 100);
-    let iPermission = parseInt(req.user.iPermission ?? 0);
 
-    const user = await db.Users.findOne({where: {strNickname: req.user.strNickname}});
-    const info = await db.SubUsers.findOne({where: {rId: user.id, strInoutPassword: input}});
-    if (info == null) {
-        res.render('manage_inout/popup_bank', {iLayout:8, iHeaderFocus:0, user:{}, msg:'비밀번호 미일치'});
+    let result = await IAgentSec.AccessInoutPassword(req.user.strNickname, input);
+    if (result.result != 'OK') {
+        res.render('manage_inout/popup_bank', {iLayout:8, iHeaderFocus:0, user:{}, msg:result.msg});
         return;
     }
 
-    if (iClass > 2 || iPermission == 100) {
-        res.render('manage_inout/popup_bank', {iLayout:8, iHeaderFocus:0, user:{}, msg:'권한이 없습니다'});
-        return;
-    }
-
-    let period = moment().add(1, "minute");
+    let period = moment().add(10, "minute");
     let str = `${(req.user.strNickname ?? '')}&&${period}`;
     let key = await IAgent.GetCipher(str);
     let agent = {iClass:req.body.iClass, iRootClass: req.user.iClass, iPermission: req.user.iPermission, strNickname: req.body.strNickname, key:key};
     res.render('manage_inout/popup_bank', {iLayout:8, iHeaderFocus:0, user:agent, msg:''});
 });
 
-router.post('/request_bank_list', async (req, res) => {
+router.post('/request_bank_list', isLoggedIn, async (req, res) => {
     console.log(`request_bank_list`);
     console.log(req.body);
     let key = req.body.key ?? '';
@@ -1252,7 +1212,7 @@ router.post('/request_bank_list', async (req, res) => {
     let iRootClass = parseInt(req.user.iClass ?? 100);
     let iClass = parseInt(req.body.iClass ?? 0);
     let iPermission = parseInt(req.user.iPermission ?? 0);
-    if (iClass > 2 || iPermission == 100) {
+    if (iRootClass != 2 || iPermission == 100) {
         res.send({result: 'FAIL', data: [], msg:'권한 없음'});
         return;
     }
@@ -1339,13 +1299,13 @@ router.post('/request_bank_list', async (req, res) => {
     // res.send({result: 'OK', data: newList});
 });
 
-router.post('/request_change_bank_type', async (req, res) => {
+router.post('/request_change_bank_type', isLoggedIn, async (req, res) => {
     console.log(`request_change_bank_type`);
     console.log(req.body);
 
     let iClass = parseInt(req.user.iClass ?? 100);
     let iPermission = parseInt(req.user.iPermission ?? 0);
-    if (iClass > 3 || iPermission == 100) {
+    if (iClass != 2 || iPermission == 100) {
         res.send({result:'FAIL', msg: '권한 없음'});
         return;
     }
@@ -1380,14 +1340,14 @@ router.post('/request_change_bank_type', async (req, res) => {
     res.send({result: 'OK'});
 });
 
-router.post('/popup_bank_add', async (req, res) => {
+router.post('/popup_bank_add', isLoggedIn,  async (req, res) => {
     console.log(`popup_bank_add`);
 
     let iClass = parseInt(req.body.iClass ?? 100);
     let iRootClass = parseInt(req.user.iClass ?? 100);
     let iPermission = parseInt(req.user.iPermission ?? 0);
 
-    if (iRootClass > 3 || iPermission == 100) {
+    if (iRootClass != 2 || iPermission == 100) {
         res.send({result:'FAIL', msg: '권한 없음'});
         return;
     }
@@ -1411,13 +1371,13 @@ router.post('/popup_bank_add', async (req, res) => {
     res.render('manage_inout/popup_bank_add', {iLayout:8, iHeaderFocus:0, user:agent, strChildes:strChildes, strChildes2:strChildes2});
 });
 
-router.post('/request_bank_add', async (req, res) => {
+router.post('/request_bank_add', isLoggedIn, async (req, res) => {
     console.log(`request_bank_add`);
 
     let iClass = parseInt(req.user.iClass ?? 100);
     let iPermission = parseInt(req.user.iPermission ?? 0);
 
-    if (iClass > 3 || iPermission == 100) {
+    if (iClass != 2 || iPermission == 100) {
         res.send({result:'FAIL', msg: '권한 없음'});
         return;
     }
@@ -1450,13 +1410,13 @@ router.post('/request_bank_add', async (req, res) => {
     res.send({result:'OK', msg:'등록성공'});
 });
 
-router.post('/request_bank_memo_apply', async (req, res) => {
+router.post('/request_bank_memo_apply', isLoggedIn, async (req, res) => {
     console.log(`request_bank_add`);
 
     let iClass = parseInt(req.user.iClass ?? 100);
     let iPermission = parseInt(req.user.iPermission ?? 0);
 
-    if (iClass > 3 || iPermission == 100) {
+    if (iClass != 2 || iPermission == 100) {
         res.send({result:'FAIL', msg: '권한 없음'});
         return;
     }
@@ -1482,14 +1442,13 @@ router.post('/request_bank_memo_apply', async (req, res) => {
     res.send({result:'OK', msg:'등록성공'});
 });
 
-
-router.post('/request_bank_del', async (req, res) => {
+router.post('/request_bank_del', isLoggedIn, async (req, res) => {
     console.log(`request_bank_del`);
 
     let iClass = parseInt(req.user.iClass ?? 100);
     let iPermission = parseInt(req.user.iPermission ?? 0);
 
-    if (iClass > 3 || iPermission == 100) {
+    if (iClass != 2 || iPermission == 100) {
         res.send({result:'FAIL', msg: '권한 없음'});
         return;
     }

@@ -17,8 +17,9 @@ const {Op, where}= require('sequelize');
 
 const IAgent = require('../implements/agent3');
 const ISocket = require('../implements/socket');
+const {isLoggedIn} = require("./middleware");
 
-router.post('/writeannouncement', async (req, res) => {
+router.post('/writeannouncement', isLoggedIn, async (req, res) => {
     
     console.log(req.body);
 
@@ -29,7 +30,7 @@ router.post('/writeannouncement', async (req, res) => {
 
 });
 
-router.post('/writeletter', async (req, res) => {
+router.post('/writeletter', isLoggedIn, async (req, res) => {
     
     console.log(req.body);
 
@@ -60,7 +61,7 @@ router.post('/writeletter', async (req, res) => {
     res.render('manage_setting/popup_writeletter', {iLayout:1, iHeaderFocus:1, agent:user, strParent: '', strChildes:strChildes, strTo: strTo, directSend: false});
 });
 
-router.post('/direct_writeletter', async (req, res) => {
+router.post('/direct_writeletter', isLoggedIn, async (req, res) => {
 
     console.log(req.body);
 
@@ -91,7 +92,7 @@ router.post('/direct_writeletter', async (req, res) => {
     res.render('manage_setting/popup_writeletter', {iLayout:1, iHeaderFocus:1, agent:user, strParent: '', strChildes:strChildes, strTo: strTo, directSend: false});
 });
 
-router.post('/direct_writeletter', async (req, res) => {
+router.post('/direct_writeletter', isLoggedIn, async (req, res) => {
 
     console.log(req.body);
 
@@ -122,7 +123,7 @@ router.post('/direct_writeletter', async (req, res) => {
     res.render('manage_setting/popup_writeletter', {iLayout:1, iHeaderFocus:1, agent:user, strParent: '', strChildes:strChildes, strTo: strTo, directSend: false});
 });
 
-router.post('/group_writeletter', async (req, res) => {
+router.post('/group_writeletter', isLoggedIn, async (req, res) => {
 
     console.log(req.body);
 
@@ -135,7 +136,7 @@ router.post('/group_writeletter', async (req, res) => {
     res.render('manage_setting/popup_group_writeletter', {iLayout:1, iHeaderFocus:1, agent:user});
 });
 
-router.post('/readletter', async (req, res) => {
+router.post('/readletter', isLoggedIn, async (req, res) => {
 
     console.log(req.body);
 
@@ -173,7 +174,12 @@ router.post('/readletter', async (req, res) => {
     }
 });
 
-router.post('/request_replyletter', async (req, res) => {
+router.post('/request_replyletter', isLoggedIn, async (req, res) => {
+
+    if (req.user.iClass != 2 || req.user.iPermission == 100) {
+        res.send({result : 'FAIL', msg : '권한없음'});
+        return;
+    }
 
     let letter = await db.Letters.findOne({where : {id: req.body.id}});
     if (letter == null) {
@@ -210,7 +216,7 @@ router.post('/request_replyletter', async (req, res) => {
 });
 
 //
-router.post('/request_letterreceiver', async (req, res) => {
+router.post('/request_letterreceiver', isLoggedIn, async (req, res) => {
     console.log(req.body);
 
     if ( req.body.strKeyword == '' )
@@ -291,7 +297,7 @@ router.post('/request_letterreceiver', async (req, res) => {
 });
 
 
-router.post('/request_receiver', async (req, res) => {
+router.post('/request_receiver', isLoggedIn, async (req, res) => {
     if (req.user.iClass > req.body.iClass) {
         res.send({'result' : 'FAIL'});
         return;
@@ -370,7 +376,7 @@ router.post('/request_writeletter', async (req, res) => {
 });
 
 //FIXME: 관리자 페이지에서 쪽지를 보낼 경우 아래 호출됨
-router.post('/request_writeletter_partner', async (req, res) => {
+router.post('/request_writeletter_partner', isLoggedIn, async (req, res) => {
     console.log(`################################################## /manage_setting_popup/request_writeletter_partner`);
     console.log(req.body);
 
@@ -436,7 +442,7 @@ router.post('/request_writeletter_partner', async (req, res) => {
     res.send({result:'OK'});
 });
 
-router.post('/request_writeletter_partner_group', async (req, res) => {
+router.post('/request_writeletter_partner_group', isLoggedIn, async (req, res) => {
     console.log(`################################################## /manage_setting_popup/request_writeletter_partner_group`);
     console.log(req.body);
 
@@ -562,8 +568,12 @@ router.post('/request_writeletter_partner_group', async (req, res) => {
     res.send({result:'OK'});
 });
 
-//  보낸 쪽지 목록
-router.post('/request_letterrecord', async (req, res) => {
+/**
+ * 보낸 쪽지 목록
+ * 총본에서 쪽지 삭제시 실제 해당 쪽지 삭제
+ * 총본외에 하위 파트너에서 삭제한 쪽지는 조회만 안되게 하기
+ */
+router.post('/request_letterrecord', isLoggedIn, async (req, res) => {
 
     if (req.user.iPermission == 100) {
         res.redirect("/");
@@ -592,20 +602,14 @@ router.post('/request_letterrecord', async (req, res) => {
     let strFrom = user.iPermission == 100 ? user.strNicknameRel : user.strNickname;
 
     let totalCount = 0;
-    if (req.body.iClass == 2) {
+    if (req.body.iClass == 2 && req.user.iClass == 2) {
         totalCount = strKeyword == '' ? await db.Letters.count({
             where:{
                 createdAt:{
                     [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
                 },
                 strFrom:strFrom,
-                eRead:{[Op.or]:listState},
-                iDelFrom: {
-                    [Op.or]:{
-                        [Op.is]: null,
-                        [Op.not]:1
-                    }
-                }
+                eRead:{[Op.or]:listState}
             },
         }) : await db.Letters.count({
             where:{
@@ -615,12 +619,6 @@ router.post('/request_letterrecord', async (req, res) => {
                 strFrom:strFrom,
                 strTo:{[Op.like]:'%'+strKeyword+'%'},
                 eRead:{[Op.or]:listState},
-                iDelFrom: {
-                    [Op.or]:{
-                        [Op.is]: null,
-                        [Op.not]:1
-                    }
-                }
             },
         });
     } else {
@@ -661,7 +659,7 @@ router.post('/request_letterrecord', async (req, res) => {
     let iOffset = (iPage-1) * iLimit;
 
     let letters = [];
-    if (req.body.iClass == 2) {
+    if (req.body.iClass == 2 && req.user.iClass == 2) {
         letters = strKeyword == '' ? await db.Letters.findAll({
             where:{
                 createdAt:{
@@ -669,12 +667,6 @@ router.post('/request_letterrecord', async (req, res) => {
                 },
                 strFrom:strFrom,
                 eRead:{[Op.or]:listState},
-                iDelFrom: {
-                    [Op.or]:{
-                        [Op.is]: null,
-                        [Op.not]:1
-                    }
-                }
             },
             limit:iLimit,
             offset:iOffset,
@@ -687,12 +679,6 @@ router.post('/request_letterrecord', async (req, res) => {
                 strFrom:strFrom,
                 strTo:{[Op.like]:'%'+strKeyword+'%'},
                 eRead:{[Op.or]:listState},
-                iDelFrom: {
-                    [Op.or]:{
-                        [Op.is]: null,
-                        [Op.not]:1
-                    }
-                }
             },
             limit:iLimit,
             offset:iOffset,
@@ -741,8 +727,12 @@ router.post('/request_letterrecord', async (req, res) => {
 });
 
 //  받은 쪽지 목록
-router.post('/request_letterlist', async (req, res) => {
-
+/**
+ * 받은 쪽지 목록
+ * 총본에서 쪽지 삭제시 실제 해당 쪽지 삭제
+ * 총본외에 하위 파트너에서 삭제한 쪽지는 조회만 안되게 하기
+ */
+router.post('/request_letterlist', isLoggedIn, async (req, res) => {
     console.log(req.body);
 
     if (req.user.iPermission == 100) {
@@ -769,8 +759,9 @@ router.post('/request_letterlist', async (req, res) => {
     const user = await IAgent.GetUserInfo(req.body.strNickname);
     let strTo = user.iPermission == 100 ? user.strNicknameRel : user.strNickname;
 
+    // 전체 쪽지 수량
     let totalCount = 0;
-    if (req.body.iClass == 2) {
+    if (req.body.iClass == 2 && req.user.iClass == 2) {
         totalCount = strKeyword == '' ? await db.Letters.count({
             where:{
                 createdAt:{
@@ -781,13 +772,7 @@ router.post('/request_letterlist', async (req, res) => {
                 },
                 iClassTo: {[Op.in]:[3,2]},
                 iClassFrom: {[Op.notIn]:[2]}, // 총본이 보낸것은 제외
-                eRead:{[Op.or]:listState},
-                iDelTo: {
-                    [Op.or]:{
-                        [Op.is]: null,
-                        [Op.not]:1
-                    }
-                }
+                eRead:{[Op.or]:listState}
             },
         }) : await db.Letters.count({
             where:{
@@ -800,13 +785,7 @@ router.post('/request_letterlist', async (req, res) => {
                 iClassTo: {[Op.in]:[3,2]},
                 iClassFrom: {[Op.notIn]:[2]}, // 총본이 보낸것은 제외
                 strFrom:{[Op.like]:'%'+strKeyword+'%'},
-                eRead:{[Op.or]:listState},
-                iDelTo: {
-                    [Op.or]:{
-                        [Op.is]: null,
-                        [Op.not]:1
-                    }
-                }
+                eRead:{[Op.or]:listState}
             },
         });
     } else {
@@ -842,12 +821,13 @@ router.post('/request_letterlist', async (req, res) => {
         });
     }
 
+    // 쪽지 조회
     let iLimit = parseInt(req.body.iLimit);
     let iPage = parseInt(req.body.iPage);
     let iOffset = (iPage-1) * iLimit;
 
     let letters = [];
-    if (req.body.iClass == 2) {
+    if (req.body.iClass == 2 && req.user.iClass == 2) {
         letters = strKeyword == '' ? await db.Letters.findAll({
             where:{
                 createdAt:{
@@ -859,12 +839,6 @@ router.post('/request_letterlist', async (req, res) => {
                 iClassTo: {[Op.in]:[3,2]},
                 iClassFrom: {[Op.notIn]:[2]}, // 총본이 보낸것은 제외
                 eRead:{[Op.or]:listState},
-                iDelTo: {
-                    [Op.or]:{
-                        [Op.is]: null,
-                        [Op.not]:1
-                    }
-                }
             },
             limit:iLimit,
             offset:iOffset,
@@ -881,12 +855,6 @@ router.post('/request_letterlist', async (req, res) => {
                 iClassFrom: {[Op.notIn]:[2]}, // 총본이 보낸것은 제외
                 strFrom:{[Op.like]:'%'+strKeyword+'%'},
                 eRead:{[Op.or]:listState},
-                iDelTo: {
-                    [Op.or]:{
-                        [Op.is]: null,
-                        [Op.not]:1
-                    }
-                }
             },
             limit:iLimit,
             offset:iOffset,
@@ -934,75 +902,101 @@ router.post('/request_letterlist', async (req, res) => {
     res.send({letters:letters, currentPage:req.body.iPage, totalCount:totalCount});
 });
 
-router.post('/request_removeletter', async(req, res) => {
+router.post('/request_removeletter', isLoggedIn, async(req, res) => {
     console.log(req.body);
     // await db.Letters.destroy({where:{id:req.body.id}});
     res.send({result:'OK'});
 });
 
-router.post('/request_letter_select_remove', async(req, res) => {
+
+//TODO: 이용자 업데이트 필요
+router.post('/request_letter_select_remove', isLoggedIn, async(req, res) => {
     console.log(req.body);
 
     if (req.user.iPermission == 100) {
-        res.send({result: 'FAIL', msg:'삭제 오류'});
+        res.send({result: 'FAIL', msg:'삭제 오류(권한없음)'});
+        return;
+    }
+
+    let type = req.body.type ?? '';
+
+    if ((type == 'RECEIVE' || type == 'SEND') == false) {
+        res.send({result: 'FAIL', msg:'삭제 오류(타입오류)'});
         return;
     }
 
     try {
+        // 로그인 유저의 그룹 아이디 체크
+        if (req.body.strGroupID.indexOf(req.user.strGroupID) != 0) {
+            res.send({result: 'FAIL', msg:'삭제 오류(권한없음)'});
+            return;
+        }
+
         let ids = req.body.ids.split(',');
         if (ids.length > 0) {
-            await db.Letters.destroy({
-                where:{
+            // 삭제 가능 권한 체크
+            let list = await db.Letters.findAll({
+                where: {
+                    strGroupID: {
+                        [Op.like]:`${req.body.strGroupID}%`
+                    },
                     id: {
-                        [Op.in] : ids
+                        [Op.in]:ids
                     }
                 }
             });
-        }
+            if (ids.length != list.length) {
+                res.send({result: 'FAIL', msg:'삭제 오류(권한없음)'});
+                return;
+            }
 
-        //TODO: 이용자 업데이트 후에 관리자 업데이트 필요(위에 destory 삭제 후 아래 주석 풀기)
-        // let ids = req.body.ids.split(',');
-        // let type = req.body.type ?? '';
-        // if (type == '' || ids.length == 0) {
-        //     res.send({result: 'FAIL', msg:'삭제 오류(타입없음)'});
-        //     return;
-        // }
-        // if (type == 'RECEIVE') {
-        //     await db.Letters.update(
-        //         {
-        //             iDelTo:1
-        //         },
-        //         {
-        //         where:{
-        //             id: {
-        //                 [Op.in] : ids
-        //             }
-        //         }
-        //     });
-        // } else if (type == 'SEND') {
-        //     await db.Letters.update(
-        //         {
-        //             iDelFrom:1
-        //         },
-        //         {
-        //             where:{
-        //                 id: {
-        //                     [Op.in] : ids
-        //                 }
-        //             }
-        //         });
-        // } else {
-        //     res.send({result: 'FAIL', msg:`삭제 오류(${type})`});
-        //     return;
-        // }
-        res.send({result:'OK'});
+            // 실제 삭제는 총본에서만 삭제되게 나머지는 플래그만 변경
+            if (req.user.iClass == 2) {
+                await db.Letters.destroy({
+                    where:{
+                        id: {
+                            [Op.in] : ids
+                        }
+                    }
+                });
+            } else {
+                if (type == 'RECEIVE') {
+                    await db.Letters.update(
+                        {
+                            iDelTo:1
+                        },
+                        {
+                        where:{
+                            id: {
+                                [Op.in] : ids
+                            }
+                        }
+                    });
+                } else if (type == 'SEND') {
+                    await db.Letters.update(
+                        {
+                            iDelFrom:1
+                        },
+                        {
+                            where:{
+                                id: {
+                                    [Op.in] : ids
+                                }
+                            }
+                        });
+                }
+            }
+            res.send({result:'OK'});
+        } else {
+            res.send({result: 'FAIL', msg:'삭제할 항목을 선택해주세요'});
+        }
     } catch (err) {
         res.send({result: 'FAIL', msg:'삭제 오류'});
     }
 });
 
 //  Announcement
-router.post('/request_announcementlist', async (req, res) => {
+router.post('/request_announcementlist', isLoggedIn, async (req, res) => {
 
     console.log(req.body);
 
@@ -1015,7 +1009,7 @@ router.post('/request_announcementlist', async (req, res) => {
     res.send({anns:fullanns});
 });
 
-router.post('/request_removeannouncement', async (req, res) => {
+router.post('/request_removeannouncement', isLoggedIn, async (req, res) => {
 
     console.log(`request_removeannouncement`);
 
@@ -1026,7 +1020,7 @@ router.post('/request_removeannouncement', async (req, res) => {
     res.send({result:'OK'});
 });
 
-router.post('/request_writeannouncement', async (req, res) => {
+router.post('/request_writeannouncement', isLoggedIn, async (req, res) => {
 
     console.log(`request_writeannouncement`);
 
@@ -1037,7 +1031,7 @@ router.post('/request_writeannouncement', async (req, res) => {
     res.send({result:'OK'});
 });
 
-router.post('/readannouncement', async (req, res) => {
+router.post('/readannouncement', isLoggedIn, async (req, res) => {
 
     console.log(req.body);
 
@@ -1047,7 +1041,7 @@ router.post('/readannouncement', async (req, res) => {
     res.render('manage_setting/popup_readannouncement', {iLayout:1, iHeaderFocus:1, user:user, contents:contents});
 });
 
-router.post('/request_annchangestate', async (req, res) => {
+router.post('/request_annchangestate', isLoggedIn, async (req, res) => {
 
     console.log('/request_annchangestate');
     console.log(req.body);

@@ -353,7 +353,7 @@ router.post('/realtime_user', (req, res) => {
     res.send('OK');
 });
 
-router.post('/logout', isLoggedIn, async (req, res) => {
+router.post('/logout', async (req, res) => {
     let strNickname = req.body.strNickname ?? '';
 
     let user = await db.Users.findOne({where:{strNickname:strNickname}});

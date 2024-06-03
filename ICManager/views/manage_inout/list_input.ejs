@@ -293,9 +293,9 @@
             success: (obj) => {
                 if (obj.result == 'OK') {
                     if (charge) {
-                        OnClickRequestCharge(user.strNickname, user.strGroupID, user.iClass);
+                        OnClickRequestCharge(user.strNickname, user.strGroupID, user.iClass, input);
                     } else {
-                        OnClickRequestExchange(user.strNickname, user.strGroupID, user.iClass, 0)
+                        OnClickRequestExchange(user.strNickname, user.strGroupID, user.iClass, 0, input)
                     }
                 } else if (obj.result == 'FAIL') {
                     alert(obj.msg);

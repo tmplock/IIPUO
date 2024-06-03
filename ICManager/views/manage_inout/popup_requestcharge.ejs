@@ -98,6 +98,12 @@
 		const strConfirmRequest = '<%=__("ConfirmRequest")%>';
 
 		$(document).ready(() => {
+			if (user.msg != '') {
+				alert(user.msg);
+				window.close();
+				return;
+			}
+
 			checkBlockCharSpecial('#strAccountOwner');
 			checkBlockNum(`#amount`);
 		});

@@ -23,7 +23,18 @@
 		<div class="list">
 
 			<div style="background-color:#ffffff;text-align:right;padding-right:5px;padding-top:0px;padding-bottom:0px;" colspan="19">
-
+				<button class="menu1" data-menu="10" style="border:1px solid rgb(95, 93, 93);width:50px;height:25px;text-align:center;" onclick="OnClickDayPeriod(1);">1분기</button>
+				&nbsp;
+				<button class="menu1" data-menu="11" style="border:1px solid rgb(95, 93, 93);width:50px;height:25px;text-align:center;" onclick="OnClickDayPeriod(6);">2분기</button>
+				&nbsp;
+				<button class="menu1" data-menu="12" style="border:1px solid rgb(95, 93, 93);width:50px;height:25px;text-align:center;" onclick="OnClickDayPeriod(11);">3분기</button>
+				&nbsp;
+				<button class="menu1" data-menu="13" style="border:1px solid rgb(95, 93, 93);width:50px;height:25px;text-align:center;" onclick="OnClickDayPeriod(16);">4분기</button>
+				&nbsp;
+				<button class="menu1" data-menu="14" style="border:1px solid rgb(95, 93, 93);width:50px;height:25px;text-align:center;" onclick="OnClickDayPeriod(21);">5분기</button>
+				&nbsp;
+				<button class="menu1" data-menu="15" style="border:1px solid rgb(95, 93, 93);width:50px;height:25px;text-align:center;" onclick="OnClickDayPeriod(26);">6분기</button>
+				&nbsp;
 				<input style="width:100px;" type="text" id="datepicker1" class="datepicker"/>~
 				<input style="width:100px;" type="text" id="datepicker2" class="datepicker" />
 				<button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearch(3, '<%=user.strGroupID%>', '<%=user.iClass%>', '<%=user.iPermission%>');"><%=__('Search')%></button>
@@ -35,7 +46,8 @@
 				<input style="margin-left:0px;width:100px;" id="strSearchNickname" type="text"/>
 				<button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearchNickname();"><%=__('Search')%></button>
 				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-
+				<button class="menu1" data-menu="0" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;" onclick="OnClickYesterdayRecord();">어제</button>
+				&nbsp;
 				<button class="menu5" data-menu="1" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;" onclick="OnClickTodayRecord();"><%=__('Today')%></button>
 				&nbsp;
 				<button class="menu1" data-menu="2" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;" onclick="OnClickMonthly1stRecord();"><%=__('Half1')%></button>
@@ -165,6 +177,10 @@
 	let bClickDateSelection = false;
 	let bToggleRecord = false;
 
+	let startDate = GetCurrentDate();
+	let endDate = GetCurrentDate();
+
+
 	$(document).on('click', '.menu1', (e) => {
 
 		$('.menu5').attr('class', 'menu1');
@@ -175,8 +191,8 @@
 	$(document).ready(() => {
 		DatePicker();
 
-		$('#datepicker1').val(GetCurrentDate());
-		$('#datepicker2').val(GetCurrentDate());
+		$('#datepicker1').val(startDate);
+		$('#datepicker2').val(endDate);
 
 		$("#table_record_list").hide();
 
@@ -202,9 +218,36 @@
 		RequestBettingDayList();
 	}
 
+	let OnClickDayPeriod = (startDay) => {
+		startDate = GetDateStart(startDate, startDay);
+		endDate = GetDateEnd(endDate, startDay+4);
+
+		$('#datepicker1').val(startDate);
+		$('#datepicker2').val(endDate);
+
+		RequestOverview(cTClass, user.strGroupID, user.iClass, user.iPermission, user.strNickname, user.strID);
+		RequestAdminList(EAgent.eAdmin, user.strGroupID, user.iClass, user.iPermission);
+		RequestBettingDayList();
+	}
+
 	let OnClickTodayRecord = () => {
-		$('#datepicker1').val(GetCurrentDate());
-		$('#datepicker2').val(GetCurrentDate());
+		startDate = GetCurrentDate();
+		endDate = GetCurrentDate();
+
+		$('#datepicker1').val(startDate);
+		$('#datepicker2').val(endDate);
+
+		RequestOverview(cTClass, user.strGroupID, user.iClass, user.iPermission, user.strNickname, user.strID);
+		RequestAdminList(EAgent.eAdmin, user.strGroupID, user.iClass, user.iPermission);
+		RequestBettingDayList();
+	}
+
+	let OnClickYesterdayRecord = () => {
+		startDate = GetCurrentDateBefore(1);
+		endDate = GetCurrentDateBefore(1);
+
+		$('#datepicker1').val(startDate);
+		$('#datepicker2').val(endDate);
 
 		RequestOverview(cTClass, user.strGroupID, user.iClass, user.iPermission, user.strNickname, user.strID);
 		RequestAdminList(EAgent.eAdmin, user.strGroupID, user.iClass, user.iPermission);
@@ -212,8 +255,11 @@
 	}
 
 	let OnClickMonthly1stRecord = () => {
-		$('#datepicker1').val(GetMonthly1stStartDate());
-		$('#datepicker2').val(GetMonthly1stEndDate());
+		startDate = GetMonthly1stStartDate();
+		endDate = GetMonthly1stEndDate();
+
+		$('#datepicker1').val(startDate);
+		$('#datepicker2').val(endDate);
 
 		RequestOverview(cTClass, user.strGroupID, user.iClass, user.iPermission, user.strNickname, user.strID);
 		RequestAdminList(EAgent.eAdmin, user.strGroupID, user.iClass, user.iPermission);
@@ -221,8 +267,11 @@
 	}
 
 	let OnClickMonthly2ndRecord = () => {
-		$('#datepicker1').val(GetMonthly2ndStartDate());
-		$('#datepicker2').val(GetMonthly2ndEndDate());
+		startDate = GetMonthly2ndStartDate();
+		endDate = GetMonthly2ndEndDate();
+
+		$('#datepicker1').val(startDate);
+		$('#datepicker2').val(endDate);
 
 		RequestOverview(cTClass, user.strGroupID, user.iClass, user.iPermission, user.strNickname, user.strID);
 		RequestAdminList(EAgent.eAdmin, user.strGroupID, user.iClass, user.iPermission);

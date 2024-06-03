@@ -14,11 +14,19 @@ module.exports = (sequelize, DataTypes) => {
             unique: true,
             allowNull: false,
         },
-        // 출금목록 내 은행정보보기
+        // 일괄수정
+        strOddPassword: {
+            type: DataTypes.STRING,
+        },
+        // 배팅관리 > 배팅취소
+        strBettingCancelPassword: {
+            type: DataTypes.STRING,
+        },
+        // 입출금관리 > 출금목록 > 은행정보보기
         strOutputPassword: {
             type: DataTypes.STRING,
         },
-        // 계좌관리
+        // 입출금관리 > 입금목록 > 계좌보기
         strInoutPassword: {
             type: DataTypes.STRING,
         },

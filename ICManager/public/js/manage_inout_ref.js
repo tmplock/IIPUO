@@ -172,7 +172,7 @@ let OnSave = (event) => {
     });
 }
 
-let OnClickRequestCharge = (strNickname, strGroupID, iClass) => {
+let OnClickRequestCharge = (strNickname, strGroupID, iClass, input) => {
     window.open('', 'popupCharge', 'width=768, height=512, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
 
     let $form = $('<form></form>');
@@ -184,12 +184,13 @@ let OnClickRequestCharge = (strNickname, strGroupID, iClass) => {
     let idx = $(`<input type="hidden" value="${strNickname}" name="strNickname">`);
     let page = $(`<input type="hidden" value="${strGroupID}" name="strGroupID">`);
     let category = $(`<input type="hidden" value=${parseInt(iClass)} name="iClass">`);
+    let strInput = $(`<input type="hidden" value="${input}" name="input">`);
 
-    $form.append(idx).append(page).append(category);
+    $form.append(idx).append(page).append(category).append(strInput);
     $form.submit();
 }
 
-let OnClickRequestExchange = (strNickname, strGroupID, iClass, iForced) => {
+let OnClickRequestExchange = (strNickname, strGroupID, iClass, iForced, input) => {
     window.open('', 'popupExchange', 'width=768, height=512, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
 
     let $form = $('<form></form>');
@@ -202,8 +203,9 @@ let OnClickRequestExchange = (strNickname, strGroupID, iClass, iForced) => {
     let page = $(`<input type="hidden" value="${strGroupID}" name="strGroupID">`);
     let category = $(`<input type="hidden" value=${parseInt(iClass)} name="iClass">`);
     let forced = $(`<input type="hidden" value=${parseInt(iForced)} name="iForced">`);
+    let strInput = $(`<input type="hidden" value="${input}" name="input">`);
 
-    $form.append(idx).append(page).append(category).append(forced);
+    $form.append(idx).append(page).append(category).append(forced).append(strInput);
     $form.submit();
 }
 

@@ -96,18 +96,11 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 const passportconfig = require('./passport-config');
-
-const Enum = require('./constants/enum');
-
 const i18n = require('./i18n');
-
-const {Op}= require('sequelize');
-
 
 app.use(i18n);
 
-const util_object = require('./utils/object');
-
+const IObject = require('./utils/object');
 const IHelper = require('./helpers/IHelper');
 
 global.io = io;
@@ -385,33 +378,33 @@ app.post('/request_listannouncementpopup', async (req, res) => {
 
 app.post('/UpdateCoin', async(req, res) => {
     
-    console.log(`##############################################################updatecoin socket_list.length = ${Object.keys(socket_list).length}`);
-    console.log(req.body);
+    // console.log(`##############################################################updatecoin socket_list.length = ${Object.keys(socket_list).length}`);
+    // console.log(req.body);
 
-    for ( let i in socket_list )
-    {
-        console.log(`/UpdateCoin socket_list[i].strNickname (${socket_list[i].strNickname}), req.body.strNickname (${socket_list[i].strNickname})`);
-        if ( socket_list[i].strNickname == req.body.strNickname )
-        {
-            socket_list[i].emit('UpdateCash', parseInt(req.body.iAmount));
-        }
-    }
+    // for ( let i in socket_list )
+    // {
+    //     console.log(`/UpdateCoin socket_list[i].strNickname (${socket_list[i].strNickname}), req.body.strNickname (${socket_list[i].strNickname})`);
+    //     if ( socket_list[i].strNickname == req.body.strNickname )
+    //     {
+    //         socket_list[i].emit('UpdateCash', parseInt(req.body.iAmount));
+    //     }
+    // }
 
     res.send('OK');
 });
 
 app.post('/AlertLetter', async(req, res) => {
 
-    console.log("##############################################################AlertLetter");
-    console.log(req.body);
+    // console.log("##############################################################AlertLetter");
+    // console.log(req.body);
 
-    for ( let i in socket_list )
-    {
-        if ( socket_list[i].strNickname == req.body.strNickname )
-        {
-            socket_list[i].emit('AlertLetter', req.body.strContents);
-        }
-    }
+    // for ( let i in socket_list )
+    // {
+    //     if ( socket_list[i].strNickname == req.body.strNickname )
+    //     {
+    //         socket_list[i].emit('AlertLetter', req.body.strContents);
+    //     }
+    // }
 
     res.send('OK');
 });
@@ -424,59 +417,59 @@ server.listen(cPort, () => {
 setInterval(async () => {
 }, 1000);
 
-var socket_list = {};
+// var socket_list = {};
 
-global.socket_list = socket_list;
+// global.socket_list = socket_list;
 
-io.on('connection', (socket) => {
+// io.on('connection', (socket) => {
 
-    socket.id = Math.random();
-    socket_list[socket.id] = socket;
+//     socket.id = Math.random();
+//     socket_list[socket.id] = socket;
 
-    console.log(`connected ${socket.id}, length ${util_object.getObjectLength(socket_list)}`);
+//     console.log(`connected ${socket.id}, length ${IObject.getObjectLength(socket_list)}`);
 
-    socket.on('request_login', async (user) => {
+//     socket.on('request_login', async (user) => {
 
-        console.log(`############################################# socket packet request_login ${user.strNickname}, ${user.strGroupID}, ${user.iClass}`);
+//         console.log(`############################################# socket packet request_login ${user.strNickname}, ${user.strGroupID}, ${user.iClass}`);
 
-        socket.strGroupID = user.strGroupID;
-        socket.iClass = user.iClass;
-        socket.strNickname = user.strNickname;
-        socket.strID = user.strID;
+//         socket.strGroupID = user.strGroupID;
+//         socket.iClass = user.iClass;
+//         socket.strNickname = user.strNickname;
+//         socket.strID = user.strID;
 
-        socket.emit('response_login', "responsedata");
+//         socket.emit('response_login', "responsedata");
 
-        const object = {strID:user.strID, iClass:user.iClass, strNickname:user.strNickname, strGroupID:user.strGroupID};
-        await redis.SetCache(user.strID, object);
-        //await redis.GetAllKeys();
-    });
+//         const object = {strID:user.strID, iClass:user.iClass, strNickname:user.strNickname, strGroupID:user.strGroupID};
+//         await redis.SetCache(user.strID, object);
+//         //await redis.GetAllKeys();
+//     });
 
-    // socket.on('group', (group) => {
-    //     console.log(`group : ${group}`);
+//     // socket.on('group', (group) => {
+//     //     console.log(`group : ${group}`);
 
-    //     socket.group = group;
-    // })
+//     //     socket.group = group;
+//     // })
 
-    socket.on('disconnect', async () => {
+//     socket.on('disconnect', async () => {
         
-        console.log(`socket.on disconnect ${socket.strID}`);
+//         console.log(`socket.on disconnect ${socket.strID}`);
         
-        // if ( socket.strID != undefined )
-        // {
-        //     await db.Sessions.destroy({where:{strID:socket.strID}, truncate:true});
-        // }
+//         // if ( socket.strID != undefined )
+//         // {
+//         //     await db.Sessions.destroy({where:{strID:socket.strID}, truncate:true});
+//         // }
 
-        delete socket_list[socket.id];
+//         delete socket_list[socket.id];
 
-        if ( socket.strID != undefined )
-        {
-            redis.RemoveCache(socket.strID);
-            //await redis.GetAllKeys();
-        }    
+//         if ( socket.strID != undefined )
+//         {
+//             redis.RemoveCache(socket.strID);
+//             //await redis.GetAllKeys();
+//         }    
 
-        console.log(`disconnected ${socket.id}, length ${util_object.getObjectLength(socket_list)}`);
-    });
-});
+//         console.log(`disconnected ${socket.id}, length ${IObject.getObjectLength(socket_list)}`);
+//     });
+// });
 
 app.post('/realtime_user', async (req, res) => {
 
@@ -508,19 +501,19 @@ app.post('/realtime_user', async (req, res) => {
 app.post('/realtime_user_logout', (req, res) => {
     console.log(`/realtime_user_logout`);
     console.log(req.body);
-    console.log(socket_list);
-    for ( let i in socket_list )
-    {
-        console.log('1#####################');
-        console.log(socket_list[i]);
-        console.log('2#####################');
-        console.log(`${socket_list[i].strID} / ${req.body.strID}`);
-        if ( socket_list[i].strID == req.body.strID )
-        {
-            console.log(`일치 : ${socket_list[i].strID} / ${req.body.strID}`);
-            socket_list[i].emit('UserLogout');
-        }
-    }
+    // console.log(socket_list);
+    // for ( let i in socket_list )
+    // {
+    //     console.log('1#####################');
+    //     console.log(socket_list[i]);
+    //     console.log('2#####################');
+    //     console.log(`${socket_list[i].strID} / ${req.body.strID}`);
+    //     if ( socket_list[i].strID == req.body.strID )
+    //     {
+    //         console.log(`일치 : ${socket_list[i].strID} / ${req.body.strID}`);
+    //         socket_list[i].emit('UserLogout');
+    //     }
+    // }
 });
 
 app.post('/request_changepassword', async (req, res) => {
@@ -538,6 +531,14 @@ app.post('/request_updatestate', async (req, res) => {
     console.log(`/request_updatestate`);
     console.log(req.body);
 
-    res.send({result:'OK'});
+    let objectData = {iCash:0, iNumLetters:0};
 
+    const user = await db.Users.findOne({where:{strID:req.body.strID}});
+    if ( user != null )
+        objectData.iCash = user.iCash;
+    const letters = await db.Letters.findAll({where:{strToID:req.body.strID, eRead:'UNREAD'}});
+    if ( letters != null )
+        objectData.iNumLetters = letters.length;
+
+    res.send({result:'OK', data:objectData});
 });

@@ -35,22 +35,15 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 db.Users = require('./models/user')(sequelize, Sequelize);
-db.BettingRecords = require('./models/betting_record')(sequelize, Sequelize);
 db.Inouts = require('./models/inout')(sequelize, Sequelize);
 db.GTs = require('./models/gt')(sequelize, Sequelize);
 db.Letters = require('./models/letter')(sequelize, Sequelize);
-db.SettleRecords = require('./models/settle_record')(sequelize, Sequelize);
-db.Accounts = require('./models/account')(sequelize, Sequelize);
 db.Announcements = require('./models/announcement')(sequelize, Sequelize);
 db.Faqs = require('./models/faq')(sequelize, Sequelize);
 db.BankRecords = require('./models/bank_record')(sequelize, Sequelize);
-db.BuildBets = require('./models/buildbet')(sequelize, Sequelize);
-
 db.RecordBets = require('./models/recordbet')(sequelize, Sequelize);
 db.RecordDailyOverviews = require('./models/RecordDailyOverview')(sequelize, Sequelize);
-
 db.RecordErrorCashes = require('./models/recorderrorcash')(sequelize, Sequelize);
-
 db.SettingRecords = require('./models/setting_record')(sequelize, Sequelize);
 
 module.exports = db;

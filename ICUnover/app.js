@@ -551,7 +551,7 @@ app.post('/request_checklogout', async (req, res) => {
 
     if ( req.user != null )
     {
-        const objectResult = await IHelper.RequestAxios("http://165.22.102.70:3070/account/checklogout", {eType:'USER', strID:req.user.strID});
+        const objectResult = await IHelper.RequestAxios(`${global.strAPIAddress}/account/checklogout`, {eType:'USER', strID:req.user.strID});
 
         console.log(objectResult);
     

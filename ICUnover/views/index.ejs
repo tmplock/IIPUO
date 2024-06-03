@@ -212,7 +212,7 @@
     </div>
     
     <!--게시판-->
-    <div class="board-wrap">
+    <!-- <div class="board-wrap">
         <div class="board-list">
             <div class="list-b">
                 <h1 onclick="location.href='/board/list'" style="cursor: hand;cursor: pointer;"><span>UNOVER</span><span>공지사항</span></h1>
@@ -254,7 +254,7 @@
                     </table>
             </div>
         </div>
-    </div>
+    </div> -->
 </div>
 
 <!--pop 배너영역-->
@@ -378,7 +378,7 @@
 
         let showMovieList = [];
         for (let i in movieList) {
-            if (bLogin) {
+            if (bLogin == 'true') {
                 let strID = user.strID;
                 if (getCookie(`${movieList[i]}_${strID}`) != 'done') {
                     showMovieList.push(movieList[i]);

@@ -237,6 +237,26 @@
                             //alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
                         }
                     });
+
+                    $.ajax(
+                    {
+                        type:'post',
+                        url: "/request_checklogout",
+                        context: document.body,
+                        data:{strID:user.strID},
+                
+                        success:function(data) {
+
+                            if ( data.result == 'OK' )
+                            {
+                                console.log(data.iLogout);
+                            }
+                        },
+                        error:function(request,status,error){
+                            //alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+                        }
+                    });
+
                 }
 
             }, 5000);

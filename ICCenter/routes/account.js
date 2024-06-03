@@ -84,15 +84,32 @@ router.post('/checklogout', (req, res) => {
     const user = FindUser(listLogout, objectData);
     if ( null != user )
     {
-        RemoveUser(listLogout, user);
         res.send({result:'OK', iLogout:1});
+    }
+    else
+    {
+        res.send({result:'OK', iLogout:0});
+    }
+});
 
+router.post('/logoutcomplete', (req, res) => {
+
+    console.log(`/account/checklogout`);
+    console.log(req.body);
+
+    let objectData = {strID:req.body.strID};
+
+    const user = FindUser(listLogout, objectData);
+    if ( null != user )
+    {
+        RemoveUser(listLogout, user);
         PrintUsers(listLogout, 'LogoutUser Complete')
     }
     else
     {
         res.send({result:'OK', iLogout:0});
     }
+
 });
 
 module.exports = router;

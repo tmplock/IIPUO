@@ -45,8 +45,14 @@ let AddOnlineUser = (strID, eType) => {
     let user = FindUser(listOnlineUser, {strID:strID});
     if ( null != user )
     {
-        listLogout.push({eType:eTargetType, strID:strID});
-        user.eType = eType;
+        if ( user.eType == eType )
+        {
+        }
+        else
+        {
+            listLogout.push({eType:eTargetType, strID:strID});
+            user.eType = eType;
+        }
     }
     else
     {

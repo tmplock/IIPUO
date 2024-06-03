@@ -303,7 +303,7 @@
 
         let showPopupList = [];
         for (let i in popupList) {
-            if (bLogin) {
+            if (bLogin == 'true') {
                 let strID = user.strID;
                 if (getCookie(`${popupList[i]}_${strID}`) != 'done') {
                     showPopupList.push(popupList[i]);

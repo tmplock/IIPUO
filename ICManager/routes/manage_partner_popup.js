@@ -1302,6 +1302,18 @@ router.post('/request_agentinfo_modify', isLoggedIn,async (req, res) => {
         return;
     }
 
+    // 수정이 하위임
+    if (req.user.iClass >= user.iClass) {
+        res.send({result:'ERROR', code:'ERRORMSG', msg: '접근권한 없음'});
+        return;
+    }
+
+    // 소속 그룹 아님
+    if (user.strGroupID.indexOf(req.user.strGroupID) != 0) {
+        res.send({result:'ERROR', code:'ERRORMSG', msg: '접근권한 없음'});
+        return;
+    }
+
     let strErrorCode = '';
 
     let fSettleBaccarat = parseFloat(req.body.fSettleBaccarat ?? 0);

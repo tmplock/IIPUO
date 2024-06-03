@@ -88,7 +88,7 @@ router.post('/checklogout', (req, res) => {
     }
     else
     {
-        req.send({result:'OK', iLogout:0});
+        res.send({result:'OK', iLogout:0});
     }
 });
 

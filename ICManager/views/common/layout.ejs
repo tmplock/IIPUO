@@ -561,7 +561,7 @@
                     <% } else { %>
                         <li>
                     <% } %>
-                        <% if ( parseInt(user.iClass) > 1 ) { %>
+                        <% if ( parseInt(user.iClass) > 1 && parseInt(user.iPermission) != 100 ) { %>
                             <a href="#" id="manage_setting"><%=__('MenuBoard')%></a>
                         <% } %>
                     </li>

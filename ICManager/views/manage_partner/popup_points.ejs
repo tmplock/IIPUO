@@ -25,9 +25,10 @@
 							<th width="16%" style="font-size:14px;">지급</th>
 							<th width="16%" style="font-size:14px;">차감</th>
 							<th width="16%" style="font-size:14px;">롤링</th>
-							<th width="16%" style="font-size:14px;">합계</th>
+							<th width="16%" style="font-size:14px;">합계(보유머니)</th>
 							<th width="16%" style="font-size:14px;">닉네임</th>
 							<th width="16%" style="font-size:14px;">전환 일자</th>
+							<th width="16%" style="font-size:14px;">비고</th>
 						</tr>
 					</thead>
 					<tbody id="listGTRecord">
@@ -55,7 +56,7 @@
 	let GetType = (eType) => {
 		if ( eType == 'ROLLING' )
 		{
-			return {strType:'롤링', color:'green'};
+			return {strType:'롤링전환', color:'green'};
 		}
 		else if ( eType == 'TAKE' )
 		{
@@ -67,7 +68,7 @@
 		}
 		else if ( eType == 'SETTLE' )
 		{
-			return {strType:'죽장', color:'red'};
+			return {strType:'죽장전환', color:'red'};
 		}
 		else if ( eType == 'GETSETTLE' )
 		{
@@ -107,22 +108,35 @@
 					let nickname = '';
 					let iClass = '';
 					let iAmountGive = 0;
+					let defaultGive = '';
 					let iAmountTake = 0;
+					let defaultTake = '';
 					let iAmountRolling = 0;
+					let defaultRolling = '';
 					let iBeforeAmount = 0;
+					let beforeSubText = '';
 					let iAfterAmount = 0;
 					let tagChar = '';
 
 					if (list[i].eType == 'ROLLING') {
 						iAmountRolling = list[i].iAmount;
 						iBeforeAmount = parseFloat(list[i].iBeforeAmountTo);
+						beforeSubText = '(롤링)';
 						iAfterAmount = parseFloat(list[i].iAfterAmountTo);
 						nickname = list[i].strTo;
 						iClass = list[i].iClassTo;
 					} else if (list[i].eType == 'GETSETTLE') {
+						iAmountGive = list[i].iAmount;
+						iBeforeAmount = parseFloat(list[i].iBeforeAmountTo);
+						beforeSubText = '(죽장)';
+						iAfterAmount = parseFloat(list[i].iAfterAmountTo);
+						nickname = list[i].strTo;
+						iClass = list[i].iClassTo;
+					} else if (list[i].eType == 'SETTLE') {
 						iAmountTake = list[i].iAmount;
 						iBeforeAmount = parseFloat(list[i].iBeforeAmountTo);
 						iAfterAmount = parseFloat(list[i].iAfterAmountTo);
+						beforeSubText = '(죽장)';
 						nickname = list[i].strTo;
 						iClass = list[i].iClassTo;
 					} else if (list[i].eType == 'TAKE') { // 차감
@@ -130,6 +144,7 @@
 						if (agent.iClass == list[i].iClassFrom) {
 							iAmountTake = list[i].iAmount;
 							iBeforeAmount = parseFloat(list[i].iBeforeAmountFrom);
+							beforeSubText = '(캐시)';
 							iAfterAmount = parseFloat(list[i].iAfterAmountFrom);
 							nickname = list[i].strTo;
 							iClass = list[i].iClassTo;
@@ -137,6 +152,7 @@
 						} else { // 상부 -> 하부(본인)
 							iAmountTake = -list[i].iAmount;
 							iBeforeAmount = parseFloat(list[i].iBeforeAmountTo);
+							beforeSubText = '(캐시)';
 							iAfterAmount = parseFloat(list[i].iAfterAmountTo);
 							nickname = list[i].strFrom;
 							iClass = list[i].iClassFrom;
@@ -147,6 +163,7 @@
 						if (agent.iClass == list[i].iClassFrom) {
 							iAmountGive = -list[i].iAmount
 							iBeforeAmount = parseFloat(list[i].iBeforeAmountFrom);
+							beforeSubText = '(캐시)';
 							iAfterAmount = parseFloat(list[i].iAfterAmountFrom);
 							nickname = list[i].strTo;
 							iClass = list[i].iClassTo;
@@ -154,6 +171,7 @@
 						} else { // 상부 -> 하부(본인)
 							iAmountGive = list[i].iAmount
 							iBeforeAmount = parseFloat(list[i].iBeforeAmountTo);
+							beforeSubText = '(캐시)';
 							iAfterAmount = parseFloat(list[i].iAfterAmountTo);
 							nickname = list[i].strFrom;
 							iClass = list[i].iClassFrom;
@@ -172,13 +190,14 @@
 
 					let tag = `	<tr>
 								<td>${list[i].id}</td>
-								<td>${GetNumberSign(iBeforeAmount)}</td>
-								<td style="color: ${GetColor(iAmountGive)}">${GetNumber(iAmountGive)}</td>
-								<td style="color: ${GetColor(iAmountTake)}">${GetNumber(iAmountTake)}</td>
-								<td style="color: ${GetColor(iAmountRolling)}">${GetNumber(iAmountRolling)}</td>
-								<td>${GetNumberSign(iAfterAmount)}</td>
+								<td>${beforeSubText}${GetNumberSign(iBeforeAmount, '0')}</td>
+								<td style="color: ${GetColor(iAmountGive)}">${GetNumber(iAmountGive, '0')}</td>
+								<td style="color: ${GetColor(iAmountTake)}">${GetNumber(iAmountTake, '0')}</td>
+								<td style="color: ${GetColor(iAmountRolling)}">${GetNumber(iAmountRolling, '0')}</td>
+								<td>${GetNumberSign(iAfterAmount, '0')}</td>
 								<td>${linkTag}</td>
 								<td>${list[i].createdAtFormat}</td>
+								<td>${GetType(list[i].eType).strType}</td>
 								</tr>`;
 
 					$('#listGTRecord').append(tag);
@@ -197,6 +216,7 @@
 					<td style="color: ${GetColor(give)}">${GetNumber(give)}</td>
 					<td style="color: ${GetColor(take)}">${GetNumber(take)}</td>
 					<td style="color: ${GetColor(rolling)}">${GetNumber(rolling)}</td>
+					<td></td>
 					<td></td>
 					<td></td>
 					<td></td>

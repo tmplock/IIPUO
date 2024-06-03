@@ -301,6 +301,7 @@ let inline_CalculateOverviewShare = async (strGroupID, strQuater) => {
         IFNULL((SELECT SUM(iShareOrgin) FROM ShareRecords WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND strQuater = '${strQuater}') ,0) as iShareOrgin,
         IFNULL((SELECT SUM(iShare) FROM ShareRecords WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND strQuater = '${strQuater}') ,0) as iShare,
         IFNULL((SELECT SUM(iSlotCommission) FROM ShareRecords WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND strQuater = '${strQuater}') ,0) as iSlotCommission,
+        IFNULL((SELECT SUM(iShareReceive) FROM ShareRecords WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND strQuater = '${strQuater}') ,0) as iShareReceive,
         IFNULL((SELECT SUM(iPayback) FROM ShareRecords WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND strQuater = '${strQuater}') ,0) as iPayback,
         IFNULL((SELECT SUM(iShareAccBefore) FROM ShareRecords WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND strQuater = '${strQuater}') ,0) as iShareAccBefore,
         IFNULL((SELECT SUM(iCreditBefore) FROM ShareRecords WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND strQuater = '${strQuater}') ,0) as iCreditBefore,

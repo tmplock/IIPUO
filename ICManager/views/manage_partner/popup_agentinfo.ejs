@@ -547,13 +547,10 @@
 					$('#bank_num').val(data.bankAccount);
 					$("#cell").removeAttr("disabled");
 					$('#cell').val(data.cell);
-					let pass = data.pass ?? '';
-					if (pass != '') {
-						$('#member_password').val(data.pass);
-						$("#member_password").removeAttr("disabled");
-						$('#member_password2').val(data.pass);
-						$("#member_password2").removeAttr("disabled");
-					}
+					$('#member_password').val(data.pass);
+					$("#member_password").removeAttr("disabled");
+					$('#member_password2').val(data.pass);
+					$("#member_password2").removeAttr("disabled");
 				}
 				else
 				{

@@ -9,7 +9,7 @@ const {Op} = require('sequelize');
 
 app.use('/account', require('./routes/account'));
 
-const cPort = 3050;
+const cPort = 3070;
 server.listen(cPort, () => {
     console.log(`ICCenter Server is started At ${cPort}`);
 });

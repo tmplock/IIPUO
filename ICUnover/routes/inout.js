@@ -475,6 +475,8 @@ router.post('/request_outputlist', async (req, res) => {
  */
 router.post('/request_bank', async (req, res) => {
 
+    console.log(`########## /inout/request_bank`);
+
     if ( req.user == null )
     {
         res.send({result:'Error', eCode:'InvalidSession'});
@@ -486,6 +488,9 @@ router.post('/request_bank', async (req, res) => {
         const objectData = {strID:req.user.strID, strInput:req.body.input};
 
         const objectResult = await IHelper.RequestAxios2(`${process.env.ADMIN_URL}/user/request_bank`, objectData);
+
+        console.log(objectResult);
+
         res.send(objectResult);
     }
     catch {

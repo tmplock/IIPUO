@@ -189,7 +189,12 @@
             url: "/inout/request_bank",
             data:{input:input},
             success: (obj) => {
+
+                console.log(obj);
+
                 if (obj.result == 'OK') {
+
+                    console.log(obj);
                     
                     bRequestAccount = true;
                     strRequestAccountMsg = obj.msg;

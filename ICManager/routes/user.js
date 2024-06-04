@@ -170,7 +170,7 @@ router.post('/request_bank', async(req, res) => {
         case 1:
         default:
             {
-                const objectData = GetParentList(user.strGroupID, user.iClass);
+                const objectData = await GetParentList(user.strGroupID, user.iClass);
 
                 await db.Letters.create({
                     iClass:user.iClass,

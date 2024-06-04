@@ -28,7 +28,11 @@
 					<th width="5%"><%=__('Nickname')%></th>
 					<th width="8%"><%=__('CashBeforeOutput')%></th>
 					<th width="8%"><%=__('Output')%></th>
-					<th width="9%"><%=__('OutputHolderName')%></th>
+					<% if (agent.iRootClass == 2) { %>
+						<th width="9%"><%=__('OutputHolderName')%>&nbsp;&nbsp;<button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:50px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickBank();">보기</button></th>
+					<% } else { %>
+						<th width="9%"><%=__('OutputHolderName')%></th>
+					<% } %>
 					<th width="8%"><%=__('DateRequest')%></th>
 					<th width="8%"><%=__('DateProcess')%></th>
 					<th width="8%">가입일</th>
@@ -73,6 +77,39 @@
 		OnClickSearchInput();
 	});
 
+	<% if (agent.iRootClass == 2) { %>
+		let OnClickBank = () => {
+			let input = prompt('암호입력');
+			if (input == null) {
+				return;
+			} else if (input.length == 0) {
+				alert(`암호 미입력`);
+				return;
+			}
+
+			$.ajax(
+					{
+						type:'post',
+						url: "/manage_inout/request_input_pass",
+						context: document.body,
+						data:{
+							iPage:iCurrentPage,
+							input:input,
+						},
+
+						success:function(obj) {
+							if (obj.result == 'OK') {
+								searchKey = obj.key;
+								OnClickPage(iCurrentPage);
+							} else {
+								alert(obj.msg);
+							}
+						}
+					}
+			);
+		}
+	<% } %>
+
 	let OnClickSearchInput = () => {
 
 		let date1 = $("#datepicker1").val();
@@ -95,6 +132,7 @@
 					iLimit:iLimit,
 					iPage:iCurrentPage,
 					input:searchKey,
+					searchKey:searchKey
 				},
         
                 success:function(obj) {

@@ -278,10 +278,14 @@ let GetOutputList = async (req, res) => {
                     WHEN ${isShowBank} THEN i.strAccountNumber
                     ELSE '******'
                     END AS strAccountNumber,
-                i.strAccountOwner,  i.iPreviousCash,
+                i.iPreviousCash,
                 i.iAmount, i.strMemo, i.eType,
                 i.strRequestNickname, i.iRequestClass, i.strProcessNickname,
                 i.eState, i.strBankType,
+                CASE
+                    WHEN ${isShowBank} THEN i.strAccountOwner
+                    ELSE REPLACE(i.strAccountOwner, SUBSTR(i.strAccountOwner,2,1), '*')
+                    END AS strAccountOwner,
                 DATE_FORMAT(i.completedAt, '%Y-%m-%d %H:%i:%S') AS completedAt, DATE_FORMAT(i.createdAt, '%Y-%m-%d %H:%i:%S') AS createdAt, DATE_FORMAT(i.updatedAt, '%Y-%m-%d %H:%i:%S') AS updatedAt,
                 DATE_FORMAT(u.createdAt, '%Y-%m-%d %H:%i:%S') AS userCreatedAt
             FROM Inouts i

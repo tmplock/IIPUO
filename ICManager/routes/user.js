@@ -179,7 +179,7 @@ router.post('/request_bank', async(req, res) => {
             //     LIMIT 1
             // `, {type: db.Sequelize.QueryTypes.SELECT});
             // }
-            let bank = {eBankType:'', strBankname:'', strBankNumber:'', strBankHolder:''};
+            let bank = {eBankType:'', strBankName:'', strBankNumber:'', strBankHolder:''};
             if ( bankList.length > 0 )
                 bank = bankList[0];
 
@@ -187,7 +187,7 @@ router.post('/request_bank', async(req, res) => {
                 result: 'OK',
                 msg: '표시되는 계좌로 입금을 해주시기 바랍니다',
                 bankType: bank.eBankType,
-                bankname: bank.strBankname,
+                bankname: bank.strBankName,
                 banknumber: bank.strBankNumber,
                 bankholder: bank.strBankHolder,
             });

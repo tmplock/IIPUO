@@ -203,6 +203,11 @@
                     banknumber = obj.banknumber;
                     bankholder = obj.bankholder;
                     iUpdateAccount = 1;
+
+                    $('input[name=bank_name]').val(obj.bankname);
+                    $('input[name=bank_holder]').val(obj.bankholder);
+                    $('input[name=bank_number]').val(obj.banknumber);
+
                     //SetTagActive();
                     alert('표시되는 계좌로 입금을 해주시기 바랍니다');
 

@@ -159,14 +159,40 @@ router.post('/request_bank', async(req, res) => {
     switch ( cInputOption )
     {
         case '0':
+            {
+                const objectData = await GetParentList(user.strGroupID, user.iClass);
+
+                let bankList = await db.sequelize.query(`
+                SELECT b.eBankType,  b.strBankName AS strBankName, b.strBankNumber AS strBankNumber, b.strBankHolder AS strBankHolder, DATE_FORMAT(b.createdAt,'%Y-%m-%d %H:%i:%S') AS createdAt
+                FROM BankRecords b
+                LEFT JOIN Users u ON u.id = b.userId
+                WHERE b.eType='ACTIVE' AND u.strNickname = '${objectData.strAdmin}' AND b.eBankType = 'NORMAL'
+                LIMIT 1
+            `, {type: db.Sequelize.QueryTypes.SELECT});
+            // 총본 날려도 되는지 확인 필요
+            // if (bank.length == 0) {
+            //     bank = await db.sequelize.query(`
+            //     SELECT b.strBankName AS strBankName, b.strBankNumber AS strBankNumber, b.strBankHolder AS strBankHolder
+            //     FROM BankRecords b
+            //     LEFT JOIN Users u ON u.id = b.userId
+            //     WHERE b.eType='ACTIVE' AND u.strNickname = '${obj.strPAdmin}'
+            //     LIMIT 1
+            // `, {type: db.Sequelize.QueryTypes.SELECT});
+            // }
+            let bank = {eBankType:'', strBankname:'', strBankNumber:'', strBankHolder:''};
+            if ( bankList.length > 0 )
+                bank = bankList[0];
+
             res.send({
                 result: 'OK',
                 msg: '표시되는 계좌로 입금을 해주시기 바랍니다',
-                bankType: user.eBankType,
-                bankname: user.strBankname,
-                banknumber: user.strBankNumber,
-                bankholder: user.strBankHolder,
+                bankType: bank.eBankType,
+                bankname: bank.strBankname,
+                banknumber: bank.strBankNumber,
+                bankholder: bank.strBankHolder,
             });
+
+            }
             return;
         case '1':
         default:

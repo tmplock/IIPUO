@@ -485,7 +485,7 @@ router.post('/request_bank', async (req, res) => {
 
         const objectData = {strID:req.user.strID, strInput:req.body.input};
 
-        const objectResult = await IHelper.RequestAxios(`${global.strAdminAddress}/user/request_bank`, objectData);
+        const objectResult = await IHelper.RequestAxios2(`${process.env.ADMIN_URL}/user/request_bank`, objectData);
         res.send(objectResult);
     }
     catch {

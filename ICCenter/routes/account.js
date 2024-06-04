@@ -66,6 +66,17 @@ let PrintUsers = (list, strDesc) => {
     console.log(list);
 }
 
+router.get('/onlineuser', (req, res) => {
+
+    res.send(listOnlineUser);
+});
+
+router.get('/logoutuser', (req, res) => {
+
+    res.send(listLogout);
+})
+
+
 router.post('/login', (req, res) => {
 
     console.log(`/account/login`);

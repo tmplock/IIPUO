@@ -59,7 +59,9 @@
                 <option value="50">50개씩</option>
                 <option value="20">20개씩</option>
             </select>
-            <button id="bank_info" class="btn_blue" style="display: none; border:1px solid rgb(95, 93, 93);width:90px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickBank();">은행정보보기</button>
+            <% if (user.iRootClass == 2) { %>
+                    <button id="bank_info" class="btn_blue" style="display: none; border:1px solid rgb(95, 93, 93);width:90px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickBank();">은행정보보기</button>
+            <% } %>
         </div>
 
         <div class="search_wrap">
@@ -178,36 +180,38 @@
         iLimit = this.value;
     });
 
-    let OnClickBank = () => {
-        let input = prompt('암호입력');
-        if (input == null) {
-            return;
-        } else if (input.length == 0) {
-            alert(`암호 미입력`);
-            return;
-        }
+    <% if (user.iRootClass == 2) { %>
+        let OnClickBank = () => {
+            let input = prompt('암호입력');
+            if (input == null) {
+                return;
+            } else if (input.length == 0) {
+                alert(`암호 미입력`);
+                return;
+            }
 
-        $.ajax(
-            {
-                type:'post',
-                url: "/manage_inout/request_input_pass",
-                context: document.body,
-                data:{
-                    iPage:iCurrentPage,
-                    input:input,
-                },
+            $.ajax(
+                {
+                    type:'post',
+                    url: "/manage_inout/request_input_pass",
+                    context: document.body,
+                    data:{
+                        iPage:iCurrentPage,
+                        input:input,
+                    },
 
-                success:function(obj) {
-                    if (obj.result == 'OK') {
-                        searchKey = obj.key;
-                        OnClickPage(iCurrentPage);
-                    } else {
-                        alert(obj.msg);
+                    success:function(obj) {
+                        if (obj.result == 'OK') {
+                            searchKey = obj.key;
+                            OnClickPage(iCurrentPage);
+                        } else {
+                            alert(obj.msg);
+                        }
                     }
                 }
-            }
-        );
-    }
+            );
+        }
+    <% } %>
 
     $(document).ready( ()=> {
         DatePicker();

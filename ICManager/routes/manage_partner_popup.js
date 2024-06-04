@@ -852,10 +852,11 @@ router.post('/request_register', isLoggedIn, async(req, res) => {
                 res.send({result:'Error', error:'Rolling', string:'롤링비(%)는 상위 에이전트 보다 클 수 없습니다.'});
                 return;
             }
-            else if (parent.fSettleBaccarat < fSettleBaccarat || parent.fSettleSlot < fSettleSlot)
-            {
-                res.send({result:'Error', error:'Settle', string:'죽장(%)은 상위 에이전트 보다 클 수 없습니다.'});
-                return;
+            else if (parent.iClass == 3 || parent.iClass == 4 || parent.iClass == 5) {
+                if (parent.fSettleBaccarat < fSettleBaccarat || parent.fSettleSlot < fSettleSlot) {
+                    res.send({result:'Error', error:'Settle', string:'죽장(%)은 상위 에이전트 보다 클 수 없습니다.'});
+                    return;
+                }
             }
         }
 
@@ -1513,7 +1514,7 @@ router.post('/request_agentinfo_modify', isLoggedIn,async (req, res) => {
                 }
 
                 // 죽장은 본사 ~ 대본만 체크
-                if (parent.iClass == 3 || parent.iClass == 4) {
+                if (parent.iClass == 3 || parent.iClass == 4 || parent.iClass == 5) {
                     if (
                         parent.fSettleBaccarat < fSettleBaccarat ||
                         parent.fSettleSlot < fSettleSlot
@@ -1736,7 +1737,7 @@ router.post('/request_agentinfo_modify', isLoggedIn,async (req, res) => {
     {
         res.send({result:'ERROR', code:strErrorCode});
     }
-}, isLoggedIn);
+});
 
 const logMessage = (source, data) => {
     let msg = '';

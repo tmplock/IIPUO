@@ -188,6 +188,26 @@
 					<col style="width:15%">
 					<col style="width:35%">
 				</colgroup>
+				<p style="background-repeat:no-repeat; background-position:left center; font-size:16px; color:#454545; padding-left:22px;">회원 입출금 등급 설정</p>
+				<tr>
+					<th scope="row"><%=__('UsingInput')%></th>
+					<td>
+						<input type="radio" style="width:30px;height:30px;" name="input_grade" required="no" message="" value="0"> <strong>1등급</strong>
+						<input type="radio" style="width:30px;height:30px;" name="input_grade" required="no" message="" value="1"> <strong>2등급</strong>
+						<input type="radio" style="width:30px;height:30px;" name="input_grade" required="no" message="" value="2" checked> <strong>3등급</strong>
+					</td>
+				</tr>
+			</table>
+		</div>
+
+		<div>
+			<table>
+				<colgroup>
+					<col style="width:15%">
+					<col style="width:35%">
+					<col style="width:15%">
+					<col style="width:35%">
+				</colgroup>
 				<p style="background-repeat:no-repeat; background-position:left center; font-size:20px; font-weight: bold; color:#454545; padding-left:22px;">PC방 이용 설정</p>
 				<tr>
 					<th scope="row">PC방 이용 설정</th>
@@ -232,6 +252,25 @@
 					<th scope="row"><%=__('UsingOutput')%></th>
 					<td>
 						<input type="checkbox" style="width:30px;height:30px;" name="using_output" id="using_output" required="no" message="" checked> <strong><%=__('DescUsingOutput')%></strong>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div>
+			<table>
+				<colgroup>
+					<col style="width:15%">
+					<col style="width:35%">
+					<col style="width:15%">
+					<col style="width:35%">
+				</colgroup>
+				<p style="background-repeat:no-repeat; background-position:left center; font-size:16px; color:#454545; padding-left:22px;">회원 입출금 등급 설정</p>
+				<tr>
+					<th scope="row"><%=__('UsingInput')%></th>
+					<td>
+						<input type="radio" style="width:30px;height:30px;" name="input_grade" required="no" message="" value="0"> <strong>1등급</strong>
+						<input type="radio" style="width:30px;height:30px;" name="input_grade" required="no" message="" value="1"> <strong>2등급</strong>
+						<input type="radio" style="width:30px;height:30px;" name="input_grade" required="no" message="" value="2" checked> <strong>3등급</strong>
 					</td>
 				</tr>
 			</table>
@@ -289,6 +328,7 @@
 		let cUsingInput = parseInt(agent.strOptionCode[0]);
 		let cUsingOutput = parseInt(agent.strOptionCode[1]);
 		let strUsingPC = parseInt(agent.strOptionCode[2]);
+		let iInputGrade = parseInt(agent.strOptionCode[3]);
 		if ( strUsingPC == 1 ) {
 			bUsingPC = true;
 			$('#using_pc').attr('checked', true);
@@ -304,6 +344,8 @@
 			$('#bank_name').val(agent.strBankname);
 			$('#bank_num').val(agent.strBankAccount);
 		}
+
+		$(`input[name="input_grade"][value="${iInputGrade}"]`).prop("checked",true);
 
 		$('#using_pc').click((e) => {
 			var checked = $('#using_pc').is(':checked');
@@ -326,6 +368,8 @@
 				$('#bank_num').val(agent.strBankAccount);
 			}
 		});
+
+
 
 		<% if ( agent.iClass == 8 || agent.iClass == 7 ) { %>
 			$('#pass_check_new_user').show();
@@ -645,6 +689,14 @@
 					strOptionCode = replaceCharacter(strOptionCode, 1, '0');
 				}
 			}
+
+			let iInputGrade = $("input[name='input_grade']:checked").val();
+			strOptionCode = replaceCharacter(strOptionCode, 3, iInputGrade.toString());
+			// alert(strOptionCode);
+			// return;
+
+
+
 		}
 
 		if (parseFloat(fSlotR) < 0 || parseFloat(fBaccaratR) < 0 || parseFloat(fUnderOverR) < 0) {

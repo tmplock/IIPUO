@@ -74,8 +74,44 @@ router.post('/request_page', isLoggedIn, async(req, res) => {
     }
 });
 
-// 출금관리 > 계좌 공개 처리
+// 입출금관리 > 출금목록 > 계좌 공개 처리
 router.post('/request_output_pass', isLoggedIn, async (req, res) => {
+    if (req.user.iClass != 2 || req.user.iPermission == 100) {
+        res.send({result:'FAIL', msg:'조회오류'});
+        return;
+    }
+
+    let input = req.body.input ?? '';
+    if (input == '') {
+        res.send({result:'FAIL', msg:'암호를 입력해주세요'});
+        return;
+    }
+
+    let iPage = parseInt(req.body.iPage ?? 0);
+    if (iPage == 0 || isNaN(iPage)) {
+        res.send({result:'FAIL', msg:'필수 파라메터 부족'});
+        return;
+    }
+
+    let result = await IAgentSec.AccessOutputBankPassword(req.user.strNickname, input);
+    if (result.result != 'OK') {
+        res.send(result);
+        return;
+    }
+
+    let period = moment().add(10, "minute");
+
+    period = await IAgent.GetCipher(`${iPage}&&${period}`);
+    res.send({result:'OK', msg:'정상 조회', key:period});
+});
+
+// 입출금관리 > 입금목록 > 계좌 공개 처리
+router.post('/request_input_pass', isLoggedIn, async (req, res) => {
+    if (req.user.iClass != 2 || req.user.iPermission == 100) {
+        res.send({result:'FAIL', msg:'조회오류'});
+        return;
+    }
+
     let input = req.body.input ?? '';
     if (input == '') {
         res.send({result:'FAIL', msg:'암호를 입력해주세요'});
@@ -276,6 +312,21 @@ let GetInputList = async (req, res) => {
     let iPage = parseInt(req.body.iPage);
     let iOffset = (iPage-1) * iLimit;
 
+    let isShowBank = false;
+    let searchKey = req.body.searchKey ?? '';
+    if (searchKey != '') {
+        // 유효기간 확인
+        let period = await IAgent.GetDeCipher(searchKey);
+        let arr = period.split('&&');
+        if (arr.length == 2) {
+            if (arr[0] == iPage) {
+                if (moment(arr[1]).isAfter(Date.now())) {
+                    isShowBank = true;
+                }
+            }
+        }
+    }
+
     const strSearchNickname = req.body.strSearchNickname ?? '';
 
     let totalCount = strSearchNickname == '' ? await db.Inouts.count({
@@ -297,15 +348,28 @@ let GetInputList = async (req, res) => {
         }
     });
 
+
     const subQuery = strSearchNickname == '' ? '' : `AND i.strID = '${strSearchNickname}'`;
     let datas = await db.sequelize.query(`
             SELECT
                 i.id, i.strID, i.strAdminNickname, i.strPAdminNickname, i.strVAdminNickname, i.strAgentNickname, i.strShopNickname,
-                i.iClass, i.strName, i.strGroupID,
+                i.iClass, i.strGroupID,
                 i.iAmount, i.strMemo, i.eType,
                 i.strRequestNickname, i.iRequestClass, i.strProcessNickname,
-                i.eState, i.strBankType, i.strAccountOwner, i.iPreviousCash,
-                u.strBankOwner AS strUserAccountOwner, u.strBankName AS strBankName, u.iPassCheckNewUser,
+                i.eState, i.strBankType, i.iPreviousCash,
+                CASE
+                    WHEN ${isShowBank} THEN i.strAccountOwner
+                    ELSE REPLACE(i.strAccountOwner, SUBSTR(i.strAccountOwner,2,1), '*')
+                    END AS strAccountOwner,
+                CASE
+                    WHEN ${isShowBank} THEN u.strBankOwner
+                    ELSE REPLACE(u.strBankOwner, SUBSTR(u.strBankOwner,2,1), '*')
+                    END AS strUserAccountOwner,
+                CASE
+                    WHEN ${isShowBank} THEN i.strName
+                    ELSE REPLACE(i.strName, SUBSTR(i.strName,2,1), '*')
+                    END AS strName,
+                u.strBankName AS strBankName, u.iPassCheckNewUser,
                 DATE_FORMAT(i.completedAt, '%Y-%m-%d %H:%i:%S') AS completedAt, DATE_FORMAT(i.createdAt, '%Y-%m-%d %H:%i:%S') AS createdAt, DATE_FORMAT(i.updatedAt, '%Y-%m-%d %H:%i:%S') AS updatedAt,
                 DATE_FORMAT(u.createdAt, '%Y-%m-%d %H:%i:%S') AS userCreatedAt
             FROM Inouts i
@@ -1139,7 +1203,7 @@ router.post('/request_inout_pass', isLoggedIn, async (req, res) => {
 });
 
 /**
- * 계좌관리
+ * 입출금관리 > 계좌보기
  */
 // 계좌관리 비번 체크
 router.post('/request_bank', isLoggedIn, async (req, res) => {

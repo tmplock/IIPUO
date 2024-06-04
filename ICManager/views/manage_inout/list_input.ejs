@@ -59,6 +59,7 @@
                 <option value="50">50개씩</option>
                 <option value="20">20개씩</option>
             </select>
+            <button id="bank_info" class="btn_blue" style="display: none; border:1px solid rgb(95, 93, 93);width:90px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickBank();">은행정보보기</button>
         </div>
 
         <div class="search_wrap">
@@ -169,12 +170,44 @@
     let iCurrentPage = 1;
     let iLimit = 100;
     let bToggleRecord = false;
+    let searchKey = '';
 
     let list = [];
 
     $('#select_limit').on("change", function () {
         iLimit = this.value;
     });
+
+    let OnClickBank = () => {
+        let input = prompt('암호입력');
+        if (input == null) {
+            return;
+        } else if (input.length == 0) {
+            alert(`암호 미입력`);
+            return;
+        }
+
+        $.ajax(
+            {
+                type:'post',
+                url: "/manage_inout/request_input_pass",
+                context: document.body,
+                data:{
+                    iPage:iCurrentPage,
+                    input:input,
+                },
+
+                success:function(obj) {
+                    if (obj.result == 'OK') {
+                        searchKey = obj.key;
+                        OnClickPage(iCurrentPage);
+                    } else {
+                        alert(obj.msg);
+                    }
+                }
+            }
+        );
+    }
 
     $(document).ready( ()=> {
         DatePicker();
@@ -203,6 +236,10 @@
         }
 
         Alert(iocount, "<%=__('RequestInput')%>", "<%=__('RequestOutput')%>,","<%=__('LetterSend')%>");
+
+        if (user.iPermission < 3) {
+            $('#bank_info').show();
+        }
 
         OnClickSearchByInput(1, true);
     });
@@ -237,7 +274,7 @@
                 type:'post',
                 url: "/manage_inout/request_searchby",
                 context: document.body,
-                data:{type:'INPUT', dateStart:date1, dateEnd:date2, strGroupID:user.strGroupID, strSearchNickname:strNickname, iLimit:limit, iPage:iPage, iClass:user.iClass},
+                data:{type:'INPUT', dateStart:date1, dateEnd:date2, strGroupID:user.strGroupID, strSearchNickname:strNickname, iLimit:limit, iPage:iPage, iClass:user.iClass, searchKey:searchKey},
 
                 success:function(obj) {
                     let data = obj.data;

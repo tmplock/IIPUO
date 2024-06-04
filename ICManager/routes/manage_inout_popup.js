@@ -33,6 +33,11 @@ router.post('/requestcharge', isLoggedIn, async (req, res) => {
         return;
     }
 
+    if (req.user.iClass > dbuser.iClass) {
+        res.render('manage_inout/popup_requestcharge', {iLayout:1, iHeaderFocus:1, user: {msg: '조회오류'}, bank: {strBankName: '', strBankHolder:'', strBankNumber:''}});
+        return;
+    }
+
     let iClass = parseInt(req.body.iClass);
     let strAdmin = '';
     if (iClass == 1 || iClass == 2 || iClass == 3) {
@@ -81,6 +86,11 @@ router.post('/requestexchange', isLoggedIn, async (req, res) => {
         return;
     }
 
+    if (req.user.iClass > dbuser.iClass) {
+        res.render('manage_inout/popup_requestcharge', {iLayout:1, iHeaderFocus:1, user: {msg: '조회오류'}, bank: {strBankName: '', strBankHolder:'', strBankNumber:''}});
+        return;
+    }
+
     user.msg = '';
     res.render('manage_inout/popup_requestexchange', {iLayout:1, iHeaderFocus:1, user:user, iForced:req.body.iForced});
 });
@@ -89,6 +99,11 @@ router.post('/request_changeoutputpassword', isLoggedIn, async (req, res) => {
 
     console.log(`/request_changeoutputpassword`);
     console.log(req.body);
+
+    if (req.user.iClass != 1) {
+        res.send({result:'FAIL'});
+        return;
+    }
 
     let user = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
     if ( null != user )

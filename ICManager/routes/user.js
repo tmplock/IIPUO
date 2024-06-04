@@ -158,8 +158,8 @@ router.post('/request_bank', async(req, res) => {
 
     switch ( cInputOption )
     {
-        case 0:
-            return res.send({
+        case '0':
+            res.send({
                 result: 'OK',
                 msg: '표시되는 계좌로 입금을 해주시기 바랍니다',
                 bankType: user.eBankType,
@@ -167,7 +167,8 @@ router.post('/request_bank', async(req, res) => {
                 banknumber: user.strBankNumber,
                 bankholder: user.strBankHolder,
             });
-        case 1:
+            return;
+        case '1':
         default:
             {
                 const objectData = await GetParentList(user.strGroupID, user.iClass);
@@ -191,8 +192,9 @@ router.post('/request_bank', async(req, res) => {
                     iClassFrom:user.iClass, // 본인의 클래스
                     iClassTo:3, // 본사로 전송 고정
                 });
+                res.send({result:'Request', msg:'문의 하였습니다. 잠시후 쪽지를 확인 바랍니다.'});
             }
-            break;
+            return; 
     }
 
 });

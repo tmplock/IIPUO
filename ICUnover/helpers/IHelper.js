@@ -33,11 +33,15 @@ exports.RequestAxios2 = async (strAddress, objectData) =>
     
             const customAxios = axios2.create({});
             const response = await customAxios.post(strAddress, objectData, {headers:{ 'Content-type': 'application/json'}});
+
+            return response.data;
+
             //console.log(response.data);
-            if ( response.data.result == 'OK' )
-                return {result:'OK', data:response.data};
-            else
-                return {result:'error', error:response.data.error};    
+            // if ( response.data.result == 'OK' )
+            //     //return {result:'OK', data:response.data};
+
+            // else
+            //     return {result:'error', error:response.data.error};    
         }
         catch (error) {
             console.log('axios error', error);

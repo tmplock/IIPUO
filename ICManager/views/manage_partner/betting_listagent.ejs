@@ -10,24 +10,7 @@
 				</ul>
 				</div>
 			<div class="list">
-				<div style="background-color:#ffffff;text-align:right;padding-right:5px;padding-top:0px;padding-bottom:0px;" colspan="19">
-					<input style="width:100px;" type="text" id="datepicker1" class="datepicker"/>~
-					<input style="width:100px;" type="text" id="datepicker2" class="datepicker" />
-					<button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearch(6, '<%=user.strGroupID%>', '<%=user.iClass%>');"><%=__('Search')%></button>
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-					<%=__('Search')%>
-					<select id="select_roomno" style="width:80px;">
-						<option><%=__('Nickname')%></option>
-					</select>
-					<input style="margin-left:0px;width:100px;" id="strSearchNickname" type="text"/>
-					<button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearchNickname();"><%=__('Search')%></button>
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-					<button class="menu5" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;color:white" onclick="OnClickTodayRecord();"><%=__('Today')%></button>
-					&nbsp;
-					<button class="menu1" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;color:white" onclick="OnClickMonthly1stRecord();"><%=__('Half1')%></button>
-					&nbsp;
-					<button class="menu1" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;color:white" onclick="OnClickMonthly2ndRecord();"><%=__('Half2')%></button>
-					&nbsp;
+				<div id="search_date">
 				</div>
 	
 				<div class="list_tit">
@@ -151,11 +134,24 @@
 	<script type="text/javascript" src="js/manage_partner_register.js"></script>
 	<script type="text/javascript" src="js/manage_setting_ref.js"></script>
 	<script type="text/javascript" src="js/manage_inout_ref.js"></script>
+	<script type="text/javascript" src="js/manage_search_date.js"></script>
 	<script type="text/javascript" src="js/socket.js"></script>
 	<script>
 		let user = JSON.parse('<%-JSON.stringify(user)%>');
 		let objectVA = JSON.parse('<%-JSON.stringify(data.agents)%>');
 		let iocount = JSON.parse('<%-JSON.stringify(iocount)%>');
+
+		var i18nTexts = {
+			Search: "<%=__('Search')%>",
+			Today : "<%=__('Today')%>",
+			Half1: "<%=__('Half1')%>",
+			Half2: "<%=__('Half2')%>",
+			Open: "<%=__('Open')%>",
+			Nickname: "<%=__('Nickname')%>",
+		};
+
+		let startDate = GetCurrentDate();
+		let endDate = GetCurrentDate();
 
 		$(document).on('click', '.menu1', (e) => {
 
@@ -169,6 +165,8 @@
 		const cTClass = parseInt(user.iClass);
 
 		$(document).ready(() => {
+			SetSeachButtons("#search_date",1,i18nTexts,user,6);
+			
 			$("#table_record_list").hide();
 
 			DatePicker();
@@ -187,8 +185,10 @@
 
 			bClickDateSelection	= true;
 
-			$('#datepicker1').val(GetCurrentDate());
-			$('#datepicker2').val(GetCurrentDate());
+			startDate = GetCurrentDate();
+			endDate = GetCurrentDate();
+			$('#datepicker1').val(startDate);
+			$('#datepicker2').val(endDate);
 
 			bToggleRecord = true;
 			RequestAgentList(EAgent.eAgent, user.strGroupID, user.iClass);
@@ -198,8 +198,10 @@
 
 			bClickDateSelection	= true;
 
-			$('#datepicker1').val(GetMonthly1stStartDate());
-			$('#datepicker2').val(GetMonthly1stEndDate());
+			startDate = GetMonthly1stStartDate();
+			endDate = GetMonthly1stEndDate();
+			$('#datepicker1').val(startDate);
+			$('#datepicker2').val(endDate);
 
 			bToggleRecord = true;
 			RequestAgentList(EAgent.eAgent, user.strGroupID, user.iClass);
@@ -209,10 +211,22 @@
 
 			bClickDateSelection	= true;
 
-			$('#datepicker1').val(GetMonthly2ndStartDate());
-			$('#datepicker2').val(GetMonthly2ndEndDate());
+			startDate = GetMonthly2ndStartDate();
+			endDate = GetMonthly2ndEndDate();
+			$('#datepicker1').val(startDate);
+			$('#datepicker2').val(endDate);
 
 			bToggleRecord = true;
+			RequestAgentList(EAgent.eAgent, user.strGroupID, user.iClass);
+		}
+
+		let OnClickDayPeriod = (startDay) => {
+			startDate = GetDateStart(startDate, startDay);
+			endDate = GetDateEnd(endDate, startDay+4);
+
+			$('#datepicker1').val(startDate);
+			$('#datepicker2').val(endDate);
+
 			RequestAgentList(EAgent.eAgent, user.strGroupID, user.iClass);
 		}
 

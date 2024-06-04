@@ -19,30 +19,8 @@
                 <div class="search_wrap" id="div_realtimebet_overview">
                 </div>
 
-                <div style="background-color:#ffffff;text-align:right;padding-right:5px;padding-top:10px;padding-bottom:10px;" colspan="19">
-
-                    <input style="margin-left:180px;width:100px;" type="text" id="datepicker1" class="datepicker"/>~
-                    <input style="width:100px;" type="text" id="datepicker2" class="datepicker" />
-
-                    <button class="btn_blue" id="button_search" style="border:1px solid rgb(95, 93, 93);width:70px;;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearch(4, '<%=user.strGroupID%>', '<%=user.iClass%>');"><%=__('Search')%></button>
-
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <%=__('Search')%>
-                    <select id="select_roomno" style="width:80px;">
-                        <option><%=__('ID')%></option>
-                        <option><%=__('Nickname')%></option>
-                        <option><%=__('Contact')%></option>
-                    </select>
-                    <input style="margin-left:0px;width:100px;" type="text"/>
-                    <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(1, 147, 214);color:white" onclick="testclick();"><%=__('Search')%></button>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-
-                    <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(53, 209, 39);color:white" onclick="OnClickMonthly1stRecord();"><%=__('Half1')%></button>
-                    &nbsp;
-                    <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(53, 209, 39);color:white" onclick="OnClickMonthly2ndRecord();"><%=__('Half2')%></button>
-                    &nbsp;
-                    <button class="btn_blue" id="button_toggle_record" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(136, 136, 248);color:white" onclick="OnClickMonthlyRecord();"><%=__('Open')%></button>
-				</div>
+                <div id="search_date">
+                </div>
 
                 <div class="search_wrap" id="div_realtimebet_overview_record">
                 </div>
@@ -134,21 +112,39 @@
 <script type="text/javascript" src="js/manage_partner_ref.js"></script>
 <script type="text/javascript" src="js/manage_setting_ref.js"></script>
 <script type="text/javascript" src="js/manage_user_menu.js"></script>
+<script type="text/javascript" src="js/manage_search_date.js"></script>
 <script type="text/javascript" src="js/socket.js"></script>
 <script>
-
-    DatePicker();
-
-    $('#datepicker1').val(GetCurrentDate());
-	$('#datepicker2').val(GetCurrentDate());
-
     var objectOverview = JSON.parse('<%-JSON.stringify(data.overview)%>');
     SetOverview(objectOverview, "#div_realtimebet_overview", true);
 
     var user = JSON.parse('<%-JSON.stringify(user)%>');
     var iocount = JSON.parse('<%-JSON.stringify(iocount)%>');
 
+    var i18nTexts = {
+        Search: "<%=__('Search')%>",
+        Today : "<%=__('Today')%>",
+        Half1: "<%=__('Half1')%>",
+        Half2: "<%=__('Half2')%>",
+        Open: "<%=__('Open')%>",
+		Nickname: "<%=__('Nickname')%>",
+    };
+
+    let startDate = GetCurrentDate();
+	let endDate = GetCurrentDate();
+
     Alert(iocount, "<%=__('RequestInput')%>", "<%=__('RequestOutput')%>","<%=__('LetterSend')%>");
+
+    $(document).ready(() => {
+		SetSeachButtons("#search_date",7,i18nTexts,user,4);
+
+		DatePicker();
+
+		$('#datepicker1').val(startDate);
+		$('#datepicker2').val(endDate);
+        
+        RequestUserList(8, user.strGroupID, user.iClass);
+	});
 
     let SetUserList = (userlist, iClass, iPermission) => {
 
@@ -280,8 +276,10 @@
 
     let OnClickMonthly1stRecord = () => {
 
-        $('#datepicker1').val(GetMonthly1stStartDate());
-        $('#datepicker2').val(GetMonthly1stEndDate());
+        startDate = GetMonthly1stStartDate();
+		endDate = GetMonthly1stEndDate();
+		$('#datepicker1').val(startDate);
+		$('#datepicker2').val(endDate);
 
         RequestOverview(user.iClass, user.strGroupID, user.iClass, user.iPermission, agent.strID);
         RequestUserList(user.iClass, user.strGroupID, user.iClass, user.iPermission);
@@ -289,12 +287,25 @@
 
     let OnClickMonthly2ndRecord = () => {
 
-        $('#datepicker1').val(GetMonthly2ndStartDate());
-        $('#datepicker2').val(GetMonthly2ndEndDate());
+        startDate = GetMonthly2ndStartDate();
+		endDate = GetMonthly2ndEndDate();
+		$('#datepicker1').val(startDate);
+		$('#datepicker2').val(endDate);
 
         RequestOverview(user.iClass, user.strGroupID, user.iClass, user.iPermission, agent.strID);
         RequestUserList(user.iClass, user.strGroupID, user.iClass, user.iPermission);
     }
+
+    let OnClickDayPeriod = (startDay) => {
+		startDate = GetDateStart(startDate, startDay);
+		endDate = GetDateEnd(endDate, startDay+4);
+
+		$('#datepicker1').val(startDate);
+		$('#datepicker2').val(endDate);
+
+		RequestOverview(user.iClass, user.strGroupID, user.iClass, user.iPermission, agent.strID);
+        RequestUserList(user.iClass, user.strGroupID, user.iClass, user.iPermission);
+	}
 
     let OnClickSearch = (iTargetClass, strGroupID, iClass, iPermission) => {
 
@@ -329,7 +340,5 @@
         });
 
     }
-
-    RequestUserList(8, user.strGroupID, user.iClass);
 
 </script>

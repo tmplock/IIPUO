@@ -1,0 +1,35 @@
+2024-06-05 01:39:58 [ICManager] error: uncaughtException: connect ETIMEDOUT
+SequelizeConnectionError: connect ETIMEDOUT
+    at ConnectionManager.connect (E:\Git2024\IIPUO\ICManager\node_modules\sequelize\lib\dialects\mysql\connection-manager.js:102:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async ConnectionManager._connect (E:\Git2024\IIPUO\ICManager\node_modules\sequelize\lib\dialects\abstract\connection-manager.js:222:24)
+    at async E:\Git2024\IIPUO\ICManager\node_modules\sequelize\lib\dialects\abstract\connection-manager.js:174:32
+    at async ConnectionManager.getConnection (E:\Git2024\IIPUO\ICManager\node_modules\sequelize\lib\dialects\abstract\connection-manager.js:197:7)
+    at async E:\Git2024\IIPUO\ICManager\node_modules\sequelize\lib\sequelize.js:305:26
+    at async MySQLQueryInterface.tableExists (E:\Git2024\IIPUO\ICManager\node_modules\sequelize\lib\dialects\abstract\query-interface.js:102:17)
+    at async Users.sync (E:\Git2024\IIPUO\ICManager\node_modules\sequelize\lib\model.js:939:21)
+    at async Sequelize.sync (E:\Git2024\IIPUO\ICManager\node_modules\sequelize\lib\sequelize.js:377:9)
+2024-06-05 01:40:01 [ICManager] error: uncaughtException: connect ETIMEDOUT
+SequelizeConnectionError: connect ETIMEDOUT
+    at ConnectionManager.connect (E:\Git2024\IIPUO\ICManager\node_modules\sequelize\lib\dialects\mysql\connection-manager.js:102:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async ConnectionManager._connect (E:\Git2024\IIPUO\ICManager\node_modules\sequelize\lib\dialects\abstract\connection-manager.js:222:24)
+    at async E:\Git2024\IIPUO\ICManager\node_modules\sequelize\lib\dialects\abstract\connection-manager.js:174:32
+2024-06-05 01:40:01 [ICManager] error: uncaughtException: connect ETIMEDOUT
+SequelizeConnectionError: connect ETIMEDOUT
+    at ConnectionManager.connect (E:\Git2024\IIPUO\ICManager\node_modules\sequelize\lib\dialects\mysql\connection-manager.js:102:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async ConnectionManager._connect (E:\Git2024\IIPUO\ICManager\node_modules\sequelize\lib\dialects\abstract\connection-manager.js:222:24)
+    at async E:\Git2024\IIPUO\ICManager\node_modules\sequelize\lib\dialects\abstract\connection-manager.js:174:32
+2024-06-05 01:40:01 [ICManager] error: uncaughtException: connect ETIMEDOUT
+SequelizeConnectionError: connect ETIMEDOUT
+    at ConnectionManager.connect (E:\Git2024\IIPUO\ICManager\node_modules\sequelize\lib\dialects\mysql\connection-manager.js:102:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async ConnectionManager._connect (E:\Git2024\IIPUO\ICManager\node_modules\sequelize\lib\dialects\abstract\connection-manager.js:222:24)
+    at async E:\Git2024\IIPUO\ICManager\node_modules\sequelize\lib\dialects\abstract\connection-manager.js:174:32
+2024-06-05 01:40:01 [ICManager] error: uncaughtException: connect ETIMEDOUT
+SequelizeConnectionError: connect ETIMEDOUT
+    at ConnectionManager.connect (E:\Git2024\IIPUO\ICManager\node_modules\sequelize\lib\dialects\mysql\connection-manager.js:102:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async ConnectionManager._connect (E:\Git2024\IIPUO\ICManager\node_modules\sequelize\lib\dialects\abstract\connection-manager.js:222:24)
+    at async E:\Git2024\IIPUO\ICManager\node_modules\sequelize\lib\dialects\abstract\connection-manager.js:174:32

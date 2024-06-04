@@ -474,6 +474,31 @@ router.post('/request_outputlist', async (req, res) => {
  * 계좌 관련
  */
 router.post('/request_bank', async (req, res) => {
+
+    if ( req.user == null )
+    {
+        res.send({result:'Error', eCode:'InvalidSession'});
+        return;
+    }
+
+    try {
+
+        const objectData = {strID:req.user.strID, strInput:req.body.input};
+
+        const objectResult = await IHelper.RequestAxios(`${global.strAdminAddress}/user/request_bank`, objectData);
+        res.send(objectResult);
+    }
+    catch {
+        res.send({result:'Error', eCode:'Null'});
+    }
+
+    return;
+
+    if ( objectResult.result == 'OK')
+    {
+        res.send({result:'OK', })        
+    }
+
     try {
         console.log(`request_bank`);
         console.log(req.body);

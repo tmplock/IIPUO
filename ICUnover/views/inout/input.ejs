@@ -184,63 +184,33 @@
             return;
         }
 
-        const arrayOptionCode = user.strOptionCode.split('');
-        const cInputOption = arrayOptionCode[3];
+        $.ajax({
+            type:'post',
+            url: "/inout/request_bank",
+            data:{input:input},
+            success: (obj) => {
+                if (obj.result == 'OK') {
+                    
+                    bRequestAccount = true;
+                    strRequestAccountMsg = obj.msg;
+                    bankType = obj.bankType;
+                    bankname = obj.bankname;
+                    banknumber = obj.banknumber;
+                    bankholder = obj.bankholder;
+                    iUpdateAccount = 1;
+                    SetTagActive();
+                    alert('표시되는 계좌로 입금을 해주시기 바랍니다');
 
-        if ( cInputOption == 0 )
-        {
-            $.ajax({
-                type:'post',
-                url: "/inout/request_bank",
-                data:{input:input},
-                success: (obj) => {
-                    if (obj.result == 'OK') {
-                        
-                        bRequestAccount = true;
-                        strRequestAccountMsg = obj.msg;
-                        bankType = obj.bankType;
-                        bankname = obj.bankname;
-                        banknumber = obj.banknumber;
-                        bankholder = obj.bankholder;
-                        iUpdateAccount = 1;
-                        SetTagActive();
-                        alert('표시되는 계좌로 입금을 해주시기 바랍니다');
-
-                    } else if (obj.result == 'FAIL') {
-                        bRequestAccount = false;
-                        alert(obj.msg);
-                    }
-                },
-                error:function(request,status,error){
-                    alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+                //} else if (obj.result == 'FAIL') {
+                } else {
+                    bRequestAccount = false;
+                    alert(obj.msg);
                 }
-            });
-
-        }
-        else
-        {
-            $.ajax({
-            
-                type:'post',
-                url: "/letter/request_writeletter",
-                context: document.body,
-                data:{strID:user.strID, strSubject:'계좌 문의',strContents:'입금계좌 문의 입니다.'},
-
-                success:function(data) {
-
-                    isSending = false;
-
-                    if ( data.result == 'OK' ) {
-                        alert('쪽지를 전송하였습니다.');
-                        //console.log(data);
-                        //window.location.href='/letter/listcs';
-                    }
-                    else
-                        alert('작성에 실패 하였습니다.');
-
-                }
-            });            
-        }
+            },
+            error:function(request,status,error){
+                alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+            }
+        });
     }
 
     let SetTagActive = () => {

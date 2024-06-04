@@ -347,6 +347,41 @@ var inline_AccessViceRegisterPassword = async (strNickname, input) => {
 }
 exports.AccessViceRegisterPassword = inline_AccessViceRegisterPassword;
 
+/**
+ * 총총 파트너정보 조회 암호(아이디 클릭시)
+ */
+var inline_AccessPartnerInfoPassword = async (strNickname, input) => {
+    if (input == null || input == undefined || input.length == 0) {
+        return {result:'FAIL', msg:'암호를 입력해주세요'};
+    }
+
+    try {
+        let user = await db.Users.findOne({where:{strNickname:strNickname}});
+        if (user == null) {
+            return {result:'FAIL', msg:'조회 불가'};
+        }
+
+        // 클래스별 접근 권환 확인
+        if (user.iClass != 1 || user.iPermission == 100) {
+            return {result:'FAIL', msg:'접근권한 없음'};
+        }
+
+        let sub = await db.SubUsers.findOne({where: {rId: user.id}});
+        if (sub != null) {
+            if (sub.strPartnerInfoPassword != input) {
+                return {result: 'FAIL', msg: '암호 불일치'};
+            } else {
+                return {result:'OK', msg:'성공'};
+            }
+        }
+    } catch (err) {
+        console.log(err);
+    }
+
+    return {result:'FAIL', msg:'조회 실패'};
+}
+exports.AccessPartnerInfoPassword = inline_AccessPartnerInfoPassword;
+
 
 var inline_GetCipherAndPeriod = async (str, minute) => {
     if (str == null || str == undefined || str.length == 0) {

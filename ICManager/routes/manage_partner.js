@@ -190,6 +190,10 @@ router.post('/listvicehq', isLoggedIn, async(req, res) => {
 router.post('/listadmin', isLoggedIn, async(req, res) => {
 
     console.log(req.body);
+    if (req.user.iClass == 1) {
+        res.send('조회 에러');
+        return;
+    }
 
     const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
     let strID = dbuser.iPermission == 100 ? dbuser.strIDRel : dbuser.strID;

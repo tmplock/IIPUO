@@ -99,6 +99,7 @@ const {DATETIME} = require("mysql/lib/protocol/constants/types");
 const {Op} = require("sequelize");
 const moment = require("moment");
 const logger = require("./config/logger");
+const IInout = require("./implements/inout");
 app.use(i18na);
 
 
@@ -231,7 +232,7 @@ var daily = null;
 
 //
 cron.schedule('*/30 * * * * *', async () => {
-    console.log('당일 등록 유저 조회(승인대기)');
+    console.log('알림 관련 조회(입출금, 쪽지, 승인대기)');
     let todayUsers = await db.Users.count({
         where: {
             strGroupID: {
@@ -246,12 +247,13 @@ cron.schedule('*/30 * * * * *', async () => {
             }
         }
     });
-    console.log(`당일 등록 유저 조회(승인대기) : ${todayUsers}`);
+    let iocount = await IInout.GetProcessing('000', '총본', 2);
     for ( let i in socket_list )
     {
         if ( socket_list[i].iClass == 2 )
         {
             socket_list[i].emit('alert_today_user', todayUsers);
+            socket_list[i].emit('alert_update', iocount);
         }
     }
 });

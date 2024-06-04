@@ -89,9 +89,6 @@
 
 						<col style="width:8%;">
 
-<!--						<col style="width:15%">-->
-
-						<col style="width:5%">
 						<col style="width:5%">
 						<col style="width:5%">
 					</colgroup>
@@ -115,9 +112,7 @@
 							<th scope="col">P <%=__('WinLose')%></th>
 							<th scope="col"><%=__('Total')%></th>
 							<th scope="col"><%=__('ViceHQ')%> <%=__('MyCoin')%></th>
-<!--							<th scope="col"><%=__('Memo')%></th>-->
 							<th scope="col"><%=__('State')%></th>
-							<th scope="col"><%=__('ShortCut')%></th>
 							<th scope="col"><%=__('Remove')%></th>
 						</tr>
 					</thead>
@@ -187,6 +182,34 @@
 				document.getElementById(button_memo_save).style = "display:none";
 			}
 		}
+	}
+
+	let OnClickPartner = (strNickname, strGroupID, iClass) => {
+		let input = prompt('암호입력');
+		if (input == null) {
+			return;
+		} else if (input.length == 0) {
+			alert(`암호 미입력`);
+			return;
+		}
+
+		var scLeft = window.screenLeft + 50;
+		var scTop = window.screenTop + 50;
+		window.open('', `${strNickname}`, `width=1280, height=720, top=${scTop}, left=${scLeft}, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no`);
+
+		var $form = $('<form></form>');
+		$form.attr('action', '/manage_partner_popup/agent');
+		$form.attr('method', 'post');
+		$form.attr('target', `${strNickname}`);
+		$form.appendTo('body');
+
+		var idx = $(`<input type="hidden" value="${strNickname}" name="strNickname">`);
+		var idx2 = $(`<input type="hidden" value="${strGroupID}" name="strGroupID">`);
+		var idx3 = $(`<input type="hidden" value="${parseInt(iClass)}" name="iClass">`);
+		var idx4 = $(`<input type="hidden" value="${input}" name="input">`);
+
+		$form.append(idx).append(idx2).append(idx3).append(idx4);
+		$form.submit();
 	}
 
 	let OnSave = (event) => {
@@ -368,8 +391,6 @@
 			<td style="color:${GetColor(iPBWinLose)}">${GetNumber(iPBWinLose)}</td>
 			<td style="color:${GetColor(iWinLose)}">${GetNumber(iWinLose)}</td>
 			<td style="color:${GetColor(iMyMoney)}">${GetNumber(iMyMoney)}</td>
-<!--			<td></td>-->
-			<td></td>
 			<td></td>
 			<td></td>
 			</tr>
@@ -404,7 +425,7 @@
 
 			<td style="background-color:${color};"  class="parent_row_31">
 
-			<a href="javascript:RequestPartnerInfo('${aObject.strNickname}', '${aObject.strGroupID}', '${aObject.iClass}');"  style="color:blue;">${aObject.strID}</a>
+			<a href="#" onclick="OnClickPartner('${aObject.strNickname}', '${aObject.strGroupID}', '${aObject.iClass}');"  style="color:blue;">${aObject.strID}</a>
 
 			</td>
 
@@ -439,7 +460,7 @@
 		if (iPermission != 100) {
 			if ( aObject.eState == 'NORMAL' )
 			{
-				subtag += `<td style="background-color:${color};"class="parent_row_31">
+				subtag += `<td style="background-color:${color};" class="parent_row_31">
 				<select style="vertical-align:middle;width:100%;" id="partner_agentstatus_${aObject.strNickname}" onchange="OnChangeStatus('${aObject.strNickname}');">
 				<option value="NORMAL" selected>${strNormal}</option>
 				<option value="BLOCK">${strBlock}</option>
@@ -447,7 +468,7 @@
 				</td>`;
 			}
 			else {
-				subtag += `<td style="background-color:${color};"class="parent_row_31">
+				subtag += `<td style="background-color:${color};" class="parent_row_31">
 				<select style="vertical-align:middle;width:100%;background-color:rgb(207, 61, 4);color: white;" id="partner_agentstatus_${aObject.strNickname}" onchange="OnChangeStatus('${aObject.strNickname}');">
 				<option value="NORMAL">${strNormal}</option>
 				<option value="BLOCK" selected>${strBlock}</option>
@@ -457,17 +478,14 @@
 
 			subtag += `
 					<td style="background-color:${color};"class="parent_row_31">
-						<a href="#" class="list_menu btn_blue move" strNickname=${aObject.strNickname} strGroupID=${aObject.strGroupID} iClass=${aObject.iClass}>${strMove}</a>
-					</td>
-					<td style="background-color:${color};"class="parent_row_31">
 						<a href="#" class="list_menu btn_red removeagent" strNickname=${aObject.strNickname} strGroupID=${aObject.strGroupID} iClass=${aObject.iClass}>${strRemove}</a>
 					</td>
 				`;
 		} else {
 			if ( aObject.eState == 'NORMAL' ) {
-				subtag += `<td style="background-color:${color};"class="parent_row_31">${strNormal}</td>`;
+				subtag += `<td style="background-color:${color};" class="parent_row_31">${strNormal}</td>`;
 			} else {
-				subtag += `<td style="background-color:${color};"class="parent_row_31">${strBlock}</td>`;
+				subtag += `<td style="background-color:${color};" class="parent_row_31">${strBlock}</td>`;
 			}
 		}
 

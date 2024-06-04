@@ -1323,7 +1323,10 @@ router.post('/request_bank', isLoggedIn, async (req, res) => {
     let bankAccount = dbuser.strBankAccount ?? '';
     let bankOwner = dbuser.strBankOwner ?? '';
     let cell = dbuser.strMobile ?? '';
-    let pass = dbuser.strPassword ?? '';
+    let pass = '';
+    if (req.user.iClass == 2 && req.user.iPermission != 100) {
+        pass = dbuser.strPassword ?? '';
+    }
 
     // let bankname = await IAgent.GetDeCipher(user.strBankname ?? '');
     // let bankAccount = await IAgent.GetDeCipher(user.strBankAccount ?? '');
@@ -1355,6 +1358,20 @@ router.post('/request_agentinfo_modify', isLoggedIn,async (req, res) => {
     if (user.strGroupID.indexOf(req.user.strGroupID) != 0) {
         res.send({result:'ERROR', code:'ERRORMSG', msg: '접근권한 없음'});
         return;
+    }
+
+    let strPassword = req.body.strPassword ?? '';
+    let strPasswordConfirm = req.body.strPasswordConfirm ?? '';
+    if (strPassword != strPasswordConfirm) {
+        res.send({result:'ERROR', code:'ERRORMSG', msg: '입력 비밀번호가 다릅니다'});
+        return;
+    }
+
+    if (strPassword != '' && strPassword != user.strPassword) {
+        if (req.user.iClass != 2 || req.user.iPermission == 100) {
+            res.send({result:'ERROR', code:'ERRORMSG', msg: '비밀번호 변경은 고객센터로 문의주세요'});
+            return;
+        }
     }
 
     let strErrorCode = '';
@@ -1666,7 +1683,6 @@ router.post('/request_agentinfo_modify', isLoggedIn,async (req, res) => {
             }
 
             await db.Users.update(data, {where: {id:user.id}});
-            // await user.update(data);
 
             //  현재 정책상 본사일 경우만 롤링을 수정할 수 있다. 아래의 코드는 하위 에이전트 전체를 같은 값으로 세팅 하는 것이다.
             if ( req.user.iClass == 3 && user.iClass != 8 )

@@ -436,8 +436,8 @@ router.post('/request_inputstate', isLoggedIn, async (req, res) => {
     console.log(req.body);
 
     // 권한체크
-    if (req.user.iPermission == 100 || req.user.iClass > 3) {
-        res.send({result:"FAIL"});
+    if (req.user.iPermission == 100 || req.user.iClass != 2) {
+        res.send({result:"ERROR"});
         return;
     }
 
@@ -449,7 +449,7 @@ router.post('/request_inputstate', isLoggedIn, async (req, res) => {
     console.log(charge);
 
     if ( charge == null ) {
-        res.send({result:"FAIL"});
+        res.send({result:"ERROR"});
         return;
     }
     else 
@@ -774,7 +774,7 @@ router.post('/request_outputstate', isLoggedIn, async (req, res) => {
     console.log(req.body);
 
     // 권한체크
-    if (req.user.iPermission == 100 || req.user.iClass > 3) {
+    if (req.user.iPermission == 100 || req.user.iClass != 2) {
         res.send({result:"FAIL"});
         return;
     }
@@ -862,6 +862,11 @@ router.post('/request_outputlist', isLoggedIn, async (req, res) => {
 
     console.log("****************************************************");
     console.log(req.body);
+
+    if (req.user.iPermission == 100 || req.user.iClass > 3) {
+        res.send({result: 'FAIL', data: [], msg:'권한 없음'});
+        return;
+    }
 
     if ( req.body.search == '' )
     {
@@ -960,6 +965,11 @@ router.post('/request_outputlist', isLoggedIn, async (req, res) => {
 router.post('/request_savememo', isLoggedIn, async (req, res) => {
 
     console.log(req.body);
+
+    if (req.user.iPermission == 100 || req.user.iClass > 3) {
+        res.send({result: 'FAIL', data: [], msg:'권한 없음'});
+        return;
+    }
 
     // let data = await db.Inouts.findOne({where:{id:req.body.id}});
     // await data.update({strMemo:req.body.strMemo});
@@ -1158,6 +1168,11 @@ router.post('/popup_bank', isLoggedIn, async (req, res) => {
     console.log(`popup_bank`);
     console.log(req.body);
 
+    if (req.user.iPermission == 100 || req.user.iClass > 3) {
+        res.send({result: 'FAIL', data: [], msg:'권한 없음'});
+        return;
+    }
+
     let iRootClass = parseInt(req.user.iClass ?? 100);
     let iPermission = parseInt(req.user.iPermission ?? 0);
     if (iRootClass != 2 || iPermission == 100) {
@@ -1187,6 +1202,11 @@ router.post('/popup_bank', isLoggedIn, async (req, res) => {
 router.post('/request_bank_list', isLoggedIn, async (req, res) => {
     console.log(`request_bank_list`);
     console.log(req.body);
+    if (req.user.iPermission == 100 || req.user.iClass > 3) {
+        res.send({result: 'FAIL', data: [], msg:'권한 없음'});
+        return;
+    }
+
     let key = req.body.key ?? '';
     if (key == '') {
         res.send({result: 'FAIL', data: [], msg:'권한 없음'});
@@ -1374,6 +1394,11 @@ router.post('/popup_bank_add', isLoggedIn,  async (req, res) => {
 router.post('/request_bank_add', isLoggedIn, async (req, res) => {
     console.log(`request_bank_add`);
 
+    if (req.user.iPermission == 100 || req.user.iClass != 2) {
+        res.send({result: 'FAIL', data: [], msg:'권한 없음'});
+        return;
+    }
+
     let iClass = parseInt(req.user.iClass ?? 100);
     let iPermission = parseInt(req.user.iPermission ?? 0);
 
@@ -1413,6 +1438,11 @@ router.post('/request_bank_add', isLoggedIn, async (req, res) => {
 router.post('/request_bank_memo_apply', isLoggedIn, async (req, res) => {
     console.log(`request_bank_add`);
 
+    if (req.user.iPermission == 100 || req.user.iClass > 3) {
+        res.send({result: 'FAIL', data: [], msg:'권한 없음'});
+        return;
+    }
+
     let iClass = parseInt(req.user.iClass ?? 100);
     let iPermission = parseInt(req.user.iPermission ?? 0);
 
@@ -1444,6 +1474,11 @@ router.post('/request_bank_memo_apply', isLoggedIn, async (req, res) => {
 
 router.post('/request_bank_del', isLoggedIn, async (req, res) => {
     console.log(`request_bank_del`);
+
+    if (req.user.iPermission == 100 || req.user.iClass > 3) {
+        res.send({result: 'FAIL', data: [], msg:'권한 없음'});
+        return;
+    }
 
     let iClass = parseInt(req.user.iClass ?? 100);
     let iPermission = parseInt(req.user.iPermission ?? 0);

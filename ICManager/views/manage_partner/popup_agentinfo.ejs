@@ -180,7 +180,8 @@
 				</tr>
 			</table>
 		</div>
-		<div>
+		<% if (agent.iClass == 0) { %>
+			<div id="asdfads" style="display: none">
 			<table>
 				<colgroup>
 					<col style="width:15%">
@@ -199,7 +200,7 @@
 				</tr>
 			</table>
 		</div>
-
+		<% } %>
 		<div>
 			<table>
 				<colgroup>
@@ -256,25 +257,27 @@
 				</tr>
 			</table>
 		</div>
-		<div>
-			<table>
-				<colgroup>
-					<col style="width:15%">
-					<col style="width:35%">
-					<col style="width:15%">
-					<col style="width:35%">
-				</colgroup>
-				<p style="background-repeat:no-repeat; background-position:left center; font-size:16px; color:#454545; padding-left:22px;">회원 입출금 등급 설정</p>
-				<tr>
-					<th scope="row"><%=__('UsingInput')%></th>
-					<td>
-						<input type="radio" style="width:30px;height:30px;" name="input_grade" required="no" message="" value="0"> <strong>1등급</strong>
-						<input type="radio" style="width:30px;height:30px;" name="input_grade" required="no" message="" value="1"> <strong>2등급</strong>
-						<input type="radio" style="width:30px;height:30px;" name="input_grade" required="no" message="" value="2" checked> <strong>3등급</strong>
-					</td>
-				</tr>
-			</table>
-		</div>
+		<% if (agent.iClass == 0) {%>
+			<div>
+				<table>
+					<colgroup>
+						<col style="width:15%">
+						<col style="width:35%">
+						<col style="width:15%">
+						<col style="width:35%">
+					</colgroup>
+					<p style="background-repeat:no-repeat; background-position:left center; font-size:16px; color:#454545; padding-left:22px;">회원 입출금 등급 설정</p>
+					<tr>
+						<th scope="row"><%=__('UsingInput')%></th>
+						<td>
+							<input type="radio" style="width:30px;height:30px;" name="input_grade" required="no" message="" value="0"> <strong>1등급</strong>
+							<input type="radio" style="width:30px;height:30px;" name="input_grade" required="no" message="" value="1"> <strong>2등급</strong>
+							<input type="radio" style="width:30px;height:30px;" name="input_grade" required="no" message="" value="2" checked> <strong>3등급</strong>
+						</td>
+					</tr>
+				</table>
+			</div>
+		<% } %>
 		<div style="display: none">
 			<table>
 				<colgroup>
@@ -328,7 +331,7 @@
 		let cUsingInput = parseInt(agent.strOptionCode[0]);
 		let cUsingOutput = parseInt(agent.strOptionCode[1]);
 		let strUsingPC = parseInt(agent.strOptionCode[2]);
-		let iInputGrade = parseInt(agent.strOptionCode[3]);
+		// let iInputGrade = parseInt(agent.strOptionCode[3]);
 		if ( strUsingPC == 1 ) {
 			bUsingPC = true;
 			$('#using_pc').attr('checked', true);
@@ -345,7 +348,7 @@
 			$('#bank_num').val(agent.strBankAccount);
 		}
 
-		$(`input[name="input_grade"][value="${iInputGrade}"]`).prop("checked",true);
+		// $(`input[name="input_grade"][value="${iInputGrade}"]`).prop("checked",true);
 
 		$('#using_pc').click((e) => {
 			var checked = $('#using_pc').is(':checked');
@@ -690,8 +693,8 @@
 				}
 			}
 
-			let iInputGrade = $("input[name='input_grade']:checked").val();
-			strOptionCode = replaceCharacter(strOptionCode, 3, iInputGrade.toString());
+			// let iInputGrade = $("input[name='input_grade']:checked").val();
+			// strOptionCode = replaceCharacter(strOptionCode, 3, iInputGrade.toString());
 			// alert(strOptionCode);
 			// return;
 

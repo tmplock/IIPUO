@@ -493,6 +493,10 @@ exports.GetSettleClass3 = async (strGroupID, iClass, strQuater, dateStart, dateE
                 sr4.fSettleBaccarat AS fSettleBaccarat42, sr4.fSettleSlot AS fSettleSlot42, 0 AS fSettlePBA42, 0 AS fSettlePBB42,
                 0 AS fSettleBaccarat5, 0 AS fSettleSlot5, 0 AS fSettlePBA5, 0 AS fSettlePBB5,
                 0 AS fSettleBaccarat52, 0 AS fSettleSlot52, 0 AS fSettlePBA52, 0 AS fSettlePBB52,
+
+                t4.iSettleDays AS iSettleDays4, t4.iSettleType AS iSettleType4,
+                sr4.iSettleDays AS iSettleDays42, sr4.iSettleType AS iSettleType42,
+                
                 IFNULL(t4.fCommission, ${cfCommission}) AS fCommission,
                 t4.iSettleAcc AS iSettleAccUser, t4.iCash as iMyMoney,
                 IFNULL((SELECT SUM(iCash) FROM Users WHERE strGroupID LIKE CONCAT(t4.strGroupID,'%')),0) as iTotalMoney,
@@ -504,7 +508,7 @@ exports.GetSettleClass3 = async (strGroupID, iClass, strQuater, dateStart, dateE
                 IFNULL((SELECT iSettleGive FROM SettleRecords WHERE strNickname =t4.strNickname AND ${query}),0) as iSettleGive,
                 IFNULL((SELECT iSettleBeforeAcc FROM SettleRecords WHERE strNickname = t4.strNickname AND ${query}),0) as iSettleBeforeAcc,
                 IFNULL((SELECT iSettleAfter FROM SettleRecords WHERE strNickname = t4.strNickname AND ${query}),0) as iSettleAfter,
-                IFNULL((SELECT iSettleAccTotal FROM SettleRecords WHERE strNickname = t4.strNickname ${query2}),0) as iSettleAfter2,
+                IFNULL((SELECT iSettleAccTotal FROM SettleRecords WHERE strNickname = t4.strNickname AND ${query2}),0) as iSettleAfter2,
                 IFNULL((SELECT iSettleOrigin FROM SettleRecords WHERE strNickname = t4.strNickname AND ${query}),0) as iSettleOrigin,
                 IFNULL((SELECT (iSettleAcc - iPayback) FROM SettleRecords WHERE strNickname = t4.strNickname AND ${query}),0) as iSettleAcc,
                 IFNULL((SELECT iPayback FROM SettleRecords WHERE strNickname = t4.strNickname AND ${query}),0) as iPayback,
@@ -523,9 +527,9 @@ exports.GetSettleClass3 = async (strGroupID, iClass, strQuater, dateStart, dateE
             FROM Users t4
                      LEFT JOIN Users t3 ON t3.id = t4.iParentID
                      LEFT JOIN (
-                         SELECT fSettleBaccarat, fSettleSlot, fSettlePBA, fSettlePBB, strID FROM SettleRecords WHERE ${query}
+                         SELECT fSettleBaccarat, fSettleSlot, fSettlePBA, fSettlePBB, strID, iSettleDays, iSettleType FROM SettleRecords WHERE ${query}
                      ) sr4 ON sr4.strID=t4.strID
-            WHERE t4.iClass = ${iClass} AND t4.strGroupID LIKE CONCAT('${strGroupID}', '%')
+            WHERE t4.iClass = ${iClass} AND t4.strGroupID LIKE CONCAT('${strGroupID}', '%') AND t4.iSettleDays=${iSettleDays} AND t4.iSettleType=${iSettleType}
             ${lastDateQuery}
             ORDER BY settleCount ASC, strAdminNickname ASC, t4.strNickname ASC, t4.strGroupID ASC
                 LIMIT ${limit}
@@ -546,6 +550,9 @@ exports.GetSettleClass3 = async (strGroupID, iClass, strQuater, dateStart, dateE
                 IFNULL(t5.fCommission, ${cfCommission}) AS fCommission,
                 t5.iSettleAcc AS iSettleAccUser, t5.iCash as iMyMoney,
                 IFNULL((SELECT SUM(iCash) FROM Users WHERE strGroupID LIKE CONCAT(t5.strGroupID,'%')),0) as iTotalMoney,
+
+                t5.iSettleDays AS iSettleDays5, t5.iSettleType AS iSettleType5,
+                sr5.iSettleDays AS iSettleDays52, sr5.iSettleType AS iSettleType52,
                 
                 IFNULL((SELECT COUNT(id) FROM SettleRecords WHERE strID = t5.strID AND ${query}),0) as settleCount,
                 IFNULL((SELECT iSettleAccTotal FROM SettleRecords WHERE strNickname = t5.strNickname AND ${query}),0) as iSettleAccTotal,
@@ -586,12 +593,12 @@ exports.GetSettleClass3 = async (strGroupID, iClass, strQuater, dateStart, dateE
                 LEFT JOIN Users t4 ON t4.id = t5.iParentID
                 LEFT JOIN Users t3 ON t3.id = t4.iParentID
                 LEFT JOIN (
-                    SELECT fSettleBaccarat, fSettleSlot, fSettlePBA, fSettlePBB, strID FROM SettleRecords WHERE ${query}
+                    SELECT fSettleBaccarat, fSettleSlot, fSettlePBA, fSettlePBB, strID, iSettleDays, iSettleType FROM SettleRecords WHERE ${query}
                 ) sr5 ON sr5.strID=t5.strID
                 LEFT JOIN (
-                    SELECT fSettleBaccarat, fSettleSlot, fSettlePBA, fSettlePBB, strID FROM SettleRecords WHERE ${query}
+                    SELECT fSettleBaccarat, fSettleSlot, fSettlePBA, fSettlePBB, strID, iSettleDays, iSettleType FROM SettleRecords WHERE ${query}
                 ) sr4 ON sr4.strID=t4.strID
-            WHERE t5.iClass = ${iClass} AND t5.strGroupID LIKE CONCAT('${strGroupID}', '%')
+            WHERE t5.iClass = ${iClass} AND t5.strGroupID LIKE CONCAT('${strGroupID}', '%') AND t5.iSettleDays=${iSettleDays} AND t5.iSettleType=${iSettleType}
             ${lastDateQuery}
             ORDER BY settleCount ASC, strAdminNickname ASC, t5.strNickname ASC, t5.strGroupID ASC
             LIMIT ${limit}
@@ -682,12 +689,9 @@ let GetSubQuaterEndDate = (iSettleDays, strSubQuater) => {
             eDay = 31;
         }
     }
-
-    // dateQuaterStart = GetQuaterStartDate(iMonth, sDay);
-    let endDate = GetQuaterEndDate(iMonth, eDay);
-
-    const date = moment(endDate).add(1, 'days').format('YYYY-MM-DD');
-    return date;
+    let date = new Date();
+    date = new Date(date.getFullYear(), iMonth-1, eDay);
+    return moment(date).add(1, 'days').format('YYYY-MM-DD');
 }
 exports.GetSubQuaterEndDate = GetSubQuaterEndDate;
 

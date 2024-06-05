@@ -276,7 +276,7 @@ let GetQuaterEndDate = (month, eday) => {
     let date = new Date();
     let res = new Date(date.getFullYear(), month + 1, 0);
     if (eday < res.getDate()) {
-          res = new Date(date.getFullYear(), month + 1, eday);
+          res = new Date(date.getFullYear(), month, eday);
     }
     res = new Date(+res + 3240 * 10000).toISOString().split("T")[0];
     return res;

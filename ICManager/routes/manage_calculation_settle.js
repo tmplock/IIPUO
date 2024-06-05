@@ -174,6 +174,12 @@ router.post('/request_settle_cal', isLoggedIn, async(req, res) => {
 
     console.log(req.body);
 
+    if (req.user.iClass == 2 || req.user.iClass == 3) {
+    } else {
+        res.send({result:'FAIL', list:[], exist: [], msg: '조회실패', totalCount: 0});
+        return;
+    }
+
     let iLimit = parseInt(req.body.iLimit);
     let iPage = parseInt(req.body.iPage);
     let iOffset = (iPage-1) * iLimit;
@@ -337,6 +343,29 @@ router.post('/settle_cal', isLoggedIn, async (req, res) => {
     res.render('manage_calculation/settle_cal', {iLayout:9, iHeaderFocus:0, user:user, list:[], strQuater:strQuater, dateQuaterStart:dateQuaterStart, dateQuaterEnd:dateQuaterEnd});
 });
 
+router.post('/settle_cal3', isLoggedIn, async (req, res) => {
+    console.log('settle_cal');
+    console.log(req.body);
+
+    let strQuater = req.body.strQuater ?? '';
+    let strSubQuater = req.body.strSubQuater ?? '';
+    let dateQuaterStart = req.body.dateQuaterStart ?? '';
+    let dateQuaterEnd = req.body.dateQuaterEnd ?? '';
+    let iSettleDays = req.body.iSettleDays ?? -1;
+    let iSettleType = req.body.iSettleType ?? -1;
+
+    if (strQuater == '' || strSubQuater == '' || iSettleDays == -1 || iSettleType == -1 || dateQuaterStart == '' || dateQuaterEnd == '') {
+        res.render('manage_calculation/settle_cal3', {iLayout:9, iHeaderFocus:0, result:'FAIL', msg:'조회오류', user:{}, list:[], strQuater:'', dateQuaterStart:'', dateQuaterEnd:'', strSubQuater:strSubQuater, iSettleDays:iSettleDays, iSettleType: iSettleType});
+        return;
+    }
+
+    const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
+
+    const user = {strNickname:req.body.strNickname, strGroupID:dbuser.strGroupID, iClass:parseInt(dbuser.iClass), strID:dbuser.strID,
+        iRootClass: req.user.iClass, iPermission: req.user.iPermission};
+
+    res.render('manage_calculation/settle_cal3', {iLayout:9, iHeaderFocus:0, result:'OK', msg:'조회성공', user:user, list:[], strQuater:strQuater, dateQuaterStart:dateQuaterStart, dateQuaterEnd:dateQuaterEnd, strSubQuater:strSubQuater, iSettleDays:iSettleDays, iSettleType: iSettleType});
+});
 
 router.post('/settle_cal_history', isLoggedIn, async (req, res) => {
     console.log('settle_cal_history');
@@ -733,7 +762,7 @@ router.post('/request_settle_all3', isLoggedIn, async(req, res) => {
 
     let lastDate = strSubQuater == '' ? IAgentSettle.GetQuaterEndDate(req.body.strQuater) : IAgentSettle.GetSubQuaterEndDate(iSettleDays, strSubQuater);
 
-    let list = await GetSettleAll3(req.body.strGroupID, req.body.strQuater, req.body.dateStart, req.body.dateEnd, req.body.iClass, iOffset, iLimit, lastDate, iSettleDays, iSettleType);
+    let list = await GetSettleAll3(req.body.strGroupID, req.body.strQuater, req.body.dateStart, req.body.dateEnd, req.body.iClass, iOffset, iLimit, lastDate, strSubQuater, iSettleDays, iSettleType);
 
     const targetUserCount = strSubQuater == '' ? await IAgentSettle.GetSettleTargetUserCount(req.body.strQuater, req.body.iClass, req.body.strGroupID) : await IAgentSettle.GetSettleTargetUserCount3(strSubQuater, req.body.iClass, req.body.strGroupID, iSettleDays, iSettleType);
 

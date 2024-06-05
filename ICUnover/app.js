@@ -498,8 +498,8 @@ app.post('/realtime_user', async (req, res) => {
     //     }
     // }
     
-    //let listData = await redis.GetAllKeys();
-    let listData = [];
+    let listData = await redis.GetAllKeys();
+    //let listData = [];
 
     axios.post(`${global.strAdminAddress}/manage_user/realtime_user`, listData)
         .then((response)=> {

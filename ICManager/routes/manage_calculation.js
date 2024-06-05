@@ -404,6 +404,51 @@ router.post('/settle_all2', isLoggedIn, async(req, res) => {
 router.post('/request_settle_all', isLoggedIn, async(req, res) => {
 
     console.log(req.body);
+    if (req.user.iClass > 5) {
+        res.send({result:'ERROR', list:[], iRootClass: req.user.iClass, exist: [], msg: '권한없음', totalCount: 0});
+        return;
+    }
+
+    // 대본, 부본은 별도 처리(정산완료건만 조회 가능)
+    // if (req.user.iClass == 4 || req.user.iClass == 5) {
+    //     SettleViceAll(req, res);
+    //     return;
+    // }
+
+    let iLimit = parseInt(req.body.iLimit);
+    let iPage = parseInt(req.body.iPage);
+    let iOffset = (iPage-1) * iLimit;
+
+    let exist = await db.SettleRecords.findAll({where:{
+            strQuater:req.body.strQuater,
+            iClass:req.body.iClass,
+            strGroupID:{[Op.like]:req.body.strGroupID+'%'},
+        }, order: [['createdAt', 'DESC']]
+    });
+
+    let lastDate = IAgentSettle.GetQuaterEndDate(req.body.strQuater);
+
+    let list = await GetSettleAll2(req.body.strGroupID, req.body.strQuater, req.body.dateStart, req.body.dateEnd, req.body.iClass, iOffset, iLimit, lastDate);
+
+    const targetUserCount = await getSettleTargetUserCount(req.body.strQuater, req.body.iClass, req.body.strGroupID);
+
+    if ( exist.length > 0 && targetUserCount == exist.length )
+    {
+        res.send({result:'EXIST', list:list, iRootClass: req.user.iClass, exist: exist, msg: '정상조회', totalCount: targetUserCount});
+    }
+    else
+    {
+        res.send({result:'OK', list:list, iRootClass: req.user.iClass, exist: exist, msg: '정상조회', totalCount: targetUserCount});
+    }
+});
+
+router.post('/request_settle_period', isLoggedIn, async(req, res) => {
+
+    console.log(req.body);
+    if (req.user.iClass > 5) {
+        res.send({result:'ERROR', list:[], iRootClass: req.user.iClass, exist: [], msg: '권한없음', totalCount: 0});
+        return;
+    }
 
     // 대본, 부본은 별도 처리(정산완료건만 조회 가능)
     // if (req.user.iClass == 4 || req.user.iClass == 5) {
@@ -537,6 +582,52 @@ let GetSettleVice = (obj) => {
  * 죽장정산 Overview
  */
 router.post('/request_overview', isLoggedIn, async (req, res) => {
+
+    console.log(`/request_overview`);
+    console.log(req.body);
+
+    let overviewList = await IAgentSettle.CalculateOverviewSettle(req.body.strGroupID, req.body.iClass, req.body.strQuater, req.body.dateStart, req.body.dateEnd);
+    let overview = {};
+    if (overviewList.length > 0) {
+        overview = overviewList[0];
+    }
+    let settleCurrent = await IAgentSettle.CalculateOverviewSettleCurrent(req.body.strGroupID, req.body.strQuater);
+    overview.iSettlePlus = settleCurrent.iSettlePlus;
+    overview.iSettleMinus = settleCurrent.iSettleMinus;
+    overview.iCurrentTotalSettle = settleCurrent.iCurrentTotalSettle;
+
+    let overviewShareList = await IAgentSettle.CalculateOverviewShare(req.body.strGroupID, req.body.strQuater);
+    let overviewShare = {};
+    if (overviewShareList.length > 0) {
+        overviewShare = overviewShareList[0];
+    }
+    let shareCurrent = await IAgentSettle.CalculateOverviewShareCurrent(req.body.strGroupID, req.body.strQuater);
+    overviewShare.iSharePlus = shareCurrent.iSharePlus;
+    overviewShare.iShareMinus = shareCurrent.iShareMinus;
+    overviewShare.iCurrentTotalShare = shareCurrent.iCurrentTotalShare;
+
+    if ( parseInt(req.body.iClass) == 3 )
+    {
+        // let share = await db.sequelize.query(`
+        //     SELECT * FROM ShareRecords
+        // `);
+        let share = await db.ShareRecords.findOne({
+            where: {
+                strID: req.body.strID,
+                strQuater: req.body.strQuater,
+            }
+        });
+
+        if ( share != null )
+        {
+            res.send({result: 'OK', overview: overview, overviewShare: overviewShare, strMemo: share.strMemo, strMemo2: share.strMemo2, iRootClass: req.body.iClass});
+            return;
+        }
+    }
+    res.send({result:'OK', overview: overview, overviewShare: overviewShare, strMemo: '', strMemo2: '', iRootClass: req.body.iClass});
+});
+
+router.post('/request_overview3', isLoggedIn, async (req, res) => {
 
     console.log(`/request_overview`);
     console.log(req.body);

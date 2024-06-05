@@ -373,6 +373,11 @@
 					RequestOverview(user.strGroupID, user.iClass, strQuater, dateQuaterStart, dateQuaterEnd, user.strID);
 					SetList(obj.list, iClass, true);
 				}
+				else if ( obj.result == 'ERROR' )
+				{
+					alert(obj.msg);
+					return;
+				}
 				else
 				{
 					adminList = obj.list;

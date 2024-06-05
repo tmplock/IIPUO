@@ -57,7 +57,7 @@ router.get('/loginsuccess', async (req, res) => {
 
     console.log(`################################################## /account/loginsuccess`);
 
-    const objectResult = await IHelper.RequestAxios(`${global.strAPIAddress}/account/login`, {eType:'USER', strID:req.user.strID});
+    const objectResult = await IHelper.RequestAxios(`${global.strAPIAddress}/account/login`, {eType:'USER', strID:req.user.strID, strNickname:req.user.strNickname, strGroupID:req.user.strGroupID, iClass:req.user.iClass});
 
     if ( objectResult.result == 'OK' )
     {

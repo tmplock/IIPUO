@@ -44,6 +44,18 @@ let mysqlsession = require('express-mysql-session')(session);
 // port:'25060',
 // timezone:'+09:00'
 
+// let session_option = {
+//     host: 'db-mysql-sgp1-62759-do-user-11246819-0.c.db.ondigitalocean.com',
+//     database: 'iipc',
+//     user: 'doadmin',
+//     port:25060,
+//     password: 'AVNS_CHqkvP_p_JM6uWuOb73',
+//     clearExpired:true,
+//     checkExpirationInterval:10000,
+//     expiration:10000    
+// }
+
+
 let session_option = {
     host: process.env.SESSIONSDB_HOST,
     database: process.env.SESSIONSDB_DB,
@@ -103,7 +115,7 @@ app.use(i18n);
 const IObject = require('./utils/object');
 const IHelper = require('./helpers/IHelper');
 
-global.io = io;
+//global.io = io;
 
 global.strAdminAddress = process.env.ADMIN_URL;
 global.strVenderAddress = process.env.VENDER_URL;
@@ -418,59 +430,59 @@ server.listen(cPort, () => {
 setInterval(async () => {
 }, 1000);
 
-// var socket_list = {};
+var socket_list = {};
 
-// global.socket_list = socket_list;
+global.socket_list = socket_list;
 
-// io.on('connection', (socket) => {
+io.on('connection', (socket) => {
 
-//     socket.id = Math.random();
-//     socket_list[socket.id] = socket;
+    socket.id = Math.random();
+    socket_list[socket.id] = socket;
 
-//     console.log(`connected ${socket.id}, length ${IObject.getObjectLength(socket_list)}`);
+    console.log(`#################################################### connected ${socket.id}, length ${IObject.getObjectLength(socket_list)}`);
 
-//     socket.on('request_login', async (user) => {
+    socket.on('request_login', async (user) => {
 
-//         console.log(`############################################# socket packet request_login ${user.strNickname}, ${user.strGroupID}, ${user.iClass}`);
+        console.log(`############################################# socket packet request_login ${user.strNickname}, ${user.strGroupID}, ${user.iClass}`);
 
-//         socket.strGroupID = user.strGroupID;
-//         socket.iClass = user.iClass;
-//         socket.strNickname = user.strNickname;
-//         socket.strID = user.strID;
+        socket.strGroupID = user.strGroupID;
+        socket.iClass = user.iClass;
+        socket.strNickname = user.strNickname;
+        socket.strID = user.strID;
 
-//         socket.emit('response_login', "responsedata");
+        socket.emit('response_login', "responsedata");
 
-//         const object = {strID:user.strID, iClass:user.iClass, strNickname:user.strNickname, strGroupID:user.strGroupID};
-//         await redis.SetCache(user.strID, object);
-//         //await redis.GetAllKeys();
-//     });
+        const object = {strID:user.strID, iClass:user.iClass, strNickname:user.strNickname, strGroupID:user.strGroupID};
+        await redis.SetCache(user.strID, object);
+        //await redis.GetAllKeys();
+    });
 
-//     // socket.on('group', (group) => {
-//     //     console.log(`group : ${group}`);
+    // socket.on('group', (group) => {
+    //     console.log(`group : ${group}`);
 
-//     //     socket.group = group;
-//     // })
+    //     socket.group = group;
+    // })
 
-//     socket.on('disconnect', async () => {
+    socket.on('disconnect', async () => {
         
-//         console.log(`socket.on disconnect ${socket.strID}`);
+        console.log(`socket.on disconnect ${socket.strID}`);
         
-//         // if ( socket.strID != undefined )
-//         // {
-//         //     await db.Sessions.destroy({where:{strID:socket.strID}, truncate:true});
-//         // }
+        // if ( socket.strID != undefined )
+        // {
+        //     await db.Sessions.destroy({where:{strID:socket.strID}, truncate:true});
+        // }
 
-//         delete socket_list[socket.id];
+        delete socket_list[socket.id];
 
-//         if ( socket.strID != undefined )
-//         {
-//             redis.RemoveCache(socket.strID);
-//             //await redis.GetAllKeys();
-//         }    
+        if ( socket.strID != undefined )
+        {
+            redis.RemoveCache(socket.strID);
+            //await redis.GetAllKeys();
+        }    
 
-//         console.log(`disconnected ${socket.id}, length ${IObject.getObjectLength(socket_list)}`);
-//     });
-// });
+        console.log(`disconnected ${socket.id}, length ${IObject.getObjectLength(socket_list)}`);
+    });
+});
 
 app.post('/realtime_user', async (req, res) => {
 
@@ -486,8 +498,8 @@ app.post('/realtime_user', async (req, res) => {
     //     }
     // }
     
-    let listData = await redis.GetAllKeys();
-    //let listData = [];
+    //let listData = await redis.GetAllKeys();
+    let listData = [];
 
     axios.post(`${global.strAdminAddress}/manage_user/realtime_user`, listData)
         .then((response)=> {

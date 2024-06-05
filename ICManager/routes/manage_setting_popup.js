@@ -759,6 +759,8 @@ router.post('/request_letterlist', isLoggedIn, async (req, res) => {
     const user = await IAgent.GetUserInfo(req.body.strNickname);
     let strTo = user.iPermission == 100 ? user.strNicknameRel : user.strNickname;
 
+    const eType = 'NORMAL';
+
     // 전체 쪽지 수량
     let totalCount = 0;
     if (req.body.iClass == 2 && req.user.iClass == 2) {
@@ -772,7 +774,8 @@ router.post('/request_letterlist', isLoggedIn, async (req, res) => {
                 },
                 iClassTo: {[Op.in]:[3,2]},
                 iClassFrom: {[Op.notIn]:[2]}, // 총본이 보낸것은 제외
-                eRead:{[Op.or]:listState}
+                eRead:{[Op.or]:listState},
+                eType:eType
             },
         }) : await db.Letters.count({
             where:{
@@ -785,7 +788,8 @@ router.post('/request_letterlist', isLoggedIn, async (req, res) => {
                 iClassTo: {[Op.in]:[3,2]},
                 iClassFrom: {[Op.notIn]:[2]}, // 총본이 보낸것은 제외
                 strFrom:{[Op.like]:'%'+strKeyword+'%'},
-                eRead:{[Op.or]:listState}
+                eRead:{[Op.or]:listState},
+                eType:eType
             },
         });
     } else {
@@ -801,7 +805,8 @@ router.post('/request_letterlist', isLoggedIn, async (req, res) => {
                         [Op.is]: null,
                         [Op.not]:1
                     }
-                }
+                },
+                eType:eType
             },
         }) :  await db.Letters.count({
             where:{
@@ -816,7 +821,8 @@ router.post('/request_letterlist', isLoggedIn, async (req, res) => {
                         [Op.is]: null,
                         [Op.not]:1
                     }
-                }
+                },
+                eType:eType
             },
         });
     }
@@ -839,6 +845,7 @@ router.post('/request_letterlist', isLoggedIn, async (req, res) => {
                 iClassTo: {[Op.in]:[3,2]},
                 iClassFrom: {[Op.notIn]:[2]}, // 총본이 보낸것은 제외
                 eRead:{[Op.or]:listState},
+                eType:eType
             },
             limit:iLimit,
             offset:iOffset,
@@ -855,6 +862,7 @@ router.post('/request_letterlist', isLoggedIn, async (req, res) => {
                 iClassFrom: {[Op.notIn]:[2]}, // 총본이 보낸것은 제외
                 strFrom:{[Op.like]:'%'+strKeyword+'%'},
                 eRead:{[Op.or]:listState},
+                eType:eType
             },
             limit:iLimit,
             offset:iOffset,
@@ -873,7 +881,8 @@ router.post('/request_letterlist', isLoggedIn, async (req, res) => {
                         [Op.is]: null,
                         [Op.not]:1
                     }
-                }
+                },
+                eType:eType
             },
             limit:iLimit,
             offset:iOffset,
@@ -891,7 +900,188 @@ router.post('/request_letterlist', isLoggedIn, async (req, res) => {
                         [Op.is]: null,
                         [Op.not]:1
                     }
-                }
+                },
+                eType:eType
+            },
+            limit:iLimit,
+            offset:iOffset,
+            order:[['createdAt','DESC']]
+        });
+    }
+
+    res.send({letters:letters, currentPage:req.body.iPage, totalCount:totalCount});
+});
+
+router.post('/request_banklist', isLoggedIn, async (req, res) => {
+    console.log(req.body);
+
+    if (req.user.iPermission == 100) {
+        res.redirect("/");
+        return;
+    }
+
+    const cNumElementsPage = 50;
+
+    let listState = [];
+    if ( req.body.eState == 'ALL')
+    {
+        listState.push('READED');
+        listState.push('UNREAD');
+        listState.push('REPLY');
+        listState.push('REPLY_READED');
+        listState.push('');
+    }
+    else
+        listState.push(req.body.eState);
+
+    let strKeyword = req.body.strKeyword ?? '';
+
+    const user = await IAgent.GetUserInfo(req.body.strNickname);
+    let strTo = user.iPermission == 100 ? user.strNicknameRel : user.strNickname;
+
+    const eType = 'ANNOUNCE';
+
+    // 전체 쪽지 수량
+    let totalCount = 0;
+    if (req.body.iClass == 2 && req.user.iClass == 2) {
+        totalCount = strKeyword == '' ? await db.Letters.count({
+            where:{
+                createdAt:{
+                    [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
+                },
+                strGroupID: {
+                    [Op.like]: req.body.strGroupID+'%'
+                },
+                iClassTo: {[Op.in]:[3,2]},
+                iClassFrom: {[Op.notIn]:[2]}, // 총본이 보낸것은 제외
+                eRead:{[Op.or]:listState},
+                eType:eType
+            },
+        }) : await db.Letters.count({
+            where:{
+                createdAt:{
+                    [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
+                },
+                strGroupID: {
+                    [Op.like]: req.body.strGroupID+'%'
+                },
+                iClassTo: {[Op.in]:[3,2]},
+                iClassFrom: {[Op.notIn]:[2]}, // 총본이 보낸것은 제외
+                strFrom:{[Op.like]:'%'+strKeyword+'%'},
+                eRead:{[Op.or]:listState},
+                eType:eType
+            },
+        });
+    } else {
+        totalCount = strKeyword == '' ? await db.Letters.count({
+            where:{
+                createdAt:{
+                    [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
+                },
+                strTo:strTo,
+                eRead:{[Op.or]:listState},
+                iDelTo: {
+                    [Op.or]:{
+                        [Op.is]: null,
+                        [Op.not]:1
+                    }
+                },
+                eType:eType
+            },
+        }) :  await db.Letters.count({
+            where:{
+                createdAt:{
+                    [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
+                },
+                strTo:strTo,
+                strFrom:{[Op.like]:'%'+strKeyword+'%'},
+                eRead:{[Op.or]:listState},
+                iDelTo: {
+                    [Op.or]:{
+                        [Op.is]: null,
+                        [Op.not]:1
+                    }
+                },
+                eType:eType
+            },
+        });
+    }
+
+    // 쪽지 조회
+    let iLimit = parseInt(req.body.iLimit);
+    let iPage = parseInt(req.body.iPage);
+    let iOffset = (iPage-1) * iLimit;
+
+    let letters = [];
+    if (req.body.iClass == 2 && req.user.iClass == 2) {
+        letters = strKeyword == '' ? await db.Letters.findAll({
+            where:{
+                createdAt:{
+                    [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
+                },
+                strGroupID: {
+                    [Op.like]: req.body.strGroupID+'%'
+                },
+                iClassTo: {[Op.in]:[3,2]},
+                iClassFrom: {[Op.notIn]:[2]}, // 총본이 보낸것은 제외
+                eRead:{[Op.or]:listState},
+                eType:eType
+            },
+            limit:iLimit,
+            offset:iOffset,
+            order:[['createdAt','DESC']]
+        }) : await db.Letters.findAll({
+            where:{
+                createdAt:{
+                    [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
+                },
+                strGroupID: {
+                    [Op.like]: req.body.strGroupID+'%'
+                },
+                iClassTo: {[Op.in]:[3,2]},
+                iClassFrom: {[Op.notIn]:[2]}, // 총본이 보낸것은 제외
+                strFrom:{[Op.like]:'%'+strKeyword+'%'},
+                eRead:{[Op.or]:listState},
+                eType:eType
+            },
+            limit:iLimit,
+            offset:iOffset,
+            order:[['createdAt','DESC']]
+        });
+    } else {
+        letters = strKeyword == '' ? await db.Letters.findAll({
+            where:{
+                createdAt:{
+                    [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
+                },
+                strTo: strTo,
+                eRead:{[Op.or]:listState},
+                iDelTo: {
+                    [Op.or]:{
+                        [Op.is]: null,
+                        [Op.not]:1
+                    }
+                },
+                eType:eType
+            },
+            limit:iLimit,
+            offset:iOffset,
+            order:[['createdAt','DESC']]
+        }) :  await db.Letters.findAll({
+            where:{
+                createdAt:{
+                    [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
+                },
+                strTo: strTo,
+                strFrom:{[Op.like]:'%'+strKeyword+'%'},
+                eRead:{[Op.or]:listState},
+                iDelTo: {
+                    [Op.or]:{
+                        [Op.is]: null,
+                        [Op.not]:1
+                    }
+                },
+                eType:eType
             },
             limit:iLimit,
             offset:iOffset,

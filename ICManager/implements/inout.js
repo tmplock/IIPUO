@@ -15,7 +15,8 @@ let inline_GetProcessing = async (strGroupID, strNickname, iClass) => {
         const contact = await inline_GetProcessingContact(strNickname, 'UNREAD'); // 받은쪽지
         const letterreply = 0;
         const contactreply = await inline_GetProcessingContactReply(strNickname, 'REPLY'); // 보낸쪽지
-        return {input:input, output:output, letter:letter, charge:charge, contact:contact, letterreply: letterreply, contactreply:contactreply};
+        const banklist = await inline_GetProcessingBanklist(strNickname,'ANNOUNCE'); // 계좌문의 쪽지
+        return {input:input, output:output, letter:letter, charge:charge, contact:contact, letterreply: letterreply, contactreply:contactreply, banklist:banklist};
     }
 
     // 총본사는 하위 모두 수신
@@ -28,7 +29,8 @@ let inline_GetProcessing = async (strGroupID, strNickname, iClass) => {
         const letterreply = 0;
         // const letterreply = await inline_GetProcessingLetterReply(strNickname, 'REPLY');// 총본이 보낸 쪽지 보낸쪽지
         const contactreply = await inline_GetProcessingContactReply(strNickname, 'REPLY'); // 보낸쪽지
-        return {input:input, output:output, letter:letter, charge:charge, contact:contact, letterreply: letterreply, contactreply:contactreply};
+        const banklist = await inline_GetProcessingBanklist(strNickname,'ANNOUNCE'); // 계좌문의 쪽지
+        return {input:input, output:output, letter:letter, charge:charge, contact:contact, letterreply: letterreply, contactreply:contactreply, banklist:banklist};
     }
 
     let strNickname2 = strNickname ?? '';
@@ -44,7 +46,8 @@ let inline_GetProcessing = async (strGroupID, strNickname, iClass) => {
         const contact = await inline_GetProcessingContact(strNickname2, 'UNREAD'); // 받은쪽지
         const letterreply = await inline_GetProcessingLetterReply(strNickname2, 'REPLY'); // 보낸쪽지
         const contactreply = await inline_GetProcessingContactReply(strNickname2, 'REPLY', iClass); // 보낸쪽지
-        return {input:input, output:output, letter:letter, charge:charge, contact:contact, letterreply: letterreply, contactreply:contactreply};
+        const banklist = await inline_GetProcessingBanklist(strNickname2,'ANNOUNCE'); // 계좌문의 쪽지
+        return {input:input, output:output, letter:letter, charge:charge, contact:contact, letterreply: letterreply, contactreply:contactreply, banklist:banklist};
     } else {
         return {};
     }
@@ -231,3 +234,15 @@ let inline_GetProcessingContactReply = async (strNickname, eRead, iClass) => {
     return result.length;
 }
 exports.GetProcessingContactReply = inline_GetProcessingContactReply;
+
+// 계좌문의 쪽지
+let inline_GetProcessingBanklist = async (strNickname, eType) => {
+
+    const result = await db.Letters.findAll({where:{
+            strTo: strNickname,
+            eType:`${eType}`
+        }});
+
+    return result.length;
+}
+exports.GetProcessingBanklist = inline_GetProcessingBanklist;

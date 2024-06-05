@@ -19,7 +19,7 @@ exports.FindUser = (list, objectData) => {
 
     for ( let i in list )
     {
-        if ( list[i].strID == objectData.strID )
+        if ( list[i].strID == objectData.strID && list[i].eType == objectData.eType)
         {
             return list[i];
         }
@@ -31,7 +31,7 @@ exports.AddOnlineUser = (listOnlineUser, listLogout, objectData) => {
 
     const eTargetType = objectData.eType == 'USER' ? 'CMS' : 'USER';
 
-    let user = this.FindUser(listOnlineUser, {strID:objectData.strID});
+    let user = this.FindUser(listOnlineUser, objectData);
     if ( null != user )
     {
         if ( user.eType == objectData.eType )
@@ -57,7 +57,7 @@ exports.AddOnlineUser = (listOnlineUser, listLogout, objectData) => {
 
 exports.AddUser = (list, objectData) => {
 
-    let user = this.FindUser(list, {strID:objectData.strID});
+    let user = this.FindUser(list, objectData);
     if ( null == user )
     {
         list.push(objectData);

@@ -132,6 +132,27 @@
 			</tr>
 		</table>
 	</div>
+	<% if (agent.iClass == 2 && agent.iPermission != 100) {%>
+	<div>
+		<table>
+			<colgroup>
+				<col style="width:15%">
+				<col style="width:35%">
+				<col style="width:15%">
+				<col style="width:35%">
+			</colgroup>
+			<p style="background-repeat:no-repeat; background-position:left center; font-size:16px; color:#454545; padding-left:22px;">회원 입출금 등급 설정</p>
+			<tr>
+				<th scope="row"><%=__('UsingInput')%></th>
+				<td>
+					<input type="radio" style="width:30px;height:30px;" name="input_grade" required="no" message="" value="0"> <strong>1등급</strong>
+					<input type="radio" style="width:30px;height:30px;" name="input_grade" required="no" message="" value="1"> <strong>2등급</strong>
+					<input type="radio" style="width:30px;height:30px;" name="input_grade" required="no" message="" value="2" checked> <strong>3등급</strong>
+				</td>
+			</tr>
+		</table>
+	</div>
+	<% } %>
 	<table>
 		<colgroup>
 			<col style="width:15%">
@@ -231,6 +252,12 @@
 				$('#bank_num').val(agent.strBankAccount);
 			}
 		});
+
+		<% if (agent.iRootClass == 2 && agent.iPermission != 100) { %>
+			let iInputGrade = parseInt(agent.strOptionCode[3]);
+			$(`input[name="input_grade"][value="${iInputGrade}"]`).prop("checked",true);
+		<% } %>
+
 		bUsingPassNewUser = ((agent.iPassCheckNewUser ?? 1) == 1) ? true : false;
 		SetUsingPassNewUser(agent.iClass);
 
@@ -491,6 +518,11 @@
 			}
 			strOptionCode = replaceCharacter(strOptionCode, 2, '0');
 		}
+
+		<% if (agent.iRootClass == 2 && agent.iPermission != 100) { %>
+			let iInputGrade = $("input[name='input_grade']:checked").val();
+			strOptionCode = replaceCharacter(strOptionCode, 3, iInputGrade.toString());
+		<% } %>
 
 		objectData.strNickname = strNickname;
 		objectData.strMobile = strMobile;

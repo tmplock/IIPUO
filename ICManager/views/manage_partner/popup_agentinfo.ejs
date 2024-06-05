@@ -257,7 +257,7 @@
 				</tr>
 			</table>
 		</div>
-		<% if (agent.iClass == 0) {%>
+		<% if (agent.iClass == 2 && agent.iPermission != 100) {%>
 			<div>
 				<table>
 					<colgroup>
@@ -331,7 +331,6 @@
 		let cUsingInput = parseInt(agent.strOptionCode[0]);
 		let cUsingOutput = parseInt(agent.strOptionCode[1]);
 		let strUsingPC = parseInt(agent.strOptionCode[2]);
-		// let iInputGrade = parseInt(agent.strOptionCode[3]);
 		if ( strUsingPC == 1 ) {
 			bUsingPC = true;
 			$('#using_pc').attr('checked', true);
@@ -347,8 +346,11 @@
 			$('#bank_name').val(agent.strBankname);
 			$('#bank_num').val(agent.strBankAccount);
 		}
+		<% if (agent.iRootClass == 2 && agent.iPermission != 100) { %>
+			let iInputGrade = parseInt(agent.strOptionCode[3]);
+			$(`input[name="input_grade"][value="${iInputGrade}"]`).prop("checked",true);
+		<% } %>
 
-		// $(`input[name="input_grade"][value="${iInputGrade}"]`).prop("checked",true);
 
 		$('#using_pc').click((e) => {
 			var checked = $('#using_pc').is(':checked');
@@ -372,8 +374,6 @@
 			}
 		});
 
-
-
 		<% if ( agent.iClass == 8 || agent.iClass == 7 ) { %>
 			$('#pass_check_new_user').show();
 			let iPassCheckNewUser = parseInt(agent.iPassCheckNewUser ?? 1);
@@ -396,8 +396,6 @@
 			$('#using_output').attr('checked', true);
 		else
 			$('#using_output').attr('checked', false);
-
-		bUsingPassNewUser
 
 		/**
 		 * 수정 가능 여부에 대한 처리(비활성할 태그를 여기에 추가)
@@ -434,28 +432,7 @@
 				$(item).get(0).disabled = true;
 			});
 			$('#btn_red').hide();
-
-			// // 관리 권한이 없을 경우 수정 불가한 태그 id 추가
-			// ["#member_nick", "#member_id", "#member_password", '#member_password2'
-			// , '#bank_name', '#bank_num', '#bank_owner', '#cell'
-			// , '#fBaccaratR', '#fPBR', '#fUnderOverR', '#fPBSingleR'
-			// , '#fSlotR', '#fPBDoubleR', '#fPBTripleR'
-			// , '#iPBLimit', '#iPBSingleLimit', '#iPBDoubleLimit', '#iPBTripleLimit'
-			// ,'#strPowerballType', '#using_single', '#using_double', '#using_triple'
-			// , '#using_input', '#using_output'
-			// ].forEach(item => {
-			// 	$(item).get(0).disabled = true;
-			// });
-			// $('#btn_red').hide();
 		}
-
-		// if (parseInt(agent.iClass) == 5) {
-		// 	['#fBaccaratR', '#fPBR', '#fUnderOverR', '#fPBSingleR'
-		// 		, '#fSlotR', '#fPBDoubleR', '#fPBTripleR'
-		// 	].forEach(item => {
-		// 		$(item).get(0).disabled = true;
-		// 	});
-		// }
 
 		$('#confirm').empty();
 		$('#confirm').append(`
@@ -693,13 +670,10 @@
 				}
 			}
 
-			// let iInputGrade = $("input[name='input_grade']:checked").val();
-			// strOptionCode = replaceCharacter(strOptionCode, 3, iInputGrade.toString());
-			// alert(strOptionCode);
-			// return;
-
-
-
+			<% if (agent.iRootClass == 2 && agent.iPermission != 100) { %>
+				let iInputGrade = $("input[name='input_grade']:checked").val();
+				strOptionCode = replaceCharacter(strOptionCode, 3, iInputGrade.toString());
+			<% } %>
 		}
 
 		if (parseFloat(fSlotR) < 0 || parseFloat(fBaccaratR) < 0 || parseFloat(fUnderOverR) < 0) {

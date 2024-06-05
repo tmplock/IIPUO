@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+        <title>GAMING</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <script  src="http://code.jquery.com/jquery-latest.min.js"></script>
+    </head>
+    
+     <body>
+
+        <br><br><br>
+
+          <button type="button" style="float:right;margin-right:20px;margin-bottom:30px;" class="btn btn-primary" onclick="javascript:location.reload();">Refresh</button>
+
+          <br>
+
+        <table class="table table-striped">
+            <thead>
+              <tr>
+                <th scope="col">온라인 유저</th>
+                <th scope="col">아이디</th>
+                <th scope="col">타입</th>
+              </tr>
+            </thead>
+            <tbody id="listOnline">
+            </tbody>
+          </table>
+
+          <div>
+            <div class="input-group mb-3"style="width:200px;">
+                <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-default">ID</span>
+                </div>
+                <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" id="strOnlineID">
+            </div>
+            <div class="input-group mb-3"style="width:200px;">
+                <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-default">Type</span>
+                </div>
+                <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" id="eOnlineType">
+            </div>
+
+            <button type="button" style="float:right;margin-right:20px;margin-bottom:30px;" class="btn btn-danger" onclick="RequestRemoveOnline();">RemoveOnline</button>
+
+          </div>
+
+        <table class="table table-striped">
+        <thead>
+            <tr>
+            <th scope="col">로그아웃 대기 유저</th>
+            <th scope="col">아이디</th>
+            <th scope="col">타입</th>
+            </tr>
+        </thead>
+        <tbody id="listLogout">
+        </tbody>
+        </table>
+        <div style="width:100%">
+            <div class="input-group mb-3"style="width:200px;">
+                <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-default">ID</span>
+                </div>
+                <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" id="strLogoutID">
+            </div>
+            <div class="input-group mb-3"style="width:200px;">
+                <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-default">Type</span>
+                </div>
+                <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" id="eLogoutType">
+            </div>
+
+            <button type="button" style="float:right;margin-right:20px;margin-bottom:30px;" class="btn btn-primary" onclick="RequestAddLogout();">AddLogout</button>
+        </div>
+
+        <button type="button" style="float:right;margin-right:20px;margin-bottom:30px;" class="btn btn-danger" onclick="RequestRemoveLogout();">RemoveLogout</button>
+
+        <script type="text/javascript">
+
+            $.ajax({
+                url:'/account/listonline',
+                type:"POST",
+                // data: {
+                //     data:data
+                // },
+                dataType: "json",
+                success: function (obj) {
+
+                    console.log(obj);
+                    if ( obj.result == 'OK')
+                    {
+                        console.log(obj.data);
+                        $('#listOnline').empty();
+                        for ( let i in obj.data )
+                        {
+                            let tag = `
+                            <tr>
+                                <td></td>
+                                <td>${obj.data[i].strID}</td>
+                                <td>${obj.data[i].eType}</td>
+                            <tr/>
+                            `;
+                            $('#listOnline').append(tag);
+
+                        }
+                    }
+                }
+            });
+
+            $.ajax({
+                url:'/account/listlogout',
+                type:"POST",
+                // data: {
+                //     data:data
+                // },
+                dataType: "json",
+                success: function (obj) {
+
+                    console.log(obj);
+                    if ( obj.result == 'OK')
+                    {
+                        console.log(obj.data);
+                        $('#listLogout').empty();
+                        for ( let i in obj.data )
+                        {
+                            let tag = `
+                            <tr>
+                                <td></td>
+                                <td>${obj.data[i].strID}</td>
+                                <td>${obj.data[i].eType}</td>
+                            <tr/>
+                            `;
+                            $('#listLogout').append(tag);
+
+                        }
+                    }
+                }
+            });
+
+            let RequestAddLogout = () => {
+
+                const eType = $('#eLogoutType').val();
+                const strID = $('#strLogoutID').val();
+                if ( eType == '' || strID == '' )
+                {
+                    return;
+                }
+
+                $.ajax({
+                    url:'/account/insertlogout',
+                    type:"POST",
+                    data: {
+                        eType:$('#eLogoutType').val(),
+                        strID:$('#strLogoutID').val()
+                    },
+                    dataType: "json",
+                    success: function (obj) {
+
+                        console.log(obj);
+                        if ( obj.result == 'OK')
+                        {
+                            console.log(obj.data);
+                            $('#listLogout').empty();
+                            for ( let i in obj.data )
+                            {
+                                let tag = `
+                                <tr>
+                                    <td></td>
+                                    <td>${obj.data[i].strID}</td>
+                                    <td>${obj.data[i].eType}</td>
+                                <tr/>
+                                `;
+                                $('#listLogout').append(tag);
+
+                            }
+                        }
+                    }
+                });
+            }
+
+            
+            let RequestRemoveLogout = () => {
+
+                const eType = $('#eLogoutType').val();
+                const strID = $('#strLogoutID').val();
+                if ( eType == '' || strID == '' )
+                {
+                    return;
+                }
+
+                $.ajax({
+                    url:'/account/removelogout',
+                    type:"POST",
+                    data: {
+                        eType:$('#eLogoutType').val(),
+                        strID:$('#strLogoutID').val()
+                    },
+                    dataType: "json",
+                    success: function (obj) {
+
+                        console.log(obj);
+                        if ( obj.result == 'OK')
+                        {
+                            console.log(obj.data);
+                            $('#listLogout').empty();
+                            for ( let i in obj.data )
+                            {
+                                let tag = `
+                                <tr>
+                                    <td></td>
+                                    <td>${obj.data[i].strID}</td>
+                                    <td>${obj.data[i].eType}</td>
+                                <tr/>
+                                `;
+                                $('#listLogout').append(tag);
+
+                            }
+                        }
+                    }
+                });
+            }
+
+            let RequestRemoveOnline = () => {
+
+                const eType = $('#eOnlineType').val();
+                const strID = $('#strOnlineID').val();
+                if ( eType == '' || strID == '' )
+                {
+                    return;
+                }
+
+                $.ajax({
+                    url:'/account/removeonline',
+                    type:"POST",
+                    data: {
+                        eType:$('#eOnlineType').val(),
+                        strID:$('#strOnlineID').val()
+                    },
+                    dataType: "json",
+                    success: function (obj) {
+
+                        console.log(obj);
+                        if ( obj.result == 'OK')
+                        {
+                            console.log(obj.data);
+                            $('#listOnline').empty();
+                            for ( let i in obj.data )
+                            {
+                                let tag = `
+                                <tr>
+                                    <td></td>
+                                    <td>${obj.data[i].strID}</td>
+                                    <td>${obj.data[i].eType}</td>
+                                <tr/>
+                                `;
+                                $('#listOnline').append(tag);
+
+                            }
+                        }
+                    }
+                });
+            }
+
+
+        </script>
+    </body>
+</html>

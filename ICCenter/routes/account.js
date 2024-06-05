@@ -11,8 +11,8 @@ const IHelperUser = require('../helpers/user');
 let listOnlineUser = [];
 let listLogout = [];
 
-listOnlineUser.push({eType:'USER', strID:'rrr'});
-listOnlineUser.push({eType:'CMS', strID:'rrr'});
+// listOnlineUser.push({eType:'USER', strID:'rrr'});
+// listOnlineUser.push({eType:'CMS', strID:'rrr'});
 
 let PrintUsers = (list, strDesc) => {
 

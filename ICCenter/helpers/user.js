@@ -31,21 +31,20 @@ exports.AddOnlineUser = (listOnlineUser, listLogout, objectData) => {
 
     const eTargetType = objectData.eType == 'USER' ? 'CMS' : 'USER';
 
-    let user = this.FindUser(listOnlineUser, objectData);
-    if ( null != user )
+    const objectTarget = {strID:objectData.strID, eType:eTargetType};
+
+    
+    let target = this.FindUser(listOnlineUser, objectTarget);
+    if ( null != target )
     {
-        if ( user.eType == objectData.eType )
-        {
-        }
-        else
-        {
-            //listLogout.push({eType:eTargetType, strID:objectData.strID});
-            const o = {eType:eTargetType, strID:objectData.strID};
-            this.AddUser(listLogout, o);
-            user.eType = objectData.eType;
-        }
+        //listLogout.push({eType:eTargetType, strID:objectData.strID});
+        const o = {eType:eTargetType, strID:objectTarget.strID};
+        this.AddUser(listLogout, o);
+        //user.eType = objectData.eType;
     }
-    else
+
+    let user = this.FindUser(listOnlineUser, objectData);
+    if ( user == null )
     {
         //listOnlineUser.push({eType:objectData.eType, strID:objectData.strID});
 

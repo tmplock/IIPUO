@@ -569,7 +569,7 @@ app.post('/request_checklogout', async (req, res) => {
     
         if ( objectResult.result == 'OK' )
         {
-            res.send({result:'OK', iLogout:objectResult.data.iLogout});
+            res.send({result:'OK', iLogout:objectResult.iLogout});
         }
         else
         {

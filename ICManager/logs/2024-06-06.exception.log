@@ -58,3 +58,7 @@ ReferenceError: RequestAxios is not defined
     at next (E:\Git2024\IIPUO\ICManager\node_modules\express\lib\router\index.js:280:10)
     at SendStream.error (E:\Git2024\IIPUO\ICManager\node_modules\serve-static\index.js:121:7)
     at SendStream.emit (node:events:519:28)
+2024-06-06 02:19:51 [ICManager] error: uncaughtException: Cannot read properties of undefined (reading 'iLogout')
+TypeError: Cannot read properties of undefined (reading 'iLogout')
+    at E:\Git2024\IIPUO\ICManager\routes\account.js:131:62
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)

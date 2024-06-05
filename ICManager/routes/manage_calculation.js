@@ -398,7 +398,7 @@ router.post('/settle_all2', isLoggedIn, async(req, res) => {
         overviewShare.iCurrentTotalShare = shareCurrent.iCurrentTotalShare;
     }
 
-    res.render('manage_calculation/settle_all2', {iLayout:0, iHeaderFocus:6, user:user, agentinfo:agentinfo, iocount:iocount, list:[], overview:overview, overviewShare:overviewShare});
+    res.render('manage_calculation/settle_all3', {iLayout:0, iHeaderFocus:6, user:user, agentinfo:agentinfo, iocount:iocount, list:[], overview:overview, overviewShare:overviewShare});
 });
 
 router.post('/request_settle_all', isLoggedIn, async(req, res) => {

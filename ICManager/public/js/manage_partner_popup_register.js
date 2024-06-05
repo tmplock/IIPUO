@@ -593,3 +593,29 @@ let SetUsingPassNewUser = (iClass) => {
         bCheckPassNewUser = true;
     }
 }
+
+let iSettleDays = -1;
+let SetRadioSettleDays = (days) => {
+    iSettleDays = days;
+    $('input[name="radio_settle_days"]').removeAttr('checked');
+    $('input[name="radio_settle_days"]').filter(`[value=${iSettleDays}]`).prop("checked", true);
+    $('input[name="radio_settle_days"]').click((e) => {
+        iSettleDays = e.val();
+    });
+}
+let OnClickSettleDays = (days) => {
+    iSettleDays = days;
+}
+
+let iSettleType = -1;
+let SetRadioSettleType = (type) => {
+    iSettleType = type;
+    $('input[name="radio_settle_type"]').removeAttr('checked');
+    $('input[name="radio_settle_type"]').filter(`[value=${iSettleType}]`).prop("checked", true);
+    $('input[name="radio_settle_type"]').click((e) => {
+        iSettleType = e.val();
+    });
+}
+let OnClickSettleType = (type) => {
+    iSettleType = type;
+}

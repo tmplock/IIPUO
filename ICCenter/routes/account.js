@@ -92,7 +92,7 @@ router.post('/insertlogout', (req, res) => {
 
     if ( req.body.eType != undefined && req.body.strID != undefined )
     {
-        const o = {eType:req.body.eType, strID:req.body.strID, strNickname:'', strGroupID:'', iClass:8};
+        const o = {eType:req.body.eType, strID:req.body.strID};
 
         IHelperUser.AddUser(listLogout, o);    
 
@@ -111,7 +111,7 @@ router.post('/removelogout', (req, res) => {
 
     if ( req.body.eType != undefined && req.body.strID != undefined )
     {
-        const o = {eType:req.body.eType, strID:req.body.strID, strNickname:'', strGroupID:'', iClass:8};
+        const o = {eType:req.body.eType, strID:req.body.strID};
         IHelperUser.RemoveUser(listLogout, o);
         
         res.send({result:'OK', data:listLogout});

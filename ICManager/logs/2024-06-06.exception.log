@@ -1,0 +1,60 @@
+2024-06-06 02:09:52 [ICManager] error: uncaughtException: IHelper is not defined
+ReferenceError: IHelper is not defined
+    at E:\Git2024\IIPUO\ICManager\routes\account.js:65:26
+    at Layer.handle [as handle_request] (E:\Git2024\IIPUO\ICManager\node_modules\express\lib\router\layer.js:95:5)
+    at next (E:\Git2024\IIPUO\ICManager\node_modules\express\lib\router\route.js:149:13)
+    at Route.dispatch (E:\Git2024\IIPUO\ICManager\node_modules\express\lib\router\route.js:119:3)
+    at Layer.handle [as handle_request] (E:\Git2024\IIPUO\ICManager\node_modules\express\lib\router\layer.js:95:5)
+    at E:\Git2024\IIPUO\ICManager\node_modules\express\lib\router\index.js:284:15
+    at Function.process_params (E:\Git2024\IIPUO\ICManager\node_modules\express\lib\router\index.js:346:12)
+    at next (E:\Git2024\IIPUO\ICManager\node_modules\express\lib\router\index.js:280:10)
+    at SendStream.error (E:\Git2024\IIPUO\ICManager\node_modules\serve-static\index.js:121:7)
+    at SendStream.emit (node:events:519:28)
+2024-06-06 02:13:37 [ICManager] error: uncaughtException: RequestAxios is not defined
+ReferenceError: RequestAxios is not defined
+    at E:\Git2024\IIPUO\ICManager\routes\account.js:67:26
+    at Layer.handle [as handle_request] (E:\Git2024\IIPUO\ICManager\node_modules\express\lib\router\layer.js:95:5)
+    at next (E:\Git2024\IIPUO\ICManager\node_modules\express\lib\router\route.js:149:13)
+    at Route.dispatch (E:\Git2024\IIPUO\ICManager\node_modules\express\lib\router\route.js:119:3)
+    at Layer.handle [as handle_request] (E:\Git2024\IIPUO\ICManager\node_modules\express\lib\router\layer.js:95:5)
+    at E:\Git2024\IIPUO\ICManager\node_modules\express\lib\router\index.js:284:15
+    at Function.process_params (E:\Git2024\IIPUO\ICManager\node_modules\express\lib\router\index.js:346:12)
+    at next (E:\Git2024\IIPUO\ICManager\node_modules\express\lib\router\index.js:280:10)
+    at SendStream.error (E:\Git2024\IIPUO\ICManager\node_modules\serve-static\index.js:121:7)
+    at SendStream.emit (node:events:519:28)
+2024-06-06 02:13:52 [ICManager] error: uncaughtException: RequestAxios is not defined
+ReferenceError: RequestAxios is not defined
+    at E:\Git2024\IIPUO\ICManager\routes\account.js:67:26
+    at Layer.handle [as handle_request] (E:\Git2024\IIPUO\ICManager\node_modules\express\lib\router\layer.js:95:5)
+    at next (E:\Git2024\IIPUO\ICManager\node_modules\express\lib\router\route.js:149:13)
+    at Route.dispatch (E:\Git2024\IIPUO\ICManager\node_modules\express\lib\router\route.js:119:3)
+    at Layer.handle [as handle_request] (E:\Git2024\IIPUO\ICManager\node_modules\express\lib\router\layer.js:95:5)
+    at E:\Git2024\IIPUO\ICManager\node_modules\express\lib\router\index.js:284:15
+    at Function.process_params (E:\Git2024\IIPUO\ICManager\node_modules\express\lib\router\index.js:346:12)
+    at next (E:\Git2024\IIPUO\ICManager\node_modules\express\lib\router\index.js:280:10)
+    at SendStream.error (E:\Git2024\IIPUO\ICManager\node_modules\serve-static\index.js:121:7)
+    at SendStream.emit (node:events:519:28)
+2024-06-06 02:14:02 [ICManager] error: uncaughtException: RequestAxios is not defined
+ReferenceError: RequestAxios is not defined
+    at E:\Git2024\IIPUO\ICManager\routes\account.js:67:26
+    at Layer.handle [as handle_request] (E:\Git2024\IIPUO\ICManager\node_modules\express\lib\router\layer.js:95:5)
+    at next (E:\Git2024\IIPUO\ICManager\node_modules\express\lib\router\route.js:149:13)
+    at Route.dispatch (E:\Git2024\IIPUO\ICManager\node_modules\express\lib\router\route.js:119:3)
+    at Layer.handle [as handle_request] (E:\Git2024\IIPUO\ICManager\node_modules\express\lib\router\layer.js:95:5)
+    at E:\Git2024\IIPUO\ICManager\node_modules\express\lib\router\index.js:284:15
+    at Function.process_params (E:\Git2024\IIPUO\ICManager\node_modules\express\lib\router\index.js:346:12)
+    at next (E:\Git2024\IIPUO\ICManager\node_modules\express\lib\router\index.js:280:10)
+    at SendStream.error (E:\Git2024\IIPUO\ICManager\node_modules\serve-static\index.js:121:7)
+    at SendStream.emit (node:events:519:28)
+2024-06-06 02:14:32 [ICManager] error: uncaughtException: RequestAxios is not defined
+ReferenceError: RequestAxios is not defined
+    at E:\Git2024\IIPUO\ICManager\routes\account.js:67:26
+    at Layer.handle [as handle_request] (E:\Git2024\IIPUO\ICManager\node_modules\express\lib\router\layer.js:95:5)
+    at next (E:\Git2024\IIPUO\ICManager\node_modules\express\lib\router\route.js:149:13)
+    at Route.dispatch (E:\Git2024\IIPUO\ICManager\node_modules\express\lib\router\route.js:119:3)
+    at Layer.handle [as handle_request] (E:\Git2024\IIPUO\ICManager\node_modules\express\lib\router\layer.js:95:5)
+    at E:\Git2024\IIPUO\ICManager\node_modules\express\lib\router\index.js:284:15
+    at Function.process_params (E:\Git2024\IIPUO\ICManager\node_modules\express\lib\router\index.js:346:12)
+    at next (E:\Git2024\IIPUO\ICManager\node_modules\express\lib\router\index.js:280:10)
+    at SendStream.error (E:\Git2024\IIPUO\ICManager\node_modules\serve-static\index.js:121:7)
+    at SendStream.emit (node:events:519:28)

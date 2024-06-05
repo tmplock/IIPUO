@@ -824,7 +824,37 @@
             $form.submit();
         }
 
+        setInterval( () => {
+
+            $.ajax(
+            {
+                type:'post',
+                url: "/account/request_checklogout",
+                context: document.body,
+                data:{strID:user.strID},
+
+                success:function(data) {
+
+                    if ( data.result == 'OK' )
+                    {
+                        //console.log(data.iLogout);
+
+                        if ( data.iLogout == 1 )
+                        {
+                            location.href = '/account/logout';
+                        }
+                    }
+                },
+                error:function(request,status,error){
+                    //alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+                }
+            });
+
+        }, 5000);
     </script>
+
+
+
     <%- script %>
 
 </div>

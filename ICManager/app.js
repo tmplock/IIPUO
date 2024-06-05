@@ -170,6 +170,8 @@ global.io = io;
 // global.strUserPageAddress = `http://165.22.102.70:3011`; // Unover000
 global.strUserPageAddress =  process.env.USER_URL; // Unover000
 
+global.strAPIAddress = "https://uogaming.org"
+
 app.get('/', (req, res) => {
     //res.redirect('account/login');
 

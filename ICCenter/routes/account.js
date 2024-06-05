@@ -42,7 +42,7 @@ router.post('/login', (req, res) => {
     console.log(`# AddOnlineUser`);
     PrintUsers(listOnlineUser, 'AddOnlineUser');
 
-    res.send({eResult:'OK'});
+    res.send({result:'OK'});
 });
 
 router.post('/checklogout', (req, res) => {
@@ -57,11 +57,11 @@ router.post('/checklogout', (req, res) => {
     const user = IHelperUser.FindUser(listLogout, objectData);
     if ( null != user )
     {
-        res.send({eResult:'OK', iLogout:1});
+        res.send({result:'OK', iLogout:1});
     }
     else
     {
-        res.send({eResult:'OK', iLogout:0});
+        res.send({result:'OK', iLogout:0});
     }
 });
 
@@ -80,7 +80,7 @@ router.post('/logoutcomplete', (req, res) => {
     }
     else
     {
-        res.send({eResult:'OK', iLogout:0});
+        res.send({result:'OK', iLogout:0});
     }
 
 });

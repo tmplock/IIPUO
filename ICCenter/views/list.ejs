@@ -19,6 +19,7 @@
             <thead>
               <tr>
                 <th scope="col">온라인 유저</th>
+                <th scope="col">닉네임</th>
                 <th scope="col">아이디</th>
                 <th scope="col">타입</th>
               </tr>
@@ -96,6 +97,7 @@
                             let tag = `
                             <tr>
                                 <td></td>
+                                <td>${obj.data[i].strNickname}</td>
                                 <td>${obj.data[i].strID}</td>
                                 <td>${obj.data[i].eType}</td>
                             <tr/>

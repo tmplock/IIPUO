@@ -52,7 +52,7 @@ router.post('/checklogout', (req, res) => {
 
     PrintUsers(listLogout, 'LogoutUser');
 
-    let objectData = {strID:req.body.strID};
+    let objectData = {strID:req.body.strID, eType:req.body.eType};
 
     const user = IHelperUser.FindUser(listLogout, objectData);
     if ( null != user )

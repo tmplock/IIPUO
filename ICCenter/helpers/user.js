@@ -42,7 +42,7 @@ exports.AddOnlineUser = (listOnlineUser, listLogout, objectData) => {
         this.AddUser(listLogout, o);
         //user.eType = objectData.eType;
 
-        this.RemoveUser(listOnline, objectTarget);
+        this.RemoveUser(listOnlineUser, objectTarget);
     }
 
     let user = this.FindUser(listOnlineUser, objectData);

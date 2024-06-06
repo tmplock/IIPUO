@@ -177,6 +177,20 @@ exports.get1QuaterEndDate = (month) => {
     return res;
 }
 
+exports.getSubQuaterEndDate = (month, eday) => {
+    var date = new Date();
+
+    let iEndDate = eday;
+    // if ( date.getDate() < 15 )
+    //     iEndDate = date.getDate();
+
+    var res = new Date(date.getFullYear(), month, iEndDate);
+
+    res = new Date(+res + 3240 * 10000).toISOString().split("T")[0];
+
+    return res;
+}
+
 exports.get2QuaterStartDate = (month) => {
     var date = new Date();
 

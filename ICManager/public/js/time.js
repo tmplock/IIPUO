@@ -59,6 +59,10 @@ let GetDateStart = (dt, day) => {
 let GetDateEnd = (dt, day) => {
     let date = new Date(dt);
     let res = day == 26 ? new Date(date.getFullYear(), date.getMonth() + 1, 0) : new Date(date.getFullYear(), date.getMonth(), day);
+    // let res = new Date(date.getFullYear(), month + 1, 0);
+    // if (eday < res.getDate()) {
+    //       res = new Date(date.getFullYear(), month + 1, eday);
+    // }
     res = new Date(+res + 3240 * 10000).toISOString().split("T")[0];
     return res;
 }
@@ -257,6 +261,23 @@ let Get2QuaterStartDate = (month) => {
 let Get2QuaterEndDate = (month) => {
     let date = new Date();
     let res = new Date(date.getFullYear(), month+1, 0);
+    res = new Date(+res + 3240 * 10000).toISOString().split("T")[0];
+    return res;
+}
+
+let GetQuaterStartDate = (month, sday) => {
+    let date = new Date();
+    let res = new Date(date.getFullYear(), month, sday);
+    res = new Date(+res + 3240 * 10000).toISOString().split("T")[0];
+    return res;
+}
+
+let GetQuaterEndDate = (month, eday) => {
+    let date = new Date();
+    let res = new Date(date.getFullYear(), month + 1, 0);
+    if (eday < res.getDate()) {
+          res = new Date(date.getFullYear(), month, eday);
+    }
     res = new Date(+res + 3240 * 10000).toISOString().split("T")[0];
     return res;
 }

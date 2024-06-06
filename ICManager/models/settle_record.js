@@ -21,8 +21,20 @@ module.exports = (sequelize, DataTypes) => {
         strGroupID: {
             type:DataTypes.STRING,
         },
+        // 죽장정산단위 : 15일, 10일, 5일
+        iSettleDays: {
+            type: DataTypes.INTEGER,
+        },
+        // 0: 누적, 1: 리셋
+        iSettleType: {
+            type: DataTypes.INTEGER,
+        },
         // 분기
         strQuater: {
+            type:DataTypes.STRING,
+        },
+        // 분기
+        strSubQuater: {
             type:DataTypes.STRING,
         },
         // 바카라 죽장%

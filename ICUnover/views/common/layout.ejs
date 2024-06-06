@@ -38,10 +38,9 @@
                             <% if (bLogin == true && user != null && user.strOptionCode == '00100000') { %>
                             <% } else { %>
                                 <li class="ico06" onclick="location.href='/inout/record'"><span>입출금내역보기</span></li>
+                                <li class="ico07" onclick="location.href='/letter/listcs'"><span>고객센터<span style="color:red;" id="MainLayoutNumLetters"></span></span></li>
                             <% } %>
-                            <li class="ico07" onclick="location.href='/letter/listcs'"><span>고객센터<span style="color:red;" id="MainLayoutNumLetters"></span></span></li>
                             <li class="ico03" onclick="location.href='/board/list'"><span>공지사항</span></li>
-
 <!--                            <li onclick="location.href='/desc?id=00'"><span>언더오버 게임설명</span></li>-->
                         </ul>
                     </div>

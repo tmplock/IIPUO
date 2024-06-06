@@ -244,11 +244,20 @@ let SetInputList = (list, iRootClass) => {
             tagNewUser = `<font style="color:red;font-size:15px;"> ❊ </font>`;
         }
 
+        let sTag = '';
+        if (parseInt(user.iRootClass) == 2) {
+            let strOptionCode = list[i].strOptionCode ?? '';
+            let arr = strOptionCode.split('');
+            if (arr[3] != 0) {
+                sTag = '[확인]';
+            }
+        }
+
         let tag = `
             <tr style="background-color:${bgColor};" name="${list[i].id}" nickname="${list[i].strID}">
             <td>${list[i].id}</td>
             <td>${strParent}</td>
-            <td><a href="javascript:OnClickNickname('${list[i].strID}');"><font style="color:blue;">${GetClassNickName(list[i].iClass, list[i].strID)}</font></a>${tagNewUser}</td>
+            <td><a href="javascript:OnClickNickname('${list[i].strID}');"><font style="color:red;">${sTag}</font><font style="color:blue;">${GetClassNickName(list[i].iClass, list[i].strID)}</font></a>${tagNewUser}</td>
             ${tagAccountOwner}
             <td><font style="color:blue;">${list[i].iAmount.toLocaleString()}</font></td>`;
         

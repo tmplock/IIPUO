@@ -215,29 +215,29 @@
 
                 if ( bLogin == 'true' )
                 {
-                    $.ajax(
-                    {
-                        type:'post',
-                        url: "/request_updatestate",
-                        context: document.body,
-                        data:{strID:user.strID},
+                    // $.ajax(
+                    // {
+                    //     type:'post',
+                    //     url: "/request_updatestate",
+                    //     context: document.body,
+                    //     data:{strID:user.strID},
                 
-                        success:function(data) {
+                    //     success:function(data) {
 
-                            if ( data.result == 'OK' )
-                            {
-                                //console.log(data);
+                    //         if ( data.result == 'OK' )
+                    //         {
+                    //             //console.log(data);
 
-                                const cCash = parseInt(data.data.iCash);
+                    //             const cCash = parseInt(data.data.iCash);
 
-                                $('#MainLayoutCoin').text(cCash.toLocaleString());
-                                $('#MainLayoutNumLetters').text(data.data.iNumLetters);
-                            }
-                        },
-                        error:function(request,status,error){
-                            //alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
-                        }
-                    });
+                    //             $('#MainLayoutCoin').text(cCash.toLocaleString());
+                    //             $('#MainLayoutNumLetters').text(data.data.iNumLetters);
+                    //         }
+                    //     },
+                    //     error:function(request,status,error){
+                    //         //alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+                    //     }
+                    // });
 
                     $.ajax(
                     {
@@ -275,6 +275,35 @@
                 }
 
             }, 5000);
+
+            setInterval( () => {
+                if ( bLogin == 'true' )
+                {
+                    $.ajax(
+                    {
+                        type:'post',
+                        url: "/request_updatestate",
+                        context: document.body,
+                        data:{strID:user.strID},
+                
+                        success:function(data) {
+
+                            if ( data.result == 'OK' )
+                            {
+                                //console.log(data);
+
+                                const cCash = parseInt(data.data.iCash);
+
+                                $('#MainLayoutCoin').text(cCash.toLocaleString());
+                                $('#MainLayoutNumLetters').text(data.data.iNumLetters);
+                            }
+                        },
+                        error:function(request,status,error){
+                            //alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+                        }
+                    });
+                }
+            }, 2000);
 
             setInterval( () => {
 

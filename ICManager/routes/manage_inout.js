@@ -228,6 +228,14 @@ let GetOutputList = async (req, res) => {
     let iPage = parseInt(req.body.iPage);
     let iOffset = (iPage-1) * iLimit;
     let eType = req.body.type;
+    let searchClass = req.body.searchClass ?? '';
+    if (searchClass != '') {
+        const sClass = parseInt(searchClass);
+        if (isNaN(sClass) || req.user.iClass > sClass) {
+            res.send({result:'FAIL', msg:'조회실패', data : [], totalCount : 0, iRootClass:req.user.iClass});
+            return;
+        }
+    }
 
     let isShowBank = false;
     let searchKey = req.body.searchKey ?? '';
@@ -246,26 +254,10 @@ let GetOutputList = async (req, res) => {
 
     let strSearchNickname = req.body.strSearchNickname ?? '';
 
-    let totalCount = strSearchNickname == '' ? await db.Inouts.count({
-        where: {
-            createdAt:{
-                [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
-            },
-            strGroupID:{[Op.like]:req.body.strGroupID+'%'},
-            eType:req.body.type,
-        }
-    }) : await db.Inouts.count({
-        where: {
-            createdAt:{
-                [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
-            },
-            strGroupID:{[Op.like]:req.body.strGroupID+'%'},
-            eType:req.body.type,
-            strID: strSearchNickname,
-        }
-    });
+    let totalCount = await GetInOutCount(strSearchNickname, req.body.dateStart, req.body.dateEnd, req.body.strGroupID, req.body.type, searchClass);
 
     const subQuery = strSearchNickname == '' ? '' : `AND i.strID = '${strSearchNickname}'`;
+    const subQuery2 = searchClass == '' ? '' : ` AND i.iClass = ${parseInt(searchClass)}`;
     let datas = await db.sequelize.query(`
             SELECT
                 i.id, i.strID, i.strAdminNickname, i.strPAdminNickname, i.strVAdminNickname, i.strAgentNickname, i.strShopNickname,
@@ -294,6 +286,7 @@ let GetOutputList = async (req, res) => {
             AND i.strGroupID LIKE '${req.body.strGroupID}%'
             AND i.eType = '${req.body.type}'
             ${subQuery}
+            ${subQuery2}
             ORDER BY i.createdAt DESC
             LIMIT ${iLimit}
             OFFSET ${iOffset}
@@ -315,6 +308,14 @@ let GetInputList = async (req, res) => {
     let iLimit = parseInt(req.body.iLimit);
     let iPage = parseInt(req.body.iPage);
     let iOffset = (iPage-1) * iLimit;
+    let searchClass = req.body.searchClass ?? '';
+    if (searchClass != '') {
+        const sClass = parseInt(searchClass);
+        if (isNaN(sClass) || req.user.iClass > sClass) {
+            res.send({result:'FAIL', msg:'조회실패', data : [], totalCount : 0, iRootClass:req.user.iClass});
+            return;
+        }
+    }
 
     let isShowBank = false;
     let searchKey = req.body.searchKey ?? '';
@@ -333,27 +334,10 @@ let GetInputList = async (req, res) => {
 
     const strSearchNickname = req.body.strSearchNickname ?? '';
 
-    let totalCount = strSearchNickname == '' ? await db.Inouts.count({
-        where: {
-            createdAt:{
-                [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
-            },
-            strGroupID:{[Op.like]:req.body.strGroupID+'%'},
-            eType:req.body.type,
-        }
-    }) : await db.Inouts.count({
-        where: {
-            createdAt:{
-                [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
-            },
-            strGroupID:{[Op.like]:req.body.strGroupID+'%'},
-            eType:req.body.type,
-            strID: strSearchNickname,
-        }
-    });
-
+    let totalCount = await GetInOutCount(strSearchNickname, req.body.dateStart, req.body.dateEnd, req.body.strGroupID, req.body.type, searchClass);
 
     const subQuery = strSearchNickname == '' ? '' : `AND i.strID = '${strSearchNickname}'`;
+    const subQuery2 = searchClass == '' ? '' : ` AND i.iClass = ${parseInt(searchClass)}`;
     let datas = await db.sequelize.query(`
             SELECT
                 i.id, i.strID, i.strAdminNickname, i.strPAdminNickname, i.strVAdminNickname, i.strAgentNickname, i.strShopNickname,
@@ -383,6 +367,7 @@ let GetInputList = async (req, res) => {
             AND i.strGroupID LIKE '${req.body.strGroupID}%'
             AND i.eType = '${req.body.type}'
             ${subQuery}
+            ${subQuery2}
             ORDER BY i.createdAt DESC
             LIMIT ${iLimit}
             OFFSET ${iOffset}
@@ -399,6 +384,34 @@ let GetInputList = async (req, res) => {
     }
 
     res.send({result:'OK', msg:'조회성공', data : list, totalCount : totalCount, iRootClass:req.user.iClass});
+}
+
+let GetInOutCount = async (strSearchNickname, dateStart, dateEnd, strGroupID, type, searchClass) => {
+    if (searchClass != '') {
+        return  await db.Inouts.count({
+            where: {
+                createdAt: {
+                    [Op.between]: [dateStart, require('moment')(dateEnd).add(1, 'days').format('YYYY-MM-DD')],
+                },
+                strGroupID: {[Op.like]: strGroupID + '%'},
+                eType: type,
+                strID: strSearchNickname,
+                iClass:parseInt(searchClass)
+            }
+        });
+    }
+
+
+    return await db.Inouts.count({
+        where: {
+            createdAt: {
+                [Op.between]: [dateStart, require('moment')(dateEnd).add(1, 'days').format('YYYY-MM-DD')],
+            },
+            strGroupID: {[Op.like]: strGroupID + '%'},
+            eType: type,
+            strID: strSearchNickname,
+        }
+    });
 }
 
 // 입출금 진입시 호출됨

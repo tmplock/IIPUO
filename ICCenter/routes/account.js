@@ -36,7 +36,7 @@ router.post('/login', (req, res) => {
     console.log(`/account/login`);
     console.log(req.body);
 
-    const objectData = {strID:req.body.strID, eType:req.body.eType, strGroupID:req.body.strGroupID, iClass:req.body.iClass, strNickname:req.body.strNickname};
+    const objectData = {strID:req.body.strID, eType:req.body.eType, strGroupID:req.body.strGroupID, iClass:req.body.iClass, strNickname:req.body.strNickname, strIP:req.body.strIP};
 
     IHelperUser.AddOnlineUser(listOnlineUser, listLogout, objectData);
     console.log(`# AddOnlineUser`);

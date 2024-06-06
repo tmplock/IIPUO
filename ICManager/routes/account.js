@@ -2,10 +2,12 @@ const express = require('express');
 const passport = require('passport');
 const router = express.Router();
 
+const requestip = require('request-ip');
+const path = require('path');
+
 router.use(express.json());
 router.use(express.urlencoded({extended:false}));
 
-const path = require('path');
 router.use(express.static(path.join(__dirname, '../', 'public')));
 
 // const db = require('../models');
@@ -64,7 +66,9 @@ router.get('/loginsuccess', async (req, res) => {
 
     console.log(`################################################## /account/loginsuccess`);
 
-    const objectResult = await RequestAxios(`${global.strAPIAddress}/account/login`, {eType:'CMS', strID:req.user.strID, strNickname:req.user.strNickname, strGroupID:req.user.strGroupID, iClass:req.user.iClass});
+    let strIP = requestip.getClientIp(req);
+
+    const objectResult = await RequestAxios(`${global.strAPIAddress}/account/login`, {eType:'CMS', strID:req.user.strID, strNickname:req.user.strNickname, strGroupID:req.user.strGroupID, iClass:req.user.iClass, strIP:strIP});
 
     console.log(objectResult);
 

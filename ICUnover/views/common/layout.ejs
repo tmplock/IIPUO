@@ -209,6 +209,7 @@
             // const listOutputRank = JSON.parse('<%-JSON.stringify(listOutputRank)%>');
             // console.log(listOutputRank);
 
+            let bLogout = false;
             
             setInterval( () => {
 
@@ -247,13 +248,22 @@
                 
                         success:function(data) {
 
+                            console.log('/request_checkout');
+                            console.log(data);
+
                             if ( data.result == 'OK' )
                             {
-                                //console.log(data.iLogout);
+                                console.log(data.iLogout);
 
+                                if ( data.iLogout == '1' )
+                                {
+                                    //location.href = '/account/logout';
+                                    bLogout = true;
+                                }
                                 if ( data.iLogout == 1 )
                                 {
-                                    location.href = '/account/logout';
+                                    //location.href = '/account/logout';
+                                    bLogout = true;
                                 }
                             }
                         },
@@ -266,16 +276,26 @@
 
             }, 5000);
 
+            setInterval( () => {
 
-            $(document).keydown(function (event) {
-            if (event.keyCode == 123) { // Prevent F12
-                alert('Content is protected\nYou cannot view the Dev Tools.');
-                return false;
-            } else if (event.ctrlKey && event.shiftKey && event.keyCode == 73) { // Prevent Ctrl+Shift+I        
-                alert('Content is protected\nYou cannot view the Dev Tools.');
-                return false;
-            }
-        });            
+                if (  bLogin == 'true'  && bLogout == true )
+                {
+                    location.href = '/account/logout';
+                    bLogout = false;
+                    location.reload();
+                }
+            }, 1000);
+
+
+            // $(document).keydown(function (event) {
+            //     if (event.keyCode == 123) { // Prevent F12
+            //         //alert('Content is protected\nYou cannot view the Dev Tools.');
+            //         return false;
+            //     } else if (event.ctrlKey && event.shiftKey && event.keyCode == 73) { // Prevent Ctrl+Shift+I        
+            //         //alert('Content is protected\nYou cannot view the Dev Tools.');
+            //         return false;
+            //     }
+            // });            
 
         </script>
 

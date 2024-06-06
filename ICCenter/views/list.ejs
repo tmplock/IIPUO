@@ -22,6 +22,7 @@
                 <th scope="col">닉네임</th>
                 <th scope="col">아이디</th>
                 <th scope="col">타입</th>
+                <th scope="col">아이피</th>
               </tr>
             </thead>
             <tbody id="listOnline">
@@ -100,6 +101,7 @@
                                 <td>${obj.data[i].strNickname}</td>
                                 <td>${obj.data[i].strID}</td>
                                 <td>${obj.data[i].eType}</td>
+                                <td>${obj.data[i].strIP}</td>
                             <tr/>
                             `;
                             $('#listOnline').append(tag);

@@ -18,79 +18,92 @@ const flash = require('connect-flash');
 var cors = require('cors');
 
 let mysqlsession = require('express-mysql-session')(session);
-// host: 'db-mysql-sgp1-78563-do-user-11246819-0.c.db.ondigitalocean.com',
-// //database: 'iipcor',
-// database:'iipc',
-// username: 'doadmin',
-// password: 'AVNS_M3_YxbEdNmi41c9HbLu',
-// dialect: 'mysql',
-// port:25060,
-// timezone:'Asia/Seoul'
+// // host: 'db-mysql-sgp1-78563-do-user-11246819-0.c.db.ondigitalocean.com',
+// // //database: 'iipcor',
+// // database:'iipc',
+// // username: 'doadmin',
+// // password: 'AVNS_M3_YxbEdNmi41c9HbLu',
+// // dialect: 'mysql',
+// // port:25060,
+// // timezone:'Asia/Seoul'
+// // let session_option = {
+// //     host: 'db-mysql-sgp1-78563-do-user-11246819-0.c.db.ondigitalocean.com',
+// //     database: 'iipc',
+// //     user: 'doadmin',
+// //     port:25060,
+// //     password: 'AVNS_M3_YxbEdNmi41c9HbLu',
+// //     clearExpired:true,
+// //     checkExpirationInterval:10000,
+// //     expiration:10000    
+// // }
+// // host:'db-mysql-sgp1-62759-do-user-11246819-0.c.db.ondigitalocean.com',
+// // database:'iipc',
+// // username:'doadmin', 
+// // password:'AVNS_FYsbSxfV0ADzDF4IiRJ',
+// // dialect: 'mysql',
+// // port:'25060',
+// // timezone:'+09:00'
+
+// // let session_option = {
+// //     host: 'db-mysql-sgp1-62759-do-user-11246819-0.c.db.ondigitalocean.com',
+// //     database: 'iipc',
+// //     user: 'doadmin',
+// //     port:25060,
+// //     password: 'AVNS_CHqkvP_p_JM6uWuOb73',
+// //     clearExpired:true,
+// //     checkExpirationInterval:10000,
+// //     expiration:10000    
+// // }
+
+// //  Origin
 // let session_option = {
-//     host: 'db-mysql-sgp1-78563-do-user-11246819-0.c.db.ondigitalocean.com',
-//     database: 'iipc',
-//     user: 'doadmin',
+//     host: process.env.SESSIONSDB_HOST,
+//     database: process.env.SESSIONSDB_DB,
+//     user: process.env.SESSIONSDB_USER,
 //     port:25060,
-//     password: 'AVNS_M3_YxbEdNmi41c9HbLu',
+//     password: process.env.SESSIONSDB_PASS,
 //     clearExpired:true,
 //     checkExpirationInterval:10000,
 //     expiration:10000    
 // }
-// host:'db-mysql-sgp1-62759-do-user-11246819-0.c.db.ondigitalocean.com',
-// database:'iipc',
-// username:'doadmin', 
-// password:'AVNS_FYsbSxfV0ADzDF4IiRJ',
-// dialect: 'mysql',
-// port:'25060',
-// timezone:'+09:00'
 
-// let session_option = {
-//     host: 'db-mysql-sgp1-62759-do-user-11246819-0.c.db.ondigitalocean.com',
-//     database: 'iipc',
-//     user: 'doadmin',
-//     port:25060,
-//     password: 'AVNS_CHqkvP_p_JM6uWuOb73',
-//     clearExpired:true,
-//     checkExpirationInterval:10000,
-//     expiration:10000    
-// }
+// let sessionStore = new mysqlsession(session_option);
 
-
-let session_option = {
-    host: process.env.SESSIONSDB_HOST,
-    database: process.env.SESSIONSDB_DB,
-    user: process.env.SESSIONSDB_USER,
-    port:25060,
-    password: process.env.SESSIONSDB_PASS,
-    clearExpired:true,
-    checkExpirationInterval:10000,
-    expiration:10000    
-}
-
-let sessionStore = new mysqlsession(session_option);
+// // app.use(session({
+// //     secret: 'administrator#',
+// //     resave: false,
+// //     saveUninitialized: false,
+// //     cookie: { secure: false, httpOnly: true, maxAge: (4 * 60 * 60 * 1000) },
+// //     passport: {}
+// // }));
+// // // app.use(session({
+// // //     secret: process.env.secret,
+// // //     resave: false,
+// // //     saveUninitialized: true,
+// // //     store: sessionStore
+// // // }));
 
 // app.use(session({
 //     secret: 'administrator#',
 //     resave: false,
 //     saveUninitialized: false,
+//     store: sessionStore,
 //     cookie: { secure: false, httpOnly: true, maxAge: (4 * 60 * 60 * 1000) },
 //     passport: {}
 // }));
-// // app.use(session({
-// //     secret: process.env.secret,
-// //     resave: false,
-// //     saveUninitialized: true,
-// //     store: sessionStore
-// // }));
+
+
+//  Session
 
 app.use(session({
     secret: 'administrator#',
     resave: false,
     saveUninitialized: false,
-    store: sessionStore,
     cookie: { secure: false, httpOnly: true, maxAge: (4 * 60 * 60 * 1000) },
     passport: {}
 }));
+
+//  end of Session
 
 const path = require('path');
 const axios = require('axios');
@@ -563,7 +576,7 @@ app.post('/request_checklogout', async (req, res) => {
 
     if ( req.user != null )
     {
-        const objectResult = await IHelper.RequestAxios(`${global.strAPIAddress}/account/checklogout`, {eType:'USER', strID:req.user.strID});
+        const objectResult = await IHelper.RequestAxios2(`${global.strAPIAddress}/account/checklogout`, {eType:'USER', strID:req.user.strID});
 
         console.log(objectResult);
     

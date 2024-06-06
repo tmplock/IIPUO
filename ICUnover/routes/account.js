@@ -2,10 +2,12 @@ const express = require('express');
 const passport = require('passport');
 const router = express.Router();
 
+const requestip = require('request-ip');
+const path = require('path');
+
 router.use(express.json());
 router.use(express.urlencoded({extended:false}));
 
-const path = require('path');
 router.use(express.static(path.join(__dirname, '../', 'public')));
 
 const IHelper = require('../helpers/IHelper');
@@ -57,7 +59,9 @@ router.get('/loginsuccess', async (req, res) => {
 
     console.log(`################################################## /account/loginsuccess`);
 
-    const objectResult = await IHelper.RequestAxios2(`${global.strAPIAddress}/account/login`, {eType:'USER', strID:req.user.strID, strNickname:req.user.strNickname, strGroupID:req.user.strGroupID, iClass:req.user.iClass});
+    let strIP = requestip.getClientIp(req);
+
+    const objectResult = await IHelper.RequestAxios2(`${global.strAPIAddress}/account/login`, {eType:'USER', strID:req.user.strID, strNickname:req.user.strNickname, strGroupID:req.user.strGroupID, iClass:req.user.iClass, strIP:strIP});
 
     if ( objectResult.result == 'OK' )
     {
@@ -105,7 +109,7 @@ router.get('/logout', isLoggedIn, (req, res) => {
     
             const objectResult = await IHelper.RequestAxios2(`${global.strAPIAddress}/account/logoutcomplete`, {eType:'USER', strID:strID});
     
-            delete req.session.uid;
+            //delete req.session.uid;
             // if you're using express-flash
             req.flash('success_msg', 'session terminated');
             res.redirect('/');

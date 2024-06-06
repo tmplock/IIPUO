@@ -36,11 +36,11 @@ router.post('/login', (req, res) => {
     console.log(`/account/login`);
     console.log(req.body);
 
-    const objectData = {strID:req.body.strID, eType:req.body.eType, strGroupID:req.body.strGroupID, iClass:req.body.iClass, strNickname:req.body.strNickname};
+    const objectData = {strID:req.body.strID, eType:req.body.eType, strGroupID:req.body.strGroupID, iClass:req.body.iClass, strNickname:req.body.strNickname, strIP:req.body.strIP};
 
     IHelperUser.AddOnlineUser(listOnlineUser, listLogout, objectData);
     console.log(`# AddOnlineUser`);
-    PrintUsers(listOnlineUser, 'AddOnlineUser');
+    //PrintUsers(listOnlineUser, 'AddOnlineUser');
 
     res.send({result:'OK'});
 });
@@ -50,7 +50,7 @@ router.post('/checklogout', (req, res) => {
     console.log(`/account/checklogout`);
     console.log(req.body);
 
-    PrintUsers(listLogout, 'LogoutUser');
+    //PrintUsers(listLogout, 'LogoutUser');
 
     let objectData = {strID:req.body.strID, eType:req.body.eType};
 
@@ -72,16 +72,24 @@ router.post('/logoutcomplete', (req, res) => {
 
     let objectData = {strID:req.body.strID, eType:req.body.eType};
 
+    const online = IHelperUser.FindUser(listOnlineUser, objectData);
+    if ( online != null )
+    {
+        IHelperUser.RemoveUser(listOnlineUser, online);
+    }
+
     const user = IHelperUser.FindUser(listLogout, objectData);
     if ( null != user )
     {
         IHelperUser.RemoveUser(listLogout, user);
-        PrintUsers(listLogout, 'LogoutUser')
+        //PrintUsers(listLogout, 'LogoutUser')
+        res.send({result:'OK'})
     }
     else
     {
-        res.send({result:'OK', iLogout:0});
+        res.send({result:'OK'});
     }
+
 
 });
 

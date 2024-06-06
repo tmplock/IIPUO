@@ -133,7 +133,7 @@
 		</table>
 	</div>
 	<% if (agent.iClass == 2 && agent.iPermission != 100) {%>
-	<div>
+	<div id="grade" style="display: none">
 		<table>
 			<colgroup>
 				<col style="width:15%">
@@ -252,11 +252,6 @@
 				$('#bank_num').val(agent.strBankAccount);
 			}
 		});
-
-		<% if (agent.iRootClass == 2 && agent.iPermission != 100) { %>
-			let iInputGrade = parseInt(agent.strOptionCode[3]);
-			$(`input[name="input_grade"][value="${iInputGrade}"]`).prop("checked",true);
-		<% } %>
 
 		bUsingPassNewUser = ((agent.iPassCheckNewUser ?? 1) == 1) ? true : false;
 		SetUsingPassNewUser(agent.iClass);
@@ -437,6 +432,11 @@
 					$("#member_password").removeAttr("disabled");
 					$('#member_password2').val(data.pass);
 					$("#member_password2").removeAttr("disabled");
+					<% if (agent.iRootClass == 2 && agent.iPermission != 100) { %>
+<!--						$(`input[name="input_grade"][value="${data.iInputGrade}"]`).prop("checked",true);-->
+<!--						$('#grade').show();-->
+					<% } %>
+
 				}
 				else
 				{
@@ -520,8 +520,8 @@
 		}
 
 		<% if (agent.iRootClass == 2 && agent.iPermission != 100) { %>
-			let iInputGrade = $("input[name='input_grade']:checked").val();
-			strOptionCode = replaceCharacter(strOptionCode, 3, iInputGrade.toString());
+			// let iInputGrade = $("input[name='input_grade']:checked").val();
+			// strOptionCode = replaceCharacter(strOptionCode, 3, iInputGrade.toString());
 		<% } %>
 
 		objectData.strNickname = strNickname;

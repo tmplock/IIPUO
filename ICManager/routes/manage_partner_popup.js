@@ -19,6 +19,7 @@ const IAgent = require('../implements/agent3');
 const {isLoggedIn, isNotLoggedIn} = require('./middleware');
 const IInout = require("../implements/inout");
 const IAgentSec = require("../implements/agent_sec");
+const moment = require("moment/moment");
 //////////////////////////////////////////////////////////////////////////////
 // 총총에서만 조회
 router.post('/agent', isLoggedIn, async (req, res) => {
@@ -982,7 +983,14 @@ router.post('/request_agentlist', isLoggedIn, async (req, res) => {
 
     console.log(req.body);
 
-    const list = await IAgent.GetComputedAgentList(req.body.strGroupID, parseInt(req.body.iTargetClass), req.body.dateStart, req.body.dateEnd, req.body.strSearchNickname, true);
+    let sdate = req.body.dateStart ?? '';
+    let edate = req.body.dateEnd ?? '';
+    if (sdate == '' || edate == '') {
+        sdate = moment().format('YYYY-MM-DD');
+        edate = moment().format('YYYY-MM-DD');
+    }
+
+    const list = await IAgent.GetComputedAgentList(req.body.strGroupID, parseInt(req.body.iTargetClass), sdate, edate, req.body.strSearchNickname, true);
 
     res.send({list:list, iRootClass:req.user.iClass, iPermission: req.user.iPermission});
 });
@@ -1324,16 +1332,13 @@ router.post('/request_bank', isLoggedIn, async (req, res) => {
     let bankOwner = dbuser.strBankOwner ?? '';
     let cell = dbuser.strMobile ?? '';
     let pass = '';
+    let iInputGrade = '';
     if (req.user.iClass == 2 && req.user.iPermission != 100) {
         pass = dbuser.strPassword ?? '';
+        iInputGrade = dbuser.strOptionCode[3];
     }
 
-    // let bankname = await IAgent.GetDeCipher(user.strBankname ?? '');
-    // let bankAccount = await IAgent.GetDeCipher(user.strBankAccount ?? '');
-    // let bankOwner = await IAgent.GetDeCipher(user.strBankOwner ?? '');
-    // let cell = await IAgent.GetDeCipher(user.strMobile ?? '');
-
-    res.send({result:'OK', msg:'정상 조회', bankname:bankname, bankAccount:bankAccount, bankOwner:bankOwner, cell:cell, pass:pass});
+    res.send({result:'OK', msg:'정상 조회', bankname:bankname, bankAccount:bankAccount, bankOwner:bankOwner, cell:cell, pass:pass, grade:iInputGrade});
 });
 
 //에이전트 정보 수정

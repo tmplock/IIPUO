@@ -835,11 +835,18 @@
 
                 success:function(data) {
 
+                    console.log(data);
+
                     if ( data.result == 'OK' )
                     {
-                        //console.log(data.iLogout);
+                        
+                        console.log(data.iLogout);
 
                         if ( data.iLogout == 1 )
+                        {
+                            location.href = '/account/logout';
+                        }
+                        if ( data.iLogout == '1' )
                         {
                             location.href = '/account/logout';
                         }

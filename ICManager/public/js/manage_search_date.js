@@ -14,6 +14,9 @@ let SetSeachButtons = (strSearchTag, iRender, i18nTexts, objectData, iTargetClas
     let tag = '';
     if(iRender == 1)
     {
+        console.log(`SetSeachButtons!!!`);
+        console.log(objectData);
+        console.log(objectData.strGroupID);
         tag = `
         <div style="background-color:#ffffff;padding-right:5px;padding-top:0px;padding-bottom:0px;" colspan="19">
             <div style="float: left;">
@@ -33,7 +36,7 @@ let SetSeachButtons = (strSearchTag, iRender, i18nTexts, objectData, iTargetClas
                 <div style="float: right; text-align: right;">
                     <input style="width:100px;" type="text" id="datepicker1" class="datepicker"/>~
                     <input style="width:100px;" type="text" id="datepicker2" class="datepicker"/>
-                    <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearch(${iTargetClass}, ${objectData.strGroupID}, ${objectData.iClass});">${i18nTexts.Search}</button>
+                    <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearch(${iTargetClass}, '${objectData.strGroupID}', ${objectData.iClass});">${i18nTexts.Search}</button>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     ${i18nTexts.Search}
                     <select id="select_roomno" style="width:80px;">
@@ -72,7 +75,7 @@ let SetSeachButtons = (strSearchTag, iRender, i18nTexts, objectData, iTargetClas
                 <div style="float: right; text-align: right;">
                     <input style="width:100px;" type="text" id="datepicker1" class="datepicker"/>~
                     <input style="width:100px;" type="text" id="datepicker2" class="datepicker"/>
-                    <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearch(${iTargetClass}, ${objectData.strGroupID}, ${objectData.iClass});">${i18nTexts.Search}</button>
+                    <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearch(${iTargetClass}, '${objectData.strGroupID}', ${objectData.iClass});">${i18nTexts.Search}</button>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     <button class="menu5" data-menu="1" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;color:white" onclick="OnClickTodayRecord();">${i18nTexts.Today}</button>
                     &nbsp;
@@ -113,7 +116,7 @@ let SetSeachButtons = (strSearchTag, iRender, i18nTexts, objectData, iTargetClas
                     <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearchAgentNickname();">${i18nTexts.Search}</button>
                     <input style="margin-left:20px; width:100px;" type="text" id="datepicker1" class="datepicker"/>~
                     <input style="width:100px;" type="text" id="datepicker2" class="datepicker"/>
-                    <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearch(${iTargetClass}, ${objectData.strGroupID}, ${objectData.iClass});">${i18nTexts.Search}</button>
+                    <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearch(${iTargetClass}, '${objectData.strGroupID}', ${objectData.iClass});">${i18nTexts.Search}</button>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     ${i18nTexts.Search}
                     <select id="select_roomno" style="width:80px;">
@@ -152,7 +155,7 @@ let SetSeachButtons = (strSearchTag, iRender, i18nTexts, objectData, iTargetClas
                 <div style="float: right; text-align: right;">
                     <input style="width:100px;" type="text" id="datepicker1" class="datepicker"/>~
                     <input style="width:100px;" type="text" id="datepicker2" class="datepicker"/>
-                    <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearch(${iTargetClass}, ${objectData.strGroupID}, ${objectData.iClass}, ${objectData.iPermission});">${i18nTexts.Search}</button>
+                    <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearch(${iTargetClass}, '${objectData.strGroupID}', ${objectData.iClass}, ${objectData.iPermission});">${i18nTexts.Search}</button>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     ${i18nTexts.Search}
                     <select id="select_roomno" style="width:80px;">
@@ -195,7 +198,7 @@ let SetSeachButtons = (strSearchTag, iRender, i18nTexts, objectData, iTargetClas
                 <div style="float: right; text-align: right;">
                     <input style="width:100px;" type="text" id="datepicker1" class="datepicker"/>~
                     <input style="width:100px;" type="text" id="datepicker2" class="datepicker"/>
-                    <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearch(${iTargetClass}, ${objectData.strGroupID}, ${objectData.iClass}, ${objectData.iPermission});">${i18nTexts.Search}</button>
+                    <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearch(${iTargetClass}, '${objectData.strGroupID}', ${objectData.iClass}, ${objectData.iPermission});">${i18nTexts.Search}</button>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     ${i18nTexts.Search}
                     <select id="select_roomno" style="width:80px;">
@@ -236,7 +239,7 @@ let SetSeachButtons = (strSearchTag, iRender, i18nTexts, objectData, iTargetClas
                 <div style="float: right; text-align: right;">
                     <input style="width:100px;" type="text" id="datepicker1" class="datepicker"/>~
                     <input style="width:100px;" type="text" id="datepicker2" class="datepicker"/>
-                    <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearch(${iTargetClass}, ${objectData.strGroupID}, ${objectData.iClass});">${i18nTexts.Search}</button>
+                    <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearch(${iTargetClass}, '${objectData.strGroupID}', ${objectData.iClass});">${i18nTexts.Search}</button>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     <button class="menu5" data-menu="1" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;color:white" onclick="OnClickTodayRecord();">${i18nTexts.Today}</button>
                     &nbsp;
@@ -275,7 +278,7 @@ let SetSeachButtons = (strSearchTag, iRender, i18nTexts, objectData, iTargetClas
                 <div style="float: right; text-align: right;">
                     <input style="width:100px;" type="text" id="datepicker1" class="datepicker"/>~
                     <input style="width:100px;" type="text" id="datepicker2" class="datepicker"/>
-                    <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearch(${iTargetClass}, ${objectData.strGroupID}, ${objectData.iClass});">${i18nTexts.Search}</button>
+                    <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearch(${iTargetClass}, '${objectData.strGroupID}', ${objectData.iClass});">${i18nTexts.Search}</button>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     ${i18nTexts.Search}
                     <select id="select_roomno" style="width:80px;">
@@ -312,7 +315,7 @@ let SetSeachButtons = (strSearchTag, iRender, i18nTexts, objectData, iTargetClas
                 <div style="float: right; text-align: right;">
                     <input style="width:100px;" type="text" id="datepicker1" class="datepicker"/>~
                     <input style="width:100px;" type="text" id="datepicker2" class="datepicker"/>
-                    <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearch(${iTargetClass}, ${objectData.strGroupID}, ${objectData.iClass}, ${objectData.iPermission});">${i18nTexts.Search}</button>
+                    <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearch(${iTargetClass}, '${objectData.strGroupID}', ${objectData.iClass}, ${objectData.iPermission});">${i18nTexts.Search}</button>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     ${i18nTexts.Search}
                     <select id="select_roomno" style="width:80px;">

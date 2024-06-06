@@ -131,6 +131,12 @@ router.post('/request_agentinfo', isLoggedIn, async(req, res) => {
 router.post('/letter_banklist', isLoggedIn, async(req, res) => {
 
     console.log(req.body);
+
+    if (req.user.iClass == 2 || req.user.iPermission == 100) {
+        res.redirect("/");
+        return;
+    }
+
     const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
 
     if (dbuser.iPermission == 100) {

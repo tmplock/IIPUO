@@ -75,7 +75,7 @@ router.post('/logoutcomplete', (req, res) => {
     const online = IHelperUser.FindUser(listOnlineUser, objectData);
     if ( online != null )
     {
-        IHelperUser.RemoveUser(FindUser, online);
+        IHelperUser.RemoveUser(listOnlineUser, online);
     }
 
     const user = IHelperUser.FindUser(listLogout, objectData);

@@ -95,34 +95,6 @@ let mysqlsession = require('express-mysql-session')(session);
 
 //  Session
 
-var sessionStore = new MySQLStore({
-    clearExpired: true,
-    // checkExpirationInterval: parseInt(process.env.SESSIONSDB_CHECK_EXP_INTERVAL, 10),
-    // expiration: parseInt(process.env.SESSIONSDB_EXPIRATION, 10)
-    checkExpirationInterval: 1000*60,
-    expiration: 1000*60
-}, connection);
-
-//var expireDate = new Date(Date.now() + 60 * 60 * 1000) // 1 hour
-var expireDate = new Date(Date.now() + 60 * 60 * 1000 * 48) // 1 hour
-/* Create a cookie that expires in 1 day */
-// var expireDate = new Date();
-// expireDate.setDate(expireDate.getDate() + 1);
-// expireDate.setDate(1000*60);
-// expireDate.setHours(expireDate.getHours()+1);
-
-// app.use(session({
-//   resave: false,
-//   saveUninitialized: true,
-//   secret: process.env.SESSIONSDB_SECRET,
-//   store: sessionStore,
-//   cookie: {
-//         expires: expireDate,
-//         httpOnly: true,
-//         secure: false
-//     }
-// }));
-
 app.use(session({
     secret: 'administrator#',
     resave: false,

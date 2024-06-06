@@ -355,20 +355,21 @@ router.post('/realtime_user', (req, res) => {
 
 router.post('/logout', async (req, res) => {
     let strNickname = req.body.strNickname ?? '';
-
     let user = await db.Users.findOne({where:{strNickname:strNickname}});
-    let strURL = user.strURL;
-    if (user != null && user.strURL != null) {
-        axios.post(`${strURL}/realtime_user_logout`, {'strID' : user.strID})
+    let strURL = global.strAPIAddress ?? '';
+    if (user != null && strURL != null && strURL.length > 0) {
+        axios.post(`${strURL}/insertlogout`, {eType:'USER', strID:user.strID})
             .then((response)=> {
-                console.log(`Axios Success /realtime_user_logout : `);
+                console.log(`Axios Success /insertlogout : `);
+                res.send({'result' : true, msg:'로그아웃처리 성공'});
             })
             .catch((error)=> {
                 console.log(error);
+                res.send({'result' : false, msg:'로그아웃처리 실패'});
             });
+    } else {
+        res.send({'result' : false, msg:'로그아웃처리 실패'});
     }
-
-    res.send({'result' : true});
 });
 
 module.exports = router;

@@ -465,8 +465,15 @@ router.post('/request_agentlist', isLoggedIn, async(req, res) => {
     console.log(`/request_agentlist : `);
     console.log(req.body);
 
-    const overview = await IAgent.GetComputedAgentTotal(req.body.strGroupID, parseInt(req.body.iTargetClass), req.body.dateStart, req.body.dateEnd, req.body.strSearchNickname);
-    const list = await IAgent.GetComputedAgentList(req.body.strGroupID, parseInt(req.body.iTargetClass), req.body.dateStart, req.body.dateEnd, req.body.strSearchNickname, true);
+    let sdate = req.body.dateStart ?? '';
+    let edate = req.body.dateEnd ?? '';
+    if (sdate == '' || edate == '') {
+        sdate = moment().format('YYYY-MM-DD');
+        edate = moment().format('YYYY-MM-DD');
+    }
+
+    const overview = await IAgent.GetComputedAgentTotal(req.body.strGroupID, parseInt(req.body.iTargetClass), sdate, edate, req.body.strSearchNickname);
+    const list = await IAgent.GetComputedAgentList(req.body.strGroupID, parseInt(req.body.iTargetClass), sdate, edate, req.body.strSearchNickname, true);
 
     res.send({list:list, overview:overview, iRootClass: req.user.iClass, iPermission: req.user.iPermission});
 });

@@ -354,22 +354,25 @@ router.post('/realtime_user', (req, res) => {
 });
 
 router.post('/logout', async (req, res) => {
-    let strNickname = req.body.strNickname ?? '';
-    let user = await db.Users.findOne({where:{strNickname:strNickname}});
-    let strURL = global.strAPIAddress ?? '';
-    if (user != null && strURL != null && strURL.length > 0) {
-        axios.post(`${strURL}/insertlogout`, {eType:'USER', strID:user.strID})
-            .then((response)=> {
-                console.log(`Axios Success /insertlogout : `);
-                res.send({'result' : true, msg:'로그아웃처리 성공'});
-            })
-            .catch((error)=> {
-                console.log(error);
-                res.send({'result' : false, msg:'로그아웃처리 실패'});
-            });
-    } else {
-        res.send({'result' : false, msg:'로그아웃처리 실패'});
+    if (req.user.iClass <= 3 && req.user.iPermission == 0) {
+        let strNickname = req.body.strNickname ?? '';
+        let user = await db.Users.findOne({where:{strNickname:strNickname}});
+        let strURL = global.strAPIAddress ?? '';
+        if (user != null && strURL != null && strURL.length > 0) {
+            axios.post(`${strURL}/account/insertlogout`, {eType:'USER', strID:user.strID})
+                .then((response)=> {
+                    console.log(`Axios Success /account/insertlogout : `);
+                    res.send({'result' : true, msg:'로그아웃처리 성공'});
+                })
+                .catch((error)=> {
+                    console.log(error);
+                    res.send({'result' : false, msg:'로그아웃처리 실패'});
+                });
+            return;
+        }
     }
+    res.send({'result' : false, msg:'로그아웃처리 실패'});
+
 });
 
 module.exports = router;

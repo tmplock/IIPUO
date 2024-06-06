@@ -209,6 +209,7 @@
             // const listOutputRank = JSON.parse('<%-JSON.stringify(listOutputRank)%>');
             // console.log(listOutputRank);
 
+            let bLogout = false;
             
             setInterval( () => {
 
@@ -256,11 +257,13 @@
 
                                 if ( data.iLogout == '1' )
                                 {
-                                    location.href = '/account/logout';
+                                    //location.href = '/account/logout';
+                                    bLogout = true;
                                 }
                                 if ( data.iLogout == 1 )
                                 {
-                                    location.href = '/account/logout';
+                                    //location.href = '/account/logout';
+                                    bLogout = true;
                                 }
                             }
                         },
@@ -272,6 +275,15 @@
                 }
 
             }, 5000);
+
+            setInterval( () => {
+
+                if (  bLogin == 'true'  && bLogout == true )
+                {
+                    location.href = '/account/logout';
+                    bLogout = false;
+                }
+            }, 1000);
 
 
             // $(document).keydown(function (event) {

@@ -60,7 +60,6 @@ router.get('/loginsuccess', async (req, res) => {
     console.log(`################################################## /account/loginsuccess`);
 
     let strIP = requestip.getClientIp(req);
-    //console.log(`Parameter : ${username}, ${password}, DB User : ${user.strNickname}, ip : ${ip}`);
 
     const objectResult = await IHelper.RequestAxios2(`${global.strAPIAddress}/account/login`, {eType:'USER', strID:req.user.strID, strNickname:req.user.strNickname, strGroupID:req.user.strGroupID, iClass:req.user.iClass, strIP:strIP});
 

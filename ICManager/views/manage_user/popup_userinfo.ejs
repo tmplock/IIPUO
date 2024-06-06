@@ -506,6 +506,7 @@
 		if ( strUsingPC != undefined ) {
 			strOptionCode = '00100000';
 		} else {
+			strOptionCode = '00000000';
 			if ( strUsingInput != undefined ) {
 				strOptionCode = replaceCharacter(strOptionCode, 0, '1');
 			} else {

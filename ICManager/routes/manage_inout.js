@@ -374,6 +374,7 @@ let GetInputList = async (req, res) => {
                     ELSE REPLACE(i.strName, SUBSTR(i.strName,2,1), '*')
                     END AS strName,
                 u.strBankName AS strBankName, u.iPassCheckNewUser,
+                u.strOptionCode AS strOptionCode,
                 DATE_FORMAT(i.completedAt, '%Y-%m-%d %H:%i:%S') AS completedAt, DATE_FORMAT(i.createdAt, '%Y-%m-%d %H:%i:%S') AS createdAt, DATE_FORMAT(i.updatedAt, '%Y-%m-%d %H:%i:%S') AS updatedAt,
                 DATE_FORMAT(u.createdAt, '%Y-%m-%d %H:%i:%S') AS userCreatedAt
             FROM Inouts i

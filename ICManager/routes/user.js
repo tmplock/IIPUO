@@ -185,11 +185,14 @@ router.post('/request_bank', async(req, res) => {
 
             res.send({
                 result: 'OK',
-                msg: '표시되는 계좌로 입금을 해주시기 바랍니다',
+                title: '본사 사정으로 인해 계좌 문의 바랍니다.',
+                msg: '이전 계좌나 다른 계좌에 입금시 당사는 해당 금액을 책임지지 않으며',
+                msg2: '회원님께서도 돌려받을 수 없음을 안내드립니다.',
                 bankType: bank.eBankType,
                 bankname: bank.strBankName,
                 banknumber: bank.strBankNumber,
                 bankholder: bank.strBankHolder,
+                iNext: 0,
             });
 
             }
@@ -218,7 +221,12 @@ router.post('/request_bank', async(req, res) => {
                     iClassFrom:user.iClass, // 본인의 클래스
                     iClassTo:3, // 본사로 전송 고정
                 });
-                res.send({result:'Request', msg:'문의 하였습니다. 잠시후 쪽지를 확인 바랍니다.'});
+                res.send({result:'Request',
+                    title: '입금 계좌는 쪽지를 통해 전달드립니다. 쪽지 내용을 확인하여 입금해주시기 바랍니다.',
+                    msg: '이전 계좌나 다른 계좌에 입금시 당사는 해당 금액을 책임지지 않으며',
+                    msg2: '회원님께서도 돌려받을 수 없음을 안내드립니다.',
+                    iNext: 1,
+                });
             }
             return; 
     }

@@ -83,10 +83,11 @@ router.post('/logoutcomplete', (req, res) => {
     {
         IHelperUser.RemoveUser(listLogout, user);
         //PrintUsers(listLogout, 'LogoutUser')
+        res.send({result:'OK'})
     }
     else
     {
-        res.send({result:'OK', iLogout:0});
+        res.send({result:'OK'});
     }
 
 

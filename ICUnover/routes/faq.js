@@ -28,7 +28,8 @@ router.get('/list', async (req, res) => {
         order:[['createdAt','DESC']]
     });
     const objectOutput = await IHelper.GetOutputRecords();
-    res.render('faq/list', {iLayout:0, bLogin:bLogin, user:req.user, messages:null, listOutputRecent:objectOutput.listOutputRecent, listOutputRank:objectOutput.listOutputRank, listFaq:listFaq, ePublishing:global.ePublishing});
+    const user = IHelper.GetUser(req.user);
+    res.render('faq/list', {iLayout:0, bLogin:bLogin, user:user, messages:null, listOutputRecent:objectOutput.listOutputRecent, listOutputRank:objectOutput.listOutputRank, listFaq:listFaq, ePublishing:global.ePublishing});
 });
 
 router.get('/view', async (req, res) => {
@@ -39,7 +40,8 @@ router.get('/view', async (req, res) => {
         bLogin = true;
     }
     const objectOutput = await IHelper.GetOutputRecords();
-    res.render('faq/view', {iLayout:0, bLogin:bLogin, user:req.user, messages:null, listOutputRecent:objectOutput.listOutputRecent, listOutputRank:objectOutput.listOutputRank, ePublishing:global.ePublishing});
+    const user = IHelper.GetUser(req.user);
+    res.render('faq/view', {iLayout:0, bLogin:bLogin, user:user, messages:null, listOutputRecent:objectOutput.listOutputRecent, listOutputRank:objectOutput.listOutputRank, ePublishing:global.ePublishing});
 });
 
 router.get('/get', async (req, res) => {
@@ -55,7 +57,8 @@ router.get('/get', async (req, res) => {
 
     const obj = await db.Faqs.findOne({where:{id:req.query.id}});
     const objectOutput = await IHelper.GetOutputRecords();
-    res.render('faq/view', {iLayout:0, bLogin:bLogin, user:req.user, messages:null, listOutputRecent:objectOutput.listOutputRecent, listOutputRank:objectOutput.listOutputRank, obj:obj, eDocumentType:'FAQ', ePublishing:global.ePublishing});
+    const user = IHelper.GetUser(req.user);
+    res.render('faq/view', {iLayout:0, bLogin:bLogin, user:user, messages:null, listOutputRecent:objectOutput.listOutputRecent, listOutputRank:objectOutput.listOutputRank, obj:obj, eDocumentType:'FAQ', ePublishing:global.ePublishing});
 });
 
 

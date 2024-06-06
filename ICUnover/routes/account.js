@@ -133,7 +133,8 @@ router.get('/mypage', async (req, res) => {
         return;
     }
     const objectOutput = await IHelper.GetOutputRecords();
-    res.render('mypage', {iLayout:0, bLogin:bLogin, user:req.user, messages:null, listOutputRecent:objectOutput.listOutputRecent, listOutputRank:objectOutput.listOutputRank, ePublishing:global.ePublishing});
+    const user = IHelper.GetUser(req.user);
+    res.render('mypage', {iLayout:0, bLogin:bLogin, user:user, messages:null, listOutputRecent:objectOutput.listOutputRecent, listOutputRank:objectOutput.listOutputRank, ePublishing:global.ePublishing});
 });
 
 

@@ -266,7 +266,8 @@ app.get('/', async (req, res) => {
 
     }
 
-    res.render('index', {iLayout:0, bLogin:bLogin, user:req.user, messages:req.flash('error')[0], listOutputRecent:objectOutput.listOutputRecent, listOutputRank:objectOutput.listOutputRank, listAnnouncement:listAnnouncement, listFaq:listFaq, ePublishing:global.ePublishing});
+    const user = IHelper.GetUser(req.user);
+    res.render('index', {iLayout:0, bLogin:bLogin, user:user, messages:req.flash('error')[0], listOutputRecent:objectOutput.listOutputRecent, listOutputRank:objectOutput.listOutputRank, listAnnouncement:listAnnouncement, listFaq:listFaq, ePublishing:global.ePublishing});
 });
 
 app.get('/desc', async (req, res) => {

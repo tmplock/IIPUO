@@ -30,8 +30,8 @@ router.get('/input', async (req, res) => {
         return;
     }
     const objectOutput = await IHelper.GetOutputRecords();
-
-    res.render('inout/input', {iLayout:0, bLogin:bLogin, user:req.user, messages:null, listOutputRecent:objectOutput.listOutputRecent, listOutputRank:objectOutput.listOutputRank, ePublishing:global.ePublishing});
+    const user = IHelper.GetUser(req.user);
+    res.render('inout/input', {iLayout:0, bLogin:bLogin, user:user, messages:null, listOutputRecent:objectOutput.listOutputRecent, listOutputRank:objectOutput.listOutputRank, ePublishing:global.ePublishing});
 });
 
 router.get('/output', async (req, res) => {
@@ -46,7 +46,8 @@ router.get('/output', async (req, res) => {
         return;
     }
     const objectOutput = await IHelper.GetOutputRecords();
-    res.render('inout/output', {iLayout:0, bLogin:bLogin, user:req.user, messages:null, listOutputRecent:objectOutput.listOutputRecent, listOutputRank:objectOutput.listOutputRank, ePublishing:global.ePublishing});
+    const user = IHelper.GetUser(req.user);
+    res.render('inout/output', {iLayout:0, bLogin:bLogin, user:user, messages:null, listOutputRecent:objectOutput.listOutputRecent, listOutputRank:objectOutput.listOutputRank, ePublishing:global.ePublishing});
 });
 
 router.get('/virtual', async (req, res) => {
@@ -61,7 +62,8 @@ router.get('/virtual', async (req, res) => {
         return;
     }
     const objectOutput = await IHelper.GetOutputRecords();
-    res.render('inout/virtual', {iLayout:0, bLogin:bLogin, user:req.user, messages:null, listOutputRecent:objectOutput.listOutputRecent, listOutputRank:objectOutput.listOutputRank, ePublishing:global.ePublishing});
+    const user = IHelper.GetUser(req.user);
+    res.render('inout/virtual', {iLayout:0, bLogin:bLogin, user:user, messages:null, listOutputRecent:objectOutput.listOutputRecent, listOutputRank:objectOutput.listOutputRank, ePublishing:global.ePublishing});
 });
 
 router.get('/exchange', async (req, res) => {
@@ -76,7 +78,8 @@ router.get('/exchange', async (req, res) => {
         return;
     }
     const objectOutput = await IHelper.GetOutputRecords();
-    res.render('inout/exchange', {iLayout:0, bLogin:bLogin, user:req.user, messages:null, listOutputRecent:objectOutput.listOutputRecent, listOutputRank:objectOutput.listOutputRank, ePublishing:global.ePublishing});
+    const user = IHelper.GetUser(req.user);
+    res.render('inout/exchange', {iLayout:0, bLogin:bLogin, user:user, messages:null, listOutputRecent:objectOutput.listOutputRecent, listOutputRank:objectOutput.listOutputRank, ePublishing:global.ePublishing});
 });
 
 router.get('/record', async (req, res) => {
@@ -91,7 +94,8 @@ router.get('/record', async (req, res) => {
         return;
     }
     const objectOutput = await IHelper.GetOutputRecords();
-    res.render('inout/record', {iLayout:0, bLogin:bLogin, user:req.user, messages:null, listOutputRecent:objectOutput.listOutputRecent, listOutputRank:objectOutput.listOutputRank, ePublishing:global.ePublishing});
+    const user = IHelper.GetUser(req.user);
+    res.render('inout/record', {iLayout:0, bLogin:bLogin, user:user, messages:null, listOutputRecent:objectOutput.listOutputRecent, listOutputRank:objectOutput.listOutputRank, ePublishing:global.ePublishing});
 });
 
 router.get('/recordcoupon', async (req, res) => {
@@ -106,7 +110,8 @@ router.get('/recordcoupon', async (req, res) => {
         return;
     }
     const objectOutput = await IHelper.GetOutputRecords();
-    res.render('inout/recordcoupon', {iLayout:0, bLogin:bLogin, user:req.user, messages:null, listOutputRecent:objectOutput.listOutputRecent, listOutputRank:objectOutput.listOutputRank, ePublishing:global.ePublishing});
+    const user = IHelper.GetUser(req.user);
+    res.render('inout/recordcoupon', {iLayout:0, bLogin:bLogin, user:user, messages:null, listOutputRecent:objectOutput.listOutputRecent, listOutputRank:objectOutput.listOutputRank, ePublishing:global.ePublishing});
 });
 //
 router.post('/request_input', async (req, res) => {

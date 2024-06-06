@@ -5,11 +5,11 @@ let RequestLogin = (user) =>
 {
     socket.emit('request_login', user);
 
-    console.log(`request_login`);
+    //console.log(`request_login`);
 }
 
 socket.on('response_login', (data) => {
-    console.log(`########################## Response Login ${data}`);
+    //console.log(`########################## Response Login ${data}`);
 });
 
 socket.on('UserLogout', () => {
@@ -29,7 +29,7 @@ socket.on('UpdateCash', (iCash) => {
 
 socket.on('AlertLetter', (strContents) => {
     
-    console.log(`AlertLetter`);
+    //console.log(`AlertLetter`);
 
     intervalAudio = setInterval(function (){
         document.getElementById("audio3").play();
@@ -39,7 +39,7 @@ socket.on('AlertLetter', (strContents) => {
     }, 7000);
 
     let iNum = $('#MainLayoutNumLetters').text();
-    console.log(`AlertLetter iNum : ${iNum}`);
+    //console.log(`AlertLetter iNum : ${iNum}`);
     if ( iNum == '' )
     {
         $('#MainLayoutNumLetters').text('1');
@@ -53,7 +53,7 @@ socket.on('AlertLetter', (strContents) => {
 
 socket.on('AlertAdminLetter', (strContents) => {
 
-    console.log(`AlertAdminLetter`);
+    //console.log(`AlertAdminLetter`);
 
     intervalAudio = setInterval(function (){
         document.getElementById("audio3").play();
@@ -63,7 +63,7 @@ socket.on('AlertAdminLetter', (strContents) => {
     }, 7000);
 
     let iNum = $('#MainLayoutNumLetters').text();
-    console.log(`AlertLetter iNum : ${iNum}`);
+    //console.log(`AlertLetter iNum : ${iNum}`);
     if ( iNum == '' )
     {
         $('#MainLayoutNumLetters').text('1');

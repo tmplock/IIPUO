@@ -3,6 +3,13 @@ const db = require('../db');
 
 const { default: axios2 } = require('axios');
 
+exports.GetUser = (user) => {
+
+    const object = {strID:user.strID, strNickname:user.strNickname, strGroupID:user.strGroupID, iClass:user.iClass, strOptionCode:user.strOptionCode, iCash:user.iCash, iRolling:user.iRolling};
+
+    return object;
+}
+
 exports.RequestAxios = async (strAddress, objectData) =>
 {
     console.log(`RequestAxios ${strAddress}`);

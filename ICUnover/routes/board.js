@@ -28,7 +28,8 @@ router.get('/list', async (req, res) => {
         order:[['createdAt','DESC']]
     });
     const objectOutput = await IHelper.GetOutputRecords();
-    res.render('board/list', {iLayout:0, bLogin:bLogin, user:req.user, messages:null, listOutputRecent:objectOutput.listOutputRecent, listOutputRank:objectOutput.listOutputRank, listAnnouncement:listAnnouncement, ePublishing:global.ePublishing});
+    const user = IHelper.GetUser(req.user);
+    res.render('board/list', {iLayout:0, bLogin:bLogin, user:user, messages:null, listOutputRecent:objectOutput.listOutputRecent, listOutputRank:objectOutput.listOutputRank, listAnnouncement:listAnnouncement, ePublishing:global.ePublishing});
 });
 
 router.get('/view', async (req, res) => {
@@ -40,7 +41,8 @@ router.get('/view', async (req, res) => {
     }
 
     const objectOutput = await IHelper.GetOutputRecords();
-    res.render('board/view', {iLayout:0, bLogin:bLogin, user:req.user, messages:null, listOutputRecent:objectOutput.listOutputRecent, listOutputRank:objectOutput.listOutputRank, ePublishing:global.ePublishing});
+    const user = IHelper.GetUser(req.user);
+    res.render('board/view', {iLayout:0, bLogin:bLogin, user:user, messages:null, listOutputRecent:objectOutput.listOutputRecent, listOutputRank:objectOutput.listOutputRank, ePublishing:global.ePublishing});
 });
 
 router.get('/write', async (req, res) => {
@@ -52,7 +54,8 @@ router.get('/write', async (req, res) => {
     }
 
     const objectOutput = await IHelper.GetOutputRecords();
-    res.render('board/write', {iLayout:0, bLogin:bLogin, user:req.user, messages:null, listOutputRecent:objectOutput.listOutputRecent, listOutputRank:objectOutput.listOutputRank, ePublishing:global.ePublishing});
+    const user = IHelper.GetUser(req.user);
+    res.render('board/write', {iLayout:0, bLogin:bLogin, user:user, messages:null, listOutputRecent:objectOutput.listOutputRecent, listOutputRank:objectOutput.listOutputRank, ePublishing:global.ePublishing});
 });
 
 router.get('/ann', async (req, res) => {
@@ -69,7 +72,8 @@ router.get('/ann', async (req, res) => {
     const objectAnn = await db.Announcements.findOne({where:{id:req.query.id}});
 
     const objectOutput = await IHelper.GetOutputRecords();
-    res.render('board/view', {iLayout:0, bLogin:bLogin, user:req.user, messages:null, listOutputRecent:objectOutput.listOutputRecent, listOutputRank:objectOutput.listOutputRank, objectAnn:objectAnn, eDocumentType:'ANN', ePublishing:global.ePublishing});
+    const user = IHelper.GetUser(req.user);
+    res.render('board/view', {iLayout:0, bLogin:bLogin, user:user, messages:null, listOutputRecent:objectOutput.listOutputRecent, listOutputRank:objectOutput.listOutputRank, objectAnn:objectAnn, eDocumentType:'ANN', ePublishing:global.ePublishing});
 });
 
 router.get('/popup', async (req, res) => {

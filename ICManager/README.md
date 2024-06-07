@@ -4,7 +4,16 @@
 npm install --save sequelize-cli express-mysql-session crypto dotenv
 ```
 -- npx sequelize init
--- NODE_ENV 설정
+
+-- NODE_ENV 영구 설정
+nano ~/.bashrc
+-- 맨 아래로 내려서 export 작성
+export NODE_ENV=production
+-- Save and exit the editor (CTRL+X, then Y, then ENTER)
+source ~/.bashrc
+
+-- 환경변수 확인
+ehco $NODE_ENV
 ```
 SET NODE_ENV="production"
 ```

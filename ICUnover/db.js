@@ -72,5 +72,6 @@ db.RecordBets = require('./models/recordbet')(sequelize, Sequelize);
 db.RecordDailyOverviews = require('./models/RecordDailyOverview')(sequelize, Sequelize);
 db.RecordErrorCashes = require('./models/recorderrorcash')(sequelize, Sequelize);
 db.SettingRecords = require('./models/setting_record')(sequelize, Sequelize);
+db.RecordInoutAccounts = require('./models/recordinoutaccount')(sequelize, Sequelize);
 
 module.exports = db;

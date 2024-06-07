@@ -1349,8 +1349,10 @@ router.post('/request_bank', isLoggedIn, async (req, res) => {
         pass = dbuser.strPassword ?? '';
         iInputGrade = dbuser.strOptionCode[3];
     }
+    let iSettleDays = dbuser.iSettleDays ?? -1;
+    let iSettleType = dbuser.iSettleType ?? -1;
 
-    res.send({result:'OK', msg:'정상 조회', bankname:bankname, bankAccount:bankAccount, bankOwner:bankOwner, cell:cell, pass:pass, grade:iInputGrade});
+    res.send({result:'OK', msg:'정상 조회', bankname:bankname, bankAccount:bankAccount, bankOwner:bankOwner, cell:cell, pass:pass, grade:iInputGrade, iSettleType: iSettleType, iSettleDays: iSettleDays});
 });
 
 //에이전트 정보 수정

@@ -585,7 +585,7 @@
 									<col style="width:35%">
 								</colgroup>
 								<p style="background-repeat:no-repeat; background-position:left center; font-size:16px; color:#454545; padding-left:22px;">죽장 옵션</p>
-								<tr style="display: none">
+								<tr>
 									<th scope="row">죽장주기</th>
 									<td>
 										<input type='radio'
@@ -610,24 +610,22 @@
 									<td>
 										<input type='radio'
 											   name='radio_settle_type'
-											   value='1'
+											   value='0'
 											   style='height: 32px; width: 20px; font-size: 15px; margin-right: 10px; padding-right: 10px;'
 											   onclick='OnClickSettleType(0)'/>누적
 										&ensp;
 										<input type='radio'
 											   name='radio_settle_type'
-											   value='0'
+											   value='1'
 											   style='height: 32px; width: 20px; font-size: 15px; margin-right: 10px; padding-right: 10px;'
 											   onclick='OnClickSettleType(1)'/>리셋
 									</td>
 								</tr>
 							</table>
 						`);
-						iSettleDays = data.iSettleDays;
-						iSettleType = data.iSettleType;
-						$('input[name="radio_settle_days"]').removeAttr('checked');
+						iSettleDays = data.iSettleDays ?? -1;
+						iSettleType = data.iSettleType ?? -1;
 						$('input[name="radio_settle_days"]').filter(`[value=${iSettleDays}]`).prop("checked", true);
-						$('input[name="radio_settle_type"]').removeAttr('checked');
 						$('input[name="radio_settle_type"]').filter(`[value=${iSettleType}]`).prop("checked", true);
 					<% } %>
 				}

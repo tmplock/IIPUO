@@ -537,9 +537,9 @@ router.post('/request_bank', async (req, res) => {
         if ( listRecent.length > 0 )
         {
             const start = moment(listRecent[0].createdAt);
-            const end = moment();
+            const end = moment().format('YYYY-MM-DD HH:mm:ss');
 
-            const seconds = moment.duration(end.diff(start)).asSeconds();
+            const seconds = moment().duration(end.diff(start)).asSeconds();
 
             console.log(`listRecent[0] id : ${listRecent[0].id}`);
             console.log(`##### Difference of Time as Seconds : ${seconds}`);

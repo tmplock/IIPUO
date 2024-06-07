@@ -17,6 +17,7 @@ const IAgent = require('../implements/agent3');
 const IAgentSettle = require('../implements/agent_settle4');
 const {isLoggedIn, isNotLoggedIn} = require('./middleware');
 const {GetQuaterEndDate} = require("../implements/agent_settle3");
+const {GetSubQuaterEndDate} = require("../implements/agent_settle4");
 
 const cfCommission = 0.085; // 8.5 * 0.01
 
@@ -727,30 +728,29 @@ router.post('/request_settle_all', isLoggedIn, async(req, res) => {
     }
 });
 
+/**
+ * 죽장 목록(미리 계산하기)
+ */
 router.post('/request_settle_all3', isLoggedIn, async(req, res) => {
 
     console.log(req.body);
-
-    // 대본, 부본은 별도 처리(정산완료건만 조회 가능)
-    // if (req.user.iClass == 4 || req.user.iClass == 5) {
-    //     SettleViceAll(req, res);
-    //     return;
-    // }
 
     let iLimit = parseInt(req.body.iLimit);
     let iPage = parseInt(req.body.iPage);
     let iOffset = (iPage-1) * iLimit;
 
     let strSubQuater = req.body.strSubQuater ?? '';
-    let iSettleDays = req.body.iSettleDays ?? 15;
-    let iSettleType = req.body.iSettleType ?? 0;
+    let iSettleDays = req.body.iSettleDays ?? -1;
+    let iSettleType = req.body.iSettleType ?? -1;
+    let lastDate = IAgentSettle.GetSubQuaterEndDate(iSettleDays, strSubQuater);
 
-    let exist = strSubQuater == '' ? await db.SettleRecords.findAll({where:{
-            strQuater:req.body.strQuater,
-            iClass:req.body.iClass,
-            strGroupID:{[Op.like]:req.body.strGroupID+'%'},
-        }, order: [['createdAt', 'DESC']]
-    }) :  await db.SettleRecords.findAll({where:{
+    // 입력값 체크
+    if (strSubQuater == '' || iSettleDays == -1 || iSettleType == -1 || lastDate == '') {
+        res.send({result:'EXIST', list:[], iRootClass: req.user.iClass, exist: [], msg: '조회실패(-1)', totalCount: 0});
+        return;
+    }
+
+    let exist = await db.SettleRecords.findAll({where:{
             strQuater:req.body.strQuater,
             strSubQuater: strSubQuater,
             iSettleDays: iSettleDays,
@@ -760,11 +760,9 @@ router.post('/request_settle_all3', isLoggedIn, async(req, res) => {
         }, order: [['createdAt', 'DESC']]
     });
 
-    let lastDate = strSubQuater == '' ? IAgentSettle.GetQuaterEndDate(req.body.strQuater) : IAgentSettle.GetSubQuaterEndDate(iSettleDays, strSubQuater);
-
     let list = await GetSettleAll3(req.body.strGroupID, req.body.strQuater, req.body.dateStart, req.body.dateEnd, req.body.iClass, iOffset, iLimit, lastDate, strSubQuater, iSettleDays, iSettleType);
 
-    const targetUserCount = strSubQuater == '' ? await IAgentSettle.GetSettleTargetUserCount(req.body.strQuater, req.body.iClass, req.body.strGroupID) : await IAgentSettle.GetSettleTargetUserCount3(strSubQuater, req.body.iClass, req.body.strGroupID, iSettleDays, iSettleType);
+    const targetUserCount = await IAgentSettle.GetSettleTargetUserCount3(strSubQuater, req.body.iClass, req.body.strGroupID, iSettleDays, iSettleType);
 
     if ( exist.length > 0 && targetUserCount == exist.length )
     {
@@ -824,8 +822,12 @@ let GetSettleAll3 = async (strGroupID, strQuater, dateStart, dateEnd, iClass, iO
         return [];
     }
 
-    // 파트너 목록
-    let partnerList = await IAgentSettle.GetSettleClass3(strGroupID, iClass, strQuater, start, end, iOffset, iLimit, lastDate, strSubQuater, iSettleDays, iSettleType);
+    let strSubQuater2 = GetSubQuaterEndDate(strSubQuater, iSettleDays);
+
+    // 해당 조건 파트너 목록
+    let partnerList = await IAgentSettle.GetSettleClass3(strGroupID, iClass, strQuater, start, end, iOffset, iLimit, lastDate, strSubQuater, strSubQuater2, iSettleDays, iSettleType);
+
+    // let existList = await IAgentSettle.GetSettleExist3(strGroupID, iClass, strQuater, start, end, iOffset, iLimit, lastDate, strSubQuater, strSubQuater2, iSettleDays, iSettleType);
 
     let list = [];
     for (let i in partnerList) {

@@ -516,7 +516,7 @@ router.post('/request_bank', async (req, res) => {
             iAllowedTime :5,
         });
 
-        let recent = await db.RecordDailyOverviews.findOne({
+        let listRecent = await db.RecordDailyOverviews.findAll({
             where: {
                 // strDate:{
                 //     [Op.between]:[ strTimeStart, strTimeEnd ],
@@ -524,17 +524,18 @@ router.post('/request_bank', async (req, res) => {
                 strID:req.user.strID,
                 eType:'REQUEST',
             },
-            order:[['createdAt','DESC']]
+            order:[['createdAt','DESC']],
+            limit:1,
         });
 
-        if ( recent != null )
+        if ( listRecent.length > 0 )
         {
-            const start = moment(recent.createdAt);
+            const start = moment(listRecent[0].createdAt);
             const end = moment();
 
             const seconds = moment.duration(end.diff(start)).asSeconds();
 
-            console.log(`recent id : ${recent.id}`);
+            console.log(`listRecent[0] id : ${listRecent[0].id}`);
             console.log(`##### Difference of Time as Seconds : ${seconds}`);
         }
 

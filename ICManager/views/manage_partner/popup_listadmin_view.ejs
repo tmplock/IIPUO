@@ -47,6 +47,7 @@
 <script type="text/javascript" src="js/manage_partner_ref.js"></script>
 <script type="text/javascript" src="js/manage_partner_menu.js"></script>
 <script type="text/javascript" src="js/manage_setting_ref.js"></script>
+<script type="text/javascript" src="js/block_modal.js"></script>
 <script type="text/javascript">
 	let agent = JSON.parse('<%-JSON.stringify(agent)%>');
 	let list = JSON.parse('<%-JSON.stringify(list)%>');
@@ -87,36 +88,15 @@
 					bgcolor = '#faecd9';
 				}
 
-				tagState = `<td class="parent_row_31" style='background-color:${bgcolor};'>
-                        <select style="vertical-align:middle;width:100%; background-color:${strColor}; color:white;" id="partner_agentstatus_${strNickname}" onchange="OnChangeStatus('${strNickname}');">
-                        <option value="NOTICE">${strNotice}</option>
-                        <option value="NORMAL" selected>${strNormal}</option>
-                        <option value="BLOCK">${strBlock}</option>
+				tagState = `
+					<td style="background-color:${bgcolor};" class="parent_row_31">
+                        <select style="vertical-align:middle;width:100%;background-color:${strColor}; color:white;" id="partner_agentstatus_${aObject.strNickname}" data-original-value="${aObject.eState}" onchange="OnChangeStatus('${aObject.strNickname}');">
+                            <option value="NORMAL" ${aObject.eState == 'NORMAL' ? 'selected' : ''}>${strNormal}</option>
+                            <option value="NOTICE" ${aObject.eState == 'NOTICE' ? 'selected' : ''}>${strNotice}</option>
+                            <option value="BLOCK" ${aObject.eState == 'BLOCK' ? 'selected' : ''}>${strBlock}</option>
                         </select>
-                        </td>`;
-
-				if ( eState == 'BLOCK') {
-
-					console.log('BLOCK');
-					tagState = `<td class="parent_row_31" style='background-color:${bgcolor};'>
-                        <select style="vertical-align:middle;width:100%; background-color:${strColor}; color:white;" id="partner_agentstatus_${strNickname}" onchange="OnChangeStatus('${strNickname}');">
-                        <option value="NORMAL">${strNormal}</option>
-                        <option value="NOTICE">${strNotice}</option>
-                        <option value="BLOCK" selected>${strBlock}</option>
-                        </select>
-                        </td>`
-				}
-				else if ( eState == 'NOTICE' )
-				{
-					console.log('NOTICE');
-					tagState = `<td class="parent_row_31" style='background-color:${bgcolor};'>
-                        <select style="vertical-align:middle;width:100%; background-color:${strColor}; color:white;" id="partner_agentstatus_${strNickname}" onchange="OnChangeStatus('${strNickname}');">
-                        <option value="NORMAL">${strNormal}</option>
-                        <option value="NOTICE" selected>${strNotice}</option>
-                        <option value="BLOCK">${strBlock}</option>
-                        </select>
-                        </td>`
-				}
+                    </td>
+				`;
 
 				// 삭제
 				let tagDel = `

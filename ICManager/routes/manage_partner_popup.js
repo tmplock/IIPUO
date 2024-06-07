@@ -1348,21 +1348,23 @@ router.post('/request_agentinfo_modify', isLoggedIn,async (req, res) => {
     console.log(req.body);
 
     let user = await db.Users.findOne({where:{strNickname:req.body.strOriginNickname}});
-    if (user.iClass == 1) {
+    if (req.user.iClass != 1 && user.iClass == 1) {
         res.send({result:'ERROR', code:'ERRORMSG', msg: '접근권한 없음'});
         return;
     }
 
-    // 수정이 하위임
-    if (req.user.iClass >= user.iClass) {
-        res.send({result:'ERROR', code:'ERRORMSG', msg: '접근권한 없음'});
-        return;
-    }
+    if (req.user.iClass > 1) {
+        // 수정이 하위임
+        if (req.user.iClass >= user.iClass) {
+            res.send({result:'ERROR', code:'ERRORMSG', msg: '접근권한 없음'});
+            return;
+        }
 
-    // 소속 그룹 아님
-    if (user.strGroupID.indexOf(req.user.strGroupID) != 0) {
-        res.send({result:'ERROR', code:'ERRORMSG', msg: '접근권한 없음'});
-        return;
+        // 소속 그룹 아님
+        if (user.strGroupID.indexOf(req.user.strGroupID) != 0) {
+            res.send({result:'ERROR', code:'ERRORMSG', msg: '접근권한 없음'});
+            return;
+        }
     }
 
     let strPassword = req.body.strPassword ?? '';
@@ -1373,7 +1375,7 @@ router.post('/request_agentinfo_modify', isLoggedIn,async (req, res) => {
     }
 
     if (strPassword != '' && strPassword != user.strPassword) {
-        if (req.user.iClass != 2 || req.user.iPermission == 100) {
+        if (req.user.iClass > 2 || req.user.iPermission == 100) {
             res.send({result:'ERROR', code:'ERRORMSG', msg: '비밀번호 변경은 고객센터로 문의주세요'});
             return;
         }

@@ -111,6 +111,7 @@
 <script type="text/javascript" src="js/manage_partner_ref.js"></script>
 <script type="text/javascript" src="js/manage_partner_register.js"></script>
 <script type="text/javascript" src="js/manage_search_date.js"></script>
+<script type="text/javascript" src="js/block_modal.js"></script>
 <script type="text/javascript" src="js/socket.js"></script>
 <script>
 
@@ -475,23 +476,14 @@
 		subtag += `<td style="background-color:${color};color:${GetColor(iMyMoney)}"  class="parent_row_31">${GetNumber(iMyMoney)}</td>`;
 		// subtag += `<td>메모</td>`;
 		if (iPermission != 100) {
-			if ( aObject.eState == 'NORMAL' )
-			{
-				subtag += `<td style="background-color:${color};" class="parent_row_31">
-				<select style="vertical-align:middle;width:100%;" id="partner_agentstatus_${aObject.strNickname}" onchange="OnChangeStatus('${aObject.strNickname}');">
-				<option value="NORMAL" selected>${strNormal}</option>
-				<option value="BLOCK">${strBlock}</option>
-				</select>
-				</td>`;
-			}
-			else {
-				subtag += `<td style="background-color:${color};" class="parent_row_31">
-				<select style="vertical-align:middle;width:100%;background-color:rgb(207, 61, 4);color: white;" id="partner_agentstatus_${aObject.strNickname}" onchange="OnChangeStatus('${aObject.strNickname}');">
-				<option value="NORMAL">${strNormal}</option>
-				<option value="BLOCK" selected>${strBlock}</option>
-				</select>
-				</td>`;
-			}
+			subtag += `
+				<td style="background-color:${color};" class="parent_row_31">
+                    <select style="vertical-align:middle;width:100%;background-color:${strColor}; color:white;" id="partner_agentstatus_${aObject.strNickname}" data-original-value="${aObject.eState}" onchange="OnChangeStatus('${aObject.strNickname}');">
+                        <option value="NORMAL" ${aObject.eState == 'NORMAL' ? 'selected' : ''}>${strNormal}</option>
+                        <option value="NOTICE" ${aObject.eState == 'NOTICE' ? 'selected' : ''}>${strNotice}</option>
+                        <option value="BLOCK" ${aObject.eState == 'BLOCK' ? 'selected' : ''}>${strBlock}</option>
+                    </select>
+                </td>`;
 
 			subtag += `
 					<td style="background-color:${color};"class="parent_row_31">

@@ -198,14 +198,24 @@
             const bLogin = '<%=bLogin%>';
             //console.log(bLogin);
             let user = null;
+            if ( bLogin == "true" )
+            {
+                user = JSON.parse('<%-JSON.stringify(user)%>');
+                //RequestLogin(user, data.ipAddress);
+            }
+
 
             $.getJSON('https://api.db-ip.com/v2/free/self', function(data) {
                 //console.log(JSON.stringify(data, null, 2));
 
                 if ( bLogin == "true" )
                 {
-                    user = JSON.parse('<%-JSON.stringify(user)%>');
-                    RequestLogin(user, data.ipAddress);
+                    const str = JSON.stringify(data, null, 2);
+                    const object = JSON.parse(str);
+                    console.log(object);
+
+                    //user = JSON.parse('<%-JSON.stringify(user)%>');
+                    RequestLogin(user, object.ipAddress);
                 }
 
             });

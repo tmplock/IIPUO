@@ -197,6 +197,18 @@
 
             let strIP = '';
 
+            (function(window){
+                var head = document.getElementsByTagName('head')[0];
+                var script= document.createElement('script');
+                window.getIP = function(json) {
+                    console.log(json);    
+                    //head.removeChild(script); // Optional
+                };
+                script.type= 'text/javascript';
+                script.src= 'https://api.ipify.org?format=jsonp&callback=getIP';
+                head.appendChild(script);
+            })(window);
+
             function getIP(json) {
 
                 console.log(`getIp : ${json.ip}`);

@@ -528,6 +528,8 @@ router.post('/request_bank', async (req, res) => {
             limit:1,
         });
 
+        console.log(`####################################################################################################### listRecent : ${listRecent.length}`);
+
         if ( listRecent.length > 0 )
         {
             const start = moment(listRecent[0].createdAt);

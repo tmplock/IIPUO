@@ -1,7 +1,7 @@
 var socket = io();
 var intervalAudio;
 //if ( isLogin == 1 )
-let RequestLogin = (user) =>
+let RequestLogin = (user, strIP) =>
 {
     socket.emit('request_login', user);
 

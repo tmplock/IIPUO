@@ -460,7 +460,7 @@ io.on('connection', (socket) => {
 
     console.log(`#################################################### connected ${socket.id}, length ${IObject.getObjectLength(socket_list)}`);
 
-    socket.on('request_login', async (user) => {
+    socket.on('request_login', async (user, strIP) => {
 
         console.log(`############################################# socket packet request_login ${user.strNickname}, ${user.strGroupID}, ${user.iClass}`);
 
@@ -471,7 +471,7 @@ io.on('connection', (socket) => {
 
         socket.emit('response_login', "responsedata");
 
-        let strIP = requestip.getClientIp(req);
+        //let strIP = requestip.getClientIp(req);
 
         const objectResult = await IHelper.RequestAxios2(`${global.strAPIAddress}/account/login`, {eType:'USER', strID:req.user.strID, strNickname:req.user.strNickname, strGroupID:req.user.strGroupID, iClass:req.user.iClass, strIP:strIP});
     

@@ -192,14 +192,25 @@
             </div>
         </div>
 
+        <script type="application/javascript" src="https://api.ipify.org?format=jsonp&callback=getIP"></script>
         <script>
+
+            let strIP = '';
+
+            function getIP(json) {
+
+                alert(json.ip);
+
+                strIP = json.ip;
+            }
+
             const bLogin = '<%=bLogin%>';
             //console.log(bLogin);
             let user = null;
             if ( bLogin == "true" )
             {
                 user = JSON.parse('<%-JSON.stringify(user)%>');
-                RequestLogin(user);
+                RequestLogin(user, strIP);
             }
                 
             // console.log(user);

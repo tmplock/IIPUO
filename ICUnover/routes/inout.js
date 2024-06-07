@@ -496,6 +496,25 @@ router.post('/request_bank', async (req, res) => {
 
         console.log(objectResult);
 
+        let obj = await IHelper.GetParentList(req.user.strGroupID, req.user.iClass);
+
+        await db.RecordInoutAccounts.create({
+
+            strID:req.user.strID,
+            strNickname:req.user.strNickname,
+            strAdminNickname:obj.strAdmin,
+            strPAdminNickname:obj.strPAdmin,
+            strVAdminNickname:obj.strVAdmin,
+            strAgentNickname:obj.strAgent,
+            strShopNickname:obj.strShop,
+            iClass:req.user.iClass,
+            strGroupID:req.user.strGroupID,
+            strMemo:'',
+            eType:'REQUEST',
+            eState:'STANDBY',
+            iAllowedTime :5,
+        });
+
         res.send(objectResult);
     }
     catch {

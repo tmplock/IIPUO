@@ -52,7 +52,7 @@ module.exports = (sequelize, DataTypes) => {
             type:DataTypes.ENUM('REQUEST', 'INPUT', 'OUTPUT'),
         },
         eState: {
-            type:DataTypes.ENUM('VALID', 'INVALID'),
+            type:DataTypes.ENUM('VALID', 'INVALID', 'STANDBY'),
         },
         iAllowedTime :{
             type:DataTypes.INTEGER,

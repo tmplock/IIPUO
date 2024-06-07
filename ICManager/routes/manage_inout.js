@@ -388,7 +388,16 @@ let GetInputList = async (req, res) => {
 
 let GetInOutCount = async (strSearchNickname, dateStart, dateEnd, strGroupID, type, searchClass) => {
     if (searchClass != '') {
-        return  await db.Inouts.count({
+        return strSearchNickname == '' ? await db.Inouts.count({
+            where: {
+                createdAt: {
+                    [Op.between]: [dateStart, require('moment')(dateEnd).add(1, 'days').format('YYYY-MM-DD')],
+                },
+                strGroupID: {[Op.like]: strGroupID + '%'},
+                eType: type,
+                iClass:parseInt(searchClass)
+            }
+        }) : await db.Inouts.count({
             where: {
                 createdAt: {
                     [Op.between]: [dateStart, require('moment')(dateEnd).add(1, 'days').format('YYYY-MM-DD')],
@@ -401,8 +410,15 @@ let GetInOutCount = async (strSearchNickname, dateStart, dateEnd, strGroupID, ty
         });
     }
 
-
-    return await db.Inouts.count({
+    return strSearchNickname == '' ? await db.Inouts.count({
+        where: {
+            createdAt: {
+                [Op.between]: [dateStart, require('moment')(dateEnd).add(1, 'days').format('YYYY-MM-DD')],
+            },
+            strGroupID: {[Op.like]: strGroupID + '%'},
+            eType: type,
+        }
+    }) : await db.Inouts.count({
         where: {
             createdAt: {
                 [Op.between]: [dateStart, require('moment')(dateEnd).add(1, 'days').format('YYYY-MM-DD')],

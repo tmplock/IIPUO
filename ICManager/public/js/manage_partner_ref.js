@@ -878,37 +878,15 @@ function AddPartner(iRootClass, aObject, bDisableRolling, iPermission)
 	let tagState = '';
 	if (iRootClass <= 3 && iPermission != 100)
 	{
-
-		if ( aObject.eState == 'NORMAL' )
-		{
-			tagState = `<td style="background-color:${color};"class="parent_row_31">
-				<select style="vertical-align:middle;width:100%;background-color:${strColor}; color:white;" id="partner_agentstatus_${aObject.strNickname}" onchange="OnChangeStatus('${aObject.strNickname}');">
-				<option value="NORMAL" selected>${strNormal}</option>
-				<option value="NOTICE">${strNotice}</option>
-				<option value="BLOCK">${strBlock}</option>
+		tagState = `
+			<td style="background-color:${color};" class="parent_row_31">
+				<select style="vertical-align:middle;width:100%;background-color:${strColor}; color:white;" id="partner_agentstatus_${aObject.strNickname}" data-original-value="${aObject.eState}" onchange="OnChangeStatus('${aObject.strNickname}');">
+					<option value="NORMAL" ${aObject.eState == 'NORMAL' ? 'selected' : ''}>${strNormal}</option>
+					<option value="NOTICE" ${aObject.eState == 'NOTICE' ? 'selected' : ''}>${strNotice}</option>
+					<option value="BLOCK" ${aObject.eState == 'BLOCK' ? 'selected' : ''}>${strBlock}</option>
 				</select>
-				</td>`;
-		}
-		else if ( aObject.eState == 'NOTICE' )
-		{
-			tagState = `<td style="background-color:${color};"class="parent_row_31">
-				<select style="vertical-align:middle;width:100%;background-color:${strColor}; color:white;" id="partner_agentstatus_${aObject.strNickname}" onchange="OnChangeStatus('${aObject.strNickname}');">
-				<option value="NORMAL">${strNormal}</option>
-				<option value="NOTICE" selected>${strNotice}</option>
-				<option value="BLOCK">${strBlock}</option>
-				</select>
-				</td>`;
-
-		}
-		else {
-			tagState = `<td style="background-color:${color};"class="parent_row_31">
-				<select style="vertical-align:middle;width:100%;background-color:${strColor}; color:white;" id="partner_agentstatus_${aObject.strNickname}" onchange="OnChangeStatus('${aObject.strNickname}');">
-				<option value="NORMAL">${strNormal}</option>
-				<option value="NORMAL">${strNotice}</option>
-				<option value="BLOCK" selected>${strBlock}</option>
-				</select>
-				</td>`;
-		}
+			</td>
+		`;
 	}
 	else
 	{
@@ -943,30 +921,30 @@ function AddPartner(iRootClass, aObject, bDisableRolling, iPermission)
 	return subtag;
 }
 
+// let OnChangeStatus = (strNickname) => {
+// 	console.log(strNickname);
+// 	$('#statusChangeModal').show();
+// 	let item = $(`#partner_agentstatus_${strNickname}`);
+// 	console.log(item.val());
 
-let OnChangeStatus = (strNickname) => {
-	console.log(strNickname);
 
-	let item = $(`#partner_agentstatus_${strNickname}`);
-	console.log(item.val());
+// 	// if (confirm(strConfirmChangeState))
+// 	// {
+// 	// 	$.ajax({
+// 	// 		type:'post',
+// 	// 		url: "/manage_partner/request_agentstate",
+// 	// 		context: document.body,
+// 	// 		data:{strNickname:strNickname, eState:item.val()},
 
-	if (confirm(strConfirmChangeState))
-	{
-		$.ajax({
-			type:'post',
-			url: "/manage_partner/request_agentstate",
-			context: document.body,
-			data:{strNickname:strNickname, eState:item.val()},
+// 	// 		success:function(data) {
 
-			success:function(data) {
+// 	// 			location.reload();
 
-				location.reload();
+// 	// 		}
+// 	// 	});
 
-			}
-		});
-
-	}
-}
+// 	// }
+// }
 
 let SetAdminList = (iRootClass, strParentTag, aObject, iPermission) => {
 
@@ -1056,7 +1034,6 @@ let SetAdminList = (iRootClass, strParentTag, aObject, iPermission) => {
 }
 
 let AddAdmin = (iRootClass, aObject, iPermission) => {
-
 	let color = '#ffffff';
 
 	let subtag = `
@@ -1122,24 +1099,28 @@ let AddAdmin = (iRootClass, aObject, iPermission) => {
 	subtag += `<td style="background-color:${color};color:${GetInversedColor(aObject.iCurrentSettleTotal)};"  class="parent_row_31">${GetSettleNumber(aObject.iCurrentSettleTotal)}</td>`;
 	subtag += `<td style="background-color:${color};"  class="parent_row_31">${GetNumber(aObject.iMyMoney)}</td>`;
 
+	let strColor = 'rgb(0, 126, 199)';
+	let bgcolor = 'white';
+
+	if (aObject.eState == 'BLOCK') {
+		strColor = 'rgb(207, 61, 4)';
+		bgcolor = '#fcd7e6';
+	}
+	else if (aObject.eState == 'NOTICE') {
+		strColor = 'rgb(207, 100, 4)';
+		bgcolor = '#faecd9';
+	}
+
 	if (iPermission != 100) {
-		if ( aObject.eState == 'NORMAL' )
-		{
-			subtag += `<td style="background-color:${color};"class="parent_row_31">
-				<select style="vertical-align:middle;width:100%;" id="partner_agentstatus_${aObject.strNickname}" onchange="OnChangeStatus('${aObject.strNickname}');">
-				<option value="NORMAL" selected>${strNormal}</option>
-				<option value="BLOCK">${strBlock}</option>
+		subtag += `
+			<td style="background-color:${bgcolor};" class="parent_row_31">
+				<select style="vertical-align:middle;width:100%;background-color:${strColor}; color:white;" id="partner_agentstatus_${aObject.strNickname}" data-original-value="${aObject.eState}" onchange="OnChangeStatus('${aObject.strNickname}');">
+					<option value="NORMAL" ${aObject.eState == 'NORMAL' ? 'selected' : ''}>${strNormal}</option>
+					<option value="NOTICE" ${aObject.eState == 'NOTICE' ? 'selected' : ''}>${strNotice}</option>
+					<option value="BLOCK" ${aObject.eState == 'BLOCK' ? 'selected' : ''}>${strBlock}</option>
 				</select>
-				</td>`;
-		}
-		else {
-			subtag += `<td style="background-color:${color};"class="parent_row_31">
-				<select style="vertical-align:middle;width:100%;background-color:rgb(207, 61, 4);color: white;" id="partner_agentstatus_${aObject.strNickname}" onchange="OnChangeStatus('${aObject.strNickname}');">
-				<option value="NORMAL">${strNormal}</option>
-				<option value="BLOCK" selected>${strBlock}</option>
-				</select>
-				</td>`;
-		}
+			</td>
+		`;
 
 		subtag += `
 					<td style="background-color:${color};"class="parent_row_31"> 
@@ -1153,7 +1134,12 @@ let AddAdmin = (iRootClass, aObject, iPermission) => {
 	} else {
 		if ( aObject.eState == 'NORMAL' ) {
 			subtag += `<td style="background-color:${color};"class="parent_row_31">${strNormal}</td>`;
-		} else {
+		}
+		else if( aObject.eState == 'NOTICE') 
+		{
+			subtag += `<td style="background-color:${color};"class="parent_row_31">${strNotice}</td>`;
+		}
+		else {
 			subtag += `<td style="background-color:${color};"class="parent_row_31">${strBlock}</td>`;
 		}
 	}

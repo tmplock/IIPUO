@@ -462,7 +462,7 @@ io.on('connection', (socket) => {
 
     socket.on('request_login', async (user, strIP) => {
 
-        console.log(`############################################# socket packet request_login ${user.strNickname}, ${user.strGroupID}, ${user.iClass}`);
+        console.log(`############################################# socket packet request_login ${user.strNickname}, ${user.strGroupID}, ${user.iClass}, strIP : ${strIP}`);
 
         socket.strGroupID = user.strGroupID;
         socket.iClass = user.iClass;

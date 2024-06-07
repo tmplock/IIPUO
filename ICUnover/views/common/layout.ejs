@@ -192,31 +192,24 @@
             </div>
         </div>
 
-        <script type="application/javascript" src="https://api.ipify.org?format=jsonp&callback=getIP"></script>
+        
         <script>
-
-            let strIP = '';
-            function getIP(json) {
-
-                console.log(`getIp : ${json.ip}`);
-                console.log(json);
-                alert(json.ip);
-
-                strIP = json.ip;
-            }
-
-            $.getJSON('https://api.db-ip.com/v2/free/self', function(data) {
-                console.log(JSON.stringify(data, null, 2));
-            });
 
             const bLogin = '<%=bLogin%>';
             //console.log(bLogin);
             let user = null;
-            if ( bLogin == "true" )
-            {
-                user = JSON.parse('<%-JSON.stringify(user)%>');
-                RequestLogin(user, strIP);
-            }
+
+            $.getJSON('https://api.db-ip.com/v2/free/self', function(data) {
+                //console.log(JSON.stringify(data, null, 2));
+
+                if ( bLogin == "true" )
+                {
+                    user = JSON.parse('<%-JSON.stringify(user)%>');
+                    RequestLogin(user, data.ipAddress);
+                }
+
+            });
+
                 
             // console.log(user);
             // const listOutputRecent = JSON.parse('<%-JSON.stringify(listOutputRecent)%>');

@@ -33,6 +33,9 @@ module.exports = (sequelize, DataTypes) => {
         strShopNickname: {
             type:DataTypes.STRING,
         },
+        strUserNickname: {
+            type:DataTypes.STRING,
+        },
         iClass: {
             type:DataTypes.INTEGER,
             allowNull: false,

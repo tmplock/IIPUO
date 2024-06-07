@@ -516,7 +516,7 @@ router.post('/request_bank', async (req, res) => {
             iAllowedTime :5,
         });
 
-        let listRecent = await db.RecordDailyOverviews.findAll({
+        let listRecent = await db.RecordInoutAccounts.findAll({
             where: {
                 // strDate:{
                 //     [Op.between]:[ strTimeStart, strTimeEnd ],

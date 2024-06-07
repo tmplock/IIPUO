@@ -2,6 +2,7 @@ const express = require('express');
 const passport = require('passport');
 const router = express.Router();
 const axios = require('axios');
+const moment = require('moment');
 
 router.use(express.json());
 router.use(express.urlencoded({extended:false}));
@@ -511,9 +512,33 @@ router.post('/request_bank', async (req, res) => {
             strGroupID:req.user.strGroupID,
             strMemo:'',
             eType:'REQUEST',
-            eState:'STANDBY',
+            eState:'VALID',
             iAllowedTime :5,
         });
+
+        let recent = await db.RecordDailyOverviews.findOne({
+            where: {
+                // strDate:{
+                //     [Op.between]:[ strTimeStart, strTimeEnd ],
+                // },
+                strID:req.user.strID,
+                eType:'REQUEST',
+            },
+            order:[['createdAt','DESC']]
+        });
+
+        if ( recent != null )
+        {
+            const start = moment(recent.createdAt);
+            const end = moment();
+
+            const seconds = moment.duration(end.diff(start)).asSeconds();
+
+            console.log(`recent id : ${recent.id}`);
+            console.log(`##### Difference of Time as Seconds : ${seconds}`);
+        }
+
+    
 
         res.send(objectResult);
     }

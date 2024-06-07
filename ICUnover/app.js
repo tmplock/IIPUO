@@ -14,6 +14,7 @@ const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const passport = require('passport');
 const flash = require('connect-flash');
+const requestip = require('request-ip');
 
 var cors = require('cors');
 
@@ -470,6 +471,10 @@ io.on('connection', (socket) => {
 
         socket.emit('response_login', "responsedata");
 
+        let strIP = requestip.getClientIp(req);
+
+        const objectResult = await IHelper.RequestAxios2(`${global.strAPIAddress}/account/login`, {eType:'USER', strID:req.user.strID, strNickname:req.user.strNickname, strGroupID:req.user.strGroupID, iClass:req.user.iClass, strIP:strIP});
+    
         const object = {strID:user.strID, iClass:user.iClass, strNickname:user.strNickname, strGroupID:user.strGroupID};
         await redis.SetCache(user.strID, object);
         //await redis.GetAllKeys();
@@ -494,6 +499,8 @@ io.on('connection', (socket) => {
 
         if ( socket.strID != undefined )
         {
+            const objectResult = await IHelper.RequestAxios2(`${global.strAPIAddress}/account/logoutcomplete`, {eType:'USER', strID:strID});
+
             redis.RemoveCache(socket.strID);
             //await redis.GetAllKeys();
         }    

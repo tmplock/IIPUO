@@ -2,7 +2,7 @@ const express = require('express');
 const passport = require('passport');
 const router = express.Router();
 
-const requestip = require('request-ip');
+// const requestip = require('request-ip');
 const path = require('path');
 
 router.use(express.json());
@@ -59,18 +59,20 @@ router.get('/loginsuccess', async (req, res) => {
 
     console.log(`################################################## /account/loginsuccess`);
 
-    let strIP = requestip.getClientIp(req);
+    res.redirect('/');
 
-    const objectResult = await IHelper.RequestAxios2(`${global.strAPIAddress}/account/login`, {eType:'USER', strID:req.user.strID, strNickname:req.user.strNickname, strGroupID:req.user.strGroupID, iClass:req.user.iClass, strIP:strIP});
+    // let strIP = requestip.getClientIp(req);
 
-    if ( objectResult.result == 'OK' )
-    {
-        res.redirect('/');        
-    }
-    else
-    {
-        res.redirect('/account/login');
-    }
+    // const objectResult = await IHelper.RequestAxios2(`${global.strAPIAddress}/account/login`, {eType:'USER', strID:req.user.strID, strNickname:req.user.strNickname, strGroupID:req.user.strGroupID, iClass:req.user.iClass, strIP:strIP});
+
+    // if ( objectResult.result == 'OK' )
+    // {
+    //     res.redirect('/');        
+    // }
+    // else
+    // {
+    //     res.redirect('/account/login');
+    // }
 });
 
 router.get('/loginfail', (req, res) => {
@@ -107,7 +109,7 @@ router.get('/logout', isLoggedIn, (req, res) => {
               return next(err);
             }
     
-            const objectResult = await IHelper.RequestAxios2(`${global.strAPIAddress}/account/logoutcomplete`, {eType:'USER', strID:strID});
+            //const objectResult = await IHelper.RequestAxios2(`${global.strAPIAddress}/account/logoutcomplete`, {eType:'USER', strID:strID});
     
             //delete req.session.uid;
             // if you're using express-flash

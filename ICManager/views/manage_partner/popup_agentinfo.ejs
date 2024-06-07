@@ -278,6 +278,45 @@
 				</table>
 			</div>
 		<% } %>
+		<% if (iRootClass <= 3 && agent.iClass >= 3) {%>
+			<div style="display:none;">
+				<table>
+					<colgroup>
+						<col style="width:15%">
+						<col style="width:35%">
+						<col style="width:15%">
+						<col style="width:35%">
+					</colgroup>
+					<p style="background-repeat:no-repeat; background-position:left center; font-size:16px; color:#454545; padding-left:22px;">파트너별 차감권한 설정</p>
+					<tr>
+						<th scope="row">차감권한 사용</th>
+						<td>
+							<%if (agent.iClass == 3 ){%>
+								<input type="checkbox" style="width:30px;height:30px;" name="input_grade" required="no" message="" value="4" checked> <strong>대본사</strong>
+								<input type="checkbox" style="width:30px;height:30px;" name="input_grade" required="no" message="" value="5"> <strong>부본사</strong>
+								<input type="checkbox" style="width:30px;height:30px;" name="input_grade" required="no" message="" value="6"> <strong>총판</strong>
+								<input type="checkbox" style="width:30px;height:30px;" name="input_grade" required="no" message="" value="7"> <strong>매장</strong>
+								<input type="checkbox" style="width:30px;height:30px;" name="input_grade" required="no" message="" value="8"> <strong>회원</strong>
+							<% }else if (agent.iClass == 4 ){%>
+								<input type="checkbox" style="width:30px;height:30px;" name="input_grade" required="no" message="" value="5"> <strong>부본사</strong>
+								<input type="checkbox" style="width:30px;height:30px;" name="input_grade" required="no" message="" value="6"> <strong>총판</strong>
+								<input type="checkbox" style="width:30px;height:30px;" name="input_grade" required="no" message="" value="7"> <strong>매장</strong>
+								<input type="checkbox" style="width:30px;height:30px;" name="input_grade" required="no" message="" value="8"> <strong>회원</strong>
+							<% }else if (agent.iClass == 5 ){%>
+								<input type="checkbox" style="width:30px;height:30px;" name="input_grade" required="no" message="" value="6"> <strong>총판</strong>
+								<input type="checkbox" style="width:30px;height:30px;" name="input_grade" required="no" message="" value="7"> <strong>매장</strong>
+								<input type="checkbox" style="width:30px;height:30px;" name="input_grade" required="no" message="" value="8"> <strong>회원</strong>
+							<% }else if (agent.iClass == 6 ){%>
+								<input type="checkbox" style="width:30px;height:30px;" name="input_grade" required="no" message="" value="7"> <strong>매장</strong>
+								<input type="checkbox" style="width:30px;height:30px;" name="input_grade" required="no" message="" value="8"> <strong>회원</strong>
+							<% }else if (agent.iClass == 7 ){%>
+								<input type="checkbox" style="width:30px;height:30px;" name="input_grade" required="no" message="" value="8"> <strong>회원</strong>
+							<% } %>
+						</td>
+					</tr>
+				</table>
+			</div>
+		<% } %>
 		<div style="display: none">
 			<table>
 				<colgroup>

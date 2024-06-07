@@ -475,6 +475,16 @@
 		subtag += `<td style="background-color:${color};color:${GetColor(iWinLose)}"  class="parent_row_31">${GetNumber(iWinLose)}</td>`;
 		subtag += `<td style="background-color:${color};color:${GetColor(iMyMoney)}"  class="parent_row_31">${GetNumber(iMyMoney)}</td>`;
 		// subtag += `<td>메모</td>`;
+		let strColor = 'rgb(0, 126, 199)';
+
+        if ( aObject.eState == 'BLOCK' )
+        {
+            strColor = 'rgb(207, 61, 4)';
+        }
+        else if ( aObject.eState == 'NOTICE' )
+        {
+            strColor = 'rgb(207, 100, 4)';
+        }
 		if (iPermission != 100) {
 			subtag += `
 				<td style="background-color:${color};" class="parent_row_31">

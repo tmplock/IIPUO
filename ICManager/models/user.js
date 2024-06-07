@@ -207,6 +207,10 @@ module.exports = (sequelize, DataTypes) => {
         },
         strInoutPassword: {
             type: DataTypes.STRING,
+        },
+        //차감권한 설정.
+        strDeduct: {
+            type: DataTypes.STRING,
         }
     }, {
         indexes: [

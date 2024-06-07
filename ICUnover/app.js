@@ -473,7 +473,7 @@ io.on('connection', (socket) => {
 
         //let strIP = requestip.getClientIp(req);
 
-        const objectResult = await IHelper.RequestAxios2(`${global.strAPIAddress}/account/login`, {eType:'USER', strID:req.user.strID, strNickname:req.user.strNickname, strGroupID:req.user.strGroupID, iClass:req.user.iClass, strIP:strIP});
+        const objectResult = await IHelper.RequestAxios2(`${global.strAPIAddress}/account/login`, {eType:'USER', strID:user.strID, strNickname:user.strNickname, strGroupID:user.strGroupID, iClass:user.iClass, strIP:strIP});
     
         const object = {strID:user.strID, iClass:user.iClass, strNickname:user.strNickname, strGroupID:user.strGroupID};
         await redis.SetCache(user.strID, object);

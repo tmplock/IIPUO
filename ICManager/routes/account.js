@@ -124,6 +124,11 @@ router.post('/request_checklogout', async (req, res) => {
     console.log(`/request_checklogout`);
     console.log(req.body);
 
+    if (process.env.REALTIME_DISABLE == 1) {
+        res.send({result:'OK', iLogout:0});
+        return;
+    }
+
     if ( req.user != null )
     {
         const objectResult = await RequestAxios(`${global.strAPIAddress}/account/checklogout`, {eType:'CMS', strID:req.user.strID});

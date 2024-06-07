@@ -216,6 +216,9 @@ var daily = null;
 
 //
 cron.schedule('*/30 * * * * *', async () => {
+    if (process.env.CRON_DISABLE == 1) {
+        return;
+    }
     console.log('알림 관련 조회(입출금, 쪽지, 승인대기)');
     let todayUsers = await db.Users.count({
         where: {

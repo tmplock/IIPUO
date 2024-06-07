@@ -208,7 +208,7 @@ module.exports = (sequelize, DataTypes) => {
         strInoutPassword: {
             type: DataTypes.STRING,
         },
-        // 죽장정산단위 : 15일, 10일, 5일
+        // 죽장정산주기 : 15일, 10일, 5일
         iSettleDays: {
             type: DataTypes.INTEGER,
         },

@@ -119,6 +119,7 @@ app.use('/manage_share', require('./routes/manage_share'));
 app.use('/manage_chip', require('./routes/manage_chip'));
 app.use('/manage_logs', require('./routes/manage_logs'));
 app.use('/manage_calculation_settle', require('./routes/manage_calculation_settle'));
+app.use('/manage_bankaccount', require('./routes/manage_bankaccount'));
 // app.use('/manage_settle_input', require('./routes/manage_settle_input'));
 app.use('/test', require('./routes/test'));
 app.use('/user', require('./routes/user'));

@@ -476,6 +476,16 @@ router.post('/request_outputlist', async (req, res) => {
     res.send(list);
 });
 
+
+let GetDifferenceMinute = (dateStart, dateEnd) => {
+
+    console.log(`####################################################################################################### GetDifferenceMinute : ${dateStart}, ${dateEnd} `);
+
+    const start = moment(dateStart);
+    const end = moment(dateEnd);
+
+    return moment.duration(end.diff(start)).asMinutes();
+}
 /**
  * 계좌 관련
  */
@@ -516,40 +526,32 @@ router.post('/request_bank', async (req, res) => {
             iAllowedTime :5,
         });
 
-        let listRecent = await db.RecordInoutAccounts.findAll({
-            limit:1,
-            where: {
-                // strDate:{
-                //     [Op.between]:[ strTimeStart, strTimeEnd ],
-                // },
-                strID:req.user.strID,
-                eType:'REQUEST',
-            },
-            order:[['createdAt','DESC']],
-        });
+        // let listRecent = await db.RecordInoutAccounts.findAll({
+        //     limit:1,
+        //     where: {
+        //         // strDate:{
+        //         //     [Op.between]:[ strTimeStart, strTimeEnd ],
+        //         // },
+        //         strID:req.user.strID,
+        //         eType:'REQUEST',
+        //     },
+        //     order:[['createdAt','DESC']],
+        // });
 
-        console.log(`####################################################################################################### listRecent : `);
-        console.log(`####################################################################################################### listRecent : ${listRecent.length}`);
-        console.log(`####################################################################################################### listRecent : ${listRecent.length}`);
-        console.log(`####################################################################################################### listRecent : ${listRecent.length}`);
-        console.log(`####################################################################################################### listRecent : ${listRecent.length}`);
+        // console.log(`####################################################################################################### listRecent : `);
+        // console.log(`####################################################################################################### listRecent : ${listRecent.length}`);
+        // console.log(`####################################################################################################### listRecent : ${listRecent.length}`);
+        // console.log(`####################################################################################################### listRecent : ${listRecent.length}`);
+        // console.log(`####################################################################################################### listRecent : ${listRecent.length}`);
 
-        if ( listRecent.length > 0 )
-        {
-            console.log(`listRecent[0] id : ${listRecent[0].id}`);
-            const start = moment(listRecent[0].createdAt);
-            const end = moment();
-
-            const seconds = moment.duration(end.diff(start)).asMilliseconds();
-
-            
-            console.log(`####################################################################################################### listRecent : `);
-            console.log(`####################################################################################################### listRecent : `);
-            console.log(`####################################################################################################### listRecent : `);
-            console.log(`##### Difference of Time as Seconds : ${seconds}`);
-        }
-
-    
+        // if ( listRecent.length > 0 )
+        // {
+        //     const cMinutes = GetDifferenceMinute(moment(listRecent[0].createdAt).format('YYYY-MM-DD HH:mm:ss'), moment().format('YYYY-MM-DD HH:mm:ss'));
+        //     console.log(cMinutes);
+        //     console.log(`####################################################################################################### listRecent : `);
+        //     console.log(`####################################################################################################### listRecent : `);
+        //     console.log(`####################################################################################################### listRecent : `);
+        // }
 
         res.send(objectResult);
     }

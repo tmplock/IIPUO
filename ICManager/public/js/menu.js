@@ -195,3 +195,20 @@ $(document).on('click', "#manage_chip", (event) => {
     $form.append(idx).append(page).append(category);
     $form.submit();
 })
+
+
+$(document).on('click', "#manage_bankaccount", (event) => {
+    
+    var $form = $('<form></form>');
+    $form.attr('action', '/manage_bankaccount/account');
+    $form.attr('method', 'post');
+    $form.appendTo('body');
+    
+    var strNickname = $(`<input type="hidden" value="${user.strNickname}" name="strNickname">`);
+    var strGroupID = $(`<input type="hidden" value="${user.strGroupID}" name="strGroupID">`);
+    var iClass = $(`<input type="hidden" value=${user.iClass} name="iClass">`);
+    var iPermission = $(`<input type="hidden" value=${user.iPermission} name="iPermission">`);
+
+    $form.append(strNickname).append(strGroupID).append(iClass).append(iPermission);
+    $form.submit();
+})

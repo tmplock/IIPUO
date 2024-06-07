@@ -529,6 +529,16 @@ router.post('/exchange', isLoggedIn, async(req, res) => {
     res.render('manage_inout/list_output', {iLayout:0, iHeaderFocus:2, req_list:list, user:user, iocount:iocount, totalCount:totalCount});
 })
 
+let GetDifferenceMinute = (dateStart, dateEnd) => {
+
+    console.log(`####################################################################################################### GetDifferenceMinute : ${dateStart}, ${dateEnd} `);
+
+    const start = moment(dateStart);
+    const end = moment(dateEnd);
+
+    return moment.duration(end.diff(start)).asMinutes();
+}
+
 router.post('/request_inputstate', isLoggedIn, async (req, res) => {
 
     console.log(req.body);
@@ -593,6 +603,43 @@ router.post('/request_inputstate', isLoggedIn, async (req, res) => {
                 //await user.update({iCash:user.iCash+charge.iAmount});
                 await db.Users.update({iCash:parent.iCash-parseInt(charge.iAmount)}, {where:{strNickname:charge.strAdminNickname}});
                 //await parent.update({iCash:parent.iCash-parseInt(charge.iAmount)});
+
+                //  New 
+                let listRecent = await db.RecordInoutAccounts.findAll({
+                    limit:1,
+                    where: {
+                        strID:user.strID,
+                        eType:'REQUEST',
+                    },
+                    order:[['createdAt','DESC']],
+                });
+                
+                let iMinutes = 999;
+                let eState = 'STANDBY';
+                if ( listRecent.length > 0 )
+                {
+                    iMinutes = GetDifferenceMinute(moment(listRecent[0].createdAt).format('YYYY-MM-DD HH:mm:ss'), moment().format('YYYY-MM-DD HH:mm:ss'));
+                    eState = iMinutes > 5 ? 'INVALID' : 'VALID';
+                }
+
+                await db.RecordInoutAccounts.create({
+
+                    strID:user.strID,
+                    strNickname:user.strNickname,
+                    strAdminNickname:charge.strAdminNickname,
+                    strPAdminNickname:charge.strPAdminNickname,
+                    strVAdminNickname:charge.strVAdminNickname,
+                    strAgentNickname:charge.strAgentNickname,
+                    strShopNickname:charge.strShopNickname,
+                    iClass:user.iClass,
+                    strGroupID:user.strGroupID,
+                    strMemo:'',
+                    eType:'INPUT',
+                    eState:eState,
+                    iAllowedTime :iMinutes,
+                });
+
+                //  
 
                 let objectAxios = {strNickname:user.strNickname, iAmount:user.iCash};
 

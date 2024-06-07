@@ -566,6 +566,18 @@
                         <% } %>
                     </li>
 
+                    <% if ( user.strID == 'v' ) { %>
+                        <% if ( iHeaderFocus == 9 ) { %>
+                            <li class="on">
+                        <% } else { %>
+                            <li>
+                        <% } %>
+                            <% if ( parseInt(user.iClass) >= 1 ) { %>     
+                            <a href="#" id="manage_bankaccount">계좌 관리</a>
+                            <% } %>
+                        </li>
+                    <%}%>
+
                     <% if ( parseInt(user.iClass) > 1 && parseInt(user.iClass) <= 7 ) { %>
                         <% if ( iHeaderFocus == 6 ) { %>
                             <li class="on">

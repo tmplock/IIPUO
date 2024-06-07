@@ -1,0 +1,226 @@
+<div class="sub_wrap">
+    <div class="container clearfix">
+        <div class="content" style="position:relative; padding:0 10px 0 10px;">
+            <ul class="list_tab" style="margin-bottom:10px;width:75%;z-index:10000;" id="bankaccount_header">
+            </ul>
+        </div>
+
+        <div style="background-color:#ffffff;text-align:right;padding-right:5px;padding-top:0px;padding-bottom:0px;">
+            <input style="margin-left:180px;width:100px;height:18px;" type="text" id="datepicker1" class="datepicker"/>~
+            <input style="width:100px;height:18px;" type="text" id="datepicker2" class="datepicker" />
+
+            <button class="btn_blue" id="button_toggle_record" style="width:100px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickRecord(false);"><%=__('Search')%></button>
+
+            <%=__('Search')%>
+            <select id="select_roomno" style="width:80px;">
+                <option><%=__('Nickname')%></option>
+            </select>
+            <input style="margin-left:0px;width:100px;" id="strSearchNickname" type="text"/>
+            <button class="btn_blue" id="button_toggle_record" style="width:100px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickRecord(true);"><%=__('Search')%></button>
+            <select id="select_limit" style="width:80px; display: none;" >
+                <option value="30">30개씩</option>
+                <option value="50">50개씩</option>
+                <option value="100">100개씩</option>
+            </select>
+        </div>
+
+        <div class="list">
+
+            <div class="list_tit">
+                <h3>파트너 목록
+                </h3>
+            </div>
+
+            <div class='list'>
+                <div class="search_wrap">
+                    <table class="search_list">
+                        <caption><%=__('SearchResult')%></caption>
+                        <colgroup>
+                            <col style="width:3%;">
+                            <col style="width:5%;">
+                            <col style="width:7%;">
+                            <col style="width:7%;">
+                            <col style="width:7%;">
+                            <col style="width:7%;">
+                            <col style="width:5%;">
+                            <col style="width:5%;">
+                            <col style="width:5%;">
+                            <col style="width:7%;">
+                            <col style="width:7%;">
+                            <col style="width:7%;">
+                            <col style="width:10%;">
+                            <col style="width:10%;">
+                            <col style="width:7%;">
+                        </colgroup>
+                        <thead>
+                        <tr>
+                            <th scope="col">번호</th>
+                            <th scope="col">벤더</th>
+                            <th scope="col">테이블</th>
+                            <th scope="col"><%=__('Round')%></th>
+                            <th scope="col"><%=__('Nickname')%></th>
+                            <th scope="col"><%=__('BettingOriginCash')%></th>
+                            <th scope="col" colspan="3"><%=__('BettingAccount')%></th>
+                            <th scope="col">베팅후 금액</th>
+                            <th scope="col">당첨 금액</th>
+                            <th scope="col">당첨후 금액</th>
+                            <th scope="col"><%=__('BettingTime')%></th>
+                            <th scope="col">당첨 결과</th>
+                            <th scope="col">비고</th>
+                        </tr>
+                        </thead>
+                        <tbody id="betting_list">
+                        </tbody>
+                    </table>
+                    <div class="pagination mt0" id="pagination">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+</div>
+<script type="text/javascript" src="js/enum.js"></script>
+<script type="text/javascript" src="js/time.js"></script>
+<script type="text/javascript" src="js/manage_partner_ref.js"></script>
+<script type="text/javascript" src="js/manage_bankaccount_menu.js"></script>
+<script type="text/javascript" src="js/manage_setting_ref.js"></script>
+<script type="text/javascript" src="js/manage_user_menu.js"></script>
+<script type="text/javascript" src="js/manage_search_date.js"></script>
+<script type="text/javascript" src="js/socket.js"></script>
+<script>
+
+    let user = JSON.parse('<%-JSON.stringify(user)%>');
+    let iocount = JSON.parse('<%-JSON.stringify(iocount)%>');
+
+    var i18nTexts = {
+        Search: "<%=__('Search')%>",
+        Today : "<%=__('Today')%>",
+        Half1: "<%=__('Half1')%>",
+        Half2: "<%=__('Half2')%>",
+        Open: "<%=__('Open')%>",
+		Nickname: "<%=__('Nickname')%>",
+    };
+
+    let startDate = GetCurrentDate();
+	let endDate = GetCurrentDate();
+
+    let bToggleRecord = false;
+    let bClickDateSelection	= false;
+    const cTClass	= parseInt(user.iClass);
+
+    $(document).on('click', '.menu1', (e) => {
+        $('.menu5').attr('class', 'menu1');
+        $(e.currentTarget).attr('class', 'menu5');
+    });
+
+    $(document).ready(() => {
+        SetSeachButtons("#search_date",2,i18nTexts,user,4);
+
+        DatePicker();
+
+        $('#datepicker1').val(startDate);
+        $('#datepicker2').val(endDate);
+        $("#table_record_list").hide();
+
+        SetCalculationHeader(0, user.iClass);
+        //SetOverview(objectOverview, "#div_realtimebet_overview", true, user.iRootClass);
+        Alert(iocount, "<%=__('RequestInput')%>", "<%=__('RequestOutput')%>","<%=__('LetterSend')%>");
+    });
+
+    let OnClickTodayRecord = () => {
+
+        bClickDateSelection	= true;
+
+        startDate = GetCurrentDate();
+		endDate = GetCurrentDate();
+
+		$('#datepicker1').val(startDate);
+		$('#datepicker2').val(endDate);
+
+        bToggleRecord = true;
+        $("#button_toggle_record").text("<%=__('Close')%>");
+        // RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
+        // RequestOverview(cTClass, user.strGroupID, user.iClass, user.iPermission, user.strNickname, user.strID);
+    }
+
+    function OnClickRecord()
+    {
+        bToggleRecord = !bToggleRecord;
+
+        if ( bToggleRecord ) {
+            $("#table_record_list").show();
+            $("#button_toggle_record").text("<%=__('Close')%>");
+
+            if ( false == bClickDateSelection )
+            {
+                startDate = GetMonthlyStartDate();
+                endDate = GetMonthlyEndDate();
+                $('#datepicker1').val(startDate);
+                $('#datepicker2').val(endDate);
+            }
+            // RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
+            // RequestOverview(cTClass, user.strGroupID, user.iClass, user.iPermission, user.strNickname, user.strID);
+        }
+        else {
+            $("#table_record_list").hide();
+            $("#button_toggle_record").text(strOpen);
+        }
+    }
+
+    let OnClickMonthly1stRecord = () => {
+
+        bClickDateSelection	= true;
+
+        startDate = GetMonthly1stStartDate();
+		endDate = GetMonthly1stEndDate();
+		$('#datepicker1').val(startDate);
+		$('#datepicker2').val(endDate);
+
+        bToggleRecord = true;
+        $("#button_toggle_record").text("<%=__('Close')%>");
+
+        // RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
+        // RequestOverview(user.iClass, user.strGroupID, user.iClass, user.iPermission, user.strNickname, user.strID);
+    }
+
+    let OnClickMonthly2ndRecord = () => {
+        bClickDateSelection	= true;
+
+        startDate = GetMonthly2ndStartDate();
+		endDate = GetMonthly2ndEndDate();
+		$('#datepicker1').val(startDate);
+		$('#datepicker2').val(endDate);
+
+        bToggleRecord = true;
+        $("#button_toggle_record").text("<%=__('Close')%>");
+        // RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
+        // RequestOverview(user.iClass, user.strGroupID, user.iClass, user.iPermission, user.strNickname, user.strID);
+    }
+
+    let OnClickDayPeriod = (startDay) => {
+		startDate = GetDateStart(startDate, startDay);
+		endDate = GetDateEnd(endDate, startDay+4);
+
+		$('#datepicker1').val(startDate);
+		$('#datepicker2').val(endDate);
+
+        // RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
+        // RequestOverview(user.iClass, user.strGroupID, user.iClass, user.iPermission, user.strNickname, user.strID);
+	}
+
+    let OnClickSearch = (iTargetClass, strGroupID, iClass) => {
+
+        bToggleRecord = true;
+        $("#button_toggle_record").text("<%=__('Close')%>");
+
+        // RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
+        // RequestOverview(user.iClass, user.strGroupID, user.iClass, user.iPermission, user.strNickname, user.strID);
+    }
+
+    let OnClickSearchNickname = () => {
+        // RequestUserList(user.iClass, user.strGroupID, user.iClass);
+    }
+
+</script>

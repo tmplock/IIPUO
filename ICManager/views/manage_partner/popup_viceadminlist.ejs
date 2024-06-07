@@ -114,6 +114,18 @@
 	var agent = JSON.parse('<%-JSON.stringify(agent)%>');
 	var objectOverview = JSON.parse('<%-JSON.stringify(overview)%>');
 
+	var i18nTexts = {
+        Search: "<%=__('Search')%>",
+        Today : "<%=__('Today')%>",
+        Half1: "<%=__('Half1')%>",
+        Half2: "<%=__('Half2')%>",
+        Open: "<%=__('Open')%>",
+		Nickname: "<%=__('Nickname')%>",
+    };
+
+	let startDate = GetCurrentDate();
+	let endDate = GetCurrentDate();
+
 	$(document).ready(() => {
 		SetSeachButtons("#search_date",2,i18nTexts,agent,5);
 
@@ -121,6 +133,8 @@
 
 		$('#datepicker1').val(startDate);
 		$('#datepicker2').val(endDate);
+
+		RequestAgentListOnPopup(EAgent.eViceAdmin, agent.strGroupID, agent.iClass, agent.iPermission, agent.strID);
 	});
 
 
@@ -241,7 +255,5 @@
 		// RequestOverview(iTargetClass, strGroupID, iClass);
 		// RequestAgentListOnPopup(iTargetClass, strGroupID, iClass, agent.iPermission);
 	}
-
-	RequestAgentListOnPopup(EAgent.eViceAdmin, agent.strGroupID, agent.iClass, agent.iPermission, agent.strID);
 
 </script>

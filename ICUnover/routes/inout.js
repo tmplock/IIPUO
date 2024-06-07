@@ -536,12 +536,16 @@ router.post('/request_bank', async (req, res) => {
 
         if ( listRecent.length > 0 )
         {
+            console.log(`listRecent[0] id : ${listRecent[0].id}`);
             const start = moment(listRecent[0].createdAt);
-            const end = moment().format('YYYY-MM-DD HH:mm:ss');
+            const end = moment();
 
             const seconds = moment.duration(end.diff(start)).asMilliseconds();
 
-            console.log(`listRecent[0] id : ${listRecent[0].id}`);
+            
+            console.log(`####################################################################################################### listRecent : `);
+            console.log(`####################################################################################################### listRecent : `);
+            console.log(`####################################################################################################### listRecent : `);
             console.log(`##### Difference of Time as Seconds : ${seconds}`);
         }
 

@@ -204,18 +204,12 @@
                 //RequestLogin(user, data.ipAddress);
             }
 
-
             $.getJSON('https://api.db-ip.com/v2/free/self', function(data) {
-                //console.log(JSON.stringify(data, null, 2));
 
                 if ( bLogin == "true" )
                 {
                     const str = JSON.stringify(data, null, 2);
                     const object = JSON.parse(str);
-                    console.log(object);
-                    console.log(object.ipAddress);
-
-                    //user = JSON.parse('<%-JSON.stringify(user)%>');
                     RequestLogin(user, object.ipAddress);
                 }
 

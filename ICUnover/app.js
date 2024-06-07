@@ -499,7 +499,7 @@ io.on('connection', (socket) => {
 
         if ( socket.strID != undefined )
         {
-            const objectResult = await IHelper.RequestAxios2(`${global.strAPIAddress}/account/logoutcomplete`, {eType:'USER', strID:strID});
+            const objectResult = await IHelper.RequestAxios2(`${global.strAPIAddress}/account/logoutcomplete`, {eType:'USER', strID:socket.strID});
 
             redis.RemoveCache(socket.strID);
             //await redis.GetAllKeys();

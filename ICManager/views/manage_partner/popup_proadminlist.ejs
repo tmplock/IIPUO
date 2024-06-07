@@ -132,6 +132,8 @@
 
 		$('#datepicker1').val(startDate);
 		$('#datepicker2').val(endDate);
+        
+        RequestAgentListOnPopup(EAgent.eProAdmin, agent.strGroupID, agent.iClass, agent.iPermission, agent.strID);
     });
 
     $(document).on('click', '.menu1', (e) => {
@@ -249,6 +251,6 @@
         // RequestAgentListOnPopup(iTargetClass, strGroupID, iClass, agent.iPermission);
     }
 
-    RequestAgentListOnPopup(EAgent.eProAdmin, agent.strGroupID, agent.iClass, agent.iPermission, agent.strID);
+    // RequestAgentListOnPopup(EAgent.eProAdmin, agent.strGroupID, agent.iClass, agent.iPermission, agent.strID);
 
 </script>

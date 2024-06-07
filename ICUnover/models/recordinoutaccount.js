@@ -17,6 +17,10 @@ module.exports = (sequelize, DataTypes) => {
             type:DataTypes.STRING,
             allowNull: false,
         },
+        strNickname: {
+            type:DataTypes.STRING,
+            allowNull: false,
+        },
         strAdminNickname: {
             type:DataTypes.STRING,
             allowNull: false,
@@ -33,9 +37,6 @@ module.exports = (sequelize, DataTypes) => {
         strShopNickname: {
             type:DataTypes.STRING,
         },
-        strUserNickname: {
-            type:DataTypes.STRING,
-        },
         iClass: {
             type:DataTypes.INTEGER,
             allowNull: false,
@@ -49,6 +50,12 @@ module.exports = (sequelize, DataTypes) => {
         },
         eType: {
             type:DataTypes.ENUM('REQUEST', 'INPUT', 'OUTPUT'),
+        },
+        eState: {
+            type:DataTypes.ENUM('VALID', 'INVALID'),
+        },
+        iAllowedTime :{
+            type:DataTypes.INTEGER,
         },
         createdAt:{
             type:DataTypes.DATE,

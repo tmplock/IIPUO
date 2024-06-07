@@ -517,6 +517,7 @@ router.post('/request_bank', async (req, res) => {
         });
 
         let listRecent = await db.RecordInoutAccounts.findAll({
+            limit:1,
             where: {
                 // strDate:{
                 //     [Op.between]:[ strTimeStart, strTimeEnd ],
@@ -525,9 +526,12 @@ router.post('/request_bank', async (req, res) => {
                 eType:'REQUEST',
             },
             order:[['createdAt','DESC']],
-            limit:1,
         });
 
+        console.log(`####################################################################################################### listRecent : `);
+        console.log(`####################################################################################################### listRecent : ${listRecent.length}`);
+        console.log(`####################################################################################################### listRecent : ${listRecent.length}`);
+        console.log(`####################################################################################################### listRecent : ${listRecent.length}`);
         console.log(`####################################################################################################### listRecent : ${listRecent.length}`);
 
         if ( listRecent.length > 0 )

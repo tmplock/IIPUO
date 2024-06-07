@@ -166,44 +166,23 @@ let RequestUserListOnPopup = (iTargetClass, strGroupID, iClass, iPermission, str
                 }
 
                 let tagState = '';
-
-                if (parseInt(iRootClass) <= 3 && iPermission != 100) {
-                    tagState = `<td class="parent_row_31" style='background-color:${bgcolor};'>
-                        <select style="vertical-align:middle;width:100%; background-color:${strColor}; color:white;" id="partner_agentstatus_${obj.strNickname}" onchange="OnChangeStatus('${obj.strNickname}');">
-                        <option value="NOTICE">${strNotice}</option>
-                        <option value="NORMAL" selected>${strNormal}</option>
-                        <option value="BLOCK">${strBlock}</option>
-                        </select>
-                        </td>`;
-
-                    if ( obj.eState == 'BLOCK') {
-
-                        console.log('BLOCK');
-                        tagState = `<td class="parent_row_31" style='background-color:${bgcolor};'>
-                        <select style="vertical-align:middle;width:100%; background-color:${strColor}; color:white;" id="partner_agentstatus_${obj.strNickname}" onchange="OnChangeStatus('${obj.strNickname}');">
-                        <option value="NORMAL">${strNormal}</option>
-                        <option value="NOTICE">${strNotice}</option>
-                        <option value="BLOCK" selected>${strBlock}</option>
-                        </select>
-                        </td>`
-                    }
-                    else if ( obj.eState == 'NOTICE' )
-                    {
-                        console.log('NOTICE');
-                        tagState = `<td class="parent_row_31" style='background-color:${bgcolor};'>
-                        <select style="vertical-align:middle;width:100%; background-color:${strColor}; color:white;" id="partner_agentstatus_${obj.strNickname}" onchange="OnChangeStatus('${obj.strNickname}');">
-                        <option value="NORMAL">${strNormal}</option>
-                        <option value="NOTICE" selected>${strNotice}</option>
-                        <option value="BLOCK">${strBlock}</option>
-                        </select>
-                        </td>`
-                    }
-                } else {
+                if (iRootClass <= 3 && iPermission != 100) {
+                    tagState = `
+                        <td style="background-color:${bgcolor};" class="parent_row_31">
+                            <select style="vertical-align:middle;width:100%;background-color:${strColor}; color:white;" id="partner_agentstatus_${obj.strNickname}" data-original-value="${obj.eState}" onchange="OnChangeStatus('${obj.strNickname}');">
+                                <option value="NORMAL" ${obj.eState == 'NORMAL' ? 'selected' : ''}>${strNormal}</option>
+                                <option value="NOTICE" ${obj.eState == 'NOTICE' ? 'selected' : ''}>${strNotice}</option>
+                                <option value="BLOCK" ${obj.eState == 'BLOCK' ? 'selected' : ''}>${strBlock}</option>
+                            </select>
+                        </td>
+                    `;
+                } 
+                else {
                     tagState = `<td class="parent_row_31" style='background-color:${bgcolor};'>${strNormal}</td>`;
                     if (obj.escape == 'BLOCK') {
-                        tagState = `<td class="parent_row_31" style='background-color:${bgcolor};'>${strNormal}</td>`;
+                        tagState = `<td class="parent_row_31" style='background-color:${bgcolor};'>${strBlock}</td>`;
                     } else if (obj.eState == 'NOTICE') {
-                        tagState = `<td class="parent_row_31" style='background-color:${bgcolor};'>${strNormal}</td>`;
+                        tagState = `<td class="parent_row_31" style='background-color:${bgcolor};'>${strNotice}</td>`;
                     }
                 }
 

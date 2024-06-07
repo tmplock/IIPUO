@@ -416,26 +416,63 @@ router.post('/request_agentstate', isLoggedIn, async(req, res) => {
     console.log(`/request_agentstate : `);
     console.log(req.body);
 
+    if(req.user.iClass > 3 || req.user.iPermission != 0)
+        {
+            res.send({result:'FAIL', msg:'조회에러(1)'});
+            return;
+        }
+    
+
     let agent = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
     if ( agent != null )
     {
         if (req.user.iPermission == 100) {
-            res.send('FAIL');
+            res.send({result:'FAIL', msg:'조회에러(2)'});
             return;
         }
-        if (req.body.eState == 'NORMAL') {
+        console.log(`/request_agentstate  iClass : ${agent.iClass}, type : ${req.body.iType}`);
+        if(req.body.iType == 1 && agent.iClass !=8)
+        {
+            if (req.body.eState == 'NORMAL') {
 
-            await db.Users.update({eState:req.body.eState, iNumLoginFailed: 0}, {where:{strNickname:req.body.strNickname}});
-            //await agent.update({eState:req.body.eState, iNumLoginFailed: 0});
-        } else {
-
-            await db.Users.update({eState:req.body.eState}, {where:{strNickname:req.body.strNickname}});
-            //await agent.update({eState:req.body.eState});
+                await db.Users.update({eState:req.body.eState, iNumLoginFailed: 0}, {where:{
+                    strGroupID:{
+                        [Op.like]:`${agent.strGroupID}%`
+                    },
+                    iClass:{
+                        [Op.gte]:agent.iClass
+                    }
+                }});
+                //await agent.update({eState:req.body.eState, iNumLoginFailed: 0});
+            } else {
+    
+                await db.Users.update({eState:req.body.eState}, {where:{
+                    strGroupID:{
+                        [Op.like]:`${agent.strGroupID}%`
+                    },
+                    iClass:{
+                        [Op.gte]:agent.iClass
+                    }
+                }});
+                //await agent.update({eState:req.body.eState});
+            }
         }
-        res.send('OK');
+        else
+        {
+            if (req.body.eState == 'NORMAL') {
+
+                await db.Users.update({eState:req.body.eState, iNumLoginFailed: 0}, {where:{strNickname:req.body.strNickname}});
+                //await agent.update({eState:req.body.eState, iNumLoginFailed: 0});
+            } else {
+    
+                await db.Users.update({eState:req.body.eState}, {where:{strNickname:req.body.strNickname}});
+                //await agent.update({eState:req.body.eState});
+            }
+        }
+        res.send({result:'OK', msg:'성공'});
     }
     else
-        res.send('FAIL');
+        res.send({result:'FAIL', msg:'조회에러(0)'});
 });
 
 router.post('/request_modifyrollingodds', isLoggedIn, async(req, res) => {

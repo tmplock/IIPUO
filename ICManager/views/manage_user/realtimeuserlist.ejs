@@ -113,6 +113,7 @@
 <script type="text/javascript" src="js/manage_setting_ref.js"></script>
 <script type="text/javascript" src="js/manage_user_menu.js"></script>
 <script type="text/javascript" src="js/manage_search_date.js"></script>
+<script type="text/javascript" src="js/block_modal.js"></script>
 <script type="text/javascript" src="js/socket.js"></script>
 <script>
     var objectOverview = JSON.parse('<%-JSON.stringify(data.overview)%>');
@@ -156,9 +157,6 @@
 
         for ( let i in userlist )
         {
-            let strColor = 'rgb(0, 126, 199)';
-            let strState = strNormal;
-
             console.log(userlist[i]);
 
             if ( userlist[i].eState == 'BLOCK' )
@@ -166,31 +164,41 @@
                 strColor = 'rgb(207, 61, 4)';
 
             }
+            // 상태
+			let strColor = 'rgb(0, 126, 199)';
+			let bgcolor = 'white';
+
+			if ( userlist[i].eState == 'BLOCK' )
+			{
+				strColor = 'rgb(207, 61, 4)';
+				bgcolor = '#fcd7e6';
+			}
+			else if ( userlist[i].eState == 'NOTICE')
+			{
+				strColor = 'rgb(207, 100, 4)';
+				bgcolor = '#faecd9';
+			}
 
             let tagState = ``;
 
             if (iClass <= 3 && iPermission != 100) {
-                tagState = `<td class="parent_row_31">
-                    <select style="vertical-align:middle;width:100%; background-color:${strColor}; color:white;" id="partner_agentstatus_${userlist[i].strNickname}" onchange="OnChangeStatus('${userlist[i].strNickname}');">
-                    <option value="NORMAL" selected>${strNormal}</option>
-                    <option value="BLOCK">${strBlock}</option>
-                    </select>
-                    </td>`;
-
-                if ( userlist[i].eState == 'BLOCK') {
-
-                    console.log('BLOCK');
-                    tagState = `<td class="parent_row_31">
-                    <select style="vertical-align:middle;width:100%; background-color:${strColor}; color:white;" id="partner_agentstatus_${userlist[i].strNickname}" onchange="OnChangeStatus('${userlist[i].strNickname}');">
-                    <option value="NORMAL">${strNormal}</option>
-                    <option value="BLOCK" selected>${strBlock}</option>
-                    </select>
-                    </td>`
-                }
+                tagState = `
+					<td style="background-color:${bgcolor};" class="parent_row_31">
+                        <select style="vertical-align:middle;width:100%;background-color:${strColor}; color:white;" id="partner_agentstatus_${userlist[i].strNickname}" data-original-value="${userlist[i].eState}" onchange="OnChangeStatus('${userlist[i].strNickname}');">
+                            <option value="NORMAL" ${userlist[i].eState == 'NORMAL' ? 'selected' : ''}>${strNormal}</option>
+                            <option value="NOTICE" ${userlist[i].eState == 'NOTICE' ? 'selected' : ''}>${strNotice}</option>
+                            <option value="BLOCK" ${userlist[i].eState == 'BLOCK' ? 'selected' : ''}>${strBlock}</option>
+                        </select>
+                    </td>
+				`;
             } else {
-                tagState = `<td class="parent_row_31">${strNormal}</td>`;
+                tagState = `<td class="parent_row_31" style='background-color:${bgcolor};'>${strNormal}</td>`;
                 if ( userlist[i].eState == 'BLOCK') {
-                    tagState = `<td class="parent_row_31">${strBlock}</td>`;
+                    tagState = `<td class="parent_row_31" style='background-color:${bgcolor};'>${strBlock}</td>`;
+                }
+                else if ( userlist[i].eState == 'NOTICE' )
+                {
+                    tagState = `<td class="parent_row_31" style='background-color:${bgcolor};'>${strNotice}</td>`;
                 }
             }
 

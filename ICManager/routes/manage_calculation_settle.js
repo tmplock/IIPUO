@@ -822,24 +822,31 @@ let GetSettleAll3 = async (strGroupID, strQuater, dateStart, dateEnd, iClass, iO
         return [];
     }
 
-    let strSubQuater2 = GetSubQuaterEndDate(strSubQuater, iSettleDays);
+    let strSubQuater2 = IAgentSettle.GetSubQuaterBefore(iSettleDays, strSubQuater);
 
+    let newList = [];
     // 해당 조건 파트너 목록
-    let partnerList = await IAgentSettle.GetSettleClass3(strGroupID, iClass, strQuater, start, end, iOffset, iLimit, lastDate, strSubQuater, strSubQuater2, iSettleDays, iSettleType);
+    if (iClass == 5) {
+        let list = await IAgentSettle.GetSettleClass5(strGroupID, strQuater, start, end, iOffset, iLimit, lastDate, strSubQuater, strSubQuater2, iSettleDays, iSettleType);
+        // 죽장 계산하기
+        for (let i in list) {
+            let obj = list[i];
+
+        }
+    }
 
     // let existList = await IAgentSettle.GetSettleExist3(strGroupID, iClass, strQuater, start, end, iOffset, iLimit, lastDate, strSubQuater, strSubQuater2, iSettleDays, iSettleType);
+    return [];
+}
 
-    let list = [];
-    for (let i in partnerList) {
-        let obj = partnerList[i];
-        if (obj.iClass == 4) {
-            // obj.iSettleVice = GetSettleVice(obj);
-        } else {
-            obj.iSettleVice = 0;
-        }
-        list.push(obj);
-    }
-    return list;
+
+let CalSettle = (obj) => {
+    let settle = {iTotal: 0, iBWin: 0, iSWin: 0, iSettle5:0, iBCommision:0, iSCommision:0, iSettle4:0, iTotal2:0, iGive:0, iAcc:0, iPayback:0, iAcc2:0};
+    settle.iTotal = obj.iAgentBetB + obj.iAgentBetUO + obj.iAgentBetS - obj.iAgentWinB - obj.iAgentWinUO - obj.iAgentWinS - obj.iAgentRollingB - obj.iAgentRollingUO - obj.iAgentRollingS;
+    settle.iBWin = obj.iAgentWinB + obj.iAgentWinUO;
+    settle.iSWin = obj.iAgentWinS;
+    settle.iSettle5 = 0;
+    // settle.iBCommision =
 }
 
 module.exports = router;

@@ -121,8 +121,8 @@ router.get('/logout', isLoggedIn, (req, res) => {
 
 router.post('/request_checklogout', async (req, res) => {
 
-    console.log(`/request_checklogout`);
-    console.log(req.body);
+    // console.log(`/request_checklogout`);
+    // console.log(req.body);
 
     if ( req.user != null )
     {

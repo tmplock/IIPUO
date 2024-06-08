@@ -26,10 +26,13 @@
 	<div class="box-wrap">
 		<ul id="listGames">
 			<% for(let i=0; i<listGames.length; i++) { %>
+
+				<% if ( listGames[i].title != 'Jump Higher' ) { %>
 				<li>
 					<img class="gameimg" id="<%= listGames[i].id %>" src="<%= listGames[i].thumbnail %>" alt="<%= listGames[i].title %>" style="width:220px;height:220px;">
 					<p class="title"><a class="gameimg" id="<%= listGames[i].id %>" style="font-size:20px;"><%= listGames[i].title %></a></p>
 				</li>
+				<% } %>
 			<% } %>
 		</ul>
 	</div>

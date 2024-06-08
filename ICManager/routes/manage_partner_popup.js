@@ -1341,33 +1341,75 @@ router.post('/request_bank', isLoggedIn, async (req, res) => {
     res.send({result:'OK', msg:'정상 조회', bankname:bankname, bankAccount:bankAccount, bankOwner:bankOwner, cell:cell, pass:pass, grade:iInputGrade});
 });
 
+/**
+ * 본사소속 파트너, 회원의 롤링을 0.0으로 설정 OR 롤백하는 기능
+ * strUpdate : 000일 경우 리셋, 111일 경우 롤백
+ */
 router.post('/request_rolling_update', isLoggedIn, async (req, res) => {
 
     console.log(`/request_rolling_update`);
     console.log(req.body);
 
-    if (req.user.iClass > 3 && req.user.iPermission != 0) {
+    // 총본만 접근 가능
+    if (req.user.iClass > 2 && req.user.iPermission != 0) {
         res.send({result:'ERROR', code:'ERRORMSG', msg: '처리오류(-1)'});
         return;
     }
 
     let strNickname = req.body.strNickname ?? '';
-    let iUpdate = req.body.iUpdate ?? -1;
+    let strUpdate = req.body.strUpdate ?? '';
+    let input = req.body.input ?? '';
 
-    if (strNickname == '' || !(iUpdate == 0 || iUpdate == 1)) {
+    if (input == '' || strNickname == '' || strUpdate == '' || !(strUpdate == '000' || strUpdate == '111')) {
         res.send({result:'ERROR', code:'ERRORMSG', msg: '처리오류(-2)'});
         return;
     }
 
+    let result = await IAgentSec.AccessPartnerBankAndPassword(strNickname, input);
+    if (result.result != 'OK') {
+        res.send({result:'ERROR', code:'ERRORMSG', msg: '처리오류(-3)'});
+        return;
+    }
+
     let user = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
-    // 기존 롤링값 백업
-    let fBaccaratR = user.fBaccaratR;
-    let fUnderOverR = user.fUnderOverR;
-    let fSlotR = user.fSlotR;
 
+    // 리셋은 본사, 대본만 가능
+    if (user.iClass == 3 || user.iClass == 4) {
+    } else {
+        res.send({result:'ERROR', code:'ERRORMSG', msg: '처리오류(-3)'});
+        return;
+    }
 
+    // 하위 파트너(본인포함)
+    if (strUpdate == '000') {
+        await db.Users.update({
+            iResetR: 1,
+        }, {
+            where: {
+                strGroupID: {
+                    [Op.like]:`${user.strGroupID}%`
+                },
+                iClass: {
+                    [Op.gte]:user.iClass
+                }
+            }
+        });
+    } else if (strUpdate == '111') {
+        await db.Users.update({
+            iResetR: 0,
+        }, {
+            where: {
+                strGroupID: {
+                    [Op.like]:`${user.strGroupID}%`
+                },
+                iClass: {
+                    [Op.gte]:user.iClass
+                }
+            }
+        });
+    }
 
-
+    res.send({result: 'OK', msg:'정상처리'});
 });
 
 //에이전트 정보 수정

@@ -89,10 +89,11 @@ exports.CalculateOdds = async (strID, iClass) => {
 
             t3.strID as strAdminID,
             t3.strGroupID as strAdminGroupID,
-
-            t4.fBaccaratR AS fPAdminBaccaratR,
-            t4.fSlotR as fPAdminSlotR,
-            t4.fUnderOverR as fPAdminUnderOverR,
+            
+            case when t4.iResetR = 1 then 0.0 ELSE t4.fBaccaratR END AS fPAdminBaccaratR,
+            case when t4.iResetR = 1 then 0.0 ELSE t4.fSlotR END AS fPAdminSlotR,
+            case when t4.iResetR = 1 then 0.0 ELSE t4.fUnderOverR END AS fPAdminUnderOverR, 
+            
             t4.fPBR as fPAdminPBR,
             t4.fPBSingleR as fPAdminPBSingleR,
             t4.fPBDoubleR as fPAdminPBDoubleR,
@@ -100,9 +101,10 @@ exports.CalculateOdds = async (strID, iClass) => {
             t4.strID as strPAdminID,
             t4.strGroupID as strPAdminGroupID,
 
-            t5.fBaccaratR AS fVAdminBaccaratR,
-            t5.fSlotR as fVAdminSlotR,
-            t5.fUnderOverR as fVAdminUnderOverR,
+            case when t5.iResetR = 1 then 0.0 ELSE t5.fBaccaratR END AS fVAdminBaccaratR,
+            case when t5.iResetR = 1 then 0.0 ELSE t5.fSlotR END AS fVAdminSlotR,
+            case when t5.iResetR = 1 then 0.0 ELSE t5.fUnderOverR  END AS fVAdminUnderOverR,
+            
             t5.fPBR as fVAdminPBR,
             t5.fPBSingleR as fVAdminPBSingleR,
             t5.fPBDoubleR as fVAdminPBDoubleR,
@@ -170,9 +172,10 @@ exports.CalculateOdds = async (strID, iClass) => {
             t3.strID as strAdminID,
             t3.strGroupID as strAdminGroupID,
 
-            t4.fBaccaratR AS fPAdminBaccaratR,
-            t4.fSlotR as fPAdminSlotR,
-            t4.fUnderOverR as fPAdminUnderOverR,
+            case when t4.iResetR = 1 then 0.0 ELSE t4.fBaccaratR END AS fPAdminBaccaratR,
+            case when t4.iResetR = 1 then 0.0 ELSE t4.fSlotR END AS fPAdminSlotR,
+            case when t4.iResetR = 1 then 0.0 ELSE t4.fUnderOverR END AS fPAdminUnderOverR, 
+
             t4.fPBR as fPAdminPBR,
             t4.fPBSingleR as fPAdminPBSingleR,
             t4.fPBDoubleR as fPAdminPBDoubleR,
@@ -180,9 +183,10 @@ exports.CalculateOdds = async (strID, iClass) => {
             t4.strID as strPAdminID,
             t4.strGroupID as strPAdminGroupID,
 
-            t5.fBaccaratR AS fVAdminBaccaratR,
-            t5.fSlotR as fVAdminSlotR,
-            t5.fUnderOverR as fVAdminUnderOverR,
+            case when t5.iResetR = 1 then 0.0 ELSE t5.fBaccaratR END AS fVAdminBaccaratR,
+            case when t5.iResetR = 1 then 0.0 ELSE t5.fSlotR END AS fVAdminSlotR,
+            case when t5.iResetR = 1 then 0.0 ELSE t5.fUnderOverR  END AS fVAdminUnderOverR,
+            
             t5.fPBR as fVAdminPBR,
             t5.fPBSingleR as fVAdminPBSingleR,
             t5.fPBDoubleR as fVAdminPBDoubleR,
@@ -190,9 +194,10 @@ exports.CalculateOdds = async (strID, iClass) => {
             t5.strID as strVAdminID,
             t5.strGroupID as strVAdminGroupID,
 
-            t6.fBaccaratR AS fAgentBaccaratR,
-            t6.fSlotR as fAgentSlotR,
-            t6.fUnderOverR as fAgentUnderOverR,
+            case when t6.iResetR = 1 then 0.0 ELSE t5.fBaccaratR END AS fAgentBaccaratR,
+            case when t6.iResetR = 1 then 0.0 ELSE t5.fSlotR END AS fAgentSlotR,
+            case when t6.iResetR = 1 then 0.0 ELSE t5.fUnderOverR  END AS fAgentUnderOverR,
+
             t6.fPBR as fAgentPBR,
             t6.fPBSingleR as fAgentPBSingleR,
             t6.fPBDoubleR as fAgentPBDoubleR,
@@ -270,9 +275,10 @@ exports.CalculateOdds = async (strID, iClass) => {
             t3.strID as strAdminID,
             t3.strGroupID as strAdminGroupID,
 
-            t4.fBaccaratR AS fPAdminBaccaratR,
-            t4.fSlotR as fPAdminSlotR,
-            t4.fUnderOverR as fPAdminUnderOverR,
+            case when t4.iResetR = 1 then 0.0 ELSE t4.fBaccaratR END AS fPAdminBaccaratR,
+            case when t4.iResetR = 1 then 0.0 ELSE t4.fSlotR END AS fPAdminSlotR,
+            case when t4.iResetR = 1 then 0.0 ELSE t4.fUnderOverR END AS fPAdminUnderOverR, 
+            
             t4.fPBR as fPAdminPBR,
             t4.fPBSingleR as fPAdminPBSingleR,
             t4.fPBDoubleR as fPAdminPBDoubleR,
@@ -280,9 +286,10 @@ exports.CalculateOdds = async (strID, iClass) => {
             t4.strID as strPAdminID,
             t4.strGroupID as strPAdminGroupID,
 
-            t5.fBaccaratR AS fVAdminBaccaratR,
-            t5.fSlotR as fVAdminSlotR,
-            t5.fUnderOverR as fVAdminUnderOverR,
+            case when t5.iResetR = 1 then 0.0 ELSE t5.fBaccaratR END AS fVAdminBaccaratR,
+            case when t5.iResetR = 1 then 0.0 ELSE t5.fSlotR END AS fVAdminSlotR,
+            case when t5.iResetR = 1 then 0.0 ELSE t5.fUnderOverR  END AS fVAdminUnderOverR,
+            
             t5.fPBR as fVAdminPBR,
             t5.fPBSingleR as fVAdminPBSingleR,
             t5.fPBDoubleR as fVAdminPBDoubleR,
@@ -290,9 +297,10 @@ exports.CalculateOdds = async (strID, iClass) => {
             t5.strID as strVAdminID,
             t5.strGroupID as strVAdminGroupID,
 
-            t6.fBaccaratR AS fAgentBaccaratR,
-            t6.fSlotR as fAgentSlotR,
-            t6.fUnderOverR as fAgentUnderOverR,
+            case when t6.iResetR = 1 then 0.0 ELSE t6.fBaccaratR END AS fAgentBaccaratR,
+            case when t6.iResetR = 1 then 0.0 ELSE t6.fSlotR END AS fAgentSlotR,
+            case when t6.iResetR = 1 then 0.0 ELSE t6.fUnderOverR  END AS fAgentUnderOverR,
+            
             t6.fPBR as fAgentPBR,
             t6.fPBSingleR as fAgentPBSingleR,
             t6.fPBDoubleR as fAgentPBDoubleR,
@@ -300,9 +308,10 @@ exports.CalculateOdds = async (strID, iClass) => {
             t6.strID as strAgentID,
             t6.strGroupID as strAgentGroupID,
 
-            t7.fBaccaratR AS fShopBaccaratR,
-            t7.fSlotR as fShopSlotR,
-            t7.fUnderOverR as fShopUnderOverR,
+            case when t7.iResetR = 1 then 0.0 ELSE t7.fBaccaratR END AS fShopBaccaratR,
+            case when t7.iResetR = 1 then 0.0 ELSE t7.fSlotR END AS fShopSlotR,
+            case when t7.iResetR = 1 then 0.0 ELSE t7.fUnderOverR  END AS fShopUnderOverR,
+
             t7.fPBR as fShopPBR,
             t7.fPBSingleR as fShopPBSingleR,
             t7.fPBDoubleR as fShopPBDoubleR,
@@ -390,9 +399,10 @@ exports.CalculateOdds = async (strID, iClass) => {
             t3.strID as strAdminID,
             t3.strGroupID as strAdminGroupID,
 
-            t4.fBaccaratR AS fPAdminBaccaratR,
-            t4.fSlotR as fPAdminSlotR,
-            t4.fUnderOverR as fPAdminUnderOverR,
+            case when t4.iResetR = 1 then 0.0 ELSE t4.fBaccaratR END AS fPAdminBaccaratR,
+            case when t4.iResetR = 1 then 0.0 ELSE t4.fSlotR END AS fPAdminSlotR,
+            case when t4.iResetR = 1 then 0.0 ELSE t4.fUnderOverR END AS fPAdminUnderOverR, 
+            
             t4.fPBR as fPAdminPBR,
             t4.fPBSingleR as fPAdminPBSingleR,
             t4.fPBDoubleR as fPAdminPBDoubleR,
@@ -400,9 +410,10 @@ exports.CalculateOdds = async (strID, iClass) => {
             t4.strID as strPAdminID,
             t4.strGroupID as strPAdminGroupID,
 
-            t5.fBaccaratR AS fVAdminBaccaratR,
-            t5.fSlotR as fVAdminSlotR,
-            t5.fUnderOverR as fVAdminUnderOverR,
+            case when t5.iResetR = 1 then 0.0 ELSE t5.fBaccaratR END AS fVAdminBaccaratR,
+            case when t5.iResetR = 1 then 0.0 ELSE t5.fSlotR END AS fVAdminSlotR,
+            case when t5.iResetR = 1 then 0.0 ELSE t5.fUnderOverR  END AS fVAdminUnderOverR,
+            
             t5.fPBR as fVAdminPBR,
             t5.fPBSingleR as fVAdminPBSingleR,
             t5.fPBDoubleR as fVAdminPBDoubleR,
@@ -410,9 +421,10 @@ exports.CalculateOdds = async (strID, iClass) => {
             t5.strID as strVAdminID,
             t5.strGroupID as strVAdminGroupID,
 
-            t6.fBaccaratR AS fAgentBaccaratR,
-            t6.fSlotR as fAgentSlotR,
-            t6.fUnderOverR as fAgentUnderOverR,
+            case when t6.iResetR = 1 then 0.0 ELSE t6.fBaccaratR END AS fAgentBaccaratR,
+            case when t6.iResetR = 1 then 0.0 ELSE t6.fSlotR END AS fAgentSlotR,
+            case when t6.iResetR = 1 then 0.0 ELSE t6.fUnderOverR  END AS fAgentUnderOverR,
+            
             t6.fPBR as fAgentPBR,
             t6.fPBSingleR as fAgentPBSingleR,
             t6.fPBDoubleR as fAgentPBDoubleR,
@@ -420,9 +432,10 @@ exports.CalculateOdds = async (strID, iClass) => {
             t6.strID as strAgentID,
             t6.strGroupID as strAgentGroupID,
 
-            t7.fBaccaratR AS fShopBaccaratR,
-            t7.fSlotR as fShopSlotR,
-            t7.fUnderOverR as fShopUnderOverR,
+            case when t7.iResetR = 1 then 0.0 ELSE t7.fBaccaratR END AS fShopBaccaratR,
+            case when t7.iResetR = 1 then 0.0 ELSE t7.fSlotR END AS fShopSlotR,
+            case when t7.iResetR = 1 then 0.0 ELSE t7.fUnderOverR  END AS fShopUnderOverR,
+            
             t7.fPBR as fShopPBR,
             t7.fPBSingleR as fShopPBSingleR,
             t7.fPBDoubleR as fShopPBDoubleR,
@@ -430,9 +443,10 @@ exports.CalculateOdds = async (strID, iClass) => {
             t7.strID as strShopID,
             t7.strGroupID as strShopGroupID,
 
-            t8.fBaccaratR AS fUserBaccaratR,
-            t8.fSlotR as fUserSlotR,
-            t8.fUnderOverR as fUserUnderOverR,
+            case when t8.iResetR = 1 then 0.0 ELSE t8.fBaccaratR END AS fUserBaccaratR,
+            case when t8.iResetR = 1 then 0.0 ELSE t8.fSlotR END AS fUserSlotR,
+            case when t8.iResetR = 1 then 0.0 ELSE t8.fUnderOverR  END AS fUserUnderOverR,
+            
             t8.fPBR as fUserPBR,
             t8.fPBSingleR as fUserPBSingleR,
             t8.fPBDoubleR as fUserPBDoubleR,

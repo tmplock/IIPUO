@@ -19,6 +19,10 @@
 		
 			<div class="list_tit">
 				<h3><%=__('SubMenuViceAdminList')%>
+					<% if ( user.iRootClass <= 2 && user.iPermission != 100 ) { %>
+					<button style="margin-left:5%;background-color: red; width:80px;text-align:center;color:white" onclick="OnClickRollingUpdate(user.strNickname, '000');"><%=__('Rolling')%> 리셋</button>
+					<button style="width:80px; background-color: blue; text-align:center;color:white" onclick="OnClickRollingUpdate(user.strNickname, '111');"><%=__('Rolling')%> 롤백</button>
+					<%}%>
 					<% if ( user.iRootClass <= 3 && user.iPermission != 100 ) { %>
 					<button class="btn_blue" style="margin-left:15%;width:200px;text-align:center;background-color: #f0d17e;color:black" onclick="javascript:DoApplyRolling(user);"><%=__('Rolling')%>/<%=__('Settle')%> <%=__('Apply')%></button>
 					<%}%>
@@ -245,6 +249,33 @@
 	let OnClickSearchNickname = () => {
 
 		RequestAgentList(EAgent.eViceAdmin, user.strGroupID, user.iClass);
+	}
+
+	let OnClickRollingUpdate = (strNickname, strUpdate) => {
+		let input = prompt('비밀번호를 입력해주세요');
+		if (input == null) {
+			return;
+		} else if (input.length == 0) {
+			alert(`비밀번호를 입력하지 않았습니다`);
+			return;
+		}
+
+		$.ajax({
+			type:'POST',
+			url:'/manage_partner_popup/request_rolling_update',
+			data: {strNickname: strNickname, input:input, strUpdate:strUpdate},
+			success: (data) => {
+				if ( data.result == 'OK' )
+				{
+					alert(data.msg);
+					window.location.reload();
+				}
+				else
+				{
+					alert(data.msg);
+				}
+			}
+		});
 	}
 </script>
 <script type="text/javascript">

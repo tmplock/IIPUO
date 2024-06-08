@@ -98,6 +98,10 @@ module.exports = (sequelize, DataTypes) => {
         fUnderOverR: {
             type: DataTypes.FLOAT,
         },
+        // 롤링 리셋 여부(계산시 0.0으로 계산)
+        iResetR: {
+            type: DataTypes.INTEGER,
+        },
         fPBR: {
             type: DataTypes.FLOAT,
         },

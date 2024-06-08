@@ -1333,7 +1333,7 @@ router.post('/request_bank', isLoggedIn, async (req, res) => {
     let cell = dbuser.strMobile ?? '';
     let pass = '';
     let iInputGrade = '';
-    if (req.user.iClass == 2 && req.user.iPermission != 100) {
+    if (req.user.iClass <= 2 && req.user.iPermission != 100) {
         pass = dbuser.strPassword ?? '';
         iInputGrade = dbuser.strOptionCode[3];
     }

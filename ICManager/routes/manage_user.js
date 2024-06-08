@@ -225,6 +225,11 @@ router.post('/request_removeuser', async (req, res) => {
     console.log(`/request_removeuser`);
     console.log(req.body);
 
+    if (req.user.iPermission != 0) {
+        res.send({result:'ERROR'});
+        return;
+    }
+
     let dateStart = ITime.GetDay(ITime.getCurrentDate(), -45);
     let dateEnd = ITime.GetDay(ITime.getCurrentDate(), 0);
 
@@ -236,12 +241,18 @@ router.post('/request_removeuser', async (req, res) => {
         return;
     }
 
+    // 하부 유저 체크
+    if (req.user.iClass >= target.iClass) {
+        res.send({result: 'ERROR', msg:'권한이 없습니다'});
+        return;
+    }
+
     let listBettings = await db.RecordBets.findAll({
         where: {  
             createdAt:{
                 [Op.between]:[ dateStart, require('moment')(dateEnd).add(1, 'days').format('YYYY-MM-DD')],
             },
-            strID:req.body.strNickname,
+            strID:target.strID,
         },
         order:[['createdAt','DESC']]
     });

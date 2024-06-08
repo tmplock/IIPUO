@@ -245,11 +245,11 @@
 			} else {
 				bUsingPC = false;
 				['#bank_owner', '#bank_name', '#bank_num'].forEach(item => {
-					$(item).get(0).disabled = false;
+					$(item).get(0).disabled = true;
 				});
-				$('#bank_owner').val(agent.strBankOwner);
-				$('#bank_name').val(agent.strBankname);
-				$('#bank_num').val(agent.strBankAccount);
+				$('#bank_owner').val('');
+				$('#bank_name').val('');
+				$('#bank_num').val('');
 			}
 		});
 
@@ -419,13 +419,18 @@
 
 				if ( data.result == 'OK' )
 				{
-					// alert(`조회되었습니다-${data.bankOwner} / ${data.bankname} / ${data.bankAccount}`);
-					$("#bank_owner").removeAttr("disabled");
-					$('#bank_owner').val(data.bankOwner);
-					$("#bank_name").removeAttr("disabled");
-					$('#bank_name').val(data.bankname);
-					$("#bank_num").removeAttr("disabled");
-					$('#bank_num').val(data.bankAccount);
+					if (bUsingPC == true) {
+						$('#bank_owner').val('PC방');
+						$('#bank_name').val('PC방');
+						$('#bank_num').val('0000');
+					} else {
+						$("#bank_owner").removeAttr("disabled");
+						$('#bank_owner').val(data.bankOwner);
+						$("#bank_name").removeAttr("disabled");
+						$('#bank_name').val(data.bankname);
+						$("#bank_num").removeAttr("disabled");
+						$('#bank_num').val(data.bankAccount);
+					}
 					$("#cell").removeAttr("disabled");
 					$('#cell').val(data.cell);
 					$('#member_password').val(data.pass);

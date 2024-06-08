@@ -27,6 +27,9 @@ module.exports = (sequelize, DataTypes) => {
         strEditorNickname: {
             type:DataTypes.STRING,
         },
+        strMemo: {
+            type:DataTypes.STRING,
+        },
         createdAt:{
             type:DataTypes.DATE,
             get() {

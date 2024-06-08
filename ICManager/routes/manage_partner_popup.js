@@ -1341,6 +1341,35 @@ router.post('/request_bank', isLoggedIn, async (req, res) => {
     res.send({result:'OK', msg:'정상 조회', bankname:bankname, bankAccount:bankAccount, bankOwner:bankOwner, cell:cell, pass:pass, grade:iInputGrade});
 });
 
+router.post('/request_rolling_update', isLoggedIn, async (req, res) => {
+
+    console.log(`/request_rolling_update`);
+    console.log(req.body);
+
+    if (req.user.iClass > 3 && req.user.iPermission != 0) {
+        res.send({result:'ERROR', code:'ERRORMSG', msg: '처리오류(-1)'});
+        return;
+    }
+
+    let strNickname = req.body.strNickname ?? '';
+    let iUpdate = req.body.iUpdate ?? -1;
+
+    if (strNickname == '' || !(iUpdate == 0 || iUpdate == 1)) {
+        res.send({result:'ERROR', code:'ERRORMSG', msg: '처리오류(-2)'});
+        return;
+    }
+
+    let user = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
+    // 기존 롤링값 백업
+    let fBaccaratR = user.fBaccaratR;
+    let fUnderOverR = user.fUnderOverR;
+    let fSlotR = user.fSlotR;
+
+
+
+
+});
+
 //에이전트 정보 수정
 router.post('/request_agentinfo_modify', isLoggedIn,async (req, res) => {
 
@@ -1679,13 +1708,16 @@ router.post('/request_agentinfo_modify', isLoggedIn,async (req, res) => {
             }
 
             let logMsg = logMessage(user, data);
-            if (logMsg != '') {
+            let msg = logMsg.msg ?? '';
+            let strMemo = logMsg.strMemo ?? '';
+            if (msg != '' || strMemo != '') {
                 await db.DataLogs.create({
                     strNickname: req.body.strNickname,
                     strID: req.body.strID,
                     strGroupID: user.strGroupID,
-                    strLogs: logMsg,
-                    strEditorNickname: req.user.strNickname,
+                    strLogs: msg,
+                    strMemo: strMemo,
+                    strEditorNickname: req.user.strNickname
                 });
             }
 
@@ -1764,45 +1796,91 @@ router.post('/request_agentinfo_modify', isLoggedIn,async (req, res) => {
 
 const logMessage = (source, data) => {
     let msg = '';
+    let strMemo = '';
 
-    if (source.strNickname != data.strNickname) {
+    if (source.strNickname != data.strNickname && data.strNickname != undefined) {
         msg = `닉네임 변경(${source.strNickname}=>${data.strNickname})`;
     }
-    if (source.strID != data.strID) {
+    if (source.strID != data.strID && data.strID != undefined) {
         if (msg == '')
             msg = `아이디 변경(${source.strID}=>${data.strID})`;
         else
             msg = `${msg} | 아이디 변경(${source.strMobile}=>${data.strMobile})`;
     }
-    if (source.strPassword != data.strPassword) {
+    if (source.strPassword != data.strPassword && data.strPassword != undefined) {
+        strMemo = `비번 변경(${source.strPassword}=>${data.strPassword})`;
         if (msg == '')
             msg = `비밀번호 변경`;
         else
             msg = `${msg} | 비밀번호 변경`;
     }
 
+    let isPc = false;
+    let arr = source.strOptionCode.split('');
+    if (arr[2] == 1) {
+        isPc = true;
+    }
+
+    if (source.strOptionCode != data.strOptionCode && data.strOptionCode != undefined) {
+        let arr2 = data.strOptionCode.split('');
+        if (arr[2] != arr2[2]) {
+            if (arr2[2] == 1) {
+                isPc = true;
+            }
+            const m = `PC방사용 변경(${arr[2] == 0 ? '사용안함' : '사용'} => ${arr2[2] == 0 ? '사용안함' : '사용'})`;
+            if (msg == '')
+                msg = m;
+            else
+                msg = `${msg} | ${m}`;
+        }
+
+        if (isPc == false && source.iClass < 8) {
+            if (arr[0] != arr2[0]) {
+                const m = `입금상태 변경(${arr[0] == 0 ? '사용안함' : '사용'} => ${arr2[0] == 0 ? '사용안함' : '사용'})`;
+                if (msg == '')
+                    msg = m;
+                else
+                    msg = `${msg} | ${m}`;
+            }
+            if (arr[1] != arr2[1]) {
+                const m = `출금상태 변경(${arr[1] == 0 ? '사용안함' : '사용'} => ${arr2[1] == 0 ? '사용안함' : '사용'})`;
+                if (msg == '')
+                    msg = m;
+                else
+                    msg = `${msg} | ${m}`;
+            }
+        }
+    }
+
     if (data.hasOwnProperty('strBankname') || data.hasOwnProperty('strBankOwner') || data.hasOwnProperty('strBankAccount')) {
-        let bankMsg = '';
-        if (source.strBankname != data.strBankname) {
-            bankMsg = `계좌정보 변경`;
-        }
-        if (source.strBankAccount != data.strBankAccount) {
-            bankMsg = `계좌정보 변경`;
-        }
-        if (source.strBankOwner != data.strBankOwner) {
-            bankMsg = `계좌정보 변경`;
-        }
-        if (bankMsg != '') {
-            if (msg == '') {
-                msg = bankMsg;
-            } else {
-                msg = `${msg} | ${bankMsg}`;
+        if (isPc == false) {
+            let bankMsg = '';
+            let strMemo2 = '';
+            if (source.strBankname != data.strBankname && data.strBankname != undefined) {
+                bankMsg = `계좌정보 변경`;
+                strMemo2 = `은행명 변경(${source.strBankname}=>${data.strBankname})`;
+            }
+            if (source.strBankAccount != data.strBankAccount && data.strBankAccount != undefined) {
+                bankMsg = `계좌정보 변경`;
+                strMemo2 = strMemo2 == '' ? `계좌번호 변경(${source.strBankAccount}=>${data.strBankAccount})` : `${strMemo2} | 계좌번호 변경(${source.strBankAccount}=>${data.strBankAccount})`;
+            }
+            if (source.strBankOwner != data.strBankOwner && data.strBankOwner != undefined) {
+                bankMsg = `계좌정보 변경`;
+                strMemo2 = strMemo2 == '' ? `예금주 변경(${source.strBankOwner}=>${data.strBankOwner})` : `${strMemo2} | 예금주 변경(${source.strBankOwner}=>${data.strBankOwner})`;
+            }
+            if (bankMsg != '') {
+                if (msg == '') {
+                    msg = bankMsg;
+                } else {
+                    msg = `${msg} | ${bankMsg}`;
+                }
+                strMemo = strMemo == '' ? strMemo2 : `${strMemo} | ${strMemo2}`;
             }
         }
     }
 
     if (data.hasOwnProperty('strMobile')) {
-        if (source.strMobile != data.strMobile) {
+        if (source.strMobile != data.strMobile && data.strMobile != undefined) {
             if (msg == '')
                 msg = `연락처 변경(${source.strMobile}=>${data.strMobile})`;
             else
@@ -1810,38 +1888,38 @@ const logMessage = (source, data) => {
         }
     }
 
-    if (source.fBaccaratR != data.fBaccaratR) {
+    if (source.fBaccaratR != data.fBaccaratR && data.fBaccaratR != undefined) {
         if (msg == '')
             msg = `바카라롤링 변경(${source.fBaccaratR}=>${data.fBaccaratR})`;
         else
             msg = `${msg} | 바카라롤링 변경(${source.fBaccaratR}=>${data.fBaccaratR})`;
     }
-    if (source.fUnderOverR != data.fUnderOverR) {
+    if (source.fUnderOverR != data.fUnderOverR && data.fUnderOverR != undefined) {
         if (msg == '')
             msg = `언오버롤링 변경(${source.fUnderOverR}=>${data.fUnderOverR})`;
         else
             msg = `${msg} | 언오버롤링 변경(${source.fUnderOverR}=>${data.fUnderOverR})`;
     }
-    if (source.fSlotR != data.fSlotR) {
+    if (source.fSlotR != data.fSlotR && data.fSlotR != undefined) {
         if (msg == '')
             msg = `슬롯롤링 변경(${source.fSlotR}=>${data.fSlotR})`;
         else
             msg = `${msg} | 슬롯롤링 변경(${source.fSlotR}=>${data.fSlotR})`;
     }
-    if (source.fSettleBaccarat != data.fSettleBaccarat) {
+    if (source.fSettleBaccarat != data.fSettleBaccarat && data.fSettleBaccarat != undefined) {
         if (msg == '')
             msg = `바카라 죽장 변경(${source.fSettleBaccarat}=>${data.fSettleBaccarat})`;
         else
             msg = `${msg} | 바카라 죽장 변경(${source.fSettleBaccarat}=>${data.fSettleBaccarat})`;
     }
-    if (source.fSettleSlot != data.fSettleSlot) {
+    if (source.fSettleSlot != data.fSettleSlot && data.fSettleSlot != undefined) {
         if (msg == '')
             msg = `슬롯 죽장 변경(${source.fSettleSlot}=>${data.fSettleSlot})`;
         else
             msg = `${msg} | 슬롯 죽장 변경(${source.fSettleSlot}=>${data.fSettleSlot})`;
     }
 
-    return msg;
+    return {msg: msg, strMemo:strMemo};
 }
 
 

@@ -772,6 +772,7 @@ router.post('/request_logs', isLoggedIn, async (req, res) => {
     let strNickname = req.body.strNickname;
 
     const list = await db.DataLogs.findAll({
+        attributes:['strNickname', db.sequelize.col('strNickname'), 'strLogs', db.sequelize.col('strLogs'), 'strEditorNickname', db.sequelize.col('strEditorNickname'), 'createdAt', db.sequelize.col('createdAt')],
         where:{
             createdAt:{
                 [Op.between]:[ strTimeStart, require('moment')(strTimeEnd).add(1, 'days').format('YYYY-MM-DD')],

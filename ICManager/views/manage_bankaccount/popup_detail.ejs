@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="format-detection" content="telephone=no">
+	<meta name="Keywords" content="">
+	<meta name="Description" content="">
+	<title>::: Bank Account Details</title>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	<script type="text/javascript" src="../../js/jquery.bxslider.min.js"></script>
+	<script type="text/javascript" src="../../js/placeholders.js"></script>
+	<script type="text/javascript" src="../../js/layout.js"></script>
+	<script type="text/javascript" src="../../js/common_js.js"></script>
+	<link rel="stylesheet" type="text/css" href="../../css/general.css"/>
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css" type="text/css" /> 
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>  
+	<script src="https://code.jquery.com/ui/1.8.18/jquery-ui.min.js"></script>  
+	<link href='//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css' rel='stylesheet' type='text/css'>
+</head>
+
+<body style="font-family:'Spoqa Han Sans Neo';">
+	<div class="content" style="position:relative; padding:0 10px 0 10px;">
+
+		<div class="list">
+
+            <div class="list_tit">
+                <h3><%=dateStart%> ~ <%=dateEnd%> 일자 <strong> 상세 조회 </strong>
+                </h3>
+            </div>
+
+            <div class='list'>
+                <div class="search_wrap">
+                    <table class="search_list">
+                        <caption><%=__('SearchResult')%></caption>
+                        <colgroup>
+                            <col style="width:3%;">
+                            <col style="width:5%;">
+                            <col style="width:7%;">
+                            <col style="width:7%;">
+                            <col style="width:7%;">
+                            <col style="width:7%;">
+                            <col style="width:5%;">
+                            <col style="width:5%;">
+                            <col style="width:5%;">
+                            <col style="width:15%;">
+                        </colgroup>
+                        <thead>
+                        <tr>
+                            <th scope="col">번호</th>
+                            <th scope="col">대본사</th>
+                            <th scope="col">부본사</th>
+                            <th scope="col">총판</th>
+                            <th scope="col">매장</th>
+                            <th scope="col">회원</th>
+                            <th scope="col">타입</th>
+                            <th scope="col">상태</th>
+                            <th scope="col">소요시간 (분)</th>
+							<th scope="col">일자</th>
+                        </tr>
+                        </thead>
+                        <tbody id="list_badetail">
+                        </tbody>
+                    </table>
+                    <div class="pagination mt0" id="pagination">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+	</div>
+
+	<script type="text/javascript" src="js/pagination.js"></script>
+	<script type="text/javascript">
+
+		let list = JSON.parse('<%-JSON.stringify(list)%>');
+		console.log(list);
+
+		$('#list_badetail').empty();
+		for ( let i in list )
+		{
+			let strTypeColor = 'black';
+			let strStateColor = 'black';
+			let eState = '';
+			let iTime = '';
+			let eType = '계좌 조회';
+			if ( list[i].eType == 'INPUT' )
+			{
+				if ( list[i].eState == 'VALID' )
+				{
+					eState = '시간내 입금';
+					strStateColor = 'blue';
+				}					
+				else if ( list[i].eState == 'INVALID' )
+				{
+					eState = '시간 초과 입금';
+					strStateColor = 'orange';
+				}					
+				else
+				{
+					eState = '조회 없이 입금';
+					strStateColor = 'red';
+				}					
+
+				iTime = list[i].iAllowedTime;
+				eType = '입금';
+				strTypeColor = 'red';
+			}
+
+			let tag = 
+			`
+			<tr>
+				<td scope="col">${parseInt(i)+1}</td>
+				<td scope="col">${list[i].strPAdminNickname}</td>
+				<td scope="col">${list[i].strVAdminNickname}</td>
+				<td scope="col">${list[i].strAgentNickname}</td>
+				<td scope="col">${list[i].strShopNickname}</td>
+				<td scope="col">${list[i].strNickname}</td>
+				<td scope="col" style='color:${strTypeColor}'>${eType}</td>
+				<td scope="col" style='color:${strStateColor}'>${eState}</td>
+				<td scope="col">${iTime}</td>
+				<td scope="col">${list[i].createdAt}</td>
+			</tr>
+			`;
+
+			$('#list_badetail').append(tag);
+		}
+		
+	</script>
+</body>
+</html>

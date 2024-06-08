@@ -9,7 +9,7 @@
             <input style="margin-left:180px;width:100px;height:18px;" type="text" id="datepicker1" class="datepicker"/>~
             <input style="width:100px;height:18px;" type="text" id="datepicker2" class="datepicker" />
 
-            <button class="btn_blue" id="button_toggle_record" style="width:100px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickRecord(false);"><%=__('Search')%></button>
+            <button class="btn_blue" id="button_toggle_record" style="width:100px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="RequestPartnerSelection();"><%=__('Search')%></button>
 
             <%=__('Search')%>
             <select id="select_roomno" style="width:80px;">
@@ -27,7 +27,14 @@
         <div class="list">
 
             <div class="list_tit">
-                <h3>파트너 목록
+                <h3>파트너 목록&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button class="btn_blue" id="bap_partner" style="width:100px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnRequestPartner(4);">대본사</button>
+                    <button class="btn_blue" id="bap_partner" style="width:100px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnRequestPartner(5);">부본사</button>
+                    <button class="btn_blue" id="bap_partner" style="width:100px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnRequestPartner(6);">총판</button>
+                    <button class="btn_blue" id="bap_partner" style="width:100px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnRequestPartner(7);">매장</button>
+                    <button class="btn_blue" id="bap_partner" style="width:100px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnRequestPartner(8);">회원</button>
+
+                    <button class="btn_blue" style="margin-top:15px;float:right;width:150px;text-align:center;background-color: rgb(214, 180, 29);color:white" onclick="SaveAccountGrade();">계좌등급 저장</button>
                 </h3>
             </div>
 
@@ -48,28 +55,24 @@
                             <col style="width:7%;">
                             <col style="width:7%;">
                             <col style="width:7%;">
-                            <col style="width:10%;">
-                            <col style="width:10%;">
-                            <col style="width:7%;">
                         </colgroup>
                         <thead>
                         <tr>
                             <th scope="col">번호</th>
-                            <th scope="col">벤더</th>
-                            <th scope="col">테이블</th>
-                            <th scope="col"><%=__('Round')%></th>
-                            <th scope="col"><%=__('Nickname')%></th>
-                            <th scope="col"><%=__('BettingOriginCash')%></th>
-                            <th scope="col" colspan="3"><%=__('BettingAccount')%></th>
-                            <th scope="col">베팅후 금액</th>
-                            <th scope="col">당첨 금액</th>
-                            <th scope="col">당첨후 금액</th>
-                            <th scope="col"><%=__('BettingTime')%></th>
-                            <th scope="col">당첨 결과</th>
-                            <th scope="col">비고</th>
+                            <th scope="col">계좌 등급</th>
+                            <th scope="col">대본사</th>
+                            <th scope="col">부본사</th>
+                            <th scope="col">총판</th>
+                            <th scope="col">매장</th>
+                            <th scope="col">대상</th>
+                            <th scope="col">계좌문의 횟수</th>
+                            <th scope="col">유효 입금 횟수</th>
+                            <th scope="col">무효 입금 횟수</th>
+                            <th scope="col">무조회 입금횟수</th>
+                            <th scope="col">상세보기</th>
                         </tr>
                         </thead>
-                        <tbody id="betting_list">
+                        <tbody id="list_bapartner">
                         </tbody>
                     </table>
                     <div class="pagination mt0" id="pagination">
@@ -93,6 +96,8 @@
 
     let user = JSON.parse('<%-JSON.stringify(user)%>');
     let iocount = JSON.parse('<%-JSON.stringify(iocount)%>');
+     
+    let iCurrentClass = 4;
 
     var i18nTexts = {
         Search: "<%=__('Search')%>",
@@ -129,98 +134,167 @@
         Alert(iocount, "<%=__('RequestInput')%>", "<%=__('RequestOutput')%>","<%=__('LetterSend')%>");
     });
 
-    let OnClickTodayRecord = () => {
-
-        bClickDateSelection	= true;
-
-        startDate = GetCurrentDate();
-		endDate = GetCurrentDate();
-
-		$('#datepicker1').val(startDate);
-		$('#datepicker2').val(endDate);
-
-        bToggleRecord = true;
-        $("#button_toggle_record").text("<%=__('Close')%>");
-        // RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
-        // RequestOverview(cTClass, user.strGroupID, user.iClass, user.iPermission, user.strNickname, user.strID);
-    }
-
-    function OnClickRecord()
-    {
-        bToggleRecord = !bToggleRecord;
-
-        if ( bToggleRecord ) {
-            $("#table_record_list").show();
-            $("#button_toggle_record").text("<%=__('Close')%>");
-
-            if ( false == bClickDateSelection )
-            {
-                startDate = GetMonthlyStartDate();
-                endDate = GetMonthlyEndDate();
-                $('#datepicker1').val(startDate);
-                $('#datepicker2').val(endDate);
-            }
-            // RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
-            // RequestOverview(cTClass, user.strGroupID, user.iClass, user.iPermission, user.strNickname, user.strID);
-        }
-        else {
-            $("#table_record_list").hide();
-            $("#button_toggle_record").text(strOpen);
-        }
-    }
-
-    let OnClickMonthly1stRecord = () => {
-
-        bClickDateSelection	= true;
-
-        startDate = GetMonthly1stStartDate();
-		endDate = GetMonthly1stEndDate();
-		$('#datepicker1').val(startDate);
-		$('#datepicker2').val(endDate);
-
-        bToggleRecord = true;
-        $("#button_toggle_record").text("<%=__('Close')%>");
-
-        // RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
-        // RequestOverview(user.iClass, user.strGroupID, user.iClass, user.iPermission, user.strNickname, user.strID);
-    }
-
-    let OnClickMonthly2ndRecord = () => {
-        bClickDateSelection	= true;
-
-        startDate = GetMonthly2ndStartDate();
-		endDate = GetMonthly2ndEndDate();
-		$('#datepicker1').val(startDate);
-		$('#datepicker2').val(endDate);
-
-        bToggleRecord = true;
-        $("#button_toggle_record").text("<%=__('Close')%>");
-        // RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
-        // RequestOverview(user.iClass, user.strGroupID, user.iClass, user.iPermission, user.strNickname, user.strID);
-    }
-
-    let OnClickDayPeriod = (startDay) => {
-		startDate = GetDateStart(startDate, startDay);
-		endDate = GetDateEnd(endDate, startDay+4);
-
-		$('#datepicker1').val(startDate);
-		$('#datepicker2').val(endDate);
-
-        // RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
-        // RequestOverview(user.iClass, user.strGroupID, user.iClass, user.iPermission, user.strNickname, user.strID);
-	}
-
-    let OnClickSearch = (iTargetClass, strGroupID, iClass) => {
-
-        bToggleRecord = true;
-        $("#button_toggle_record").text("<%=__('Close')%>");
-
-        // RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
-        // RequestOverview(user.iClass, user.strGroupID, user.iClass, user.iPermission, user.strNickname, user.strID);
-    }
-
     let OnClickSearchNickname = () => {
         // RequestUserList(user.iClass, user.strGroupID, user.iClass);
+    }
+
+    let RequestPartnerSelection = () => {
+
+        OnRequestPartner(iCurrentClass);
+    }
+
+    let OnRequestPartner = (iClass) => {
+
+        iCurrentClass = iClass;
+
+        const dateStart = $('#datepicker1').val();
+        const dateEnd = $('#datepicker2').val();
+
+        $.ajax({
+			type:'post',
+			url: "/manage_bankaccount/request_partner",
+			context: document.body,
+			data:{
+                strGroupID:user.strGroupID,
+				iClass:iClass,
+                dateStart:dateStart,
+                dateEnd:dateEnd,
+			},
+			success: (data) => {
+
+                if ( data.result == 'OK' )
+                {
+                    $('#list_bapartner').empty();
+                    for ( let i in data.list )
+                    {
+                        const aObject = data.list[i];
+                        let strAccountGrade = data.list[i].strOptionCode[3];
+
+                        let tag = `
+                        <tr>
+                            <td>${parseInt(i)+1}</td>
+                            <td><input id="bankaccount_grade" strID='${aObject.strID}' strOptionCode='${aObject.strOptionCode}' style='width:70%;' value="${strAccountGrade}"></td>
+                            <td>${data.list[i].strPAdminNickname}</td>
+                            <td>${data.list[i].strVAdminNickname}</td>
+                            <td>${data.list[i].strAgentNickname}</td>
+                            <td>${data.list[i].strShopNickname}</td>
+
+                            <td>
+                                <a href="javascript:RequestPartnerInfo('${aObject.strNickname}', '${aObject.strGroupID}', '${aObject.iClass}', '${aObject.iPermission}', '${aObject.strNickname}');"  style="color:blue;">${aObject.strNickname}</a>
+                            </td>
+
+                            <td>${data.list[i].iNumRequest}</td>
+                            <td>${data.list[i].iNumValidInput}</td>
+                            <td>${data.list[i].iNumInvalidInput}</td>
+                            <td>${data.list[i].iNumStandbyInput}</td>
+                            <td><button class="btn_blue" style="width:50px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnPopupDetail('${data.list[i].strID}');">상세</button></td>
+                        </tr>`;
+
+                        //<td>${data.list[i].strNickname}</td>
+
+                        $('#list_bapartner').append(tag);
+                    }
+                }
+			},
+		});
+    }
+
+    $(document).on('click', '#bap_partner', (e) => {
+
+        $('button[id="bap_partner"]').each( (index, element) => {
+
+            $(element).css('background-color', 'rgb(74, 141, 68)');
+
+        });
+        //$('#bap_partner')
+
+        $(e.currentTarget).css('background-color', 'red');
+
+    });
+
+    let OnPopupDetail = (strID) => {
+
+        window.open('', 'popupDetail', 'width=1280, height=720, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
+
+        var $form = $('<form></form>');
+        $form.attr('action', '/manage_bankaccount/detail');
+        $form.attr('method', 'post');
+        $form.attr('target', 'popupDetail');
+        $form.appendTo('body');
+
+        const dateStart = $('#datepicker1').val();
+        const dateEnd = $('#datepicker2').val();
+
+        var idx = $(`<input type="hidden" value="${strID}" name="strID">`);
+        var page = $(`<input type="hidden" value="${dateStart}" name="dateStart">`);
+        var category = $(`<input type="hidden" value=${dateEnd} name="dateEnd">`);
+
+        $form.append(idx).append(page).append(category);
+
+        $form.submit();
+    }
+
+    let SaveAccountGrade = () => {
+
+        //let list = [];
+        let str = '';
+
+        let bFoundError = false;
+
+        $('input[id="bankaccount_grade"]').each( (index, e) => {
+
+            const strID = $(e).attr('strID');
+            let strOptionCode = $(e).attr('strOptionCode');
+            const cGrade = $(e).val();
+
+            if ( parseInt(cGrade) >= 0 && parseInt(cGrade) <= 9 )
+            {
+                console.log(`${index} + strID : ${strID}`);
+
+                let array = strOptionCode.split('');
+                array[3] = cGrade;
+                strOptionCode = array.join('');
+            
+                //list.push({strID:strID, strOptionCode:strOptionCode});
+                str += `${strID}:${strOptionCode},`;
+            }
+            else
+            {
+                bFoundError = true;
+                return;
+            }
+        });
+
+        if ( bFoundError == true )
+        {
+            alert('계좌 등급은 0 부터 9까지 입니다.');
+            return;
+        }
+
+        if ( str.length <= 0 )
+            return;
+
+        str = str.substring(0, str.length-1);
+
+        console.log(str);
+
+        if ( confirm('계좌 등급을 업데이트 하시겠습니까?'))
+        {
+            $.ajax({
+                type:'post',
+                url: "/manage_bankaccount/request_updategrade",
+                context: document.body,
+                data:{data:str},
+                success: (data) => {
+
+                    if ( data.result == 'OK' )
+                    {
+                        alert('계좌 등급이 업데이트 되었습니다.');
+                    }
+                },
+            });
+        }
+
     }
 
 </script>

@@ -731,7 +731,62 @@ router.post('/request_settle_all', isLoggedIn, async(req, res) => {
 /**
  * 죽장 목록(미리 계산하기)
  */
-router.post('/request_settle_all3', isLoggedIn, async(req, res) => {
+// router.post('/request_settle_all3', isLoggedIn, async(req, res) => {
+//
+//     console.log(req.body);
+//
+//     let iLimit = parseInt(req.body.iLimit);
+//     let iPage = parseInt(req.body.iPage);
+//     let iOffset = (iPage-1) * iLimit;
+//
+//     let strSubQuater = req.body.strSubQuater ?? '';
+//     let iSettleDays = req.body.iSettleDays ?? -1;
+//     let iSettleType = req.body.iSettleType ?? -1;
+//     let lastDate = IAgentSettle.GetSubQuaterEndDate(iSettleDays, strSubQuater);
+//
+//     // 입력값 체크
+//     if (strSubQuater == '' || iSettleDays == -1 || iSettleType == -1 || lastDate == '') {
+//         res.send({result:'FAIL', list:[], iRootClass: req.user.iClass, exist: [], msg: '조회실패(-1)', totalCount: 0});
+//         return;
+//     }
+//
+//     // strQuater
+//     let start = req.body.dateStart ?? '';
+//     let end = req.body.dateEnd ?? '';
+//     // 값이 없으면 현재 시간을 기준으로 설정
+//     if (start == '' || end == '') {
+//         res.send({result:'FAIL', list:[], iRootClass: req.user.iClass, exist: [], msg: '조회기간 오류(-1)', totalCount: 0});
+//         return;
+//     }
+//
+//     // let exist = await db.SettleRecords.findAll({where:{
+//     //         strQuater:req.body.strQuater,
+//     //         strSubQuater: strSubQuater,
+//     //         iSettleDays: iSettleDays,
+//     //         iSettleType: iSettleType,
+//     //         iClass:req.body.iClass,
+//     //         strGroupID:{[Op.like]:req.body.strGroupID+'%'},
+//     //     }, order: [['createdAt', 'DESC']]
+//     // });
+//     let strSubQuater2 = IAgentSettle.GetSubQuaterBefore(iSettleDays, strSubQuater);
+//
+//     let list = await IAgentSettle.GetSettleList(req.body.strGroupID, req.body.strQuater, req.body.dateStart, req.body.dateEnd, req.body.iClass, iOffset, iLimit, lastDate, strSubQuater, strSubQuater2, iSettleDays, iSettleType);
+//
+//     let existList = await IAgentSettle.GetSettleExistList(req.body.strGroupID, req.body.iClass, req.body.strQuater, req.body.dateStart, req.body.dateEnd, lastDate, strSubQuater, strSubQuater2, iSettleDays, iSettleType);
+//
+//     const targetUserCount = await IAgentSettle.GetSettleTargetUserCount3(strSubQuater, req.body.iClass, req.body.strGroupID, iSettleDays, iSettleType);
+//
+//     if ( existList.length > 0 && targetUserCount == existList.length )
+//     {
+//         res.send({result:'EXIST', list:list, iRootClass: req.user.iClass, exist: existList, msg: '정상조회', totalCount: targetUserCount});
+//     }
+//     else
+//     {
+//         res.send({result:'OK', list:list, iRootClass: req.user.iClass, exist: existList, msg: '정상조회', totalCount: targetUserCount});
+//     }
+// });
+
+router.post('/request_settle_list', isLoggedIn, async(req, res) => {
 
     console.log(req.body);
 
@@ -746,32 +801,48 @@ router.post('/request_settle_all3', isLoggedIn, async(req, res) => {
 
     // 입력값 체크
     if (strSubQuater == '' || iSettleDays == -1 || iSettleType == -1 || lastDate == '') {
-        res.send({result:'EXIST', list:[], iRootClass: req.user.iClass, exist: [], msg: '조회실패(-1)', totalCount: 0});
+        res.send({result:'FAIL', list:[], iRootClass: req.user.iClass, exist: [], msg: '조회실패(-1)', totalCount: 0});
+        return;
+    }
+    let start = req.body.dateStart ?? '';
+    let end = req.body.dateEnd ?? '';
+    if (start == '' || end == '') {
+        res.send({result:'FAIL', list:[], iRootClass: req.user.iClass, exist: [], msg: '조회기간 오류(-1)', totalCount: 0});
         return;
     }
 
-    let exist = await db.SettleRecords.findAll({where:{
-            strQuater:req.body.strQuater,
-            strSubQuater: strSubQuater,
-            iSettleDays: iSettleDays,
-            iSettleType: iSettleType,
-            iClass:req.body.iClass,
-            strGroupID:{[Op.like]:req.body.strGroupID+'%'},
-        }, order: [['createdAt', 'DESC']]
-    });
+    let strSubQuater2 = IAgentSettle.GetSubQuaterBefore(iSettleDays, strSubQuater);
+    let list = await IAgentSettle.GetSettleList(req.body.strGroupID, req.body.strQuater, req.body.dateStart, req.body.dateEnd, req.body.iClass, iOffset, iLimit, lastDate, strSubQuater, strSubQuater2, iSettleDays, iSettleType);
+    res.send({result:'OK', list:list, iRootClass: req.user.iClass, msg: '정상조회'});
+});
 
-    let list = await GetSettleAll3(req.body.strGroupID, req.body.strQuater, req.body.dateStart, req.body.dateEnd, req.body.iClass, iOffset, iLimit, lastDate, strSubQuater, iSettleDays, iSettleType);
+router.post('/request_settle_exist', isLoggedIn, async(req, res) => {
 
-    const targetUserCount = await IAgentSettle.GetSettleTargetUserCount3(strSubQuater, req.body.iClass, req.body.strGroupID, iSettleDays, iSettleType);
+    console.log(req.body);
 
-    if ( exist.length > 0 && targetUserCount == exist.length )
-    {
-        res.send({result:'EXIST', list:list, iRootClass: req.user.iClass, exist: exist, msg: '정상조회', totalCount: targetUserCount});
+    let iLimit = parseInt(req.body.iLimit);
+    let iPage = parseInt(req.body.iPage);
+    let iOffset = (iPage-1) * iLimit;
+
+    let strSubQuater = req.body.strSubQuater ?? '';
+    let iSettleDays = req.body.iSettleDays ?? -1;
+    let iSettleType = req.body.iSettleType ?? -1;
+    let lastDate = IAgentSettle.GetSubQuaterEndDate(iSettleDays, strSubQuater);
+    // 입력값 체크
+    if (strSubQuater == '' || iSettleDays == -1 || iSettleType == -1 || lastDate == '') {
+        res.send({result:'FAIL', list:[], iRootClass: req.user.iClass, exist: [], msg: '조회실패(-1)', totalCount: 0});
+        return;
     }
-    else
-    {
-        res.send({result:'OK', list:list, iRootClass: req.user.iClass, exist: exist, msg: '정상조회', totalCount: targetUserCount});
+    let start = req.body.dateStart ?? '';
+    let end = req.body.dateEnd ?? '';
+    if (start == '' || end == '') {
+        res.send({result:'FAIL', list:[], iRootClass: req.user.iClass, exist: [], msg: '조회기간 오류(-1)', totalCount: 0});
+        return;
     }
+
+    let strSubQuater2 = IAgentSettle.GetSubQuaterBefore(iSettleDays, strSubQuater);
+    let list = await IAgentSettle.GetSettleExistList(req.body.strGroupID, req.body.iClass, req.body.strQuater, req.body.dateStart, req.body.dateEnd, lastDate, strSubQuater, strSubQuater2, iSettleDays, iSettleType, iLimit, iOffset);
+    res.send({result:'OK', list:list, iRootClass: req.user.iClass, msg: '정상조회'});
 });
 
 
@@ -810,43 +881,6 @@ let GetSettleAll2 = async (strGroupID, strQuater, dateStart, dateEnd, iClass, iO
         list.push(obj);
     }
     return list;
-}
-
-let GetSettleAll3 = async (strGroupID, strQuater, dateStart, dateEnd, iClass, iOffset, iLimit, lastDate, strSubQuater, iSettleDays, iSettleType) => {
-    // strQuater
-    let start = dateStart ?? '';
-    let end = dateEnd ?? '';
-
-    // 값이 없으면 현재 시간을 기준으로 설정
-    if (start == '' || end == '') {
-        return [];
-    }
-
-    let strSubQuater2 = IAgentSettle.GetSubQuaterBefore(iSettleDays, strSubQuater);
-
-    let newList = [];
-    // 해당 조건 파트너 목록
-    if (iClass == 5) {
-        let list = await IAgentSettle.GetSettleClass5(strGroupID, strQuater, start, end, iOffset, iLimit, lastDate, strSubQuater, strSubQuater2, iSettleDays, iSettleType);
-        // 죽장 계산하기
-        for (let i in list) {
-            let obj = list[i];
-
-        }
-    }
-
-    // let existList = await IAgentSettle.GetSettleExist3(strGroupID, iClass, strQuater, start, end, iOffset, iLimit, lastDate, strSubQuater, strSubQuater2, iSettleDays, iSettleType);
-    return [];
-}
-
-
-let CalSettle = (obj) => {
-    let settle = {iTotal: 0, iBWin: 0, iSWin: 0, iSettle5:0, iBCommision:0, iSCommision:0, iSettle4:0, iTotal2:0, iGive:0, iAcc:0, iPayback:0, iAcc2:0};
-    settle.iTotal = obj.iAgentBetB + obj.iAgentBetUO + obj.iAgentBetS - obj.iAgentWinB - obj.iAgentWinUO - obj.iAgentWinS - obj.iAgentRollingB - obj.iAgentRollingUO - obj.iAgentRollingS;
-    settle.iBWin = obj.iAgentWinB + obj.iAgentWinUO;
-    settle.iSWin = obj.iAgentWinS;
-    settle.iSettle5 = 0;
-    // settle.iBCommision =
 }
 
 module.exports = router;

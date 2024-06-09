@@ -36,6 +36,23 @@
 			</div>
 		</div>
 	</div>
+	<!-- Popup -->
+	<div id="statusChangeModal" class="modal">
+		<div class="modal-content">
+			<div class="modal-header">
+				<span class="modal-close">&times;</span>
+				<h2>상태 변경</h2>
+			</div>
+			<div class="modal-body">
+				<p><%=__('ConfirmChangeState')%></p>
+			</div>
+			<div class="modal-footer">
+				<button class="modal-btn" id="blockAllButton">전체변경</button>
+				<button class="modal-btn" id="blockSelfButton">본인만변경</button>
+				<button class="modal-btn" id="cancelButton">취소</button>
+			</div>
+		</div>
+	</div>
 </div>
 </div>
 <script type="text/javascript" src="js/constants.js"></script>

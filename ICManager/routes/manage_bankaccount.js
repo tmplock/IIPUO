@@ -57,21 +57,26 @@ router.post('/detail', isLoggedIn, async(req, res) => {
 
 });
 
-let BuildPartner = async (objectUser, strOptionCode, listRecordAccount) => {
+let BuildPartner = (objectUser, strOptionCode, listRecordAccount) => {
 
     console.log(`BuildPartner : ${listRecordAccount.length}`);
 
     let list = [];
 
-    let obj = await IAgent.GetParentList(objectUser.strGroupID, objectUser.iClass);
+    //let obj = await IAgent.GetParentList(objectUser.strGroupID, objectUser.iClass);
 
-    let object = {strID:objectUser.strID, strGroupID:objectUser.strGroupID, iClass:objectUser.iClass, iNumRequest:0, iNumValidInput:0, iNumInvalidInput:0, iNumStandbyInput:0, strAdminNickname:obj.strAdmin, strPAdminNickname:obj.strPAdmin, strVAdminNickname:obj.strVAdmin, strAgentNickname:obj.strAgent, strShopNickname:obj.strShop, strNickname:objectUser.strNickname, strOptionCode:strOptionCode};
+    let object = {strID:objectUser.strID, strGroupID:objectUser.strGroupID, iClass:objectUser.iClass, iNumRequest:0, iNumValidInput:0, iNumInvalidInput:0, iNumStandbyInput:0, strAdminNickname:'', strPAdminNickname:'', strVAdminNickname:'', strAgentNickname:'', strShopNickname:'', strNickname:objectUser.strNickname, strOptionCode:strOptionCode};
 
     for ( let i in listRecordAccount )
     {
         if ( listRecordAccount[i].strID == objectUser.strID )
         {
             list.push(listRecordAccount[i]);
+            object.strAdminNickname = listRecordAccount[i].strAdminNickname;
+            object.strPAdminNickname = listRecordAccount[i].strPAdminNickname;
+            object.strVAdminNickname = listRecordAccount[i].strVAdminNickname;
+            object.strAgentNickname = listRecordAccount[i].strAgentNickname;
+            object.strShopNickname = listRecordAccount[i].strShopNickname;
         }
     }
 
@@ -121,7 +126,10 @@ router.post('/request_partner', isLoggedIn, async (req, res) => {
     let list = [];
     for ( let i in listPartner )
     {
-        const object = await BuildPartner(listPartner[i], listPartner[i].strOptionCode, listRecordAccount);
+        const object = BuildPartner(listPartner[i], listPartner[i].strOptionCode, listRecordAccount);
+        if ( object.iNumRequest == 0 && object.iNumInvalidInput == 0 && object.iNumStandbyInput == 0 && object.iNumValidInput == 0 )
+            continue;
+        
         list.push(object);   
     }
 

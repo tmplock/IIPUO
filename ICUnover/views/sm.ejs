@@ -26,8 +26,54 @@
 	<div class="box-wrap">
 		<ul id="listGames">
 			<% for(let i=0; i<listGames.length; i++) { %>
-
-				<% if ( listGames[i].title != 'Jump Higher' ) { %>
+				<% if (
+					listGames[i].title != 'Jump Higher mobile' &&
+					listGames[i].title != '108' &&
+					listGames[i].title != '777' &&
+					listGames[i].title != 'cs5moneyroll' &&
+					listGames[i].title != 'Wild West Gold Megaways' &&
+					listGames[i].title != 'Heart of Cleopatra' &&
+					listGames[i].title != 'Forge of Olyms' &&
+					listGames[i].title != 'Barn Festival' &&
+					listGames[i].title != 'Sweet Bonanza' &&
+					listGames[i].title != 'Rise of Giza PowerNudge' &&
+					listGames[i].title != 'Empty the Bank' &&
+					listGames[i].title != 'Treasure Wild' &&
+					listGames[i].title != 'Wild West Gold' &&
+					listGames[i].title != 'Fury of Odin Megaways' &&
+					listGames[i].title != 'Mammoth Gold Megaways' &&
+					listGames[i].title != 'Fruits of the Amazon' &&
+					listGames[i].title != 'Big Bass - Secrets of the Golden Lake' &&
+					listGames[i].title != 'Release the Bison' &&
+					listGames[i].title != 'Ice Lobster' &&
+					listGames[i].title != 'Cyber Heist' &&
+					listGames[i].title != 'Wild Bison Charge' &&
+					listGames[i].title != 'Zeus vs Hades - Gods of War' &&
+					listGames[i].title != 'Starlight Christmas' &&
+					listGames[i].title != 'Octobeer Fortunes' &&
+					listGames[i].title != 'Bonanza Gold' &&
+					listGames[i].title != 'Rise of Samurai Megaways' &&
+					listGames[i].title != 'Madame Destiny Megaways' &&
+					listGames[i].title != 'Magician's Secrets' &&
+					listGames[i].title != 'The Dog House Megaways' &&
+					listGames[i].title != 'Candy Village' &&
+					listGames[i].title != 'Gates of Olympus' &&
+					listGames[i].title != 'Hot Fiesta' &&
+					listGames[i].title != 'Big Bass Bonanza - Keeping it Reel' &&
+					listGames[i].title != 'PIZZA PIZZA PIZZA' &&
+					listGames[i].title != 'Hot Pepper' &&
+					listGames[i].title != 'Sweet Powernudge' &&
+					listGames[i].title != 'The Dog House Multihold' &&
+					listGames[i].title != 'Spellbinding Mystery' &&
+					listGames[i].title != 'Rujak Bonanza' &&
+					listGames[i].title != 'Twilight Princess' &&
+					listGames[i].title != '3 Buzzing Wilds' &&
+					listGames[i].title != 'Rise of Samurai 4' &&
+					listGames[i].title != 'Zombie Carnival' &&
+					listGames[i].title != 'Cleocatra' &&
+					listGames[i].title != 'Rise of Samurai 3' &&
+					listGames[i].title != 'Dragon Hero'
+				) { %>
 				<li>
 					<img class="gameimg" id="<%= listGames[i].id %>" src="<%= listGames[i].thumbnail %>" alt="<%= listGames[i].title %>" style="width:220px;height:220px;">
 					<p class="title"><a class="gameimg" id="<%= listGames[i].id %>" style="font-size:20px;"><%= listGames[i].title %></a></p>

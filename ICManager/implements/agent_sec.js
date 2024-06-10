@@ -34,7 +34,7 @@ var inline_AccessPartnerBankAndPassword = async (strNickname, input) => {
         // 클래스별 접근 권환 확인
         if (user.iClass > 3 || user.iPermission == 100) {
             if (!(user.iClass == 8 || user.iClass == 7)) {
-                return {result:'FAIL', msg:'접근권한 없음'};    // 매장, 총판, 본사 이상만 접근 가능
+                return {result:'FAIL', msg:'접근권한 없음'};    // 매장, 본사 이상만 접근 가능
             }
         }
 

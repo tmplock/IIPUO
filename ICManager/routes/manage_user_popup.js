@@ -300,8 +300,12 @@ router.post('/request_gt', isLoggedIn, async(req, res) => {
         let to = await db.Users.findOne({where:{strNickname:req.body.strTo}});
         let from = await db.Users.findOne({where:{strNickname:req.body.strFrom}});
 
-        const cAmount = parseInt(req.body.iAmount);
-        if (cAmount < 0) {
+        let cAmount = parseInt(req.body.iAmount);
+        if (isNaN(cAmount)) {
+            cAmount = 0;
+        }
+
+        if (cAmount <= 0) {
             res.send({result:'FAIL', reason:''});
             return;
         }
@@ -367,9 +371,12 @@ router.post('/request_gt', isLoggedIn, async(req, res) => {
         const iFromCash = from.iCash + parseInt(req.body.iAmount);
         const iToCash = to.iCash - parseInt(req.body.iAmount);
 
-        const cAmount = parseInt(req.body.iAmount);
+        let cAmount = parseInt(req.body.iAmount);
+        if (isNaN(cAmount)) {
+            cAmount = 0;
+        }
 
-        if (cAmount < 0) {
+        if (cAmount <= 0) {
             res.send({result:'FAIL', reason:''});
             return;
         }
@@ -431,18 +438,22 @@ router.post('/request_gt', isLoggedIn, async(req, res) => {
         //  알 파는 버전
         if ( to != null && from != null )
         {
-            const cAmount = parseInt(req.body.iAmount);
+            let cAmount = parseInt(req.body.iAmount);
+            if (isNaN(cAmount)) {
+                cAmount = 0;
+            }
 
-            if (cAmount < 0) {
+            if (cAmount <= 0) {
                 res.send({result:'FAIL', reason:''});
                 return;
             }
 
-            if ( from.iCash < cAmount )
-            {
-                res.send({result:'FAIL', reason:'NOTENOUGH'});
-                return;
-            }
+            // 회장님 지시로 롤링/죽장은 본사 머니와 상관없이 되도록 수정(추후 확인 필요)
+            // if ( from.iCash < cAmount )
+            // {
+            //     res.send({result:'FAIL', reason:'NOTENOUGH'});
+            //     return;
+            // }
 
             if ( to.iRolling < cAmount )
             {
@@ -515,14 +526,24 @@ router.post('/request_gt', isLoggedIn, async(req, res) => {
         
         if ( to != null && from != null)
         {
-            const cAmount = parseInt(req.body.iAmount);
+            let cAmount = parseInt(req.body.iAmount);
+            if (isNaN(cAmount)) {
+                cAmount = 0;
+            }
 
-            if (cAmount < 0) {
+            if (cAmount <= 0) {
                 res.send({result:'FAIL', reason:''});
                 return;
             }
 
-            if ( from.iCash < cAmount )
+            // 회장님 지시로 롤링/죽장은 본사 머니와 상관없이 되도록 수정(추후 확인 필요)
+            // if ( from.iCash < cAmount )
+            // {
+            //     res.send({result:'FAIL', reason:'NOTENOUGH'});
+            //     return;
+            // }
+
+            if ( to.iSettle < cAmount )
             {
                 res.send({result:'FAIL', reason:'NOTENOUGH'});
                 return;

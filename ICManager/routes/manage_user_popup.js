@@ -301,7 +301,7 @@ router.post('/request_gt', isLoggedIn, async(req, res) => {
         let from = await db.Users.findOne({where:{strNickname:req.body.strFrom}});
 
         let cAmount = parseInt(req.body.iAmount);
-        if (isNaN(cAmount)) {
+        if (Number.isNaN(cAmount)) {
             cAmount = 0;
         }
 
@@ -372,7 +372,7 @@ router.post('/request_gt', isLoggedIn, async(req, res) => {
         const iToCash = to.iCash - parseInt(req.body.iAmount);
 
         let cAmount = parseInt(req.body.iAmount);
-        if (isNaN(cAmount)) {
+        if (Number.isNaN(cAmount)) {
             cAmount = 0;
         }
 
@@ -439,7 +439,7 @@ router.post('/request_gt', isLoggedIn, async(req, res) => {
         if ( to != null && from != null )
         {
             let cAmount = parseInt(req.body.iAmount);
-            if (isNaN(cAmount)) {
+            if (Number.isNaN(cAmount)) {
                 cAmount = 0;
             }
 
@@ -527,7 +527,7 @@ router.post('/request_gt', isLoggedIn, async(req, res) => {
         if ( to != null && from != null)
         {
             let cAmount = parseInt(req.body.iAmount);
-            if (isNaN(cAmount)) {
+            if (Number.isNaN(cAmount)) {
                 cAmount = 0;
             }
 

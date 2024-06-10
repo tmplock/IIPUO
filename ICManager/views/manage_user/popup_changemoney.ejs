@@ -402,7 +402,7 @@
 			let strTarget = $('#agent_list').val();
 			let iMoney = $('#GTMoney').val();
 			iMoney = parseInt(iMoney);
-			if (isNaN(iMoney)) {
+			if (Number.isNaN(iMoney)) {
 				iMoney = 0;
 			}
 

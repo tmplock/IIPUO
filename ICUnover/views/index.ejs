@@ -14,17 +14,36 @@
             autoControls: true,pager:true,});
     });
 
+    let listIgnore = ['LIVE_VIVO', 'LIVE_WORLD'];
+    
+
+    let CheckIgnoreGame = (strGame) => {
+
+        for ( let i in listIgnore )
+        {
+            if ( listIgnore[i] == strGame )
+                return true;
+        }
+        return false;
+    }
+
     var GoGame = (strGame, strGameKey) => {
         // if ( strGame != 'LIVE_EZUGI' ) {
         //     alert('해당 게임은 점검중입니다.');
         //     return;
         // }
 
-        if ( strGame == 'LIVE_VIVO' || strGame == 'LIVE_WORLD' )
+        if ( CheckIgnoreGame(strGame) == true )
         {
-            alert('준비중입니다.');
+            alert('점검중 입니다.');
             return;
         }
+
+        // if ( strGame == 'LIVE_VIVO' || strGame == 'LIVE_WORLD' )
+        // {
+        //     alert('준비중입니다.');
+        //     return;
+        // }
         // strGame == 'LIVE_DREAM'
         // if ( strGame == 'LIVE_CQ9' )
         // {

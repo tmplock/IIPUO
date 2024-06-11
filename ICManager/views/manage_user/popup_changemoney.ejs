@@ -402,9 +402,13 @@
 			let strTarget = $('#agent_list').val();
 			let iMoney = $('#GTMoney').val();
 			iMoney = parseInt(iMoney);
+			if (Number.isNaN(iMoney)) {
+				iMoney = 0;
+			}
 
-			if (strTarget == null || strTarget == '' || iMoney == null || iMoney == '' || iMoney < 0) {
+			if (strTarget == null || strTarget == '' || iMoney == null || iMoney == '' || iMoney <= 0) {
 				alert(strAlertIncorrectInputValue);
+				isSending = false;
 				return;
 			}
 

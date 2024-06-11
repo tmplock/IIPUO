@@ -1241,6 +1241,17 @@ router.post('/request_inout_pass', isLoggedIn, async (req, res) => {
         return;
     }
 
+    // 입출금 체크 여부
+    // let inputCode = 0;
+    // try {
+    //     let strOptionCode = info.strOptionCode.split('');
+    //     inputCode = strOptionCode[0];
+    // } catch (err) {}
+    // if (parseInt(inputCode) != 1) {
+    //     res.send({result: 'FAIL', msg:'권한이 없습니다'});
+    //     return;
+    // }
+
     let strAdmin = '';
     if (iClass == 1) {
         res.send({result: 'OK', msg: '입금 계좌 조회 성공'});

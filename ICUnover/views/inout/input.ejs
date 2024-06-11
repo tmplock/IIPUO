@@ -64,7 +64,6 @@
 
     let isSending = false;
     let bRequestAccount = false;
-    let strRequestAccountMsg = '';
 
     let bankType = '';
     let bankname = '';
@@ -173,7 +172,6 @@
             success: (obj) => {
                 if (obj.result == 'OK') {
                     bRequestAccount = true;
-                    strRequestAccountMsg = obj.msg;
                     bankType = obj.bankType;
                     bankname = obj.bankname;
                     banknumber = obj.banknumber;
@@ -183,7 +181,7 @@
                     $('input[name=bank_name]').val(obj.bankname);
                     $('input[name=bank_holder]').val(obj.bankholder);
                     $('input[name=bank_number]').val(obj.banknumber);
-                    SetTagActive(obj.title, obj.strMsg, obj.strSubMsg, 1);
+                    SetTagActive(obj.title, obj.msg, obj.msg2, 1);
                 } else {
                     bRequestAccount = false;
                     alert(obj.msg);

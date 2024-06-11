@@ -632,8 +632,8 @@ exports.ProcessRolling = (oRO, listBet, cPBType, cPBTarget, strDate) => {
     for ( let i in listBet )
     {
         const cBet = listBet[i];
-        const cBetAmount = parseInt(cBet.iBet);
-        const cWinAmount = parseInt(cBet.iWin);
+        const cBetAmount = parseInt(cBet.iBet/1.2);
+        const cWinAmount = parseInt(cBet.iWin/1.2);
 
         console.log(`cBet : ${cBet}, cBetAmount : ${cBetAmount}`);
         switch ( cBet.iGameCode )
@@ -718,28 +718,15 @@ exports.ProcessRolling = (oRO, listBet, cPBType, cPBTarget, strDate) => {
                 break;
             default:
                 console.log(`##### 0`);
+                objectData.iPAdminRB += CalculateRollingAmount(o.strPAdminID, cBetAmount, o.fPAdminBaccaratR, o.fVAdminBaccaratR);
+                objectData.iVAdminRB += CalculateRollingAmount(o.strVAdminID, cBetAmount, o.fVAdminBaccaratR, o.fAgentBaccaratR);
+                objectData.iAgentRB += CalculateRollingAmount(o.strAgentID, cBetAmount, o.fAgentBaccaratR, o.fShopBaccaratR);
+                objectData.iShopRB += CalculateRollingAmount(o.strShopID, cBetAmount, o.fShopBaccaratR, o.fUserBaccaratR);
+                objectData.iUserRB += CalculateRollingAmount(o.strUserID, cBetAmount, o.fUserBaccaratR, 0);
 
-                objectData.iPAdminRB += parseInt(CalculateRollingAmount(o.strPAdminID, cBetAmount, o.fPAdminBaccaratR, o.fVAdminBaccaratR) / 1.2);
-                objectData.iVAdminRB += parseInt(CalculateRollingAmount(o.strVAdminID, cBetAmount, o.fVAdminBaccaratR, o.fAgentBaccaratR) / 1.2);
-                objectData.iAgentRB += parseInt(CalculateRollingAmount(o.strAgentID, cBetAmount, o.fAgentBaccaratR, o.fShopBaccaratR) / 1.2);
-                objectData.iShopRB += parseInt(CalculateRollingAmount(o.strShopID, cBetAmount, o.fShopBaccaratR, o.fUserBaccaratR) / 1.2);
-                objectData.iUserRB += parseInt(CalculateRollingAmount(o.strUserID, cBetAmount, o.fUserBaccaratR, 0) / 1.2);
-
-                objectData.iBetB += parseInt(cBetAmount/1.2);
-                objectData.iWinB += parseInt(cWinAmount/1.2);
+                objectData.iBetB += cBetAmount;
+                objectData.iWinB += cWinAmount;
                 objectData.iWinLoseB += (cBetAmount-cWinAmount);
-
-
-
-                // objectData.iPAdminRB += CalculateRollingAmount(o.strPAdminID, cBetAmount, o.fPAdminBaccaratR, o.fVAdminBaccaratR);
-                // objectData.iVAdminRB += CalculateRollingAmount(o.strVAdminID, cBetAmount, o.fVAdminBaccaratR, o.fAgentBaccaratR);
-                // objectData.iAgentRB += CalculateRollingAmount(o.strAgentID, cBetAmount, o.fAgentBaccaratR, o.fShopBaccaratR);
-                // objectData.iShopRB += CalculateRollingAmount(o.strShopID, cBetAmount, o.fShopBaccaratR, o.fUserBaccaratR);
-                // objectData.iUserRB += CalculateRollingAmount(o.strUserID, cBetAmount, o.fUserBaccaratR, 0);
-
-                // objectData.iBetB += cBetAmount;
-                // objectData.iWinB += cWinAmount;
-                // objectData.iWinLoseB += (cBetAmount-cWinAmount);
 
                 break;
     
@@ -1713,7 +1700,7 @@ exports.ProcessRollingBetWin = (oRO, iGameCode, iBet, iWin, strDate) => {
     const o = oRO.objectData;
     console.log(o);
 
-    const cBetAmount = parseInt(iBet);
+    const cBetAmount = parseInt(iBet/1.2);
 
     console.log(`cBetAmount : ${cBetAmount}, iGameCode : ${iGameCode}`);
     switch ( iGameCode )
@@ -1792,7 +1779,7 @@ exports.ProcessRollingBetWin = (oRO, iGameCode, iBet, iWin, strDate) => {
         break;
     }
 
-    const cWinAmount = parseInt(iWin);
+    const cWinAmount = parseInt(iWin/1.2);
 
     console.log(`cWinAmount : ${cWinAmount}`);
     switch ( iGameCode )

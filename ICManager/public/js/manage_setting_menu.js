@@ -67,12 +67,11 @@ $(document).on('click', '#setting_popup', ()=> {
 });
 
 $(document).on('click', '#setting_banklist', ()=> {
-
     var $form = $('<form></form>');
     $form.attr('action', '/manage_setting/letter_banklist');
     $form.attr('method', 'post');
     $form.appendTo('body');
-    
+
     var strNickname = $(`<input type="hidden" value="${user.strNickname}" name="strNickname">`);
     var strGroupID = $(`<input type="hidden" value="${user.strGroupID}" name="strGroupID">`);
     var iClass = $(`<input type="hidden" value=${user.iClass} name="iClass">`);
@@ -80,8 +79,8 @@ $(document).on('click', '#setting_banklist', ()=> {
 
     $form.append(strNickname).append(strGroupID).append(iClass).append(iPermission);
     $form.submit();
-
 });
+
 
 let GetSettingSectionClass = (iSection, iCurrent) => {
     const cSection = parseInt(iSection);
@@ -148,12 +147,12 @@ let SetSettingHeader = (iSection, iClass) => {
         tag += subtag1;
     }
 
-    if ( user.iClass == 2 )
+    if ( user.iClass <= 2 )
     {
-        let subtag1 = 
-        `
-        <li class=${GetSettingSectionClass(iSection, 4)}>
-            <a href="#" style="color:${GetSettingSectionColor(iSection, 4)};" id="setting_banklist">계좌 문의</a>
+        let subtag1 =
+            `
+        <li class=${GetSettingSectionClass(iSection, 5)}>
+            <a href="#" style="color:${GetSettingSectionColor(iSection, 5)};" id="setting_banklist">계좌문의</a>
         </li>
         `;
         tag += subtag1;

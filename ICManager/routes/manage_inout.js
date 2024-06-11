@@ -302,7 +302,8 @@ let GetOutputList = async (req, res, visibleGrade) => {
             obj.iNewUser = 1;
         }
         if (visibleGrade == true) {
-            let grade = IAgent.GetGradeFromStrOptionCode(obj.strOptionCode);
+            let iGrade = IAgent.GetGradeFromStrOptionCode(obj.strOptionCode);
+            let grade = IAgent.GetGrade(iGrade);
             let strGrade =  `[${grade.id}:${grade.str}]`
             obj.strGrade = strGrade;
         }
@@ -388,7 +389,8 @@ let GetInputList = async (req, res, visibleGrade) => {
             obj.iNewUser = 1;
         }
         if (visibleGrade == true) {
-            let grade = IAgent.GetGradeFromStrOptionCode(obj.strOptionCode);
+            let iGrade = IAgent.GetGradeFromStrOptionCode(obj.strOptionCode);
+            let grade = IAgent.GetGrade(iGrade);
             let strGrade =  `[${grade.id}:${grade.str}]`
             obj.strGrade = strGrade;
         }

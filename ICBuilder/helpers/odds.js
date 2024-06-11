@@ -571,7 +571,7 @@ let CalculateRollingAmount = (strID, cAmount, fMine, fChild) => {
         const c = parseInt(cAmount) * fOdds * 0.01;
 
         const value = parseInt(c/1.2);
-        return c;
+        return value;
 
     }
     return 0;

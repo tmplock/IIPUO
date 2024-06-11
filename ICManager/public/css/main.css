@@ -1,0 +1,65 @@
+.modal-moneychange {
+    display: none; 
+    position: fixed; 
+    z-index: 1; 
+    left: 0;
+    top: 0;
+    width: 100%; 
+    height: 100%; 
+    overflow: auto; 
+    background-color: rgb(0,0,0); 
+    background-color: rgba(0,0,0,0.4); 
+    padding-top: 0px;
+}
+.modal-moneychange .modal-content {
+    background-color: #fefefe;
+    margin: 5% auto; 
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; 
+    max-width: 600px;
+}
+.modal-moneychange .modal-content .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+.modal-moneychange .modal-content .close:hover,
+.modal-moneychange .modal-content .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+.button-group button {
+    margin: 4px;
+    padding: 8px 12px;
+    font-size: 16px;
+    cursor: pointer;
+}
+.input-group {
+    margin: 10px 0;
+}
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+.input-group input,
+.input-group textarea {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+}
+.submit-button-container {
+    display: flex;
+    justify-content: center;
+}
+.submit-button {
+    width: 30%;
+    padding: 10px;
+    font-size: 18px;
+    background-color: #9370DB;
+    color: white;
+    border: none;
+    cursor: pointer;
+}

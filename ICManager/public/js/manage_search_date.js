@@ -10,6 +10,7 @@ let SetSeachButtons = (strSearchTag, iRender, i18nTexts, objectData, iTargetClas
         6:popup_bettingrecord
         7:realtimeuserlist
     */
+    console.log(`SetSeachButtons!!!`);
     $(strSearchTag).empty();
     let tag = '';
     if(iRender == 1)
@@ -290,6 +291,30 @@ let SetSeachButtons = (strSearchTag, iRender, i18nTexts, objectData, iTargetClas
                     <button class="btn_blue" data-menu="2" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;color:white" onclick="OnClickMonthly1stRecord();">${i18nTexts.Half1}</button>
                     &nbsp;
                     <button class="btn_blue" data-menu="3" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;color:white" onclick="OnClickMonthly2ndRecord();">${i18nTexts.Half2}</button>
+                </div>
+            </div>
+        </div>
+        `;
+    }
+    else if(iRender == 8) {
+        tag = `
+        <div style="background-color:#ffffff;padding-right:5px;padding-top:0px;padding-bottom:0px;" colspan="19">
+            <div style="overflow: hidden;">
+                <div style="float: right; text-align: right;">
+                    <input style="width:100px;" type="text" id="datepicker1" class="datepicker"/>~
+                    <input style="width:100px;" type="text" id="datepicker2" class="datepicker"/>
+                    <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearch(${iTargetClass}, '${objectData.strGroupID}', ${objectData.iClass});">${i18nTexts.Search}</button>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    ${i18nTexts.Search}
+                    <select id="select_roomno" style="width:80px;">
+                        <option>${i18nTexts.Nickname}</option>
+                    </select>
+                    <input style="margin-left:0px;width:100px;" id="strSearchNickname" type="text"/>
+                    <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearchNickname();">${i18nTexts.Search}</button>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button class="btn_blue" data-menu="2" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color:#4682B4;color:white" onclick="OnClickMonthly1stRecord();">${i18nTexts.Half1}</button>
+                    &nbsp;
+                    <button class="btn_blue" data-menu="3" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color:#4682B4;color:white" onclick="OnClickMonthly2ndRecord();">${i18nTexts.Half2}</button>
                 </div>
             </div>
         </div>

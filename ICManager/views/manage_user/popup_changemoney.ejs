@@ -1,90 +1,150 @@
-<div class="sub_wrap">
-    <div class="container clearfix">
-        
-        <div class="content" style="position:relative; padding:0 10px 0 10px;">
-            <ul class="list_tab" style="margin-bottom:10px;width:75%;z-index:10000;">
-                <li class="on">
-                    <a href="#" id="user_userlist"><%=__('UserList')%></a>
-                </li>
-            </ul>
+<!DOCTYPE html>
+	<html lang="ko">
+	<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="format-detection" content="telephone=no">
+	<meta name="Keywords" content="">
+	<meta name="Description" content="">
+	<title>Inout</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	<script type="text/javascript" src="../../js/jquery.bxslider.min.js"></script>
+	<script type="text/javascript" src="../../js/placeholders.js"></script>
+	<script type="text/javascript" src="../../js/layout.js"></script>
+	<script type="text/javascript" src="../../js/common_js.js"></script>
+	<link rel="stylesheet" type="text/css" href="../../css/general.css"/>
+	<link rel="stylesheet" type="text/css" href="../../css/button.css"/>
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css" type="text/css" /> 
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>  
+	<script src="https://code.jquery.com/ui/1.8.18/jquery-ui.min.js"></script>
+	<link href='//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css' rel='stylesheet' type='text/css'>
+</head>
 
-            <ul class="list_tab" style="margin-left:80%;margin-top:-40px;margin-bottom:10px;height:30px;">
-			</ul>
-        </div>
+<body style="font-family:'Spoqa Han Sans Neo';">
+	<div class="sub_wrap">
+		<div class="container clearfix">
+			
+			<div class="content" style="position:relative; padding:0 10px 0 10px;">
+				<ul class="list_tab" style="margin-bottom:10px;width:75%;z-index:10000;">
+					<li class="on">
+						<a href="#" id="user_changemoney"><%=__('UserList')%></a>
+					</li>
+					<li class="off">
+						<a href="#" id="user_changemoneylist">전환 내역</a>
+					</li>
+				</ul>
 
-            <div class="list">
-                <div id="search_date">
-                </div>
+				<ul class="list_tab" style="margin-left:90%;margin-top:-40px;margin-bottom:10px;height:30px;">
+				</ul>
+			</div>
 
-                <div class="list_tit">
-                    <h3><%=__('All')%> <%=__('User')%>
-                        <% if ( user.iClass > 3 ) { %>
-                            <div style="text-align:right;margin-top:-55px;">
-                                <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);border-radius:3px;width:70px;height:25px;text-align:center;background-color: rgb(240, 90, 90);color:white" onclick="OnClickChangeMoney('<%=user.strNickname%>', '<%=user.strGroupID%>', '<%=user.iClass%>');"><%=__('ExchangeCash')%></button>
-                                <span id="top_total_point_area">
-                                    <font style="color:#00FFFF;font-size:15px;font-weight:bold;"><%=__('Cash')%> :</font><font style="color:yellow;font-size:15px;font-weight:bold;"><%=parseInt(agentinfo.iCash).toLocaleString()%></font>
-                                    &nbsp;&nbsp;
-                                    <font style="color:#00FFFF;font-size:15px;font-weight:bold;"><%=__('Rolling')%> :</font><font style="color:yellow;font-size:15px;font-weight:bold;"><%=parseInt(agentinfo.iRolling).toLocaleString()%></font>
-                                    &nbsp;&nbsp;
-                                    <% if ( user.iClass < 6 ) { %>
-                                        <font style="color:#00FFFF;font-size:15px;font-weight:bold;"><%=__('Settle')%> :</font><font style="color:yellow;font-size:15px;font-weight:bold;"><%=parseInt(agentinfo.iSettle).toLocaleString()%></font>
-                                        &nbsp;&nbsp;&nbsp;
-                                    <% } %>
-                                </span>
-                            </div>
-                        <%}%>
-                    </h3>
-                </div>
+				<div class="list">
+					<div id="search_date">
+					</div>
 
-            <div class="search_wrap">
+					<div class="list_tit">
+						<h3><%=__('All')%> <%=__('User')%>
+							<% if ( user.iClass > 3 ) { %>
+								<div style="text-align:right;margin-top:-55px;">
+									<% if ( user.iClass <= 5 ) { %>
+										<td colspan="3">
+											<button class="btn_gray" id="openRollingModal"><%=__('Rolling')%><%=__('Exchange')%></button>
+											<button class="btn_gray" id="openSettleModal"><%=__('Settle')%><%=__('Exchange')%></button>
+										</td>
+									<% } else { %>
+											<td colspan="3">
+												<button class="btn_gray" id="openRollingModal"><%=__('Rolling')%><%=__('Exchange')%></button>
+											</td>
+									<% } %>
+									<span id="top_total_point_area">
+										<font style="color:#00FFFF;font-size:15px;font-weight:bold;"><%=__('Cash')%> :</font><font style="color:yellow;font-size:15px;font-weight:bold;"><%=parseInt(agentinfo.iCash).toLocaleString()%></font>
+										&nbsp;&nbsp;
+										<font style="color:#00FFFF;font-size:15px;font-weight:bold;"><%=__('Rolling')%> :</font><font style="color:yellow;font-size:15px;font-weight:bold;"><%=parseInt(agentinfo.iRolling).toLocaleString()%></font>
+										&nbsp;&nbsp;
+										<% if ( user.iClass < 6 ) { %>
+											<font style="color:#00FFFF;font-size:15px;font-weight:bold;"><%=__('Settle')%> :</font><font style="color:yellow;font-size:15px;font-weight:bold;"><%=parseInt(agentinfo.iSettle).toLocaleString()%></font>
+											&nbsp;&nbsp;&nbsp;
+										<% } %>
+									</span>
+								</div>
+							<%}%>
+						</h3>
+					</div>
 
-                <table class="search_list">
-                    <caption><%=__('SearchResult')%></caption>
-                    <colgroup>
-						<col style="width:5%">
-						<col style="width:5%">
-						<col style="width:5%">
-						<col style="width:5%">
-                        <col style="width:5%">
-                        <col style="width:8%">
-                        <col style="width:8%">
-                        <col style="width:8%">
-                        <col style="width:8%">
-                        <col style="width:8%">
-                        <col style="width:8%">
-                        <col style="width:10%">
-                        <col style="width:10%">
-                    </colgroup>
-                    <thead>
-                        <tr>
-							<th scope="col"><%=__('ProAdmin')%></th>
-                            <th scope="col"><%=__('ViceAdmin')%></th>
-                            <th scope="col"><%=__('Agent')%></th>
-                            <th scope="col"><%=__('Shop')%></th>
-                            <th scope="col"><%=__('Nickname')%></th>
-                            <th scope="col"><%=__('Input')%></th>
-                            <th scope="col"><%=__('Output')%></th>
-                            <th scope="col"><%=__('MyCash')%></th>
-                            <th scope="col"><%=__('Rolling')%></th>
-                            <th scope="col"><%=__('Total')%></th>
-                            <th scope="col">미전환롤링</th>
-                            <th scope="col"><%=__('DateRegister')%></th>
-                            <th scope="col">상세정보</th>
-                        </tr>
-                    </thead>
-                    <tbody id = "userlist">
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
-<script type="text/javascript" src="js/enum.js"></script>
-<script type="text/javascript" src="js/time.js"></script>
-<script type="text/javascript" src="js/manage_setting_ref.js"></script>
-<script type="text/javascript" src="js/manage_partner_ref.js"></script>
-<script type="text/javascript" src="js/manage_search_date.js"></script>
-<link rel="stylesheet" type="text/css" href="../../css/general.css"/>
+				<div class="search_wrap">
+
+					<table class="search_list">
+						<caption><%=__('SearchResult')%></caption>
+						<colgroup>
+							<col style="width:8%">
+							<col style="width:8%">
+							<col style="width:10%">
+							<col style="width:15%">
+							<col style="width:15%">
+							<col style="width:15%">
+							<col style="width:15%">
+							<col style="width:15%">
+							<col style="width:8%">
+						</colgroup>
+						<thead>
+							<tr>
+								<th scope="col"><%=__('Shop')%></th>
+								<th scope="col"><%=__('Nickname')%></th>
+								<th scope="col">머니전환</th>
+								<th scope="col"><%=__('Input')%></th>
+								<th scope="col"><%=__('Output')%></th>
+								<th scope="col"><%=__('MyCash')%></th>
+								<th scope="col"><%=__('Rolling')%></th>
+								<th scope="col"><%=__('DateRegister')%></th>
+								<th scope="col">상세정보</th>
+							</tr>
+						</thead>
+						<tbody id = "userlist">
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="myModal" class="modal-moneychange">
+
+	</div>
+
+	<!-- Rolling Exchange Modal -->
+	<div id="rollingModal" class="modal">
+		<div class="modal-content">
+			<span class="close">&times;</span>
+			<h2><%=__('Rolling')%><%=__('Exchange')%></h2>
+			<div class="input-group">
+				<label for="translate_rolling"><%=__('Amount')%></label>
+				<input type="number" min="0" id="translate_rolling" value="" style="height: 25px;font-size: 16px;">
+			</div>
+			<button class="submit-button" onclick="OnClickTranslate('ROLLING')"><%=__('Exchange')%></button>
+		</div>
+	</div>
+
+	<!-- Settle Exchange Modal -->
+	<div id="settleModal" class="modal">
+		<div class="modal-content">
+			<span class="close">&times;</span>
+			<h2><%=__('Settle')%><%=__('Exchange')%></h2>
+			<div class="input-group">
+				<label for="translate_settle"><%=__('Amount')%></label>
+				<input type="number" min="0" id="translate_settle" value="" style="height: 25px;font-size: 16px;">
+			</div>
+			<button class="submit-button" onclick="OnClickTranslate('SETTLE')"><%=__('Exchange')%></button>
+		</div>
+	</div>
+
+	<script type="text/javascript" src="js/enum.js"></script>
+	<script type="text/javascript" src="js/time.js"></script>
+	<script type="text/javascript" src="js/util.js"></script>
+	<script type="text/javascript" src="js/manage_setting_ref.js"></script>
+	<script type="text/javascript" src="js/manage_partner_ref.js"></script>
+	<script type="text/javascript" src="js/manage_search_date.js"></script>
+	<script type="text/javascript" src="js/popup_changemoney.js"></script>
+	<script type="text/javascript" src="js/popup_changemoney_menu.js"></script>
+</body>
 <script>
     let user = JSON.parse('<%-JSON.stringify(user)%>');
     let userlist = JSON.parse('<%-JSON.stringify(userlist)%>');
@@ -100,7 +160,11 @@
         Half2: "<%=__('Half2')%>",
         Open: "<%=__('Open')%>",
 		Nickname: "<%=__('Nickname')%>",
-        ProAdmin: "<%=__('ProAdmin')%>"
+        ProAdmin: "<%=__('ProAdmin')%>",
+		strNormal: "<%=__('Normal')%>",
+		strNotice: "<%=__('Notice')%>",
+		strBlock: "<%=__('Block')%>",
+		strTotal: "<%=__('Total')%>"
     };
 
     let startDate = GetCurrentDate();
@@ -124,7 +188,7 @@
         for ( let i in userlist )
         {
             let strColor = 'rgb(0, 126, 199)';
-            let strState = strNormal;
+            let strState = i18nTexts.strNormal;
 
             let bgcolor = 'white';
             if ( iClass == 7 )
@@ -147,28 +211,6 @@
                 bgcolor = '#faecd9';
             }
 
-            let tagState = '';
-            if (user.iRootClass <= 3 && user.iPermission != 100) {
-                tagState = `
-					<td style="background-color:${bgcolor};" class="parent_row_31">
-                        <select style="vertical-align:middle;width:100%;background-color:${strColor}; color:white;" id="partner_agentstatus_${userlist[i].strNickname}" data-original-value="${userlist[i].eState}" onchange="OnChangeStatus('${userlist[i].strNickname}');">
-                            <option value="NORMAL" ${userlist[i].eState == 'NORMAL' ? 'selected' : ''}>${strNormal}</option>
-                            <option value="NOTICE" ${userlist[i].eState == 'NOTICE' ? 'selected' : ''}>${strNotice}</option>
-                            <option value="BLOCK" ${userlist[i].eState == 'BLOCK' ? 'selected' : ''}>${strBlock}</option>
-                        </select>
-                    </td>
-				`;
-            } else {
-                tagState = `<td class="parent_row_31" style='background-color:${bgcolor};'>${strNormal}</td>`;
-                if ( userlist[i].eState == 'BLOCK') {
-                    tagState = `<td class="parent_row_31" style='background-color:${bgcolor};'>${strBlock}</td>`;
-                }
-                else if ( userlist[i].eState == 'NOTICE' )
-                {
-                    tagState = `<td class="parent_row_31" style='background-color:${bgcolor};'>${strNotice}</td>`;
-                }
-            }
-
             let strLoginedAt = '';
             if ( userlist[i].loginedAt != null )
                 strLoginedAt = userlist[i].loginedAt.replace(/T/, ' ').replace(/\..+/, '');
@@ -176,49 +218,52 @@
                 strCreatedAt = userlist[i].createdAt.replace(/T/, ' ').replace(/\..+/, '');
 
             let strClassTag = `<td style='background-color:${bgcolor};'><a href="javascript:OnClickNickname('${userlist[i].strNickname}');" style="color:blue;">${userlist[i].strNickname}</a></td>`;
-            let strDeleteTag = '';
-            if (user.iRootClass <= 3 && user.iPermission != 100) {
-                strDeleteTag = `<td id="btn_84" style='background-color:${bgcolor};'>
-                                    <a href="javascript:OnClickRemove('${userlist[i].strNickname}', '${userlist[i].strGroupID}', '${userlist[i].iClass}');" class="btn_red">${strRemove}</a>
-                                </td>`;
-            }
-            let letter = ``;
-            if (user.iRootClass <= 3 && user.iPermission != 100) {
-                letter = `<td style='background-color:${bgcolor};'><a href="javascript:OnClickWritingLetter('${userlist[i].strNickname}');" class="btn_green">${strLetter}</a></td>`;
-            }
-            let inoutTag = ``;
-            if (user.iRootClass <= 3 && user.iPermission != 100) {
-                inoutTag = `<td style="background-color:${bgcolor};">
-                                <a style="border: 1px solid green;display:inline-block;font-weight:bold;border-radius:4px;background-color:blue;width:30px;color:white;" href="#" id="partner_adjustinput" strnickname="${userlist[i].strNickname}" strgroupid="${userlist[i].strGroupID}" iclass="${userlist[i].iClass}">입금</a>
-                                <a style="border: 1px solid green;display:inline-block;font-weight:bold;border-radius:4px;background-color:red;width:30px;color:white;" href="#" id="partner_adjustoutput" strnickname="${userlist[i].strNickname}" strgroupid="${userlist[i].strGroupID}" iclass="${userlist[i].iClass}">출금</a>
-                            </td>`;
-            }
-            let class4 = userlist[i].iClass >= 4 ? `${userlist[i].lev2}` : '';
-            let class5 = userlist[i].iClass >= 5 ? `${userlist[i].lev3}` : '';
-            let class6 = userlist[i].iClass >= 6 ? `${userlist[i].lev4}` : '';
+            // let inoutTag = ``;
+            // if (user.iRootClass <= 3 && user.iPermission != 100) {
+            //     inoutTag = `<td style="background-color:${bgcolor};">
+            //                     <a style="border: 1px solid green;display:inline-block;font-weight:bold;border-radius:4px;background-color:blue;width:30px;color:white;" href="#" id="partner_adjustinput" strnickname="${userlist[i].strNickname}" strgroupid="${userlist[i].strGroupID}" iclass="${userlist[i].iClass}">입금</a>
+            //                     <a style="border: 1px solid green;display:inline-block;font-weight:bold;border-radius:4px;background-color:red;width:30px;color:white;" href="#" id="partner_adjustoutput" strnickname="${userlist[i].strNickname}" strgroupid="${userlist[i].strGroupID}" iclass="${userlist[i].iClass}">출금</a>
+            //                 </td>`;
+            // }
+			let inoutTag = `<td style="background-color:${bgcolor};">
+                            <a id="pay_${userlist[i].strNickname}" class="pay-btn" style="border: 1px solid green;display:inline-block;font-weight:bold;border-radius:4px;background-color:blue;width:30px;color:white;" href="#" id="partner_adjustinput" iCash="${user.iCash}" strnickname="${userlist[i].strNickname}" strgroupid="${userlist[i].strGroupID}" iclass="${userlist[i].iClass}">지급</a>
+                            <a id="deduct_${userlist[i].strNickname}" class="deduct-btn" style="border: 1px solid green;display:inline-block;font-weight:bold;border-radius:4px;background-color:red;width:30px;color:white;" href="#" id="partner_adjustoutput" iCash="${userlist[i].iCash}" strnickname="${userlist[i].strNickname}" strgroupid="${userlist[i].strGroupID}" iclass="${userlist[i].iClass}">차감</a>
+                        </td>`;
+            // let class4 = userlist[i].iClass >= 4 ? `${userlist[i].lev2}` : '';
+            // let class5 = userlist[i].iClass >= 5 ? `${userlist[i].lev3}` : '';
+            // let class6 = userlist[i].iClass >= 6 ? `${userlist[i].lev4}` : '';
             let class7 = userlist[i].iClass >= 7 ? `${userlist[i].lev5}` : '';
-            let tag = `
+            // let tag = `
+            //     <tr>
+            //         <td style='background-color:${bgcolor};'>${class4}</td>
+            //         <td style='background-color:${bgcolor};'>${class5}</td>
+            //         <td style='background-color:${bgcolor};'>${class6}</td>
+            //         <td style='background-color:${bgcolor};'>${class7}</td>
+            //         ${strClassTag}
+			// 		${inoutTag}}
+            //         <td style='background-color:${bgcolor};'>${GetNumber(userlist[i].iInput)}</td>
+            //         <td style='background-color:${bgcolor};'>${GetNumber(userlist[i].iOutput)}</td>
+            //         <td style='background-color:${bgcolor};'>${GetNumber(userlist[i].iCash)}</td>
+            //         <td style='background-color:${bgcolor};'><font color="${GetClassSettleColor(userlist[i].iMyRollingMoney, iRootClass)}">${GetNumber(userlist[i].iMyRollingMoney)}</font></td>
+            //         <td style='background-color:${bgcolor};'><font color="${GetClassSettleColor(userlist[i].iCurrentRolling, iRootClass)}">${GetNumber(userlist[i].iCurrentRolling)}</font></td>
+            //         <td style='background-color:${bgcolor};'>${strCreatedAt}</td>
+            //         <td style='background-color:${bgcolor};'>
+			// 			<a id="adjust_${userlist[i].strNickname}" href="#" style="border: 1px solid green; display:inline-block; font-weight:bold; border-radius:4px; background-color:blue; width:30px; color:white;">상세보기</a>
+			// 		</td>
+            //     </tr>`;
+			let tag = `
                 <tr>
-                    <td style='background-color:${bgcolor};'>${class4}</td>
-                    <td style='background-color:${bgcolor};'>${class5}</td>
-                    <td style='background-color:${bgcolor};'>${class6}</td>
                     <td style='background-color:${bgcolor};'>${class7}</td>
                     ${strClassTag}
-                    ${letter}
-                    ${strDeleteTag}
+					${inoutTag}}
                     <td style='background-color:${bgcolor};'>${GetNumber(userlist[i].iInput)}</td>
                     <td style='background-color:${bgcolor};'>${GetNumber(userlist[i].iOutput)}</td>
                     <td style='background-color:${bgcolor};'>${GetNumber(userlist[i].iCash)}</td>
-                    <td style='background-color:${bgcolor};'><font color="${GetClassSettleColor(userlist[i].iMyRollingMoney, iRootClass)}">${GetNumber(userlist[i].iMyRollingMoney)}</font></td>
-                    <td style='background-color:${bgcolor};'><font color="${GetClassColor(userlist[i].iTotal-userlist[i].iMyRollingMoney, iRootClass)}">${GetNumber(userlist[i].iTotal-userlist[i].iMyRollingMoney)}</font></td>
                     <td style='background-color:${bgcolor};'><font color="${GetClassSettleColor(userlist[i].iCurrentRolling, iRootClass)}">${GetNumber(userlist[i].iCurrentRolling)}</font></td>
-                    ${inoutTag}
                     <td style='background-color:${bgcolor};'>${strCreatedAt}</td>
-                    ${tagState}
-                    <td style='background-color:${bgcolor};'>${strLoginedAt}</td>
-                    <td style='background-color:${bgcolor};'>${userlist[i].strIP}</td>
-
-
+                    <td style='background-color:${bgcolor};'>
+						<a id="adjust_${userlist[i].strNickname}" href="#" style="border: 1px solid green; display:inline-block; font-weight:bold; border-radius:4px; background-color:blue; width:30px; color:white;">상세보기</a>
+					</td>
                 </tr>`;
 
             $('#userlist').append(tag);
@@ -249,7 +294,7 @@
 
         let endtag = `
         <tr>
-            <td colspan="5">${strTotal}</td>
+            <td colspan="5">${i18nTexts.strTotal}</td>
             <% if (user.iRootClass <= 3 && user.iPermission != 100) { %>
                 <td></td>
                 <td></td>
@@ -346,33 +391,6 @@
 
     }
 
-    let OnClickRemove = (strNickname, strGroupID, iClass) => {
-
-        if ( confirm(`${strNickname} ${strConfirmRemove}`) )
-        {
-            $.ajax({
-                type:'post',
-                url: "/manage_user/request_removeuser",
-                context: document.body,
-                data:{strNickname:strNickname, strGroupID:strGroupID, iClass:iClass},
-        
-                success:function(data) {
-                    
-                    if ( data.result == 'OK' )
-                    {
-                        alert(strAlertComplete);
-                        location.reload();
-                    }
-                    else
-                    {
-                        alert(strAlertCantRemove);
-                    }
-                    console.log(data);
-                }
-		    });            
-        }
-    }
-
     let OnClickSearchNickname = () => {
 
         RequestUserList(user.iClass, user.strGroupID, user.iClass);
@@ -412,8 +430,164 @@
         }
     }
 
-    $(document).ready(() => {
-        SetSeachButtons("#search_date",3,i18nTexts,user,4);
+	let setAmount = (iAmount) => {
+		console.log(`setAmount : ${iAmount}`);
+		if (iAmount === 'ALL') {
+			let withdrawableAmount = parseInt($('#withdrawable').val().replace(/,/g, '')) || 0;
+			$('#exchangeAmount').val(withdrawableAmount.toLocaleString());
+		} else if (iAmount === 'RESET') {
+			$('#exchangeAmount').val(0);
+		} else {
+			let currentAmount = parseInt($('#exchangeAmount').val().replace(/,/g, '')) || 0;
+			let newAmount = currentAmount + iAmount;
+			$('#exchangeAmount').val(newAmount.toLocaleString());
+		}
+	}
+
+	let UpdateGTRecord = (eType, list) => {
+			let parent_id = '#gtrecord_cash';
+			if ( eType == "FROM")
+				parent_id = '#gtrecord_rolling';
+			$(parent_id).empty();
+			if ( list.length == 0 ) 
+			{
+				let tag = 
+				`
+				<tr>
+					<td colspan="20" height="40"><strong>${strNoRecord}</strong></td>
+				</tr>
+				`;
+				$(parent_id).append(tag);
+			}
+			else 
+			{
+				let iTotalGive = 0;
+				let iTotalTake = 0;
+				for ( let i in list )
+				{
+					let target = list[i].strTo;
+					if ( eType == 'FROM' )
+						target = list[i].strFrom;
+
+					if ( list[i].eType == 'GIVE')
+						iTotalGive += parseFloat(list[i].iAmount);
+					else if ( list[i].eType == 'TAKE' )
+						iTotalTake += parseFloat(list[i].iAmount);
+
+					let tag = 
+					`
+					<tr>
+						<td style="color:${GetGTColor(list[i].eType)};">${parseInt(i)+1}</td>
+						<td style="color:${GetGTColor(list[i].eType)};">${target}</td>
+						<td style="color:${GetGTColor(list[i].eType)};">${GetNumber(list[i].iAmount)}</td>
+						<td style="color:${GetGTColor(list[i].eType)};">${GetGTType(list[i].eType)}</td>
+						<td style="color:${GetGTColor(list[i].eType)};">${list[i].createdAt}</td>
+					</tr>
+					`;
+					$(parent_id).append(tag);
+				}
+
+				let total = parseFloat(iTotalGive) + parseFloat(iTotalTake);
+
+				let finaltag = `
+					<tr>
+						<td style="background-color:gray;color:white;">전체 : ${GetNumber(total)}</td>
+						<td style="background-color:gray;color:white;">지급총합</td>
+						<td style="background-color:gray;color:skyblue;">${GetNumber(iTotalGive)}</td>
+						<td style="background-color:gray;color:white;">차감총합</td>
+						<td style="background-color:gray;color:orange;">${GetNumber(iTotalTake)}</td>
+					</tr>`;
+				$(parent_id).append(finaltag);
+			}
+		}
+
+	let RequestGTRecord = (eType, strSearch) => {
+
+		let dateStart = $('#datepicker1').val();
+		let dateEnd = $('#datepicker2').val();
+
+		$.ajax({
+			type:'post',
+			url: "/manage_user_popup/request_gtrecord",
+			context: document.body,
+			data:{strNickname:user.strNickname, eType:eType, dateStart:dateStart, dateEnd:dateEnd, strSearch:strSearch, iClass: user.iClass},
+
+			success: (list) => {
+				console.log(list);
+				UpdateGTRecord(eType, list);
+
+				// $('#pagination').empty();
+				// $('#pagination').append(getPagination(iLimit, obj.totalCount, iCurrentPage));
+			},
+			error:function(request,status,error){
+				alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+			}
+		});
+	}
+
+	let OnClickTranslate = (eType) => {
+
+		let iSettle = $('#translate_settle').val();
+		iSettle = parseInt(iSettle);
+		let iRolling = $('#translate_rolling').val();
+		iRolling = parseInt(iRolling);
+		let strType = '';
+		let iMoney = 0;
+
+		if ( eType == 'SETTLE' )
+		{
+			strType = '죽장';
+			if ( iSettle > 0 && iSettle <= agent.iSettle )
+				iMoney = iSettle;
+		}
+		else if ( eType == 'ROLLING' )
+		{
+			strType = '롤링';
+			if ( iRolling > 0 && iRolling <= agent.iRolling )
+				iMoney = iRolling;
+		}
+
+		if ( iMoney == '' || iMoney == 0 || iMoney < 0 )
+		{
+			alert(strAlertIncorrectInputValue);
+			return;
+		}
+
+		if ( confirm(strConfirmExchange) )
+		{
+			$.ajax({
+				type:'post',
+				url: "/manage_user_popup/request_gt",
+				context: document.body,
+				data:{strTo:agent.strNickname, strFrom:agent.strNickname, iAmount:iMoney, eType:eType},
+				success: (obj) => {
+					if ( obj.result == 'OK' )
+					{
+						RequestGTRecord('TO', '');
+						RequestGTRecord('FROM', '');
+						$('#cash').text(GetNumber((obj.cash)));
+						$('#rolling').text(GetNumber((obj.rolling)));
+						$('#settle').text(GetNumber((obj.settle)));
+						location.reload();
+					}
+					else {
+						if ( obj.reason == 'NOTENOUGH')
+						{
+							alert(strAlertErrorNotEnoughMoney);
+						}
+						else
+							alert(strAlertError);
+					}
+				},
+				error:function(request,status,error){
+					alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+				}
+			});
+		}
+	}
+
+	$(document).ready(() => {
+		SetSeachButtons("#search_date",8,i18nTexts,user,4);
         DatePicker();
 
         $('#datepicker1').val(GetCurrentDate());
@@ -428,6 +602,5 @@
         let total3 = SetUserList(shoplist, 7, user.iRootClass);
         let total4 = SetUserList(userlist, 8, user.iRootClass);
         AddEndTag(total1, total2, total3, total4, user.iRootClass);
-    });
-
+	});
 </script>

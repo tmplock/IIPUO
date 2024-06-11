@@ -14,10 +14,10 @@
             autoControls: true,pager:true,});
     });
 
-    let listIgnore = ['LIVE_VIVO', 'LIVE_WORLD'];
-    
+    let listIgnoredLive = ['LIVE_VIVO', 'LIVE_WORLD'];
+    let listIgnoredSM = ['SM_RELAX'];
 
-    let CheckIgnoreGame = (strGame) => {
+    let CheckIgnoreGame = (strGame, listIgnore) => {
 
         for ( let i in listIgnore )
         {
@@ -28,33 +28,16 @@
     }
 
     var GoGame = (strGame, strGameKey) => {
-        // if ( strGame != 'LIVE_EZUGI' ) {
-        //     alert('해당 게임은 점검중입니다.');
-        //     return;
-        // }
 
-        if ( CheckIgnoreGame(strGame) == true )
-        {
-            alert('점검중 입니다.');
-            return;
-        }
-
-        // if ( strGame == 'LIVE_VIVO' || strGame == 'LIVE_WORLD' )
-        // {
-        //     alert('준비중입니다.');
-        //     return;
-        // }
-        // strGame == 'LIVE_DREAM'
-        // if ( strGame == 'LIVE_CQ9' )
-        // {
-        //     alert('해당 게임은 점검중입니다.');
-        //     return;
-        // }
-
-        //console.log(bLogin);
         if ( "false" == bLogin )
         {
             alert('로그인이 필요한 서비스 입니다.');
+            return;
+        }
+
+        if ( CheckIgnoreGame(strGame, listIgoredLive) == true )
+        {
+            alert('점검중 입니다.');
             return;
         }
 
@@ -92,7 +75,7 @@
             return;
         }
 
-        if ( strGame == 'SM_RELAX' )
+        if ( CheckIgnoreGame(strGame, listIgnoredSM) == true )
         {
             alert('점검중 입니다.');
             return;

@@ -632,8 +632,8 @@ exports.ProcessRolling = (oRO, listBet, cPBType, cPBTarget, strDate) => {
     for ( let i in listBet )
     {
         const cBet = listBet[i];
-        const cBetAmount = parseInt(cBet.iBet / 1.2);
-        const cWinAmount = parseInt(cBet.iWin / 1.2);
+        const cBetAmount = parseInt(cBet.iBet);
+        const cWinAmount = parseInt(cBet.iWin);
 
         console.log(`cBet : ${cBet}, cBetAmount : ${cBetAmount}`);
         switch ( cBet.iGameCode )
@@ -1195,7 +1195,9 @@ exports.UpdateOverview = async (list) => {
 
             // 소수점 정리
             // const cRolling = parseInt(t.iRollingB) + parseInt(t.iRollingUO) + parseInt(t.iRollingS) + parseInt(t.iRollingPBA) + parseInt(t.iRollingPBB);
-            const cRolling = t.iRollingB + t.iRollingUO + t.iRollingS + t.iRollingPBA + t.iRollingPBB; // 요게 맞음
+            //const cRolling = t.iRollingB + t.iRollingUO + t.iRollingS + t.iRollingPBA + t.iRollingPBB; // 요게 맞음
+            
+            const cRolling = t.iRollingB/1.2 + t.iRollingUO + t.iRollingS + t.iRollingPBA + t.iRollingPBB; // 요게 맞음
 
 
             //continue;
@@ -1473,7 +1475,7 @@ exports.ProcessRollingBet = (oRO, iGameCode, iBet, strDate) => {
     const o = oRO.objectData;
     console.log(o);
 
-    const cBetAmount = parseInt(iBet/1.2);
+    const cBetAmount = parseInt(iBet);
 
     console.log(`cBetAmount : ${cBetAmount}, iGameCode : ${iGameCode}`);
     switch ( iGameCode )
@@ -1615,7 +1617,7 @@ exports.ProcessRollingWin = (oRO, iGameCode, iWin, strDate) => {
     const o = oRO.objectData;
     console.log(o);
 
-    const cWinAmount = parseInt(iWin/1.2);
+    const cWinAmount = parseInt(iWin);
 
     console.log(`cWinAmount : ${cWinAmount}`);
     switch ( iGameCode )
@@ -1700,7 +1702,7 @@ exports.ProcessRollingBetWin = (oRO, iGameCode, iBet, iWin, strDate) => {
     const o = oRO.objectData;
     console.log(o);
 
-    const cBetAmount = parseInt(iBet/1.2);
+    const cBetAmount = parseInt(iBet);
 
     console.log(`cBetAmount : ${cBetAmount}, iGameCode : ${iGameCode}`);
     switch ( iGameCode )
@@ -1779,7 +1781,7 @@ exports.ProcessRollingBetWin = (oRO, iGameCode, iBet, iWin, strDate) => {
         break;
     }
 
-    const cWinAmount = parseInt(iWin/1.2);
+    const cWinAmount = parseInt(iWin);
 
     console.log(`cWinAmount : ${cWinAmount}`);
     switch ( iGameCode )

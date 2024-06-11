@@ -632,8 +632,8 @@ exports.ProcessRolling = (oRO, listBet, cPBType, cPBTarget, strDate) => {
     for ( let i in listBet )
     {
         const cBet = listBet[i];
-        const cBetAmount = parseInt(cBet.iBet/1.2);
-        const cWinAmount = parseInt(cBet.iWin/1.2);
+        const cBetAmount = parseInt(cBet.iBet / 1.2);
+        const cWinAmount = parseInt(cBet.iWin / 1.2);
 
         console.log(`cBet : ${cBet}, cBetAmount : ${cBetAmount}`);
         switch ( cBet.iGameCode )
@@ -1473,7 +1473,7 @@ exports.ProcessRollingBet = (oRO, iGameCode, iBet, strDate) => {
     const o = oRO.objectData;
     console.log(o);
 
-    const cBetAmount = parseInt(iBet);
+    const cBetAmount = parseInt(iBet/1.2);
 
     console.log(`cBetAmount : ${cBetAmount}, iGameCode : ${iGameCode}`);
     switch ( iGameCode )
@@ -1615,7 +1615,7 @@ exports.ProcessRollingWin = (oRO, iGameCode, iWin, strDate) => {
     const o = oRO.objectData;
     console.log(o);
 
-    const cWinAmount = parseInt(iWin);
+    const cWinAmount = parseInt(iWin/1.2);
 
     console.log(`cWinAmount : ${cWinAmount}`);
     switch ( iGameCode )

@@ -146,10 +146,11 @@ router.post('/request_searchby', isLoggedIn, async(req, res) => {
     }
 
     let eType = req.body.type;
+    let visibleGrade = req.user.iClass == 2 ? true  : false;
     if (eType == 'OUTPUT') {
-        return await GetOutputList(req, res);
+        return await GetOutputList(req, res, visibleGrade);
     } else if (eType == 'INPUT') {
-        return await GetInputList(req, res);
+        return await GetInputList(req, res, visibleGrade);
     } else {
         res.send({result:'FAIL', msg:'허용되지 않은 접근입니다', data : [], totalCount : 0, iRootClass:req.user.iClass});
     }
@@ -223,7 +224,7 @@ let GetRootInOutList = async (req, res) => {
     res.send({result:'OK', msg:'조회성공', data : list, totalCount : totalCount, iRootClass:req.user.iClass});
 }
 
-let GetOutputList = async (req, res) => {
+let GetOutputList = async (req, res, visibleGrade) => {
     let iLimit = parseInt(req.body.iLimit);
     let iPage = parseInt(req.body.iPage);
     let iOffset = (iPage-1) * iLimit;
@@ -279,7 +280,8 @@ let GetOutputList = async (req, res) => {
                     ELSE REPLACE(i.strAccountOwner, SUBSTR(i.strAccountOwner,2,1), '*')
                     END AS strAccountOwner,
                 DATE_FORMAT(i.completedAt, '%Y-%m-%d %H:%i:%S') AS completedAt, DATE_FORMAT(i.createdAt, '%Y-%m-%d %H:%i:%S') AS createdAt, DATE_FORMAT(i.updatedAt, '%Y-%m-%d %H:%i:%S') AS updatedAt,
-                DATE_FORMAT(u.createdAt, '%Y-%m-%d %H:%i:%S') AS userCreatedAt
+                DATE_FORMAT(u.createdAt, '%Y-%m-%d %H:%i:%S') AS userCreatedAt,
+                u.strOptionCode AS strOptionCode
             FROM Inouts i
             LEFT JOIN Users u ON u.strNickname = i.strID
             WHERE DATE(i.createdAt) BETWEEN '${req.body.dateStart}' AND '${req.body.dateEnd}'
@@ -299,12 +301,17 @@ let GetOutputList = async (req, res) => {
         if (obj.strBankType == 'NEWUSER') {
             obj.iNewUser = 1;
         }
+        if (visibleGrade == true) {
+            let grade = IAgent.GetGradeFromStrOptionCode(obj.strOptionCode);
+            let strGrade =  `[${grade.id}:${grade.str}]`
+            obj.strGrade = strGrade;
+        }
         list.push(obj);
     }
     res.send({result:'OK', msg:'조회성공', data : list, totalCount : totalCount, iRootClass:req.user.iClass});
 }
 
-let GetInputList = async (req, res) => {
+let GetInputList = async (req, res, visibleGrade) => {
     let iLimit = parseInt(req.body.iLimit);
     let iPage = parseInt(req.body.iPage);
     let iOffset = (iPage-1) * iLimit;
@@ -379,6 +386,11 @@ let GetInputList = async (req, res) => {
         obj.iNewUser = 0;
         if (obj.strBankType == 'NEWUSER') {
             obj.iNewUser = 1;
+        }
+        if (visibleGrade == true) {
+            let grade = IAgent.GetGradeFromStrOptionCode(obj.strOptionCode);
+            let strGrade =  `[${grade.id}:${grade.str}]`
+            obj.strGrade = strGrade;
         }
         list.push(obj);
     }
@@ -1220,6 +1232,7 @@ router.post('/output_alert', (req, res)=> {
 /**
  * 입출금관리 > 입금목록 > 입금신청
  */
+// deprecate
 router.post('/request_inout_pass', isLoggedIn, async (req, res) => {
     console.log(`request_inout_pass`);
     console.log(req.body);
@@ -1286,6 +1299,7 @@ router.post('/request_inout_pass', isLoggedIn, async (req, res) => {
 /**
  * 입출금관리 > 계좌보기
  */
+// deprecate
 // 계좌관리 비번 체크
 router.post('/request_bank', isLoggedIn, async (req, res) => {
     console.log(`request_bank`);
@@ -1308,6 +1322,7 @@ router.post('/request_bank', isLoggedIn, async (req, res) => {
     res.send({result: 'OK'});
 });
 
+// deprecate
 // 입출금관리 > 계좌관리
 router.post('/popup_bank', isLoggedIn, async (req, res) => {
     console.log(`popup_bank`);
@@ -1344,6 +1359,7 @@ router.post('/popup_bank', isLoggedIn, async (req, res) => {
     res.render('manage_inout/popup_bank', {iLayout:8, iHeaderFocus:0, user:agent, msg:''});
 });
 
+// deprecate
 router.post('/request_bank_list', isLoggedIn, async (req, res) => {
     console.log(`request_bank_list`);
     console.log(req.body);
@@ -1464,6 +1480,7 @@ router.post('/request_bank_list', isLoggedIn, async (req, res) => {
     // res.send({result: 'OK', data: newList});
 });
 
+// deprecate
 router.post('/request_change_bank_type', isLoggedIn, async (req, res) => {
     console.log(`request_change_bank_type`);
     console.log(req.body);
@@ -1505,6 +1522,7 @@ router.post('/request_change_bank_type', isLoggedIn, async (req, res) => {
     res.send({result: 'OK'});
 });
 
+// deprecate
 router.post('/popup_bank_add', isLoggedIn,  async (req, res) => {
     console.log(`popup_bank_add`);
 
@@ -1536,6 +1554,7 @@ router.post('/popup_bank_add', isLoggedIn,  async (req, res) => {
     res.render('manage_inout/popup_bank_add', {iLayout:8, iHeaderFocus:0, user:agent, strChildes:strChildes, strChildes2:strChildes2});
 });
 
+// deprecate
 router.post('/request_bank_add', isLoggedIn, async (req, res) => {
     console.log(`request_bank_add`);
 
@@ -1580,6 +1599,7 @@ router.post('/request_bank_add', isLoggedIn, async (req, res) => {
     res.send({result:'OK', msg:'등록성공'});
 });
 
+// deprecate
 router.post('/request_bank_memo_apply', isLoggedIn, async (req, res) => {
     console.log(`request_bank_add`);
 
@@ -1617,6 +1637,7 @@ router.post('/request_bank_memo_apply', isLoggedIn, async (req, res) => {
     res.send({result:'OK', msg:'등록성공'});
 });
 
+// deprecate
 router.post('/request_bank_del', isLoggedIn, async (req, res) => {
     console.log(`request_bank_del`);
 

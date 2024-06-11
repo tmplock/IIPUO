@@ -5,7 +5,7 @@
         <p style="background-repeat:no-repeat; background-position:left center; font-size:20px; color:#454545; padding-left:22px;margin-top:10px;height:30px;margin-bottom:5px;">
             계좌 목록
         </p>
-        <a class="btn_thinorange" style="position:absolute;top:35px; right:15%;" href="javascript:OnClickAddBank();">계좌 등록</a>
+        <a class="btn_thinorange" style="position:absolute;top:35px; right:15%;" href="javascript:OnClickAddBank(-1);">계좌 등록</a>
         <table class="search_list">
             <thead>
             <tr>
@@ -17,6 +17,8 @@
                 <th width="15%">사용여부</th>
                 <th width="15%">등록일</th>
                 <th width="30%">메모</th>
+                <th width="10%">경고메세지</th>
+                <th width="10%">수정</th>
                 <th width="10%">삭제</th>
             </tr>
             </thead>
@@ -47,7 +49,7 @@
     let RequestList = () => {
         $.ajax({
             type:'post',
-            url: "/manage_inout/request_bank_grade_list",
+            url: "/manage_bank_grade/request_bank_list",
             data:{iClass: user.iClass, strNickname: user.strNickname, key:user.key},
             success: (obj) => {
                 if ( obj.result == 'OK' ) {
@@ -70,7 +72,7 @@
 
         $.ajax({
             type:'post',
-            url: "/manage_inout/request_bank_memo_apply",
+            url: "/manage_bank_grade/request_bank_memo_apply",
             data:{id:id, strMemo:memo, iClass: user.iClass, strNickname: user.strNickname},
 
             success: (obj) => {
@@ -90,7 +92,7 @@
         if (confirm(`${name} 계좌를 삭제할까요?`)) {
             $.ajax({
                 type:'post',
-                url: "/manage_inout/request_bank_del",
+                url: "/manage_bank_grade/request_bank_del",
                 data:{id:id},
 
                 success: (obj) => {
@@ -128,23 +130,20 @@
                     </select>
                     `;
                 }
-
-                let bankType = '';
-                if (aObject.eBankType == 'NEWUSER') {
-                    bankType = '(신규가입자용)';
-                }
-
+                let msgTag = `<pre>${aObject.strTitle}\n${aObject.strMsg}\n${aObject.strSubMsg}</pre>`
                 let memoTag = `<input style="width:70%;" type="text" id="memoinput_${aObject.id}" value="${aObject.strMemo}"><button style="color:white;" class="menu4" onclick="OnClickMemo(${aObject.id});">저장</button>`;
                 $('#bank_list').append(`
                     <tr>
                         <td>${i+1}</td>
-                        <td style="font-weight:100;">${GetClassNickName(aObject.iClass, aObject.strNickname)}</td>
+                        <td style="font-weight:100;">${aObject.strGrade}</td>
                         <td style="font-weight:100;">${aObject.strBankName}</td>
-                        <td style="font-weight:100;">${aObject.strBankHolder}${bankType}</td>
+                        <td style="font-weight:100;">${aObject.strBankHolder}</td>
                         <td style="font-weight:100;">${aObject.strBankNumber}</td>
                         <td style="font-weight:100;">${tagType}</td>
                         <td style="font-weight:100;">${aObject.createdAt}</td>
                         <td style="font-weight:100;">${memoTag}</td>
+                        <td style="font-weight:100;">${msgTag}</td>
+                        <td style="font-weight:100;"><button class="btn_red" style="background-color: blue" onclick="OnClickAddBank(${aObject.id});">수정</button></td>
                         <td style="font-weight:100;"><button class="btn_red" style="background-color: red" onclick="OnClickDelete('${aObject.strBankName}', ${aObject.id});">삭제</button></td>
                     </tr>
                 `);
@@ -162,21 +161,23 @@
                         <td></td>
                         <td></td>
                         <td></td>
+                        <td></td>
                     </tr>
             `);
         }
     }
 
-    let OnClickAddBank = () => {
+    let OnClickAddBank = (id) => {
         window.open('', 'popupChkBankAdd', 'width=680, height=520, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
         var $form = $('<form></form>');
-        $form.attr('action', '/manage_inout/popup_bank_add');
+        $form.attr('action', '/manage_bank_grade/popup_bank_add');
         $form.attr('method', 'post');
         $form.attr('target', 'popupChkBankAdd');
         $form.appendTo('body');
         var strNickname = $(`<input type="hidden" value="${user.strNickname}" name="strNickname">`);
         var iClass = $(`<input type="hidden" value=${parseInt(user.iClass)} name="iClass">`);
-        $form.append(strNickname).append(iClass);
+        var id = $(`<input type="hidden" value=${parseInt(id)} name="id">`);
+        $form.append(strNickname).append(iClass).append(id);
         $form.submit();
     }
 
@@ -184,7 +185,7 @@
         location.reload();
     }
 
-    let OnChangeType = (id, userId) => {
+    let OnChangeType = (id) => {
         let item = $(`#type_${id}`);
         let msg = (item.val() == 'ACTIVE') ? '사용' : '미사용';
 
@@ -192,8 +193,8 @@
         {
             $.ajax({
                 type:'post',
-                url: "/manage_inout/request_change_bank_type",
-                data:{id:id, eType:item.val(), userId:userId},
+                url: "/manage_bank_grade/request_change_bank_type",
+                data:{id:id, eType:item.val()},
                 success:function(obj) {
                     if (obj.result == 'OK') {
                         // location.reload();

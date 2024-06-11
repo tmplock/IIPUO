@@ -1,0 +1,10 @@
+<div style="height:5px;"></div>
+
+<script type="text/javascript">
+    let msg = JSON.parse('<%-JSON.stringify(msg)%>');
+
+    $(document).ready( ()=> {
+        alert(msg);
+        self.close();
+    });
+</script>

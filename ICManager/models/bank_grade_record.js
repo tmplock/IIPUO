@@ -9,8 +9,8 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
         },
         // 계좌명
-        strGrade: {
-            type:DataTypes.STRING,
+        iGrade: {
+            type:DataTypes.INTEGER,
             allowNull: false,
         },
         // 계좌명
@@ -51,6 +51,18 @@ module.exports = (sequelize, DataTypes) => {
         strGroupID: {
             type:DataTypes.STRING,
             allowNull: false,
+        },
+        strWriter: {
+            type:DataTypes.STRING,
+        },
+        strTitle: {
+            type:DataTypes.STRING,
+        },
+        strMsg: {
+            type:DataTypes.STRING,
+        },
+        strSubMsg: {
+            type:DataTypes.STRING,
         }
     });
 

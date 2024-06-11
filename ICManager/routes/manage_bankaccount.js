@@ -20,28 +20,70 @@ const ITime = require('../utils/time');
 const ISocket = require('../implements/socket');
 const IAgent = require("../implements/agent3");
 const moment = require("moment");
+const IAgentSec = require("../implements/agent_sec");
 
 router.post('/account', isLoggedIn, async(req, res) => {
     console.log(req.body);
-    let strParent = await IAgent.GetParentNickname(req.body.strNickname);
+
+    const input = req.body.input ?? '';
+    if (input == '') {
+        res.render('error/popup_error', {iLayout:8, iHeaderFocus:0, msg:'비밀번호 미입력'});
+        return;
+    }
+
+    if (req.user.iClass != 2 || req.user.iPermission != 0) {
+        res.render('error/popup_error', {iLayout:0, iHeaderFocus:9, msg:'조회오류'});
+        return;
+    }
+
+    let result = await IAgentSec.AccessInoutPassword(req.user.strNickname, input);
+    if (result.result != 'OK') {
+        res.render('error/popup_error', {iLayout:8, iHeaderFocus:0, msg:result.msg});
+        return;
+    }
+
     const user = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
-    console.log(user);
+
     let agent = {strNickname:user.strNickname, iClass:user.iClass, strGroupID:user.strGroupID, iCash:user.iCash, iSettle:user.iSettle, iRolling:user.iRolling, iSettleAcc:user.iSettleAcc,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission, iRootNickname:req.user.strNickname};
 
-
-    let iocount = await IInout.GetProcessing(user.strGroupID, user.strNickname, user.iClass);
-    console.log(`ic : ${iocount.input}, oc : ${iocount.output}`);
-    
-
-    res.render('manage_bankaccount/account', {iLayout:0, iHeaderFocus:9, user:user, agent:agent, iocount:iocount, strParent:strParent});
+    res.render('manage_bankaccount/account', {iLayout:8, iHeaderFocus:0, user:agent, msg:'', yesterday:0});
 
 });
+
+router.post('/yesterday', isLoggedIn, async(req, res) => {
+    console.log(req.body);
+
+    if (req.user.iClass != 2 || req.user.iPermission != 0) {
+        res.render('error/popup_error', {iLayout:0, iHeaderFocus:9, msg:'조회오류'});
+        return;
+    }
+
+    let yesterday = parseInt(req.body.iYesterday ?? 0);
+    if (Number.isNaN(yesterday)) {
+        yesterday = 0;
+    }
+    yesterday = yesterday + 1;
+
+    const user = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
+
+    let agent = {strNickname:user.strNickname, iClass:user.iClass, strGroupID:user.strGroupID, iCash:user.iCash, iSettle:user.iSettle, iRolling:user.iRolling, iSettleAcc:user.iSettleAcc,
+        iRootClass:req.user.iClass, iPermission:req.user.iPermission, iRootNickname:req.user.strNickname};
+
+    res.render('manage_bankaccount/account', {iLayout:8, iHeaderFocus:0, user:agent, msg:'', yesterday:yesterday});
+
+});
+
 
 router.post('/detail', isLoggedIn, async(req, res) => {
 
     console.log(`/manage_bankaccount/detail`);
     console.log(req.body);
+
+    if (req.user.iClass != 2 && req.user.iPermission != 0) {
+        res.render('error/popup_error', {msg: '조회에러'});
+        return;
+    }
 
     let listRecordAccount = await db.RecordInoutAccounts.findAll({
         where: {
@@ -53,7 +95,7 @@ router.post('/detail', isLoggedIn, async(req, res) => {
         order:[['createdAt','DESC']]
     });
 
-    res.render('manage_bankaccount/popup_detail', {iLayout:1, iHeaderFocus:0, list:listRecordAccount, dateStart:req.body.dateStart, dateEnd:req.body.dateEnd});
+    res.render('manage_bankaccount/popup_detail', {iLayout:8, iHeaderFocus:0, list:listRecordAccount, dateStart:req.body.dateStart, dateEnd:req.body.dateEnd});
 
 });
 
@@ -101,23 +143,49 @@ router.post('/request_partner', isLoggedIn, async (req, res) => {
     console.log(`/request_partner`);
     console.log(req.body);
 
-    let listPartner = await db.Users.findAll({
+    if (req.user.iClass != 2 || req.user.iPermission != 0) {
+        res.send({result:'FAIL', list:[], msg:'조회에러'});
+        return;
+    }
+
+    let strNickname = req.body.strSearchNickname ?? '';
+    let strGroupID = `${req.user.strGroupID}`.substring(0, 3);
+
+    let listPartner = strNickname == '' ? await db.Users.findAll({
         where:{
-            iClass:req.body.iClass,
             strGroupID: {
-                [Op.like]:`${req.body.strGroupID}%`
+                [Op.like]:`${strGroupID}%`
+            }
+        },
+        order:[['updatedAt','DESC']]
+    }) : await db.Users.findAll({
+        where:{
+            strNickname:`${strNickname}`,
+            strGroupID: {
+                [Op.like]:`${strGroupID}%`
             }
         },
         order:[['updatedAt','DESC']]
     });
 
-    let listRecordAccount = await db.RecordInoutAccounts.findAll({
+    let listRecordAccount = strNickname == '' ? await db.RecordInoutAccounts.findAll({
         where: {
             createdAt:{
                 [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
             },
             strGroupID: {
-                [Op.like]:`${req.body.strGroupID}%`
+                [Op.like]:`${strGroupID}%`
+            }
+        },
+        order:[['createdAt','DESC']]
+    }) : await db.RecordInoutAccounts.findAll({
+        where: {
+            strNickname: `${strNickname}`,
+            createdAt:{
+                [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
+            },
+            strGroupID: {
+                [Op.like]:`${strGroupID}%`
             }
         },
         order:[['createdAt','DESC']]

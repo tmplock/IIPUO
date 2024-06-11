@@ -1332,42 +1332,13 @@ router.post('/request_bank', isLoggedIn, async (req, res) => {
     let bankOwner = dbuser.strBankOwner ?? '';
     let cell = dbuser.strMobile ?? '';
     let pass = dbuser.strPassword ?? '';
-    let iInputGrade = '';
-    try {
-        iInputGrade = dbuser.strOptionCode.split('')[3];
-    } catch (err) {
-    }
-
-    res.send({result:'OK', msg:'정상 조회', bankname:bankname, bankAccount:bankAccount, bankOwner:bankOwner, cell:cell, pass:pass, grade:iInputGrade});
-});
-
-router.post('/request_rolling_update', isLoggedIn, async (req, res) => {
-
-    console.log(`/request_rolling_update`);
-    console.log(req.body);
-
-    if (req.user.iClass > 3 && req.user.iPermission != 0) {
-        res.send({result:'ERROR', code:'ERRORMSG', msg: '처리오류(-1)'});
+    if (req.user.iClass == 2 && req.user.iPermission == 0) {
+        let iInputGrade = IAgent.GetGradeFromStrOptionCode(dbuser.strOptionCode);
+        let gradelist = IAgent.GetGradeList();
+        res.send({result:'OK', msg:'정상 조회', bankname:bankname, bankAccount:bankAccount, bankOwner:bankOwner, cell:cell, pass:pass, grade:iInputGrade, gradelist:gradelist});
         return;
     }
-
-    let strNickname = req.body.strNickname ?? '';
-    let iUpdate = req.body.iUpdate ?? -1;
-
-    if (strNickname == '' || !(iUpdate == 0 || iUpdate == 1)) {
-        res.send({result:'ERROR', code:'ERRORMSG', msg: '처리오류(-2)'});
-        return;
-    }
-
-    let user = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
-    // 기존 롤링값 백업
-    let fBaccaratR = user.fBaccaratR;
-    let fUnderOverR = user.fUnderOverR;
-    let fSlotR = user.fSlotR;
-
-
-
-
+    res.send({result:'OK', msg:'정상 조회', bankname:bankname, bankAccount:bankAccount, bankOwner:bankOwner, cell:cell, pass:pass, grade:0, gradelist: []});
 });
 
 //에이전트 정보 수정

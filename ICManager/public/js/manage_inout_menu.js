@@ -29,5 +29,4 @@ $(document).on('click', '#inout_output', ()=> {
 
     $form.append(strNickname).append(strGroupID).append(iClass).append(iPermission);
     $form.submit();
-
 });

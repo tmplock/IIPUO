@@ -46,9 +46,6 @@
                 <div class="list_tit" style="margin-top:20px;">
                     <h3><%=__('LetterListReceived')%>
                     </h3>
-                    <% if ( user.iPermission != 100) { %>
-                        <button class="btn_add" type="button" onclick="OnClickWritingLetter('');">쪽지 쓰기</button>
-                    <% } %>
                 </div>
                     
                 <table class="search_list">
@@ -169,7 +166,7 @@ let user = JSON.parse('<%-JSON.stringify(user)%>');
 		AlertintervalSoundOff('alert_letter');
 		AlertintervalSoundOff('alert_letter_reply');
 
-		SetSettingHeader(4, user.iClass);
+		SetSettingHeader(5, user.iClass);
 
 		RequestLetterList(0);
 	});

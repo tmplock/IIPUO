@@ -132,7 +132,7 @@ router.post('/letter_banklist', isLoggedIn, async(req, res) => {
 
     console.log(req.body);
 
-    if (req.user.iClass == 2 || req.user.iPermission == 100) {
+    if (req.user.iClass != 2 || req.user.iPermission != 0) {
         res.redirect("/");
         return;
     }

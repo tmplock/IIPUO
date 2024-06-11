@@ -915,7 +915,7 @@ router.post('/request_letterlist', isLoggedIn, async (req, res) => {
 router.post('/request_banklist', isLoggedIn, async (req, res) => {
     console.log(req.body);
 
-    if (req.user.iPermission == 100) {
+    if (req.user.iClass != 2 || req.user.iPermission != 0) {
         res.redirect("/");
         return;
     }

@@ -183,12 +183,10 @@
                     $('input[name=bank_name]').val(obj.bankname);
                     $('input[name=bank_holder]').val(obj.bankholder);
                     $('input[name=bank_number]').val(obj.banknumber);
-                    SetTagActive(obj.title, obj.msg, obj.msg2, obj.iNext);
+                    SetTagActive(obj.title, obj.strMsg, obj.strSubMsg, 1);
                 } else {
                     bRequestAccount = false;
-
-                    iUpdateAccount = 1;
-                    SetTagActive(obj.title, obj.msg, obj.msg2, obj.iNext);
+                    alert(obj.msg);
                 }
             },
             error:function(request,status,error){
@@ -198,15 +196,6 @@
     }
 
     let SetTagActive = (title, msg, msg2, next) => {
-        // document.getElementById('inputPrice').disabled = false;
-        // document.getElementById('inputName').disabled = false;
-        // document.getElementById('btn_50').disabled = false;
-        // document.getElementById('btn_30').disabled = false;
-        // document.getElementById('btn_10').disabled = false;
-        // document.getElementById('btn_5').disabled = false;
-        // document.getElementById('btn_init').disabled = false;
-        // document.getElementById('btn_submit').disabled = false;
-
         $('#bank_name').val(bankname);
         $('#bank_holder').val(bankholder);
         $('#bank_number').val(banknumber);

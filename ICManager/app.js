@@ -123,6 +123,7 @@ app.use('/manage_bankaccount', require('./routes/manage_bankaccount'));
 // app.use('/manage_settle_input', require('./routes/manage_settle_input'));
 app.use('/test', require('./routes/test'));
 app.use('/user', require('./routes/user'));
+app.use('/manage_bank_grade', require('./routes/manage_bank_grade'));
 
 app.use((req, res, next) => {
     req.io = io;

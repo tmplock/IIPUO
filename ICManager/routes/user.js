@@ -168,9 +168,9 @@ router.post('/request_bank', async(req, res) => {
             msg: list[0].strMsg ?? '',
             msg2: list[0].strSubMsg ?? '',
             bankType: '',
-            bankname: bank.strBankName ?? '',
-            banknumber: bank.strBankNumber ?? '',
-            bankholder: bank.strBankHolder ?? ''
+            bankname: list[0].strBankName ?? '',
+            banknumber: list[0].strBankNumber ?? '',
+            bankholder: list[0].strBankHolder ?? ''
         });
     } else {
         const objectData = await GetParentList(user.strGroupID, user.iClass);

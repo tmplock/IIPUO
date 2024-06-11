@@ -154,7 +154,7 @@ router.post('/request_bank', async(req, res) => {
 
     let iGrade = IAgent.GetGradeFromStrOptionCode(user.strOptionCode);
 
-    let list = await db.BankGradeRecords.final({
+    let list = await db.BankGradeRecords.findAll({
         where: {
             iGrade: iGrade,
             eType: 'ACTIVE'

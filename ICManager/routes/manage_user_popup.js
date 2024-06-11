@@ -175,15 +175,56 @@ router.post('/translate', isLoggedIn, async(req, res) => {
 });
 
 router.post('/changemoney', isLoggedIn, async(req, res) => {
-    console.log(req.body);
-    const user = await IAgent.GetUserInfo(req.body.strNickname);
-    console.log(`######################################################################## ChangeMoney`);
-    console.log(user);
-    let agent = {strNickname:user.strNickname, iClass:user.iClass, strGroupID:user.strGroupID, iCash:user.iCash, iSettle:user.iSettle, iRolling:user.iRolling, iSettleAcc:user.iSettleAcc,
-        iRootClass:req.user.iClass, iPermission:req.user.iPermission, iRootNickname:req.user.strNickname};
-    res.render('manage_user/popup_changemoney', {iLayout:1, iHeaderFocus:0, agent:agent});
+    console.log(req.user);
+    const dbuser = await IAgent.GetUserInfo(req.user.strNickname);
+
+    const user = {strNickname:req.user.strNickname, strGroupID:req.user.strGroupID, iClass:parseInt(req.user.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle,
+        iRootClass: req.user.iClass, iPermission: req.user.iPermission, strID: dbuser.strID};
+
+    const strTimeStart = ITime.getTodayStart();
+    const strTimeEnd = ITime.getTodayEnd();
+
+    let result = await IAgent.GetUserList(strTimeStart, strTimeEnd, user.strGroupID);
+    let listShops = await IAgent.GetShopList(strTimeStart, strTimeEnd, user.strGroupID);
+    let listAgents = await IAgent.GetAgentList(strTimeStart, strTimeEnd, user.strGroupID);
+    let listViceAdmins = [];
+    let listProAdmins = [];
+    // let listViceAdmins = await GetViceAdminList(strTimeStart, strTimeEnd, user.strGroupID);
+    // let listProAdmins = await  GetProAdminList(strTimeStart, strTimeEnd, user.strGroupID);
+
+    let total = {iTotalCash:0};
+
+    for ( let i in result )
+    {
+        if ( result[i].lev5 == null )
+        {
+            result.splice(i, 1);
+        }
+        else
+            total.iTotalCash += parseFloat(result[i].iCash);
+    }
+    //  Shops
+    var bobj = {overview:null};
+
+    const agentinfo = await IAgent.GetPopupAgentInfo(req.user.strGroupID, parseInt(req.user.iClass), req.user.strNickname);
+
+    console.log(`###################################################### ${req.user.iClass}, ${req.user.strNickname}`);
+    console.log(agentinfo);
+
+    res.render('manage_user/popup_changemoney', {iLayout:1, iHeaderFocus:0, user:user, userlist:result, shoplist:listShops, agentlist:listAgents, vadminlist:listViceAdmins, proadminlist: listProAdmins, total:total, data:bobj, agentinfo:agentinfo});
 
 });
+
+// router.post('/changemoney', isLoggedIn, async(req, res) => {
+//     console.log(req.body);
+//     const user = await IAgent.GetUserInfo(req.body.strNickname);
+//     console.log(`######################################################################## ChangeMoney`);
+//     console.log(user);
+//     let useroObject = {strNickname:user.strNickname, iClass:user.iClass, strGroupID:user.strGroupID, iCash:user.iCash, iSettle:user.iSettle, iRolling:user.iRolling, iSettleAcc:user.iSettleAcc,
+//         iRootClass:req.user.iClass, iPermission:req.user.iPermission, iRootNickname:req.user.strNickname};
+//     res.render('manage_user/popup_changemoney', {iLayout:1, iHeaderFocus:0, user:useroObject});
+
+// });
 
 router.post('/request_targetclassagentlist', isLoggedIn, async(req, res) => {
     console.log(req.body);

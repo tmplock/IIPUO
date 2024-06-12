@@ -1882,12 +1882,12 @@ exports.GetGradeList = () => {
     return [
         {id: 0, str:'계좌요청'},
         {id: 1, str:'블랙'},
-        {id: 2, str:'일반2'},
-        {id: 3, str:'일반3'},
-        {id: 4, str:'일반4'},
-        {id: 5, str:'일반5'},
-        {id: 6, str:'일반6'},
-        {id: 7, str:'일반7'},
+        {id: 2, str:'주의'},
+        {id: 3, str:'일반1'},
+        {id: 4, str:'일반2'},
+        {id: 5, str:'일반3'},
+        {id: 6, str:'일반4'},
+        {id: 7, str:'일반5'},
         {id: 8, str:'VIP'},
         {id: 9, str:'VVIP'},
     ];

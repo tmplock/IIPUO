@@ -107,5 +107,5 @@ cron.schedule('*/1 * * * * ', async ()=> {
     lProcessID = -1;
     strCurrentStep = '';
     
-    console.log(`##### END OF CRON`);
+    console.log(`##### END OF CRON... Ver.1.0`);
 });

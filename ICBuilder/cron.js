@@ -98,7 +98,11 @@ cron.schedule('*/1 * * * * ', async ()=> {
 
     //  ##### OVERVIEW
     console.log(`##### UPDATE OVERVIEW : Length : ${listOverview.length}`);
-    await ODDS.UpdateOverview(listOverview);
+
+    const fBaccaratRR = 1.2;
+    const fSlotRR = 1.2;
+
+    await ODDS.UpdateOverview(listOverview, fBaccaratRR, fSlotRR);
     
     lProcessID = -1;
     strCurrentStep = '';

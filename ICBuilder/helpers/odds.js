@@ -1174,7 +1174,7 @@ let ProcessGroupDailyOverview = (objectRolling, objectArg, strDate) => {
     return listFinal;    
 }
 
-exports.UpdateOverview = async (list) => {
+exports.UpdateOverview = async (list, fBaccaratRR, fSlotRR) => {
 
     if ( list.length > 0 )
     {
@@ -1197,7 +1197,7 @@ exports.UpdateOverview = async (list) => {
             // const cRolling = parseInt(t.iRollingB) + parseInt(t.iRollingUO) + parseInt(t.iRollingS) + parseInt(t.iRollingPBA) + parseInt(t.iRollingPBB);
             //const cRolling = t.iRollingB + t.iRollingUO + t.iRollingS + t.iRollingPBA + t.iRollingPBB; // 요게 맞음
             
-            const cRolling = t.iRollingB/1.2 + t.iRollingUO + t.iRollingS + t.iRollingPBA + t.iRollingPBB; // 요게 맞음
+            const cRolling = t.iRollingB/fBaccaratRR+ t.iRollingUO + t.iRollingS/fSlotRR + t.iRollingPBA + t.iRollingPBB; // 요게 맞음
 
 
             //continue;

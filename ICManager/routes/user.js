@@ -172,11 +172,14 @@ router.post('/request_bank', async(req, res) => {
         });
 
         let iGrade = IAgent.GetGradeFromStrOptionCode(user.strOptionCode);
-
+        let strGroupID = `${user.strGroupID}`.substring(0,3);
         let list = await db.BankGradeRecords.findAll({
             where: {
                 iGrade: iGrade,
-                eType: 'ACTIVE'
+                eType: 'ACTIVE',
+                strGroupID: {
+                    [Op.like]:`${strGroupID}%`
+                }
             }
         });
 

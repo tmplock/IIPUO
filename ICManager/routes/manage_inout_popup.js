@@ -39,11 +39,15 @@ router.post('/requestcharge', isLoggedIn, async (req, res) => {
     }
 
     // 등급체크
+    let strGroupID = `${dbuser.strGroupID}`.substring(0,3);
     let iGrade = IAgent.GetGradeFromStrOptionCode(dbuser.strOptionCode);
     let list = await db.BankGradeRecords.findAll({
         where: {
             iGrade: iGrade,
-            eType: 'ACTIVE'
+            eType: 'ACTIVE',
+            strGroupID: {
+                [Op.like]:`${strGroupID}%`
+            }
         }
     });
 

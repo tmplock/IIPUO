@@ -1847,3 +1847,64 @@ var inline_GetDeCipher = async (str) => {
     }
 }
 exports.GetDeCipher = inline_GetDeCipher;
+
+exports.GetGradeFromStrOptionCode = (strOptionCode) => {
+    try {
+        if (strOptionCode == null || strOptionCode == undefined) {
+            return 0;
+        }
+        let grade = parseInt(strOptionCode.split('')[3]);
+        if (Number.isNaN(grade)) {
+            return 0;
+        }
+        return grade;
+    } catch (err) {
+    }
+    return 0;
+}
+
+exports.GetGrade = (iGrade) => {
+    let g = parseInt(iGrade);
+    if (Number.isNaN(g) || g == null || iGrade == null || iGrade == undefined) {
+        return {id: 0, str:'계좌요청'};
+    }
+
+    let list = this.GetGradeList();
+    for (let i in list) {
+        if (list[i].id == iGrade) {
+            return list[i];
+        }
+    }
+    return {id: 0, str:'계좌요청'};
+}
+
+exports.GetGradeList = () => {
+    return [
+        {id: 0, str:'계좌요청'},
+        {id: 1, str:'블랙'},
+        {id: 2, str:'일반2'},
+        {id: 3, str:'일반3'},
+        {id: 4, str:'일반4'},
+        {id: 5, str:'일반5'},
+        {id: 6, str:'일반6'},
+        {id: 7, str:'일반7'},
+        {id: 8, str:'VIP'},
+        {id: 9, str:'VVIP'},
+    ];
+}
+
+exports.GetReplaceText = (str) => {
+    var result = str.replace(/\\n/g, '\\n')
+        .replace(/\\'/g, "\\'")
+        .replace(/\\"/g, '\\"')
+        .replace(/\\&/g, '\\&')
+        .replace(/\\r/g, '\\r')
+        .replace(/\\t/g, '\\t')
+        .replace(/\\b/g, '\\b')
+        .replace(/\\f/g, '\\f');
+
+    // 제어 문자를 제거합니다.
+    result = result.replace(/[\u0000-\u0019]+/g, '');
+
+    return result;
+}

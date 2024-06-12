@@ -152,85 +152,103 @@ router.post('/request_bank', async(req, res) => {
         return res.send({result: 'FAIL', msg: '조회 실패'});
     }
 
-    //TODO:strOptionCode 레벨을 확인하여 체크
-    const array = user.strOptionCode.split('');
-    const cInputOption = array[3];
+    try {
+        let obj = await IAgent.GetParentList(user.strGroupID, user.iClass);
+        await db.RecordInoutAccounts.create({
+            strID:user.strID,
+            strNickname:user.strNickname,
+            strAdminNickname:obj.strAdmin,
+            strPAdminNickname:obj.strPAdmin,
+            strVAdminNickname:obj.strVAdmin,
+            strAgentNickname:obj.strAgent,
+            strShopNickname:obj.strShop,
+            iClass:user.iClass,
+            strGroupID:user.strGroupID,
+            strMemo:'',
+            eType:'REQUEST',
+            eState:'VALID',
+            iAllowedTime :5,
+            strLoginNickname: 'SYSTEM'
+        });
 
-    switch ( cInputOption )
-    {
-        case '0':
-            {
-                const objectData = await GetParentList(user.strGroupID, user.iClass);
+        let iGrade = IAgent.GetGradeFromStrOptionCode(user.strOptionCode);
 
-                let bankList = await db.sequelize.query(`
-                SELECT b.eBankType,  b.strBankName AS strBankName, b.strBankNumber AS strBankNumber, b.strBankHolder AS strBankHolder, DATE_FORMAT(b.createdAt,'%Y-%m-%d %H:%i:%S') AS createdAt
-                FROM BankRecords b
-                LEFT JOIN Users u ON u.id = b.userId
-                WHERE b.eType='ACTIVE' AND u.strNickname = '${objectData.strAdmin}' AND b.eBankType = 'NORMAL'
-                LIMIT 1
-            `, {type: db.Sequelize.QueryTypes.SELECT});
-            // 총본 날려도 되는지 확인 필요
-            // if (bank.length == 0) {
-            //     bank = await db.sequelize.query(`
-            //     SELECT b.strBankName AS strBankName, b.strBankNumber AS strBankNumber, b.strBankHolder AS strBankHolder
-            //     FROM BankRecords b
-            //     LEFT JOIN Users u ON u.id = b.userId
-            //     WHERE b.eType='ACTIVE' AND u.strNickname = '${obj.strPAdmin}'
-            //     LIMIT 1
-            // `, {type: db.Sequelize.QueryTypes.SELECT});
-            // }
-            let bank = {eBankType:'', strBankName:'', strBankNumber:'', strBankHolder:''};
-            if ( bankList.length > 0 )
-                bank = bankList[0];
+        let list = await db.BankGradeRecords.findAll({
+            where: {
+                iGrade: iGrade,
+                eType: 'ACTIVE'
+            }
+        });
+
+        if (list.length > 0) {
+            let bankname = list[0].strBankName ?? '';
+            let banknumber = list[0].strBankNumber ?? '';
+            let bankholder = list[0].strBankHolder ?? '';
+            if (bankname == '' && banknumber == '' && bankholder == '') {
+                await InsertLetter(user);
+            }
 
             res.send({
                 result: 'OK',
-                title: '본사 사정으로 인해 계좌 문의 바랍니다.',
+                title: list[0].strTitle ?? '',
+                msg: list[0].strMsg ?? '',
+                msg2: list[0].strSubMsg ?? '',
+                bankType: '',
+                bankname: list[0].strBankName ?? '',
+                banknumber: list[0].strBankNumber ?? '',
+                bankholder: list[0].strBankHolder ?? ''
+            });
+        } else {
+            await InsertLetter(user);
+            res.send({
+                result: 'OK',
+                title: '입금 계좌는 쪽지를 통해 전달드립니다. 쪽지 내용을 확인하여 입금해주시기 바랍니다.',
                 msg: '이전 계좌나 다른 계좌에 입금시 당사는 해당 금액을 책임지지 않으며',
                 msg2: '회원님께서도 돌려받을 수 없음을 안내드립니다.',
-                bankType: bank.eBankType,
-                bankname: bank.strBankName,
-                banknumber: bank.strBankNumber,
-                bankholder: bank.strBankHolder,
-                iNext: 0,
+                bankType: '',
+                bankname: '',
+                banknumber: '',
+                bankholder: ''
             });
-
-            }
-            return;
-        case '1':
-        default:
-            {
-                const objectData = await GetParentList(user.strGroupID, user.iClass);
-
-                await db.Letters.create({
-                    iClass:user.iClass,
-                    strGroupID:user.strGroupID,
-                    strAdminNickname:objectData.strAdmin,
-                    strPAdminNickname:objectData.strPAdmin,
-                    strVAdminNickname:objectData.strVAdmin,
-                    strAgentNickname:objectData.strAgent,
-                    strShopNickname:objectData.strShop,
-                    strTo:objectData.strAdmin,
-                    strToID:objectData.strAdminID,
-                    strFrom:user.strNickname,
-                    strFromID:user.strID,
-                    eType:'ANNOUNCE',
-                    eRead:'UNREAD',
-                    strSubject:"입금계좌 문의",
-                    strContents:"입급 계좌 문의 입니다.",
-                    iClassFrom:user.iClass, // 본인의 클래스
-                    iClassTo:3, // 본사로 전송 고정
-                });
-                res.send({result:'Request',
-                    title: '입금 계좌는 쪽지를 통해 전달드립니다. 쪽지 내용을 확인하여 입금해주시기 바랍니다.',
-                    msg: '이전 계좌나 다른 계좌에 입금시 당사는 해당 금액을 책임지지 않으며',
-                    msg2: '회원님께서도 돌려받을 수 없음을 안내드립니다.',
-                    iNext: 1,
-                });
-            }
-            return; 
+        }
+    } catch (err) {
+        console.log(err);
+        res.send({
+            result: 'FAIL',
+            title: '',
+            msg: '조회실패',
+            msg2: '',
+            bankType: '',
+            bankname: '',
+            banknumber: '',
+            bankholder: ''
+        });
     }
-
 });
+
+let InsertLetter = async (user) => {
+    const objectData = await GetParentList(user.strGroupID, user.iClass);
+
+    await db.Letters.create({
+        iClass: user.iClass,
+        strGroupID: user.strGroupID,
+        strAdminNickname: objectData.strAdmin,
+        strPAdminNickname: objectData.strPAdmin,
+        strVAdminNickname: objectData.strVAdmin,
+        strAgentNickname: objectData.strAgent,
+        strShopNickname: objectData.strShop,
+        strTo: objectData.strAdmin,
+        strToID: objectData.strAdminID,
+        strFrom: user.strNickname,
+        strFromID: user.strID,
+        eType: 'NORMAL',
+        eRead: 'UNREAD',
+        strSubject: "입금계좌 문의",
+        strContents: "입급 계좌 문의 입니다.",
+        iClassFrom: user.iClass, // 본인의 클래스
+        iClassTo: 3, // 본사로 전송 고정
+        strWriter: 'SYSTEM'
+    });
+}
 
 module.exports = router;

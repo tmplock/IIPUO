@@ -1,0 +1,177 @@
+<div style="height:5px;">
+</div>
+<div class="write">
+    <p style="background-repeat:no-repeat; background-position:left center; font-size:16px; color:#454545; padding-left:22px;">계좌정보</p>
+    <table>
+        <colgroup>
+            <col style="width:25%">
+            <col style="width:75%">
+        </colgroup>
+        <tr>
+            <th>등급</th>
+            <td>
+                <select style="width:200px; display: none" id="grade_list"></select>
+            </td>
+        </tr>
+        <tr>
+            <th scope="row">은행명</th>
+            <td>
+                <input type="text" style="width:90%;height: 30px;" name="bank_name" id="bank_name" required="yes"  message="" value="">&nbsp;
+            </td>
+        </tr>
+        <tr>
+            <th scope="row">계좌번호</th>
+            <td>
+                <input type="text" style="width:90%;height: 30px;" name="bank_number" id="bank_number" required="yes" message="" value="">
+            </td>
+        </tr>
+        <tr>
+            <th scope="row">예금주</th>
+            <td>
+                <input type="text" style="width:90%;height: 30px;" name="bank_holder" id="bank_holder" value="" required="yes"  message=""/>&nbsp;
+            </td>
+        </tr>
+        <tr>
+            <th scope="row">메모</th>
+            <td>
+                <input type="text" style="width:90%;height: 30px;" name="bank_memmo" id="bank_memo" value="" required="yes"  message=""/>&nbsp;
+            </td>
+        </tr>
+    </table>
+
+    <p style="background-repeat:no-repeat; background-position:left center; font-size:16px; color:#454545; padding-left:22px;">경고 메세지(회원이 계죄 요청 후 표시되는 경고 안내 메세지)</p>
+    <table>
+        <colgroup>
+            <col style="width:25%">
+            <col style="width:75%">
+        </colgroup>
+        <tr>
+            <th scope="row">타이틀</th>
+            <td>
+                <input type="text" style="width:90%;height: 30px;" name="title" id="title" required="yes"  message="" value="표시되는 계좌로 입금하시기 바랍니다.">&nbsp;
+            </td>
+        </tr>
+        <tr>
+            <th scope="row">메세지</th>
+            <td>
+                <input type="text" style="width:90%;height: 30px;" name="msg" id="msg" required="yes" message="" value="이전 계좌나 다른 계좌에 입금시 당사는 해당 금액을 책임지지 않으며">
+            </td>
+        </tr>
+        <tr>
+            <th scope="row">메세지2</th>
+            <td>
+                <input type="text" style="width:90%;height: 30px;" name="sub_msg" id="sub_msg" required="yes" message="" value="회원님께서도 돌려받을 수 없음을 안내드립니다.">&nbsp;
+            </td>
+        </tr>
+    </table>
+
+    <div class="align_c margin_t20">
+        <button onclick="OnClickAdd()" id="request_adjustinput" class="custom-btn btn-3" style="font-family:'Spoqa Han Sans Neo';"><span>등록</span></button>
+        <button onclick="javascript:self.close();" class="custom-btn btn-5" style="font-family:'Spoqa Han Sans Neo';">취소</button>
+    </div>
+</div>
+
+<script type="text/javascript" src="js/manage_user_popup_menu.js"></script>
+<script type="text/javascript" src="js/manage_partner_popup_menu.js"></script>
+<script src="https://code.jquery.com/ui/1.8.18/jquery-ui.min.js"></script>
+<script>
+    let user = JSON.parse('<%-JSON.stringify(user)%>');
+    let list = JSON.parse('<%-JSON.stringify(list)%>');
+    let bank = JSON.parse('<%-JSON.stringify(bank)%>');
+
+    let selectGradeId = 0;
+    let strTitle = '';
+    let strMsg = '';
+    let strSubMsg = '';
+
+    $(document).ready( ()=> {
+        checkBlockCharSpecial(`#bank_name`);
+        checkBlockCharSpecial(`#bank_holder`);
+        checkBlockNum(`#bank_number`);
+
+        if (bank.id != 0) {
+            selectGradeId = bank.iGrade;
+            $('#bank_name').val(bank.strBankName);
+            $('#bank_number').val(bank.strBankNumber);
+            $('#bank_holder').val(bank.strBankHolder);
+
+            $('#memo').val(bank.strMemo);
+
+            $('#title').val(bank.strTitle);
+            $('#msg').val(bank.strMsg);
+            $('#sub_msg').val(bank.strSubMsg);
+        }
+
+        SetGradeList();
+    });
+
+    let SetGradeList = () => {
+        $('#grade_list').empty();
+        if (list.length > 0) {
+            // 기본값 설정
+            if (bank.id != 0) {
+                selectGradeId = bank.iGrade;
+            } else {
+                if (list.length > 0) {
+                    selectGradeId = list[0].id;
+                }
+            }
+            for ( let i in list ) {
+                let tag = list[i].id == selectGradeId ? 'selected' : '';
+                $('#grade_list').append(`<option value="${list[i].id}" ${tag}>${list[i].id} : ${list[i].str}</option>`);
+            }
+            $('#grade_list').css("display","");
+            $('select').on('change', function() {
+                selectGradeId = this.value;
+            });
+        } else {
+            $('#grade_list').css("display","none");
+        }
+    }
+
+    let OnClickAdd = () => {
+        const bankName = $('#bank_name').val();
+        const bankNumber = $('#bank_number').val();
+        const bankHolder = $('#bank_holder').val();
+
+        const strMemo = $('#memo').val();
+
+        const strTitle = $('#title').val();
+        const strMsg = $('#msg').val();
+        const strSubMsg = $('#sub_msg').val();
+
+        let objectData = {};
+        if (bank.id != 0) {
+            objectData.id = bank.id;
+        }
+        objectData.grade = selectGradeId;
+        objectData.bankName = bankName;
+        objectData.bankNumber = bankNumber;
+        objectData.bankHolder = bankHolder;
+        objectData.memo = strMemo;
+        objectData.title = strTitle;
+        objectData.msg = strMsg;
+        objectData.subMsg = strSubMsg;
+
+        $.ajax({
+            type:'POST',
+            url:'/manage_bank_grade/request_bank_add',
+            data:objectData,
+            success: (data) => {
+                if ( data.result == 'OK' )
+                {
+                    alert(bank.id != 0 ? '수정성공' : '등록성공');
+                    if (typeof(window.opener) != 'undefined') {
+                        window.opener.parent.reload();
+                    }
+                    self.close();
+                }
+                else if (data.result == 'FAIL')
+                {
+                    alert(data.msg);
+                }
+            }
+        });
+    };
+
+</script>

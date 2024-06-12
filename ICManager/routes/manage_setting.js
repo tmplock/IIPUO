@@ -128,32 +128,4 @@ router.post('/request_agentinfo', isLoggedIn, async(req, res) => {
     }
 });
 
-router.post('/letter_banklist', isLoggedIn, async(req, res) => {
-
-    console.log(req.body);
-
-    if (req.user.iClass != 2 || req.user.iPermission != 0) {
-        res.redirect("/");
-        return;
-    }
-
-    const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
-
-    if (dbuser.iPermission == 100) {
-        res.redirect("/");
-        return;
-    }
-
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle,
-        iRootClass:req.user.iClass, iPermission:req.user.iPermission};
-
-    if (dbuser.iPermission == 100) {
-        user.strID = dbuser.strIDRel;
-    }
-
-    let iocount = await IInout.GetProcessing(dbuser.strGroupID, dbuser.strNickname, dbuser.iClass);
-
-    res.render('manage_setting/letterbanklist', {iLayout:0, iHeaderFocus:5, user:user, iocount:iocount});
-});
-
 module.exports = router;

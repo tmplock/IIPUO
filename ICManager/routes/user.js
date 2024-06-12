@@ -181,6 +181,13 @@ router.post('/request_bank', async(req, res) => {
         });
 
         if (list.length > 0) {
+            let bankname = list[0].strBankName ?? '';
+            let banknumber = list[0].strBankNumber ?? '';
+            let bankholder = list[0].strBankHolder ?? '';
+            if (bankname == '' && banknumber == '' && bankholder == '') {
+                await InsertLetter(user);
+            }
+
             res.send({
                 result: 'OK',
                 title: list[0].strTitle ?? '',
@@ -192,28 +199,7 @@ router.post('/request_bank', async(req, res) => {
                 bankholder: list[0].strBankHolder ?? ''
             });
         } else {
-            const objectData = await GetParentList(user.strGroupID, user.iClass);
-
-            await db.Letters.create({
-                iClass: user.iClass,
-                strGroupID: user.strGroupID,
-                strAdminNickname: objectData.strAdmin,
-                strPAdminNickname: objectData.strPAdmin,
-                strVAdminNickname: objectData.strVAdmin,
-                strAgentNickname: objectData.strAgent,
-                strShopNickname: objectData.strShop,
-                strTo: objectData.strAdmin,
-                strToID: objectData.strAdminID,
-                strFrom: user.strNickname,
-                strFromID: user.strID,
-                eType: 'ANNOUNCE',
-                eRead: 'UNREAD',
-                strSubject: "입금계좌 문의",
-                strContents: "입급 계좌 문의 입니다.",
-                iClassFrom: user.iClass, // 본인의 클래스
-                iClassTo: 3, // 본사로 전송 고정
-                strWriter: 'SYSTEM'
-            });
+            await InsertLetter(user);
             res.send({
                 result: 'OK',
                 title: '입금 계좌는 쪽지를 통해 전달드립니다. 쪽지 내용을 확인하여 입금해주시기 바랍니다.',
@@ -239,5 +225,30 @@ router.post('/request_bank', async(req, res) => {
         });
     }
 });
+
+let InsertLetter = async (user) => {
+    const objectData = await GetParentList(user.strGroupID, user.iClass);
+
+    await db.Letters.create({
+        iClass: user.iClass,
+        strGroupID: user.strGroupID,
+        strAdminNickname: objectData.strAdmin,
+        strPAdminNickname: objectData.strPAdmin,
+        strVAdminNickname: objectData.strVAdmin,
+        strAgentNickname: objectData.strAgent,
+        strShopNickname: objectData.strShop,
+        strTo: objectData.strAdmin,
+        strToID: objectData.strAdminID,
+        strFrom: user.strNickname,
+        strFromID: user.strID,
+        eType: 'NORMAL',
+        eRead: 'UNREAD',
+        strSubject: "입금계좌 문의",
+        strContents: "입급 계좌 문의 입니다.",
+        iClassFrom: user.iClass, // 본인의 클래스
+        iClassTo: 3, // 본사로 전송 고정
+        strWriter: 'SYSTEM'
+    });
+}
 
 module.exports = router;

@@ -27,18 +27,18 @@ router.post('/account', isLoggedIn, async(req, res) => {
 
     const input = req.body.input ?? '';
     if (input == '') {
-        res.render('error/popup_error', {iLayout:8, iHeaderFocus:0, msg:'비밀번호 미입력'});
+        res.render('error/popup_error', {msg:'비밀번호 미입력'});
         return;
     }
 
     if (req.user.iClass != 2 || req.user.iPermission != 0) {
-        res.render('error/popup_error', {iLayout:0, iHeaderFocus:9, msg:'조회오류'});
+        res.render('error/popup_error', {msg:'조회오류'});
         return;
     }
 
     let result = await IAgentSec.AccessInoutPassword(req.user.strNickname, input);
     if (result.result != 'OK') {
-        res.render('error/popup_error', {iLayout:8, iHeaderFocus:0, msg:result.msg});
+        res.render('error/popup_error', {msg:result.msg});
         return;
     }
 
@@ -55,7 +55,7 @@ router.post('/yesterday', isLoggedIn, async(req, res) => {
     console.log(req.body);
 
     if (req.user.iClass != 2 || req.user.iPermission != 0) {
-        res.render('error/popup_error', {iLayout:0, iHeaderFocus:9, msg:'조회오류'});
+        res.render('error/popup_error', {msg:'조회오류'});
         return;
     }
 
@@ -107,18 +107,13 @@ let BuildPartner = (objectUser, strOptionCode, listRecordAccount) => {
 
     //let obj = await IAgent.GetParentList(objectUser.strGroupID, objectUser.iClass);
 
-    let object = {strID:objectUser.strID, strGroupID:objectUser.strGroupID, iClass:objectUser.iClass, iNumRequest:0, iNumValidInput:0, iNumInvalidInput:0, iNumStandbyInput:0, strAdminNickname:'', strPAdminNickname:'', strVAdminNickname:'', strAgentNickname:'', strShopNickname:'', strNickname:objectUser.strNickname, strOptionCode:strOptionCode};
+    let object = {strID:objectUser.strID, strGroupID:objectUser.strGroupID, iClass:objectUser.iClass, iNumRequest:0, iNumValidInput:0, iNumInvalidInput:0, iNumStandbyInput:0, strNickname:objectUser.strNickname, strOptionCode:strOptionCode};
 
     for ( let i in listRecordAccount )
     {
         if ( listRecordAccount[i].strID == objectUser.strID )
         {
             list.push(listRecordAccount[i]);
-            object.strAdminNickname = listRecordAccount[i].strAdminNickname;
-            object.strPAdminNickname = listRecordAccount[i].strPAdminNickname;
-            object.strVAdminNickname = listRecordAccount[i].strVAdminNickname;
-            object.strAgentNickname = listRecordAccount[i].strAgentNickname;
-            object.strShopNickname = listRecordAccount[i].strShopNickname;
         }
     }
 
@@ -150,56 +145,72 @@ router.post('/request_partner', isLoggedIn, async (req, res) => {
 
     let strNickname = req.body.strSearchNickname ?? '';
     let strGroupID = `${req.user.strGroupID}`.substring(0, 3);
+    let dateStart = req.body.dateStart ?? '';
+    let dateEnd = req.body.dateEnd ?? '';
 
-    let listPartner = strNickname == '' ? await db.Users.findAll({
-        where:{
-            strGroupID: {
-                [Op.like]:`${strGroupID}%`
-            }
-        },
-        order:[['updatedAt','DESC']]
-    }) : await db.Users.findAll({
-        where:{
-            strNickname:`${strNickname}`,
-            strGroupID: {
-                [Op.like]:`${strGroupID}%`
-            }
-        },
-        order:[['updatedAt','DESC']]
-    });
+    let subQuery = strNickname == '' ? '' : `AND t.strNickname = '${strNickname}'`;
 
-    let listRecordAccount = strNickname == '' ? await db.RecordInoutAccounts.findAll({
-        where: {
-            createdAt:{
-                [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
-            },
-            strGroupID: {
-                [Op.like]:`${strGroupID}%`
-            }
-        },
-        order:[['createdAt','DESC']]
-    }) : await db.RecordInoutAccounts.findAll({
-        where: {
-            strNickname: `${strNickname}`,
-            createdAt:{
-                [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
-            },
-            strGroupID: {
-                [Op.like]:`${strGroupID}%`
-            }
-        },
-        order:[['createdAt','DESC']]
-    });
+    let [list] = await db.sequelize.query(`
+        SELECT t.strNickname, t.createdAt, t.updatedAt, t.strGroupID, u.strID, u.strOptionCode,
+               IFNULL((SELECT COUNT(id) FROM RecordInoutAccounts WHERE DATE(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}' AND strID = t.strID AND eType = 'REQUEST'),0) as iNumRequest,
+               IFNULL((SELECT COUNT(id) FROM RecordInoutAccounts WHERE DATE(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}' AND strID = t.strID AND eType = 'INPUT' AND eState = 'VALID'),0) as iNumValidInput,
+               IFNULL((SELECT COUNT(id) FROM RecordInoutAccounts WHERE DATE(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}' AND strID = t.strID AND eType = 'INPUT' AND eState = 'INVALID'),0) as iNumInvalidInput,
+               IFNULL((SELECT COUNT(id) FROM RecordInoutAccounts WHERE DATE(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}' AND strID = t.strID AND eType = 'INPUT' AND eState = 'STANDBY'),0) as iNumStandbyInput
+        FROM RecordInoutAccounts t
+                 LEFT JOIN Users u ON u.strID = t.strID
+        WHERE DATE(t.createdAt) BETWEEN '${dateStart}' AND '${dateEnd}' AND t.strGroupID LIKE '${strGroupID}%'
+        ${subQuery}
+        GROUP BY t.strNickname
+        ORDER BY t.updatedAt DESC ;
+    `);
 
-    let list = [];
-    for ( let i in listPartner )
-    {
-        const object = BuildPartner(listPartner[i], listPartner[i].strOptionCode, listRecordAccount);
-        if ( object.iNumRequest == 0 && object.iNumInvalidInput == 0 && object.iNumStandbyInput == 0 && object.iNumValidInput == 0 )
-            continue;
-        
-        list.push(object);   
-    }
+    // let listPartner = strNickname == '' ? await db.Users.findAll({
+    //     where:{
+    //         strGroupID: {
+    //             [Op.like]:`${strGroupID}%`
+    //         }
+    //     },
+    //     order:[['updatedAt','DESC']]
+    // }) : await db.Users.findAll({
+    //     where:{
+    //         strNickname:`${strNickname}`,
+    //         strGroupID: {
+    //             [Op.like]:`${strGroupID}%`
+    //         }
+    //     },
+    //     order:[['updatedAt','DESC']]
+    // });
+    // let listRecordAccount = strNickname == '' ? await db.RecordInoutAccounts.findAll({
+    //     where: {
+    //         createdAt:{
+    //             [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
+    //         },
+    //         strGroupID: {
+    //             [Op.like]:`${strGroupID}%`
+    //         }
+    //     },
+    //     order:[['createdAt','DESC']]
+    // }) : await db.RecordInoutAccounts.findAll({
+    //     where: {
+    //         strNickname: `${strNickname}`,
+    //         createdAt:{
+    //             [Op.between]:[ req.body.dateStart, require('moment')(req.body.dateEnd).add(1, 'days').format('YYYY-MM-DD')],
+    //         },
+    //         strGroupID: {
+    //             [Op.like]:`${strGroupID}%`
+    //         }
+    //     },
+    //     order:[['createdAt','DESC']]
+    // });
+    // let list = [];
+    // for ( let i in listPartner )
+    // {
+    //     const object = BuildPartner(listPartner[i], listPartner[i].strOptionCode, listRecordAccount);
+    //     if ( object.iNumRequest == 0 && object.iNumInvalidInput == 0 && object.iNumStandbyInput == 0 && object.iNumValidInput == 0 )
+    //         continue;
+    //
+    //     list.push(object);
+    // }
 
     res.send({result:'OK', list:list});
 });

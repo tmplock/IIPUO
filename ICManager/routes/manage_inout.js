@@ -637,7 +637,6 @@ router.post('/request_inputstate', isLoggedIn, async (req, res) => {
                 }
 
                 await db.RecordInoutAccounts.create({
-
                     strID:user.strID,
                     strNickname:user.strNickname,
                     strAdminNickname:charge.strAdminNickname,
@@ -651,6 +650,7 @@ router.post('/request_inputstate', isLoggedIn, async (req, res) => {
                     eType:'INPUT',
                     eState:eState,
                     iAllowedTime :iMinutes,
+                    strLoginNickname: req.user.strNickname
                 });
 
                 //  
@@ -1243,15 +1243,44 @@ router.post('/request_inout_pass', isLoggedIn, async (req, res) => {
     const input = req.body.input;
 
     // 비밀번호는 로그인한 이용자
-    const info = await db.Users.findOne({where: {strNickname: req.user.strNickname, strPassword: input}});
-    if (info == null) {
+    const user = await db.Users.findOne({where: {strNickname: req.user.strNickname, strPassword: input}});
+    if (user == null) {
         res.send({result: 'FAIL', msg:'비밀번호가 틀립니다'});
         return;
     }
+
+    let strNickname = req.body.strNickname ?? '';
+    const user2 = await db.Users.findOne({where: {strNickname: req.body.strNickname}});
+
+    if (user.iClass > user2.iClass) {
+        res.send({result: 'FAIL', msg:'조회 오류'});
+        return;
+    }
+
+    // 계좌 조회 로그 등록
+    let obj = await IAgent.GetParentList(user2.strGroupID, user2.iClass);
+    await db.RecordInoutAccounts.create({
+        strID:user2.strID,
+        strNickname:user2.strNickname,
+        strAdminNickname:obj.strAdmin,
+        strPAdminNickname:obj.strPAdmin,
+        strVAdminNickname:obj.strVAdmin,
+        strAgentNickname:obj.strAgent,
+        strShopNickname:obj.strShop,
+        iClass:user2.iClass,
+        strGroupID:user2.strGroupID,
+        strMemo:'',
+        eType:'REQUEST',
+        eState:'VALID',
+        iAllowedTime :5,
+        strLoginNickname: user.strNickname
+    });
+
+
     let iRootClass = parseInt(req.user.iClass ?? 100);
     let iPermission = parseInt(req.user.iPermission ?? 0);
 
-    if (iRootClass > iClass || iPermission == 100) {
+    if (iRootClass > iClass || iPermission != 0) {
         res.send({result: 'FAIL', msg:'권한이 없습니다'});
         return;
     }
@@ -1267,42 +1296,17 @@ router.post('/request_inout_pass', isLoggedIn, async (req, res) => {
     //     return;
     // }
 
-    let strAdmin = '';
-    if (iClass == 1) {
-        res.send({result: 'OK', msg: '입금 계좌 조회 성공'});
-        return;
-    } else if (iClass == 2) {
-        // 총총에 등록된 계좌 조회
-        strAdmin = await IAgent.GetParentNickname(req.body.strNickname);
-    } else if (iClass == 3) {
-        // 총본에 등록된 계좌 조회
-        strAdmin = await IAgent.GetParentNickname(req.body.strNickname);
-    } else {
-        let obj = await IAgent.GetParentList(req.body.strGroupID, iClass);
-        strAdmin = obj.strAdmin;
-    }
-    console.log(strAdmin);
-    let bank = await db.sequelize.query(`
-            SELECT b.strBankName AS strBankName, b.strBankNumber AS strBankNumber, b.strBankHolder AS strBankHolder
-            FROM BankRecords b
-            LEFT JOIN Users u ON u.id = b.userId
-            WHERE b.eType='ACTIVE' AND u.strNickname = '${strAdmin}'
-            LIMIT 1
-        `, {type: db.Sequelize.QueryTypes.SELECT});
+    // 등급체크
+    let iGrade = IAgent.GetGradeFromStrOptionCode(user.strOptionCode);
+    let list = await db.BankGradeRecords.findAll({
+        where: {
+            iGrade: iGrade,
+            eType: 'ACTIVE'
+        }
+    });
 
-    // 총본 날려도 되는지 확인 필요
-    // if (bank.length == 0) {
-    //     bank = await db.sequelize.query(`
-    //     SELECT b.strBankName AS strBankName, b.strBankNumber AS strBankNumber, b.strBankHolder AS strBankHolder
-    //     FROM BankRecords b
-    //     LEFT JOIN Users u ON u.id = b.userId
-    //     WHERE b.eType='ACTIVE' AND u.strNickname = '${obj.strPAdmin}'
-    //     LIMIT 1
-    // `, {type: db.Sequelize.QueryTypes.SELECT});
-    // }
-    console.log(bank);
-    if (bank.length > 0) {
-        let key = IAgentSec.GetCipherAndPeriod(req.user.strNickname, 10);
+    if (list.length > 0) {
+        let key = await IAgentSec.GetCipherAndPeriod(req.user.strNickname, 10);
         res.send({result: 'OK', msg: '입금 계좌 조회 성공', key:key});
     } else {
         res.send({result: 'FAIL', msg: '등록된 계좌가 없습니다'});

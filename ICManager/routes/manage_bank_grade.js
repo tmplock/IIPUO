@@ -44,7 +44,7 @@ router.post('/request_input_pass', isLoggedIn, async (req, res) => {
         return;
     }
 
-    let key = IAgentSec.GetCipherAndPeriod(req.user.strNickname, 10);
+    let key = await IAgentSec.GetCipherAndPeriod(req.user.strNickname, 10);
     res.send({result: 'OK', msg: '조회 성공', key:key});
 });
 
@@ -79,18 +79,18 @@ router.post('/popup_bank', isLoggedIn, async (req, res) => {
 
     const input = req.body.input ?? '';
     if (input == '') {
-        res.render('error/popup_error', {iLayout:8, iHeaderFocus:0, msg:'비밀번호 미입력'});
+        res.render('error/popup_error', {msg:'비밀번호 미입력'});
         return;
     }
 
     if (req.user.iClass != 2 || req.user.iPermission != 0) {
-        res.render('error/popup_error', {iLayout:8, iHeaderFocus:0, msg:'권한 없음'});
+        res.render('error/popup_error', {msg:'권한 없음'});
         return;
     }
 
     let result = await IAgentSec.AccessInoutPassword(req.user.strNickname, input);
     if (result.result != 'OK') {
-        res.render('error/popup_error', {iLayout:8, iHeaderFocus:0, msg:result.msg});
+        res.render('error/popup_error', {msg:result.msg});
         return;
     }
 
@@ -193,7 +193,7 @@ router.post('/request_change_bank_type', isLoggedIn, async (req, res) => {
 
     // 동일 항목 사용중 체크
     if (eType == 'ACTIVE') {
-        let list = await db.BankGradeRecords.findAll({where: {strGroupID: obj.strGroupID, eType:'ACTIVE'}});
+        let list = await db.BankGradeRecords.findAll({where: {strGroupID: obj.strGroupID, eType:'ACTIVE', iGrade:obj.iGrade}});
         if (list.length > 0) {
             res.send({result:'FAIL', msg: '사용중인 계좌가 있습니다. 미사용으로 변경 후에 변경해주세요.'});
             return;
@@ -231,7 +231,7 @@ router.post('/popup_bank_add', isLoggedIn,  async (req, res) => {
         });
 
         if (bank == null) {
-            res.render('error/popup_error', {iLayout:8, iHeaderFocus:0,  msg: '조회 오류'});
+            res.render('error/popup_error', {msg: '조회 오류'});
             return;
         }
         bank.iEdit = 1;

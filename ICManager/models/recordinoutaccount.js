@@ -57,6 +57,9 @@ module.exports = (sequelize, DataTypes) => {
         iAllowedTime :{
             type:DataTypes.INTEGER,
         },
+        strLoginNickname: {
+            type:DataTypes.STRING,
+        },
         createdAt:{
             type:DataTypes.DATE,
             get() {

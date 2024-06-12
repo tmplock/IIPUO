@@ -181,7 +181,11 @@
                     $('input[name=bank_name]').val(obj.bankname);
                     $('input[name=bank_holder]').val(obj.bankholder);
                     $('input[name=bank_number]').val(obj.banknumber);
-                    SetTagActive(obj.title, obj.msg, obj.msg2, 1);
+                    let isNext = 0;
+                    if (bankname == '' || banknumber == '' || bankholder == '') {
+                        isNext = 1;
+                    }
+                    SetTagActive(obj.title, obj.msg, obj.msg2, isNext);
                 } else {
                     bRequestAccount = false;
                     alert(obj.msg);

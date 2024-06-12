@@ -5,7 +5,7 @@
         <p style="background-repeat:no-repeat; background-position:left center; font-size:20px; color:#454545; padding-left:22px;margin-top:10px;height:30px;margin-bottom:5px;">
             계좌 목록
         </p>
-        <a class="btn_thinorange" style="position:absolute;top:35px; right:15%;" href="javascript:OnClickAddBank(-1);">계좌 등록</a>
+        <a class="btn_thinorange" style="position:absolute;top:35px; right:15%;" href="javascript:OnClickAddBank(0);">계좌 등록</a>
         <table class="search_list">
             <thead>
             <tr>
@@ -17,7 +17,7 @@
                 <th width="15%">사용여부</th>
                 <th width="15%">등록일</th>
                 <th width="30%">메모</th>
-                <th width="10%">경고메세지</th>
+                <th width="30%">경고메세지</th>
                 <th width="10%">수정</th>
                 <th width="10%">삭제</th>
             </tr>
@@ -130,7 +130,7 @@
                     </select>
                     `;
                 }
-                let msgTag = `<pre>${aObject.strTitle}\n${aObject.strMsg}\n${aObject.strSubMsg}</pre>`
+                let msgTag = `${aObject.strTitle}<br>${aObject.strMsg}<br>${aObject.strSubMsg}`;
                 let memoTag = `<input style="width:70%;" type="text" id="memoinput_${aObject.id}" value="${aObject.strMemo}"><button style="color:white;" class="menu4" onclick="OnClickMemo(${aObject.id});">저장</button>`;
                 $('#bank_list').append(`
                     <tr>
@@ -143,8 +143,8 @@
                         <td style="font-weight:100;">${aObject.createdAt}</td>
                         <td style="font-weight:100;">${memoTag}</td>
                         <td style="font-weight:100;">${msgTag}</td>
-                        <td style="font-weight:100;"><button class="btn_red" style="background-color: blue" onclick="OnClickAddBank(${aObject.id});">수정</button></td>
-                        <td style="font-weight:100;"><button class="btn_red" style="background-color: red" onclick="OnClickDelete('${aObject.strBankName}', ${aObject.id});">삭제</button></td>
+                        <td style="font-weight:100;"><button class="btn_red" style="background-color: blue; color: white;" onclick="OnClickAddBank(${aObject.id});">수정</button></td>
+                        <td style="font-weight:100;"><button class="btn_red" style="background-color: red;  color: white;" onclick="OnClickDelete('${aObject.strBankName}', ${aObject.id});">삭제</button></td>
                     </tr>
                 `);
                 checkBlockCharSpecial2(`#memoinput_${aObject.id}`);

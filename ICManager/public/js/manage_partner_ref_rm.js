@@ -316,3 +316,78 @@ let RequestOverview_RollingMinus = (iTargetClass, strGroupID, iClass, iPermissio
 	});
 }
 
+
+
+//	RECORD
+
+let RequestBettingRecord_RollingMinus = (iTargetClass, strGroupID, iClass, strID, fBaccaratR, fUnderOverR, fSlotR) => {
+
+	const dateStart = $('#datepicker1').val();
+	const dateEnd = $('#datepicker2').val();
+
+	$.ajax({
+		type:'post',
+		url: "/manage_partner/request_bettingrecord",
+		context: document.body,
+		data:{iTargetClass:iClass, strGroupID:strGroupID, iClass:iClass, dateStart:dateStart, dateEnd:dateEnd, strID:strID},
+
+		success: (obj) => {
+			SetOverviewRecordList_RollingMinus(obj.record, "#div_realtimebet_overview_record", true, obj.iRootClass, fBaccaratR, fUnderOverR, fSlotR);
+		},
+		error:function(request,status,error){
+			alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+		}
+	});
+}
+
+
+function SetOverviewRecordList_RollingMinus(aObject, strParentTag, bClear, iRootClass, fBaccaratR, fUnderOverR, fSlotR)
+{
+	if ( bClear == true )
+		$(strParentTag).empty();
+
+	let tag = `
+	<div id="table_record_list" class="day_tot_list_area" style="margin-top:20px;">`;
+	tag += AddOverviewTableHeader();
+
+	console.log(`SetOverviewRecordList Length : ${aObject.length}`);
+
+	let object = aObject[aObject.length-1];
+
+	//	For Total
+	let listTotal = [];
+	for ( let i = 0; i < 4; ++ i )
+	{
+		listTotal.push({iBetting:0, iWin:0, iRolling:0, iTotal:0});
+	}
+
+	for ( var root = 0; root < aObject.length-1; ++root)
+	{
+		var tObject = aObject[root];
+		let row = AddTable_RollingMinus(aObject[root].strDate, 0, 0, 0, tObject, iRootClass, false, fBaccaratR, fUnderOverR, fSlotR);
+		if (row != '') {
+			tag += row;
+		}
+
+		console.log(`## AddTable`);
+		console.log(tObject);
+
+		for ( let i in tObject.kBettingInfo ) {
+			object.kBettingInfo.push(tObject.kBettingInfo[i]);
+		}
+
+		object.iExchange += parseFloat(tObject.iExchange);
+		object.iInput += parseFloat(tObject.iInput);
+		object.iOutput += parseFloat(tObject.iOutput);
+	}
+	//	For Total
+	tag += AddTable_RollingMinus('', 0, 0, 0, object, iRootClass, false, fBaccaratR, fUnderOverR, fSlotR);
+
+	tag += `
+			</tbody>
+		</table>
+	</div>
+	`;
+
+	$(strParentTag).append(tag);
+}

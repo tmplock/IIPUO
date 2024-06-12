@@ -27,18 +27,18 @@ router.post('/account', isLoggedIn, async(req, res) => {
 
     const input = req.body.input ?? '';
     if (input == '') {
-        res.render('error/popup_error', {msg:'비밀번호 미입력'});
+        res.render('error/popup_error', {iLayout:8, iHeaderFocus:0, user: {}, yesterday:0, msg:'비밀번호 미입력'});
         return;
     }
 
     if (req.user.iClass != 2 || req.user.iPermission != 0) {
-        res.render('error/popup_error', {msg:'조회오류'});
+        res.render('error/popup_error', {iLayout:8, iHeaderFocus:0, user: {}, msg:'조회오류', yesterday:0});
         return;
     }
 
     let result = await IAgentSec.AccessInoutPassword(req.user.strNickname, input);
     if (result.result != 'OK') {
-        res.render('error/popup_error', {msg:result.msg});
+        res.render('error/popup_error', {iLayout:8, iHeaderFocus:0, user: {}, msg:result.msg, yesterday:0});
         return;
     }
 
@@ -55,7 +55,7 @@ router.post('/yesterday', isLoggedIn, async(req, res) => {
     console.log(req.body);
 
     if (req.user.iClass != 2 || req.user.iPermission != 0) {
-        res.render('error/popup_error', {msg:'조회오류'});
+        res.render('error/popup_error', {iLayout:8, iHeaderFocus:0, user: {}, msg:'조회오류', yesterday:0});
         return;
     }
 
@@ -81,7 +81,7 @@ router.post('/detail', isLoggedIn, async(req, res) => {
     console.log(req.body);
 
     if (req.user.iClass != 2 && req.user.iPermission != 0) {
-        res.render('error/popup_error', {msg: '조회에러'});
+        res.render('error/popup_error', {iLayout:8, iHeaderFocus:0, msg: '조회에러', list:[], dateStart:req.body.dateStart, dateEnd:req.body.dateEnd});
         return;
     }
 
@@ -152,16 +152,17 @@ router.post('/request_partner', isLoggedIn, async (req, res) => {
 
     let [list] = await db.sequelize.query(`
         SELECT t.strNickname, t.createdAt, t.updatedAt, t.strGroupID, u.strID, u.strOptionCode,
-               IFNULL((SELECT COUNT(id) FROM RecordInoutAccounts WHERE DATE(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}' AND strID = t.strID AND eType = 'REQUEST'),0) as iNumRequest,
-               IFNULL((SELECT COUNT(id) FROM RecordInoutAccounts WHERE DATE(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}' AND strID = t.strID AND eType = 'INPUT' AND eState = 'VALID'),0) as iNumValidInput,
-               IFNULL((SELECT COUNT(id) FROM RecordInoutAccounts WHERE DATE(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}' AND strID = t.strID AND eType = 'INPUT' AND eState = 'INVALID'),0) as iNumInvalidInput,
-               IFNULL((SELECT COUNT(id) FROM RecordInoutAccounts WHERE DATE(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}' AND strID = t.strID AND eType = 'INPUT' AND eState = 'STANDBY'),0) as iNumStandbyInput
+               (SELECT MAX(createdAt) FROM RecordInoutAccounts WHERE DATE(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}' AND strID = t.strID) AS lastDate,
+               IFNULL((SELECT COUNT(id) FROM RecordInoutAccounts WHERE DATE(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}' AND strID = t.strID AND eType = 'REQUEST'),0) AS iNumRequest,
+               IFNULL((SELECT COUNT(id) FROM RecordInoutAccounts WHERE DATE(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}' AND strID = t.strID AND eType = 'INPUT' AND eState = 'VALID'),0) AS iNumValidInput,
+               IFNULL((SELECT COUNT(id) FROM RecordInoutAccounts WHERE DATE(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}' AND strID = t.strID AND eType = 'INPUT' AND eState = 'INVALID'),0) AS iNumInvalidInput,
+               IFNULL((SELECT COUNT(id) FROM RecordInoutAccounts WHERE DATE(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}' AND strID = t.strID AND eType = 'INPUT' AND eState = 'STANDBY'),0) AS iNumStandbyInput
         FROM RecordInoutAccounts t
                  LEFT JOIN Users u ON u.strID = t.strID
         WHERE DATE(t.createdAt) BETWEEN '${dateStart}' AND '${dateEnd}' AND t.strGroupID LIKE '${strGroupID}%'
         ${subQuery}
-        GROUP BY t.strNickname
-        ORDER BY t.updatedAt DESC ;
+        GROUP BY t.strID
+        ORDER BY lastDate DESC ;
     `);
 
     // let listPartner = strNickname == '' ? await db.Users.findAll({

@@ -79,18 +79,18 @@ router.post('/popup_bank', isLoggedIn, async (req, res) => {
 
     const input = req.body.input ?? '';
     if (input == '') {
-        res.render('error/popup_error', {msg:'비밀번호 미입력'});
+        res.render('error/popup_error', {iLayout:8, iHeaderFocus:0, user: {}, msg:'비밀번호 미입력'});
         return;
     }
 
     if (req.user.iClass != 2 || req.user.iPermission != 0) {
-        res.render('error/popup_error', {msg:'권한 없음'});
+        res.render('error/popup_error', {iLayout:8, iHeaderFocus:0, user: {}, msg:'권한 없음'});
         return;
     }
 
     let result = await IAgentSec.AccessInoutPassword(req.user.strNickname, input);
     if (result.result != 'OK') {
-        res.render('error/popup_error', {msg:result.msg});
+        res.render('error/popup_error', {iLayout:8, iHeaderFocus:0, user: {}, msg:result.msg});
         return;
     }
 

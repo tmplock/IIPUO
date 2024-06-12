@@ -48,7 +48,7 @@
         <tr>
             <th scope="row">타이틀</th>
             <td>
-                <input type="text" style="width:90%;height: 30px;" name="title" id="title" required="yes"  message="" value="본사 사정으로 인해 계좌 문의 바랍니다.">&nbsp;
+                <input type="text" style="width:90%;height: 30px;" name="title" id="title" required="yes"  message="" value="표시되는 계좌로 입금하시기 바랍니다.">&nbsp;
             </td>
         </tr>
         <tr>
@@ -151,7 +151,7 @@
         objectData.memo = strMemo;
         objectData.title = strTitle;
         objectData.msg = strMsg;
-        objectData.subMsag = strSubMsg;
+        objectData.subMsg = strSubMsg;
 
         $.ajax({
             type:'POST',

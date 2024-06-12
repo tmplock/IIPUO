@@ -271,7 +271,7 @@ router.post('/request_bank_add', isLoggedIn, async (req, res) => {
         return;
     }
 
-    if (strTitle == '' || strMsg == '') {
+    if (strTitle == '' || strMsg == '' || strSubMsg == '') {
         res.send({result:'FAIL', msg: '경고 문구를 입력해주세요'});
         return;
     }

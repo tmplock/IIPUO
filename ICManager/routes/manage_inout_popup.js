@@ -133,11 +133,12 @@ router.post('/request_adjustinput', isLoggedIn, async (req, res) => {
         }
     }
 
-    // 권한 체크
-    if (req.user.iClass > 3 || req.user.iPermission != 0) {
-        res.send({result : 'FAIL', msg: '조회 오류'});
-        return;
-    }
+    // 06.13 수정 권한 제한 되어있는거 입금 출금 신청이 안되서 다시 주석.
+    //권한체크
+    // if (req.user.iClass > 3 || req.user.iPermission != 0) {
+    //     res.send({result : 'FAIL', msg: '조회 오류'});
+    //     return;
+    // }
 
     await db.Inouts.create({
         strID:req.body.strNickname,
@@ -203,11 +204,11 @@ router.post('/request_adjustoutput', isLoggedIn, async (req, res) => {
         res.send({result:'FAIL', reason:'NOTENOUGH'});
         return;
     }
-
-    if (req.user.iClass > 3 || req.user.iPermission != 0) {
-        res.send({result:'FAIL', reason:'ERROR'});
-        return;
-    }
+    // 06.13 수정 권한 제한 되어있는거 입금 출금 신청이 안되서 다시 주석.
+    // if (req.user.iClass > 3 || req.user.iPermission != 0) {
+    //     res.send({result:'FAIL', reason:'ERROR'});
+    //     return;
+    // }
 
     let objectParents = await IAgent.GetParentList(req.body.strGroupID, req.body.iClass);
 

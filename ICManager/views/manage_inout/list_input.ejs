@@ -303,7 +303,7 @@
             `);
         }
         // 본사 이상만 충전 표시(총총 제외)
-        if ( user.strOptionCode[1] == '1' && user.iClass > 3 && user.iPermission != 100 ) {
+        if ( user.strOptionCode[1] == '1' && user.iClass > 2 && user.iPermission != 100 ) {
             $(`#list_tab`).append(`
                 <button class="custom-btn btn-7" onclick="OnClickRequestInout(false)"><span><%=__('RequestOutput')%></span></button>
             `);

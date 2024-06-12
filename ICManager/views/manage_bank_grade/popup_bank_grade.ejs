@@ -54,7 +54,7 @@
             success: (obj) => {
                 if ( obj.result == 'OK' ) {
                     SetList(obj.data);
-                } else if ( obj.result == 'FAIL' ) {
+                } else {
                     alert(obj.msg);
                     self.close();
                 }
@@ -98,7 +98,7 @@
                 success: (obj) => {
                     if ( obj.result == 'OK' ) {
                         location.reload();
-                    } else if ( obj.result == 'FAIL' ) {
+                    } else {
                         alert(obj.msg);
                     }
                 },

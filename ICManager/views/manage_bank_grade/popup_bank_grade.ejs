@@ -97,6 +97,7 @@
 
                 success: (obj) => {
                     if ( obj.result == 'OK' ) {
+                        alert(obj.msg);
                         location.reload();
                     } else {
                         alert(obj.msg);

@@ -219,11 +219,11 @@ router.post('/popup_bank_add', isLoggedIn,  async (req, res) => {
         return;
     }
 
-    let id = req.body.id ?? -1;
+    let id = req.body.id ?? 0;
 
-    let bank = {iEdit: 0};
+    let bank = {id: 0};
     // 수정용
-    if (id != -1) {
+    if (id != 0) {
         bank = await db.BankGradeRecords.findOne({
             where: {
                 id: req.body.id
@@ -231,10 +231,9 @@ router.post('/popup_bank_add', isLoggedIn,  async (req, res) => {
         });
 
         if (bank == null) {
-            res.render('error/popup_error', {msg: '조회 오류'});
+            res.render('error/popup_error', {iLayout:8, iHeaderFocus:0, user: {}, list:[], bank: {}, msg: '조회 오류'});
             return;
         }
-        bank.iEdit = 1;
     }
 
     let agent = {iClass: req.body.iClass, iRootClass: req.user.iClass, strNickname: req.body.strNickname};

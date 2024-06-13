@@ -389,14 +389,11 @@ let Alert = (iocount, strInput, strOutput, strLetter, strCharge, strContact) => 
 }
 
 let AlertCash = (iCash) => {
-	console.log(`Alert ${iCash}`);
-
 	$('#MainLayoutMyCash').text(iCash.toLocaleString());
 
 }
 
 let AlertTodayUser = (todayUser) => {
-	console.log(`AlertTodayUser ${todayUser}`);
 	$('#MainTodayUser').text(`승인요청(${todayUser})`);
 }
 

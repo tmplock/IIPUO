@@ -449,7 +449,7 @@
 </head>
 <body>
 <div class="content" style="position:relative; padding:0 10px 0 10px;">
-    <div class="list_tit" style="height:80px; padding-top:10px;">
+    <div class="list_tit" id="main_title" style="height:80px; padding-top:10px;">
         <h3>
             <a class="btn_gray" style="font-weight:bold; font-size:18px; position:absolute; left:50px; top:25px;">계좌관리</a>
         </h3>
@@ -565,19 +565,6 @@
                             <a href="#" id="manage_setting"><%=__('MenuBoard')%></a>
                         <% } %>
                     </li>
-
-                    <% if ( user.strID == 'a' && user.iClass == 3 ) { %>
-                        <% if ( iHeaderFocus == 9 ) { %>
-                            <li class="on">
-                        <% } else { %>
-                            <li>
-                        <% } %>
-                            <% if ( parseInt(user.iClass) >= 1 ) { %>     
-                            <a href="#" id="manage_bankaccount">계좌 관리</a>
-                            <% } %>
-                        </li>
-                    <%}%>
-
                     <% if ( parseInt(user.iClass) > 1 && parseInt(user.iClass) <= 7 ) { %>
                         <% if ( iHeaderFocus == 6 ) { %>
                             <li class="on">

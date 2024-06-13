@@ -146,10 +146,11 @@ router.post('/request_searchby', isLoggedIn, async(req, res) => {
     }
 
     let eType = req.body.type;
+    let visibleGrade = req.user.iClass == 2 ? true  : false;
     if (eType == 'OUTPUT') {
-        return await GetOutputList(req, res);
+        return await GetOutputList(req, res, visibleGrade);
     } else if (eType == 'INPUT') {
-        return await GetInputList(req, res);
+        return await GetInputList(req, res, visibleGrade);
     } else {
         res.send({result:'FAIL', msg:'허용되지 않은 접근입니다', data : [], totalCount : 0, iRootClass:req.user.iClass});
     }
@@ -223,7 +224,7 @@ let GetRootInOutList = async (req, res) => {
     res.send({result:'OK', msg:'조회성공', data : list, totalCount : totalCount, iRootClass:req.user.iClass});
 }
 
-let GetOutputList = async (req, res) => {
+let GetOutputList = async (req, res, visibleGrade) => {
     let iLimit = parseInt(req.body.iLimit);
     let iPage = parseInt(req.body.iPage);
     let iOffset = (iPage-1) * iLimit;
@@ -279,7 +280,8 @@ let GetOutputList = async (req, res) => {
                     ELSE REPLACE(i.strAccountOwner, SUBSTR(i.strAccountOwner,2,1), '*')
                     END AS strAccountOwner,
                 DATE_FORMAT(i.completedAt, '%Y-%m-%d %H:%i:%S') AS completedAt, DATE_FORMAT(i.createdAt, '%Y-%m-%d %H:%i:%S') AS createdAt, DATE_FORMAT(i.updatedAt, '%Y-%m-%d %H:%i:%S') AS updatedAt,
-                DATE_FORMAT(u.createdAt, '%Y-%m-%d %H:%i:%S') AS userCreatedAt
+                DATE_FORMAT(u.createdAt, '%Y-%m-%d %H:%i:%S') AS userCreatedAt,
+                u.strOptionCode AS strOptionCode
             FROM Inouts i
             LEFT JOIN Users u ON u.strNickname = i.strID
             WHERE DATE(i.createdAt) BETWEEN '${req.body.dateStart}' AND '${req.body.dateEnd}'
@@ -299,12 +301,18 @@ let GetOutputList = async (req, res) => {
         if (obj.strBankType == 'NEWUSER') {
             obj.iNewUser = 1;
         }
+        if (visibleGrade == true) {
+            let iGrade = IAgent.GetGradeFromStrOptionCode(obj.strOptionCode);
+            let grade = IAgent.GetGrade(iGrade);
+            let strGrade =  `[${grade.id}:${grade.str}]`
+            obj.strGrade = strGrade;
+        }
         list.push(obj);
     }
     res.send({result:'OK', msg:'조회성공', data : list, totalCount : totalCount, iRootClass:req.user.iClass});
 }
 
-let GetInputList = async (req, res) => {
+let GetInputList = async (req, res, visibleGrade) => {
     let iLimit = parseInt(req.body.iLimit);
     let iPage = parseInt(req.body.iPage);
     let iOffset = (iPage-1) * iLimit;
@@ -379,6 +387,12 @@ let GetInputList = async (req, res) => {
         obj.iNewUser = 0;
         if (obj.strBankType == 'NEWUSER') {
             obj.iNewUser = 1;
+        }
+        if (visibleGrade == true) {
+            let iGrade = IAgent.GetGradeFromStrOptionCode(obj.strOptionCode);
+            let grade = IAgent.GetGrade(iGrade);
+            let strGrade =  `[${grade.id}:${grade.str}]`
+            obj.strGrade = strGrade;
         }
         list.push(obj);
     }
@@ -623,7 +637,6 @@ router.post('/request_inputstate', isLoggedIn, async (req, res) => {
                 }
 
                 await db.RecordInoutAccounts.create({
-
                     strID:user.strID,
                     strNickname:user.strNickname,
                     strAdminNickname:charge.strAdminNickname,
@@ -637,6 +650,7 @@ router.post('/request_inputstate', isLoggedIn, async (req, res) => {
                     eType:'INPUT',
                     eState:eState,
                     iAllowedTime :iMinutes,
+                    strLoginNickname: req.user.strNickname
                 });
 
                 //  
@@ -1220,6 +1234,7 @@ router.post('/output_alert', (req, res)=> {
 /**
  * 입출금관리 > 입금목록 > 입금신청
  */
+// deprecate
 router.post('/request_inout_pass', isLoggedIn, async (req, res) => {
     console.log(`request_inout_pass`);
     console.log(req.body);
@@ -1228,15 +1243,44 @@ router.post('/request_inout_pass', isLoggedIn, async (req, res) => {
     const input = req.body.input;
 
     // 비밀번호는 로그인한 이용자
-    const info = await db.Users.findOne({where: {strNickname: req.user.strNickname, strPassword: input}});
-    if (info == null) {
+    const user = await db.Users.findOne({where: {strNickname: req.user.strNickname, strPassword: input}});
+    if (user == null) {
         res.send({result: 'FAIL', msg:'비밀번호가 틀립니다'});
         return;
     }
+
+    let strNickname = req.body.strNickname ?? '';
+    const user2 = await db.Users.findOne({where: {strNickname: req.body.strNickname}});
+
+    if (user.iClass > user2.iClass) {
+        res.send({result: 'FAIL', msg:'조회 오류'});
+        return;
+    }
+
+    // 계좌 조회 로그 등록
+    let obj = await IAgent.GetParentList(user2.strGroupID, user2.iClass);
+    await db.RecordInoutAccounts.create({
+        strID:user2.strID,
+        strNickname:user2.strNickname,
+        strAdminNickname:obj.strAdmin,
+        strPAdminNickname:obj.strPAdmin,
+        strVAdminNickname:obj.strVAdmin,
+        strAgentNickname:obj.strAgent,
+        strShopNickname:obj.strShop,
+        iClass:user2.iClass,
+        strGroupID:user2.strGroupID,
+        strMemo:'',
+        eType:'REQUEST',
+        eState:'VALID',
+        iAllowedTime :5,
+        strLoginNickname: user.strNickname
+    });
+
+
     let iRootClass = parseInt(req.user.iClass ?? 100);
     let iPermission = parseInt(req.user.iPermission ?? 0);
 
-    if (iRootClass > iClass || iPermission == 100) {
+    if (iRootClass > iClass || iPermission != 0) {
         res.send({result: 'FAIL', msg:'권한이 없습니다'});
         return;
     }
@@ -1252,42 +1296,21 @@ router.post('/request_inout_pass', isLoggedIn, async (req, res) => {
     //     return;
     // }
 
-    let strAdmin = '';
-    if (iClass == 1) {
-        res.send({result: 'OK', msg: '입금 계좌 조회 성공'});
-        return;
-    } else if (iClass == 2) {
-        // 총총에 등록된 계좌 조회
-        strAdmin = await IAgent.GetParentNickname(req.body.strNickname);
-    } else if (iClass == 3) {
-        // 총본에 등록된 계좌 조회
-        strAdmin = await IAgent.GetParentNickname(req.body.strNickname);
-    } else {
-        let obj = await IAgent.GetParentList(req.body.strGroupID, iClass);
-        strAdmin = obj.strAdmin;
-    }
-    console.log(strAdmin);
-    let bank = await db.sequelize.query(`
-            SELECT b.strBankName AS strBankName, b.strBankNumber AS strBankNumber, b.strBankHolder AS strBankHolder
-            FROM BankRecords b
-            LEFT JOIN Users u ON u.id = b.userId
-            WHERE b.eType='ACTIVE' AND u.strNickname = '${strAdmin}'
-            LIMIT 1
-        `, {type: db.Sequelize.QueryTypes.SELECT});
+    // 등급체크
+    let strGroupID = `${user2.strGroupID}`.substring(0,3);
+    let iGrade = IAgent.GetGradeFromStrOptionCode(user.strOptionCode);
+    let list = await db.BankGradeRecords.findAll({
+        where: {
+            iGrade: iGrade,
+            eType: 'ACTIVE',
+            strGroupID: {
+                [Op.like]:`${strGroupID}%`
+            }
+        }
+    });
 
-    // 총본 날려도 되는지 확인 필요
-    // if (bank.length == 0) {
-    //     bank = await db.sequelize.query(`
-    //     SELECT b.strBankName AS strBankName, b.strBankNumber AS strBankNumber, b.strBankHolder AS strBankHolder
-    //     FROM BankRecords b
-    //     LEFT JOIN Users u ON u.id = b.userId
-    //     WHERE b.eType='ACTIVE' AND u.strNickname = '${obj.strPAdmin}'
-    //     LIMIT 1
-    // `, {type: db.Sequelize.QueryTypes.SELECT});
-    // }
-    console.log(bank);
-    if (bank.length > 0) {
-        let key = IAgentSec.GetCipherAndPeriod(req.user.strNickname, 10);
+    if (list.length > 0) {
+        let key = await IAgentSec.GetCipherAndPeriod(req.user.strNickname, 10);
         res.send({result: 'OK', msg: '입금 계좌 조회 성공', key:key});
     } else {
         res.send({result: 'FAIL', msg: '등록된 계좌가 없습니다'});
@@ -1297,6 +1320,7 @@ router.post('/request_inout_pass', isLoggedIn, async (req, res) => {
 /**
  * 입출금관리 > 계좌보기
  */
+// deprecate
 // 계좌관리 비번 체크
 router.post('/request_bank', isLoggedIn, async (req, res) => {
     console.log(`request_bank`);
@@ -1319,6 +1343,7 @@ router.post('/request_bank', isLoggedIn, async (req, res) => {
     res.send({result: 'OK'});
 });
 
+// deprecate
 // 입출금관리 > 계좌관리
 router.post('/popup_bank', isLoggedIn, async (req, res) => {
     console.log(`popup_bank`);
@@ -1355,6 +1380,7 @@ router.post('/popup_bank', isLoggedIn, async (req, res) => {
     res.render('manage_inout/popup_bank', {iLayout:8, iHeaderFocus:0, user:agent, msg:''});
 });
 
+// deprecate
 router.post('/request_bank_list', isLoggedIn, async (req, res) => {
     console.log(`request_bank_list`);
     console.log(req.body);
@@ -1475,6 +1501,7 @@ router.post('/request_bank_list', isLoggedIn, async (req, res) => {
     // res.send({result: 'OK', data: newList});
 });
 
+// deprecate
 router.post('/request_change_bank_type', isLoggedIn, async (req, res) => {
     console.log(`request_change_bank_type`);
     console.log(req.body);
@@ -1516,6 +1543,7 @@ router.post('/request_change_bank_type', isLoggedIn, async (req, res) => {
     res.send({result: 'OK'});
 });
 
+// deprecate
 router.post('/popup_bank_add', isLoggedIn,  async (req, res) => {
     console.log(`popup_bank_add`);
 
@@ -1547,6 +1575,7 @@ router.post('/popup_bank_add', isLoggedIn,  async (req, res) => {
     res.render('manage_inout/popup_bank_add', {iLayout:8, iHeaderFocus:0, user:agent, strChildes:strChildes, strChildes2:strChildes2});
 });
 
+// deprecate
 router.post('/request_bank_add', isLoggedIn, async (req, res) => {
     console.log(`request_bank_add`);
 
@@ -1591,6 +1620,7 @@ router.post('/request_bank_add', isLoggedIn, async (req, res) => {
     res.send({result:'OK', msg:'등록성공'});
 });
 
+// deprecate
 router.post('/request_bank_memo_apply', isLoggedIn, async (req, res) => {
     console.log(`request_bank_add`);
 
@@ -1628,6 +1658,7 @@ router.post('/request_bank_memo_apply', isLoggedIn, async (req, res) => {
     res.send({result:'OK', msg:'등록성공'});
 });
 
+// deprecate
 router.post('/request_bank_del', isLoggedIn, async (req, res) => {
     console.log(`request_bank_del`);
 

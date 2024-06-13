@@ -233,11 +233,18 @@
             `);
         }
         // 본사 이상만 충전 표시
-        if ( user.strOptionCode[1] == '1' && user.iClass > 3 && user.iPermission != 100 ) {
+        if ( user.strOptionCode[1] == '1' && user.iClass > 2 && user.iPermission != 100 ) {
             $(`#list_tab`).append(`
                 <button class="custom-btn btn-7" onclick="OnClickRequestInout(false)"><span><%=__('RequestOutput')%></span></button>
             `);
         }
+
+        <% if (user.iClass > 1 && user.iClass <= 3 && user.iRootClass <= 3 && user.iPermission == 0) { %>
+            $('#list_tab').append(`
+                <button class="custom-btn btn-17" onclick="OnClickRequestBank2()"><span>계좌보기2</span></button>
+                <button class="custom-btn btn-17" onclick="OnClickPopupBankLog()"><span>계좌요청로그</span></button>
+            `);
+        <%}%>
 
         if (user.iPermission < 3) {
             $('#bank_info').show();
@@ -366,5 +373,72 @@
                 alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
             }
         });
+    }
+
+    function OnClickRequestBank2() {
+        var input = prompt('암호입력');
+
+        if (input == null) {
+            return;
+        } else if (input.length == 0) {
+            alert(`암호 미입력`);
+            return;
+        }
+
+        $.ajax({
+            type:'post',
+            url: "/manage_bank_grade/request_bank",
+            data:{input:input, iClass: user.iClass, strNickname: user.strNickname},
+            success: (obj) => {
+                if (obj.result == 'OK') {
+                    OpenBankPopup2(input);
+                } else if (obj.result == 'FAIL') {
+                    alert(obj.msg);
+                }
+            },
+            error:function(request,status,error){
+                alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+            }
+        });
+    }
+
+    function OnClickPopupBankLog() {
+        var input = prompt('암호입력');
+        if (input == null) {
+            return;
+        } else if (input.length == 0) {
+            alert(`암호 미입력`);
+            return;
+        }
+
+        window.open('', 'popupAccountChk', 'width=750, height=720, top=90, left=90, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
+        var $form = $('<form></form>');
+        $form.attr('action', '/manage_bankaccount/account');
+        $form.attr('method', 'post');
+        $form.attr('target', 'popupAccountChk');
+        $form.appendTo('body');
+
+        var strNickname = $(`<input type="hidden" value="${user.strNickname}" name="strNickname">`);
+        var strGroupID = $(`<input type="hidden" value="${user.strGroupID}" name="strGroupID">`);
+        var iClass = $(`<input type="hidden" value=${user.iClass} name="iClass">`);
+        var iPermission = $(`<input type="hidden" value=${user.iPermission} name="iPermission">`);
+        var sInput = $(`<input type="hidden" value=${input} name="input">`);
+
+        $form.append(strNickname).append(strGroupID).append(iClass).append(iPermission).append(sInput);
+        $form.submit();
+    }
+
+    let OpenBankPopup2 = (input) => {
+        window.open('', 'popupChk22', 'width=1280, height=720, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
+        var $form = $('<form></form>');
+        $form.attr('action', '/manage_bank_grade/popup_bank');
+        $form.attr('method', 'post');
+        $form.attr('target', 'popupChk22');
+        $form.appendTo('body');
+        var strNickname = $(`<input type="hidden" value="${user.strNickname}" name="strNickname">`);
+        var iClass = $(`<input type="hidden" value=${parseInt(user.iClass)} name="iClass">`);
+        var sInput = $(`<input type="hidden" value=${input} name="input">`);
+        $form.append(strNickname).append(iClass).append(sInput);
+        $form.submit();
     }
 </script>

@@ -29,45 +29,35 @@ router.post('/requestcharge', isLoggedIn, async (req, res) => {
         user.iCash = dbuser.iCash;
         user.strBankOwner = dbuser.strBankOwner;
     } else {
-        res.render('manage_inout/popup_requestcharge', {iLayout:1, iHeaderFocus:1, user: {msg: '조회오류'}, bank: {strBankName: '', strBankHolder:'', strBankNumber:''}});
+        res.render('error/popup_error', {iLayout:1, iHeaderFocus:1, user: {}, bank:{}, msg: '조회오류'});
         return;
     }
 
-    if (req.user.iClass > dbuser.iClass) {
-        res.render('manage_inout/popup_requestcharge', {iLayout:1, iHeaderFocus:1, user: {msg: '조회오류'}, bank: {strBankName: '', strBankHolder:'', strBankNumber:''}});
+    if (req.user.iClass > dbuser.iClass || req.user.iPermission != 0 || req.user.iClass > 3) {
+        res.render('error/popup_error', {iLayout:1, iHeaderFocus:1, user: {}, bank:{}, msg: '조회오류'});
         return;
     }
 
-    let iClass = parseInt(req.body.iClass);
-    let strAdmin = '';
-    if (iClass == 1 || iClass == 2 || iClass == 3) {
-        res.render('manage_inout/popup_requestcharge', {iLayout:1, iHeaderFocus:1, user: {msg: '권한없음'}, bank: {strBankName: '', strBankHolder:'', strBankNumber:''}});
-        return;
-        // 총총에 등록된 계좌 조회
-        // strAdmin = await IAgent.GetParentNickname(req.body.strNickname);
-        // 총본에 등록된 계좌 조회
-        // strAdmin = await IAgent.GetParentNickname(req.body.strNickname);
+    // 등급체크
+    let strGroupID = `${dbuser.strGroupID}`.substring(0,3);
+    let iGrade = IAgent.GetGradeFromStrOptionCode(dbuser.strOptionCode);
+    let list = await db.BankGradeRecords.findAll({
+        where: {
+            iGrade: iGrade,
+            eType: 'ACTIVE',
+            strGroupID: {
+                [Op.like]:`${strGroupID}%`
+            }
+        }
+    });
+
+    if (list.length > 0) {
+        user.msg = '';
+        let key = await IAgentSec.GetCipherAndPeriod(req.user.strNickname, 10);
+        res.render('manage_inout/popup_requestcharge', {iLayout:1, iHeaderFocus:1, user:user, bank:list[0]});
     } else {
-        let obj = await IAgent.GetParentList(req.body.strGroupID, iClass);
-        strAdmin = obj.strAdmin;
+        res.render('error/popup_error', {iLayout:1, iHeaderFocus:1, user: {}, bank:{}, msg:'등록된 계좌가 없습니다'});
     }
-    console.log(strAdmin);
-
-    let bank = await db.sequelize.query(`
-            SELECT b.strBankName AS strBankName, b.strBankNumber AS strBankNumber, b.strBankHolder AS strBankHolder
-            FROM BankRecords b
-            LEFT JOIN Users u ON u.id = b.userId
-            WHERE b.eType='ACTIVE' AND u.strNickname = '${strAdmin}'
-            LIMIT 1
-        `, {type: db.Sequelize.QueryTypes.SELECT});
-
-    let obj = {};
-    if (bank.length > 0) {
-        obj = bank[0];
-    }
-
-    user.msg = '';
-    res.render('manage_inout/popup_requestcharge', {iLayout:1, iHeaderFocus:1, user:user, bank:obj});
 });
 
 router.post('/requestexchange', isLoggedIn, async (req, res) => {
@@ -82,12 +72,12 @@ router.post('/requestexchange', isLoggedIn, async (req, res) => {
         user.strBankAccount = dbuser.strBankAccount;
         user.strBankOwner = dbuser.strBankOwner;
     } else {
-        res.render('manage_inout/popup_requestexchange', {iLayout:1, iHeaderFocus:1, user: {msg: '조회오류'}, iForced: req.body.iForced});
+        res.render('error/popup_error', {iLayout:1, iHeaderFocus:1, user: {}, iForced:req.body.iForced, msg: '조회오류'});
         return;
     }
 
     if (req.user.iClass > dbuser.iClass) {
-        res.render('manage_inout/popup_requestcharge', {iLayout:1, iHeaderFocus:1, user: {msg: '조회오류'}, bank: {strBankName: '', strBankHolder:'', strBankNumber:''}});
+        res.render('error/popup_error', {iLayout:1, iHeaderFocus:1, user: {}, iForced:req.body.iForced, msg: '조회오류'});
         return;
     }
 
@@ -142,6 +132,13 @@ router.post('/request_adjustinput', isLoggedIn, async (req, res) => {
             return;
         }
     }
+
+    // 06.13 수정 권한 제한 되어있는거 입금 출금 신청이 안되서 다시 주석.
+    //권한체크
+    // if (req.user.iClass > 3 || req.user.iPermission != 0) {
+    //     res.send({result : 'FAIL', msg: '조회 오류'});
+    //     return;
+    // }
 
     await db.Inouts.create({
         strID:req.body.strNickname,
@@ -207,6 +204,11 @@ router.post('/request_adjustoutput', isLoggedIn, async (req, res) => {
         res.send({result:'FAIL', reason:'NOTENOUGH'});
         return;
     }
+    // 06.13 수정 권한 제한 되어있는거 입금 출금 신청이 안되서 다시 주석.
+    // if (req.user.iClass > 3 || req.user.iPermission != 0) {
+    //     res.send({result:'FAIL', reason:'ERROR'});
+    //     return;
+    // }
 
     let objectParents = await IAgent.GetParentList(req.body.strGroupID, req.body.iClass);
 

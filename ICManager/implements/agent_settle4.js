@@ -313,7 +313,7 @@ exports.GetSettleList = async (strGroupID, strQuater, dateStart, dateEnd, iClass
             newList.push(this.CalSettle(list[i]));
         }
     } else if (iClass == 4) {
-        let list = await GetSettleClass4(strGroupID, strQuater, dateStart, dateEnd, iOffset, iLimit, lastDate, strSubQuater, strSubQuater2, iSettleDays, iSettleType);
+        let list = await GetSettleClass4(strGroupID, strQuater, dateStart, dateEnd, iOffset, iLimit, lastDate, strSubQuater, strSubQuater2, iSettleDays, iSettleType, exist);
         // 죽장 계산하기
         for (let i in list) {
             newList.push(this.CalSettle(list[i]));
@@ -380,7 +380,7 @@ let GetSettleClass5 = async (strGroupID, strQuater, dateStart, dateEnd, iOffset,
     let lastDateQuery = `AND t5.createdAt < '${lastDate}'`;
     let query = `strSubQuater='${strSubQuater}' AND iSettleDays=${iSettleDays} AND iSettleType=${iSettleType}`;
     let query2 = `strSubQuater='${strSubQuater2}' AND iSettleDays=${iSettleDays} AND iSettleType=${iSettleType}`;
-    let query3 = exist.length == 0 ? '' : `AND t5.strID NOT IN ${exist}`;
+    let query3 = exist.length == 0 ? '' : `AND t5.id NOT IN (${exist})`;
 
     let list = await db.sequelize.query(`
         SELECT
@@ -503,6 +503,7 @@ let GetSettleClass4 = async (strGroupID, strQuater, dateStart, dateEnd, iOffset,
     let lastDateQuery = `AND t4.createdAt < '${lastDate}'`;
     let query = `strSubQuater='${strSubQuater}' AND iSettleDays=${iSettleDays} AND iSettleType=${iSettleType}`;
     let query2 = `strSubQuater='${strSubQuater2}' AND iSettleDays=${iSettleDays} AND iSettleType=${iSettleType}`;
+    let query3 = exist.length == 0 ? '' : `AND t5.id NOT IN (${exist})`;
 
     let list = await db.sequelize.query(`
             SELECT
@@ -513,23 +514,24 @@ let GetSettleClass4 = async (strGroupID, strQuater, dateStart, dateEnd, iOffset,
                 t4.iSettleDays, t4.iSettleType,
                 t4.iSettleAcc, t4.iCash,
                 IFNULL(t5.fCommission, ${cfCommission}) AS fCommission,            
-                IFNULL((SELECT iSettleAccTotal FROM SettleRecords WHERE strNickname = t4.strNickname AND ${query2}),0) as iSettleAfter2,
+                IFNULL((SELECT SUM(iSettleAccTotal) FROM SettleRecords WHERE strNickname = t4.strNickname AND ${query2}),0) AS iSettleAfter2,
                 
-                IFNULL((SELECT sum(iAgentBetB) FROM RecordDailyOverviews WHERE strID = t4.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iAgentBetB,
-                IFNULL((SELECT sum(iAgentWinB) FROM RecordDailyOverviews WHERE strID = t4.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iAgentWinB,
-                IFNULL((SELECT sum(iAgentRollingB) FROM RecordDailyOverviews WHERE strID = t4.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iAgentRollingB,
+                IFNULL((SELECT SUM(iAgentBetB) FROM RecordDailyOverviews WHERE strID = t4.strID AND DATE(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) AS iAgentBetB,
+                IFNULL((SELECT SUM(iAgentWinB) FROM RecordDailyOverviews WHERE strID = t4.strID AND DATE(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) AS iAgentWinB,
+                IFNULL((SELECT SUM(iAgentRollingB) FROM RecordDailyOverviews WHERE strID = t4.strID AND DATE(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) AS iAgentRollingB,
                 
-                IFNULL((SELECT sum(iAgentBetUO) FROM RecordDailyOverviews WHERE strID = t4.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iAgentBetUO,
-                IFNULL((SELECT sum(iAgentWinUO) FROM RecordDailyOverviews WHERE strID = t4.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iAgentWinUO,
-                IFNULL((SELECT sum(iAgentRollingUO) FROM RecordDailyOverviews WHERE strID = t4.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iAgentRollingUO,
+                IFNULL((SELECT SUM(iAgentBetUO) FROM RecordDailyOverviews WHERE strID = t4.strID AND DATE(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) AS iAgentBetUO,
+                IFNULL((SELECT SUM(iAgentWinUO) FROM RecordDailyOverviews WHERE strID = t4.strID AND DATE(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) AS iAgentWinUO,
+                IFNULL((SELECT SUM(iAgentRollingUO) FROM RecordDailyOverviews WHERE strID = t4.strID AND DATE(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) AS iAgentRollingUO,
                 
-                IFNULL((SELECT sum(iAgentBetS) FROM RecordDailyOverviews WHERE strID = t4.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iAgentBetS,
-                IFNULL((SELECT sum(iAgentWinS) FROM RecordDailyOverviews WHERE strID = t4.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iAgentWinS,
-                IFNULL((SELECT sum(iAgentRollingS) FROM RecordDailyOverviews WHERE strID = t4.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iAgentRollingS
+                IFNULL((SELECT SUM(iAgentBetS) FROM RecordDailyOverviews WHERE strID = t4.strID AND DATE(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) AS iAgentBetS,
+                IFNULL((SELECT SUM(iAgentWinS) FROM RecordDailyOverviews WHERE strID = t4.strID AND DATE(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) AS iAgentWinS,
+                IFNULL((SELECT SUM(iAgentRollingS) FROM RecordDailyOverviews WHERE strID = t4.strID AND DATE(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) AS iAgentRollingS
             FROM Users t4
                 LEFT JOIN Users t3 ON t3.id = t4.iParentID
             WHERE t4.iClass = 4 AND t4.strGroupID LIKE CONCAT('${strGroupID}', '%') AND t4.iSettleDays=${iSettleDays} AND t4.iSettleType=${iSettleType}
-            ${lastDateQuery}
+                ${lastDateQuery}
+                ${query3}
             ORDER BY strAdminNickname ASC, t5.strNickname ASC
             LIMIT ${limit}
             OFFSET ${offset}
@@ -583,29 +585,17 @@ exports.GetSettleExistList = async (strGroupID, iClass, strQuater, dateStart, da
         `, {type: db.Sequelize.QueryTypes.SELECT});
     } else if (iClass == 5) {
         list = await db.sequelize.query(`
-            SELECT
-                t3.strID AS strAdminID, t3.strNickname AS strAdminNickname,
-                t5.strID, t5.strNickname, t5.strGroupID, t5.iClass, t5.strSettleMemo,
-                t5.fSettleBaccarat, t5.fSettleSlot,
-                t4.fSettleBaccarat, t4.fSettleSlot,
-                t5.iSettleAcc, t5.iCash,
-                t5.iSettleDays, t5.iSettleType,
-                IFNULL((SELECT SUM(iCash) FROM Users WHERE strGroupID LIKE CONCAT(t5.strGroupID,'%')),0) as iTotalMoney,
-                IFNULL((SELECT iSettleAccTotal FROM SettleRecords WHERE strNickname = t5.strNickname AND ${query}),0) as iSettleAccTotal,
-                IFNULL((SELECT iSettleAcc FROM SettleRecords WHERE strNickname = t5.strNickname AND ${query}),0) as iSettleAccQuater,
-                IFNULL((SELECT iSettle FROM SettleRecords WHERE strNickname = t5.strNickname AND ${query}),0) as iSettleComplete,
-                IFNULL((SELECT iSettleGive FROM SettleRecords WHERE strNickname = t5.strNickname AND ${query}),0) as iSettleGive,
-                IFNULL((SELECT iSettleBeforeAcc FROM SettleRecords WHERE strNickname = t5.strNickname AND ${query}),0) as iSettleBeforeAcc,
-                IFNULL((SELECT iSettleAfter FROM SettleRecords WHERE strNickname = t5.strNickname AND ${query}),0) as iSettleAfter,
-                IFNULL((SELECT iSettleAccTotal FROM SettleRecords WHERE strNickname = t5.strNickname AND ${query2}),0) as iSettleAfter2,
-                IFNULL((SELECT iSettleOrigin FROM SettleRecords WHERE strNickname = t5.strNickname AND ${query}),0) as iSettleOrigin,
-                IFNULL((SELECT (iSettleAcc - iPayback) FROM SettleRecords WHERE strNickname = t5.strNickname AND ${query}),0) as iSettleAcc,
-                IFNULL((SELECT iPayback FROM SettleRecords WHERE strNickname = t5.strNickname AND ${query}),0) as iPayback
-            FROM Users t5
-                LEFT JOIN Users t4 ON t4.id = t5.iParentID
-                LEFT JOIN Users t3 ON t3.id = t4.iParentID
-            WHERE t5.iClass = ${iClass} AND t5.strGroupID LIKE CONCAT('${strGroupID}', '%') AND t5.iSettleDays=${iSettleDays} AND t5.iSettleType=${iSettleType}
-            ${lastDateQuery}
+            SELECT t3.strID AS strAdminID, t3.strNickname AS strAdminNickname,
+                   t5.strID, t5.strNickname, t5.strGroupID, t5.iClass, t5.strSettleMemo,
+                   t5.fSettleBaccarat, t5.fSettleSlot,
+                   t5.iSettleAcc, t5.iCash,
+                   t5.iSettleDays, t5.iSettleType,
+                   sr.*
+            FROM SettleRecords sr
+                    LEFT JOIN Users t5 ON t5.strID = sr.strID
+                    LEFT JOIN Users t4 ON t4.id = t5.iParentID
+                    LEFT JOIN Users t3 ON t3.id = t4.iParentID
+            WHERE sr.strSubQuater='${strSubQuater}' AND sr.iSettleDays='${iSettleDays}' AND sr.iSettleType='${iSettleType}' AND sr.iClass=${iClass}
             ORDER BY strAdminNickname ASC, t5.strNickname ASC, t5.strGroupID ASC
             LIMIT ${limit}
             OFFSET ${offset}
@@ -649,16 +639,17 @@ exports.CheckSettleExistIDList = async (strSubQuater, iSettleDays, iSettleType, 
 }
 
 exports.GetSettleExistIDList = async (strSubQuater, iSettleDays, iSettleType, iClass) => {
-    let list = await db.SettleRecords.findAll({
-        attributes: ['strID'],
-        where: {
-            strSubQuater: strSubQuater,
-            iSettleDays: iSettleDays,
-            iSettleType:iSettleType,
-            iClass: iClass
-        }
-    });
-    return list;
+    let list = await db.sequelize.query(`
+        SELECT u.id 
+        FROM SettleRecords sr
+        LEFT JOIN Users u ON u.strID = sr.strID
+        WHERE sr.strSubQuater='${strSubQuater}' AND sr.iSettleDays='${iSettleDays}' AND sr.iSettleType='${iSettleType}' AND sr.iClass=${iClass}
+    `);
+    let newList = [];
+    for (let i in list[0]) {
+        newList.push(list[0][i].id);
+    }
+    return newList;
 }
 
 
@@ -677,25 +668,27 @@ let ExistSettle = (obj) => {
     settle.strGroupID = obj.strGroupID;
     settle.fSettleBaccarat = obj.fSettleBaccarat;
     settle.fSettleSlot = obj.fSettleSlot;
-
-    settle.iTotal = obj.iAgentBetB + obj.iAgentBetUO + obj.iAgentBetS - obj.iAgentWinB - obj.iAgentWinUO - obj.iAgentWinS - obj.iAgentRollingB - obj.iAgentRollingUO - obj.iAgentRollingS;
-    settle.iBaccaratWinLose = obj.iAgentWinB;
-    settle.iUnderOverWinLose = obj.iAgentWinUO;
-    settle.iSlotWinLose = obj.iAgentWinS;
+    settle.iTotal = obj.iTotal
 
     // 부본 죽장 계산
     if (obj.iClass == 5) {
-        settle.iSettleVice = settle.iTotal * settle.fSettleBaccarat;
+        settle.iSettleVice = settle.iSettleVice;
     }
 
     // 대본 죽장 계산 및 알값 처리
     if (obj.iClass == 4) {
-        settle.iCommissionBaccarat = obj.iCommissionBaccarat;
-        settle.iCommissionSlot = obj.iCommissionSlot;
-        settle.iSettle = (settle.iTotal - settle.iCommissionBaccarat - settle.iCommissionSlot) * settle.fSettleBaccarat;
+        settle.iBaccaratWinLose = obj.iBWinlose;
+        settle.iUnderOverWinLose = obj.iUWinlose;
+        settle.iSlotWinLose = obj.iSWinlose;
+
+        settle.iCommissionBaccarat = obj.iCommissionB;
+        settle.iCommissionSlot = obj.iCommissionS;
+        settle.iSettle = obj.iSettle;
     }
 
-    settle.iResult = settle.iTotal - settle.iSettleVice - settle.iCommissionBaccarat - settle.iCommissionSlot - settle.iSettle;
+    settle.iResult = obj.iResult;
+
+    return settle;
 }
 
 let GetSubQuaterBefore = (iSettleDays, strSubQuater) => {

@@ -29,12 +29,12 @@ router.post('/requestcharge', isLoggedIn, async (req, res) => {
         user.iCash = dbuser.iCash;
         user.strBankOwner = dbuser.strBankOwner;
     } else {
-        res.render('error/popup_error', {iLayout:1, iHeaderFocus:1, user: {}, bank:{}, msg: '조회오류'});
+        res.render('error/popup_error_popup', {iLayout:1, iHeaderFocus:1, user: {}, bank:{}, msg: '조회오류'});
         return;
     }
 
-    if (req.user.iClass > dbuser.iClass || req.user.iPermission != 0 || req.user.iClass > 3) {
-        res.render('error/popup_error', {iLayout:1, iHeaderFocus:1, user: {}, bank:{}, msg: '조회오류'});
+    if (req.user.iClass > dbuser.iClass || req.user.iPermission != 0) {
+        res.render('error/popup_error_popup', {iLayout:1, iHeaderFocus:1, user: {}, bank:{}, msg: '조회오류'});
         return;
     }
 
@@ -56,7 +56,7 @@ router.post('/requestcharge', isLoggedIn, async (req, res) => {
         let key = await IAgentSec.GetCipherAndPeriod(req.user.strNickname, 10);
         res.render('manage_inout/popup_requestcharge', {iLayout:1, iHeaderFocus:1, user:user, bank:list[0]});
     } else {
-        res.render('error/popup_error', {iLayout:1, iHeaderFocus:1, user: {}, bank:{}, msg:'등록된 계좌가 없습니다'});
+        res.render('error/popup_error_popup', {iLayout:1, iHeaderFocus:1, user: {}, bank:{}, msg:'등록된 계좌가 없습니다'});
     }
 });
 

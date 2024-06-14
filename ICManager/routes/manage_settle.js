@@ -34,7 +34,7 @@ router.post('/applysettle', isLoggedIn, async (req, res) => {
     }
 
     // 죽장 대상 ID list
-    let checkIdList = req.body.checkIdList ?? [];
+    let checkIdList = req.body.checkIdList.split(',');
 
     if (checkIdList.length == 0) {
         res.send({result:'FAIL', msg: '죽장할 대상이 없습니다'});
@@ -44,14 +44,14 @@ router.post('/applysettle', isLoggedIn, async (req, res) => {
     let strSubQuater = req.body.strSubQuater ?? '';
     let iSettleDays = req.body.iSettleDays ?? '';
     let iSettleType = req.body.iSettleType ?? '';
+    let iClass = req.body.iClass;
 
     // id에 대한 완료 여부 확인하기
-    let existList =  await IAgentSettle.CheckSettleExistIDList(strSubQuater, iSettleDays, iSettleType, checkIdList);
+    let existList =  await IAgentSettle.CheckSettleExistIDList(strSubQuater, iSettleDays, iSettleType, checkIdList, iClass);
     if (existList.length > 0) {
         res.send({result:'FAIL', msg: '이미 죽장처리된 항목이 있습니다. 다시 조회 후 죽장 지급을 해주세요'});
         return;
     }
-
 
     let strGroupID = req.body.strGroupID ?? '';
     let strQuater = req.body.strQuater ?? '';
@@ -89,6 +89,9 @@ router.post('/applysettle', isLoggedIn, async (req, res) => {
         if (settle == null) {
             await db.SettleRecords.create({
                 strQuater:strQuater,
+                strSubQuater:strSubQuater,
+                iSettleDays:iSettleDays,
+                iSettleType:iSettleType,
                 strGroupID:data.strGroupID,
                 strNickname:data.strNickname,
                 iSettle:data.iSettle, // 죽장 분기
@@ -115,7 +118,7 @@ router.post('/applysettle', isLoggedIn, async (req, res) => {
 
             // 죽장 지급시에는 1000단위 절삭
             // let iAmout = Math.floor(parseInt(iSettleGive)/10000)*10000;
-            let iAmout = iSettleGive;
+            let iAmout = data.iSettleGive;
             await db.GTs.create(
                 {
                     eType:'GETSETTLE',
@@ -200,7 +203,11 @@ router.post('/request_settle_list', isLoggedIn, async(req, res) => {
     }
 
     let strSubQuater2 = IAgentSettle.GetSubQuaterBefore(iSettleDays, strSubQuater);
-    let list = await IAgentSettle.GetSettleList(req.body.strGroupID, req.body.strQuater, req.body.dateStart, req.body.dateEnd, req.body.iClass, iOffset, iLimit, lastDate, strSubQuater, strSubQuater2, iSettleDays, iSettleType);
+
+    // 죽장 완료 ids
+    let exist = await IAgentSettle.GetSettleExistIDList(req.body.strSubQuater, req.body.iSettleDays, req.body.iSettleType, req.body.iClass);
+
+    let list = await IAgentSettle.GetSettleList(req.body.strGroupID, req.body.strQuater, req.body.dateStart, req.body.dateEnd, req.body.iClass, iOffset, iLimit, lastDate, strSubQuater, strSubQuater2, iSettleDays, iSettleType, exist);
     res.send({result:'OK', list:list, iRootClass: req.user.iClass, msg: '정상조회'});
 });
 

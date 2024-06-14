@@ -336,10 +336,12 @@
 			`);
 		}
 
+		let ids = [];
 		for (let i in list) {
 			let obj = list[i];
 			obj.parentID = obj.strAdminID;
 			obj.parentNickname = obj.strAdminNickname;
+			ids.push(obj.id);
 
 			if (obj.iClass == 4) {
 				let tag = AddPartner4(obj, i);
@@ -351,6 +353,8 @@
 				$('#list_agents').append(tag);
 			}
 		}
+
+		checkIdList = ids;
 	}
 </script>
 <!--OnClick-->
@@ -652,6 +656,11 @@
 		}
 		openAlertModal();
 
+		let ids = '';
+		for (let i in checkIdList) {
+			ids = ids == '' ? checkIdList[i] : `${ids},${checkIdList[i]}`;
+		}
+
 		$.ajax({
 			url:'/manage_settle/applysettle',
 			type:"POST",
@@ -667,7 +676,7 @@
 				strSubQuater:strSubQuater,
 				iSettleDays:iSettleDays,
 				iSettleType:iSettleType,
-				checkIdList:checkIdList,
+				checkIdList:ids,
 			},
 			dataType: "json",
 			success: function (obj) {

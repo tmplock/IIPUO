@@ -1,0 +1,220 @@
+<div style="height:5px;"></div>
+
+<div class="list">
+    <div class="search_wrap">
+        <p style="background-repeat:no-repeat; background-position:left center; font-size:20px; color:#454545; padding-left:22px;margin-top:10px;height:30px;margin-bottom:5px;">
+            계좌 목록
+        </p>
+        <a class="btn_thinorange" style="position:absolute;top:35px; right:15%;" href="javascript:OnClickAddBank(0);">계좌 등록</a>
+        <table class="search_list">
+            <thead>
+            <tr>
+                <th width="5%"><%=__('Index')%></th>
+                <th width="15%">등급</th>
+                <th width="15%">은행명</th>
+                <th width="15%">예금주</th>
+                <th width="15%">계좌번호</th>
+                <th width="15%">사용여부</th>
+                <th width="15%">등록일</th>
+                <th width="30%">메모</th>
+                <th width="30%">경고메세지</th>
+                <th width="10%">수정</th>
+                <th width="10%">삭제</th>
+            </tr>
+            </thead>
+            <tbody id="bank_list">
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script type="text/javascript" src="js/constants.js"></script>
+<script type="text/javascript" src="js/enum.js"></script>
+<script type="text/javascript" src="js/time.js"></script>
+<script type="text/javascript" src="js/util.js"></script>
+<script type="text/javascript">
+    let user = JSON.parse('<%-JSON.stringify(user)%>');
+    let list = [];
+    let msg = JSON.parse('<%-JSON.stringify(msg)%>');
+
+    $(document).ready( ()=> {
+        if (msg == '') {
+            RequestList();
+        } else {
+            alert(msg);
+            self.close();
+        }
+    });
+
+    let RequestList = () => {
+        $.ajax({
+            type:'post',
+            url: "/manage_bank_grade/request_bank_list",
+            data:{iClass: user.iClass, strNickname: user.strNickname, key:user.key},
+            success: (obj) => {
+                if ( obj.result == 'OK' ) {
+                    SetList(obj.data);
+                } else {
+                    alert(obj.msg);
+                    self.close();
+                }
+            },
+            error:function(request,status,error){
+                alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+            }
+        });
+    }
+
+    let OnClickMemo = (id) => {
+        console.log(`id : ${id}`);
+
+        let memo = $(`#memoinput_${id}`).val();
+
+        $.ajax({
+            type:'post',
+            url: "/manage_bank_grade/request_bank_memo_apply",
+            data:{id:id, strMemo:memo, iClass: user.iClass, strNickname: user.strNickname},
+
+            success: (obj) => {
+                if ( obj.result == 'OK' ) {
+
+                } else {
+                    alert(obj.msg);
+                }
+            },
+            error:function(request,status,error){
+                alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+            }
+        });
+    }
+
+    let OnClickDelete = (name, id) => {
+        if (confirm(`${name} 계좌를 삭제할까요?`)) {
+            $.ajax({
+                type:'post',
+                url: "/manage_bank_grade/request_bank_del",
+                data:{id:id},
+
+                success: (obj) => {
+                    if ( obj.result == 'OK' ) {
+                        alert(obj.msg);
+                        location.reload();
+                    } else {
+                        alert(obj.msg);
+                    }
+                },
+                error:function(request,status,error){
+                    alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+                }
+            });
+        }
+    }
+
+    let SetList = (list) => {
+        $("#bank_list").empty();
+        if (list.length > 0) {
+
+            for (let i = 0; i<list.length; i++) {
+                let aObject = list[i];
+
+                let tagType = `
+                    <select style="vertical-align:middle;width:100%;" id="type_${aObject.id}" onchange="OnChangeType(${aObject.id}, ${aObject.userId});">
+                        <option value="STOP" selected>미사용</option>
+                        <option value="ACTIVE">사용</option>
+                    </select>
+                `;
+                if (aObject.eType == 'ACTIVE') {
+                    tagType = `
+                    <select style="vertical-align:middle;width:100%;" id="type_${aObject.id}" onchange="OnChangeType(${aObject.id}, ${aObject.userId});">
+                        <option value="STOP">미사용</option>
+                        <option value="ACTIVE" selected>사용</option>
+                    </select>
+                    `;
+                }
+                let msgTag = `${aObject.strTitle}<br>${aObject.strMsg}<br>${aObject.strSubMsg}`;
+                let memoTag = `<input style="width:70%;" type="text" id="memoinput_${aObject.id}" value="${aObject.strMemo}"><button style="color:white;" class="menu4" onclick="OnClickMemo(${aObject.id});">저장</button>`;
+                $('#bank_list').append(`
+                    <tr>
+                        <td>${i+1}</td>
+                        <td style="font-weight:100;">${aObject.strGrade}</td>
+                        <td style="font-weight:100;">${aObject.strBankName}</td>
+                        <td style="font-weight:100;">${aObject.strBankHolder}</td>
+                        <td style="font-weight:100;">${aObject.strBankNumber}</td>
+                        <td style="font-weight:100;">${tagType}</td>
+                        <td style="font-weight:100;">${aObject.createdAt}</td>
+                        <td style="font-weight:100;">${memoTag}</td>
+                        <td style="font-weight:100;">${msgTag}</td>
+                        <td style="font-weight:100;"><button class="btn_red" style="background-color: blue; color: white;" onclick="OnClickAddBank(${aObject.id});">수정</button></td>
+                        <td style="font-weight:100;"><button class="btn_red" style="background-color: red;  color: white;" onclick="OnClickDelete('${aObject.strBankName}', ${aObject.id});">삭제</button></td>
+                    </tr>
+                `);
+                checkBlockCharSpecial2(`#memoinput_${aObject.id}`);
+            }
+        } else {
+            $('#bank_list').append(`
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+            `);
+        }
+    }
+
+    let OnClickAddBank = (id) => {
+        window.open('', 'popupChkBankAdd', 'width=680, height=520, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
+        var $form = $('<form></form>');
+        $form.attr('action', '/manage_bank_grade/popup_bank_add');
+        $form.attr('method', 'post');
+        $form.attr('target', 'popupChkBankAdd');
+        $form.appendTo('body');
+        var strNickname = $(`<input type="hidden" value="${user.strNickname}" name="strNickname">`);
+        var iClass = $(`<input type="hidden" value=${parseInt(user.iClass)} name="iClass">`);
+        var id = $(`<input type="hidden" value=${parseInt(id)} name="id">`);
+        $form.append(strNickname).append(iClass).append(id);
+        $form.submit();
+    }
+
+    function reload() {
+        location.reload();
+    }
+
+    let OnChangeType = (id) => {
+        let item = $(`#type_${id}`);
+        let msg = (item.val() == 'ACTIVE') ? '사용' : '미사용';
+
+        if (confirm(`${msg}처리 하시겠습니까?`))
+        {
+            $.ajax({
+                type:'post',
+                url: "/manage_bank_grade/request_change_bank_type",
+                data:{id:id, eType:item.val()},
+                success:function(obj) {
+                    if (obj.result == 'OK') {
+                        // location.reload();
+                    } else {
+                        alert(obj.msg);
+                        let value = (item.val() == 'ACTIVE') ? 'STOP' : 'ACTIVE';
+                        $(`#type_${id}`).val(`${value}`).prop('selected', true);
+                    }
+                }
+            });
+        }
+        else
+        {
+            let value = (item.val() == 'ACTIVE') ? 'STOP' : 'ACTIVE';
+            SetRollbackSelect(`#type_${id}`, value);
+        }
+    }
+
+    let SetRollbackSelect = (id, value) => {
+        $(`${id}`).val(`${value}`).prop('selected', true);
+    }
+</script>

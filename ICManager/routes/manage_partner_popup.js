@@ -1331,43 +1331,14 @@ router.post('/request_bank', isLoggedIn, async (req, res) => {
     let bankAccount = dbuser.strBankAccount ?? '';
     let bankOwner = dbuser.strBankOwner ?? '';
     let cell = dbuser.strMobile ?? '';
-    let pass = '';
-    let iInputGrade = '';
-    if (req.user.iClass <= 2 && req.user.iPermission != 100) {
-        pass = dbuser.strPassword ?? '';
-        iInputGrade = dbuser.strOptionCode[3];
-    }
-
-    res.send({result:'OK', msg:'정상 조회', bankname:bankname, bankAccount:bankAccount, bankOwner:bankOwner, cell:cell, pass:pass, grade:iInputGrade});
-});
-
-router.post('/request_rolling_update', isLoggedIn, async (req, res) => {
-
-    console.log(`/request_rolling_update`);
-    console.log(req.body);
-
-    if (req.user.iClass > 3 && req.user.iPermission != 0) {
-        res.send({result:'ERROR', code:'ERRORMSG', msg: '처리오류(-1)'});
+    let pass = dbuser.strPassword ?? '';
+    if (req.user.iClass == 2 && req.user.iPermission == 0) {
+        let iInputGrade = IAgent.GetGradeFromStrOptionCode(dbuser.strOptionCode);
+        let gradelist = IAgent.GetGradeList();
+        res.send({result:'OK', msg:'정상 조회', bankname:bankname, bankAccount:bankAccount, bankOwner:bankOwner, cell:cell, pass:pass, grade:iInputGrade, gradelist:gradelist});
         return;
     }
-
-    let strNickname = req.body.strNickname ?? '';
-    let iUpdate = req.body.iUpdate ?? -1;
-
-    if (strNickname == '' || !(iUpdate == 0 || iUpdate == 1)) {
-        res.send({result:'ERROR', code:'ERRORMSG', msg: '처리오류(-2)'});
-        return;
-    }
-
-    let user = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
-    // 기존 롤링값 백업
-    let fBaccaratR = user.fBaccaratR;
-    let fUnderOverR = user.fUnderOverR;
-    let fSlotR = user.fSlotR;
-
-
-
-
+    res.send({result:'OK', msg:'정상 조회', bankname:bankname, bankAccount:bankAccount, bankOwner:bankOwner, cell:cell, pass:pass, grade:0, gradelist: []});
 });
 
 //에이전트 정보 수정
@@ -1653,58 +1624,57 @@ router.post('/request_agentinfo_modify', isLoggedIn,async (req, res) => {
                 data['strPasswordConfirm'] = strPasswordConfirm;
             }
 
-            let strBankname = req.body.strBankname ?? '';
-            if (strBankname != '') {
-                // data['strBankname'] = await IAgent.GetCipher(strBankname);
-                data['strBankname'] = strBankname;
+            let bUsingPc = false;
+            try {
+                let strOptionCode = req.body.strOptionCode ?? '';
+                if (strOptionCode != undefined && strOptionCode.length > 0) {
+                    let arr2 = strOptionCode.split('')[2];
+                    if (parseInt(arr2) == 1) {
+                        bUsingPc = true;
+                    }
+                }
+            } catch (err) {
             }
 
-            let strBankOwner = req.body.strBankOwner ?? '';
-            if (strBankOwner != '') {
-                // data['strBankOwner'] = await IAgent.GetCipher(strBankOwner);
-                data['strBankOwner'] = strBankOwner;
-            }
+            // PC방 전용이 아닐 경우에만 은행정보를 수정
+            if (bUsingPc == false) {
+                let strBankname = req.body.strBankname ?? '';
+                if (strBankname != '') {
+                    // data['strBankname'] = await IAgent.GetCipher(strBankname);
+                    data['strBankname'] = strBankname;
+                }
 
-            let strBankAccount = req.body.strBankAccount ?? '';
-            if (strBankAccount != '') {
-                // data['strBankAccount'] = await IAgent.GetCipher(strBankAccount);
-                data['strBankAccount'] = strBankAccount;
+                let strBankOwner = req.body.strBankOwner ?? '';
+                if (strBankOwner != '') {
+                    // data['strBankOwner'] = await IAgent.GetCipher(strBankOwner);
+                    data['strBankOwner'] = strBankOwner;
+                }
+
+                let strBankAccount = req.body.strBankAccount ?? '';
+                if (strBankAccount != '') {
+                    // data['strBankAccount'] = await IAgent.GetCipher(strBankAccount);
+                    data['strBankAccount'] = strBankAccount;
+                }
+
+                // 은행정보 수정 가능 권한 체크
+                if (data.hasOwnProperty('strBankname') || data.hasOwnProperty('strBankOwner') || data.hasOwnProperty('strBankAccount')) {
+                    if (user.strBankname != data.strBankname || user.strBankAccount != data.strBankAccount || user.strBankOwner != data.strBankOwner) {
+                        if (data.strBankname != '' || data.strBankAccount != '' || data.strBankOwner != '') {
+                            if (req.user.iClass == 8 || req.user.iClass == 7) {
+                            } else if (req.user.iClass > 3) {
+                                strErrorCode = 'ERRORMSG';
+                                res.send({result:'ERROR', code:strErrorCode, msg: '접근권한 없음'});
+                                return;
+                            }
+                        }
+                    }
+                }
             }
 
             let strMobile = req.body.strMobile ?? '';
             if (strMobile != '') {
                 // data['strMobile'] = await IAgent.GetCipher(strMobile);
                 data['strMobile'] = strMobile;
-            }
-
-            // 은행정보 수정 가능 권한 체크
-            if (data.hasOwnProperty('strBankname') || data.hasOwnProperty('strBankOwner') || data.hasOwnProperty('strBankAccount')) {
-                if (user.strBankname != data.strBankname || user.strBankAccount != data.strBankAccount || user.strBankOwner != data.strBankOwner) {
-                    if (data.strBankname != '' || data.strBankAccount != '' || data.strBankOwner != '') {
-                        if (req.user.iClass == 8 || req.user.iClass == 7) {
-                        } else if (req.user.iClass > 3) {
-                            strErrorCode = 'ERRORMSG';
-                            res.send({result:'ERROR', code:strErrorCode, msg: '접근권한 없음'});
-                            return;
-                        }
-                    }
-                }
-
-                // if (user.strBankname != data.strBankname) {
-                //     strErrorCode = 'ERRORMSG';
-                //     res.send({result:'ERROR', code:strErrorCode, msg: '계좌 변경은 고객센터로 문의주세요'});
-                //     return;
-                // }
-                // if (user.strBankAccount != data.strBankAccount) {
-                //     strErrorCode = 'ERRORMSG';
-                //     res.send({result:'ERROR', code:strErrorCode, msg: '계좌 변경은 고객센터로 문의주세요'});
-                //     return;
-                // }
-                // if (user.strBankOwner != data.strBankOwner) {
-                //     strErrorCode = 'ERRORMSG';
-                //     res.send({result:'ERROR', code:strErrorCode, msg: '계좌 변경은 고객센터로 문의주세요'});
-                //     return;
-                // }
             }
 
             let logMsg = logMessage(user, data);

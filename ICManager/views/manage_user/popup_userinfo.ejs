@@ -190,6 +190,10 @@
 				</tr>
 			</table>
 	</div>
+	<% if (iRootClass == 2 && agent.iClass > 3) {%>
+		<div id="grade">
+		</div>
+	<% } %>
 	<div class="write_btn align_r" id="confirm">
 	</div>
 </div>
@@ -210,6 +214,7 @@
 
 	let bUsingPC = false;
 	let bUsingPassNewUser = true;
+	let selectGradeId = 0;
 
 	$(document).ready( ()=> {
 		let cUsingInput = parseInt(agent.strOptionCode[0]);
@@ -313,6 +318,47 @@
 			checkBlockCharNickname($(item));
 		});
 	});
+
+	<% if (agent.iRootClass == 2 && agent.iPermission == 0) { %>
+		let SetGradeList = (list, iGrade) => {
+			$('#grade').empty();
+			$('#grade').append(`
+						<table>
+							<colgroup>
+								<col style="width:15%">
+									<col style="width:35%">
+										<col style="width:15%">
+											<col style="width:35%">
+							</colgroup>
+							<p style="background-repeat:no-repeat; background-position:left center; font-size:20px; font-weight: bold; color:#454545; padding-left:22px;">회원등급</p>
+							<tr>
+								<th scope="row">회원등급</th>
+								<td colspan="3">
+									<select style="width:200px;" id="grade_list"></select>
+								</td>
+							</tr>
+						</table>
+						`);
+			$('#grade_list').empty();
+			if (list.length > 0) {
+				// 기본값 설정
+				selectGradeId = iGrade;
+
+				for ( let i in list ) {
+					let tag = list[i].id == iGrade ? 'selected' : '';
+					$('#grade_list').append(`<option value="${list[i].id}" ${tag}>${list[i].id} : ${list[i].str}</option>`);
+				}
+				$('#grade_list').css("display","");
+				$('select').on('change', function() {
+					selectGradeId = this.value;
+				});
+
+			} else {
+				$('#grade_list').css("display","none");
+			}
+			$('#grade').show();
+		}
+	<% } %>
 
 	let CheckID = () => {
 		let strID = $('#member_id').val();
@@ -437,9 +483,11 @@
 					$("#member_password").removeAttr("disabled");
 					$('#member_password2').val(data.pass);
 					$("#member_password2").removeAttr("disabled");
-					<% if (agent.iRootClass == 2 && agent.iPermission != 100) { %>
-<!--						$(`input[name="input_grade"][value="${data.iInputGrade}"]`).prop("checked",true);-->
-<!--						$('#grade').show();-->
+
+					<% if (agent.iRootClass == 2 && agent.iPermission == 0) { %>
+						if (data.gradelist.length > 0) {
+							SetGradeList(data.gradelist, data.grade);
+						}
 					<% } %>
 
 				}
@@ -525,9 +573,8 @@
 			strOptionCode = replaceCharacter(strOptionCode, 2, '0');
 		}
 
-		<% if (agent.iRootClass == 2 && agent.iPermission != 100) { %>
-			// let iInputGrade = $("input[name='input_grade']:checked").val();
-			// strOptionCode = replaceCharacter(strOptionCode, 3, iInputGrade.toString());
+		<% if (agent.iRootClass == 2 && agent.iPermission == 0) { %>
+			strOptionCode = replaceCharacter(strOptionCode, 3, selectGradeId.toString());
 		<% } %>
 
 		objectData.strNickname = strNickname;

@@ -1,5 +1,6 @@
 let GetNumber = (number, defaultValue = '') => {
 
+    //const cNumber = Math.round(parseInt(number)/100)*100;
     const cNumber = parseInt(number);
     if ( cNumber == 0 )
         return defaultValue;
@@ -14,6 +15,25 @@ let GetNumber = (number, defaultValue = '') => {
         return cNumber.toLocaleString();
     }
 }
+
+let GetNumberRounds = (number, defaultValue = '') => {
+
+    const cNumber = Math.round(parseInt(number)/100)*100;
+    //const cNumber = parseInt(number);
+    if ( cNumber == 0 )
+        return defaultValue;
+    else if ( cNumber == undefined || cNumber == null || isNaN(cNumber) )
+        return defaultValue;
+    else if ( cNumber < 0 )
+    {
+        let temp = -cNumber;
+        return temp.toLocaleString();
+    }
+    else {
+        return cNumber.toLocaleString();
+    }
+}
+
 
 let GetNumberSign = (number, defaultValue = '') => {
 

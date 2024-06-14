@@ -14,28 +14,30 @@
             autoControls: true,pager:true,});
     });
 
+    let listIgnoredLive = ['LIVE_VIVO', 'LIVE_WORLD', 'LIVE_EZUGI'];
+    let listIgnoredSM = ['SM_RELAX'];
+
+    let CheckIgnoreGame = (strGame, listIgnore) => {
+
+        for ( let i in listIgnore )
+        {
+            if ( listIgnore[i] == strGame )
+                return true;
+        }
+        return false;
+    }
+
     var GoGame = (strGame, strGameKey) => {
-        // if ( strGame != 'LIVE_EZUGI' ) {
-        //     alert('해당 게임은 점검중입니다.');
-        //     return;
-        // }
 
-        if ( strGame == 'LIVE_VIVO' || strGame == 'LIVE_WORLD' )
-        {
-            alert('준비중입니다.');
-            return;
-        }
-        // strGame == 'LIVE_DREAM'
-        if ( strGame == 'LIVE_CQ9' )
-        {
-            alert('해당 게임은 점검중입니다.');
-            return;
-        }
-
-        //console.log(bLogin);
         if ( "false" == bLogin )
         {
             alert('로그인이 필요한 서비스 입니다.');
+            return;
+        }
+
+        if ( CheckIgnoreGame(strGame, listIgnoredLive) == true )
+        {
+            alert('점검중 입니다.');
             return;
         }
 
@@ -73,7 +75,7 @@
             return;
         }
 
-        if ( strGame == 'SM_RELAX' )
+        if ( CheckIgnoreGame(strGame, listIgnoredSM) == true )
         {
             alert('점검중 입니다.');
             return;
@@ -599,14 +601,6 @@
 
 <script>
     $(document).ready(function () {
-        // ajaxContents("/ajaxCall/loginMsg", "msgTxt");
-        // ajaxContents("/ajaxCall/topNotice", "main_notice");
-        // ajaxContents("/ajaxCall/topWithdraw", "day");
-        // ajaxContents("/ajaxCall/callCenter", "callcenter");
-        // ajaxContents("/ajaxCall/topEvent", "main_event");
-        // ajaxContents("/ajaxCall/topFaq", "main_faq");
-        // ajaxContents("/ajaxCall/topWeekWithdraw", "week");
-
     });
 
 </script><!-- 여기서 부터 카피라이트 부분입니다. -->

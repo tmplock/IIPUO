@@ -122,8 +122,10 @@ module.exports = (sequelize, DataTypes) => {
         iPayback: {
             type:DataTypes.INTEGER,
         },
-        iClass: {
-            type:DataTypes.INTEGER,
+        // 부본에 대한 처리여부(부본 죽장 처리시 : WAIT, 대본에서 처리시 COMPLETE 처리)
+        eType: {
+            type:DataTypes.ENUM('WAIT', 'COMPLETE'),
+            allowNull: false
         },
         createdAt:{
             type:DataTypes.DATE,

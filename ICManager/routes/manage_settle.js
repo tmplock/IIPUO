@@ -67,6 +67,7 @@ router.post('/applysettle', isLoggedIn, async (req, res) => {
         list = await IAgentSettle.GetSettleClass5OfIdList(strGroupID, strQuater, dateStart, dateEnd, lastDate, strSubQuater, strSubQuater2, iSettleDays, iSettleType, checkIdList);
 
     } else if (req.body.iClass == 4) {
+        //TODO: 부본사 죽장 완료여부 체크 로직 필요
         res.send({result: 'FAIL', msg: '부본사 죽장 정산을 먼저 처리해 주세요.'});
         return;
     }
@@ -85,6 +86,8 @@ router.post('/applysettle', isLoggedIn, async (req, res) => {
         let user = await db.Users.findOne({where:{strNickname:data.strNickname}});
 
         let settle = await db.SettleRecords.findOne({where:{strID:data.strID, strSubQuater:strSubQuater, iSettleType:iSettleType, iSettleDays:iSettleDays}});
+
+        let eType = iClass == 4 ? 'COMPLETE' : 'WAIT';
 
         if (settle == null) {
             await db.SettleRecords.create({
@@ -114,7 +117,11 @@ router.post('/applysettle', isLoggedIn, async (req, res) => {
                 iSettleVice:data.iSettleVice,
                 iSettleAfter:data.iSettleAccTotal,
                 iPayback:data.iPayback,
+                eType: eType
             });
+
+            // iClass4 일 경우에는 하부에 대한 죽장도 완료처리할 것
+            await db.SettleRecords
 
             // 죽장 지급시에는 1000단위 절삭
             // let iAmout = Math.floor(parseInt(iSettleGive)/10000)*10000;

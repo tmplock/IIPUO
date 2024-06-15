@@ -786,8 +786,8 @@
 	let AddPartner5 = (aObject, index) => {
 		let color = '#E8FCDE';
 		let tagoption = 'disabled="disabled"';
-
-		let headtag = `<td>${parseInt(index) + 1}</td>`;
+		let idx = parseInt(index) + 1;
+		let headtag = `<td>${idx}</td>`;
 		headtag += `<td>${aObject.parentNickname ?? ''}`;
 
 		let subtag = `<tr id=${aObject.strNickname} class='Agent' onmouseover="this.style.backgroundColor='#9FB6FF'" onmouseout="this.style.background='blue'">
@@ -886,8 +886,8 @@
 	let AddPartner4 = (aObject, index) => {
 		let color = '#E8FCDE';
 		let tagoption = 'disabled="disabled"';
-
-		let headtag = '<td>${parseInt(index) + 1}</td>';
+		let idx = parseInt(index) + 1;
+		let headtag = `<td>${idx}</td>`;
 		headtag += `<td>${aObject.strAdminNickname ?? ''}`;
 
 		let subtag = `<tr id=${aObject.strNickname} class='Agent' onmouseover="this.style.backgroundColor='#9FB6FF'" onmouseout="this.style.background='blue'">

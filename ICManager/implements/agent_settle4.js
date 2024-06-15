@@ -347,20 +347,27 @@ exports.CalSettle = (obj) => {
     settle.fSettleBaccarat = obj.fSettleBaccarat;
     settle.fSettleSlot = obj.fSettleSlot;
 
-    settle.iTotal = parseFloat(obj.iAgentBetB) + parseFloat(obj.iAgentBetUO) + parseFloat(obj.iAgentBetS) - parseFloat(obj.iAgentWinB) - parseFloat(obj.iAgentWinUO) - parseFloat(obj.iAgentWinS) - parseFloat(obj.iAgentRollingB) - parseFloat(obj.iAgentRollingUO) - parseFloat(obj.iAgentRollingS);
-    settle.iBaccaratWinLose = obj.iAgentWinB;
-    settle.iUnderOverWinLose = obj.iAgentWinUO;
-    settle.iSlotWinLose = obj.iAgentWinS;
+
 
     // 부본 죽장 계산
     if (obj.iClass == 5) {
+        settle.iTotal = parseFloat(obj.iAgentBetB) + parseFloat(obj.iAgentBetUO) + parseFloat(obj.iAgentBetS) - parseFloat(obj.iAgentWinB) - parseFloat(obj.iAgentWinUO) - parseFloat(obj.iAgentWinS) - parseFloat(obj.iAgentRollingB) - parseFloat(obj.iAgentRollingUO) - parseFloat(obj.iAgentRollingS);
+        settle.iBaccaratWinLose = obj.iAgentWinB;
+        settle.iUnderOverWinLose = obj.iAgentWinUO;
+        settle.iSlotWinLose = obj.iAgentWinS;
+
         settle.iSettleVice = parseInt(parseFloat(settle.iTotal) * parseFloat(settle.fSettleBaccarat) * 0.01);
     }
 
     // 대본 죽장 계산 및 알값 처리
     if (obj.iClass == 4) {
-        settle.iCommissionBaccarat = obj.iCommissionBaccarat;
-        settle.iCommissionSlot = obj.iCommissionSlot;
+        settle.iTotal = obj.iTotal;
+        settle.iBaccaratWinLose = obj.iBWinlose;
+        settle.iUnderOverWinLose = obj.iUWinlose;
+        settle.iSlotWinLose = obj.iSWinlose;
+
+        settle.iCommissionBaccarat = obj.iCommissionB;
+        settle.iCommissionSlot = obj.iCommissionS;
         settle.iSettle = parseInt((parseFloat(settle.iTotal) - parseFloat(settle.iCommissionBaccarat) - parseFloat(settle.iCommissionSlot)) * parseFloat(settle.fSettleBaccarat)  * 0.01);
     }
 
@@ -495,8 +502,9 @@ exports.GetSettleClass5OfIdList = async (strGroupID, strQuater, dateStart, dateE
 
 /**
  * 대본 죽장 조회
+ * 부본에서 완료된 죽장을 가져와야 함
  */
-let GetSettleClass4 = async (strGroupID, strQuater, dateStart, dateEnd, iOffset, iLimit, lastDate, strSubQuater, strSubQuater2, iSettleDays, iSettleType) => {
+let GetSettleClass4 = async (strGroupID, strQuater, dateStart, dateEnd, iOffset, iLimit, lastDate, strSubQuater, strSubQuater2, iSettleDays, iSettleType, exist) => {
     let offset = parseInt(iOffset ?? 0);
     let limit = parseInt(iLimit ?? 30);
 
@@ -509,12 +517,21 @@ let GetSettleClass4 = async (strGroupID, strQuater, dateStart, dateEnd, iOffset,
             SELECT
                 t3.strID AS strAdminID, t3.strNickname AS strAdminNickname,
                 
-                t4.strID, t4.strNickname, t4.strGroupID, t4.iClass, t4.strSettleMemo,
+                t4.id, t4.strID, t4.strNickname, t4.strGroupID, t4.iClass, t4.strSettleMemo,
                 t4.fSettleBaccarat, t4.fSettleSlot,
                 t4.iSettleDays, t4.iSettleType,
                 t4.iSettleAcc, t4.iCash,
-                IFNULL(t5.fCommission, ${cfCommission}) AS fCommission,            
+                IFNULL(t4.fCommission, ${cfCommission}) AS fCommission,            
                 IFNULL((SELECT SUM(iSettleAccTotal) FROM SettleRecords WHERE strNickname = t4.strNickname AND ${query2}),0) AS iSettleAfter2,
+                IFNULL((SELECT SUM(iTotal) FROM SettleRecords WHERE strGroupID LIKE CONCAT('${strGroupID}', '%') AND iClass = 5 AND strSubQuater IN ('6-1')),0) AS iTotal,
+                IFNULL((SELECT SUM(iCommissionB) FROM SettleRecords WHERE strGroupID LIKE CONCAT('${strGroupID}', '%') AND iClass = 5 AND strSubQuater IN ('6-1')),0) AS iCommissionB,
+                IFNULL((SELECT SUM(iCommissionS) FROM SettleRecords WHERE strGroupID LIKE CONCAT('${strGroupID}', '%') AND iClass = 5 AND strSubQuater IN ('6-1')),0) AS iCommissionS,
+                IFNULL((SELECT SUM(iBWinlose) FROM SettleRecords WHERE strGroupID LIKE CONCAT('${strGroupID}', '%') AND iClass = 5 AND strSubQuater IN ('6-1')),0) AS iBWinlose,
+                IFNULL((SELECT SUM(iUWinlose) FROM SettleRecords WHERE strGroupID LIKE CONCAT('${strGroupID}', '%') AND iClass = 5 AND strSubQuater IN ('6-1')),0) AS iUWinlose,
+                IFNULL((SELECT SUM(iSWinlose) FROM SettleRecords WHERE strGroupID LIKE CONCAT('${strGroupID}', '%') AND iClass = 5 AND strSubQuater IN ('6-1')),0) AS iSWinlose,
+                IFNULL((SELECT SUM(iSettleVice) FROM SettleRecords WHERE strGroupID LIKE CONCAT('${strGroupID}', '%') AND iClass = 5 AND strSubQuater IN ('6-1')),0) AS iSettleVice,
+                IFNULL((SELECT SUM(iResult) FROM SettleRecords WHERE strGroupID LIKE CONCAT('${strGroupID}', '%') AND iClass = 5 AND strSubQuater IN ('6-1')),0) AS iResult
+                
                 
                 IFNULL((SELECT SUM(iAgentBetB) FROM RecordDailyOverviews WHERE strID = t4.strID AND DATE(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) AS iAgentBetB,
                 IFNULL((SELECT SUM(iAgentWinB) FROM RecordDailyOverviews WHERE strID = t4.strID AND DATE(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) AS iAgentWinB,
@@ -532,11 +549,46 @@ let GetSettleClass4 = async (strGroupID, strQuater, dateStart, dateEnd, iOffset,
             WHERE t4.iClass = 4 AND t4.strGroupID LIKE CONCAT('${strGroupID}', '%') AND t4.iSettleDays=${iSettleDays} AND t4.iSettleType=${iSettleType}
                 ${lastDateQuery}
                 ${query3}
-            ORDER BY strAdminNickname ASC, t5.strNickname ASC
+            ORDER BY strAdminNickname ASC, t4.strNickname ASC
             LIMIT ${limit}
             OFFSET ${offset}
         `);
     return list[0];
+}
+
+/**
+ *  대본 분기에 따른 부본사 subQuater 리스트 구하기
+ */
+exports.GetSubQuaterList = (iSettleDays, subQuater) => {
+    if (iSettleDays == 5) {
+        if ('6-1') {
+
+        } else if ('6-2') {
+
+        } else if ('6-3') {
+
+        } else if ('6-4') {
+
+        } else if ('6-5') {
+
+        } else if ('6-6') {
+
+        }
+    } else if (iSettleDays == 10) {
+        if ('6-1') {
+
+        } else if ('6-2') {
+
+        } else if ('6-3') {
+
+        }
+    } else if (iSettleDays == 15) {
+        if ('6-1') {
+
+        } else if ('6-2') {
+
+        }
+    }
 }
 
 
@@ -656,13 +708,18 @@ exports.GetSettleExistIDList = async (strSubQuater, iSettleDays, iSettleType, iC
 // 완료된 죽장
 let ExistSettle = (obj) => {
     let settle = {
-        strNickname:'', iClass: 0, strGroupID: '', fSettleBaccarat:0, fSettleSlot:0,
+        strAdminID: '', strAdminNickname: '',
+        id:0, strID:'', strNickname:'', iClass: 0, strGroupID: '', fSettleBaccarat:0, fSettleSlot:0,
         iTotal: 0, iBaccaratWinLose: 0, iUnderOverWinLose:0, iSlotWinLose: 0,
         iSettleVice:0, iCommissionBaccarat:0, iCommissionSlot:0, iSettle:0, iResult:0, // 부본죽장, 대본B알값, 대본S알값, 대본죽장, 합계
         iSettleGive:0, iSettleAcc: 0, iPayback:0,  // 죽장지급, 죽장이월, 수금(전월죽장이월금액에 대한 수금액)
         iSettleTotal:0, iSettleBeforeAcc:0, iSettleAccTotal:0, // 죽장 총합, 전월죽장 이월, 총이월
         strSettleMemo: ''
     };
+    settle.strAdminID == obj.strAdminID;
+    settle.strAdminNickname = obj.strAdminNickname;
+    settle.id = obj.id;
+    settle.strID = obj.strID;
     settle.strNickname = obj.strNickname;
     settle.iClass = obj.iClass;
     settle.strGroupID = obj.strGroupID;

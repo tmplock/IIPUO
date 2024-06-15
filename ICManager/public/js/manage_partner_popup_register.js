@@ -35,12 +35,6 @@ let RequestParentEnableList = (strNickname, strGroupID, iClass, iRegisterClass, 
                     let tag = `<option value="${data[i].strNickname}">${data[i].strNickname}</option>`;
 
                     if ( i == 0 ) {
-                        // $('#fRollingSlot').val(data[i].fSlotR);
-                        // $('#fRollingBaccarat').val(data[i].fBaccaratR);
-                        // $('#fRollingUnderover').val(data[i].fUnderOverR);
-
-                        // $('#fSettleSlot').val(data[i].fSettleSlot);
-                        // $('#fSettleBaccarat').val(data[i].fSettleBaccarat);
                         SetParentValues(data[i].strNickname);
                     }
 
@@ -79,7 +73,7 @@ let SetParentValues = (strNickname) => {
                 $('#fRollingUnderOver').val(0);
 
                 $('#fSettleBaccarat').val(0);
-                $('#fSettleSlot').val(0);
+                $('#fSettleResetBaccarat').val(0);
             }
 
             $('#strParentGroupID').val(parentenablelist[i].strGroupID);
@@ -378,7 +372,7 @@ let Submit = (bClose) => {
     let fBaccaratR = 0;
     let fUnderOverR = 0;
     let fSettleBaccarat = 0;
-    let fSettleSlot = 0;
+    let fSettleResetBaccarat = 0;
 
     let strPermissionInput = $('#using_input_permission').attr('checked');
     if ( strPermissionInput != undefined ) {
@@ -398,8 +392,8 @@ let Submit = (bClose) => {
         fUnderOverR = Number.isNaN(fUnderOverR) ? 0 : fUnderOverR;
         fSettleBaccarat = parseFloat($('#fSettleBaccarat').val());
         fSettleBaccarat = Number.isNaN(fSettleBaccarat) ? 0 : fSettleBaccarat;
-        fSettleSlot = parseFloat($('#fSettleSlot').val());
-        fSettleSlot = Number.isNaN(fSettleSlot) ? 0 : fSettleSlot;
+        fSettleResetBaccarat = parseFloat($('#fSettleResetBaccarat').val());
+        fSettleResetBaccarat = Number.isNaN(fSettleResetBaccarat) ? 0 : fSettleResetBaccarat;
 
         let strUsingInput = $('#using_input').attr('checked');
         let strUsingOutput = $('#using_output').attr('checked');
@@ -427,7 +421,7 @@ let Submit = (bClose) => {
         }
 
         if (iParentClass <= 5) {
-            if(fSettleBaccarat == undefined || fSettleSlot == null)
+            if(fSettleBaccarat == undefined || fSettleResetBaccarat == null)
             {
                 alert(strAlertErrorSettleValue);
                 return;
@@ -469,7 +463,7 @@ let Submit = (bClose) => {
                 fBaccaratR:fBaccaratR,
                 fUnderOverR:fUnderOverR,
                 fSettleBaccarat:fSettleBaccarat,
-                fSettleSlot:fSettleSlot,
+                fSettleResetBaccarat:fSettleResetBaccarat,
                 strOptionCode:strOptionCode,
                 iPermission:strPermissionInput,
                 iCheckAutoRegister:bCheckAutoRegister ? 1 : 0,

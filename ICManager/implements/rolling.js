@@ -229,7 +229,7 @@ let GetAgentFromParameter = (array, strNickname) => {
                 fPBDoubleR:array[i].fPBDouble,
                 fPBTripleR:array[i].fPBTriple,
                 fSettleBaccarat:array[i].fSettleBaccarat,
-                fSettleSlot:array[i].fSettleSlot,
+                fSettleResetBaccarat:array[i].fSettleResetBaccarat,
             };
             //array[i];
         }
@@ -259,7 +259,7 @@ var inline_ModifyRollingGroup = async (array)=> {
         object.fPBDouble = array[cDefault+7];
         object.fPBTriple = array[cDefault+8];
         object.fSettleBaccarat = array[cDefault+9];
-        object.fSettleSlot = array[cDefault+10];
+        object.fSettleResetBaccarat = array[cDefault+10];
 
         list.push(object);
     }
@@ -326,10 +326,7 @@ var inline_ModifyRollingGroup = async (array)=> {
             ret.name = `[${list[i].strNickname}] 언더오버 롤링값은 상위보다 높을 수 없습니다`;
         } else if ( list[i].fSettleBaccarat > parent.fParentSettleBaccarat ) {
             ret.result = 'FAIL';
-            ret.name = `[${list[i].strNickname}] 바카라 죽장값은 상위보다 높을 수 없습니다`;
-        } else if ( list[i].fSettleSlot > parent.fParentSettleSlot ) {
-            ret.result = 'FAIL';
-            ret.name = `[${list[i].strNickname}] 슬롯 죽장값은 상위보다 높을 수 없습니다`;
+            ret.name = `[${list[i].strNickname}] 누적 죽장값은 상위보다 높을 수 없습니다`;
         }
 
         if (ret.result == 'FAIL')
@@ -375,9 +372,6 @@ var inline_ModifyRollingGroup = async (array)=> {
                 } else if ( list[i].fSettleBaccarat < child.fSettleBaccarat ) {
                     ret.result = "FAIL";
                     ret.name = `[${list[i].strNickname}] 바카라 죽장값은 하위(${child.strNickname})보다 낮을 수 없습니다.`;
-                } else if ( list[i].fSettleSlot < child.fSettleSlot) {
-                    ret.result = "FAIL";
-                    ret.name = `[${list[i].strNickname}] 슬롯 죽장값은 하위(${child.strNickname})보다 낮을 수 없습니다.`;
                 }
                 if (ret.result == 'FAIL')
                     return ret;

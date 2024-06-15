@@ -302,17 +302,20 @@ exports.CalculateOverviewShare = inline_CalculateOverviewShare;
 
 /**
  * 죽장 대상 리스트 조회
+ * 리셋과 누진은 별도로 죽장을 해야함
  */
 exports.GetSettleList = async (strGroupID, strQuater, dateStart, dateEnd, iClass, iOffset, iLimit, lastDate, strSubQuater, strSubQuater2, iSettleDays, iSettleType, exist) => {
     let newList = [];
     // 해당 조건 파트너 목록
     if (iClass == 5) {
+        // 생성되지 않은 부본 리스트 조회
         let list = await GetSettleClass5(strGroupID, strQuater, dateStart, dateEnd, iOffset, iLimit, lastDate, strSubQuater, strSubQuater2, iSettleDays, iSettleType, exist);
         // 죽장 계산하기
         for (let i in list) {
             newList.push(this.CalSettle(list[i]));
         }
     } else if (iClass == 4) {
+        // 대상항목에 대한 대본 리스트 조회
         let list = await GetSettleClass4(strGroupID, strQuater, dateStart, dateEnd, iOffset, iLimit, lastDate, strSubQuater, strSubQuater2, iSettleDays, iSettleType, exist);
         // 죽장 계산하기
         for (let i in list) {
@@ -320,6 +323,31 @@ exports.GetSettleList = async (strGroupID, strQuater, dateStart, dateEnd, iClass
         }
     }
     return newList;
+}
+
+
+exports.GetSettleWaitList = async (ids, iClass) => {
+    if (iClass == 4) {
+        let list = await db.sequelize.query(`
+            SELECT sr.*, u3.strNickname AS strAdminNickname
+            FROM SettleRecords sr
+            LEFT JOIN Users u4 ON u4.strID = sr.strID
+            LEFT JOIN Users u3 ON u3.id = u4.iParentID
+            WHERE sr.id IN (${ids}) AND sr.eType = 'WAIT'
+        `);
+        return list[0];
+    } else if (iClass == 5) {
+        let list = await db.sequelize.query(`
+            SELECT sr.*, u3.strNickname AS strAdminNickname
+            FROM SettleRecords sr
+            LEFT JOIN Users u5 ON u5.strID = sr.strID
+            LEFT JOIN Users u4 ON u4.id = u5.iParentID
+            LEFT JOIN Users u3 ON u3.id = u4.iParentID
+            WHERE sr.id IN (${ids}) AND sr.eType = 'WAIT'
+        `);
+        return list[0];
+    }
+    return [];
 }
 
 /**
@@ -330,12 +358,14 @@ exports.GetSettleList = async (strGroupID, strQuater, dateStart, dateEnd, iClass
 exports.CalSettle = (obj) => {
     let settle = {
         strAdminID: '', strAdminNickname: '',
-        id:0, strID:'', strNickname:'', iClass: 0, strGroupID: '', fSettleBaccarat:0, fSettleSlot:0,
+        id:0, strID:'', strNickname:'', iClass: 0, strGroupID: '', fSettleBaccarat:0, fSettleResetBaccarat:0,
         iTotal: 0, iBaccaratWinLose: 0, iUnderOverWinLose:0, iSlotWinLose: 0,
         iSettleVice:0, iCommissionBaccarat:0, iCommissionSlot:0, iSettle:0, iResult:0, // 부본죽장, 대본B알값, 대본S알값, 대본죽장, 합계
         iSettleGive:0, iSettleAcc: 0, iPayback:0,  // 죽장지급, 죽장이월, 수금(전월죽장이월금액에 대한 수금액)
         iSettleTotal:0, iSettleBeforeAcc:0, iSettleAccTotal:0, // 죽장 총합, 전월죽장 이월, 총이월
-        strSettleMemo: ''
+        strSettleMemo: '',
+        iSettleType: 0, fCommission:0.085,
+        iSettleOrigin: 0,
     };
     settle.strAdminID = obj.strAdminID;
     settle.strAdminNickname = obj.strAdminNickname;
@@ -345,9 +375,14 @@ exports.CalSettle = (obj) => {
     settle.iClass = obj.iClass;
     settle.strGroupID = obj.strGroupID;
     settle.fSettleBaccarat = obj.fSettleBaccarat;
-    settle.fSettleSlot = obj.fSettleSlot;
+    settle.fSettleResetBaccarat = obj.fSettleResetBaccarat;
+    settle.iSettleType = obj.iSettleType
+    settle.fCommission = obj.fCommission;
+    settle.iPayback = obj.iPayback;
+    settle.iSettleBeforeAcc = obj.iSettleBeforeAcc;
+    settle.iSettleAccTotal = obj.iSettleAccTotal;
 
-
+    let iSettle = 0;
 
     // 부본 죽장 계산
     if (obj.iClass == 5) {
@@ -356,7 +391,17 @@ exports.CalSettle = (obj) => {
         settle.iUnderOverWinLose = obj.iAgentWinUO;
         settle.iSlotWinLose = obj.iAgentWinS;
 
-        settle.iSettleVice = parseInt(parseFloat(settle.iTotal) * parseFloat(settle.fSettleBaccarat) * 0.01);
+        if (obj.iSettleType == 1) {
+            iSettle = parseInt(parseFloat(settle.iTotal) * parseFloat(settle.fSettleResetBaccarat) * 0.01);
+            if (iSettle > 0) {
+                settle.iSettleVice = iSettle;
+            }
+        } else {
+            iSettle = parseInt(parseFloat(settle.iTotal) * parseFloat(settle.fSettleBaccarat) * 0.01);
+            if (iSettle > 0) {
+                settle.iSettle = iSettle;
+            }
+        }
     }
 
     // 대본 죽장 계산 및 알값 처리
@@ -365,16 +410,65 @@ exports.CalSettle = (obj) => {
         settle.iBaccaratWinLose = obj.iBWinlose;
         settle.iUnderOverWinLose = obj.iUWinlose;
         settle.iSlotWinLose = obj.iSWinlose;
+        settle.iSettleVice = obj.iSettleVice;
 
-        settle.iCommissionBaccarat = obj.iCommissionB;
-        settle.iCommissionSlot = obj.iCommissionS;
-        settle.iSettle = parseInt((parseFloat(settle.iTotal) - parseFloat(settle.iCommissionBaccarat) - parseFloat(settle.iCommissionSlot)) * parseFloat(settle.fSettleBaccarat)  * 0.01);
+        if (obj.iSettleType == 1) {
+            // 리셋은 알값(커미션) 미계산
+            iSettle = parseFloat(settle.iTotal) * parseFloat(obj.fSettleResetBaccarat)  * 0.01; // 대본죽장 = 합계 * 리셋죽장
+            if (iSettle > 0) {
+                settle.iSettle = iSettle;
+            }
+        } else {
+            // TODO:누진은 기존 방식으로 해야할 듯
+            // settle.iSettle = parseInt((parseFloat(settle.iTotal) - parseFloat(settle.iCommissionBaccarat) - parseFloat(settle.iCommissionSlot)) * parseFloat(obj.fSettle) parseFloat(settle.fSettleBaccarat)  * 0.01);
+        }
+
+        this.SetCalCommission(settle);
     }
 
     settle.iResult = settle.iTotal - settle.iSettleVice - settle.iCommissionBaccarat - settle.iCommissionSlot - settle.iSettle;
 
-
     return settle;
+}
+
+exports.SetPayback = (settle, iSettle) => {
+    // 죽장이 플러스일 경우 자동 수금 처리 표시
+    if (iSettle > 0) {
+        let iPayback = parseFloat(settle.iPayback ?? 0);
+        let iSettleBeforeAcc = parseFloat(settle.iSettleBeforeAcc ?? 0) + iPayback;
+        if (iSettle > 0 && iSettleBeforeAcc < 0) {
+            // 이월 금액이 남아 있는 경우
+            if (-iSettleBeforeAcc > iSettle) {
+                iPayback = iPayback + iSettle;
+            } else {
+                iPayback = iPayback - iSettleBeforeAcc;
+            }
+            settle.iPayback = iPayback;
+        }
+    }
+}
+
+/**
+ * 알값 계산
+ * 리셋일 경우 계산 안함
+ * 마이너스일 경우 알값 계산 안함
+ */
+exports.SetCalCommission = (settle) => {
+    // 리셋일 경우 계산 안함
+    let iSettleType = settle.iSettleType ?? 0;
+    if (iSettleType == 1) {
+        return;
+    }
+
+    let winloseB = (parseFloat(settle.iBaccaratWinLose) + parseFloat(settle.iUnderOverWinLose));
+    if (winloseB > 0) {
+        settle.iCommissionBaccarat = winloseB * parseFloat(settle.fCommission);
+    }
+
+    let winloseS = parseFloat(settle.iSlotWinLose ?? 0);
+    if (winloseS > 0) {
+        settle.iCommissionSlot = winloseS * parseFloat(settle.fCommission);
+    }
 }
 
 /**
@@ -394,7 +488,7 @@ let GetSettleClass5 = async (strGroupID, strQuater, dateStart, dateEnd, iOffset,
             t3.strID AS strAdminID, t3.strNickname AS strAdminNickname,
 
             t5.id AS id, t5.strID, t5.strNickname, t5.strGroupID, t5.iClass, t5.strSettleMemo,
-            t5.fSettleBaccarat, t5.fSettleSlot,
+            t5.fSettleBaccarat, t5.fSettleResetBaccarat, t5.fSettleSlot,
             t5.iSettleDays, t5.iSettleType,
             t5.iSettleAcc, t5.iCash,
             IFNULL(t5.fCommission, ${cfCommission}) AS fCommission,
@@ -423,47 +517,6 @@ let GetSettleClass5 = async (strGroupID, strQuater, dateStart, dateEnd, iOffset,
     `);
     return list[0];
 }
-// let GetSettleClass5 = async (strGroupID, strQuater, dateStart, dateEnd, iOffset, iLimit, lastDate, strSubQuater, strSubQuater2, iSettleDays, iSettleType) => {
-//     let offset = parseInt(iOffset ?? 0);
-//     let limit = parseInt(iLimit ?? 30);
-//
-//     let lastDateQuery = `AND t5.createdAt < '${lastDate}'`;
-//     let query = `strSubQuater='${strSubQuater}' AND iSettleDays=${iSettleDays} AND iSettleType=${iSettleType}`;
-//     let query2 = `strSubQuater='${strSubQuater2}' AND iSettleDays=${iSettleDays} AND iSettleType=${iSettleType}`;
-//
-//     let list = await db.sequelize.query(`
-//             SELECT
-//                 t3.strID AS strAdminID, t3.strNickname AS strAdminNickname,
-//
-//                 t5.strID, t5.strNickname, t5.strGroupID, t5.iClass, t5.strSettleMemo,
-//                 t5.fSettleBaccarat, t5.fSettleSlot,
-//                 t5.iSettleDays, t5.iSettleType,
-//                 t5.iSettleAcc, t5.iCash,
-//                 IFNULL(t5.fCommission, ${cfCommission}) AS fCommission,
-//                 IFNULL((SELECT iSettleAccTotal FROM SettleRecords WHERE strNickname = t5.strNickname AND ${query2}),0) as iSettleAfter2,
-//
-//                 IFNULL((SELECT sum(iAgentBetB) FROM RecordDailyOverviews WHERE strID = t5.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iAgentBetB,
-//                 IFNULL((SELECT sum(iAgentWinB) FROM RecordDailyOverviews WHERE strID = t5.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iAgentWinB,
-//                 IFNULL((SELECT sum(iAgentRollingB) FROM RecordDailyOverviews WHERE strID = t5.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iAgentRollingB,
-//
-//                 IFNULL((SELECT sum(iAgentBetUO) FROM RecordDailyOverviews WHERE strID = t5.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iAgentBetUO,
-//                 IFNULL((SELECT sum(iAgentWinUO) FROM RecordDailyOverviews WHERE strID = t5.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iAgentWinUO,
-//                 IFNULL((SELECT sum(iAgentRollingUO) FROM RecordDailyOverviews WHERE strID = t5.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iAgentRollingUO,
-//
-//                 IFNULL((SELECT sum(iAgentBetS) FROM RecordDailyOverviews WHERE strID = t5.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iAgentBetS,
-//                 IFNULL((SELECT sum(iAgentWinS) FROM RecordDailyOverviews WHERE strID = t5.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iAgentWinS,
-//                 IFNULL((SELECT sum(iAgentRollingS) FROM RecordDailyOverviews WHERE strID = t5.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iAgentRollingS
-//             FROM Users t5
-//                 LEFT JOIN Users t4 ON t4.id = t5.iParentID
-//                 LEFT JOIN Users t3 ON t3.id = t4.iParentID
-//             WHERE t5.iClass = 5 AND t5.strGroupID LIKE CONCAT('${strGroupID}', '%') AND t5.iSettleDays=${iSettleDays} AND t5.iSettleType=${iSettleType}
-//             ${lastDateQuery}
-//             ORDER BY strAdminNickname ASC, t5.strNickname ASC
-//             LIMIT ${limit}
-//             OFFSET ${offset}
-//         `);
-//     return list[0];
-// }
 
 exports.GetSettleClass5OfIdList = async (strGroupID, strQuater, dateStart, dateEnd, lastDate, strSubQuater, strSubQuater2, iSettleDays, iSettleType, idList) => {
     let lastDateQuery = `AND t5.createdAt < '${lastDate}'`;
@@ -474,7 +527,7 @@ exports.GetSettleClass5OfIdList = async (strGroupID, strQuater, dateStart, dateE
             SELECT
                 t3.strID AS strAdminID, t3.strNickname AS strAdminNickname,
                 t5.id AS id, t5.strID, t5.strNickname, t5.strGroupID, t5.iClass, t5.strSettleMemo,
-                t5.fSettleBaccarat, t5.fSettleSlot,
+                t5.fSettleBaccarat, t5.fSettleResetBaccarat, t5.fSettleSlot,
                 t5.iSettleDays, t5.iSettleType,
                 t5.iSettleAcc, t5.iCash,
                 IFNULL((SELECT SUM(iSettleAccTotal) FROM SettleRecords WHERE strNickname = t5.strNickname AND ${query2}),0) AS iSettleAfter2,
@@ -509,29 +562,24 @@ let GetSettleClass4 = async (strGroupID, strQuater, dateStart, dateEnd, iOffset,
     let limit = parseInt(iLimit ?? 30);
 
     let lastDateQuery = `AND t4.createdAt < '${lastDate}'`;
-    let query = `strSubQuater='${strSubQuater}' AND iSettleDays=${iSettleDays} AND iSettleType=${iSettleType}`;
+    let strSubQuaterMonth = `${strSubQuater}`.substring(0,2); // 1-
+
+    let query = `iClass = 5 AND strGroupID LIKE CONCAT('${strGroupID}', '%') AND strSubQuater LIKE CONCAT('${strSubQuaterMonth}', '%')`;
+    // let query = `iClass = 5 AND eType='COMPLETE' AND strGroupID LIKE CONCAT('${strGroupID}', '%') AND strSubQuater LIKE CONCAT('${strSubQuaterMonth}', '%')`;
+
     let query2 = `strSubQuater='${strSubQuater2}' AND iSettleDays=${iSettleDays} AND iSettleType=${iSettleType}`;
-    let query3 = exist.length == 0 ? '' : `AND t5.id NOT IN (${exist})`;
+    let query3 = exist.length == 0 ? '' : `AND t4.id NOT IN (${exist})`;
 
     let list = await db.sequelize.query(`
             SELECT
                 t3.strID AS strAdminID, t3.strNickname AS strAdminNickname,
                 
                 t4.id, t4.strID, t4.strNickname, t4.strGroupID, t4.iClass, t4.strSettleMemo,
-                t4.fSettleBaccarat, t4.fSettleSlot,
+                t4.fSettleBaccarat, t4.fSettleResetBaccarat, t4.fSettleSlot,
                 t4.iSettleDays, t4.iSettleType,
                 t4.iSettleAcc, t4.iCash,
-                IFNULL(t4.fCommission, ${cfCommission}) AS fCommission,            
-                IFNULL((SELECT SUM(iSettleAccTotal) FROM SettleRecords WHERE strNickname = t4.strNickname AND ${query2}),0) AS iSettleAfter2,
-                IFNULL((SELECT SUM(iTotal) FROM SettleRecords WHERE strGroupID LIKE CONCAT('${strGroupID}', '%') AND iClass = 5 AND strSubQuater IN ('6-1')),0) AS iTotal,
-                IFNULL((SELECT SUM(iCommissionB) FROM SettleRecords WHERE strGroupID LIKE CONCAT('${strGroupID}', '%') AND iClass = 5 AND strSubQuater IN ('6-1')),0) AS iCommissionB,
-                IFNULL((SELECT SUM(iCommissionS) FROM SettleRecords WHERE strGroupID LIKE CONCAT('${strGroupID}', '%') AND iClass = 5 AND strSubQuater IN ('6-1')),0) AS iCommissionS,
-                IFNULL((SELECT SUM(iBWinlose) FROM SettleRecords WHERE strGroupID LIKE CONCAT('${strGroupID}', '%') AND iClass = 5 AND strSubQuater IN ('6-1')),0) AS iBWinlose,
-                IFNULL((SELECT SUM(iUWinlose) FROM SettleRecords WHERE strGroupID LIKE CONCAT('${strGroupID}', '%') AND iClass = 5 AND strSubQuater IN ('6-1')),0) AS iUWinlose,
-                IFNULL((SELECT SUM(iSWinlose) FROM SettleRecords WHERE strGroupID LIKE CONCAT('${strGroupID}', '%') AND iClass = 5 AND strSubQuater IN ('6-1')),0) AS iSWinlose,
-                IFNULL((SELECT SUM(iSettleVice) FROM SettleRecords WHERE strGroupID LIKE CONCAT('${strGroupID}', '%') AND iClass = 5 AND strSubQuater IN ('6-1')),0) AS iSettleVice,
-                IFNULL((SELECT SUM(iResult) FROM SettleRecords WHERE strGroupID LIKE CONCAT('${strGroupID}', '%') AND iClass = 5 AND strSubQuater IN ('6-1')),0) AS iResult
-                
+                IFNULL(t4.fCommission, ${cfCommission}) AS fCommission,
+                IFNULL((SELECT SUM(iSettleVice) FROM SettleRecords WHERE ${query}),0) AS iSettleVice,
                 
                 IFNULL((SELECT SUM(iAgentBetB) FROM RecordDailyOverviews WHERE strID = t4.strID AND DATE(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) AS iAgentBetB,
                 IFNULL((SELECT SUM(iAgentWinB) FROM RecordDailyOverviews WHERE strID = t4.strID AND DATE(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) AS iAgentWinB,
@@ -557,80 +605,22 @@ let GetSettleClass4 = async (strGroupID, strQuater, dateStart, dateEnd, iOffset,
 }
 
 /**
- *  대본 분기에 따른 부본사 subQuater 리스트 구하기
- */
-exports.GetSubQuaterList = (iSettleDays, subQuater) => {
-    if (iSettleDays == 5) {
-        if ('6-1') {
-
-        } else if ('6-2') {
-
-        } else if ('6-3') {
-
-        } else if ('6-4') {
-
-        } else if ('6-5') {
-
-        } else if ('6-6') {
-
-        }
-    } else if (iSettleDays == 10) {
-        if ('6-1') {
-
-        } else if ('6-2') {
-
-        } else if ('6-3') {
-
-        }
-    } else if (iSettleDays == 15) {
-        if ('6-1') {
-
-        } else if ('6-2') {
-
-        }
-    }
-}
-
-
-
-/**
  * 죽장 완료 목록 리스트
  */
-exports.GetSettleExistList = async (strGroupID, iClass, strQuater, dateStart, dateEnd, lastDate, strSubQuater, strSubQuater2, iSettleDays, iSettleType, limit, offset) => {
-    let lastDateQuery = '';
-    if (iClass == 4) {
-        lastDateQuery = `AND t4.createdAt < '${lastDate}'`;
-    } else if (iClass == 5) {
-        lastDateQuery = `AND t5.createdAt < '${lastDate}'`;
-    }
-
-    let query = `strSubQuater='${strSubQuater}' AND iSettleDays=${iSettleDays} AND iSettleType=${iSettleType}`;
-    let query2 = `strSubQuater='${strSubQuater2}' AND iSettleDays=${iSettleDays} AND iSettleType=${iSettleType}`;
-
+exports.GetSettleExistList = async (strGroupID, iClass, strQuater, dateStart, dateEnd, lastDate, strSubQuater, strSubQuater2, iSettleDays, iSettleType, limit, offset, eType) => {
     let list = [];
     if (iClass == 4) {
         list = await db.sequelize.query(`
-            SELECT
-                t3.strID AS strAdminID, t3.strNickname AS strAdminNickname, 
-                t4.strID, t4.strNickname, t4.strGroupID, t4.iClass, t4.strSettleMemo,
-                t4.fSettleBaccarat, t4.fSettleSlot,
-                t4.iSettleDays, t4.iSettleType,
-                t4.iSettleAcc, t4.iCash,
-                IFNULL((SELECT SUM(iCash) FROM Users WHERE strGroupID LIKE CONCAT(t4.strGroupID,'%')),0) as iTotalMoney,
-                IFNULL((SELECT iSettleAccTotal FROM SettleRecords WHERE strNickname = t4.strNickname AND ${query}),0) as iSettleAccTotal,
-                IFNULL((SELECT iSettleAcc FROM SettleRecords WHERE strNickname = t4.strNickname AND ${query}),0) as iSettleAccQuater,
-                IFNULL((SELECT iSettle FROM SettleRecords WHERE strNickname = t4.strNickname AND ${query}),0) as iSettleComplete,
-                IFNULL((SELECT iSettleGive FROM SettleRecords WHERE strNickname = t4.strNickname AND ${query}),0) as iSettleGive,
-                IFNULL((SELECT iSettleBeforeAcc FROM SettleRecords WHERE strNickname = t4.strNickname AND ${query}),0) as iSettleBeforeAcc,
-                IFNULL((SELECT iSettleAfter FROM SettleRecords WHERE strNickname = t4.strNickname AND ${query}),0) as iSettleAfter,
-                IFNULL((SELECT iSettleAccTotal FROM SettleRecords WHERE strNickname = t4.strNickname AND ${query2}),0) as iSettleAfter2,
-                IFNULL((SELECT iSettleOrigin FROM SettleRecords WHERE strNickname = t4.strNickname AND ${query}),0) as iSettleOrigin,
-                IFNULL((SELECT (iSettleAcc - iPayback) FROM SettleRecords WHERE strNickname = t4.strNickname AND ${query}),0) as iSettleAcc,
-                IFNULL((SELECT iPayback FROM SettleRecords WHERE strNickname = t4.strNickname AND ${query}),0) as iPayback            
-            FROM Users t4
-                     LEFT JOIN Users t3 ON t3.id = t4.iParentID
-            WHERE t4.iClass = ${iClass} AND t4.strGroupID LIKE CONCAT('${strGroupID}', '%') AND t4.iSettleDays=${iSettleDays} AND t4.iSettleType=${iSettleType}
-            ${lastDateQuery}
+            SELECT t3.strID AS strAdminID, t3.strNickname AS strAdminNickname,
+                   t4.strID, t4.strNickname, t4.strGroupID, t4.iClass, t4.strSettleMemo,
+                   t4.fSettleBaccarat, t4.fSettleResetBaccarat, t4.fSettleSlot,
+                   t4.iSettleAcc, t4.iCash,
+                   t4.iSettleDays, t4.iSettleType,
+                   sr.*
+            FROM SettleRecords sr
+                    LEFT JOIN Users t4 ON t4.strID = t4.strID
+                    LEFT JOIN Users t3 ON t3.id = t4.iParentID
+            WHERE sr.strSubQuater='${strSubQuater}' AND sr.iSettleDays='${iSettleDays}' AND sr.iSettleType='${iSettleType}' AND sr.iClass=${iClass} AND sr.eType = '${eType}'
             ORDER BY strAdminNickname ASC, t4.strNickname ASC, t4.strGroupID ASC
             LIMIT ${limit}
             OFFSET ${offset}
@@ -639,7 +629,7 @@ exports.GetSettleExistList = async (strGroupID, iClass, strQuater, dateStart, da
         list = await db.sequelize.query(`
             SELECT t3.strID AS strAdminID, t3.strNickname AS strAdminNickname,
                    t5.strID, t5.strNickname, t5.strGroupID, t5.iClass, t5.strSettleMemo,
-                   t5.fSettleBaccarat, t5.fSettleSlot,
+                   t5.fSettleBaccarat, t5.fSettleResetBaccarat, t5.fSettleSlot,
                    t5.iSettleAcc, t5.iCash,
                    t5.iSettleDays, t5.iSettleType,
                    sr.*
@@ -647,7 +637,7 @@ exports.GetSettleExistList = async (strGroupID, iClass, strQuater, dateStart, da
                     LEFT JOIN Users t5 ON t5.strID = sr.strID
                     LEFT JOIN Users t4 ON t4.id = t5.iParentID
                     LEFT JOIN Users t3 ON t3.id = t4.iParentID
-            WHERE sr.strSubQuater='${strSubQuater}' AND sr.iSettleDays='${iSettleDays}' AND sr.iSettleType='${iSettleType}' AND sr.iClass=${iClass}
+            WHERE sr.strSubQuater='${strSubQuater}' AND sr.iSettleDays='${iSettleDays}' AND sr.iSettleType='${iSettleType}' AND sr.iClass=${iClass} AND sr.eType = '${eType}'
             ORDER BY strAdminNickname ASC, t5.strNickname ASC, t5.strGroupID ASC
             LIMIT ${limit}
             OFFSET ${offset}
@@ -690,6 +680,19 @@ exports.CheckSettleExistIDList = async (strSubQuater, iSettleDays, iSettleType, 
     return list;
 }
 
+
+exports.CheckSettleCompleteExistIDList = async (idList) => {
+    let list = await db.SettleRecords.findAll({
+        where: {
+            strID: {
+                [Op.in]:idList
+            },
+            eType:'COMPLETE'
+        }
+    });
+    return list;
+}
+
 exports.GetSettleExistIDList = async (strSubQuater, iSettleDays, iSettleType, iClass) => {
     let list = await db.sequelize.query(`
         SELECT u.id 
@@ -709,7 +712,7 @@ exports.GetSettleExistIDList = async (strSubQuater, iSettleDays, iSettleType, iC
 let ExistSettle = (obj) => {
     let settle = {
         strAdminID: '', strAdminNickname: '',
-        id:0, strID:'', strNickname:'', iClass: 0, strGroupID: '', fSettleBaccarat:0, fSettleSlot:0,
+        id:0, strID:'', strNickname:'', iClass: 0, strGroupID: '', fSettleBaccarat:0, fSettleResetBaccarat:0,
         iTotal: 0, iBaccaratWinLose: 0, iUnderOverWinLose:0, iSlotWinLose: 0,
         iSettleVice:0, iCommissionBaccarat:0, iCommissionSlot:0, iSettle:0, iResult:0, // 부본죽장, 대본B알값, 대본S알값, 대본죽장, 합계
         iSettleGive:0, iSettleAcc: 0, iPayback:0,  // 죽장지급, 죽장이월, 수금(전월죽장이월금액에 대한 수금액)
@@ -724,27 +727,22 @@ let ExistSettle = (obj) => {
     settle.iClass = obj.iClass;
     settle.strGroupID = obj.strGroupID;
     settle.fSettleBaccarat = obj.fSettleBaccarat;
-    settle.fSettleSlot = obj.fSettleSlot;
-    settle.iTotal = obj.iTotal
-
-    // 부본 죽장 계산
-    if (obj.iClass == 5) {
-        settle.iSettleVice = settle.iSettleVice;
-    }
-
-    // 대본 죽장 계산 및 알값 처리
-    if (obj.iClass == 4) {
-        settle.iBaccaratWinLose = obj.iBWinlose;
-        settle.iUnderOverWinLose = obj.iUWinlose;
-        settle.iSlotWinLose = obj.iSWinlose;
-
-        settle.iCommissionBaccarat = obj.iCommissionB;
-        settle.iCommissionSlot = obj.iCommissionS;
-        settle.iSettle = obj.iSettle;
-    }
-
+    settle.fSettleResetBaccarat = obj.fSettleResetBaccarat;
+    settle.iTotal = obj.iTotal;
+    settle.iSettleGive = obj.iSettleGive;
+    settle.iPayback = obj.iPayback;
+    settle.iBaccaratWinLose = obj.iBWinlose;
+    settle.iUnderOverWinLose = obj.iUWinlose;
+    settle.iSlotWinLose = obj.iSWinlose;
+    settle.iCommissionBaccarat = obj.iCommissionB;
+    settle.iCommissionSlot = obj.iCommissionS;
+    settle.iSettle = obj.iSettle;
+    settle.iSettleVice = obj.iSettleVice;
     settle.iResult = obj.iResult;
-
+    settle.iSettleAcc = obj.iSettleAcc;
+    settle.iSettleBeforeAcc = obj.iSettleBeforeAcc; // 전월죽장이월
+    settle.iSettleAccTotal = obj.iSettleAccTotal; // 총이월
+    settle.iSettleTotal = obj.iSettle + obj.iSettleVice; // 죽장 총합
     return settle;
 }
 

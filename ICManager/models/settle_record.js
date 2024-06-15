@@ -41,6 +41,10 @@ module.exports = (sequelize, DataTypes) => {
         fSettleBaccarat: {
             type: DataTypes.FLOAT,
         },
+        // 리셋 죽장%
+        fSettleResetBaccarat: {
+            type: DataTypes.FLOAT,
+        },
         // 슬록 죽장%
         fSettleSlot: {
             type: DataTypes.FLOAT,
@@ -122,7 +126,7 @@ module.exports = (sequelize, DataTypes) => {
         iPayback: {
             type:DataTypes.INTEGER,
         },
-        // 부본에 대한 처리여부(부본 죽장 처리시 : WAIT, 대본에서 처리시 COMPLETE 처리)
+        // 부본에 대한 처리여부(WAIT:죽장계산(죽장 지급전), COMPLETE:죽장지급완료)
         eType: {
             type:DataTypes.ENUM('WAIT', 'COMPLETE'),
             allowNull: false

@@ -113,6 +113,9 @@ module.exports = (sequelize, DataTypes) => {
         fSettleBaccarat: {
             type: DataTypes.FLOAT,
         },
+        fSettleResetBaccarat: {
+            type: DataTypes.FLOAT,
+        },
         fSettleSlot: {
             type: DataTypes.FLOAT,
         },

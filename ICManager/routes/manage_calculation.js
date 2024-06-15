@@ -105,7 +105,7 @@ router.post('/request_applysettle_all', isLoggedIn, async (req, res) => {
         list.push({strNickname:array[idx+0], iSettle:array[idx+1], iInputSettle:array[idx+2], iQuaterSettle:array[idx+3], iAccumulated:array[idx+4],
             iCB:array[idx+5], iCS:array[idx+6], iTotal:array[idx+7], iBWinlose: array[idx+8], iUWinlose: array[idx+9],
             iSWinlose: array[idx+10], iPWinlose: array[idx+11], iRolling: array[idx+12], iResult: array[idx+13],
-            fSettleBaccarat: array[idx+14], fSettleSlot: array[idx+15], fSettlePBA: array[idx+16], fSettlePBB: array[idx+17],
+            fSettleBaccarat: array[idx+14], fSettleResetBaccarat: array[idx+15], fSettlePBA: array[idx+16], fSettlePBB: array[idx+17],
             iClass: array[idx+18], strID: array[idx+19], from: array[idx+20], iSettleVice:array[idx+21], iSettleBeforeAcc:array[idx+22]});
     }
 
@@ -228,9 +228,9 @@ router.post('/request_applysettle_all', isLoggedIn, async (req, res) => {
                 if (fSettleBaccarat == '') {
                     fSettleBaccarat = 0;
                 }
-                let fSettleSlot = list[i].fSettleSlot;
-                if (fSettleSlot == '') {
-                    fSettleSlot = 0;
+                let fSettleResetBaccarat = list[i].fSettleResetBaccarat;
+                if (fSettleResetBaccarat == '') {
+                    fSettleResetBaccarat = 0;
                 }
                 let fSettlePBA = list[i].fSettlePBA;
                 if (fSettlePBA == '') {
@@ -264,7 +264,7 @@ router.post('/request_applysettle_all', isLoggedIn, async (req, res) => {
                     iPWinlose:iPWinlose,
                     iResult:iResult,
                     fSettleBaccarat:fSettleBaccarat,
-                    fSettleSlot:fSettleSlot,
+                    fSettleResetBaccarat:fSettleResetBaccarat,
                     fSettlePBA:fSettlePBA,
                     fSettlePBB:fSettlePBB,
                     iClass:list[i].iClass,
@@ -398,7 +398,7 @@ router.post('/settle_all2', isLoggedIn, async(req, res) => {
         overviewShare.iCurrentTotalShare = shareCurrent.iCurrentTotalShare;
     }
 
-    res.render('manage_calculation/settle_all3', {iLayout:0, iHeaderFocus:6, user:user, agentinfo:agentinfo, iocount:iocount, list:[], overview:overview, overviewShare:overviewShare});
+    res.render('manage_calculation/settle_all4', {iLayout:0, iHeaderFocus:6, user:user, agentinfo:agentinfo, iocount:iocount, list:[], overview:overview, overviewShare:overviewShare});
 });
 
 router.post('/request_settle_all', isLoggedIn, async(req, res) => {

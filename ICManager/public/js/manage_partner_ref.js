@@ -755,11 +755,11 @@ function AddPartner(iRootClass, aObject, bDisableRolling, iPermission)
 			`;
 		subtag += `
 			<td style="background-color:${color};"  class="parent_row_31">
-				<input type="number" step="0.01" style="width:50%;" name="bakara_over_31" id="fSettleBaccarat${aObject.strNickname}" required="no" message="바카라 죽장" value=${aObject.fSettleBaccarat ?? 0} ${tagoption}>%
+				<input type="number" step="0.01" style="width:50%;" name="bakara_over_31" id="fSettleBaccarat${aObject.strNickname}" required="no" message="누적 죽장" value=${aObject.fSettleBaccarat ?? 0} ${tagoption}>%
 			</td>
 		
 			<td style="background-color:${color};"  class="parent_row_31">
-				<input type="number" step="0.01" style="width:50%;" name="bakara_over_31" id="fSettleSlot${aObject.strNickname}" required="no" message="슬롯 죽장" value=${aObject.fSettleSlot ?? 0} ${tagoption}>%
+				<input type="number" step="0.01" style="width:50%;" name="bakara_over_31" id="fSettleResetBaccarat${aObject.strNickname}" required="no" message="리셋 죽장" value=${aObject.fSettleResetBaccarat ?? 0} ${tagoption}>%
 			</td>
 		`;
 	} else {
@@ -794,11 +794,11 @@ function AddPartner(iRootClass, aObject, bDisableRolling, iPermission)
 
 		subtag += `
 			<td style="background-color:${color};"  class="parent_row_31">
-				<input type="number" step="0.01" style="width:50%;" name="bakara_over_31" id="fSettleBaccarat${aObject.strNickname}" required="no" message="바카라 죽장" value=${aObject.fSettleBaccarat ?? 0} ${tagoption} disabled>%
+				<input type="number" step="0.01" style="width:50%;" name="bakara_over_31" id="fSettleBaccarat${aObject.strNickname}" required="no" message="누적 죽장" value=${aObject.fSettleBaccarat ?? 0} ${tagoption} disabled>%
 			</td>
 		
 			<td style="background-color:${color};"  class="parent_row_31">
-				<input type="number" step="0.01" style="width:50%;" name="bakara_over_31" id="fSettleSlot${aObject.strNickname}" required="no" message="슬롯 죽장" value=${aObject.fSettleSlot ?? 0} ${tagoption} disabled>%
+				<input type="number" step="0.01" style="width:50%;" name="bakara_over_31" id="fSettleResetBaccarat${aObject.strNickname}" required="no" message="리셋 죽장" value=${aObject.fSettleResetBaccarat ?? 0} ${tagoption} disabled>%
 			</td>
 		`;
 	}
@@ -1540,7 +1540,6 @@ function DoApplyRolling(user)
 	let fPBTripleParent = user.fPBTripleR;
 
 	let fSettleBaccaratParent = user.fSettleBaccarat;
-	let fSettleSlotParent = user.fSettleSlot;
 
 	for ( var i = 0; i < agents.length; ++i)
 	{
@@ -1554,7 +1553,7 @@ function DoApplyRolling(user)
 		var fPBDouble = 0.0;
 		var fPBTriple = 0.0;
 		var fSettleBaccarat = parseFloat($(`#fSettleBaccarat${element.id}`).val());
-		var fSettleSlot = parseFloat($(`#fSettleSlot${element.id}`).val());
+		var fSettleResetBaccarat = parseFloat($(`#fSettleResetBaccarat${element.id}`).val());
 
 		var iClass = parseInt($(`#iClass${element.id}`).val());
 		//
@@ -1607,7 +1606,7 @@ function DoApplyRolling(user)
 			list.push(fPBDouble);
 			list.push(fPBTriple);
 			list.push(fSettleBaccarat);
-			list.push(fSettleSlot);
+			list.push(fSettleResetBaccarat);
 		}
 	}
 
@@ -1643,7 +1642,7 @@ function DoApplySettle()
 
 	var list = [];
 	let fParentSettleBaccarat = 100;
-	let fParentSettleSlot = 100;
+	let fParentSettleResetBaccarat = 100;
 	let fParentSettlePBA = 100;
 	let fParentSettlePBB = 100;
 
@@ -1654,7 +1653,7 @@ function DoApplySettle()
 		const element = agents[i];
 
 		var fSettleBaccarat = parseFloat($(`#fSettleBaccarat${element.id}`).val());
-		var fSettleSlot = parseFloat($(`#fSettleSlot${element.id}`).val());
+		var fSettleResetBaccarat = parseFloat($(`#fSettleResetBaccarat${element.id}`).val());
 		var fSettlePBA = 0;
 		var fSettlePBB = 0;
 
@@ -1665,12 +1664,12 @@ function DoApplySettle()
 			list.push(element.id);
 			list.push(iClass);
 			list.push(fSettleBaccarat);
-			list.push(fSettleSlot);
+			list.push(fSettleResetBaccarat);
 			list.push(fSettlePBA);
 			list.push(fSettlePBB);
 
 			fParentSettleBaccarat = fSettleBaccarat;
-			fParentSettleSlot = fSettleSlot;
+			fParentSettleResetBaccarat = fSettleResetBaccarat;
 			fParentSettlePBA = fSettlePBA;
 			fParentSettlePBB = fSettlePBB;
 		}

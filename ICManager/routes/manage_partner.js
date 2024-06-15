@@ -581,7 +581,7 @@ router.post('/request_modify_rollingodds_group', isLoggedIn, async(req, res) => 
             {
 
                 let fSettleBaccarat = ret.data[i].fSettleBaccarat ?? 0;
-                let fSettleSlot = ret.data[i].fSettleSlot ?? 0;
+                let fSettleResetBaccarat = ret.data[i].fSettleResetBaccarat ?? 0;
                 let fSettlePBA = ret.data[i].fSettlePBA ?? 0;
                 let fSettlePBB = ret.data[i].fSettlePBB ?? 0;
 
@@ -608,7 +608,7 @@ router.post('/request_modify_rollingodds_group', isLoggedIn, async(req, res) => 
                         fPBDoubleR:ret.data[i].fPBDouble,
                         fPBTripleR:ret.data[i].fPBTriple,
                         fSettleBaccarat:ret.data[i].fSettleBaccarat,
-                        fSettleSlot:ret.data[i].fSettleSlot,
+                        fSettleResetBaccarat:ret.data[i].fSettleResetBaccarat,
                     }, {where:{strNickname:ret.data[i].strNickname}});
             }
         }
@@ -643,15 +643,15 @@ const logRollingMessage = (source, data) => {
     }
     if (source.fSettleBaccarat != data.fSettleBaccarat) {
         if (msg == '')
-            msg = `바카라죽장 변경(${source.fSettleBaccarat}=>${data.fSettleBaccarat})`;
+            msg = `누적 죽장 변경(${source.fSettleBaccarat}=>${data.fSettleBaccarat})`;
         else
-            msg = `${msg} | 바카라죽장 변경(${source.fSettleBaccarat}=>${data.fSettleBaccarat})`;
+            msg = `${msg} | 누적 죽장 변경(${source.fSettleBaccarat}=>${data.fSettleBaccarat})`;
     }
-    if (source.fSettleSlot != data.fSettleSlot) {
+    if (source.fSettleResetBaccarat != data.fSettleResetBaccarat) {
         if (msg == '')
-            msg = `슬롯죽장 변경(${source.fSettleSlot}=>${data.fSettleSlot})`;
+            msg = `리셋 죽장 변경(${source.fSettleResetBaccarat}=>${data.fSettleResetBaccarat})`;
         else
-            msg = `${msg} | 슬롯죽장 변경(${source.fSettleSlot}=>${data.fSettleSlot})`;
+            msg = `${msg} | 리셋 죽장 변경(${source.fSettleResetBaccarat}=>${data.fSettleResetBaccarat})`;
     }
 
     return msg;
@@ -673,7 +673,7 @@ router.post('/request_modify_settle_group', isLoggedIn, async(req, res) => {
         for ( let i in ret.data )
         {
             let fSettleBaccarat = ret.data[i].fSettleBaccarat ?? 0;
-            let fSettleSlot = ret.data[i].fSettleSlot ?? 0;
+            let fSettleResetBaccarat = ret.data[i].fSettleResetBaccarat ?? 0;
             let fSettlePBA = ret.data[i].fSettlePBA ?? 0;
             let fSettlePBB = ret.data[i].fSettlePBB ?? 0;
 
@@ -686,8 +686,7 @@ router.post('/request_modify_settle_group', isLoggedIn, async(req, res) => {
                 if ( null != parent && parent.iClass == 3 || parent.iClass == 4 )
                 {
                     if (
-                        parent.fSettleBaccarat < fSettleBaccarat ||
-                        parent.fSettleSlot < fSettleSlot
+                        parent.fSettleBaccarat < fSettleBaccarat
                     )
                     {
                         console.log(`########## ModifyAgentInfo : Error Parent`);
@@ -713,8 +712,7 @@ router.post('/request_modify_settle_group', isLoggedIn, async(req, res) => {
 
                         if (child.iClass == 3 || child.iClass == 4 || child.iClass == 5) {
                             if (
-                                child.fSettleBaccarat > fSettleBaccarat ||
-                                child.fSettleSlot > fSettleSlot
+                                child.fSettleBaccarat > fSettleBaccarat
                             )
                             {
                                 console.log(`########## ModifyAgentInfo : Error Children`);
@@ -740,7 +738,7 @@ router.post('/request_modify_settle_group', isLoggedIn, async(req, res) => {
                 await db.Users.update(
                     {
                         fSettleBaccarat:fSettleBaccarat,
-                        fSettleSlot:fSettleSlot,
+                        fSettleResetBaccarat:fSettleResetBaccarat,
                         fSettlePBA:fSettlePBA,
                         fSettlePBB:fSettlePBB
                     }, {where:{strNickname:ret.data[i].strNickname}});
@@ -760,15 +758,15 @@ const logSettleMessage = (source, data) => {
 
     if (source.fSettleBaccarat != data.fSettleBaccarat) {
         if (msg == '')
-            msg = `바카라죽장 변경(${source.fSettleBaccarat}=>${data.fSettleBaccarat})`;
+            msg = `누적 죽장 변경(${source.fSettleBaccarat}=>${data.fSettleBaccarat})`;
         else
-            msg = `${msg} | 바카라죽장 변경(${source.fSettleBaccarat}=>${data.fSettleBaccarat})`;
+            msg = `${msg} | 누적 죽장 변경(${source.fSettleBaccarat}=>${data.fSettleBaccarat})`;
     }
-    if (source.fSettleSlot != data.fSettleSlot) {
+    if (source.fSettleResetBaccarat != data.fSettleResetBaccarat) {
         if (msg == '')
-            msg = `슬롯죽장 변경(${source.fSettleSlot}=>${data.fSettleSlot})`;
+            msg = `리셋 죽장 변경(${source.fSettleResetBaccarat}=>${data.fSettleResetBaccarat})`;
         else
-            msg = `${msg} | 슬롯죽장 변경(${source.fSettleSlot}=>${data.fSettleSlot})`;
+            msg = `${msg} | 리셋 죽장 변경(${source.fSettleResetBaccarat}=>${data.fSettleResetBaccarat})`;
     }
     return msg;
 }

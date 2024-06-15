@@ -27,7 +27,7 @@ var inline_ModifySettleGroup = async (array)=> {
         object.strNickname = array[cDefault+0];
         object.iClass = array[cDefault+1];
         object.fSettleBaccarat = array[cDefault+2];
-        object.fSettleSlot = array[cDefault+3];
+        object.fSettleResetBaccarat = array[cDefault+3];
         object.fSettlePBA = array[cDefault+4];
         object.fSettlePBB = array[cDefault+5];
         // object.fBaccarat = array[cDefault+3];
@@ -76,8 +76,7 @@ var inline_ModifySettleGroup = async (array)=> {
         if ( parent == null )
             parent = result[0];
     
-        if ( list[i].fSettleBaccarat > parent.fParentSettleBaccarat || 
-            list[i].fSettleSlot > parent.fParentSettleSlot ||
+        if ( list[i].fSettleBaccarat > parent.fParentSettleBaccarat ||
             list[i].fSettlePBA > parent.fParentSettlePBA ||
             list[i].fSettlePBB > parent.fParentSettlePBB )
         {
@@ -123,20 +122,17 @@ var inline_ModifySettleGroup = async (array)=> {
                 console.log(`me ${list[i].fBaccarat}, children ${child.fBaccaratR}, me ${list[i].fSlot}, children ${child.fSlotR}, me ${list[i].fUnderOver}, children ${child.fUnderOverR}`);
 
                 //console.log(`Me ${list[i].strNickname} : ${list[i].fSettle}, Child ${children[j]}`);
-                if ( list[i].fSettleBaccarat < child.fSettleBaccarat || 
-                    list[i].fSettleSlot < child.fSettleSlot ||
+                if ( list[i].fSettleBaccarat < child.fSettleBaccarat ||
                     list[i].fSettlePBA < child.fSettlePBA ||
                     list[i].fSettlePBB < child.fSettlePBB) 
                 {
     
                     console.log(`me ${list[i].fSettleBaccarat}, children ${child.fSettleBaccarat}`);
-                    console.log(`me ${list[i].fSettleSlot}, children ${child.fSettleSlot}`);
                     ret.result = "FAIL";
                     ret.name = `
                     ${list[i].strNickname}
                     하위보다 값이 작습니다.
                     Baccarat -> 하위 : ${child.fSettleBaccarat}, ${me.strNickname} : ${list[i].fSettleBaccarat}
-                    Slot -> 하위 : ${child.fSettleSlot}, ${me.strNickname} : ${list[i].fSettleSlot}
                     Slot -> 하위 : ${child.fSettlePBA}, ${me.strNickname} : ${list[i].fSettlePBA}
                     Slot -> 하위 : ${child.fSettlePBB}, ${me.strNickname} : ${list[i].fSettlePBB}
                     `;
@@ -165,7 +161,7 @@ var inline_ModifySettleForce = async (array)=> {
         object.strNickname = array[cDefault+0];
         object.iClass = array[cDefault+1];
         object.fSettleBaccarat = array[cDefault+2];
-        object.fSettleSlot = array[cDefault+3];
+        object.fSettleResetBaccarat = array[cDefault+3];
         object.fSettlePBA = array[cDefault+4];
         object.fSettlePBB = array[cDefault+5];
         // object.fBaccarat = array[cDefault+3];
@@ -182,7 +178,7 @@ var inline_ModifySettleForce = async (array)=> {
             ret.result = 'Error';
             ret.name = '바카라 죽장값을 확인해주세요';
             break;
-        } else if (list[i].fSettleSlot < 0) {
+        } else if (list[i].fSettleResetBaccarat < 0) {
             ret.result = 'Error';
             ret.name = '슬롯 죽장값을 확인해주세요';
             break;

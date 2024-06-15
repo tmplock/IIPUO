@@ -262,6 +262,7 @@
 			return;
 		}
 		bSending = true;
+		let eType = iViewSettleState == 1 ? 'WAIT' : 'COMPLETE';
 		$.ajax({
 			url:'/manage_settle/request_settle_exist',
 			type:"POST",
@@ -276,7 +277,8 @@
 				iUserClass: user.iClass,
 				strSubQuater:strSubQuater,
 				iSettleDays:iSettleDays,
-				iSettleType:iSettleType
+				iSettleType:iSettleType,
+				eType:eType
 			},
 			dataType: "json",
 			error: function (request, status, error) {
@@ -305,17 +307,19 @@
 		$('#list_agents').empty();
 		$(`#list_tit`).empty();
 		if ( user.iClass > 1 && user.iClass <= 3 && user.iPermission != 100) {
-			if (iViewClass == 4 && iViewSettleState == 0) {
+			if (iViewClass == 4 && (iViewSettleState == 0 || iViewSettleState == 1)) {
 				$(`#list_tit`).append(`
 					<h3>죽장 정산
 						<button id='button_changesettle' style="margin-left:8%;width:200px;height:40px;text-align:center;background-color: rgb(82, 161, 206);color:white" onclick="DoApplySettle();"><strong>죽장 적용</strong></button>
+						<button id='button_makesettle' style="margin-left:8%;width:200px;height:40px;text-align:center;background-color: rgb(82, 161, 206);color:white" onclick="RequestMakeSettle();"><strong>죽장 생성</strong></button>
 						<button id='button_applysettle' style="margin-left:300px;width:200px;height:40px;text-align:center;background-color: rgb(218, 107, 107);color:white" onclick="RequestApplySettle();"><strong>죽장 지급</strong></button>
 					</h3>
 				`);
-			} else if (iViewClass == 5 && iViewSettleState == 0) {
+			} else if (iViewClass == 5 && (iViewSettleState == 0 || iViewSettleState == 1)) {
 				$(`#list_tit`).append(`
 					<h3>죽장 정산
 						<button id='button_changesettle' style="margin-left:8%;width:200px;height:40px;text-align:center;background-color: rgb(82, 161, 206);color:white" onclick="DoApplySettle();"><strong>죽장 적용</strong></button>
+						<button id='button_makesettle' style="margin-left:8%;width:200px;height:40px;text-align:center;background-color: rgb(82, 161, 206);color:white" onclick="RequestMakeSettle();"><strong>죽장 생성</strong></button>
 						<button id='button_applysettle' style="margin-left:300px;width:200px;height:40px;text-align:center;background-color: rgb(218, 107, 107);color:white" onclick="RequestApplySettle();"><strong>죽장 지급</strong></button>
 					</h3>
 				`);
@@ -485,7 +489,8 @@
 			if (user.iRootClass <= 3 && user.iPermission == 0) {
 				$(`#view_class_state`).append(`
 				<button id="button_settle_list" class="${iViewSettleState == 0 ? 'menu5' : 'menu1'}" style="border:0; solid rgb(95, 93, 93);width:170px;height:25px;text-align:center;color:white" onclick="OnClickSettleState(0);">대상목록</button>
-				<button id="button_settle_exist" class="${iViewSettleState == 1 ? 'menu5' : 'menu1'}" style="border:0; solid rgb(95, 93, 93);width:170px;height:25px;text-align:center;color:white" onclick="OnClickSettleState(1);">완료목록</button>
+				<button id="button_settle_wait" class="${iViewSettleState == 1 ? 'menu5' : 'menu1'}" style="border:0; solid rgb(95, 93, 93);width:170px;height:25px;text-align:center;color:white" onclick="OnClickSettleState(1);">지급대기목록</button>
+				<button id="button_settle_exist" class="${iViewSettleState == 2 ? 'menu5' : 'menu1'}" style="border:0; solid rgb(95, 93, 93);width:170px;height:25px;text-align:center;color:white" onclick="OnClickSettleState(2);">지급완료목록</button>
 			`);
 			}
 
@@ -566,14 +571,14 @@
 
 		let list = [];
 		let fParentSettleBaccarat = 100;
-		let fParentSettleSlot = 100;
+		let fParentSettleResetBaccarat = 100;
 		let fParentSettlePBA = 100;
 		let fParentSettlePBB = 100;
 
 		console.log(`Agent Length : ${agents.length}`);
 
 		let fSettleBaccaratParent = 0.0;
-		let fSettleSlotParent = 0.0;
+		let fSettleResetBaccaratParent = 0.0;
 		let fSettlePBAParent = 0.0;
 		let fSettlePBBParent = 0.0;
 
@@ -583,13 +588,13 @@
 			const element = agents[i];
 
 			let fSettleBaccarat = parseFloat($(`#fSettleBaccarat${element.id}`).val());
-			let fSettleSlot = parseFloat($(`#fSettleSlot${element.id}`).val());
+			let fSettleResetBaccarat = parseFloat($(`#fSettleResetBaccarat${element.id}`).val());
 			let fSettlePBA = 0.0;
 			let fSettlePBB = 0.0;
 			let iClass = parseInt($(`#iClass${element.id}`).val());
 
 			fSettleBaccaratParent = fSettleBaccarat;
-			fSettleSlotParent = fSettleSlot;
+			fSettleResetBaccaratParent = fSettleResetBaccarat;
 			fSettlePBAParent = fSettlePBA;
 			fSettlePBBParent = fSettlePBB;
 
@@ -598,12 +603,12 @@
 				list.push(element.id);
 				list.push(iClass);
 				list.push(fSettleBaccarat);
-				list.push(fSettleSlot);
+				list.push(fSettleResetBaccarat);
 				list.push(fSettlePBA);
 				list.push(fSettlePBB);
 
 				fParentSettleBaccarat = fSettleBaccarat;
-				fParentSettleSlot = fSettleSlot;
+				fParentSettleResetBaccarat = fSettleResetBaccarat;
 				fParentSettlePBA = fSettlePBA;
 				fParentSettlePBB = fSettlePBB;
 			}
@@ -638,7 +643,7 @@
 		});
 	}
 	// 죽장 적용
-	let RequestApplySettle = () => {
+	let RequestMakeSettle = () => {
 		if (bSending) {
 			alert('처리중입니다.');
 			closeAlertModal();
@@ -646,7 +651,7 @@
 		}
 		bSending = true;
 
-		let ok = confirm('죽장 정산을 하시겠습니까?');
+		let ok = confirm('죽장 데이터를 생성 하시겠습니까?');
 		if (ok != true) {
 			bSending = false;
 			return;
@@ -659,7 +664,7 @@
 		}
 
 		$.ajax({
-			url:'/manage_settle/applysettle',
+			url:'/manage_settle/make_settle',
 			type:"POST",
 			data:{
 				strGroupID:user.strGroupID,
@@ -683,15 +688,68 @@
 				console.log(obj);
 				if ( obj.result == 'OK')
 				{
-					alert('정산이 완료 되었습니다.');
+					alert('죽장 데이터 생성이 완료 되었습니다.');
 					iCurrentPage = 1;
-					RequestList(user.strGroupID, strQuater, dateQuaterStart, dateQuaterEnd, iViewClass);
+					OnClickPage(1);
 				}
 				else if ( obj.result == 'EXIST' )
 				{
 					alert('이미 정산된 파트너 입니다.');
 					iCurrentPage = 1;
-					RequestList(user.strGroupID, strQuater, dateQuaterStart, dateQuaterEnd, iViewClass);
+					OnClickPage(1);
+				}
+				else
+				{
+					alert(obj.msg);
+				}
+			}
+		});
+	}
+
+	let RequestApplySettle = () => {
+		if (bSending) {
+			alert('처리중입니다.');
+			closeAlertModal();
+			return;
+		}
+		bSending = true;
+
+		let ok = confirm('죽장을 지급 하시겠습니까?');
+		if (ok != true) {
+			bSending = false;
+			return;
+		}
+		openAlertModal();
+
+		let ids = '';
+		for (let i in checkIdList) {
+			ids = ids == '' ? checkIdList[i] : `${ids},${checkIdList[i]}`;
+		}
+
+		$.ajax({
+			url:'/manage_settle/apply_settle',
+			type:"POST",
+			data:{
+				iClass: iViewClass,
+				checkIdList:ids,
+			},
+			dataType: "json",
+			success: function (obj) {
+				bSending = false;
+				closeAlertModal();
+
+				console.log(obj);
+				if ( obj.result == 'OK')
+				{
+					alert('죽장 지급이 완료 되었습니다.');
+					iCurrentPage = 1;
+					OnClickPage(1);
+				}
+				else if ( obj.result == 'EXIST' )
+				{
+					alert('이미 정산된 파트너 입니다.');
+					iCurrentPage = 1;
+					OnClickPage(1);
 				}
 				else
 				{
@@ -807,7 +865,7 @@
 				</td>
 
 				<td style="background-color:${color};"  class="parent_row_31">
-				<input type="text" style="width:50%;" name="bakara_over_31" id="fSettleSlot${aObject.strNickname}" required="no" message="죽장" value=${aObject.fSettleSlot ?? 0} ${tagoption}>
+				<input type="text" style="width:50%;" name="bakara_over_31" id="fSettleResetBaccarat${aObject.strNickname}" required="no" message="죽장" value=${aObject.fSettleResetBaccarat ?? 0} ${tagoption}>
 				%
 				</td>
 				`;
@@ -905,7 +963,7 @@
 				</td>
 
 				<td style="background-color:${color};"  class="parent_row_31">
-				<input type="text" style="width:50%;" name="bakara_over_31" id="fSettleSlot${aObject.strNickname}" required="no" message="죽장" value=${aObject.fSettleSlot ?? 0} ${tagoption}>
+				<input type="text" style="width:50%;" name="bakara_over_31" id="fSettleResetBaccarat${aObject.strNickname}" required="no" message="죽장" value=${aObject.fSettleResetBaccarat ?? 0} ${tagoption}>
 				%
 				</td>
 				`;
@@ -916,8 +974,10 @@
 				`;
 		}
 
-		subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetColor(aObject.iTotal)}" id='total_${aObject.strNickname}'>${GetNumber(aObject.iTotal)}</font></td>`;
-		subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetColor(aObject.iBaccaratWinLose+aObject.iUnderOverWinLose)}" id='bwinlose_${aObject.strNickname}'>${GetNumber((aObject.iBaccaratWinLose+aObject.iUnderOverWinLose))}</font></td>`;
+		let iBaccaratWinLose = parseFloat(aObject.iBaccaratWinLose) + parseFloat(aObject.iUnderOverWinLose);
+
+		subtag += `<td style="background-color:${color};"  class="parent_row_31"><a><font color="${GetColor(aObject.iTotal)}" id='total_${aObject.strNickname}'>${GetNumber(aObject.iTotal)}</font></a></td>`;
+		subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetColor(iBaccaratWinLose)}" id='bwinlose_${aObject.strNickname}'>${GetNumber((iBaccaratWinLose))}</font></td>`;
 		subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetColor(aObject.iSlotWinLose)}" id='swinlose_${aObject.strNickname}'>${GetNumber((aObject.iSlotWinLose))}</font></td>`;
 		// 부본 죽장
 		subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetInversedColor(aObject.iSettleVice)}" id='settleevice_${aObject.strNickname}'>${GetNumber((aObject.iSettleVice))}</font></td>`;

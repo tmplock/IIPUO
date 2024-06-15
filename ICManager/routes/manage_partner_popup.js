@@ -316,7 +316,7 @@ router.post('/settingodds', isLoggedIn, async (req, res) => {
 
     const user = {fSlotR: dbuser.fSlotR, fBaccaratR: dbuser.fBaccaratR, fUnderOverR: dbuser.fUnderOverR,
         fPBR:dbuser.fPBR, fPBSingleR:dbuser.fPBSingleR, fPBDoubleR:dbuser.fPBDoubleR, fPBTripleR:dbuser.fPBTripleR,
-        fSettleSlot:dbuser.fSettleSlot, fSettleBaccarat:dbuser.fSettleBaccarat, fSettlePBA:dbuser.fSettlePBA, fSettlePBB:dbuser.fSettlePBB
+        fSettleResetBaccarat:dbuser.fSettleResetBaccarat, fSettleBaccarat:dbuser.fSettleBaccarat, fSettlePBA:dbuser.fSettlePBA, fSettlePBB:dbuser.fSettlePBB
     };
 
     res.render('manage_partner/popup_settingodds', {iLayout:1, iHeaderFocus:0, agent:agent, user:user});
@@ -441,7 +441,7 @@ router.post('/registeragent_view', isLoggedIn, async(req, res) => {
         SELECT u.id, u.strID, u.strNickname, u.iClass, u.iPermission, u.strGroupID, u.iParentID,
             u.iCash, u.iRolling, u.iSettle, u.iSettleAcc, u.iSettleAccBefore,
             u.fBaccaratR, u.fSlotR, u.fUnderOverR, u.fPBR, u.fPBSingleR, u.fPBDoubleR, u.fPBTripleR,
-            u.fSettleBaccarat, u.fSettleSlot, u.fSettlePBA, u.fSettlePBB, u.createdAt, u.updatedAt,
+            u.fSettleBaccarat, u.fSettleResetBaccarat, u.fSettlePBA, u.fSettlePBB, u.createdAt, u.updatedAt,
             u.eState, u.strIP, u.strOptionCode, u.strSettleMemo, u.iRelUserID, u.fCommission, u.iPassCheckNewUser
         FROM Users u
         WHERE u.iClass = ${req.body.iAgentClass}
@@ -467,7 +467,7 @@ router.post('/readagent_view', isLoggedIn, async(req, res) => {
         SELECT u.id, u.strID, u.strNickname, u.iClass, u.iPermission, u.strGroupID, u.iParentID,
             u.iCash, u.iRolling, u.iSettle, u.iSettleAcc, u.iSettleAccBefore,
             u.fBaccaratR, u.fSlotR, u.fUnderOverR, u.fPBR, u.fPBSingleR, u.fPBDoubleR, u.fPBTripleR,
-            u.fSettleBaccarat, u.fSettleSlot, u.fSettlePBA, u.fSettlePBB, u.createdAt, u.updatedAt,
+            u.fSettleBaccarat, u.fSettleResetBaccarat, u.fSettlePBA, u.fSettlePBB, u.createdAt, u.updatedAt,
             u.eState, u.strIP, u.strOptionCode, u.strSettleMemo, u.iRelUserID, u.fCommission, u.iPassCheckNewUser
         FROM Users u
         WHERE u.iClass = ${user.iClass}
@@ -556,8 +556,8 @@ router.post('/request_register_view', isLoggedIn, async(req, res) => {
                 fPBSingleR:user.fPBSingleR,
                 fPBDoubleR:user.fPBDoubleR,
                 fPBTripleR:user.fPBTripleR,
-                fSettleSlot:user.fSettleBaccarat,
-                fSettleBaccarat:user.fSettleSlot,
+                fSettleResetBaccarat:user.fSettleResetBaccarat,
+                fSettleBaccarat:user.fSettleBaccarat,
                 fSettlePBA:user.fSettlePBA,
                 fSettlePBB:user.fSettlePBB,
                 eState:'BLOCK',
@@ -621,7 +621,7 @@ router.post('/request_parentenablelist', isLoggedIn, async(req, res) => {
         SELECT u.id, u.strID, u.strNickname, u.iClass, u.iPermission, u.strGroupID, u.iParentID,
             u.iCash, u.iRolling, u.iSettle, u.iSettleAcc, u.iSettleAccBefore,
             u.fBaccaratR, u.fSlotR, u.fUnderOverR, u.fPBR, u.fPBSingleR, u.fPBDoubleR, u.fPBTripleR,
-            u.fSettleBaccarat, u.fSettleSlot, u.fSettlePBA, u.fSettlePBB, u.createdAt, u.updatedAt,
+            u.fSettleBaccarat, u.fSettleResetBaccarat, u.fSettlePBA, u.fSettlePBB, u.createdAt, u.updatedAt,
             u.eState, u.strIP, u.strOptionCode, u.strSettleMemo, u.iRelUserID, u.fCommission, u.iPassCheckNewUser
         FROM Users u
         WHERE u.iClass = ${parseInt(req.body.iRegisterClass)-1}
@@ -818,8 +818,8 @@ router.post('/request_register', isLoggedIn, async(req, res) => {
         let fSettleBaccarat = parseFloat(req.body.fSettleBaccarat ?? 0);
         fSettleBaccarat = Number.isNaN(fSettleBaccarat) ? 0 : fSettleBaccarat;
 
-        let fSettleSlot = parseFloat(req.body.fSettleSlot ?? 0);
-        fSettleSlot = Number.isNaN(fSettleSlot) ? 0 : fSettleSlot;
+        let fSettleResetBaccarat = parseFloat(req.body.fSettleResetBaccarat ?? 0);
+        fSettleResetBaccarat = Number.isNaN(fSettleResetBaccarat) ? 0 : fSettleResetBaccarat;
 
         let fBaccaratR = parseFloat(req.body.fBaccaratR ?? 0);
         fBaccaratR = Number.isNaN(fBaccaratR) ? 0 : fBaccaratR;
@@ -838,7 +838,7 @@ router.post('/request_register', isLoggedIn, async(req, res) => {
             return;
         }
 
-        if (fSettleSlot < 0 || fSettleBaccarat < 0) {
+        if (fSettleResetBaccarat < 0 || fSettleBaccarat < 0) {
             res.send({result:'Error', error:'Settle', string:'죽장 설정값을 확인해주세요'});
             return;
         }
@@ -857,10 +857,16 @@ router.post('/request_register', isLoggedIn, async(req, res) => {
                 res.send({result:'Error', error:'Rolling', string:'롤링비(%)는 상위 에이전트 보다 클 수 없습니다.'});
                 return;
             }
-            else if (parent.iClass == 3 || parent.iClass == 4 || parent.iClass == 5) {
-                if (parent.fSettleBaccarat < fSettleBaccarat || parent.fSettleSlot < fSettleSlot) {
-                    res.send({result:'Error', error:'Settle', string:'죽장(%)은 상위 에이전트 보다 클 수 없습니다.'});
-                    return;
+
+            // 죽장은 본사 ~ 대본만 체크
+            // 본사가 누적이면 하위는 모두 누적이어야 함, 하위 죽장률 체크 필요
+            // 본사가 리셋이면 하위는 모두 리셋이어야 함, 하위 죽장률 체크 불필요
+            if (iSettleType != 1) {
+                if (parent.iClass == 3 || parent.iClass == 4 || parent.iClass == 5) {
+                    if (parent.fSettleBaccarat < fSettleBaccarat) {
+                        res.send({result:'Error', error:'Settle', string:'죽장(%)은 상위 에이전트 보다 클 수 없습니다.'});
+                        return;
+                    }
                 }
             }
         }
@@ -970,7 +976,7 @@ router.post('/request_register', isLoggedIn, async(req, res) => {
                 fBaccaratR:fBaccaratR,
                 fSlotR:fSlotR,
                 fUnderOverR:fUnderOverR,
-                fSettleSlot:fSettleSlot,
+                fSettleResetBaccarat:fSettleResetBaccarat,
                 fSettleBaccarat:fSettleBaccarat,
                 eState:eState,
                 //strOptionCode:'00000000',
@@ -1203,8 +1209,8 @@ router.post('/request_settingodds', isLoggedIn, async (req, res) => {
     let fRollingUnderOver = parseFloat(req.body.fRollingUnderOver);
     fRollingUnderOver = Number.isNaN(fRollingUnderOver) ? 0 : fRollingUnderOver;
 
-    let fSettleSlot = parseFloat(req.body.fSettleSlot);
-    fSettleSlot = Number.isNaN(fSettleSlot) ? 0 : fSettleSlot;
+    let fSettleResetBaccarat = parseFloat(req.body.fSettleResetBaccarat);
+    fSettleResetBaccarat = Number.isNaN(fSettleResetBaccarat) ? 0 : fSettleResetBaccarat;
 
     let fSettleBaccarat = parseFloat(req.body.fSettleBaccarat);
     fSettleBaccarat = Number.isNaN(fSettleBaccarat) ? 0 : fSettleBaccarat;
@@ -1277,7 +1283,7 @@ router.post('/request_settingodds', isLoggedIn, async (req, res) => {
             fBaccaratR:fRollingBaccarat,
             fSlotR:fRollingSlot,
             fUnderOverR:fRollingUnderOver,
-            fSettleSlot:fSettleSlot,
+            fSettleResetBaccarat:fSettleResetBaccarat,
             fSettleBaccarat:fSettleBaccarat,
         }, {where:{id:users[i].id}});
     }
@@ -1404,8 +1410,8 @@ router.post('/request_agentinfo_modify', isLoggedIn, async (req, res) => {
     let fSettleBaccarat = parseFloat(req.body.fSettleBaccarat ?? 0);
     fSettleBaccarat = Number.isNaN(fSettleBaccarat) ? 0 : fSettleBaccarat;
 
-    let fSettleSlot = parseFloat(req.body.fSettleSlot ?? 0);
-    fSettleSlot = Number.isNaN(fSettleSlot) ? 0 : fSettleSlot;
+    let fSettleResetBaccarat = parseFloat(req.body.fSettleResetBaccarat ?? 0);
+    fSettleResetBaccarat = Number.isNaN(fSettleResetBaccarat) ? 0 : fSettleResetBaccarat;
 
     let fSlotR = parseFloat(req.body.fSlotR ?? 0);
     fSlotR = Number.isNaN(fSlotR) ? 0 : fSlotR;
@@ -1420,15 +1426,16 @@ router.post('/request_agentinfo_modify', isLoggedIn, async (req, res) => {
     iPassCheckNewUser = Number.isNaN(iPassCheckNewUser) ? 1 : iPassCheckNewUser;
 
     let iSettleDays = parseInt(req.body.iSettleDays ?? 15);
-    iSettleDays = Number.isNaN(iSettleDays) ? null : iSettleDays;
+    iSettleDays = Number.isNaN(iSettleDays) ? 15 : iSettleDays;
     let iSettleType = parseInt(req.body.iSettleType ?? 0);
-    iSettleType = Number.isNaN(iSettleType) ? null : iSettleType;
+    iSettleType = Number.isNaN(iSettleType) ? 0 : iSettleType;
 
     if (fSlotR < 0 || fBaccaratR < 0 || fUnderOverR < 0) {
         strErrorCode = 'ERRORMSG';
         res.send({result:'ERROR', code:strErrorCode, msg: '롤링 설정값을 확인해주세요'});
         return;
     }
+
 
     if ( null != user )
     {
@@ -1556,21 +1563,20 @@ router.post('/request_agentinfo_modify', isLoggedIn, async (req, res) => {
                     console.log(`########## ModifyAgentInfo : Error Parent`);
                     bUpdate = false;
                     strErrorCode = 'GreaterThanParent';
-                    res.send({result:'ERROR', code:strErrorCode});
+                    res.send({result:'ERRORMSG', code:'ERRORMSG', msg: `롤링값은 ${parent.strNickname}의 롤링보다 커서 변경 할 수 없습니다.`});
                     return;
                 }
 
                 // 죽장은 본사 ~ 대본만 체크
                 if (parent.iClass == 3 || parent.iClass == 4 || parent.iClass == 5) {
                     if (
-                        parent.fSettleBaccarat < fSettleBaccarat ||
-                        parent.fSettleSlot < fSettleSlot
+                        parent.fSettleBaccarat < fSettleBaccarat
                     )
                     {
                         console.log(`########## ModifyAgentInfo : Error Parent`);
                         bUpdate = false;
                         strErrorCode = 'GreaterThanParent';
-                        res.send({result:'ERROR', code:strErrorCode});
+                        res.send({result:'ERROR', code:'ERRORMSG', msg: `죽장값은 ${parent.strNickname}의 죽장보다 커서 변경 할 수 없습니다.`});
                         return;
                     }
                 }
@@ -1605,28 +1611,31 @@ router.post('/request_agentinfo_modify', isLoggedIn, async (req, res) => {
                 }
 
                 // 죽장은 본사 ~ 대본만 체크
-                if (child.iClass == 4 || child.iClass == 5 || child.iClass == 6) {
-                    if (
-                        child.fSettleBaccarat > fSettleBaccarat ||
-                        child.fSettleSlot > fSettleSlot
-                    )
-                    {
-                        console.log(`########## ModifyAgentInfo : Error Children`);
-                        bUpdate = false;
-                        strErrorCode = 'LessThanChild';
-                        res.send({result:'ERROR', code:strErrorCode});
-                        return;
-                    }
-                    if (iSettleDays == null) {
-                        strErrorCode = 'ERRORMSG';
-                        res.send({result:'ERROR', code:strErrorCode, msg: '죽장일자를 확인해주세요'});
-                        return;
-                    }
+                // 본사가 누적이면 하위는 모두 누적이어야 함, 하위 죽장률 체크 필요
+                // 본사가 리셋이면 하위는 모두 리셋이어야 함, 하위 죽장률 체크 불필요
+                if (iSettleType != 1) {
+                    if (child.iClass == 4 || child.iClass == 5 || child.iClass == 6) {
+                        if (
+                            child.fSettleBaccarat > fSettleBaccarat
+                        )
+                        {
+                            console.log(`########## ModifyAgentInfo : Error Children`);
+                            bUpdate = false;
+                            strErrorCode = 'LessThanChild';
+                            res.send({result:'ERROR', code:strErrorCode});
+                            return;
+                        }
+                        if (iSettleDays == null) {
+                            strErrorCode = 'ERRORMSG';
+                            res.send({result:'ERROR', code:strErrorCode, msg: '죽장일자를 확인해주세요'});
+                            return;
+                        }
 
-                    if (iSettleType == null) {
-                        strErrorCode = 'ERRORMSG';
-                        res.send({result:'ERROR', code:strErrorCode, msg: '죽장일자를 확인해주세요'});
-                        return;
+                        if (iSettleType == null) {
+                            strErrorCode = 'ERRORMSG';
+                            res.send({result:'ERROR', code:strErrorCode, msg: '죽장일자를 확인해주세요'});
+                            return;
+                        }
                     }
                 }
             }
@@ -1643,7 +1652,7 @@ router.post('/request_agentinfo_modify', isLoggedIn, async (req, res) => {
                 fBaccaratR:fBaccaratR,
                 fUnderOverR:fUnderOverR,
                 fSettleBaccarat:fSettleBaccarat,
-                fSettleSlot:fSettleSlot,
+                fSettleResetBaccarat:fSettleResetBaccarat,
                 iPermission:0,
                 iPassCheckNewUser:iPassCheckNewUser,
                 iSettleDays:iSettleDays,
@@ -1726,21 +1735,6 @@ router.post('/request_agentinfo_modify', isLoggedIn, async (req, res) => {
             }
 
             await db.Users.update(data, {where: {id:user.id}});
-
-            //  현재 정책상 본사일 경우만 롤링을 수정할 수 있다. 아래의 코드는 하위 에이전트 전체를 같은 값으로 세팅 하는 것이다.
-            if ( req.user.iClass == 3 && user.iClass != 8 )
-            {
-                let children = await db.Users.findAll({
-                    where:{
-                        strGroupID:{
-                            [Op.like]:user.strGroupID+'%'
-                        },
-                        iPermission: {
-                            [Op.notIn]: [100]
-                        },
-                    }
-                });
-            }
 
             if ( (req.body.strNickname != user.strNickname || req.body.strID != user.strID) && bUpdate == true )
             {
@@ -1884,18 +1878,18 @@ const logMessage = (source, data) => {
     if (data.hasOwnProperty('fSettleBaccarat')) {
         if (source.fSettleBaccarat != data.fSettleBaccarat) {
             if (msg == '')
-                msg = `바카라 죽장 변경(${source.fSettleBaccarat}=>${data.fSettleBaccarat})`;
+                msg = `누적 죽장 변경(${source.fSettleBaccarat}=>${data.fSettleBaccarat})`;
             else
-                msg = `${msg} | 바카라 죽장 변경(${source.fSettleBaccarat}=>${data.fSettleBaccarat})`;
+                msg = `${msg} | 누적 죽장 변경(${source.fSettleBaccarat}=>${data.fSettleBaccarat})`;
         }
     }
 
-    if (data.hasOwnProperty('fSettleSlot')) {
-        if (source.fSettleSlot != data.fSettleSlot) {
+    if (data.hasOwnProperty('fSettleResetBaccarat')) {
+        if (source.fSettleResetBaccarat != data.fSettleResetBaccarat) {
             if (msg == '')
-                msg = `슬롯 죽장 변경(${source.fSettleSlot}=>${data.fSettleSlot})`;
+                msg = `리셋 죽장 변경(${source.fSettleResetBaccarat}=>${data.fSettleResetBaccarat})`;
             else
-                msg = `${msg} | 슬롯 죽장 변경(${source.fSettleSlot}=>${data.fSettleSlot})`;
+                msg = `${msg} | 리셋 죽장 변경(${source.fSettleResetBaccarat}=>${data.fSettleResetBaccarat})`;
         }
     }
 
@@ -2094,7 +2088,7 @@ let GetViceHQs = async (strGroupID) => {
             id, strID, strNickname, iClass, iPermission, strGroupID, iParentID,
             iCash, iRolling, iSettle, iSettleAcc, iSettleAccBefore, 
             fBaccaratR, fSlotR, fUnderOverR, fPBR, fPBSingleR, fPBDoubleR, fPBTripleR,
-            fSettleBaccarat, fSettleSlot, fSettlePBA, fSettlePBB, createdAt, updatedAt,
+            fSettleBaccarat, fSettleResetBaccarat, fSettlePBA, fSettlePBB, createdAt, updatedAt,
             eState, strIP, strOptionCode, strSettleMemo, iRelUserID, fCommission, iPassCheckNewUser
         FROM Users
         WHERE iClass = 2 
@@ -2115,7 +2109,7 @@ let GetAdmins = async (strGroupID, strQuater) => {
             id, strID, strNickname, iClass, iPermission, strGroupID, iParentID,
             iCash, iRolling, iSettle, iSettleAcc, iSettleAccBefore, 
             fBaccaratR, fSlotR, fUnderOverR, fPBR, fPBSingleR, fPBDoubleR, fPBTripleR,
-            fSettleBaccarat, fSettleSlot, fSettlePBA, fSettlePBB, createdAt, updatedAt,
+            fSettleBaccarat, fSettleResetBaccarat, fSettlePBA, fSettlePBB, createdAt, updatedAt,
             eState, strIP, strOptionCode, strSettleMemo, iRelUserID, fCommission, iPassCheckNewUser
         FROM Users
         WHERE iClass = 3 
@@ -2137,7 +2131,7 @@ let GetProAdmins = async (strGroupID, strQuater) => {
             id, strID, strNickname, iClass, iPermission, strGroupID, iParentID,
             iCash, iRolling, iSettle, iSettleAcc, iSettleAccBefore, 
             fBaccaratR, fSlotR, fUnderOverR, fPBR, fPBSingleR, fPBDoubleR, fPBTripleR,
-            fSettleBaccarat, fSettleSlot, fSettlePBA, fSettlePBB, createdAt, updatedAt,
+            fSettleBaccarat, fSettleResetBaccarat, fSettlePBA, fSettlePBB, createdAt, updatedAt,
             eState, strIP, strOptionCode, strSettleMemo, iRelUserID, fCommission, iPassCheckNewUser
         FROM Users
         WHERE iClass = 4
@@ -2153,7 +2147,7 @@ let GetAgent = async (strNickname, iClass) => {
             id, strID, strNickname, iClass, iPermission, strGroupID, iParentID,
             iCash, iRolling, iSettle, iSettleAcc, iSettleAccBefore, 
             fBaccaratR, fSlotR, fUnderOverR, fPBR, fPBSingleR, fPBDoubleR, fPBTripleR,
-            fSettleBaccarat, fSettleSlot, fSettlePBA, fSettlePBB, createdAt, updatedAt,
+            fSettleBaccarat, fSettleResetBaccarat, fSettlePBA, fSettlePBB, createdAt, updatedAt,
             eState, strIP, strOptionCode, strSettleMemo, iRelUserID, fCommission, iPassCheckNewUser
         FROM Users
         WHERE iClass = ${iClass}

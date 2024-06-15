@@ -123,13 +123,13 @@
 		</colgroup>
 		<p style="background-repeat:no-repeat; background-position:left center; font-size:16px; color:#454545; padding-left:22px;">죽장 설정</p>
 		<tr>
-			<th scope="row">바카라 죽장</th>
+			<th scope="row">누적 죽장</th>
 			<td>
 				<input type="text" style="width:30%;" name="bank_password" id="fSettleBaccarat" required="no"  message="" value="">
 			</td>
-			<th scope="row">슬롯 죽장</th>
+			<th scope="row">리셋 죽장</th>
 			<td>
-				<input type="text" style="width:30%;" name="bank_password" id="fSettleSlot" required="no"  message="" value="">
+				<input type="text" style="width:30%;" name="bank_password" id="fSettleResetBaccarat" required="no"  message="" value="">
 			</td>
 		</tr>
 	</table>
@@ -144,13 +144,13 @@
 			</colgroup>
 			<p style="background-repeat:no-repeat; background-position:left center; font-size:16px; color:#454545; padding-left:22px;">죽장 설정</p>
 			<tr>
-				<th scope="row">바카라 죽장</th>
+				<th scope="row">누적 죽장</th>
 				<td>
 					<input type="text" style="width:30%;" name="settle" id="fSettleBaccarat" required="no"  message="" value="" disabled>
 				</td>
-				<th scope="row">슬롯 죽장</th>
+				<th scope="row">리셋 죽장</th>
 				<td>
-					<input type="text" style="width:30%;" name="settle" id="fSettleSlot" required="no"  message="" value="" disabled>
+					<input type="text" style="width:30%;" name="bank_password" id="fSettleResetBaccarat" required="no"  message="" value="">
 				</td>
 			</tr>
 		</table>
@@ -326,8 +326,8 @@
 	let bCheckNickname = false;
 	let bUsingPC = false;
 	let bUsingPassNewUser = true;
-	let iSettleType = -1;
-	let iSettleDays = -1;
+	let iSettleType = 1;
+	let iSettleDays = 15;
 
 	$(document).ready( ()=> {
 
@@ -382,7 +382,7 @@
 
 		if (agent.iClass >= 3 && agent.iClass <= 5) {
 			$('#fSettleBaccarat').val(agent.fSettleBaccarat ?? 0);
-			$('#fSettleSlot').val(agent.fSettleSlot ?? 0);
+			$('#fSettleResetBaccarat').val(agent.fSettleResetBaccarat ?? 0);
 		}
 
 		if ( cUsingInput == 1 )
@@ -403,7 +403,7 @@
 		if (agent.iPermission == 100) {
 			["#member_nick", "#member_id",
 				"#member_password", '#member_password2', '#bank_owner', '#bank_name', '#bank_num', '#cell'
-				, '#fBaccaratR', '#fUnderOverR', '#fSlotR', '#fSettleBaccarat', '#fSettleSlot'
+				, '#fBaccaratR', '#fUnderOverR', '#fSlotR', '#fSettleBaccarat', '#fSettleResetBaccarat'
 				, '#using_input', '#using_output', '#using_pc', '#using_pass_new_user'
 			].forEach(item => {
 				$(item).get(0).disabled = true;
@@ -412,7 +412,7 @@
 		} else if ( parseInt(agent.iRootClass) == parseInt(agent.iClass) ) {
 			[
 				"#member_password", '#member_password2', '#bank_owner', '#bank_name', '#bank_num', '#cell'
-				, '#fBaccaratR', '#fUnderOverR', '#fSlotR', '#fSettleBaccarat', '#fSettleSlot'
+				, '#fBaccaratR', '#fUnderOverR', '#fSlotR', '#fSettleBaccarat', '#fSettleResetBaccarat'
 				, '#using_input', '#using_output', '#using_pc', '#using_pass_new_user'
 			].forEach(item => {
 				$(item).get(0).disabled = true;
@@ -457,7 +457,7 @@
 		checkBlockNum(`#fSlotR`);
 
 		checkBlockNum('#fSettleBaccarat');
-		checkBlockNum('#fSettleSlot');
+		checkBlockNum('#fSettleResetBaccarat');
 	});
 
 	let CheckID = () => {
@@ -678,7 +678,7 @@
 		let fPBDoubleR = agent.fPBDoubleR;
 		let fPBTripleR = agent.fPBTripleR;
 		let fSettleBaccarat = agent.fSettleBaccarat;
-		let fSettleSlot = agent.fSettleSlot;
+		let fSettleResetBaccarat = agent.fSettleResetBaccarat;
 		let fSettlePBA = agent.fSettlePBA;
 		let fSettlePBB = agent.fSettlePBB;
 		let iPBLimit = agent.iPBLimit;
@@ -696,7 +696,7 @@
 			fBaccaratR = $('#fBaccaratR').val();
 			fUnderOverR = $('#fUnderOverR').val();
 			fSettleBaccarat = $('#fSettleBaccarat').val();
-			fSettleSlot = $('#fSettleSlot').val();
+			fSettleResetBaccarat = $('#fSettleResetBaccarat').val();
 
 			let strUsingInput = $('#using_input').attr('checked');
 			let strUsingOutput = $('#using_output').attr('checked');
@@ -733,20 +733,10 @@
 			alert('롤링 설정값을 확인해주세요');
 			return;
 		}
-		if (parseFloat(fSettleBaccarat) < 0 || parseFloat(fSettleSlot) < 0) {
+		if (parseFloat(fSettleBaccarat) < 0 || parseFloat(fSettleResetBaccarat) < 0) {
 			alert('죽장 설정값을 확인해주세요');
 			return;
 		}
-
-		<% if (agent.iRootClass <= 3 && agent.iClass >= 3 && agent.iClass <= 5) { %>
-			if (iSettleDays == -1) {
-				alert('정산주기를 선택해주세요');
-				return;
-			} else if (iSettleType == -1) {
-				alert('리셋여부를 선택해주세요');
-				return;
-			}
-		<% } %>
 
 		objectData.strNickname = strNickname;
 		objectData.strMobile = strMobile;
@@ -764,7 +754,7 @@
 		objectData.fBaccaratR = fBaccaratR;
 		objectData.fUnderOverR = fUnderOverR;
 		objectData.fSettleBaccarat = fSettleBaccarat;
-		objectData.fSettleSlot = fSettleSlot;
+		objectData.fSettleResetBaccarat = fSettleResetBaccarat;
 		objectData.fSettlePBA = fSettlePBA;
 		objectData.fSettlePBB = fSettlePBB;
 		objectData.strEditorNickname = agent.iRootNickname;

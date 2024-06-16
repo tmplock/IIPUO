@@ -729,191 +729,6 @@ let FindIndexFromBettingRecord = (date, list) => {
 }
 
 /**
- * 본인 배팅 롤링
- * 유저팝업 > 본인배팅
- * 파트너팝업 > 본인배팅
- * */
-let GetClassSelfRolling = (daiyBetting, iClass, iGameCode) => {
-    let iRolling = 0;
-    switch ( parseInt(iClass) )
-    {
-        case EAgent.eHQ:
-            if (iGameCode == 0)
-                return 0;
-            else if (iGameCode == 100)
-                return 0;
-            else if (iGameCode == 200)
-                return 0;
-            else if (iGameCode == 300)
-                return 0;
-            break;
-        case EAgent.eViceHQ:
-            if (iGameCode == 0)
-                return 0;
-            else if (iGameCode == 100)
-                return 0;
-            else if (iGameCode == 200)
-                return 0;
-            else if (iGameCode == 300)
-                return 0;
-            break;
-        case EAgent.eAdmin: //  Admin
-            if (iGameCode == 0)
-                return daiyBetting.iSelfBRollingVAdmin;
-            else if (iGameCode == 100)
-                return daiyBetting.iSelfUORollingVAdmin;
-            else if (iGameCode == 200)
-                return daiyBetting.iSelfSlotRollingVAdmin;
-            else if (iGameCode == 300)
-                return daiyBetting.iSelfPBRollingVAdmin;
-            break;
-        case EAgent.eProAdmin: //  PAdmin
-            if (iGameCode == 0)
-                return daiyBetting.iSelfBRollingPAdmin;
-            else if (iGameCode == 100)
-                return daiyBetting.iSelfUORollingPAdmin;
-            else if (iGameCode == 200)
-                return daiyBetting.iSelfSlotRollingPAdmin;
-            else if (iGameCode == 300)
-                return daiyBetting.iSelfPBRollingPAdmin;
-            break;
-        case EAgent.eViceAdmin: //  VAdmin
-            if (iGameCode == 0)
-                return daiyBetting.iSelfBRollingVAdmin;
-            else if (iGameCode == 100)
-                return daiyBetting.iSelfUORollingVAdmin;
-            else if (iGameCode == 200)
-                return daiyBetting.iSelfSlotRollingVAdmin;
-            else if (iGameCode == 300)
-                return daiyBetting.iSelfPBRollingVAdmin;
-            break;
-        case EAgent.eAgent: //  Agent
-            if (iGameCode == 0)
-                return daiyBetting.iSelfBRollingAgent;
-            else if (iGameCode == 100)
-                return daiyBetting.iSelfUORollingAgent;
-            else if (iGameCode == 200)
-                return daiyBetting.iSelfSlotRollingAgent;
-            else if (iGameCode == 300)
-                return daiyBetting.iSelfPBRollingAgent;
-            break;
-        case EAgent.eShop: //  Shop
-            if (iGameCode == 0)
-                return daiyBetting.iSelfBRollingShop;
-            else if (iGameCode == 100)
-                return daiyBetting.iSelfUORollingShop;
-            else if (iGameCode == 200)
-                return daiyBetting.iSelfSlotRollingShop;
-            else if (iGameCode == 300)
-                return daiyBetting.iSelfPBRollingShop;
-            break;
-        case EAgent.eUser: //  User
-            if (iGameCode == 0)
-                return daiyBetting.iSelfBRollingUser;
-            else if (iGameCode == 100)
-                return daiyBetting.iSelfUORollingUser;
-            else if (iGameCode == 200)
-                return daiyBetting.iSelfSlotRollingUser;
-            else if (iGameCode == 300)
-                return daiyBetting.iSelfPBRollingUser;
-            break;
-    }
-    return 0;
-}
-
-/**
- * 본인 + 하위 파트너 배팅 롤링
- * 파트너팝업 > 회원
- * */
-let GetClassRolling = (daiyBetting, iClass, iGameCode) => {
-    let iRolling = 0;
-    switch ( parseInt(iClass) )
-    {
-        case EAgent.eHQ:
-            if (iGameCode == 0)
-                return daiyBetting.iBRollingPAdmin + daiyBetting.iBRollingVAdmin + daiyBetting.iBRollingAgent + daiyBetting.iBRollingShop + daiyBetting.iBRollingUser;
-            else if (iGameCode == 100)
-                return daiyBetting.iUORollingPAdmin + daiyBetting.iUORollingVAdmin + daiyBetting.iUORollingAgent + daiyBetting.iUORollingShop + daiyBetting.iUORollingUser;
-            else if (iGameCode == 200)
-                return daiyBetting.iSlotRollingPAdmin + daiyBetting.iSlotRollingVAdmin + daiyBetting.iSlotRollingAgent + daiyBetting.iSlotRollingShop + daiyBetting.iSlotRollingUser;
-            else if (iGameCode == 300)
-                return daiyBetting.iPBRollingPAdmin + daiyBetting.iPBRollingVAdmin + daiyBetting.iPBRollingAgent + daiyBetting.iPBRollingShop + daiyBetting.iPBRollingUser;
-            break;
-        case EAgent.eViceHQ:
-            if (iGameCode == 0)
-                return daiyBetting.iBRollingPAdmin + daiyBetting.iBRollingVAdmin + daiyBetting.iBRollingAgent + daiyBetting.iBRollingShop + daiyBetting.iBRollingUser;
-            else if (iGameCode == 100)
-                return daiyBetting.iUORollingPAdmin + daiyBetting.iUORollingVAdmin + daiyBetting.iUORollingAgent + daiyBetting.iUORollingShop + daiyBetting.iUORollingUser;
-            else if (iGameCode == 200)
-                return daiyBetting.iSlotRollingPAdmin + daiyBetting.iSlotRollingVAdmin + daiyBetting.iSlotRollingAgent + daiyBetting.iSlotRollingShop + daiyBetting.iSlotRollingUser;
-            else if (iGameCode == 300)
-                return daiyBetting.iPBRollingPAdmin + daiyBetting.iPBRollingVAdmin + daiyBetting.iPBRollingAgent + daiyBetting.iPBRollingShop + daiyBetting.iPBRollingUser;
-            break;
-        case EAgent.eAdmin: //  Admin
-            if (iGameCode == 0)
-                return daiyBetting.iBRollingPAdmin + daiyBetting.iBRollingVAdmin + daiyBetting.iBRollingAgent + daiyBetting.iBRollingShop + daiyBetting.iBRollingUser;
-            else if (iGameCode == 100)
-                return daiyBetting.iUORollingPAdmin + daiyBetting.iUORollingVAdmin + daiyBetting.iUORollingAgent + daiyBetting.iUORollingShop + daiyBetting.iUORollingUser;
-            else if (iGameCode == 200)
-                return daiyBetting.iSlotRollingPAdmin + daiyBetting.iSlotRollingVAdmin + daiyBetting.iSlotRollingAgent + daiyBetting.iSlotRollingShop + daiyBetting.iSlotRollingUser;
-            else if (iGameCode == 300)
-                return daiyBetting.iPBRollingPAdmin + daiyBetting.iPBRollingVAdmin + daiyBetting.iPBRollingAgent + daiyBetting.iPBRollingShop + daiyBetting.iPBRollingUser;
-            break;
-        case EAgent.eProAdmin: //  PAdmin
-            if (iGameCode == 0)
-                return daiyBetting.iBRollingPAdmin + daiyBetting.iBRollingVAdmin + daiyBetting.iBRollingAgent + daiyBetting.iBRollingShop + daiyBetting.iBRollingUser;
-            else if (iGameCode == 100)
-                return daiyBetting.iUORollingPAdmin + daiyBetting.iUORollingVAdmin + daiyBetting.iUORollingAgent + daiyBetting.iUORollingShop + daiyBetting.iUORollingUser;
-            else if (iGameCode == 200)
-                return daiyBetting.iSlotRollingPAdmin + daiyBetting.iSlotRollingVAdmin + daiyBetting.iSlotRollingAgent + daiyBetting.iSlotRollingShop + daiyBetting.iSlotRollingUser;
-            else if (iGameCode == 300)
-                return daiyBetting.iPBRollingPAdmin + daiyBetting.iPBRollingVAdmin + daiyBetting.iPBRollingAgent + daiyBetting.iPBRollingShop + daiyBetting.iPBRollingUser;
-            break;
-        case EAgent.eViceAdmin: //  VAdmin
-            if (iGameCode == 0)
-                return daiyBetting.iBRollingVAdmin + daiyBetting.iBRollingAgent + daiyBetting.iBRollingShop + daiyBetting.iBRollingUser;
-            else if (iGameCode == 100)
-                return daiyBetting.iUORollingVAdmin + daiyBetting.iUORollingAgent + daiyBetting.iUORollingShop + daiyBetting.iUORollingUser;
-            else if (iGameCode == 200)
-                return daiyBetting.iSlotRollingVAdmin + daiyBetting.iSlotRollingAgent + daiyBetting.iSlotRollingShop + daiyBetting.iSlotRollingUser;
-            else if (iGameCode == 300)
-                return daiyBetting.iPBRollingVAdmin + daiyBetting.iPBRollingAgent + daiyBetting.iPBRollingShop + daiyBetting.iPBRollingUser;
-            break;
-        case EAgent.eAgent: //  Agent
-            if (iGameCode == 0)
-                return daiyBetting.iBRollingAgent + daiyBetting.iBRollingShop + daiyBetting.iBRollingUser;
-            else if (iGameCode == 100)
-                return daiyBetting.iUORollingAgent + daiyBetting.iUORollingShop + daiyBetting.iUORollingUser;
-            else if (iGameCode == 200)
-                return daiyBetting.iSlotRollingAgent + daiyBetting.iSlotRollingShop + daiyBetting.iSlotRollingUser;
-            else if (iGameCode == 300)
-                return daiyBetting.iPBRollingAgent + daiyBetting.iPBRollingShop + daiyBetting.iPBRollingUser;
-            break;
-        case EAgent.eShop: //  Shop
-            if (iGameCode == 0)
-                return daiyBetting.iBRollingShop + daiyBetting.iBRollingUser;
-            else if (iGameCode == 100)
-                return daiyBetting.iUORollingShop + daiyBetting.iUORollingUser;
-            else if (iGameCode == 200)
-                return daiyBetting.iSlotRollingShop + daiyBetting.iSlotRollingUser;
-            else if (iGameCode == 300)
-                return daiyBetting.iPBRollingShop + daiyBetting.iPBRollingUser;
-            break;
-        case EAgent.eUser: //  User
-            if (iGameCode == 0)
-                return daiyBetting.iBRollingUser;
-            else if (iGameCode == 100)
-                return daiyBetting.iUORollingUser;
-            else if (iGameCode == 200)
-                return daiyBetting.iSlotRollingUser;
-            else if (iGameCode == 300)
-                return daiyBetting.iPBRollingUser;
-            break;
-    }
-    return 0;
-}
-
-/**
  * 본인 배팅
  * 베팅 금액이 없으면 0, 롤링값도 재계산 0.01
  */
@@ -1750,6 +1565,9 @@ var inline_GetUserInfo = async (strNickname) => {
 
     let iPermission = 0;
 
+    let iSettleDays = 15;
+    let iSettleType = 0;
+
     let dbuser = await db.Users.findOne({where:{strNickname:strNickname}});
     if (dbuser != null) {
         strID = dbuser.strID;
@@ -1778,12 +1596,16 @@ var inline_GetUserInfo = async (strNickname) => {
             fPBSingleR = dbuser.fPBSingleR;
             fPBDoubleR = dbuser.fPBDoubleR;
             fPBTripleR = dbuser.fPBTripleR;
+            iSettleDays = dbuser.iSettleDays;
+            iSettleType = dbuser.iSettleType;
         }
     }
 
     return {iCash:iCash, iRolling: iRolling, iSettle:iSettle, strID:strID, strNickname:strNickname, iClass:iClass, strGroupID:strGroupID, strOptionCode:strOptionCode, iSettleAcc: iSettleAcc,
         strIDRel: strIDRel, strNicknameRel: strNicknameRel, iPermission:iPermission,
-        fBaccaratR: fBaccaratR, fSlotR: fSlotR, fUnderOverR: fUnderOverR, fPBR: fPBR, fPBSingleR: fPBSingleR, fPBDoubleR: fPBDoubleR, fPBTripleR: fPBTripleR};
+        fBaccaratR: fBaccaratR, fSlotR: fSlotR, fUnderOverR: fUnderOverR, fPBR: fPBR, fPBSingleR: fPBSingleR, fPBDoubleR: fPBDoubleR, fPBTripleR: fPBTripleR,
+        iSettleDays:iSettleDays, iSettleType:iSettleType
+    };
 }
 exports.GetUserInfo = inline_GetUserInfo;
 

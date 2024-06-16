@@ -211,6 +211,14 @@ module.exports = (sequelize, DataTypes) => {
         //차감권한 설정.
         strDeduct: {
             type: DataTypes.STRING,
+        },
+        // 죽장정산주기 : 15일, 10일, 5일
+        iSettleDays: {
+            type: DataTypes.INTEGER,
+        },
+        // 0: 누적, 1: 리셋
+        iSettleType: {
+            type: DataTypes.INTEGER,
         }
     }, {
         indexes: [

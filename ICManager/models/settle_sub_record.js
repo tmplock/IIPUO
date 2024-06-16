@@ -88,6 +88,14 @@ module.exports = (sequelize, DataTypes) => {
         iTotalViceAdmin: {
             type:DataTypes.INTEGER,
         },
+        // 죽장정산단위 : 15일, 10일, 5일
+        iSettleDays: {
+            type: DataTypes.INTEGER,
+        },
+        // 0: 누적, 1: 리셋
+        iSettleType: {
+            type: DataTypes.INTEGER,
+        },
         createdAt:{
             type:DataTypes.DATE,
             get() {

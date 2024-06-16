@@ -16,7 +16,6 @@ const {Op}= require('sequelize');
 const IAgent = require('../implements/agent3');
 const IAgentSettle = require('../implements/agent_settle4');
 const {isLoggedIn, isNotLoggedIn} = require('./middleware');
-const {GetQuaterEndDate} = require("../implements/agent_settle3");
 
 const cfCommission = 0.085; // 8.5 * 0.01
 
@@ -148,8 +147,6 @@ router.post('/request_apply_sub_settle', isLoggedIn, async (req, res) => {
             return;
         }
     }
-
-    console.log(list);
 
     if ( bFlag == true )
     {

@@ -45,14 +45,14 @@
 		</div>
 	</div>
 </div>
-<div class="modal" id="modal_alert">
+<div class="modal_indicator" id="modal_alert" style="display: none">
 	<div class="modal_body" id="modal_body">
 		<h2>처리중입니다</h2>
 		<p style="font-size: 16px;">잠시만 기다려 주세요</p>
 	</div>
 </div>
 <script>
-	const modal = document.querySelector('.modal');
+	const modal = document.querySelector('.modal_indicator');
 	function openAlertModal() {
 		modal.style.display="flex";
 	}

@@ -24,8 +24,8 @@ const { default: axios2 } = require('axios');
 
 let RequestAxios = async (strAddress, objectData) =>
 {
-    console.log(`RequestAxios ${strAddress}`);
-    console.log(objectData);
+    // console.log(`RequestAxios ${strAddress}`);
+    // console.log(objectData);
 
     try {
 
@@ -128,7 +128,7 @@ router.post('/request_checklogout', async (req, res) => {
     {
         const objectResult = await RequestAxios(`${global.strAPIAddress}/account/checklogout`, {eType:'CMS', strID:req.user.strID});
 
-        console.log(objectResult);
+        // console.log(objectResult);
     
         if ( objectResult.result == 'OK' )
         {

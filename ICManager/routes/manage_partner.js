@@ -555,9 +555,6 @@ router.post('/request_bettingrecord_user', isLoggedIn, async(req, res) => {
 
 
 router.post('/request_overview', isLoggedIn, async(req, res) => {
-
-    console.log('request_overview : ');
-    console.log(req.body);
     let user = await IAgent.GetUserInfo(req.body.strNickname);
     let strID = user.iPermission == 100 ? user.strIDRel : user.strID;
     const overview = await IAgent.CalculateBettingRecord(req.body.strGroupID, parseInt(req.body.iTargetClass), req.body.dateStart, req.body.dateEnd, '', strID);

@@ -415,6 +415,9 @@ a.btn_red{display:inline-block; height:32px; padding:0 8px; font-weight:bold; co
 .menu5 {
 	background-color: rgb(250, 74, 74);
 }
+.menu6 {
+	background-color: rgb(250, 74, 74);
+}
 
 .clicked_menu{
 	border-color: #4285f4;

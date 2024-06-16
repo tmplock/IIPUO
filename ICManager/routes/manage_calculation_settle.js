@@ -31,14 +31,15 @@ router.post('/request_apply_sub_settle', isLoggedIn, async (req, res) => {
     }
 
     // 부본사 죽장 완료 여부 확인 필요
-    let exist = await db.SettleRecords.findAll({where:{
-            strQuater:req.body.strQuater,
-            iClass:5,
-            strGroupID:{[Op.like]:req.body.strGroupID+'%'},
-            iSettleDays:req.body.iSettleDays,
-            iSettleType:req.body.iSettleType,
-        }, order: [['createdAt', 'DESC']]
-    });
+    let exist = await IAgentSettle.GetSettleExistList(req.body.strGroupID, req.body.strQuater, 5, req.body.iSettleDays, req.body.iSettleType);
+    // let exist = await db.SettleRecords.findAll({where:{
+    //         strQuater:req.body.strQuater,
+    //         iClass:5,
+    //         strGroupID:{[Op.like]:req.body.strGroupID+'%'},
+    //         iSettleDays:req.body.iSettleDays,
+    //         iSettleType:req.body.iSettleType,
+    //     }, order: [['createdAt', 'DESC']]
+    // });
 
     const targetUserCount = await IAgentSettle.GetSettleTargetUserCount(req.body.strQuater, 5, req.body.strGroupID, req.body.iSettleDays, req.body.iSettleType);
 
@@ -119,6 +120,8 @@ router.post('/request_apply_sub_settle', isLoggedIn, async (req, res) => {
                     iCommissionS:obj.iCommissionS ?? 0,
                     iSettleViceAdmin:obj.iSettleViceAdmin ?? 0,
                     iTotalViceAdmin:obj.iTotalViceAdmin ?? 0,
+                    iSettleDays:req.body.iSettleDays,
+                    iSettleType:req.body.iSettleType,
                 });
             } else {
                 await db.SettleSubRecords.update({
@@ -142,6 +145,8 @@ router.post('/request_apply_sub_settle', isLoggedIn, async (req, res) => {
                     iCommissionS:obj.iCommissionS ?? 0,
                     iSettleViceAdmin:obj.iSettleViceAdmin ?? 0,
                     iTotalViceAdmin:obj.iTotalViceAdmin ?? 0,
+                    iSettleDays:req.body.iSettleDays,
+                    iSettleType:req.body.iSettleType,
                 }, {
                     where: { id: subSettle.id }
                 });
@@ -181,13 +186,12 @@ router.post('/request_settle_cal', isLoggedIn, async(req, res) => {
         let iSettleDays = req.body.iSettleDays;
         let iSettleType = req.body.iSettleType;
 
-
         let exist = await db.SettleSubRecords.findAll({where:{
                 strQuater:req.body.strQuater,
                 iClass:req.body.iClass,
                 strGroupID:{[Op.like]:req.body.strGroupID+'%'},
-                iSettleDays: iSettleDays,
-                iSettleType: iSettleType,
+                // iSettleDays: iSettleDays,
+                // iSettleType: iSettleType,
             }, order: [['createdAt', 'DESC']]
         });
 
@@ -199,15 +203,17 @@ router.post('/request_settle_cal', isLoggedIn, async(req, res) => {
 
         if (targetUserCount == exist.length)
         {
-            res.send({result:'EXIST', list:list, iRootClass: req.user.iClass, exist: exist, msg: '정상조회', totalCount: targetUserCount});
+            res.send({result:'EXIST', list:list, iRootClass: req.user.iClass, exist: exist, msg: '정상조회', totalCount: targetUserCount, bEnableSettle:false});
         }
         else
         {
-            res.send({result:'OK', list:list, iRootClass: req.user.iClass, exist: exist, msg: '정상조회', totalCount: targetUserCount});
+            // 죽장 가능 여부
+            let bEnableSettle = IAgentSettle.IsSettleEnableDate(req.body.strQuater, iSettleDays);
+            res.send({result:'OK', list:list, iRootClass: req.user.iClass, exist: exist, msg: '정상조회', totalCount: targetUserCount, bEnableSettle:bEnableSettle});
         }
     } catch (err) {
         console.log(err.toString());
-        res.send({result:'ERROR', list:[], iRootClass: req.user.iClass, exist: [], msg: '조회에러', totalCount: 0});
+        res.send({result:'ERROR', list:[], iRootClass: req.user.iClass, exist: [], msg: '조회에러', totalCount: 0, bEnableSettle:false});
     }
 });
 
@@ -256,6 +262,8 @@ let GetSettlePartnerList = async (strGroupID, iClass, strQuater, dateStart, date
     }
 
     let strQuater2 = IAgentSettle.GetBeforeQuater(strQuater, iSettleDays);
+    // let subQuery = `AND t5.iSettleDays = ${iSettleDays} AND t5.iSettleType = ${iSettleType}`;
+    let subQuery = '';
 
     let list = await db.sequelize.query(`
             SELECT
@@ -263,6 +271,7 @@ let GetSettlePartnerList = async (strGroupID, iClass, strQuater, dateStart, date
                 t4.strID AS strID4, t4.strNickname AS strNickname4,
                 t4.fBaccaratR AS fBaccaratR4, t4.fSlotR AS fSlotR4, t4.fUnderOverR AS fUnderOverR4,
                 t4.fSettleBaccarat AS fSettleBaccarat4, t4.fSettleSlot AS fSettleSlot4,
+                t4.iSettleCommission,
                 
                 t5.strID AS strID, t5.strNickname AS strNickname, t5.strGroupID AS strGroupID, t5.iClass, t5.strSettleMemo,
                 t5.fBaccaratR AS fBaccaratR, t5.fSlotR AS fSlotR, t5.fUnderOverR AS fUnderOverR,
@@ -299,7 +308,8 @@ let GetSettlePartnerList = async (strGroupID, iClass, strQuater, dateStart, date
                 LEFT JOIN (
                     SELECT * FROM SettleSubRecords WHERE strQuater='${strQuater}'
                 ) sub ON sub.strID = t5.strID
-            WHERE t5.iClass = ${iClass} AND t5.strGroupID LIKE CONCAT('${strGroupID}', '%') AND t5.iSettleDays = ${iSettleDays} AND t5.iSettleType = ${iSettleType}
+            WHERE t5.iClass = ${iClass} AND t5.strGroupID LIKE CONCAT('${strGroupID}', '%') 
+            ${subQuery}
             ${lastDateQuery}
             ORDER BY strNickname3 ASC, strNickname4 ASC, t5.strGroupID ASC
             LIMIT ${limit}
@@ -318,8 +328,10 @@ router.post('/settle_cal', isLoggedIn, async (req, res) => {
 
     const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
 
+    const adminUser = await IAgent.GetAdminInfo(dbuser);
+
     const user = {strNickname:req.body.strNickname, strGroupID:dbuser.strGroupID, iClass:parseInt(dbuser.iClass), strID:dbuser.strID,
-        iRootClass: req.user.iClass, iPermission: req.user.iPermission, iSettleDays: req.body.iSettleDays, iSettleType:req.body.iSettleType};
+        iRootClass: req.user.iClass, iPermission: req.user.iPermission, iSettleDays: adminUser.iSettleDays, iSettleType:adminUser.iSettleType};
 
     res.render('manage_calculation/settle_cal', {iLayout:9, iHeaderFocus:0, user:user, list:[], strQuater:strQuater, dateQuaterStart:dateQuaterStart, dateQuaterEnd:dateQuaterEnd});
 });
@@ -717,14 +729,15 @@ router.post('/request_settle_all_reset', isLoggedIn, async(req, res) => {
         let iSettleType = req.body.iSettleType;
         let iSettleDays = req.body.iSettleDays;
 
-        let exist = await db.SettleRecords.findAll({where:{
-                strQuater:req.body.strQuater,
-                iSettleType: iSettleType,
-                iSettleDays: iSettleDays,
-                iClass:req.body.iClass,
-                strGroupID:{[Op.like]:req.body.strGroupID+'%'},
-            }, order: [['createdAt', 'DESC']]
-        });
+        // let exist = await db.SettleRecords.findAll({where:{
+        //         strQuater:req.body.strQuater,
+        //         // iSettleType: iSettleType,
+        //         // iSettleDays: iSettleDays,
+        //         iClass:req.body.iClass,
+        //         strGroupID:{[Op.like]:req.body.strGroupID+'%'},
+        //     }, order: [['createdAt', 'DESC']]
+        // });
+        let exist = await IAgentSettle.GetSettleExistList(req.body.strGroupID, req.body.strQuater, req.body.iClass, iSettleDays, iSettleType);
 
         let lastDate = IAgentSettle.GetQuaterEndDate(req.body.strQuater, iSettleDays);
 
@@ -734,15 +747,17 @@ router.post('/request_settle_all_reset', isLoggedIn, async(req, res) => {
 
         if ( exist.length > 0 && targetUserCount == exist.length )
         {
-            res.send({result:'EXIST', list:list, iRootClass: req.user.iClass, exist: exist, msg: '정상조회', totalCount: targetUserCount});
+            res.send({result:'EXIST', list:list, iRootClass: req.user.iClass, exist: exist, msg: '정상조회', totalCount: targetUserCount, bEnableSettle:false});
         }
         else
         {
-            res.send({result:'OK', list:list, iRootClass: req.user.iClass, exist: exist, msg: '정상조회', totalCount: targetUserCount});
+            // 죽장 가능 여부
+            let bEnableSettle = IAgentSettle.IsSettleEnableDate(req.body.strQuater, iSettleDays);
+            res.send({result:'OK', list:list, iRootClass: req.user.iClass, exist: exist, msg: '정상조회', totalCount: targetUserCount, bEnableSettle:bEnableSettle});
         }
     } catch (err) {
         console.log(err.toString());
-        res.send({result:'ERROR', list:[], iRootClass: req.user.iClass, exist: [], msg: '조회오류', totalCount: 0});
+        res.send({result:'ERROR', list:[], iRootClass: req.user.iClass, exist: [], msg: '조회오류', totalCount: 0, bEnableSettle:false});
     }
 });
 
@@ -757,9 +772,13 @@ let GetSettleAllReset = async (strGroupID, strQuater, dateStart, dateEnd, iClass
     let list = [];
     for (let i in partnerList) {
         let obj = partnerList[i];
+        if (obj.strNickname == '강동구1테') {
+            console.log('1111##################');
+            console.log(obj);
+        }
         if (obj.iClass == 4) {
             // obj.iSettleVice = GetSettleVice(obj);
-        } else {
+        } else if (obj.iClass == 5) {
             obj.iSettleVice = 0;
         }
         list.push(obj);

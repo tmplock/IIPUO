@@ -351,6 +351,7 @@
 	let selectGradeId = 0;
 	let iSettleType = 1;
 	let iSettleDays = 15;
+	let iSettleCommission = 0;
 
 	$(document).ready( ()=> {
 
@@ -522,6 +523,90 @@
 		}
 	<% } %>
 
+	<% if (agent.iRootClass <= 3 && 3 <= agent.iClass && agent.iClass <= 5) { %>
+		let tagDisabled = agent.iClass > 3 ? 'disabled' : '';
+		let SetSettleOption = (settleDays, settleType, settleCommission) => {
+			let subTag = '';
+			if (settleType == 1) {
+				// subTag = `<tr>
+				// 				<th scope="row">알값 계산</th>
+				// 				<td>
+				// 					<input type='radio'
+				// 						   name='radio_settle_days'
+				// 						   value='15'
+				// 						   style='height: 32px; width: 20px; font-size: 15px; margin-right: 10px; padding-right: 10px;'
+				// 						   onclick='OnClickSettleCommission(0)'/>계산함
+				// 					&ensp;
+				// 					<input type='radio'
+				// 						   name='radio_settle_days'
+				// 						   value='10'
+				// 						   style='height: 32px; width: 20px; font-size: 15px; margin-right: 10px; padding-right: 10px;'
+				// 						   onclick='OnClickSettleCommission(1)'/>계산 안함
+				// 				</td>
+				// 				<th scope="row"></th>
+				// 				<td></td>
+				// 			</tr>`;
+			}
+			$('#settle_option').empty();
+			$('#settle_option').append(`
+							<table>
+								<colgroup>
+									<col style="width:15%">
+									<col style="width:35%">
+									<col style="width:15%">
+									<col style="width:35%">
+								</colgroup>
+								<p style="background-repeat:no-repeat; background-position:left center; font-size:16px; color:#454545; padding-left:22px;">죽장 옵션</p>
+								<tr>
+									<th scope="row">죽장주기</th>
+									<td>
+										<input type='radio'
+											   name='radio_settle_days'
+											   value='15'
+											   style='height: 32px; width: 20px; font-size: 15px; margin-right: 10px; padding-right: 10px;' ${tagDisabled}
+											   onclick='OnClickSettleDays(15)'/>15일
+										&ensp;
+										<input type='radio'
+											   name='radio_settle_days'
+											   value='10'
+											   style='height: 32px; width: 20px; font-size: 15px; margin-right: 10px; padding-right: 10px;' ${tagDisabled}
+											   onclick='OnClickSettleDays(10)'/>10일
+										&ensp;
+										<input type='radio'
+											   name='radio_settle_days'
+											   value='5'
+											   style='height: 32px; width: 20px; font-size: 15px; margin-right: 10px; padding-right: 10px;' ${tagDisabled}
+											   onclick='OnClickSettleDays(5)'/>5일
+									</td>
+									<th scope="row">리셋여부</th>
+									<td>
+										<input type='radio'
+											   name='radio_settle_type'
+											   value='0'
+											   style='height: 32px; width: 20px; font-size: 15px; margin-right: 10px; padding-right: 10px;' ${tagDisabled}
+											   onclick='OnClickSettleType(0)'/>누적
+										&ensp;
+										<input type='radio'
+											   name='radio_settle_type'
+											   value='1'
+											   style='height: 32px; width: 20px; font-size: 15px; margin-right: 10px; padding-right: 10px;' ${tagDisabled}
+											   onclick='OnClickSettleType(1)'/>리셋
+									</td>
+								</tr>
+								${subTag}
+							</table>
+						`);
+			iSettleDays = settleDays ?? -1;
+			iSettleType = settleType ?? -1;
+			iSettleCommission = settleCommission ?? 0;
+			$('input[name="radio_settle_days"]').filter(`[value=${iSettleDays}]`).prop("checked", true);
+			$('input[name="radio_settle_type"]').filter(`[value=${iSettleType}]`).prop("checked", true);
+			if (subTag != '') {
+				$('input[name="radio_settle_commission"]').filter(`[value=${iSettleCommission}]`).prop("checked", true);
+			}
+		}
+	<% } %>
+
 	let CheckID = () => {
 		let strID = $('#member_id').val();
 
@@ -651,58 +736,7 @@
 					<% } %>
 
 					<% if (agent.iRootClass <= 3 && agent.iClass >= 3 && agent.iClass <= 5) { %>
-					$('#settle_option').empty();
-					$('#settle_option').append(`
-							<table>
-								<colgroup>
-									<col style="width:15%">
-									<col style="width:35%">
-									<col style="width:15%">
-									<col style="width:35%">
-								</colgroup>
-								<p style="background-repeat:no-repeat; background-position:left center; font-size:16px; color:#454545; padding-left:22px;">죽장 옵션</p>
-								<tr>
-									<th scope="row">죽장주기</th>
-									<td>
-										<input type='radio'
-											   name='radio_settle_days'
-											   value='15'
-											   style='height: 32px; width: 20px; font-size: 15px; margin-right: 10px; padding-right: 10px;'
-											   onclick='OnClickSettleDays(15)'/>15일
-										&ensp;
-										<input type='radio'
-											   name='radio_settle_days'
-											   value='10'
-											   style='height: 32px; width: 20px; font-size: 15px; margin-right: 10px; padding-right: 10px;'
-											   onclick='OnClickSettleDays(10)'/>10일
-										&ensp;
-										<input type='radio'
-											   name='radio_settle_days'
-											   value='5'
-											   style='height: 32px; width: 20px; font-size: 15px; margin-right: 10px; padding-right: 10px;'
-											   onclick='OnClickSettleDays(5)'/>5일
-									</td>
-									<th scope="row">리셋여부</th>
-									<td>
-										<input type='radio'
-											   name='radio_settle_type'
-											   value='0'
-											   style='height: 32px; width: 20px; font-size: 15px; margin-right: 10px; padding-right: 10px;'
-											   onclick='OnClickSettleType(0)'/>누적
-										&ensp;
-										<input type='radio'
-											   name='radio_settle_type'
-											   value='1'
-											   style='height: 32px; width: 20px; font-size: 15px; margin-right: 10px; padding-right: 10px;'
-											   onclick='OnClickSettleType(1)'/>리셋
-									</td>
-								</tr>
-							</table>
-						`);
-					iSettleDays = data.iSettleDays ?? -1;
-					iSettleType = data.iSettleType ?? -1;
-					$('input[name="radio_settle_days"]').filter(`[value=${iSettleDays}]`).prop("checked", true);
-					$('input[name="radio_settle_type"]').filter(`[value=${iSettleType}]`).prop("checked", true);
+						SetSettleOption(data.iSettleDays, data.iSettleType, data.iSettleCommission);
 					<% } %>
 				}
 				else
@@ -766,9 +800,6 @@
 
 		let iRootClass = parseInt(agent.iRootClass);
 		let iClass = parseInt(agent.iClass);
-
-		let iSettleDays = agent.iSettleDays;
-		let iSettleType = agent.iSettleType;
 
 		if ( iRootClass <= 3 || (iRootClass < iClass) ) {
 			fSlotR = $('#fSlotR').val();
@@ -841,6 +872,7 @@
 		<% if (agent.iRootClass <= 3 && agent.iClass >= 3 && agent.iClass <= 5) { %>
 			objectData.iSettleDays = iSettleDays;
 			objectData.iSettleType = iSettleType;
+			objectData.iSettleCommission = iSettleCommission;
 		<% } %>
 
 		if ( strPassword != strPasswordConfirm ){
@@ -898,6 +930,9 @@
 	}
 	let OnClickSettleType = (type) => {
 		iSettleType = type;
+	}
+	let OnClickSettleCommission = (type) => {
+		iSettleCommission = type;
 	}
 </script>
 	

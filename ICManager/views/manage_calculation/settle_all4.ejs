@@ -198,14 +198,14 @@
 
 	</div>
 </div>
-<div class="modal_indicator" id="modal_alert" style="display: none">
-	<div class="modal_body" id="modal_body">
+<div class="modal-indicator " id="modal_alert" style="display: none">
+	<div class="modal-indicator-body" id="modal_body">
 		<h2>처리중입니다</h2>
 		<p style="font-size: 16px;">잠시만 기다려 주세요</p>
 	</div>
 </div>
 <script>
-	const modal = document.querySelector('.modal_indicator');
+	const modal = document.querySelector('.modal-indicator ');
 	function openAlertModal() {
 		modal.style.display="flex";
 	}
@@ -251,6 +251,7 @@
 	let strQuater = '';
 	let iSettleDays = -1;
 	let iSettleType = -1;
+	let iSettleCommission = -1;
 
 	$(document).ready(() => {
 		Alert(iocount, "<%=__('RequestInput')%>", "<%=__('RequestOutput')%>","<%=__('LetterSend')%>");
@@ -283,8 +284,11 @@
 		SetOverviewShare(overviewShare, overview, '#overview_share');
 
 		AddButtonEvent();
-
-		OnClickDaySettlePeriod(user.iSettleDays, user.iSettleType);
+		if (user.iClass == 3 || user.iClass == 4 || user.iClass == 5) {
+			iSettleDays = user.iSettleDays;
+			iSettleType = user.iSettleType;
+			OnClickDaySettlePeriod(iSettleDays, iSettleType);
+		}
 	});
 
 	let RequestOverview = (strGroupID, iClass, strQuater, dateStart, dateEnd, strID) => {
@@ -341,7 +345,7 @@
 				{
 					adminList = obj.list;
 					exist = obj.exist;
-					bEnableSettle = true;
+					bEnableSettle = obj.bEnableSettle;
 					RequestOverview(user.strGroupID, user.iClass, strQuater, dateQuaterStart, dateQuaterEnd, user.strID);
 					SetList(obj.list, iClass, true);
 				}
@@ -633,11 +637,11 @@
 			`);
 		}
 
-		let bVisible = false;
-		let now = new Date();
-		if (bEnable && (now.getDate() == 16 || now.getDate() == 1)) {
-			bVisible = true;
-		}
+		let bVisible = bEnableSettle;
+		// let now = new Date();
+		// if (bEnable && (now.getDate() == 16 || now.getDate() == 1)) {
+		// 	bVisible = true;
+		// }
 		if ( user.iClass > 1 && user.iClass <= 3 && user.iPermission != 100 && bEnableSettle) {
 
 			$(`#list_tit`).empty();
@@ -756,60 +760,21 @@
 		// 전체 죽장 계산
 		let iSettleBaccarat = 0;
 		let iSettleSlot = 0;
-		let iSettlePBA = 0;
-		let iSettlePBB = 0;
 
 		// 부본
 		let iSettleBaccarat5 = 0;
 		let iSettleSlot5 = 0;
-		let iSettlePBA5 = 0;
-		let iSettlePBB5 = 0;
 
-		// 대본
-		let iSettleBaccarat4 = 0;
-		let iSettleSlot4 = 0;
-		let iSettlePBA4 = 0;
-		let iSettlePBB4 = 0;
-
-		// 죽장률 대본
-		let fSettleBaccarat4 = 0.0;
-		let fSettleSlot4 = 0.0;
 		// 죽장률 부본
 		let fSettleBaccarat5 = 0.0;
 		let fSettleSlot5 = 0.0;
 
-		fSettleBaccarat4 = obj.fSettleBaccarat4 ?? 0;
-		fSettleSlot4 = obj.fSettleBaccarat4 ?? 0;
 		fSettleBaccarat5 = obj.fSettleBaccarat5 ?? 0;
 		fSettleSlot5 = obj.fSettleBaccarat5 ?? 0;
 
 		// 전체 죽장 계산
 		let iBTotal = parseFloat(obj.iBaccaratTotal) + parseFloat(obj.iUnderOverTotal);
 		let iSTotal = parseFloat(obj.iSlotTotal);
-		// 선행조건 확인
-		// 1. 두개의 죽장률이 다를 경우 2. 두개의 합계가 서로 부호가 다를 경우
-		// 3-1. 플러스로 이긴경우 해당 게임의 죽장비율 적용
-		// 3-2. 마이너스로 이긴경우 해당 게임의 죽장비율 적용
-		// if (obj.fSettleBaccarat4 != obj.fSettleSlot4) {
-		// 	if ((iBTotal > 0 && iSTotal < 0) || (iBTotal < 0 && iSTotal > 0)) {
-		// 		if (Math.abs(iBTotal) > Math.abs(iSTotal)) {
-		// 			fSettleBaccarat4 = obj.fSettleBaccarat4;
-		// 			fSettleSlot4 = obj.fSettleBaccarat4;
-		// 			fSettleBaccarat5 = obj.fSettleBaccarat5 ?? 0;
-		// 			fSettleSlot5 = obj.fSettleBaccarat5 ?? 0;
-		// 		} else if (Math.abs(iSTotal) > Math.abs(iBTotal)) {
-		// 			fSettleBaccarat4 = obj.fSettleSlot4;
-		// 			fSettleSlot4 = obj.fSettleSlot4;
-		// 			fSettleBaccarat5 = obj.fSettleSlot5 ?? 0;
-		// 			fSettleSlot5 = obj.fSettleSlot5 ?? 0;
-		// 		}
-		// 	}
-		// } else {
-		// 	fSettleBaccarat4 = obj.fSettleBaccarat4;
-		// 	fSettleSlot4 = obj.fSettleSlot4;
-		// 	fSettleBaccarat5 = obj.fSettleBaccarat5 ?? 0;
-		// 	fSettleSlot5 = obj.fSettleSlot5 ?? 0;
-		// }
 
 		iBTotal = parseFloat(obj.iBaccaratTotal) + parseFloat(obj.iUnderOverTotal) - parseFloat(obj.iCommissionBaccarat ?? 0) - parseFloat(iSettleBaccarat);
 		iSTotal = (parseFloat(obj.iSlotTotal) - parseFloat(obj.iCommissionSlot) - parseFloat(iSettleSlot));
@@ -819,19 +784,10 @@
 			iSettleBaccarat5 = iBTotal * fSettleBaccarat5 * 0.01;
 			iSettleSlot5 = iSTotal * fSettleSlot5 * 0.01;
 			obj.iSettle = parseFloat(iSettleBaccarat5 + iSettleSlot5);
-		} else if (obj.iClass == 4) {
-			if (iBTotal + iSTotal > 0) {
-				iSettleBaccarat = iBTotal * fSettleBaccarat4 * 0.01;
-				iSettleSlot = iSTotal * fSettleSlot4 * 0.01;
-			} else {
-				iSettleBaccarat = 0;
-				iSettleSlot = 0;
+			if (obj.iSettle < 0 && iSettleType == 1) {
+				obj.iSettle = 0;
 			}
-			obj.iSettle = parseFloat(iSettleBaccarat5 + iSettleSlot5);
-			// obj.iSettle = parseInt(obj.iSettleTotal ?? 0);
 		}
-
-		console.log(obj);
 	}
 
 	/**
@@ -861,12 +817,18 @@
 			if (winloseS > 0 && fSettleSlot != 0) {
 				obj.iSlotWinLose = parseFloat(obj.iSWinlose ?? 0);
 				obj.iCommissionSlot = parseFloat(obj.iCommissionS);
+				if (iSettleType == 1 && iSettleCommission == 1) {
+					obj.iCommissionSlot = 0;
+				}
 			} else if (winloseS < 0) {
 				obj.iSlotWinLose = 0;
 			} else {
 				// else 부분 확인 필요
 				obj.iSlotWinLose = parseFloat(obj.iSWinlose ?? 0);
 				obj.iCommissionSlot = parseFloat(obj.iCommissionS);
+				if (iSettleType == 1 && iSettleCommission == 1) {
+					obj.iCommissionSlot = 0;
+				}
 			}
 
 			// let winloseB = (parseFloat(obj.iBaccaratWinLose) + parseFloat(obj.iUnderOverWinLose));
@@ -886,7 +848,6 @@
 			// 	obj.iSlotWinLose = 0;
 			// }
 		}
-		console.log(obj);
 	}
 
 
@@ -904,7 +865,7 @@
 	 * @constructor
 	 */
 	let AddPartner = (iRootClass, aObject, bEnableSettle, index) => {
-		let data = CalculateSendData(aObject, bEnableSettle);
+		let data = CalculateSendData5(aObject, bEnableSettle);
 		// 정산 처리를 위해서 추가
 		aObject.iBaccaratWinLose = data.iBaccaratWinLose;
 		aObject.iUnderOverWinLose = data.iUnderOverWinLose;
@@ -1066,7 +1027,7 @@
 		}
 
 		// 죽장 적립(입력값 죽장 이월)
-		subtag += `<input type='hidden' id='quatersettle_${aObject.strNickname}' value='${parseInt(aObject.iSettleOrigin)}'/>`;
+		subtag += `<input type='hidden' id='quatersettle_${aObject.strNickname}' value='${parseInt(data.iSettleOrigin)}'/>`;
 		subtag += `<input type='hidden' id='class_${aObject.strNickname}' value='${aObject.iClass}'/>`;
 		subtag += `<input type='hidden' id='rolling_${aObject.strNickname}' value='${parseInt(aObject.iRollingMoney)}'/>`;
 		subtag += `<input type='hidden' id='result_${aObject.strNickname}' value='${parseInt(data.iResult)}'/>`;
@@ -1355,7 +1316,10 @@
 	/**
 	 * 화면 표시 및 전송할 죽장값들 계산
 	 */
-	let CalculateSendData = (aObject, bEnableSettle) => {
+	let CalculateSendData5 = (aObject, bEnableSettle) => {
+		if (aObject.strNickname =='강동구1테') {
+			console.log(aObject);
+		}
 		let data = {
 			iTotal: 0,
 			iRolling: 0,
@@ -1392,26 +1356,19 @@
 			data.iUnderOverWinLose = parseFloat(aObject.iUnderOverWinLose);
 			data.iSlotWinLose = parseFloat(aObject.iSlotWinLose);
 			data.iPBWinLose = 0;
-			data.iResult = data.iTotal - parseFloat(aObject.iSettleVice ?? 0) - parseFloat(aObject.iCommissionBaccarat) - parseFloat(aObject.iCommissionSlot) - parseFloat(aObject.iSettle);
 			data.iSettleBeforeAcc = parseFloat(aObject.iSettleAccUser ?? 0);
 			data.iSettleAccTotal = 0;
 			data.iSettleVice = parseFloat(aObject.iSettleVice ?? 0);
 			data.iSettleQuater = parseFloat(aObject.iSettle ?? 0);
 			data.iSettleAcc = parseFloat(aObject.iSettleAcc ?? 0);
 
-			if (aObject.iClass == 4) {
-				data.fSettleBaccarat = parseFloat(aObject.fSettleBaccarat4 ?? 0);
-				data.fSettleSlot = parseFloat(aObject.fSettleSlot4 ?? 0);
-				data.fSettlePBA = 0;
-				data.fSettlePBB = 0;
-				data.iSettleVice = parseFloat(aObject.iSettleVice ?? 0);
-			} else if (aObject.iClass == 5) {
-				data.fSettleBaccarat = parseFloat(aObject.fSettleBaccarat5 ?? 0);
-				data.fSettleSlot = parseFloat(aObject.fSettleSlot5 ?? 0);
-				data.fSettlePBA = 0;
-				data.fSettlePBB = 0;
-				data.iSettleVice = parseFloat(aObject.iSettle ?? 0);
-			}
+			data.fSettleBaccarat = parseFloat(aObject.fSettleBaccarat5 ?? 0);
+			data.fSettleSlot = parseFloat(aObject.fSettleSlot5 ?? 0);
+			data.fSettlePBA = 0;
+			data.fSettlePBB = 0;
+			data.iSettle = parseFloat(aObject.iSettle ?? 0);
+			data.iSettleVice = parseFloat(aObject.iSettle ?? 0);
+			data.iResult = data.iTotal - parseFloat(data.iSettleVice ?? 0) - parseFloat(aObject.iCommissionBaccarat) - parseFloat(aObject.iCommissionSlot);
 		} else {  // 죽장 완료
 			data.iTotal = parseFloat(aObject.iBaccaratTotal) + parseFloat(aObject.iUnderOverTotal) + parseFloat(aObject.iSlotTotal) + parseFloat(aObject.iPBATotal) + parseFloat(aObject.iPBBTotal);
 			data.iRolling = parseFloat(aObject.iRollingMoney);
@@ -1419,7 +1376,7 @@
 			data.iUnderOverWinLose = parseFloat(aObject.iUnderOverWinLose);
 			data.iSlotWinLose = parseFloat(aObject.iSlotWinLose);
 			data.iPBWinLose = 0;
-			data.iResult = data.iTotal - parseFloat(aObject.iSettleVice ?? 0) - parseFloat(aObject.iCommissionBaccarat) - parseFloat(aObject.iCommissionSlot) - parseFloat(aObject.iSettle);
+
 			data.iSettleBeforeAcc = parseFloat(aObject.iSettleBeforeAcc ?? 0);
 			data.iSettleAfter = parseFloat(aObject.iSettleAfter ?? 0);
 			data.iSettleAccTotal = parseFloat(aObject.iSettleAfter ?? 0);
@@ -1429,19 +1386,12 @@
 			data.iPayback = parseFloat(aObject.iPayback ?? 0);
 			data.iSettleAcc = parseFloat(aObject.iSettleAcc ?? 0);
 
-			if (aObject.iClass == 4) {
-				data.fSettleBaccarat = parseFloat(aObject.fSettleBaccarat42 ?? 0);
-				data.fSettleSlot = parseFloat(aObject.fSettleSlot42 ?? 0);
-				data.fSettlePBA = 0;
-				data.fSettlePBB = 0;
-				data.iSettleVice = parseFloat(aObject.iSettleVice ?? 0);
-			} else if (aObject.iClass == 5) {
-				data.fSettleBaccarat = parseFloat(aObject.fSettleBaccarat52 ?? 0);
-				data.fSettleSlot = parseFloat(aObject.fSettleSlot52 ?? 0);
-				data.fSettlePBA = 0;
-				data.fSettlePBB = 0;
-				data.iSettleVice = parseFloat(aObject.iSettle ?? 0);
-			}
+			data.fSettleBaccarat = parseFloat(aObject.fSettleBaccarat52 ?? 0);
+			data.fSettleSlot = parseFloat(aObject.fSettleSlot52 ?? 0);
+			data.fSettlePBA = 0;
+			data.fSettlePBB = 0;
+			data.iSettleVice = parseFloat(aObject.iSettle ?? 0);
+			data.iResult = data.iTotal - parseFloat(aObject.iSettleVice ?? 0) - parseFloat(aObject.iCommissionBaccarat) - parseFloat(aObject.iCommissionSlot);
 		}
 
 		data.iCommissionBaccarat = parseFloat(aObject.iCommissionBaccarat ?? 0);
@@ -1452,68 +1402,27 @@
 
 		// 적립 죽장비
 		if (bEnableSettle == true) {
-
-			if (true) {
-				let iSettle = parseFloat(aObject.iSettle ?? 0);
-				// 적립가능 금액 = 해당월 죽장 - 전월 죽장 이월
-				data.iInputQuaterSettle = iSettle;
-				if (data.iSettleBeforeAcc < 0) {
-					data.iInputQuaterSettle += data.iSettleBeforeAcc;
-				}
-				data.inputSettleOption = 'disabled="disabled"';
-
-
-				// 죽장이 플러스일 경우 자동 수금 처리 표시
-				let iPayback = parseFloat(data.iPayback ?? 0);
-				let iSettleBeforeAcc = parseFloat(data.iSettleBeforeAcc ?? 0) + iPayback;
-				if (iSettle > 0 && iSettleBeforeAcc < 0) {
-					// 이월 금액이 남아 있는 경우
-					if (-iSettleBeforeAcc > iSettle) {
-						iPayback = iPayback + iSettle;
-					} else {
-						iPayback = iPayback - iSettleBeforeAcc;
-					}
-					data.iPayback = iPayback;
-				}
+			let iSettle = data.iSettle;
+			// 적립가능 금액 = 해당월 죽장 - 전월 죽장 이월
+			data.iInputQuaterSettle = iSettle;
+			if (data.iSettleBeforeAcc < 0) {
+				data.iInputQuaterSettle += data.iSettleBeforeAcc;
 			}
+			data.inputSettleOption = 'disabled="disabled"';
 
 
-			if (false) {
-				let iSettle = parseFloat(aObject.iSettle ?? 0);
-				// 적립가능 금액 = 해당월 죽장 - 전월 죽장 이월
-				data.iInputQuaterSettle = iSettle;
-				if (data.iSettleAcc < 0) {
-					data.iInputQuaterSettle += data.iSettleAcc;
+			// 죽장이 플러스일 경우 자동 수금 처리 표시
+			let iPayback = parseFloat(data.iPayback ?? 0);
+			let iSettleBeforeAcc = parseFloat(data.iSettleBeforeAcc ?? 0) + iPayback;
+			if (iSettle > 0 && iSettleBeforeAcc < 0) {
+				// 이월 금액이 남아 있는 경우
+				if (-iSettleBeforeAcc > iSettle) {
+					iPayback = iPayback + iSettle;
+				} else {
+					iPayback = iPayback - iSettleBeforeAcc;
 				}
-				data.inputSettleOption = 'disabled="disabled"';
-
-
-				// 죽장이 플러스일 경우 자동 수금 처리 표시
-				let iPayback = parseFloat(data.iPayback ?? 0);
-				// 이용자가 가지고 있는 보유죽장
-				let iSettleAcc = parseFloat(data.iSettleAcc ?? 0) + iPayback;
-				if (iSettle > 0 && iSettleAcc < 0) {
-					// 이월 금액이 남아 있는 경우
-					if (-iSettleAcc > iSettle) {
-						iPayback = iPayback + iSettle;
-					} else {
-						iPayback = iPayback - iSettleAcc;
-					}
-					data.iPayback = iPayback;
-				}
+				data.iPayback = iPayback;
 			}
-
-			// if (parseInt(aObject.iClass) == 4) {
-			// 	// 마이너스는 수정 불가
-			// 	if (data.iInputQuaterSettle < 0) {
-			// 		data.inputSettleOption = 'disabled="disabled"';
-			// 	}
-			// } else if (parseInt(aObject.iClass) == 5) {
-			// 	// 마이너스는 수정 불가
-			// 	if (data.iInputQuaterSettle < 0) {
-			// 		data.inputSettleOption = 'disabled="disabled"';
-			// 	}
-			// }
 		} else {
 			data.inputSettleOption = 'disabled="disabled"';
 			data.iInputQuaterSettle = 0;
@@ -1522,9 +1431,6 @@
 	}
 
 	let CalculateSendData4 = (aObject, bEnableSettle) => {
-		if (aObject.strNickname == '테떡림이') {
-			console.log(aObject);
-		}
 		let data = {
 			iTotal: 0,
 			iRolling: 0,
@@ -1617,27 +1523,24 @@
 
 		// 적립 죽장비
 		if (bEnableSettle == true) {
-			if (true) {
-				let iSettle = parseFloat(aObject.iSettle ?? 0);
-				// 적립가능 금액 = 해당월 죽장 - 전월 죽장 이월
-				data.iInputQuaterSettle = iSettle;
-				if (data.iSettleBeforeAcc < 0) {
-					data.iInputQuaterSettle += data.iSettleBeforeAcc;
+			let iSettle = data.iSettle;
+			// 적립가능 금액 = 해당월 죽장 - 전월 죽장 이월
+			data.iInputQuaterSettle = iSettle;
+			if (data.iSettleBeforeAcc < 0) {
+				data.iInputQuaterSettle += data.iSettleBeforeAcc;
+			}
+			data.inputSettleOption = 'disabled="disabled"';
+			// 죽장이 플러스일 경우 자동 수금 처리 표시
+			let iPayback = parseFloat(data.iPayback ?? 0);
+			let iSettleBeforeAcc = parseFloat(data.iSettleBeforeAcc ?? 0) + iPayback;
+			if (iSettle > 0 && iSettleBeforeAcc < 0) {
+				// 이월 금액이 남아 있는 경우
+				if (-iSettleBeforeAcc > iSettle) {
+					iPayback = iPayback + iSettle;
+				} else {
+					iPayback = iPayback - iSettleBeforeAcc;
 				}
-				data.inputSettleOption = 'disabled="disabled"';
-
-				// 죽장이 플러스일 경우 자동 수금 처리 표시
-				let iPayback = parseFloat(data.iPayback ?? 0);
-				let iSettleBeforeAcc = parseFloat(data.iSettleBeforeAcc ?? 0) + iPayback;
-				if (iSettle > 0 && iSettleBeforeAcc < 0) {
-					// 이월 금액이 남아 있는 경우
-					if (-iSettleBeforeAcc > iSettle) {
-						iPayback = iPayback + iSettle;
-					} else {
-						iPayback = iPayback - iSettleBeforeAcc;
-					}
-					data.iPayback = iPayback;
-				}
+				data.iPayback = iPayback;
 			}
 		} else {
 			data.inputSettleOption = 'disabled="disabled"';
@@ -2021,23 +1924,23 @@
 			} else if (quater == 2) {
 				sDay = 6;
 				eDay = 10;
-				iQuater = '1'
+				iQuater = '2'
 			} else if (quater == 3) {
 				sDay = 11;
 				eDay = 15;
-				iQuater = '1'
+				iQuater = '3'
 			} else if (quater == 4) {
 				sDay = 16;
 				eDay = 20;
-				iQuater = '2'
+				iQuater = '4'
 			} else if (quater == 5) {
 				sDay = 21;
 				eDay = 25;
-				iQuater = '2'
+				iQuater = '5'
 			} else if (quater == 6) {
 				sDay = 26;
 				eDay = 31;
-				iQuater = '2'
+				iQuater = '6'
 			}
 		} else if (days == 10) {
 			iSettleDays = days;
@@ -2053,7 +1956,7 @@
 			} else if (quater == 3) {
 				sDay = 21;
 				eDay = 31;
-				iQuater = '2'
+				iQuater = '3'
 			}
 		} else if (days == 15) {
 			iSettleDays = days;

@@ -317,6 +317,11 @@ exports.GetSettleClass = async (strGroupID, iClass, strQuater, dateStart, dateEn
     let strQuater2 = GetBeforeQuater(strQuater, iSettleDays);
 
     if (iClass == 4) {
+        // let subQuery = `AND t4.iSettleDays = ${iSettleDays} AND t4.iSettleType = ${iSettleType}`;
+        let subQuery = ``;
+        if (strGroupID.length == 3) {
+            subQuery = `AND t3.iSettleDays = ${iSettleDays} AND t3.iSettleType = ${iSettleType}`;
+        }
         let list = await db.sequelize.query(`
             SELECT
                 t3.strID AS strAdminID, t3.strNickname AS strAdminNickname, 
@@ -326,6 +331,7 @@ exports.GetSettleClass = async (strGroupID, iClass, strQuater, dateStart, dateEn
                 sr4.fSettleBaccarat AS fSettleBaccarat42, sr4.fSettleSlot AS fSettleSlot42, 0 AS fSettlePBA42, 0 AS fSettlePBB42,
                 0 AS fSettleBaccarat5, 0 AS fSettleSlot5, 0 AS fSettlePBA5, 0 AS fSettlePBB5,
                 0 AS fSettleBaccarat52, 0 AS fSettleSlot52, 0 AS fSettlePBA52, 0 AS fSettlePBB52,
+                t4.iSettleCommission,
                 IFNULL(t4.fCommission, ${cfCommission}) AS fCommission,
                 t4.iSettleAcc AS iSettleAccUser, t4.iCash as iMyMoney,
                 IFNULL((SELECT SUM(iCash) FROM Users WHERE strGroupID LIKE CONCAT(t4.strGroupID,'%')),0) as iTotalMoney,
@@ -358,7 +364,8 @@ exports.GetSettleClass = async (strGroupID, iClass, strQuater, dateStart, dateEn
                      LEFT JOIN (
                          SELECT fSettleBaccarat, fSettleSlot, fSettlePBA, fSettlePBB, strID FROM SettleRecords WHERE strQuater='${strQuater}'
                      ) sr4 ON sr4.strID=t4.strID
-            WHERE t4.iClass = ${iClass} AND t4.strGroupID LIKE CONCAT('${strGroupID}', '%') AND t4.iSettleDays = ${iSettleDays} AND t4.iSettleType = ${iSettleType}
+            WHERE t4.iClass = ${iClass} AND t4.strGroupID LIKE CONCAT('${strGroupID}', '%') 
+            ${subQuery}
             ${lastDateQuery}
             ORDER BY settleCount ASC, strAdminNickname ASC, t4.strNickname ASC, t4.strGroupID ASC
                 LIMIT ${limit}
@@ -367,6 +374,12 @@ exports.GetSettleClass = async (strGroupID, iClass, strQuater, dateStart, dateEn
 
         return list;
     } else if (iClass == 5) {
+        // let subQuery = `AND t5.iSettleDays = ${iSettleDays} AND t5.iSettleType = ${iSettleType}`;
+        let subQuery = '';
+        // 총본에서 조회할 경우
+        if (strGroupID.length == 3) {
+            subQuery = `AND t3.iSettleDays = ${iSettleDays} AND t3.iSettleType = ${iSettleType}`;
+        }
         let list = await db.sequelize.query(`
             SELECT
                 t3.strID AS strAdminID, t3.strNickname AS strAdminNickname,
@@ -376,6 +389,7 @@ exports.GetSettleClass = async (strGroupID, iClass, strQuater, dateStart, dateEn
                 sr5.fSettleBaccarat AS fSettleBaccarat52, sr5.fSettleSlot AS fSettleSlot52, 0 AS fSettlePBA52, 0 AS fSettlePBB52,
                 t4.fSettleBaccarat AS fSettleBaccarat4, t4.fSettleSlot AS fSettleSlot4, 0 AS fSettlePBA4, 0 AS fSettlePBB4,
                 sr4.fSettleBaccarat AS fSettleBaccarat42, sr4.fSettleSlot AS fSettleSlot42, 0 AS fSettlePBA42, 0 AS fSettlePBB42,
+                t5.iSettleCommission,
                 IFNULL(t5.fCommission, ${cfCommission}) AS fCommission,
                 t5.iSettleAcc AS iSettleAccUser, t5.iCash as iMyMoney,
                 IFNULL((SELECT SUM(iCash) FROM Users WHERE strGroupID LIKE CONCAT(t5.strGroupID,'%')),0) as iTotalMoney,
@@ -424,11 +438,47 @@ exports.GetSettleClass = async (strGroupID, iClass, strQuater, dateStart, dateEn
                 LEFT JOIN (
                     SELECT fSettleBaccarat, fSettleSlot, fSettlePBA, fSettlePBB, strID FROM SettleRecords WHERE strQuater='${strQuater}'
                 ) sr4 ON sr4.strID=t4.strID
-            WHERE t5.iClass = ${iClass} AND t5.strGroupID LIKE CONCAT('${strGroupID}', '%') AND t5.iSettleDays = ${iSettleDays} AND t5.iSettleType = ${iSettleType}
+            WHERE t5.iClass = ${iClass} AND t5.strGroupID LIKE CONCAT('${strGroupID}', '%') 
+            ${subQuery}
             ${lastDateQuery}
             ORDER BY settleCount ASC, strAdminNickname ASC, t5.strNickname ASC, t5.strGroupID ASC
             LIMIT ${limit}
             OFFSET ${offset}
+        `);
+        return list[0];
+    }
+    return [];
+}
+
+exports.GetSettleExistList = async (strGroupID, strQuater, iClass, iSettleDays, iSettleType) => {
+    let subQuery = '';
+    // 총본에서 조회할 경우
+    if (strGroupID.length == 3) {
+        subQuery = `AND t3.iSettleDays = ${iSettleDays} AND t3.iSettleType = ${iSettleType}`;
+    }
+    if (iClass == 5) {
+        let list = await db.sequelize.query(`
+            SELECT sr.* 
+            FROM SettleRecords sr
+                LEFT JOIN Users t5 ON t5.strID = sr.strID 
+                LEFT JOIN Users t4 ON t4.id = t5.iParentID
+                LEFT JOIN Users t3 ON t3.id = t4.iParentID
+            WHERE sr.strQuater = '${strQuater}'
+                AND sr.iClass = ${iClass}
+                AND sr.strGroupID LIKE CONCAT('${strGroupID}', '%')
+                ${subQuery} 
+        `);
+        return list[0];
+    } else if (iClass == 4) {
+        let list = await db.sequelize.query(`
+            SELECT sr.* 
+            FROM SettleRecords sr
+                LEFT JOIN Users t4 ON t4.strID = sr.strID 
+                LEFT JOIN Users t3 ON t3.id = t4.iParentID
+            WHERE sr.strQuater = '${strQuater}'
+                AND sr.iClass = ${iClass}
+                AND sr.strGroupID LIKE CONCAT('${strGroupID}', '%')
+                ${subQuery}
         `);
         return list[0];
     }
@@ -529,6 +579,14 @@ let GetQuaterEndDate = (strQuater, iSettleDays) => {
             sDay = 21;
             eDay = 31;
         }
+    } else if (iSettleDays == 15) {
+        if (quater == 1) {
+            sDay = 1;
+            eDay = 15;
+        } else if (quater == 2) {
+            sDay = 16;
+            eDay = 31;
+        }
     }
     let date = new Date();
     date = new Date(date.getFullYear(), iMonth-1, eDay);
@@ -536,36 +594,84 @@ let GetQuaterEndDate = (strQuater, iSettleDays) => {
 }
 exports.GetQuaterEndDate = GetQuaterEndDate;
 
+// 죽장 지급 날짜 여부
+exports.IsSettleEnableDate = (strQuater, iSettleDays) => {
+    return true;
+    let endDate = this.GetQuaterEndDate(strQuater, iSettleDays);
+    let endDay = moment(endDate).date();
+    let date = new Date();
+    if (endDay == date.getDate()) {
+        return true;
+    }
+    return false;
+}
+
 exports.GetSettleTargetUserCount = async (strQuater, iClass, strGroupID, iSettleDays, iSettleType) => {
     let lastDate = GetQuaterEndDate(strQuater, iSettleDays);
 
+    let subQuery = '';
+    if (strGroupID.length == 3) {
+        subQuery = `AND u3.iSettleDays = ${iSettleDays} AND u3.iSettleType = ${iSettleType}`;
+    }
+    let subQuery2 = ''
     if (lastDate != '') {
-        let count = await db.Users.count({
-            where: {
-                iClass: iClass,
-                iPermission: {
-                    [Op.notIn]: [100]
-                },
-                iSettleDays: iSettleDays,
-                iSettleType: iSettleType,
-                strGroupID: {[Op.like]: strGroupID + '%'},
-                createdAt: {[Op.lt]: lastDate}
-            }
-        });
-        return count;
-    } else {
-        let count = await db.Users.count({
-            where: {
-                iClass: iClass,
-                iPermission: {
-                    [Op.notIn]: [100]
-                },
-                iSettleDays: iSettleDays,
-                iSettleType: iSettleType,
-                strGroupID: {[Op.like]: strGroupID + '%'}
-            }
-        });
-        return count;
+        subQuery2 = `AND u.createdAt > '${lastDate}'`;
+    }
+    if (iClass == 4) {
+        let list = await db.sequelize.query(`
+            SELECT u.id 
+            FROM Users u
+                LEFT JOIN Users u3 ON u3.id = u.iParentID
+            WHERE u.iClass = ${iClass}
+                AND u.iPermission NOT IN (100)
+                AND u.strGroupID LIKE CONCAT('${strGroupID}', '%')
+                ${subQuery2}
+                ${subQuery}
+        `);
+        return list[0].length;
+    } else if (iClass == 5) {
+        let list = await db.sequelize.query(`
+            SELECT u.id 
+            FROM Users u
+                LEFT JOIN Users u4 ON u4.id = u.iParentID
+                LEFT JOIN Users u3 ON u3.id = u4.iParentID
+            WHERE u.iClass = ${iClass}
+                AND u.iPermission NOT IN (100)
+                AND u.strGroupID LIKE CONCAT('${strGroupID}', '%')
+                ${subQuery2}
+                ${subQuery}
+        `);
+        return list[0].length;
     }
     return 0;
+
+    // if (lastDate != '') {
+    //     let count = await db.Users.count({
+    //         where: {
+    //             iClass: iClass,
+    //             iPermission: {
+    //                 [Op.notIn]: [100]
+    //             },
+    //             // iSettleDays: iSettleDays,
+    //             // iSettleType: iSettleType,
+    //             strGroupID: {[Op.like]: strGroupID + '%'},
+    //             createdAt: {[Op.lt]: lastDate}
+    //         }
+    //     });
+    //     return count;
+    // } else {
+    //     let count = await db.Users.count({
+    //         where: {
+    //             iClass: iClass,
+    //             iPermission: {
+    //                 [Op.notIn]: [100]
+    //             },
+    //             // iSettleDays: iSettleDays,
+    //             // iSettleType: iSettleType,
+    //             strGroupID: {[Op.like]: strGroupID + '%'}
+    //         }
+    //     });
+    //     return count;
+    // }
+    // return 0;
 }

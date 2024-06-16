@@ -25,8 +25,6 @@ let inline_GetPopupAgentInfo = async (strGroupID, iClass, strNickname) => {
     if ( strGroupID == undefined || iClass == undefined || strNickname == undefined )
         return null;
 
-    console.log(`############################# 2inline_GetPopupAgentInfo ${strGroupID}, ${strNickname}, ${iClass}`);
-
     if (iClass > 3) {
         const [users] = await db.sequelize.query(
             `
@@ -1505,6 +1503,17 @@ var inline_GetChildNicknameList = async (strGroupID, iClass) => {
     return list;
 }
 exports.GetChildNicknameList = inline_GetChildNicknameList;
+
+exports.GetAdminInfo = async (user) => {
+    if (user.iClass == 3) {
+        return user;
+    }
+    let parentInfo = await this.GetParentList(user.strGroupID, user.iClass, user);
+    let adminUser = await db.Users.findOne({ where: {
+            strNickname: parentInfo.strAdmin
+        }});
+    return adminUser;
+}
 
 var inline_GetUserInfo = async (strNickname) => {
     let strID = '';

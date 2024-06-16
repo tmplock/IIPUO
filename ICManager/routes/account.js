@@ -64,13 +64,11 @@ router.post('/login', passport.authenticate('local', {
 
 router.get('/loginsuccess', async (req, res) => {
 
-    console.log(`################################################## /account/loginsuccess`);
-
     let strIP = requestip.getClientIp(req);
 
     const objectResult = await RequestAxios(`${global.strAPIAddress}/account/login`, {eType:'CMS', strID:req.user.strID, strNickname:req.user.strNickname, strGroupID:req.user.strGroupID, iClass:req.user.iClass, strIP:strIP});
 
-    console.log(objectResult);
+    // console.log(objectResult);
 
     if ( objectResult.result == 'OK' )
     {

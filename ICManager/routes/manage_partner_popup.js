@@ -1380,9 +1380,20 @@ router.post('/request_bank', isLoggedIn, async (req, res) => {
             iInputGrade = IAgent.GetGradeFromStrOptionCode(dbuser.strOptionCode);
             gradelist = IAgent.GetGradeList();
         }
-        let iSettleDays = dbuser.iSettleDays ?? 15;
-        let iSettleType = dbuser.iSettleType ?? 0;
-        res.send({result:'OK', msg:'정상 조회', bankname:bankname, bankAccount:bankAccount, bankOwner:bankOwner, cell:cell, pass:pass, grade:iInputGrade, gradelist:gradelist, iSettleType:iSettleType, iSettleDays:iSettleDays});
+        let iSettleDays = 15;
+        let iSettleType = 0;
+        // 본사의 죽장옵션값으로
+        if (dbuser.iClass == 3) {
+            iSettleDays = dbuser.iSettleDays ?? 15;
+            iSettleType = dbuser.iSettleType ?? 0;
+        } else if (dbuser.iClass > 3) {
+            let adminUser = await IAgent.GetAdminInfo(dbuser);
+            iSettleDays = adminUser.iSettleDays;
+            iSettleType = adminUser.iSettleType;
+        }
+        // 본인 옵션
+        let iSettleCommission = dbuser.iSettleCommission ?? 0;
+        res.send({result:'OK', msg:'정상 조회', bankname:bankname, bankAccount:bankAccount, bankOwner:bankOwner, cell:cell, pass:pass, grade:iInputGrade, gradelist:gradelist, iSettleType:iSettleType, iSettleDays:iSettleDays, iSettleCommission:iSettleCommission});
         return ;
     }
     res.send({result:'OK', msg:'정상 조회', bankname:bankname, bankAccount:bankAccount, bankOwner:bankOwner, cell:cell, pass:pass, grade:0, gradelist: [], iSettleType:-1, iSettleDays:-1});
@@ -1460,15 +1471,18 @@ router.post('/request_agentinfo_modify', isLoggedIn,async (req, res) => {
         iSettleDays = Number.isNaN(iSettleDays) ? 15 : iSettleDays;
         let iSettleType = parseInt(req.body.iSettleType ?? 0);
         iSettleType = Number.isNaN(iSettleType) ? 0 : iSettleType;
+        let iSettleCommission = parseInt(req.body.iSettleCommission ?? 0);
+
+        if (user.iClass == 3) {
+
+        }
 
         let adminSettleType = 0;
+        // 본사는 총본에서 자유롭게 죽장 정보 변경 가능
         if (user.iClass == 3) {
             adminSettleType = user.iSettleType ?? 0;
         } else if (user.iClass > 3) {
-            let parentInfo = await IAgent.GetParentList(user.strGroupID, user.iClass, user);
-            let adminUser = await db.Users.findOne({ where: {
-                    strNickname: parentInfo.strAdmin
-                }});
+            let adminUser = await IAgent.GetAdminInfo(user);
             adminSettleType = adminUser.iSettleType ?? 0;
         }
 

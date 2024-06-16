@@ -219,6 +219,10 @@ module.exports = (sequelize, DataTypes) => {
         // 0: 누적, 1: 리셋
         iSettleType: {
             type: DataTypes.INTEGER,
+        },
+        // 죽장 리셋 계산시 알값 제외 여부(1:제외, 0:포함)',
+        iSettleCommission: {
+            type: DataTypes.INTEGER,
         }
     }, {
         indexes: [

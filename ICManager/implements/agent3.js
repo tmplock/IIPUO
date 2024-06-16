@@ -1505,6 +1505,9 @@ var inline_GetChildNicknameList = async (strGroupID, iClass) => {
 exports.GetChildNicknameList = inline_GetChildNicknameList;
 
 exports.GetAdminInfo = async (user) => {
+    if (user.iClass < 3) {
+        return null;
+    }
     if (user.iClass == 3) {
         return user;
     }

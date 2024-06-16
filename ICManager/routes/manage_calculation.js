@@ -144,15 +144,12 @@ router.post('/settle_all4', isLoggedIn, async(req, res) => {
         iSettleType = adminUser.iSettleType;
     }
 
-
     const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle, strID:dbuser.strID,
         iRootClass:req.user.iClass, iPermission:req.user.iPermission, iSettleDays:iSettleDays, iSettleType:iSettleType};
 
     const agentinfo = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
 
     let iocount = await IInout.GetProcessing(user.strGroupID, user.strNickname, dbuser.iClass);
-    console.log(`ic : ${iocount.input}, oc : ${iocount.output}`);
-
     // let date = new Date();
     // let iMonth = date.getMonth();
     // let strQuater = '';

@@ -454,7 +454,7 @@ exports.GetSettleExistList = async (strGroupID, strQuater, iClass, iSettleDays, 
     let subQuery = '';
     // 총본에서 조회할 경우
     if (strGroupID.length == 3) {
-        subQuery = `AND t3.iSettleDays = ${iSettleDays} AND t3.iSettleType = ${iSettleType}`;
+        // subQuery = `AND t3.iSettleDays = ${iSettleDays} AND t3.iSettleType = ${iSettleType}`;
     }
     if (iClass == 5) {
         let list = await db.sequelize.query(`
@@ -466,6 +466,7 @@ exports.GetSettleExistList = async (strGroupID, strQuater, iClass, iSettleDays, 
             WHERE sr.strQuater = '${strQuater}'
                 AND sr.iClass = ${iClass}
                 AND sr.strGroupID LIKE CONCAT('${strGroupID}', '%')
+                AND sr.iSettleDays = ${iSettleDays} AND sr.iSettleType = ${iSettleType}
                 ${subQuery} 
         `);
         return list[0];
@@ -478,11 +479,42 @@ exports.GetSettleExistList = async (strGroupID, strQuater, iClass, iSettleDays, 
             WHERE sr.strQuater = '${strQuater}'
                 AND sr.iClass = ${iClass}
                 AND sr.strGroupID LIKE CONCAT('${strGroupID}', '%')
+                AND sr.iSettleDays = ${iSettleDays} AND sr.iSettleType = ${iSettleType}
                 ${subQuery}
         `);
         return list[0];
     }
     return [];
+}
+
+exports.GetSubSettleExistList = async (strGroupID, strQuater, iClass, iSettleDays, iSettleType) => {
+    // let exist = await db.SettleSubRecords.findAll({where:{
+    //         strQuater:req.body.strQuater,
+    //         iClass:5,
+    //         strGroupID:{[Op.like]:req.body.strGroupID+'%'},
+    //         iSettleDays:req.body.iSettleDays,
+    //         iSettleType:req.body.iSettleType,
+    //     }, order: [['createdAt', 'DESC']]
+    // });
+
+    let subQuery = '';
+    // 총본에서 조회할 경우
+    if (strGroupID.length == 3) {
+        // subQuery = `AND t3.iSettleDays = ${iSettleDays} AND t3.iSettleType = ${iSettleType}`;
+    }
+    let list = await db.sequelize.query(`
+            SELECT sr.* 
+            FROM SettleSubRecords sr
+                LEFT JOIN Users t5 ON t5.strID = sr.strID 
+                LEFT JOIN Users t4 ON t4.id = t5.iParentID
+                LEFT JOIN Users t3 ON t3.id = t4.iParentID
+            WHERE sr.strQuater = '${strQuater}'
+                AND sr.iClass = 5
+                AND sr.strGroupID LIKE CONCAT('${strGroupID}', '%')
+                AND sr.iSettleDays = ${iSettleDays} AND sr.iSettleType = ${iSettleType}
+                ${subQuery} 
+        `);
+    return list[0];
 }
 
 exports.GetSettleList = async (strGroupID, strQuater) => {

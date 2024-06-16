@@ -854,29 +854,6 @@ router.post('/request_register', isLoggedIn, async(req, res) => {
             return;
         }
 
-        // 본사 죽장 타입 조회
-        let iSettleDays = parseInt(req.body.iSettleDays ?? 15);
-        iSettleDays = Number.isNaN(iSettleDays) ? 15 : iSettleDays;
-        let iSettleType = parseInt(req.body.iSettleType ?? 0);
-        iSettleType = Number.isNaN(iSettleType) ? 0 : iSettleType;
-
-        // 본사 죽장 타입 조회
-        let adminSettleType = 0;
-        if (parent.iClass == 3) {
-            adminSettleType = parent.iSettleType ?? 0;
-        } else if (parent.iClass > 3) {
-            let parentInfo = await IAgent.GetParentList(parent.strGroupID, parent.iClass, parent);
-            let adminUser = await db.Users.findOne({ where: {
-                    strNickname: parentInfo.strAdmin
-                }});
-            adminSettleType = adminUser.iSettleType ?? 0;
-        }
-
-        if (adminSettleType != iSettleType) {
-            res.send({result:'ERROR', code:'ERRORMSG', msg: '죽장 타입을 확인해주세요'});
-            return;
-        }
-
         if ( parent != null )
         {
             if ( parent.fSlotR < fSlotR ||
@@ -890,7 +867,8 @@ router.post('/request_register', isLoggedIn, async(req, res) => {
             // 죽장은 본사 ~ 대본만 체크
             // 본사가 누적이면 하위는 모두 누적이어야 함, 하위 죽장률 체크 필요
             // 본사가 리셋이면 하위는 모두 리셋이어야 함, 하위 죽장률 체크 불필요
-            if (adminSettleType != 1) {
+            let admin = await IAgent.GetAdminInfo(parent);
+            if (admin != null && admin.iSettleType != 1) {
                 if (parent.iClass == 3 || parent.iClass == 4 || parent.iClass == 5) {
                     if (parent.fSettleBaccarat < fSettleBaccarat || parent.fSettleSlot < fSettleSlot) {
                         res.send({result:'Error', error:'Settle', string:'죽장(%)은 상위 에이전트 보다 클 수 없습니다.'});
@@ -1466,31 +1444,6 @@ router.post('/request_agentinfo_modify', isLoggedIn,async (req, res) => {
             return;
         }
 
-        // 본사 죽장 타입 조회
-        let iSettleDays = parseInt(req.body.iSettleDays ?? 15);
-        iSettleDays = Number.isNaN(iSettleDays) ? 15 : iSettleDays;
-        let iSettleType = parseInt(req.body.iSettleType ?? 0);
-        iSettleType = Number.isNaN(iSettleType) ? 0 : iSettleType;
-        let iSettleCommission = parseInt(req.body.iSettleCommission ?? 0);
-
-        if (user.iClass == 3) {
-
-        }
-
-        let adminSettleType = 0;
-        // 본사는 총본에서 자유롭게 죽장 정보 변경 가능
-        if (user.iClass == 3) {
-            adminSettleType = user.iSettleType ?? 0;
-        } else if (user.iClass > 3) {
-            let adminUser = await IAgent.GetAdminInfo(user);
-            adminSettleType = adminUser.iSettleType ?? 0;
-        }
-
-        if (adminSettleType != iSettleType) {
-            res.send({result:'ERROR', code:'ERRORMSG', msg: '죽장 타입을 확인해주세요'});
-            return;
-        }
-
         if ( null != user )
         {
             let bUpdate = true;
@@ -1524,7 +1477,8 @@ router.post('/request_agentinfo_modify', isLoggedIn,async (req, res) => {
                     }
 
                     // 죽장은 본사 ~ 대본만 체크
-                    if (adminSettleType != 1) {
+                    let admin = await IAgent.GetAdminInfo(parent);
+                    if (admin != null && admin.iSettleType != 1) { // 리셋은 죽장을 자유롭게 설정 가능
                         if (parent.iClass == 3 || parent.iClass == 4 || parent.iClass == 5) {
                             if (
                                 parent.fSettleBaccarat < fSettleBaccarat ||
@@ -1584,17 +1538,17 @@ router.post('/request_agentinfo_modify', isLoggedIn,async (req, res) => {
                                 res.send({result:'ERROR', code:strErrorCode});
                                 return;
                             }
-                            if (iSettleDays == null) {
-                                strErrorCode = 'ERRORMSG';
-                                res.send({result:'ERROR', code:strErrorCode, msg: '죽장일자를 확인해주세요'});
-                                return;
-                            }
-
-                            if (iSettleType == null) {
-                                strErrorCode = 'ERRORMSG';
-                                res.send({result:'ERROR', code:strErrorCode, msg: '죽장일자를 확인해주세요'});
-                                return;
-                            }
+                            // if (iSettleDays == null) {
+                            //     strErrorCode = 'ERRORMSG';
+                            //     res.send({result:'ERROR', code:strErrorCode, msg: '죽장일자를 확인해주세요'});
+                            //     return;
+                            // }
+                            //
+                            // if (iSettleType == null) {
+                            //     strErrorCode = 'ERRORMSG';
+                            //     res.send({result:'ERROR', code:strErrorCode, msg: '죽장일자를 확인해주세요'});
+                            //     return;
+                            // }
                         }
                     }
                 }
@@ -1614,8 +1568,6 @@ router.post('/request_agentinfo_modify', isLoggedIn,async (req, res) => {
                     fSettleSlot:fSettleSlot,
                     iPermission:0,
                     iPassCheckNewUser:iPassCheckNewUser,
-                    iSettleDays:iSettleDays,
-                    iSettleType:iSettleType
                 };
 
                 let strPassword = req.body.strPassword ?? '';
@@ -1679,6 +1631,22 @@ router.post('/request_agentinfo_modify', isLoggedIn,async (req, res) => {
                 if (strMobile != '') {
                     // data['strMobile'] = await IAgent.GetCipher(strMobile);
                     data['strMobile'] = strMobile;
+                }
+
+                // 본사일 경우에만 죽장옵션 수정 가능
+                if (user.iClass == 3) {
+                    let iSettleDays = parseInt(req.body.iSettleDays ?? -1);
+                    if (iSettleDays != -1) {
+                        data['iSettleDays'] = iSettleDays;
+                    }
+                    let iSettleType = parseInt(req.body.iSettleType ?? -1);
+                    if (iSettleType != -1) {
+                        data['iSettleType'] = iSettleType;
+                    }
+                    let iSettleCommission = parseInt(req.body.iSettleCommission ?? -1);
+                    if (iSettleCommission != -1) {
+                        data['iSettleCommission'] = iSettleCommission;
+                    }
                 }
 
                 let logMsg = logMessage(user, data);

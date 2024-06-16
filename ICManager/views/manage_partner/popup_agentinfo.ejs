@@ -157,6 +157,7 @@
 	</div>
 	<% } %>
 
+	<div id="settle_option"></div>
 
 	<% if (agent.iClass == 8) { %>
 		<div style="display: none">
@@ -257,7 +258,7 @@
 				</table>
 			</div>
 		<% } %>
-		<% if (iRootClass <= 3 && agent.iClass >= 3) {%>
+		<% if (agent.iRootClass <= 3 && agent.iClass >= 3) {%>
 			<div style="display:none;">
 				<table>
 					<colgroup>
@@ -331,7 +332,7 @@
 			</table>
 		</div>
 	<% } %>
-	<% if (iRootClass == 2 && agent.iClass > 3) {%>
+	<% if (agent.iRootClass == 2 && agent.iClass > 3) {%>
 		<div id="grade">
 		</div>
 	<% } %>
@@ -348,6 +349,8 @@
 	let bUsingPC = false;
 	let bUsingPassNewUser = true;
 	let selectGradeId = 0;
+	let iSettleType = 1;
+	let iSettleDays = 15;
 
 	$(document).ready( ()=> {
 
@@ -646,6 +649,61 @@
 							SetGradeList(data.gradelist, data.grade);
 						}
 					<% } %>
+
+					<% if (agent.iRootClass <= 3 && agent.iClass >= 3 && agent.iClass <= 5) { %>
+					$('#settle_option').empty();
+					$('#settle_option').append(`
+							<table>
+								<colgroup>
+									<col style="width:15%">
+									<col style="width:35%">
+									<col style="width:15%">
+									<col style="width:35%">
+								</colgroup>
+								<p style="background-repeat:no-repeat; background-position:left center; font-size:16px; color:#454545; padding-left:22px;">죽장 옵션</p>
+								<tr>
+									<th scope="row">죽장주기</th>
+									<td>
+										<input type='radio'
+											   name='radio_settle_days'
+											   value='15'
+											   style='height: 32px; width: 20px; font-size: 15px; margin-right: 10px; padding-right: 10px;'
+											   onclick='OnClickSettleDays(15)'/>15일
+										&ensp;
+										<input type='radio'
+											   name='radio_settle_days'
+											   value='10'
+											   style='height: 32px; width: 20px; font-size: 15px; margin-right: 10px; padding-right: 10px;'
+											   onclick='OnClickSettleDays(10)'/>10일
+										&ensp;
+										<input type='radio'
+											   name='radio_settle_days'
+											   value='5'
+											   style='height: 32px; width: 20px; font-size: 15px; margin-right: 10px; padding-right: 10px;'
+											   onclick='OnClickSettleDays(5)'/>5일
+									</td>
+									<th scope="row">리셋여부</th>
+									<td>
+										<input type='radio'
+											   name='radio_settle_type'
+											   value='0'
+											   style='height: 32px; width: 20px; font-size: 15px; margin-right: 10px; padding-right: 10px;'
+											   onclick='OnClickSettleType(0)'/>누적
+										&ensp;
+										<input type='radio'
+											   name='radio_settle_type'
+											   value='1'
+											   style='height: 32px; width: 20px; font-size: 15px; margin-right: 10px; padding-right: 10px;'
+											   onclick='OnClickSettleType(1)'/>리셋
+									</td>
+								</tr>
+							</table>
+						`);
+					iSettleDays = data.iSettleDays ?? -1;
+					iSettleType = data.iSettleType ?? -1;
+					$('input[name="radio_settle_days"]').filter(`[value=${iSettleDays}]`).prop("checked", true);
+					$('input[name="radio_settle_type"]').filter(`[value=${iSettleType}]`).prop("checked", true);
+					<% } %>
 				}
 				else
 				{
@@ -708,6 +766,9 @@
 
 		let iRootClass = parseInt(agent.iRootClass);
 		let iClass = parseInt(agent.iClass);
+
+		let iSettleDays = agent.iSettleDays;
+		let iSettleType = agent.iSettleType;
 
 		if ( iRootClass <= 3 || (iRootClass < iClass) ) {
 			fSlotR = $('#fSlotR').val();
@@ -777,6 +838,10 @@
 		objectData.fSettlePBB = fSettlePBB;
 		objectData.strEditorNickname = agent.iRootNickname;
 		objectData.iPassCheckNewUser = bUsingPassNewUser ? 1 : 0;
+		<% if (agent.iRootClass <= 3 && agent.iClass >= 3 && agent.iClass <= 5) { %>
+			objectData.iSettleDays = iSettleDays;
+			objectData.iSettleType = iSettleType;
+		<% } %>
 
 		if ( strPassword != strPasswordConfirm ){
 			alert(strAlertDifferentPasswordAndConfirm);
@@ -827,6 +892,12 @@
 
 	let OnClickClose = () => {
 		window.close();
+	}
+	let OnClickSettleDays = (days) => {
+		iSettleDays = days;
+	}
+	let OnClickSettleType = (type) => {
+		iSettleType = type;
 	}
 </script>
 	

@@ -36,17 +36,11 @@ var inline_GetAdminForSettle = async (strGroupID, strQuater, iClass) => {
 exports.GetAdminForSettle = inline_GetAdminForSettle;
 
 //  For Settle
-var inline_GetAgentListForSettle = async (strGroupID, iClass, strQuater, dateStart, dateEnd, strNickname) => {
+var inline_GetAgentListForSettle = async (strGroupID, iClass, strQuater, dateStart, dateEnd, strNickname, iSettleDays, iSettleType) => {
 
     console.log(`############################################################################################### 2GetAgentListForSettle : iClass = ${iClass}, strGroupID : ${strGroupID}, ${dateStart} ~ ${dateEnd}`);
 
-    let strQuater2 = '';
-    let quaterList = strQuater.split('-');
-    if (quaterList[1] == '2') {
-        strQuater2 = `${quaterList[0]}-1`;
-    } else {
-        strQuater2 = `${parseInt(quaterList[0])-1}-2`;
-    }
+    let strQuater2 = GetBeforeQuater(strQuater, iSettleDays);
 
     let subQuery = '';
     if ( iClass == EAgent.eProAdmin )
@@ -105,7 +99,7 @@ var inline_GetAgentListForSettle = async (strGroupID, iClass, strQuater, dateSta
         ${subQuery11}
         FROM Users AS t1
         LEFT JOIN Users AS t2 ON t2.iParentID = t1.id
-        WHERE t2.iClass=${iClass} AND t2.strGroupID LIKE CONCAT('${strGroupID}', '%')
+        WHERE t2.iClass=${iClass} AND t2.strGroupID LIKE CONCAT('${strGroupID}', '%') AND t2.iSettleDays = ${iSettleDays} AND t2.iSettleType = ${iSettleType}
     `);
     console.log(list);
     return list;
@@ -127,7 +121,7 @@ var inline_GetAgentListForSettleRecord = async (strGroupID, iClass, strQuater, d
 exports.GetAgentListForSettleRecord = inline_GetAgentListForSettleRecord;
 
 
-let inline_CalculateOverviewSettleCurrent = async (strGroupID, strQuater) => {
+let inline_CalculateOverviewSettleCurrent = async (strGroupID, strQuater, iSettleDays) => {
     let data = {iSettlePlus:0, iSettleMinus:0, iCurrentTotalSettle:0};
 
     let list = await db.SettleRecords.findAll({
@@ -145,7 +139,7 @@ let inline_CalculateOverviewSettleCurrent = async (strGroupID, strQuater) => {
     if (list.length == 0) {
         list = await db.SettleRecords.findAll({
             where: {
-                strQuater: GetBeforeQuater(strQuater),
+                strQuater: GetBeforeQuater(strQuater, iSettleDays),
                 iClass: {
                     [Op.in]:[4,5]
                 },
@@ -241,7 +235,7 @@ exports.CalculateOverviewSettle = inline_CalculateOverviewSettle;
 /**
  * 죽장 정산 Overview 내 지분자 정보
  */
-let inline_CalculateOverviewShareCurrent = async (strGroupID, strQuater) => {
+let inline_CalculateOverviewShareCurrent = async (strGroupID, strQuater, iSettleDays) => {
     let data = {iSharePlus:0, iShareMinus:0, iCurrentTotalShare:0};
 
     let list = await db.ShareRecords.findAll({
@@ -257,7 +251,7 @@ let inline_CalculateOverviewShareCurrent = async (strGroupID, strQuater) => {
         // 이전분기에서 한번더 검색
         list = await db.ShareRecords.findAll({
             where: {
-                strQuater: GetBeforeQuater(strQuater),
+                strQuater: GetBeforeQuater(strQuater, iSettleDays),
                 strGroupID: {
                     [Op.like]:`${strGroupID}%`
                 }
@@ -303,7 +297,7 @@ exports.CalculateOverviewShare = inline_CalculateOverviewShare;
 /**
  * 죽장 정산 클래스 데이터 조회
  */
-exports.GetSettleClass = async (strGroupID, iClass, strQuater, dateStart, dateEnd, iOffset, iLimit, lastDate) => {
+exports.GetSettleClass = async (strGroupID, iClass, strQuater, dateStart, dateEnd, iOffset, iLimit, lastDate, settleDays, settleType) => {
     let offset = parseInt(iOffset ?? 0);
     let limit = parseInt(iLimit ?? 30);
 
@@ -317,18 +311,10 @@ exports.GetSettleClass = async (strGroupID, iClass, strQuater, dateStart, dateEn
         }
     }
 
-    let strQuater2 = '';
-    let quaterList = strQuater.split('-');
-    if (quaterList[1] == '2') {
-        strQuater2 = `${quaterList[0]}-1`;
-    } else {
-        let month = parseInt(quaterList[0])-1;
-        if (month == 0) {
-            strQuater2 = `12-2`;
-        } else {
-            strQuater2 = `${parseInt(quaterList[0])-1}-2`;
-        }
-    }
+    let iSettleDays = parseInt(settleDays);
+    let iSettleType = parseInt(settleType);
+
+    let strQuater2 = GetBeforeQuater(strQuater, iSettleDays);
 
     if (iClass == 4) {
         let list = await db.sequelize.query(`
@@ -372,7 +358,7 @@ exports.GetSettleClass = async (strGroupID, iClass, strQuater, dateStart, dateEn
                      LEFT JOIN (
                          SELECT fSettleBaccarat, fSettleSlot, fSettlePBA, fSettlePBB, strID FROM SettleRecords WHERE strQuater='${strQuater}'
                      ) sr4 ON sr4.strID=t4.strID
-            WHERE t4.iClass = ${iClass} AND t4.strGroupID LIKE CONCAT('${strGroupID}', '%')
+            WHERE t4.iClass = ${iClass} AND t4.strGroupID LIKE CONCAT('${strGroupID}', '%') AND t4.iSettleDays = ${iSettleDays} AND t4.iSettleType = ${iSettleType}
             ${lastDateQuery}
             ORDER BY settleCount ASC, strAdminNickname ASC, t4.strNickname ASC, t4.strGroupID ASC
                 LIMIT ${limit}
@@ -438,7 +424,7 @@ exports.GetSettleClass = async (strGroupID, iClass, strQuater, dateStart, dateEn
                 LEFT JOIN (
                     SELECT fSettleBaccarat, fSettleSlot, fSettlePBA, fSettlePBB, strID FROM SettleRecords WHERE strQuater='${strQuater}'
                 ) sr4 ON sr4.strID=t4.strID
-            WHERE t5.iClass = ${iClass} AND t5.strGroupID LIKE CONCAT('${strGroupID}', '%')
+            WHERE t5.iClass = ${iClass} AND t5.strGroupID LIKE CONCAT('${strGroupID}', '%') AND t5.iSettleDays = ${iSettleDays} AND t5.iSettleType = ${iSettleType}
             ${lastDateQuery}
             ORDER BY settleCount ASC, strAdminNickname ASC, t5.strNickname ASC, t5.strGroupID ASC
             LIMIT ${limit}
@@ -461,38 +447,97 @@ exports.GetSettleList = async (strGroupID, strQuater) => {
     return list;
 }
 
-
-let GetBeforeQuater = (strQuater) => {
-    let strQuater2 = '';
+let GetBeforeQuater = (strQuater, iSettleDays) => {
     let quaterList = strQuater.split('-');
-    if (quaterList[1] == '2') {
-        strQuater2 = `${quaterList[0]}-1`;
-    } else {
-        let month = parseInt(quaterList[0])-1;
-        if (month == 0) {
-            strQuater2 = `12-2`;
-        } else {
-            strQuater2 = `${parseInt(quaterList[0])-1}-2`;
+    let iMonth = quaterList[0];
+    let quater = quaterList[1];
+    if (iSettleDays == 5) {
+        if (quater == 1) {
+            if (iMonth == 1) {
+                iMonth = 12;
+                quater = 6;
+            } else {
+                iMonth = iMonth - 1;
+                quater = 6;
+            }
+        } else if (quater == 2 || quater == 3 || quater == 4 || quater == 5 || quater == 6) {
+            quater = parseInt(quater) - 1;
+        }
+    } else if (iSettleDays == 10) {
+        if (quater == 1) {
+            if (iMonth == 1) {
+                iMonth = 12;
+                quater = 3;
+            } else {
+                iMonth = iMonth - 1;
+                quater = 3;
+            }
+        } else if (quater == 2 || quater == 3) {
+            quater = parseInt(quater) - 1;
+        }
+    } else if (iSettleDays == 15) {
+        if (quater == 1) {
+            if (iMonth == 1) {
+                iMonth = 12;
+                quater = 2;
+            } else {
+                iMonth = iMonth - 1;
+                quater = 1;
+            }
+        } else if (quater == 2) {
+            quater = parseInt(quater) - 1;
         }
     }
-    return strQuater2;
+    return `${iMonth}-${quater}`;
 }
+exports.GetBeforeQuater = GetBeforeQuater;
 
-let GetQuaterEndDate = (quater) => {
-    let endDate = '';
-    let quaterList = quater.split('-');
-    if (quaterList[1] == '1') {
-        endDate = ITime.get1QuaterEndDate(parseInt(quaterList[0])-1);
-    } else if (quaterList[1] == '2') {
-        endDate = ITime.get2QuaterEndDate(parseInt(quaterList[0])-1);
+let GetQuaterEndDate = (strQuater, iSettleDays) => {
+    let quaterList = strQuater.split('-');
+    let iMonth = quaterList[0];
+    let quater = quaterList[1];
+    let sDay = 0;
+    let eDay = 0;
+    if (iSettleDays == 5) {
+        if (quater == 1) {
+            sDay = 1;
+            eDay = 5;
+        } else if (quater == 2) {
+            sDay = 6;
+            eDay = 10;
+        } else if (quater == 3) {
+            sDay = 11;
+            eDay = 15;
+        } else if (quater == 4) {
+            sDay = 16;
+            eDay = 20;
+        } else if (quater == 5) {
+            sDay = 21;
+            eDay = 25;
+        } else if (quater == 6) {
+            sDay = 26;
+            eDay = 31;
+        }
+    } else if (iSettleDays == 10) {
+        if (quater == 1) {
+            sDay = 1;
+            eDay = 10;
+        } else if (quater == 2) {
+            sDay = 11;
+            eDay = 20;
+        } else if (quater == 3) {
+            sDay = 21;
+            eDay = 31;
+        }
     }
-    const date = moment(endDate).add(1, 'days').format('YYYY-MM-DD');
-    return date;
+    let date = new Date();
+    date = new Date(date.getFullYear(), iMonth-1, eDay);
+    return moment(date).add(1, 'days').format('YYYY-MM-DD');
 }
 exports.GetQuaterEndDate = GetQuaterEndDate;
 
-exports.GetSettleTargetUserCount = async (strQuater, iClass, strGroupID) => {
-    let lastDate = GetQuaterEndDate(strQuater);
+exports.GetSettleTargetUserCount = async (strQuater, iClass, strGroupID, iSettleDays, iSettleType) => {
+    let lastDate = GetQuaterEndDate(strQuater, iSettleDays);
 
     if (lastDate != '') {
         let count = await db.Users.count({
@@ -501,6 +546,8 @@ exports.GetSettleTargetUserCount = async (strQuater, iClass, strGroupID) => {
                 iPermission: {
                     [Op.notIn]: [100]
                 },
+                iSettleDays: iSettleDays,
+                iSettleType: iSettleType,
                 strGroupID: {[Op.like]: strGroupID + '%'},
                 createdAt: {[Op.lt]: lastDate}
             }
@@ -513,6 +560,8 @@ exports.GetSettleTargetUserCount = async (strQuater, iClass, strGroupID) => {
                 iPermission: {
                     [Op.notIn]: [100]
                 },
+                iSettleDays: iSettleDays,
+                iSettleType: iSettleType,
                 strGroupID: {[Op.like]: strGroupID + '%'}
             }
         });

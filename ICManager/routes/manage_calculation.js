@@ -127,109 +127,68 @@ router.post('/settle_all2', isLoggedIn, async(req, res) => {
     res.render('manage_calculation/settle_all2', {iLayout:0, iHeaderFocus:6, user:user, agentinfo:agentinfo, iocount:iocount, list:[], overview:overview, overviewShare:overviewShare});
 });
 
-router.post('/request_settle_all', isLoggedIn, async(req, res) => {
+/**
+ * 리셋 죽장 조회
+ */
+router.post('/settle_all4', isLoggedIn, async(req, res) => {
 
     console.log(req.body);
 
-    // 대본, 부본은 별도 처리(정산완료건만 조회 가능)
-    // if (req.user.iClass == 4 || req.user.iClass == 5) {
-    //     SettleViceAll(req, res);
-    //     return;
+    const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
+
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle, strID:dbuser.strID,
+        iRootClass:req.user.iClass, iPermission:req.user.iPermission, iSettleDays:dbuser.iSettleDays, iSettleType:dbuser.iSettleType};
+
+    const agentinfo = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
+
+    let iocount = await IInout.GetProcessing(user.strGroupID, user.strNickname, dbuser.iClass);
+    console.log(`ic : ${iocount.input}, oc : ${iocount.output}`);
+
+    // let date = new Date();
+    // let iMonth = date.getMonth();
+    // let strQuater = '';
+    // let dateStart = '';
+    // let dateEnd = '';
+    // if ( date.getDate() < 16 ) {
+    //     strQuater = `${iMonth+1}-1`;
+    //     dateStart = ITime.get1QuaterStartDate(iMonth);
+    //     dateEnd = ITime.get1QuaterEndDate(iMonth);
+    // } else {
+    //     strQuater = `${iMonth+1}-2`;
+    //     dateStart = ITime.get2QuaterStartDate(iMonth);
+    //     dateEnd = ITime.get2QuaterEndDate(iMonth);
     // }
 
-    let iLimit = parseInt(req.body.iLimit);
-    let iPage = parseInt(req.body.iPage);
-    let iOffset = (iPage-1) * iLimit;
+    // let overviewList = await IAgentSettle.CalculateOverviewSettle(req.body.strGroupID, req.body.iClass, strQuater, dateStart, dateEnd);
+    // let overview = {};
+    // if (overviewList.length > 0) {
+    //     overview = overviewList[0];
+    // }
+    let overview = {};
 
-    let exist = await db.SettleRecords.findAll({where:{
-            strQuater:req.body.strQuater,
-            iClass:req.body.iClass,
-            strGroupID:{[Op.like]:req.body.strGroupID+'%'},
-        }, order: [['createdAt', 'DESC']]
-    });
+    let overviewShare = {};
 
-    let lastDate = IAgentSettle.GetQuaterEndDate(req.body.strQuater);
-
-    let list = await GetSettleAll2(req.body.strGroupID, req.body.strQuater, req.body.dateStart, req.body.dateEnd, req.body.iClass, iOffset, iLimit, lastDate);
-
-    const targetUserCount = await getSettleTargetUserCount(req.body.strQuater, req.body.iClass, req.body.strGroupID);
-
-    if ( exist.length > 0 && targetUserCount == exist.length )
-    {
-        res.send({result:'EXIST', list:list, iRootClass: req.user.iClass, exist: exist, msg: '정상조회', totalCount: targetUserCount});
+    if (dbuser.iClass <= 3) {
+        // 대.부본 보관죽장*
+        // let settleCurrent = await IAgentSettle.CalculateOverviewSettleCurrent(req.body.strGroupID, strQuater);
+        // overview.iSettlePlus = settleCurrent.iSettlePlus;
+        // overview.iSettleMinus = settleCurrent.iSettleMinus;
+        // overview.iCurrentTotalSettle = settleCurrent.iCurrentTotalSettle;
+        //
+        // // 순이익, 배당금, 지분자 전월 이월, 지분자 총이월, 합계
+        // let overviewShareList = await IAgentSettle.CalculateOverviewShare(req.body.strGroupID, strQuater);
+        // if (overviewShareList.length > 0) {
+        //     overviewShare = overviewShareList[0];
+        // }
+        // // 지분자보관죽장*
+        // let shareCurrent = await IAgentSettle.CalculateOverviewShareCurrent(req.body.strGroupID, strQuater);
+        // overviewShare.iSharePlus = shareCurrent.iSharePlus;
+        // overviewShare.iShareMinus = shareCurrent.iShareMinus;
+        // overviewShare.iCurrentTotalShare = shareCurrent.iCurrentTotalShare;
     }
-    else
-    {
-        res.send({result:'OK', list:list, iRootClass: req.user.iClass, exist: exist, msg: '정상조회', totalCount: targetUserCount});
-    }
+
+    res.render('manage_calculation/settle_all4', {iLayout:0, iHeaderFocus:6, user:user, agentinfo:agentinfo, iocount:iocount, list:[], overview:overview, overviewShare:overviewShare});
 });
-
-let getSettleTargetUserCount = async (strQuater, iClass, strGroupID) => {
-    let lastDate = GetQuaterEndDate(strQuater);
-
-    if (lastDate != '') {
-        let count = await db.Users.count({
-            where: {
-                iClass: iClass,
-                iPermission: {
-                    [Op.notIn]: [100]
-                },
-                strGroupID: {[Op.like]: strGroupID + '%'},
-                createdAt: {[Op.lt]: lastDate}
-            }
-        });
-        return count;
-    } else {
-        let count = await db.Users.count({
-            where: {
-                iClass: iClass,
-                iPermission: {
-                    [Op.notIn]: [100]
-                },
-                strGroupID: {[Op.like]: strGroupID + '%'}
-            }
-        });
-        return count;
-    }
-    return 0;
-}
-
-let GetSettleAll2 = async (strGroupID, strQuater, dateStart, dateEnd, iClass, iOffset, iLimit, lastDate) => {
-    // strQuater
-    let start = dateStart ?? '';
-    let end = dateEnd ?? '';
-
-    // 값이 없으면 현재 시간을 기준으로 설정
-    if (start == '' || end == '') {
-        let date = new Date();
-        let iMonth = date.getMonth();
-
-        if (date.getDate() < 16) {
-            strQuater = `${iMonth + 1}-1`;
-            start = ITime.get1QuaterStartDate(iMonth);
-            end = ITime.get1QuaterEndDate(iMonth);
-        } else {
-            strQuater = `${iMonth + 1}-2`;
-            start = ITime.get2QuaterStartDate(iMonth);
-            end = ITime.get2QuaterEndDate(iMonth);
-        }
-    }
-
-    // 파트너 목록
-    let partnerList = await IAgentSettle.GetSettleClass(strGroupID, iClass, strQuater, start, end, iOffset, iLimit, lastDate);
-
-    let list = [];
-    for (let i in partnerList) {
-        let obj = partnerList[i];
-        if (obj.iClass == 4) {
-            obj.iSettleVice = GetSettleVice(obj);
-        } else {
-            obj.iSettleVice = 0;
-        }
-        list.push(obj);
-    }
-    return list;
-}
 
 let GetSettleVice = (obj) => {
     // 죽장 계산
@@ -336,7 +295,7 @@ router.post('/request_proadmin_settle_list', isLoggedIn, async (req, res) => {
                  JOIN Users u2 ON u.iParentID = u2.id
         WHERE 1=1
           AND u.iClass=4
-          AND u.strGroupID LIKE CONCAT('${dbuser.strGroupID}', '%')
+          AND u.strGroupID LIKE CONCAT('${dbuser.strGroupID}', '%') AND u.iSettleDays = ${dbuser.iSettleDays} AND u.iSettleType = ${dbuser.iSettleType}
         ORDER BY parentNickname ASC, u.strNickname ASC, parentGroupID ASC
         ;
     `);

@@ -104,7 +104,9 @@
 				dateEnd:dateEnd,
 				iLimit:iLimit,
 				iPage:iCurrentPage,
-				iUserClass: user.iClass
+				iUserClass: user.iClass,
+				iSettleDays:user.iSettleDays,
+				iSettleType:user.iSettleType
 			},
 			dataType: "json",
 			success: function (obj) {
@@ -114,16 +116,22 @@
 					exist = obj.exist;
 					bEnableSettle = true;
 					SetList(obj.list, iClass, true);
+					$('#pagination').empty();
+					$('#pagination').append(getPagination(iLimit, obj.totalCount, iCurrentPage));
 				}
-				else {
+				else if ( obj.result == 'EXIST')
+				{
 					adminList = obj.list;
 					exist = obj.exist;
 					bEnableSettle = false;
 					SetList(obj.list, iClass, false);
+					$('#pagination').empty();
+					$('#pagination').append(getPagination(iLimit, obj.totalCount, iCurrentPage));
 				}
-
-				$('#pagination').empty();
-				$('#pagination').append(getPagination(iLimit, obj.totalCount, iCurrentPage));
+				else
+				{
+					alert(obj.msg);
+				}
 			}
 		});
 	};

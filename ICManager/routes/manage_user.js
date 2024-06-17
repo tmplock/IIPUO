@@ -171,10 +171,8 @@ let GetClassList = (strGroupID, listUsers) => {
 
 router.post('/request_realtimeuserlist', isLoggedIn, async ( req, res ) => {
 
-    console.log(`################################################## /request_realtimeuserlist`);
     let list = GetNicknameList(req.body.strGroupID, realtime_userlist);
     let listClass = GetClassList(req.body.strGroupID, realtime_userlist);
-    console.log(req.body);
     let result = [];
 
     for ( let i in realtime_userlist )

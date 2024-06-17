@@ -24,8 +24,8 @@ const { default: axios2 } = require('axios');
 
 let RequestAxios = async (strAddress, objectData) =>
 {
-    console.log(`RequestAxios ${strAddress}`);
-    console.log(objectData);
+    // console.log(`RequestAxios ${strAddress}`);
+    // console.log(objectData);
 
     try {
 
@@ -64,13 +64,11 @@ router.post('/login', passport.authenticate('local', {
 
 router.get('/loginsuccess', async (req, res) => {
 
-    console.log(`################################################## /account/loginsuccess`);
-
     let strIP = requestip.getClientIp(req);
 
     const objectResult = await RequestAxios(`${global.strAPIAddress}/account/login`, {eType:'CMS', strID:req.user.strID, strNickname:req.user.strNickname, strGroupID:req.user.strGroupID, iClass:req.user.iClass, strIP:strIP});
 
-    console.log(objectResult);
+    // console.log(objectResult);
 
     if ( objectResult.result == 'OK' )
     {
@@ -128,7 +126,7 @@ router.post('/request_checklogout', async (req, res) => {
     {
         const objectResult = await RequestAxios(`${global.strAPIAddress}/account/checklogout`, {eType:'CMS', strID:req.user.strID});
 
-        console.log(objectResult);
+        // console.log(objectResult);
     
         if ( objectResult.result == 'OK' )
         {

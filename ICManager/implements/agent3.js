@@ -25,8 +25,6 @@ let inline_GetPopupAgentInfo = async (strGroupID, iClass, strNickname) => {
     if ( strGroupID == undefined || iClass == undefined || strNickname == undefined )
         return null;
 
-    console.log(`############################# 2inline_GetPopupAgentInfo ${strGroupID}, ${strNickname}, ${iClass}`);
-
     if (iClass > 3) {
         const [users] = await db.sequelize.query(
             `
@@ -219,9 +217,6 @@ exports.GetPopupAgentInfo = inline_GetPopupAgentInfo;
  * 본인의 배팅 레코드
  */
 let inline_CalculateSelfBettingRecord = async (strGroupID, iClass, dateStart, dateEnd, strNickname, strID) => {
-
-    console.log(`############################# 2CalculateBettingRecord ${dateStart}, ${dateEnd}`);
-
     // user
     let user = await db.Users.findOne({
         where: {
@@ -288,15 +283,11 @@ exports.CalculateSelfBettingRecord = inline_CalculateSelfBettingRecord;
  * 본인+하위파트너 배팅 레코드
  */
 let inline_CalculateBettingRecord = async (strGroupID, iClass, dateStart, dateEnd, strNickname, strID) => {
-
-    console.log(`############################# 2CalculateBettingRecord ${dateStart}, ${dateEnd}`);
-
     // partner > list
     let list = await inline_GetBettingRecord(dateStart, dateEnd, strID);
 
     // partner > overview
     let iom = await inline_GetIOMFromDate(strGroupID, iClass, dateStart, dateEnd, '', strID);
-    console.log(iom);
 
     let strDate = '';
     if (dateStart != dateEnd) {
@@ -349,9 +340,6 @@ exports.CalculateBettingRecord = inline_CalculateBettingRecord;
  * 배팅조회
  */
 var inline_GetBettingRecord = async (strTimeStart, strTimeEnd, strID) => {
-
-    console.log(`############################# 2GetBettingRecord strTimeStart : ${strTimeStart}, strTimeEnd : ${strTimeEnd}`);
-
     let list = await db.RecordDailyOverviews.findAll({
         where: {
             strDate:{
@@ -372,28 +360,6 @@ exports.GetBettingRecord = inline_GetBettingRecord;
  * 입금, 전환머니, 출금, 보유머니
  */
 var inline_GetBettingRecordMoney = async (strTimeStart, strTimeEnd, strID) => {
-
-    console.log(`############################# 2GetBettingRecord strTimeStart : ${strTimeStart}, strTimeEnd : ${strTimeEnd}`);
-
-    const [rList]  = await db.sequelize.query(
-        `        SELECT * FROM RecordDailyOverviews
-                SELECT DATE(Inouts.createdAt) AS date,
-                IFNULL((SELECT SUM(iRolling) FROM Users WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND iClass > 3 ),0) as iRolling, 
-                IFNULL((SELECT SUM(iSettle) FROM Users WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND iClass > 3) ,0) as iSettle,
-                IFNULL((SELECT SUM(iCash) FROM Users WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND iClass > 3 ),0) as iTotalMoney,
-                IFNULL((SELECT SUM(iAmount) FROM Inouts WHERE eType='INPUT' AND eState = 'COMPLETE' AND strGroupID LIKE CONCAT('${strGroupID}','%') AND date(createdAt) BETWEEN '${strStartDate}' AND '${strEndDate}'),0) as iInput,
-                IFNULL((SELECT SUM(iAmount) FROM Inouts WHERE eType='OUTPUT' AND eState = 'COMPLETE' AND strGroupID LIKE CONCAT('${strGroupID}','%') AND date(createdAt) BETWEEN '${strStartDate}' AND '${strEndDate}'),0) as iOutput,
-                IFNULL((SELECT SUM(iAmount) FROM Inouts WHERE eType='ROLLING' OR Inouts.eType = 'SETTLE' AND eState = 'COMPLETE' AND strGroupID LIKE CONCAT('${strGroupID}','%') AND date(createdAt) BETWEEN '${strStartDate}' AND '${strEndDate}'),0) as iExchange,
-                IFNULL(SUM(case when Inouts.eType = 'ROLLING' then Inouts.iAmount ELSE 0 END),0) as iExchangeRolling,
-                IFNULL(SUM(case when Inouts.eType = 'SETTLE' then Inouts.iAmount ELSE 0 END),0) as iExchangeSettle,
-                0 AS iMyRollingMoney
-                from Inouts 
-                LEFT OUTER JOIN Users
-                ON Inouts.strAdminNickname = Users.strNickname
-                WHERE Inouts.strGroupID LIKE CONCAT('${strGroupID}','%') AND Inouts.eState = 'COMPLETE' AND DATE(Inouts.createdAt) BETWEEN '${strStartDate}' AND '${strEndDate}' ${strQueryNickname}
-            `
-    );
-
     let list = await db.RecordDailyOverviews.findAll({
         where: {
             strDate:{
@@ -414,9 +380,6 @@ exports.GetBettingRecordMoney = inline_GetBettingRecordMoney;
  *  이용자 팝업 > 본인배팅내역, 파트너 팝업 > 회원, 파트너 팝업 > 정산
  */
 let inline_GetIOMFromDate = async (strGroupID, iClass, strStartDate, strEndDate, strNickname, strID) => {
-
-    console.log("############################# 2GetIOM " + strGroupID);
-
     let strQueryNickname = ``;
     if ( strNickname != undefined && strNickname != null )
     {
@@ -726,191 +689,6 @@ let FindIndexFromBettingRecord = (date, list) => {
             return i;
     }
     return -1;
-}
-
-/**
- * 본인 배팅 롤링
- * 유저팝업 > 본인배팅
- * 파트너팝업 > 본인배팅
- * */
-let GetClassSelfRolling = (daiyBetting, iClass, iGameCode) => {
-    let iRolling = 0;
-    switch ( parseInt(iClass) )
-    {
-        case EAgent.eHQ:
-            if (iGameCode == 0)
-                return 0;
-            else if (iGameCode == 100)
-                return 0;
-            else if (iGameCode == 200)
-                return 0;
-            else if (iGameCode == 300)
-                return 0;
-            break;
-        case EAgent.eViceHQ:
-            if (iGameCode == 0)
-                return 0;
-            else if (iGameCode == 100)
-                return 0;
-            else if (iGameCode == 200)
-                return 0;
-            else if (iGameCode == 300)
-                return 0;
-            break;
-        case EAgent.eAdmin: //  Admin
-            if (iGameCode == 0)
-                return daiyBetting.iSelfBRollingVAdmin;
-            else if (iGameCode == 100)
-                return daiyBetting.iSelfUORollingVAdmin;
-            else if (iGameCode == 200)
-                return daiyBetting.iSelfSlotRollingVAdmin;
-            else if (iGameCode == 300)
-                return daiyBetting.iSelfPBRollingVAdmin;
-            break;
-        case EAgent.eProAdmin: //  PAdmin
-            if (iGameCode == 0)
-                return daiyBetting.iSelfBRollingPAdmin;
-            else if (iGameCode == 100)
-                return daiyBetting.iSelfUORollingPAdmin;
-            else if (iGameCode == 200)
-                return daiyBetting.iSelfSlotRollingPAdmin;
-            else if (iGameCode == 300)
-                return daiyBetting.iSelfPBRollingPAdmin;
-            break;
-        case EAgent.eViceAdmin: //  VAdmin
-            if (iGameCode == 0)
-                return daiyBetting.iSelfBRollingVAdmin;
-            else if (iGameCode == 100)
-                return daiyBetting.iSelfUORollingVAdmin;
-            else if (iGameCode == 200)
-                return daiyBetting.iSelfSlotRollingVAdmin;
-            else if (iGameCode == 300)
-                return daiyBetting.iSelfPBRollingVAdmin;
-            break;
-        case EAgent.eAgent: //  Agent
-            if (iGameCode == 0)
-                return daiyBetting.iSelfBRollingAgent;
-            else if (iGameCode == 100)
-                return daiyBetting.iSelfUORollingAgent;
-            else if (iGameCode == 200)
-                return daiyBetting.iSelfSlotRollingAgent;
-            else if (iGameCode == 300)
-                return daiyBetting.iSelfPBRollingAgent;
-            break;
-        case EAgent.eShop: //  Shop
-            if (iGameCode == 0)
-                return daiyBetting.iSelfBRollingShop;
-            else if (iGameCode == 100)
-                return daiyBetting.iSelfUORollingShop;
-            else if (iGameCode == 200)
-                return daiyBetting.iSelfSlotRollingShop;
-            else if (iGameCode == 300)
-                return daiyBetting.iSelfPBRollingShop;
-            break;
-        case EAgent.eUser: //  User
-            if (iGameCode == 0)
-                return daiyBetting.iSelfBRollingUser;
-            else if (iGameCode == 100)
-                return daiyBetting.iSelfUORollingUser;
-            else if (iGameCode == 200)
-                return daiyBetting.iSelfSlotRollingUser;
-            else if (iGameCode == 300)
-                return daiyBetting.iSelfPBRollingUser;
-            break;
-    }
-    return 0;
-}
-
-/**
- * 본인 + 하위 파트너 배팅 롤링
- * 파트너팝업 > 회원
- * */
-let GetClassRolling = (daiyBetting, iClass, iGameCode) => {
-    let iRolling = 0;
-    switch ( parseInt(iClass) )
-    {
-        case EAgent.eHQ:
-            if (iGameCode == 0)
-                return daiyBetting.iBRollingPAdmin + daiyBetting.iBRollingVAdmin + daiyBetting.iBRollingAgent + daiyBetting.iBRollingShop + daiyBetting.iBRollingUser;
-            else if (iGameCode == 100)
-                return daiyBetting.iUORollingPAdmin + daiyBetting.iUORollingVAdmin + daiyBetting.iUORollingAgent + daiyBetting.iUORollingShop + daiyBetting.iUORollingUser;
-            else if (iGameCode == 200)
-                return daiyBetting.iSlotRollingPAdmin + daiyBetting.iSlotRollingVAdmin + daiyBetting.iSlotRollingAgent + daiyBetting.iSlotRollingShop + daiyBetting.iSlotRollingUser;
-            else if (iGameCode == 300)
-                return daiyBetting.iPBRollingPAdmin + daiyBetting.iPBRollingVAdmin + daiyBetting.iPBRollingAgent + daiyBetting.iPBRollingShop + daiyBetting.iPBRollingUser;
-            break;
-        case EAgent.eViceHQ:
-            if (iGameCode == 0)
-                return daiyBetting.iBRollingPAdmin + daiyBetting.iBRollingVAdmin + daiyBetting.iBRollingAgent + daiyBetting.iBRollingShop + daiyBetting.iBRollingUser;
-            else if (iGameCode == 100)
-                return daiyBetting.iUORollingPAdmin + daiyBetting.iUORollingVAdmin + daiyBetting.iUORollingAgent + daiyBetting.iUORollingShop + daiyBetting.iUORollingUser;
-            else if (iGameCode == 200)
-                return daiyBetting.iSlotRollingPAdmin + daiyBetting.iSlotRollingVAdmin + daiyBetting.iSlotRollingAgent + daiyBetting.iSlotRollingShop + daiyBetting.iSlotRollingUser;
-            else if (iGameCode == 300)
-                return daiyBetting.iPBRollingPAdmin + daiyBetting.iPBRollingVAdmin + daiyBetting.iPBRollingAgent + daiyBetting.iPBRollingShop + daiyBetting.iPBRollingUser;
-            break;
-        case EAgent.eAdmin: //  Admin
-            if (iGameCode == 0)
-                return daiyBetting.iBRollingPAdmin + daiyBetting.iBRollingVAdmin + daiyBetting.iBRollingAgent + daiyBetting.iBRollingShop + daiyBetting.iBRollingUser;
-            else if (iGameCode == 100)
-                return daiyBetting.iUORollingPAdmin + daiyBetting.iUORollingVAdmin + daiyBetting.iUORollingAgent + daiyBetting.iUORollingShop + daiyBetting.iUORollingUser;
-            else if (iGameCode == 200)
-                return daiyBetting.iSlotRollingPAdmin + daiyBetting.iSlotRollingVAdmin + daiyBetting.iSlotRollingAgent + daiyBetting.iSlotRollingShop + daiyBetting.iSlotRollingUser;
-            else if (iGameCode == 300)
-                return daiyBetting.iPBRollingPAdmin + daiyBetting.iPBRollingVAdmin + daiyBetting.iPBRollingAgent + daiyBetting.iPBRollingShop + daiyBetting.iPBRollingUser;
-            break;
-        case EAgent.eProAdmin: //  PAdmin
-            if (iGameCode == 0)
-                return daiyBetting.iBRollingPAdmin + daiyBetting.iBRollingVAdmin + daiyBetting.iBRollingAgent + daiyBetting.iBRollingShop + daiyBetting.iBRollingUser;
-            else if (iGameCode == 100)
-                return daiyBetting.iUORollingPAdmin + daiyBetting.iUORollingVAdmin + daiyBetting.iUORollingAgent + daiyBetting.iUORollingShop + daiyBetting.iUORollingUser;
-            else if (iGameCode == 200)
-                return daiyBetting.iSlotRollingPAdmin + daiyBetting.iSlotRollingVAdmin + daiyBetting.iSlotRollingAgent + daiyBetting.iSlotRollingShop + daiyBetting.iSlotRollingUser;
-            else if (iGameCode == 300)
-                return daiyBetting.iPBRollingPAdmin + daiyBetting.iPBRollingVAdmin + daiyBetting.iPBRollingAgent + daiyBetting.iPBRollingShop + daiyBetting.iPBRollingUser;
-            break;
-        case EAgent.eViceAdmin: //  VAdmin
-            if (iGameCode == 0)
-                return daiyBetting.iBRollingVAdmin + daiyBetting.iBRollingAgent + daiyBetting.iBRollingShop + daiyBetting.iBRollingUser;
-            else if (iGameCode == 100)
-                return daiyBetting.iUORollingVAdmin + daiyBetting.iUORollingAgent + daiyBetting.iUORollingShop + daiyBetting.iUORollingUser;
-            else if (iGameCode == 200)
-                return daiyBetting.iSlotRollingVAdmin + daiyBetting.iSlotRollingAgent + daiyBetting.iSlotRollingShop + daiyBetting.iSlotRollingUser;
-            else if (iGameCode == 300)
-                return daiyBetting.iPBRollingVAdmin + daiyBetting.iPBRollingAgent + daiyBetting.iPBRollingShop + daiyBetting.iPBRollingUser;
-            break;
-        case EAgent.eAgent: //  Agent
-            if (iGameCode == 0)
-                return daiyBetting.iBRollingAgent + daiyBetting.iBRollingShop + daiyBetting.iBRollingUser;
-            else if (iGameCode == 100)
-                return daiyBetting.iUORollingAgent + daiyBetting.iUORollingShop + daiyBetting.iUORollingUser;
-            else if (iGameCode == 200)
-                return daiyBetting.iSlotRollingAgent + daiyBetting.iSlotRollingShop + daiyBetting.iSlotRollingUser;
-            else if (iGameCode == 300)
-                return daiyBetting.iPBRollingAgent + daiyBetting.iPBRollingShop + daiyBetting.iPBRollingUser;
-            break;
-        case EAgent.eShop: //  Shop
-            if (iGameCode == 0)
-                return daiyBetting.iBRollingShop + daiyBetting.iBRollingUser;
-            else if (iGameCode == 100)
-                return daiyBetting.iUORollingShop + daiyBetting.iUORollingUser;
-            else if (iGameCode == 200)
-                return daiyBetting.iSlotRollingShop + daiyBetting.iSlotRollingUser;
-            else if (iGameCode == 300)
-                return daiyBetting.iPBRollingShop + daiyBetting.iPBRollingUser;
-            break;
-        case EAgent.eUser: //  User
-            if (iGameCode == 0)
-                return daiyBetting.iBRollingUser;
-            else if (iGameCode == 100)
-                return daiyBetting.iUORollingUser;
-            else if (iGameCode == 200)
-                return daiyBetting.iSlotRollingUser;
-            else if (iGameCode == 300)
-                return daiyBetting.iPBRollingUser;
-            break;
-    }
-    return 0;
 }
 
 /**
@@ -1726,6 +1504,20 @@ var inline_GetChildNicknameList = async (strGroupID, iClass) => {
 }
 exports.GetChildNicknameList = inline_GetChildNicknameList;
 
+exports.GetAdminInfo = async (user) => {
+    if (user.iClass < 3) {
+        return null;
+    }
+    if (user.iClass == 3) {
+        return user;
+    }
+    let parentInfo = await this.GetParentList(user.strGroupID, user.iClass, user);
+    let adminUser = await db.Users.findOne({ where: {
+            strNickname: parentInfo.strAdmin
+        }});
+    return adminUser;
+}
+
 var inline_GetUserInfo = async (strNickname) => {
     let strID = '';
     let iClass = '';
@@ -1749,6 +1541,9 @@ var inline_GetUserInfo = async (strNickname) => {
     let iRelUserID = 0;
 
     let iPermission = 0;
+
+    let iSettleDays = 15;
+    let iSettleType = 0;
 
     let dbuser = await db.Users.findOne({where:{strNickname:strNickname}});
     if (dbuser != null) {
@@ -1778,12 +1573,16 @@ var inline_GetUserInfo = async (strNickname) => {
             fPBSingleR = dbuser.fPBSingleR;
             fPBDoubleR = dbuser.fPBDoubleR;
             fPBTripleR = dbuser.fPBTripleR;
+            iSettleDays = dbuser.iSettleDays;
+            iSettleType = dbuser.iSettleType;
         }
     }
 
     return {iCash:iCash, iRolling: iRolling, iSettle:iSettle, strID:strID, strNickname:strNickname, iClass:iClass, strGroupID:strGroupID, strOptionCode:strOptionCode, iSettleAcc: iSettleAcc,
         strIDRel: strIDRel, strNicknameRel: strNicknameRel, iPermission:iPermission,
-        fBaccaratR: fBaccaratR, fSlotR: fSlotR, fUnderOverR: fUnderOverR, fPBR: fPBR, fPBSingleR: fPBSingleR, fPBDoubleR: fPBDoubleR, fPBTripleR: fPBTripleR};
+        fBaccaratR: fBaccaratR, fSlotR: fSlotR, fUnderOverR: fUnderOverR, fPBR: fPBR, fPBSingleR: fPBSingleR, fPBDoubleR: fPBDoubleR, fPBTripleR: fPBTripleR,
+        iSettleDays:iSettleDays, iSettleType:iSettleType
+    };
 }
 exports.GetUserInfo = inline_GetUserInfo;
 

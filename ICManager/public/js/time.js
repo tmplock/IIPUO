@@ -261,21 +261,6 @@ let Get2QuaterEndDate = (month) => {
     return res;
 }
 
-// let Get2QuaterEndDate = (month) => {
-//     var date = new Date(); 
-
-//     let iEndDate = 0;
-//     //let iEndDate = 31;
-//     // if ( date.getDate() < 31 )
-//     //     iEndDate = date.getDate();
-
-//     var res = new Date(date.getFullYear(), month, iEndDate);
-
-//     res = new Date(+res + 3240 * 10000).toISOString().split("T")[0];
-
-//     return res;
-// }
-
 let GetQuaterDate = (month, day) => {
     var date = new Date(); 
     var res = new Date(date.getFullYear(), month, day);
@@ -302,6 +287,23 @@ let GetHalfYearStartDate = () => {
 let GetYearStartDate = () => {
     let date = new Date();
     let res = new Date(date.getFullYear() - 1, date.getMonth(), 1);
+    res = new Date(+res + 3240 * 10000).toISOString().split("T")[0];
+    return res;
+}
+
+let GetQuaterStartDate = (month, sday) => {
+    let date = new Date();
+    let res = new Date(date.getFullYear(), month, sday);
+    res = new Date(+res + 3240 * 10000).toISOString().split("T")[0];
+    return res;
+}
+
+let GetQuaterEndDate = (month, eday) => {
+    let date = new Date();
+    let res = new Date(date.getFullYear(), month + 1, 0);
+    if (eday < res.getDate()) {
+        res = new Date(date.getFullYear(), month, eday);
+    }
     res = new Date(+res + 3240 * 10000).toISOString().split("T")[0];
     return res;
 }

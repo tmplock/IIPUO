@@ -219,12 +219,12 @@ app.get('/', (req, res) => {
 
 const cPort = process.env.PORT;
 server.listen(cPort, () => {
-    console.log(`Unover CMS Server Started At ${cPort}`);
+    console.log(`ICManager Server Started At ${cPort}`);
 });
 
 var dateCurrent = util_time.getCurrentDate();
 console.log("****************************************************************************************************");
-console.log(dateCurrent);
+console.log(`현재시간 : ${dateCurrent}`);
 
 /**
  * 배팅 정보 스케줄 작업
@@ -237,7 +237,7 @@ var daily = null;
 
 //
 cron.schedule('*/30 * * * * *', async () => {
-    console.log('알림 관련 조회(입출금, 쪽지, 승인대기)');
+    // console.log('알림 관련 조회(입출금, 쪽지, 승인대기)');
     let todayUsers = await db.Users.count({
         where: {
             strGroupID: {
@@ -283,7 +283,7 @@ io.on('connection', (socket) => {
     socket.id = Math.random();
     socket_list[socket.id] = socket;
 
-    console.log(`connected ${socket.id}, length ${util_object.getObjectLength(socket_list)}`);
+    // console.log(`connected ${socket.id}, length ${util_object.getObjectLength(socket_list)}`);
 
     socket.on('request_login', (user) => {
         socket.strGroupID = user.strGroupID;
@@ -296,7 +296,7 @@ io.on('connection', (socket) => {
     socket.on('disconnect', () => {
         delete socket_list[socket.id];
 
-        console.log(`disconnected ${socket.id}, length ${util_object.getObjectLength(socket_list)}`);
+        // console.log(`disconnected ${socket.id}, length ${util_object.getObjectLength(socket_list)}`);
     });
 });
 
@@ -307,9 +307,9 @@ process.on("uncaughtException", function (err) {
 
 app.post('/AlertLetter', (req, res) => {
 
-    console.log(`AlertLetter`);
+    // console.log(`AlertLetter`);
 
-    console.log(req.body);
+    // console.log(req.body);
 
     for ( let i in socket_list )
     {
@@ -320,7 +320,7 @@ app.post('/AlertLetter', (req, res) => {
             socket_list[i].emit('AlertLetter', objectData);
             //socket_list[i].emit('AlertLetter', req.body.strContents);
 
-            console.log(`########### AlertLetter ${req.body.strContents}`);
+            // console.log(`########### AlertLetter ${req.body.strContents}`);
         }
     }
 
@@ -328,18 +328,18 @@ app.post('/AlertLetter', (req, res) => {
 });
 
 app.post('/force_logout', (req, res) => {
-    console.log(`/force_logout`);
-    console.log(req.body);
-    console.log(socket_list);
+    // console.log(`/force_logout`);
+    // console.log(req.body);
+    // console.log(socket_list);
     for ( let i in socket_list )
     {
-        console.log('1#####################');
-        console.log(socket_list[i]);
-        console.log('2#####################');
-        console.log(`${socket_list[i].strID} / ${req.body.strID}`);
+        // console.log('1#####################');
+        // console.log(socket_list[i]);
+        // console.log('2#####################');
+        // console.log(`${socket_list[i].strID} / ${req.body.strID}`);
         if ( socket_list[i].strID == req.body.strID )
         {
-            console.log(`일치 : ${socket_list[i].strID} / ${req.body.strID}`);
+            // console.log(`일치 : ${socket_list[i].strID} / ${req.body.strID}`);
             socket_list[i].emit('UserLogout');
         }
     }

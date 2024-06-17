@@ -16,7 +16,6 @@ const {Op}= require('sequelize');
 const IAgent = require('../implements/agent3');
 const IAgentSettle = require('../implements/agent_settle4');
 const {isLoggedIn, isNotLoggedIn} = require('./middleware');
-const {GetQuaterEndDate} = require("../implements/agent_settle3");
 
 const cfCommission = 0.085; // 8.5 * 0.01
 
@@ -32,16 +31,19 @@ router.post('/request_apply_sub_settle', isLoggedIn, async (req, res) => {
     }
 
     // 부본사 죽장 완료 여부 확인 필요
-    let exist = await db.SettleRecords.findAll({where:{
-            strQuater:req.body.strQuater,
-            iClass:5,
-            strGroupID:{[Op.like]:req.body.strGroupID+'%'},
-        }, order: [['createdAt', 'DESC']]
-    });
+    let exist = await IAgentSettle.GetSettleExistList(req.body.strGroupID, req.body.strQuater, 5, req.body.iSettleDays, req.body.iSettleType);
+    // let exist = await db.SettleRecords.findAll({where:{
+    //         strQuater:req.body.strQuater,
+    //         iClass:5,
+    //         strGroupID:{[Op.like]:req.body.strGroupID+'%'},
+    //         iSettleDays:req.body.iSettleDays,
+    //         iSettleType:req.body.iSettleType,
+    //     }, order: [['createdAt', 'DESC']]
+    // });
 
-    const targetUserCount = await IAgentSettle.GetSettleTargetUserCount(req.body.strQuater, 5, req.body.strGroupID);
+    const targetUserCount = await IAgentSettle.GetSettleTargetUserCount(req.body.strQuater, 5, req.body.strGroupID, req.body.iSettleDays, req.body.iSettleType);
 
-    if ( targetUserCount > exist.length ) {
+    if ( exist.length == 0 || targetUserCount > exist.length ) {
         res.send({result:'FAIL', msg: '부본사 죽장 정산을 먼저 처리해 주세요.'});
         return;
     }
@@ -63,20 +65,23 @@ router.post('/request_apply_sub_settle', isLoggedIn, async (req, res) => {
 
     if ( list.length > 0 )
     {
-        let exist = await db.SettleSubRecords.findAll({where:{
-                strQuater:req.body.strQuater,
-                iClass:5,
-                strGroupID:{[Op.like]:req.body.strGroupID+'%'},
-            }, order: [['createdAt', 'DESC']]
-        });
-
-        const targetUserCount = await IAgentSettle.GetSettleTargetUserCount(req.body.strQuater, 5, req.body.strGroupID);
-
-        if ( targetUserCount == exist.length )
-        {
-            res.send({result:'EXIST'});
-            return;
-        }
+        // let exist = await IAgentSettle.GetSubSettleExistList(req.body.strGroupID, req.body.strQuater, 5, req.body.iSettleDays, req.body.iSettleType);
+        // // let exist = await db.SettleSubRecords.findAll({where:{
+        // //         strQuater:req.body.strQuater,
+        // //         iClass:5,
+        // //         strGroupID:{[Op.like]:req.body.strGroupID+'%'},
+        // //         iSettleDays:req.body.iSettleDays,
+        // //         iSettleType:req.body.iSettleType,
+        // //     }, order: [['createdAt', 'DESC']]
+        // // });
+        //
+        // const targetUserCount = await IAgentSettle.GetSettleTargetUserCount(req.body.strQuater, 5, req.body.strGroupID, req.body.iSettleDays, req.body.iSettleType);
+        //
+        // if ( exist > 0 && targetUserCount == exist.length )
+        // {
+        //     res.send({result:'EXIST'});
+        //     return;
+        // }
     }
     else
     {
@@ -116,6 +121,8 @@ router.post('/request_apply_sub_settle', isLoggedIn, async (req, res) => {
                     iCommissionS:obj.iCommissionS ?? 0,
                     iSettleViceAdmin:obj.iSettleViceAdmin ?? 0,
                     iTotalViceAdmin:obj.iTotalViceAdmin ?? 0,
+                    iSettleDays:req.body.iSettleDays,
+                    iSettleType:req.body.iSettleType,
                 });
             } else {
                 await db.SettleSubRecords.update({
@@ -139,6 +146,8 @@ router.post('/request_apply_sub_settle', isLoggedIn, async (req, res) => {
                     iCommissionS:obj.iCommissionS ?? 0,
                     iSettleViceAdmin:obj.iSettleViceAdmin ?? 0,
                     iTotalViceAdmin:obj.iTotalViceAdmin ?? 0,
+                    iSettleDays:req.body.iSettleDays,
+                    iSettleType:req.body.iSettleType,
                 }, {
                     where: { id: subSettle.id }
                 });
@@ -148,8 +157,6 @@ router.post('/request_apply_sub_settle', isLoggedIn, async (req, res) => {
             return;
         }
     }
-
-    console.log(list);
 
     if ( bFlag == true )
     {
@@ -171,66 +178,79 @@ let GetSettleFromList = (settleList, strID) => {
 }
 
 router.post('/request_settle_cal', isLoggedIn, async(req, res) => {
-
     console.log(req.body);
+    try {
+        let iLimit = parseInt(req.body.iLimit);
+        let iPage = parseInt(req.body.iPage);
+        let iOffset = (iPage-1) * iLimit;
+        let strQuater = req.body.strQuater;
+        let iSettleDays = req.body.iSettleDays;
+        let iSettleType = req.body.iSettleType;
 
-    let iLimit = parseInt(req.body.iLimit);
-    let iPage = parseInt(req.body.iPage);
-    let iOffset = (iPage-1) * iLimit;
 
-    let exist = await db.SettleSubRecords.findAll({where:{
-            strQuater:req.body.strQuater,
-            iClass:req.body.iClass,
-            strGroupID:{[Op.like]:req.body.strGroupID+'%'},
-        }, order: [['createdAt', 'DESC']]
-    });
+        // let exist = await db.SettleSubRecords.findAll({where:{
+        //         strQuater:req.body.strQuater,
+        //         iClass:req.body.iClass,
+        //         strGroupID:{[Op.like]:req.body.strGroupID+'%'},
+        //         // iSettleDays: iSettleDays,
+        //         // iSettleType: iSettleType,
+        //     }, order: [['createdAt', 'DESC']]
+        // });
+        let exist = await IAgentSettle.GetSubSettleExistList(req.body.strGroupID, req.body.strQuater, req.body.iClass, iSettleDays, iSettleType);
 
-    let lastDate = IAgentSettle.GetQuaterEndDate(req.body.strQuater);
+        let lastDate = IAgentSettle.GetQuaterEndDate(strQuater, iSettleDays);
 
-    let list = await GetSettleCalulation(req.body.strGroupID, req.body.strQuater, req.body.dateStart, req.body.dateEnd, req.body.iClass, iOffset, iLimit, lastDate);
+        let list = await GetSettleCalulation(req.body.strGroupID, req.body.strQuater, req.body.dateStart, req.body.dateEnd, req.body.iClass, iOffset, iLimit, lastDate, iSettleDays, iSettleType);
 
-    const targetUserCount = await IAgentSettle.GetSettleTargetUserCount(req.body.strQuater, req.body.iClass, req.body.strGroupID);
+        const targetUserCount = await IAgentSettle.GetSettleTargetUserCount(req.body.strQuater, req.body.iClass, req.body.strGroupID, iSettleDays, iSettleType);
 
-    if (targetUserCount == exist.length)
-    {
-        res.send({result:'EXIST', list:list, iRootClass: req.user.iClass, exist: exist, msg: '정상조회', totalCount: targetUserCount});
-    }
-    else
-    {
-        res.send({result:'OK', list:list, iRootClass: req.user.iClass, exist: exist, msg: '정상조회', totalCount: targetUserCount});
+        if (exist.length > 0 && targetUserCount == exist.length)
+        {
+            res.send({result:'EXIST', list:list, iRootClass: req.user.iClass, exist: exist, msg: '정상조회', totalCount: targetUserCount, bEnableSettle:false});
+        }
+        else
+        {
+            // 죽장 가능 여부
+            let bEnableSettle = IAgentSettle.IsSettleEnableDate(req.body.strQuater, iSettleDays);
+            res.send({result:'OK', list:list, iRootClass: req.user.iClass, exist: exist, msg: '정상조회', totalCount: targetUserCount, bEnableSettle:bEnableSettle});
+        }
+    } catch (err) {
+        console.log(err.toString());
+        res.send({result:'ERROR', list:[], iRootClass: req.user.iClass, exist: [], msg: '조회에러', totalCount: 0, bEnableSettle:false});
     }
 });
 
-let GetSettleCalulation = async (strGroupID, strQuater, dateStart, dateEnd, iClass, iOffset, iLimit, lastDate) => {
+let GetSettleCalulation = async (strGroupID, strQuater, dateStart, dateEnd, iClass, iOffset, iLimit, lastDate, iSettleDays, iSettleType) => {
     // strQuater
     let start = dateStart ?? '';
     let end = dateEnd ?? '';
 
     // 값이 없으면 현재 시간을 기준으로 설정
     if (start == '' || end == '') {
-        let date = new Date();
-        let iMonth = date.getMonth();
-
-        if (date.getDate() < 16) {
-            strQuater = `${iMonth + 1}-1`;
-            start = ITime.get1QuaterStartDate(iMonth);
-            end = ITime.get1QuaterEndDate(iMonth);
-        } else {
-            strQuater = `${iMonth + 1}-2`;
-            start = ITime.get2QuaterStartDate(iMonth);
-            end = ITime.get2QuaterEndDate(iMonth);
-        }
+        // let date = new Date();
+        // let iMonth = date.getMonth();
+        //
+        // if (date.getDate() < 16) {
+        //     strQuater = `${iMonth + 1}-1`;
+        //     start = ITime.get1QuaterStartDate(iMonth);
+        //     end = ITime.get1QuaterEndDate(iMonth);
+        // } else {
+        //     strQuater = `${iMonth + 1}-2`;
+        //     start = ITime.get2QuaterStartDate(iMonth);
+        //     end = ITime.get2QuaterEndDate(iMonth);
+        // }
+        return [];
     }
 
     // 파트너 목록
-    let partnerList = await GetSettlePartnerList(strGroupID, iClass, strQuater, start, end, iOffset, iLimit, lastDate);
+    let partnerList = await GetSettlePartnerList(strGroupID, iClass, strQuater, start, end, iOffset, iLimit, lastDate, iSettleDays, iSettleType);
     return partnerList;
 }
 
 /**
  * 죽장 대상 목록
  */
-let GetSettlePartnerList = async (strGroupID, iClass, strQuater, dateStart, dateEnd, iOffset, iLimit, lastDate) => {
+let GetSettlePartnerList = async (strGroupID, iClass, strQuater, dateStart, dateEnd, iOffset, iLimit, lastDate, iSettleDays, iSettleType) => {
     let offset = parseInt(iOffset ?? 0);
     let limit = parseInt(iLimit ?? 30);
 
@@ -244,25 +264,20 @@ let GetSettlePartnerList = async (strGroupID, iClass, strQuater, dateStart, date
         }
     }
 
-    let strQuater2 = '';
-    let quaterList = strQuater.split('-');
-    if (quaterList[1] == '2') {
-        strQuater2 = `${quaterList[0]}-1`;
-    } else {
-        let month = parseInt(quaterList[0])-1;
-        if (month == 0) {
-            strQuater2 = `12-2`;
-        } else {
-            strQuater2 = `${parseInt(quaterList[0])-1}-2`;
-        }
+    let strQuater2 = IAgentSettle.GetBeforeQuater(strQuater, iSettleDays);
+    // let subQuery = `AND t5.iSettleDays = ${iSettleDays} AND t5.iSettleType = ${iSettleType}`;
+    let subQuery = '';
+    // 총본에서 조회할 경우
+    if (strGroupID.length == 3) {
+        subQuery = `AND t3.iSettleDays = ${iSettleDays} AND t3.iSettleType = ${iSettleType}`;
     }
-
     let list = await db.sequelize.query(`
             SELECT
                 t3.strID AS strID3, t3.strNickname AS strNickname3,
                 t4.strID AS strID4, t4.strNickname AS strNickname4,
                 t4.fBaccaratR AS fBaccaratR4, t4.fSlotR AS fSlotR4, t4.fUnderOverR AS fUnderOverR4,
                 t4.fSettleBaccarat AS fSettleBaccarat4, t4.fSettleSlot AS fSettleSlot4,
+                t4.iSettleCommission,
                 
                 t5.strID AS strID, t5.strNickname AS strNickname, t5.strGroupID AS strGroupID, t5.iClass, t5.strSettleMemo,
                 t5.fBaccaratR AS fBaccaratR, t5.fSlotR AS fSlotR, t5.fUnderOverR AS fUnderOverR,
@@ -299,26 +314,14 @@ let GetSettlePartnerList = async (strGroupID, iClass, strQuater, dateStart, date
                 LEFT JOIN (
                     SELECT * FROM SettleSubRecords WHERE strQuater='${strQuater}'
                 ) sub ON sub.strID = t5.strID
-            WHERE t5.iClass = ${iClass} AND t5.strGroupID LIKE CONCAT('${strGroupID}', '%')
+            WHERE t5.iClass = ${iClass} AND t5.strGroupID LIKE CONCAT('${strGroupID}', '%') 
+            ${subQuery}
             ${lastDateQuery}
             ORDER BY strNickname3 ASC, strNickname4 ASC, t5.strGroupID ASC
             LIMIT ${limit}
             OFFSET ${offset}
         `);
     return list[0];
-}
-
-/**
- * 부본 합계 구하기
- */
-let GetSettleVice = (obj) => {
-    // 죽장 계산
-    let iBTotal = parseFloat(obj.iBaccaratTotalVice ?? 0) + parseFloat(obj.iUnderOverTotalVice ?? 0);
-    let iSTotal = parseFloat(obj.iSlotTotalVice ?? 0);
-    let iPBATotal = parseFloat(obj.iPBATotalVice ?? 0);
-    let iPBBTotal = parseFloat(obj.iPBBTotalVice ?? 0);
-
-    return iBTotal + iSTotal + iPBATotal + iPBBTotal;
 }
 
 router.post('/settle_cal', isLoggedIn, async (req, res) => {
@@ -328,11 +331,21 @@ router.post('/settle_cal', isLoggedIn, async (req, res) => {
     let strQuater = req.body.strQuater ?? '';
     let dateQuaterStart = req.body.dateQuaterStart ?? '';
     let dateQuaterEnd = req.body.dateQuaterEnd ?? '';
+    let iSettleDays = 15;
+    let iSettleType = 0;
 
     const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
+    if (dbuser.iClass < 3) {
+        iSettleDays = req.body.iSettleDays;
+        iSettleType = req.body.iSettleType;
+    } else {
+        const adminUser = await IAgent.GetAdminInfo(dbuser);
+        iSettleDays = adminUser.iSettleDays;
+        iSettleType = adminUser.iSettleType;
+    }
 
     const user = {strNickname:req.body.strNickname, strGroupID:dbuser.strGroupID, iClass:parseInt(dbuser.iClass), strID:dbuser.strID,
-        iRootClass: req.user.iClass, iPermission: req.user.iPermission};
+        iRootClass: req.user.iClass, iPermission: req.user.iPermission, iSettleDays: iSettleDays, iSettleType:iSettleType};
 
     res.render('manage_calculation/settle_cal', {iLayout:9, iHeaderFocus:0, user:user, list:[], strQuater:strQuater, dateQuaterStart:dateQuaterStart, dateQuaterEnd:dateQuaterEnd});
 });
@@ -347,6 +360,12 @@ router.post('/settle_cal_history', isLoggedIn, async (req, res) => {
     const user = {strNickname:dbuser.strNickname, strGroupID:dbuser.strGroupID, iClass:parseInt(dbuser.iClass), strID:dbuser.strID,
         iRootClass: req.user.iClass, iPermission: req.user.iPermission};
 
+    let iSettleDays = 15;
+    let iSettleType = 0;
+    const admin = await IAgent.GetAdminInfo(dbuser);
+    iSettleDays = admin.iSettleDays;
+    iSettleType = admin.iSettleType;
+
     // let list = await db.SettleSubRecords.findAll({where:{
     //         strQuater:req.body.strQuater,
     //         iClass:req.body.iClass,
@@ -358,7 +377,8 @@ router.post('/settle_cal_history', isLoggedIn, async (req, res) => {
         SELECT ss.*, u.strNickname
         FROM SettleSubRecords ss
         LEFT JOIN Users u ON u.strID = ss.strID
-        WHERE ss.strQuater = '${req.body.strQuater}' 
+        WHERE ss.strQuater = '${req.body.strQuater}'
+          AND ss.iSettleDays = ${iSettleDays} AND ss.iSettleType = ${iSettleType} 
           AND ss.iClass = ${parseInt(req.body.iClass) + 1} 
           AND ss.strGroupID LIKE '${req.body.strGroupID}%'
     `);
@@ -383,10 +403,12 @@ router.post('/request_applysettle_all', isLoggedIn, async (req, res) => {
                 strQuater:req.body.strQuater,
                 iClass:5,
                 strGroupID:{[Op.like]:req.body.strGroupID+'%'},
+                iSettleDays:req.body.iSettleDays,
+                iSettleType:req.body.iSettleType,
             }, order: [['createdAt', 'DESC']]
         });
 
-        const targetUserCount = await IAgentSettle.GetSettleTargetUserCount(req.body.strQuater, 5, req.body.strGroupID);
+        const targetUserCount = await IAgentSettle.GetSettleTargetUserCount(req.body.strQuater, 5, req.body.strGroupID, req.body.iSettleDays, req.body.iSettleType);
 
         if ( targetUserCount > exist.length ) {
             res.send({result:'FAIL', msg: '부본사 죽장 정산을 먼저 처리해 주세요.'});
@@ -400,10 +422,12 @@ router.post('/request_applysettle_all', isLoggedIn, async (req, res) => {
                 strQuater:req.body.strQuater,
                 iClass:5,
                 strGroupID:{[Op.like]:req.body.strGroupID+'%'},
+                iSettleDays:req.body.iSettleDays,
+                iSettleType:req.body.iSettleType,
             }, order: [['createdAt', 'DESC']]
         });
 
-        const targetUserCount = await IAgentSettle.GetSettleTargetUserCount(req.body.strQuater, 5, req.body.strGroupID);
+        const targetUserCount = await IAgentSettle.GetSettleTargetUserCount(req.body.strQuater, 5, req.body.strGroupID, req.body.iSettleDays, req.body.iSettleType);
 
         if ( targetUserCount > exist.length ) {
             res.send({result:'FAIL', msg: '죽장 계산을 먼저 처리해 주세요.'});
@@ -430,10 +454,12 @@ router.post('/request_applysettle_all', isLoggedIn, async (req, res) => {
                 strQuater:req.body.strQuater,
                 iClass:req.body.iClass,
                 strGroupID:{[Op.like]:req.body.strGroupID+'%'},
+                iSettleDays:req.body.iSettleDays,
+                iSettleType:req.body.iSettleType,
             }, order: [['createdAt', 'DESC']]
         });
 
-        const targetUserCount = await IAgentSettle.GetSettleTargetUserCount(req.body.strQuater, req.body.iClass, req.body.strGroupID);
+        const targetUserCount = await IAgentSettle.GetSettleTargetUserCount(req.body.strQuater, req.body.iClass, req.body.strGroupID, req.body.iSettleDays, req.body.iSettleType);
 
         if ( exist.length > 0 && targetUserCount == exist.length )
         {
@@ -454,9 +480,6 @@ router.post('/request_applysettle_all', isLoggedIn, async (req, res) => {
 
     for ( let i in list )
     {
-        if (list[i].strNickname == '테떡림이') {
-            console.log('테떡림이');
-        }
         if (list[i].from != from.strNickname) {
             from = await db.Users.findOne({where:{strNickname:list[i].from}});
         }
@@ -470,16 +493,17 @@ router.post('/request_applysettle_all', isLoggedIn, async (req, res) => {
             let iSettleAccTotal = parseFloat(user.iSettleAcc); // 총이월(전월죽장이월 + 죽장이월)
             let iPayback = 0; // 수금
 
-            // // 부본일 경우 마이너스 죽장은 지급 안함
-            // if (parseInt(req.body.iClass) == 5)
-            // {
-            //     if (iSettle < 0) {
-            //         iSettle = 0;
-            //     }
-            //     if (iSettleGive < 0) {
-            //         iSettleGive = 0;
-            //     }
-            // }
+            // 리셋일 경우 마이너스 죽장은 지급 안함
+            if (req.body.iSettleType == 1)
+            {
+                if (iSettle < 0) {
+                    iSettle = 0;
+                }
+                if (iSettleGive < 0) {
+                    iSettleGive = 0;
+                }
+            }
+
             // 대본 죽장분기값(iSettle)이 마이너스일 경우 해당 금액은 모두 이월처리
             if (parseInt(req.body.iClass) == 4 || parseInt(req.body.iClass) == 5)
             {
@@ -507,7 +531,7 @@ router.post('/request_applysettle_all', isLoggedIn, async (req, res) => {
 
             iSettleAccTotal = iSettleAccTotal + iSettleAcc;
 
-            let settle = await db.SettleRecords.findOne({where:{strNickname:user.strNickname, strQuater:req.body.strQuater}});
+            let settle = await db.SettleRecords.findOne({where:{strNickname:user.strNickname, strQuater:req.body.strQuater, iSettleDays: req.body.iSettleDays, iSettleType: req.body.iSettleType}});
 
             if ( settle == null )
             {
@@ -596,57 +620,57 @@ router.post('/request_applysettle_all', isLoggedIn, async (req, res) => {
                     iSettleVice:iSettleVice,
                     iSettleAfter:iSettleAccTotal,
                     iPayback:iPayback,
+                    iSettleDays: req.body.iSettleDays,
+                    iSettleType: req.body.iSettleType,
                 });
 
                 // 죽장 지급시에는 1000단위 절삭
-                // let iAmout = Math.floor(parseInt(iSettleGive)/10000)*10000;
-                let iAmout = iSettleGive;
-                await db.GTs.create(
-                    {
-                        eType:'GETSETTLE',
-                        strTo:user.strNickname,
-                        strFrom:from.strNickname,
-                        strGroupID:user.strGroupID,
-                        iAmount:iAmout,
-                        iBeforeAmountTo:user.iSettle,
-                        iAfterAmountTo:user.iCash,
-                        iBeforeAmountFrom:from.iCash,
-                        iAfterAmountFrom:from.iCash,
-                        iClassTo: user.iClass,
-                        iClassFrom: from.iClass,
-                    });
-
-                // 입금처리
-                if (iAmout > 0) {
-                    const parents = await IAgent.GetParentList(user.strGroupID, user.iClass);
-                    let strAdminNickname = parents.strAdmin;
-                    let strPAdminNickname = parents.strPAdmin;
-                    let strVAdminNickname = parents.strVAdmin;
-                    await db.Inouts.create({
-                        strID:user.strNickname,
-                        strAdminNickname:strAdminNickname,
-                        strPAdminNickname:strPAdminNickname,
-                        strVAdminNickname:strVAdminNickname,
-                        strAgentNickname:'',
-                        strShopNickname:'',
-                        iClass:user.iClass,
-                        strName:user.strNickname,
-                        strGroupID:user.strGroupID,
-                        strAccountOwner:'관리자죽장지급',
-                        strBankName:'',
-                        strAccountNumber:'',
-                        iPreviousCash:user.iCash,
-                        iAmount:iAmout,
-                        eType:'INPUT',
-                        eState:'COMPLETE',
-                        completedAt:new Date(),
-                    });
-                }
-
-                let iSettleUser = parseFloat(user.iSettle); // 이용자가 가지고 있는 죽장
-                iSettleUser = iSettleUser + iAmout; // 죽장이 실제 발생시에만 이용자에 추가
-                //await user.update({iSettle:iSettleUser, iSettleAccBefore: user.iSettleAcc, iSettleAcc:iSettleAccTotal});
-                await db.Users.update({iSettle:iSettleUser, iSettleAccBefore: user.iSettleAcc, iSettleAcc:iSettleAccTotal}, {where:{strNickname:list[i].strNickname}});
+                // let iAmout = iSettleGive;
+                // await db.GTs.create(
+                //     {
+                //         eType:'GETSETTLE',
+                //         strTo:user.strNickname,
+                //         strFrom:from.strNickname,
+                //         strGroupID:user.strGroupID,
+                //         iAmount:iAmout,
+                //         iBeforeAmountTo:user.iSettle,
+                //         iAfterAmountTo:user.iCash,
+                //         iBeforeAmountFrom:from.iCash,
+                //         iAfterAmountFrom:from.iCash,
+                //         iClassTo: user.iClass,
+                //         iClassFrom: from.iClass,
+                //     });
+                //
+                // // 입금처리
+                // if (iAmout > 0) {
+                //     const parents = await IAgent.GetParentList(user.strGroupID, user.iClass);
+                //     let strAdminNickname = parents.strAdmin;
+                //     let strPAdminNickname = parents.strPAdmin;
+                //     let strVAdminNickname = parents.strVAdmin;
+                //     await db.Inouts.create({
+                //         strID:user.strNickname,
+                //         strAdminNickname:strAdminNickname,
+                //         strPAdminNickname:strPAdminNickname,
+                //         strVAdminNickname:strVAdminNickname,
+                //         strAgentNickname:'',
+                //         strShopNickname:'',
+                //         iClass:user.iClass,
+                //         strName:user.strNickname,
+                //         strGroupID:user.strGroupID,
+                //         strAccountOwner:'관리자죽장지급',
+                //         strBankName:'',
+                //         strAccountNumber:'',
+                //         iPreviousCash:user.iCash,
+                //         iAmount:iAmout,
+                //         eType:'INPUT',
+                //         eState:'COMPLETE',
+                //         completedAt:new Date(),
+                //     });
+                // }
+                //
+                // let iSettleUser = parseFloat(user.iSettle); // 이용자가 가지고 있는 죽장
+                // iSettleUser = iSettleUser + iAmout; // 죽장이 실제 발생시에만 이용자에 추가
+                // await db.Users.update({iSettle:iSettleUser, iSettleAccBefore: user.iSettleAcc, iSettleAcc:iSettleAccTotal}, {where:{strNickname:list[i].strNickname}});
             }
         }
     }
@@ -662,66 +686,149 @@ router.post('/request_applysettle_all', isLoggedIn, async (req, res) => {
 });
 
 router.post('/request_settle_all', isLoggedIn, async(req, res) => {
-
     console.log(req.body);
 
-    // 대본, 부본은 별도 처리(정산완료건만 조회 가능)
-    // if (req.user.iClass == 4 || req.user.iClass == 5) {
-    //     SettleViceAll(req, res);
-    //     return;
-    // }
+    try {
+        // 대본, 부본은 별도 처리(정산완료건만 조회 가능)
+        // if (req.user.iClass == 4 || req.user.iClass == 5) {
+        //     SettleViceAll(req, res);
+        //     return;
+        // }
 
-    let iLimit = parseInt(req.body.iLimit);
-    let iPage = parseInt(req.body.iPage);
-    let iOffset = (iPage-1) * iLimit;
+        let iLimit = parseInt(req.body.iLimit);
+        let iPage = parseInt(req.body.iPage);
+        let iOffset = (iPage-1) * iLimit;
+        let iSettleType = req.body.iSettleType;
+        let iSettleDays = req.body.iSettleDays;
 
-    let exist = await db.SettleRecords.findAll({where:{
-            strQuater:req.body.strQuater,
-            iClass:req.body.iClass,
-            strGroupID:{[Op.like]:req.body.strGroupID+'%'},
-        }, order: [['createdAt', 'DESC']]
-    });
+        let exist = await db.SettleRecords.findAll({where:{
+                strQuater:req.body.strQuater,
+                iSettleType: iSettleType,
+                iSettleDays: iSettleDays,
+                iClass:req.body.iClass,
+                strGroupID:{[Op.like]:req.body.strGroupID+'%'},
+            }, order: [['createdAt', 'DESC']]
+        });
 
-    let lastDate = IAgentSettle.GetQuaterEndDate(req.body.strQuater);
+        let lastDate = IAgentSettle.GetQuaterEndDate(req.body.strQuater, iSettleDays);
 
-    let list = await GetSettleAll2(req.body.strGroupID, req.body.strQuater, req.body.dateStart, req.body.dateEnd, req.body.iClass, iOffset, iLimit, lastDate);
+        let list = await GetSettleAll2(req.body.strGroupID, req.body.strQuater, req.body.dateStart, req.body.dateEnd, req.body.iClass, iOffset, iLimit, lastDate, iSettleDays, iSettleType);
 
-    const targetUserCount = await IAgentSettle.GetSettleTargetUserCount(req.body.strQuater, req.body.iClass, req.body.strGroupID);
+        const targetUserCount = await IAgentSettle.GetSettleTargetUserCount(req.body.strQuater, req.body.iClass, req.body.strGroupID, iSettleDays, iSettleType);
 
-    if ( exist.length > 0 && targetUserCount == exist.length )
-    {
-        res.send({result:'EXIST', list:list, iRootClass: req.user.iClass, exist: exist, msg: '정상조회', totalCount: targetUserCount});
+        if ( exist.length > 0 && targetUserCount == exist.length )
+        {
+            res.send({result:'EXIST', list:list, iRootClass: req.user.iClass, exist: exist, msg: '정상조회', totalCount: targetUserCount});
+        }
+        else
+        {
+            res.send({result:'OK', list:list, iRootClass: req.user.iClass, exist: exist, msg: '정상조회', totalCount: targetUserCount});
+        }
+    } catch (err) {
+        res.send({result:'ERROR', list:[], iRootClass: req.user.iClass, exist: [], msg: '조회오류', totalCount: 0});
     }
-    else
-    {
-        res.send({result:'OK', list:list, iRootClass: req.user.iClass, exist: exist, msg: '정상조회', totalCount: targetUserCount});
+});
+
+/**
+ * 리셋 죽장 조회
+ */
+router.post('/request_settle_all_reset', isLoggedIn, async(req, res) => {
+
+    console.log(req.body);
+    try {
+        // 대본, 부본은 별도 처리(정산완료건만 조회 가능)
+        // if (req.user.iClass == 4 || req.user.iClass == 5) {
+        //     SettleViceAll(req, res);
+        //     return;
+        // }
+
+        let iLimit = parseInt(req.body.iLimit);
+        let iPage = parseInt(req.body.iPage);
+        let iOffset = (iPage-1) * iLimit;
+        let iSettleType = req.body.iSettleType;
+        let iSettleDays = req.body.iSettleDays;
+
+        // let exist = await db.SettleRecords.findAll({where:{
+        //         strQuater:req.body.strQuater,
+        //         // iSettleType: iSettleType,
+        //         // iSettleDays: iSettleDays,
+        //         iClass:req.body.iClass,
+        //         strGroupID:{[Op.like]:req.body.strGroupID+'%'},
+        //     }, order: [['createdAt', 'DESC']]
+        // });
+        let exist = await IAgentSettle.GetSettleExistList(req.body.strGroupID, req.body.strQuater, req.body.iClass, iSettleDays, iSettleType);
+
+        let lastDate = IAgentSettle.GetQuaterEndDate(req.body.strQuater, iSettleDays);
+
+        let list = await GetSettleAllReset(req.body.strGroupID, req.body.strQuater, req.body.dateStart, req.body.dateEnd, req.body.iClass, iOffset, iLimit, lastDate, iSettleDays, iSettleType);
+
+        const targetUserCount = await IAgentSettle.GetSettleTargetUserCount(req.body.strQuater, req.body.iClass, req.body.strGroupID, iSettleDays, iSettleType);
+
+        if ( exist.length > 0 && targetUserCount == exist.length )
+        {
+            res.send({result:'EXIST', list:list, iRootClass: req.user.iClass, exist: exist, msg: '정상조회', totalCount: targetUserCount, bEnableSettle:false});
+        }
+        else
+        {
+            // 죽장 가능 여부
+            let bEnableSettle = IAgentSettle.IsSettleEnableDate(req.body.strQuater, iSettleDays);
+            res.send({result:'OK', list:list, iRootClass: req.user.iClass, exist: exist, msg: '정상조회', totalCount: targetUserCount, bEnableSettle:bEnableSettle});
+        }
+    } catch (err) {
+        console.log(err.toString());
+        res.send({result:'ERROR', list:[], iRootClass: req.user.iClass, exist: [], msg: '조회오류', totalCount: 0, bEnableSettle:false});
     }
 });
 
 
-let GetSettleAll2 = async (strGroupID, strQuater, dateStart, dateEnd, iClass, iOffset, iLimit, lastDate) => {
+let GetSettleAllReset = async (strGroupID, strQuater, dateStart, dateEnd, iClass, iOffset, iLimit, lastDate, iSettleDays, iSettleType) => {
+    let start = dateStart ?? '';
+    let end = dateEnd ?? '';
+
+    // 파트너 목록
+    let partnerList = await IAgentSettle.GetSettleClass(strGroupID, iClass, strQuater, start, end, iOffset, iLimit, lastDate, iSettleDays, iSettleType);
+
+    let list = [];
+    for (let i in partnerList) {
+        let obj = partnerList[i];
+        if (obj.strNickname == '강동구1테') {
+            console.log('1111##################');
+            console.log(obj);
+        }
+        if (obj.iClass == 4) {
+            // obj.iSettleVice = GetSettleVice(obj);
+        } else if (obj.iClass == 5) {
+            obj.iSettleVice = 0;
+        }
+        list.push(obj);
+    }
+    return list;
+}
+
+let GetSettleAll2 = async (strGroupID, strQuater, dateStart, dateEnd, iClass, iOffset, iLimit, lastDate, iSettleDays, iSettleType) => {
     // strQuater
     let start = dateStart ?? '';
     let end = dateEnd ?? '';
 
     // 값이 없으면 현재 시간을 기준으로 설정
     if (start == '' || end == '') {
-        let date = new Date();
-        let iMonth = date.getMonth();
-
-        if (date.getDate() < 16) {
-            strQuater = `${iMonth + 1}-1`;
-            start = ITime.get1QuaterStartDate(iMonth);
-            end = ITime.get1QuaterEndDate(iMonth);
-        } else {
-            strQuater = `${iMonth + 1}-2`;
-            start = ITime.get2QuaterStartDate(iMonth);
-            end = ITime.get2QuaterEndDate(iMonth);
-        }
+        // let date = new Date();
+        // let iMonth = date.getMonth();
+        //
+        // if (date.getDate() < 16) {
+        //     strQuater = `${iMonth + 1}-1`;
+        //     start = ITime.get1QuaterStartDate(iMonth);
+        //     end = ITime.get1QuaterEndDate(iMonth);
+        // } else {
+        //     strQuater = `${iMonth + 1}-2`;
+        //     start = ITime.get2QuaterStartDate(iMonth);
+        //     end = ITime.get2QuaterEndDate(iMonth);
+        // }
+        return [];
     }
 
     // 파트너 목록
-    let partnerList = await IAgentSettle.GetSettleClass(strGroupID, iClass, strQuater, start, end, iOffset, iLimit, lastDate);
+    let partnerList = await IAgentSettle.GetSettleClass(strGroupID, iClass, strQuater, start, end, iOffset, iLimit, lastDate, iSettleDays, iSettleType);
 
     let list = [];
     for (let i in partnerList) {

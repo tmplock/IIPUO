@@ -570,12 +570,6 @@ let OnClickUser = (strNickname, strGroupID, iClass) => {
 
     if ( iClass == 8 )
     {
-        //  User Popup
-
-        console.log(strNickname);
-        console.log(strGroupID);
-        console.log(iClass);
-
         let strAddress = '/manage_user_popup/output';
         window.open('', 'popupInoutAgent', 'width=1280, height=720, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
 

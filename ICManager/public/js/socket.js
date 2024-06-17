@@ -289,6 +289,37 @@ let AlertintervalSoundOff = (eAlertType) =>{
 	}
 }
 
+
+let AlertSoundOnOff = (isOn) =>{
+	clearInterval(intervalInput);
+	intervalInputSoundOn = isOn;
+	localStorage.setItem('intervalInputSoundOn', isOn);
+
+	clearInterval(intervalOutput);
+	intervalOutputSoundOn = isOn;
+	localStorage.setItem('intervalInputSoundOn', isOn);
+
+	clearInterval(intervalLetter);
+	intervalLetterSoundOn = isOn;
+	localStorage.setItem('intervalLetterSoundOn', isOn);
+
+	clearInterval(intervalLetterReply);
+	intervalLetterReplySoundOn = isOn;
+	localStorage.setItem('intervalLetterReplySoundOn', isOn);
+
+	clearInterval(intervalCharge);
+	intervalChargeSoundOn = isOn;
+	localStorage.setItem('intervalChargeSoundOn', isOn);
+
+	clearInterval(intervalContact);
+	intervalContactSoundOn = isOn;
+	localStorage.setItem('intervalContactSoundOn', isOn);
+
+	clearInterval(intervalContactReply);
+	intervalContactReplySoundOn = isOn;
+	localStorage.setItem('intervalContactReplySoundOn', isOn);
+}
+
 let LoadLocalStorage = () => {
 	input = localStorage.getItem('input') ?? 0;
 	output = localStorage.getItem('output') ?? 0;
@@ -400,7 +431,7 @@ let AlertTodayUser = (todayUser) => {
 //let socket = io();
 
 socket.on('connect', ()=> {
-	console.log("접속완료");
+	// console.log("접속완료");
 	if (user != null) {
 		socket.emit('request_login', user);
 	}
@@ -501,18 +532,9 @@ socket.on("num_rooms", (iNumRooms) => {
 });
 
 socket.on("realtime_bet", (betting) => {
-
-	console.log(`realtime_bet `);
-	console.log(betting);
-
 	const chips = parseInt(betting.chips);
 	const target = parseInt(betting.target);
 
-	
-	console.log('Target:'+ target);
-	console.log('iChip:'+ chips);
-	console.log(objectRealtime[0]);
-	
 	if ( objectRealtime != undefined )
 		objectRealtime[0].kBettingInfo[target].iBetting += chips;
 		
@@ -525,12 +547,9 @@ socket.on("realtime_bet", (betting) => {
 
 socket.on("realtime_betwin", (betting) => {
 
-	console.log(betting);
-
 	const target = parseInt(betting.target);
 	const win = parseInt(betting.result);
-	
-	console.log(`betwin:${objectRealtime[0]}`);
+
 	if ( objectRealtime != undefined )
 		objectRealtime[0].kBettingInfo[target].iWin += win;
 	if ( objectOverview != undefined )

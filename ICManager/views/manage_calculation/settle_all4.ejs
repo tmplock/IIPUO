@@ -20,7 +20,7 @@
 				<option value="10">11</option>
 				<option value="11">12</option>
 			</select>월
-			<% if (user.iRootClass == 2 && user.iClass == 2) { %>
+			<% if (user.iRootClass <= 3 && user.iClass == 3) { %>
 				<button id="button_quater_5_0" class="menu1" data-menu="10" style="border:1px solid rgb(95, 93, 93);width:80px;height:25px;text-align:center;color:white" onclick="OnClickDaySettlePeriod(5, 1);">5일(리셋)</button>
 				<button id="button_quater_5_1" class="menu1" data-menu="10" style="border:1px solid rgb(95, 93, 93);width:80px;height:25px;text-align:center;color:white" onclick="OnClickDaySettlePeriod(5, 0);">5일(누적)</button>
 				<button id="button_quater_10_0" class="menu1" data-menu="11" style="border:1px solid rgb(95, 93, 93);width:80px;height:25px;text-align:center;color:white" onclick="OnClickDaySettlePeriod(10, 1);">10일(리셋)</button>

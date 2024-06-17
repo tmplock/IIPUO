@@ -268,7 +268,7 @@ let GetSettlePartnerList = async (strGroupID, iClass, strQuater, dateStart, date
     // let subQuery = `AND t5.iSettleDays = ${iSettleDays} AND t5.iSettleType = ${iSettleType}`;
     let subQuery = '';
     // 총본에서 조회할 경우
-    if (strGroupID.length == 3) {
+    if (strGroupID.length == 5) {
         subQuery = `AND t3.iSettleDays = ${iSettleDays} AND t3.iSettleType = ${iSettleType}`;
     }
     let list = await db.sequelize.query(`
@@ -339,9 +339,9 @@ router.post('/settle_cal', isLoggedIn, async (req, res) => {
         iSettleDays = req.body.iSettleDays;
         iSettleType = req.body.iSettleType;
     } else {
-        const adminUser = await IAgent.GetAdminInfo(dbuser);
-        iSettleDays = adminUser.iSettleDays;
-        iSettleType = adminUser.iSettleType;
+        const padminUser = await IAgent.GetPAdminInfo(dbuser);
+        iSettleDays = padminUser.iSettleDays;
+        iSettleType = padminUser.iSettleType;
     }
 
     const user = {strNickname:req.body.strNickname, strGroupID:dbuser.strGroupID, iClass:parseInt(dbuser.iClass), strID:dbuser.strID,
@@ -362,9 +362,9 @@ router.post('/settle_cal_history', isLoggedIn, async (req, res) => {
 
     let iSettleDays = 15;
     let iSettleType = 0;
-    const admin = await IAgent.GetAdminInfo(dbuser);
-    iSettleDays = admin.iSettleDays;
-    iSettleType = admin.iSettleType;
+    const padmin = await IAgent.GetPAdminInfo(dbuser);
+    iSettleDays = padmin.iSettleDays;
+    iSettleType = padmin.iSettleType;
 
     // let list = await db.SettleSubRecords.findAll({where:{
     //         strQuater:req.body.strQuater,

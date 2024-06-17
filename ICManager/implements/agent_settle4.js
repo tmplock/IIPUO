@@ -319,7 +319,7 @@ exports.GetSettleClass = async (strGroupID, iClass, strQuater, dateStart, dateEn
     if (iClass == 4) {
         // let subQuery = `AND t4.iSettleDays = ${iSettleDays} AND t4.iSettleType = ${iSettleType}`;
         let subQuery = ``;
-        if (strGroupID.length == 3) {
+        if (strGroupID.length == 5) {
             subQuery = `AND t3.iSettleDays = ${iSettleDays} AND t3.iSettleType = ${iSettleType}`;
         }
         let list = await db.sequelize.query(`
@@ -377,7 +377,7 @@ exports.GetSettleClass = async (strGroupID, iClass, strQuater, dateStart, dateEn
         // let subQuery = `AND t5.iSettleDays = ${iSettleDays} AND t5.iSettleType = ${iSettleType}`;
         let subQuery = '';
         // 총본에서 조회할 경우
-        if (strGroupID.length == 3) {
+        if (strGroupID.length == 5) {
             subQuery = `AND t3.iSettleDays = ${iSettleDays} AND t3.iSettleType = ${iSettleType}`;
         }
         let list = await db.sequelize.query(`
@@ -453,7 +453,7 @@ exports.GetSettleClass = async (strGroupID, iClass, strQuater, dateStart, dateEn
 exports.GetSettleExistList = async (strGroupID, strQuater, iClass, iSettleDays, iSettleType) => {
     let subQuery = '';
     // 총본에서 조회할 경우
-    if (strGroupID.length == 3) {
+    if (strGroupID.length == 5) {
         // subQuery = `AND t3.iSettleDays = ${iSettleDays} AND t3.iSettleType = ${iSettleType}`;
     }
     if (iClass == 5) {
@@ -499,7 +499,7 @@ exports.GetSubSettleExistList = async (strGroupID, strQuater, iClass, iSettleDay
 
     let subQuery = '';
     // 총본에서 조회할 경우
-    if (strGroupID.length == 3) {
+    if (strGroupID.length == 5) {
         // subQuery = `AND t3.iSettleDays = ${iSettleDays} AND t3.iSettleType = ${iSettleType}`;
     }
     let list = await db.sequelize.query(`
@@ -642,7 +642,7 @@ exports.GetSettleTargetUserCount = async (strQuater, iClass, strGroupID, iSettle
     let lastDate = GetQuaterEndDate(strQuater, iSettleDays);
 
     let subQuery = '';
-    if (strGroupID.length == 3) {
+    if (strGroupID.length == 5) {
         subQuery = `AND u3.iSettleDays = ${iSettleDays} AND u3.iSettleType = ${iSettleType}`;
     }
     let subQuery2 = ''

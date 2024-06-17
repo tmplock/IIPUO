@@ -524,7 +524,7 @@
 	<% } %>
 
 	<% if (agent.iRootClass <= 3 && 3 <= agent.iClass && agent.iClass <= 5) { %>
-		let tagDisabled = agent.iClass > 3 ? 'disabled' : '';
+		let tagDisabled = agent.iClass > 4 ? 'disabled' : '';
 		let SetSettleOption = (settleDays, settleType, settleCommission) => {
 			let subTag = '';
 			if (settleType == 1) {

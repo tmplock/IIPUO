@@ -1518,6 +1518,20 @@ exports.GetAdminInfo = async (user) => {
     return adminUser;
 }
 
+exports.GetPAdminInfo = async (user) => {
+    if (user.iClass < 3) {
+        return null;
+    }
+    if (user.iClass == 3) {
+        return user;
+    }
+    let parentInfo = await this.GetParentList(user.strGroupID, user.iClass, user);
+    let adminUser = await db.Users.findOne({ where: {
+            strNickname: parentInfo.strPAdmin
+        }});
+    return adminUser;
+}
+
 var inline_GetUserInfo = async (strNickname) => {
     let strID = '';
     let iClass = '';

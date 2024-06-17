@@ -138,10 +138,10 @@ router.post('/settle_all4', isLoggedIn, async(req, res) => {
 
     let iSettleDays = 15;
     let iSettleType = 0;
-    if (dbuser.iClass >= 3) {
-        const adminUser = await IAgent.GetAdminInfo(dbuser);
-        iSettleDays = adminUser.iSettleDays;
-        iSettleType = adminUser.iSettleType;
+    if (dbuser.iClass >= 4) {
+        const padminUser = await IAgent.GetPAdminInfo(dbuser);
+        iSettleDays = padminUser.iSettleDays;
+        iSettleType = padminUser.iSettleType;
     }
 
     const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle, strID:dbuser.strID,

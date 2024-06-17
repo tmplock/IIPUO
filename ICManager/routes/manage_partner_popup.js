@@ -867,8 +867,8 @@ router.post('/request_register', isLoggedIn, async(req, res) => {
             // 죽장은 본사 ~ 대본만 체크
             // 본사가 누적이면 하위는 모두 누적이어야 함, 하위 죽장률 체크 필요
             // 본사가 리셋이면 하위는 모두 리셋이어야 함, 하위 죽장률 체크 불필요
-            let admin = await IAgent.GetAdminInfo(parent);
-            if (admin != null && admin.iSettleType != 1) {
+            let padmin = await IAgent.GetPAdminInfo(parent);
+            if (padmin != null && padmin.iSettleType != 1) {
                 if (parent.iClass == 3 || parent.iClass == 4 || parent.iClass == 5) {
                     if (parent.fSettleBaccarat < fSettleBaccarat || parent.fSettleSlot < fSettleSlot) {
                         res.send({result:'Error', error:'Settle', string:'죽장(%)은 상위 에이전트 보다 클 수 없습니다.'});
@@ -1360,14 +1360,14 @@ router.post('/request_bank', isLoggedIn, async (req, res) => {
         }
         let iSettleDays = 15;
         let iSettleType = 0;
-        // 본사의 죽장옵션값으로
-        if (dbuser.iClass == 3) {
+        // 대본사의 죽장옵션값으로
+        if (dbuser.iClass == 4) {
             iSettleDays = dbuser.iSettleDays ?? 15;
             iSettleType = dbuser.iSettleType ?? 0;
-        } else if (dbuser.iClass > 3) {
-            let adminUser = await IAgent.GetAdminInfo(dbuser);
-            iSettleDays = adminUser.iSettleDays;
-            iSettleType = adminUser.iSettleType;
+        } else if (dbuser.iClass > 4) {
+            let padminUser = await IAgent.GetPAdminInfo(dbuser);
+            iSettleDays = padminUser.iSettleDays;
+            iSettleType = padminUser.iSettleType;
         }
         // 본인 옵션
         let iSettleCommission = dbuser.iSettleCommission ?? 0;
@@ -1477,9 +1477,9 @@ router.post('/request_agentinfo_modify', isLoggedIn,async (req, res) => {
                     }
 
                     // 죽장은 본사 ~ 대본만 체크
-                    let admin = await IAgent.GetAdminInfo(parent);
-                    if (admin != null && admin.iSettleType != 1) { // 리셋은 죽장을 자유롭게 설정 가능
-                        if (parent.iClass == 3 || parent.iClass == 4 || parent.iClass == 5) {
+                    let padmin = await IAgent.GetPAdminInfo(parent);
+                    if (padmin != null && padmin.iSettleType != 1) { // 리셋은 죽장을 자유롭게 설정 가능
+                        if (parent.iClass == 4 || parent.iClass == 5) {
                             if (
                                 parent.fSettleBaccarat < fSettleBaccarat ||
                                 parent.fSettleSlot < fSettleSlot
@@ -1507,6 +1507,9 @@ router.post('/request_agentinfo_modify', isLoggedIn,async (req, res) => {
                         },
                     }
                 });
+
+                let padmin = await IAgent.GetPAdminInfo(parent);
+                let padminSettleType = padmin.iSettleType;
                 for ( let i in children )
                 {
                     let child = children[i];
@@ -1523,10 +1526,10 @@ router.post('/request_agentinfo_modify', isLoggedIn,async (req, res) => {
                         return;
                     }
 
-                    // 죽장은 본사 ~ 대본만 체크
-                    // 본사가 누적이면 하위는 모두 누적이어야 함, 하위 죽장률 체크 필요
-                    // 본사가 리셋이면 하위는 모두 리셋이어야 함, 하위 죽장률 체크 불필요
-                    if (adminSettleType != 1) {
+                    // 죽장은 대본사 ~ 대본만 체크
+                    // 대본사가 누적이면 하위는 모두 누적이어야 함, 하위 죽장률 체크 필요
+                    // 대본사가 리셋이면 하위는 모두 리셋이어야 함, 하위 죽장률 체크 불필요
+                    if (padminSettleType != 1) {
                         if (child.iClass == 4 || child.iClass == 5 || child.iClass == 6) {
                             if (
                                 child.fSettleBaccarat > fSettleBaccarat
@@ -1633,8 +1636,8 @@ router.post('/request_agentinfo_modify', isLoggedIn,async (req, res) => {
                     data['strMobile'] = strMobile;
                 }
 
-                // 본사일 경우에만 죽장옵션 수정 가능
-                if (user.iClass == 3) {
+                // 대본사일 경우에만 죽장옵션 수정 가능
+                if (user.iRootClass <= 3 && user.iClass == 4) {
                     let iSettleDays = parseInt(req.body.iSettleDays ?? -1);
                     if (iSettleDays != -1) {
                         data['iSettleDays'] = iSettleDays;

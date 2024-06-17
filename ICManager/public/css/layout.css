@@ -73,6 +73,29 @@
 .pagination .next{background:url(../images/common/btn_next.png) no-repeat center center; margin-left:12px;}
 
 /* 처리 팝업 */
+.modal-indicator {
+    display: none;
+    position: fixed;
+    z-index: 99999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5); /* Black w/ opacity */
+    padding-top: 60px;
+}
+
+/* Modal body */
+.modal-indicator-body {
+    padding: 35px 25px;
+    font-size: 25px; /* Larger font size */
+    border: 1px solid #888;
+    color: #333;
+    text-align: center; /* Center align text */
+}
+
+/* 처리 팝업 */
 .modal {
     display: none;
     position: fixed;

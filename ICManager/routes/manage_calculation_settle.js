@@ -360,6 +360,12 @@ router.post('/settle_cal_history', isLoggedIn, async (req, res) => {
     const user = {strNickname:dbuser.strNickname, strGroupID:dbuser.strGroupID, iClass:parseInt(dbuser.iClass), strID:dbuser.strID,
         iRootClass: req.user.iClass, iPermission: req.user.iPermission};
 
+    let iSettleDays = 15;
+    let iSettleType = 0;
+    const admin = await IAgent.GetAdminInfo(dbuser);
+    iSettleDays = admin.iSettleDays;
+    iSettleType = admin.iSettleType;
+
     // let list = await db.SettleSubRecords.findAll({where:{
     //         strQuater:req.body.strQuater,
     //         iClass:req.body.iClass,
@@ -372,7 +378,7 @@ router.post('/settle_cal_history', isLoggedIn, async (req, res) => {
         FROM SettleSubRecords ss
         LEFT JOIN Users u ON u.strID = ss.strID
         WHERE ss.strQuater = '${req.body.strQuater}'
-          AND ss.iSettleDays = ${dbuser.iSettleDays} AND ss.iSettleType = ${dbuser.iSettleType} 
+          AND ss.iSettleDays = ${iSettleDays} AND ss.iSettleType = ${iSettleType} 
           AND ss.iClass = ${parseInt(req.body.iClass) + 1} 
           AND ss.strGroupID LIKE '${req.body.strGroupID}%'
     `);
@@ -487,16 +493,17 @@ router.post('/request_applysettle_all', isLoggedIn, async (req, res) => {
             let iSettleAccTotal = parseFloat(user.iSettleAcc); // 총이월(전월죽장이월 + 죽장이월)
             let iPayback = 0; // 수금
 
-            // // 부본일 경우 마이너스 죽장은 지급 안함
-            // if (parseInt(req.body.iClass) == 5)
-            // {
-            //     if (iSettle < 0) {
-            //         iSettle = 0;
-            //     }
-            //     if (iSettleGive < 0) {
-            //         iSettleGive = 0;
-            //     }
-            // }
+            // 리셋일 경우 마이너스 죽장은 지급 안함
+            if (req.body.iSettleType == 1)
+            {
+                if (iSettle < 0) {
+                    iSettle = 0;
+                }
+                if (iSettleGive < 0) {
+                    iSettleGive = 0;
+                }
+            }
+
             // 대본 죽장분기값(iSettle)이 마이너스일 경우 해당 금액은 모두 이월처리
             if (parseInt(req.body.iClass) == 4 || parseInt(req.body.iClass) == 5)
             {
@@ -618,54 +625,52 @@ router.post('/request_applysettle_all', isLoggedIn, async (req, res) => {
                 });
 
                 // 죽장 지급시에는 1000단위 절삭
-                // let iAmout = Math.floor(parseInt(iSettleGive)/10000)*10000;
-                let iAmout = iSettleGive;
-                await db.GTs.create(
-                    {
-                        eType:'GETSETTLE',
-                        strTo:user.strNickname,
-                        strFrom:from.strNickname,
-                        strGroupID:user.strGroupID,
-                        iAmount:iAmout,
-                        iBeforeAmountTo:user.iSettle,
-                        iAfterAmountTo:user.iCash,
-                        iBeforeAmountFrom:from.iCash,
-                        iAfterAmountFrom:from.iCash,
-                        iClassTo: user.iClass,
-                        iClassFrom: from.iClass,
-                    });
-
-                // 입금처리
-                if (iAmout > 0) {
-                    const parents = await IAgent.GetParentList(user.strGroupID, user.iClass);
-                    let strAdminNickname = parents.strAdmin;
-                    let strPAdminNickname = parents.strPAdmin;
-                    let strVAdminNickname = parents.strVAdmin;
-                    await db.Inouts.create({
-                        strID:user.strNickname,
-                        strAdminNickname:strAdminNickname,
-                        strPAdminNickname:strPAdminNickname,
-                        strVAdminNickname:strVAdminNickname,
-                        strAgentNickname:'',
-                        strShopNickname:'',
-                        iClass:user.iClass,
-                        strName:user.strNickname,
-                        strGroupID:user.strGroupID,
-                        strAccountOwner:'관리자죽장지급',
-                        strBankName:'',
-                        strAccountNumber:'',
-                        iPreviousCash:user.iCash,
-                        iAmount:iAmout,
-                        eType:'INPUT',
-                        eState:'COMPLETE',
-                        completedAt:new Date(),
-                    });
-                }
-
-                let iSettleUser = parseFloat(user.iSettle); // 이용자가 가지고 있는 죽장
-                iSettleUser = iSettleUser + iAmout; // 죽장이 실제 발생시에만 이용자에 추가
-                //await user.update({iSettle:iSettleUser, iSettleAccBefore: user.iSettleAcc, iSettleAcc:iSettleAccTotal});
-                await db.Users.update({iSettle:iSettleUser, iSettleAccBefore: user.iSettleAcc, iSettleAcc:iSettleAccTotal}, {where:{strNickname:list[i].strNickname}});
+                // let iAmout = iSettleGive;
+                // await db.GTs.create(
+                //     {
+                //         eType:'GETSETTLE',
+                //         strTo:user.strNickname,
+                //         strFrom:from.strNickname,
+                //         strGroupID:user.strGroupID,
+                //         iAmount:iAmout,
+                //         iBeforeAmountTo:user.iSettle,
+                //         iAfterAmountTo:user.iCash,
+                //         iBeforeAmountFrom:from.iCash,
+                //         iAfterAmountFrom:from.iCash,
+                //         iClassTo: user.iClass,
+                //         iClassFrom: from.iClass,
+                //     });
+                //
+                // // 입금처리
+                // if (iAmout > 0) {
+                //     const parents = await IAgent.GetParentList(user.strGroupID, user.iClass);
+                //     let strAdminNickname = parents.strAdmin;
+                //     let strPAdminNickname = parents.strPAdmin;
+                //     let strVAdminNickname = parents.strVAdmin;
+                //     await db.Inouts.create({
+                //         strID:user.strNickname,
+                //         strAdminNickname:strAdminNickname,
+                //         strPAdminNickname:strPAdminNickname,
+                //         strVAdminNickname:strVAdminNickname,
+                //         strAgentNickname:'',
+                //         strShopNickname:'',
+                //         iClass:user.iClass,
+                //         strName:user.strNickname,
+                //         strGroupID:user.strGroupID,
+                //         strAccountOwner:'관리자죽장지급',
+                //         strBankName:'',
+                //         strAccountNumber:'',
+                //         iPreviousCash:user.iCash,
+                //         iAmount:iAmout,
+                //         eType:'INPUT',
+                //         eState:'COMPLETE',
+                //         completedAt:new Date(),
+                //     });
+                // }
+                //
+                // let iSettleUser = parseFloat(user.iSettle); // 이용자가 가지고 있는 죽장
+                // iSettleUser = iSettleUser + iAmout; // 죽장이 실제 발생시에만 이용자에 추가
+                // await db.Users.update({iSettle:iSettleUser, iSettleAccBefore: user.iSettleAcc, iSettleAcc:iSettleAccTotal}, {where:{strNickname:list[i].strNickname}});
             }
         }
     }

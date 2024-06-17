@@ -111,30 +111,51 @@
 	</div>
 
 	<!-- Rolling Exchange Modal -->
-	<div id="rollingModal" class="modal">
+	<div id="rollingModal" class="modal-translate" style="display: none;">
 		<div class="modal-content">
 			<span class="close">&times;</span>
 			<h2><%=__('Rolling')%><%=__('Exchange')%></h2>
 			<div class="input-group">
-				<label for="translate_rolling"><%=__('Amount')%></label>
+				<label for="translate_rolling">전환 금액</label>
 				<input type="number" min="0" id="translate_rolling" value="" style="height: 25px;font-size: 16px;">
 			</div>
-			<button class="submit-button" onclick="OnClickTranslate('ROLLING')"><%=__('Exchange')%></button>
+			<div class="submit-button-container">
+				<button class="submit-button" onclick="OnClickTranslate('ROLLING')"><%=__('Exchange')%></button>
+			</div>
 		</div>
 	</div>
 
 	<!-- Settle Exchange Modal -->
-	<div id="settleModal" class="modal">
+	<div id="settleModal" class="modal-translate" style="display: none;">
 		<div class="modal-content">
 			<span class="close">&times;</span>
 			<h2><%=__('Settle')%><%=__('Exchange')%></h2>
 			<div class="input-group">
-				<label for="translate_settle"><%=__('Amount')%></label>
-				<input type="number" min="0" id="translate_settle" value="" style="height: 25px;font-size: 16px;">
+				<label for="translate_settle">전환 금액</label>
+				<input type="number" min="0" id="translate_settle" value="">
 			</div>
-			<button class="submit-button" onclick="OnClickTranslate('SETTLE')"><%=__('Exchange')%></button>
+			<div class="submit-button-container">
+				<button class="submit-button" onclick="OnClickTranslate('SETTLE')"><%=__('Exchange')%></button>
+			</div>
 		</div>
 	</div>
+
+	<div class="modal-process" id="modal_alert">
+		<div class="modal_body" id="modal_body">
+			<h2>처리중입니다</h2>
+			<p style="font-size: 16px;">잠시만 기다려 주세요</p>
+		</div>
+	</div>
+
+	<script>
+		const modal = document.querySelector('.modal-process');
+		function openAlertModal() {
+			modal.style.display="flex";
+		}
+		function closeAlertModal() {
+			modal.style.display = "none";
+		}
+	</script>
 
 	<script type="text/javascript" src="js/enum.js"></script>
 	<script type="text/javascript" src="js/time.js"></script>
@@ -152,6 +173,16 @@
     let agentlist = JSON.parse('<%-JSON.stringify(agentlist)%>');
     let vadminlist = JSON.parse('<%-JSON.stringify(vadminlist)%>');
     let proadminlist = JSON.parse('<%-JSON.stringify(proadminlist)%>');
+
+	const strNoRecord = '<%=__("NoRecord")%>';
+	const strConfirmGive = '<%=__("ConfirmGive")%>';
+	const strConfirmTake = '<%=__("ConfirmTake")%>';
+	const strGive = '<%=__("Give")%>';
+	const strTake = '<%=__("Take")%>';
+	const strConfirmExchange = '<%=__("ConfirmExchange")%>';
+	const strAlertIncorrectInputValue = '<%=__("AlertIncorrectInputValue")%>';
+	const strAlertErrorNotEnoughMoney = '<%=__("AlertErrorNotEnoughMoney")%>';
+	const strAlertComplete = '<%=__("AlertComplete")%>';
 
     var i18nTexts = {
         Search: "<%=__('Search')%>",
@@ -178,6 +209,8 @@
     // });
 
     let bToggleRecord = false;
+	let isSending = false;
+	let iLimit = 50;
 
     let SetUserList = (userlist, iClass, iRootClass) => {
 
@@ -262,7 +295,7 @@
                     <td style='background-color:${bgcolor};'><font color="${GetClassSettleColor(userlist[i].iCurrentRolling, iRootClass)}">${GetNumber(userlist[i].iCurrentRolling)}</font></td>
                     <td style='background-color:${bgcolor};'>${strCreatedAt}</td>
                     <td style='background-color:${bgcolor};'>
-						<a id="adjust_${userlist[i].strNickname}" href="#" style="border: 1px solid green; display:inline-block; font-weight:bold; border-radius:4px; background-color:blue; width:30px; color:white;">상세보기</a>
+						<a id="adjust_${userlist[i].strNickname}" href="#" style="border: 1px solid green; display:inline-block; font-weight:bold; border-radius:4px; background-color:blue; width:30px; color:white;"onclick="openDetail('${userlist[i].strNickname}','${userlist[i].strGroupID}','${userlist[i].iClass}','${userlist[i].iPermission}')">상세보기</a>
 					</td>
                 </tr>`;
 
@@ -280,42 +313,42 @@
         return total;
     }
 
-    let AddEndTag = (total1, total2, total3, total4, iRootClass) => {
-        let total = {
-        input:  total1.input + total2.input + total3.input + total4.input,
-        output: total1.output + total2.output + total3.output + total4.output,
-        cash:   total1.cash + total2.cash + total3.cash + total4.cash,
-        rolling:total1.rolling + total2.rolling + total3.rolling + total4.rolling,
-        total:  total1.total + total2.total + total3.total + total4.total,
-        totalRolling: total1.totalRolling + total2.totalRolling + total3.totalRolling + total4.totalRolling
-        };
+    // let AddEndTag = (total1, total2, total3, total4, iRootClass) => {
+    //     let total = {
+    //     input:  total1.input + total2.input + total3.input + total4.input,
+    //     output: total1.output + total2.output + total3.output + total4.output,
+    //     cash:   total1.cash + total2.cash + total3.cash + total4.cash,
+    //     rolling:total1.rolling + total2.rolling + total3.rolling + total4.rolling,
+    //     total:  total1.total + total2.total + total3.total + total4.total,
+    //     totalRolling: total1.totalRolling + total2.totalRolling + total3.totalRolling + total4.totalRolling
+    //     };
 
-        let total_f = parseFloat(total.total) - parseFloat(total.rolling);
+    //     let total_f = parseFloat(total.total) - parseFloat(total.rolling);
 
-        let endtag = `
-        <tr>
-            <td colspan="5">${i18nTexts.strTotal}</td>
-            <% if (user.iRootClass <= 3 && user.iPermission != 100) { %>
-                <td></td>
-                <td></td>
-            <%}%>
-            <td>${GetNumber(total.input)}</td>
-            <td>${GetNumber(total.output)}</td>
-            <td>${GetNumber(total.cash)}</td>
-            <td><font color='${GetClassSettleColor(total.rolling, iRootClass)}'>${GetNumber(total.rolling)}</font></td>
-            <td><font color=${GetClassColor(total.total, iRootClass)}>${GetNumber(total.total-total.rolling)}</font></td>
-            <td><font color='${GetClassSettleColor(total.totalRolling, iRootClass)}'>${GetNumber(total.totalRolling)}</font></td>
-            <% if (user.iRootClass <= 3 && user.iPermission != 100) { %>
-                <td></td>
-            <%}%>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>`;
+    //     let endtag = `
+    //     <tr>
+    //         <td colspan="5">${i18nTexts.strTotal}</td>
+    //         <% if (user.iRootClass <= 3 && user.iPermission != 100) { %>
+    //             <td></td>
+    //             <td></td>
+    //         <%}%>
+    //         <td>${GetNumber(total.input)}</td>
+    //         <td>${GetNumber(total.output)}</td>
+    //         <td>${GetNumber(total.cash)}</td>
+    //         <td><font color='${GetClassSettleColor(total.rolling, iRootClass)}'>${GetNumber(total.rolling)}</font></td>
+    //         <td><font color=${GetClassColor(total.total, iRootClass)}>${GetNumber(total.total-total.rolling)}</font></td>
+    //         <td><font color='${GetClassSettleColor(total.totalRolling, iRootClass)}'>${GetNumber(total.totalRolling)}</font></td>
+    //         <% if (user.iRootClass <= 3 && user.iPermission != 100) { %>
+    //             <td></td>
+    //         <%}%>
+    //         <td></td>
+    //         <td></td>
+    //         <td></td>
+    //         <td></td>
+    //     </tr>`;
 
-        $('#userlist').append(endtag);
-    }
+    //     $('#userlist').append(endtag);
+    // }
 
     let OnClickTodayRecord = () => {
 
@@ -370,7 +403,7 @@
 
         $.ajax({
             type:'post',
-            url: "/manage_user/request_userlist",
+            url: "/manage_user/request_userlistchangemoney",
             context: document.body,
             data:{iTargetClass:iTargetClass, strGroupID:strGroupID, iClass:iClass, dateStart:dateStart, dateEnd:dateEnd, strSearchNickname:strNickname},
 
@@ -382,7 +415,7 @@
                 let total3 = SetUserList(obj.shoplist, 7, obj.iRootClass);
                 let total4 = SetUserList(obj.userlist, 8, obj.iRootClass);
 
-                AddEndTag(total1, total2, total3, total4, obj.iRootClass);
+                // AddEndTag(total1, total2, total3, total4, obj.iRootClass);
             },
             error:function(request,status,error){
                 alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
@@ -444,85 +477,72 @@
 		}
 	}
 
-	let UpdateGTRecord = (eType, list) => {
-			let parent_id = '#gtrecord_cash';
-			if ( eType == "FROM")
-				parent_id = '#gtrecord_rolling';
-			$(parent_id).empty();
-			if ( list.length == 0 ) 
-			{
-				let tag = 
-				`
-				<tr>
-					<td colspan="20" height="40"><strong>${strNoRecord}</strong></td>
-				</tr>
-				`;
-				$(parent_id).append(tag);
+	let OnClickProcess = async (eGTType) => {
+			if (isSending) {
+				alert('처리중입니다');
+				return;
 			}
-			else 
+			isSending = true;
+
+			let strTarget = $('#strNickname').val();
+			let iMoney = $('#exchangeAmount').val();
+			iMoney = parseInt(iMoney.replace(/,/g, ''));
+			// iMoney = parseInt(iMoney);
+			if (Number.isNaN(iMoney)) {
+				iMoney = 0;
+			}
+
+			if (strTarget == null || strTarget == '' || iMoney == null || iMoney == '' || iMoney <= 0) {
+				alert(strAlertIncorrectInputValue);
+				isSending = false;
+				return;
+			}
+
+			let strConfirm = '';
+			if (eGTType == 'TAKE') {
+				strConfirm = strConfirmTake;
+			}
+			else
 			{
-				let iTotalGive = 0;
-				let iTotalTake = 0;
-				for ( let i in list )
-				{
-					let target = list[i].strTo;
-					if ( eType == 'FROM' )
-						target = list[i].strFrom;
+				strConfirm = strConfirmGive;
+			}
 
-					if ( list[i].eType == 'GIVE')
-						iTotalGive += parseFloat(list[i].iAmount);
-					else if ( list[i].eType == 'TAKE' )
-						iTotalTake += parseFloat(list[i].iAmount);
-
-					let tag = 
-					`
-					<tr>
-						<td style="color:${GetGTColor(list[i].eType)};">${parseInt(i)+1}</td>
-						<td style="color:${GetGTColor(list[i].eType)};">${target}</td>
-						<td style="color:${GetGTColor(list[i].eType)};">${GetNumber(list[i].iAmount)}</td>
-						<td style="color:${GetGTColor(list[i].eType)};">${GetGTType(list[i].eType)}</td>
-						<td style="color:${GetGTColor(list[i].eType)};">${list[i].createdAt}</td>
-					</tr>
-					`;
-					$(parent_id).append(tag);
+			if (confirm(strConfirm)) {
+				if (eGTType == 'TAKE') {
+					openAlertModal();
+					await sleep(5000);
 				}
+				$.ajax({
+					type: 'post',
+					url: "/manage_user_popup/request_gt",
+					context: document.body,
+					data: {strTo: strTarget, strFrom: user.strNickname, iAmount: iMoney, eType: eGTType},
 
-				let total = parseFloat(iTotalGive) + parseFloat(iTotalTake);
-
-				let finaltag = `
-					<tr>
-						<td style="background-color:gray;color:white;">전체 : ${GetNumber(total)}</td>
-						<td style="background-color:gray;color:white;">지급총합</td>
-						<td style="background-color:gray;color:skyblue;">${GetNumber(iTotalGive)}</td>
-						<td style="background-color:gray;color:white;">차감총합</td>
-						<td style="background-color:gray;color:orange;">${GetNumber(iTotalTake)}</td>
-					</tr>`;
-				$(parent_id).append(finaltag);
+					success: (obj) => {
+						isSending = false;
+						closeAlertModal();
+						if (obj.result == 'OK') {
+							window.opener.location.reload(true);
+						} else {
+							if (obj.reason == 'NOTENOUGH') {
+								alert(strAlertErrorNotEnoughMoney);
+							} else {
+								alert(strAlertComplete);
+								window.opener.location.reload(true);
+							}
+						}
+						location.reload();
+					},
+					error: function (request, status, error) {
+						isSending = false;
+						alert("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
+					}
+				});
 			}
 		}
 
-	let RequestGTRecord = (eType, strSearch) => {
-
-		let dateStart = $('#datepicker1').val();
-		let dateEnd = $('#datepicker2').val();
-
-		$.ajax({
-			type:'post',
-			url: "/manage_user_popup/request_gtrecord",
-			context: document.body,
-			data:{strNickname:user.strNickname, eType:eType, dateStart:dateStart, dateEnd:dateEnd, strSearch:strSearch, iClass: user.iClass},
-
-			success: (list) => {
-				console.log(list);
-				UpdateGTRecord(eType, list);
-
-				// $('#pagination').empty();
-				// $('#pagination').append(getPagination(iLimit, obj.totalCount, iCurrentPage));
-			},
-			error:function(request,status,error){
-				alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
-			}
-		});
+	function sleep(ms) {
+		return new Promise(resolve => setTimeout(resolve, ms));
 	}
 
 	let OnClickTranslate = (eType) => {
@@ -537,13 +557,13 @@
 		if ( eType == 'SETTLE' )
 		{
 			strType = '죽장';
-			if ( iSettle > 0 && iSettle <= agent.iSettle )
+			if ( iSettle > 0 && iSettle <= user.iSettle )
 				iMoney = iSettle;
 		}
 		else if ( eType == 'ROLLING' )
 		{
 			strType = '롤링';
-			if ( iRolling > 0 && iRolling <= agent.iRolling )
+			if ( iRolling > 0 && iRolling <= user.iRolling )
 				iMoney = iRolling;
 		}
 
@@ -559,15 +579,10 @@
 				type:'post',
 				url: "/manage_user_popup/request_gt",
 				context: document.body,
-				data:{strTo:agent.strNickname, strFrom:agent.strNickname, iAmount:iMoney, eType:eType},
+				data:{strTo:user.strNickname, strFrom:user.strNickname, iAmount:iMoney, eType:eType},
 				success: (obj) => {
 					if ( obj.result == 'OK' )
 					{
-						RequestGTRecord('TO', '');
-						RequestGTRecord('FROM', '');
-						$('#cash').text(GetNumber((obj.cash)));
-						$('#rolling').text(GetNumber((obj.rolling)));
-						$('#settle').text(GetNumber((obj.settle)));
 						location.reload();
 					}
 					else {
@@ -601,6 +616,46 @@
         let total2 = SetUserList(agentlist, 6, user.iRootClass);
         let total3 = SetUserList(shoplist, 7, user.iRootClass);
         let total4 = SetUserList(userlist, 8, user.iRootClass);
-        AddEndTag(total1, total2, total3, total4, user.iRootClass);
+        // AddEndTag(total1, total2, total3, total4, user.iRootClass);
+
+		var rollingModal = $("#rollingModal");
+    	var settleModal = $("#settleModal");
+
+		var openRollingModalBtn = $("#openRollingModal");
+		var openSettleModalBtn = $("#openSettleModal");
+
+		var closeRollingModal = rollingModal.find(".close");
+    	var closeSettleModal = settleModal.find(".close");
+		settleModal.hide();
+		rollingModal.hide();
+
+		openRollingModalBtn.on("click", function() {
+			rollingModal.show();
+		});
+
+		// When the user clicks the button, open the settle modal 
+		openSettleModalBtn.on("click", function() {
+			settleModal.show();
+		});
+
+		// When the user clicks on <span> (x), close the rolling modal
+		closeRollingModal.on("click", function() {
+			rollingModal.hide();
+		});
+
+		// When the user clicks on <span> (x), close the settle modal
+		closeSettleModal.on("click", function() {
+			settleModal.hide();
+		});
+
+		// When the user clicks anywhere outside of the modal, close it
+		$(window).on("click", function(event) {
+			if ($(event.target).is(rollingModal)) {
+				rollingModal.hide();
+			}
+			if ($(event.target).is(settleModal)) {
+				settleModal.hide();
+			}
+		});
 	});
 </script>

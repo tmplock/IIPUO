@@ -43,7 +43,7 @@ let SetModal = (strModalTag, iRender) => {
                 <input type="password" id="changemoneypw" placeholder="지급 비밀번호를 입력하세요">
             </div>
             <div class="submit-button-container">
-                <button class="submit-button" onclick="submitExchange()">지급하기</button>
+                <button class="submit-button" onclick="OnClickProcess('GIVE')">지급하기</button>
             </div>
         </div>
         `;
@@ -83,7 +83,7 @@ let SetModal = (strModalTag, iRender) => {
                 <input type="password" id="changemoneypw" placeholder="회수 비밀번호를 입력하세요">
             </div>
             <div class="submit-button-container">
-                <button class="submit-button" onclick="submitExchange()">회수하기</button>
+                <button class="submit-button" onclick="OnClickProcess('TAKE')">회수하기</button>
             </div>
         </div>
         `;
@@ -119,3 +119,20 @@ $(window).on('click', function(event) {
         $('#myModal').hide();
     }
 });
+
+function openDetail(strNickname) {
+    var scLeft = window.screenLeft + 50;
+    var scTop = window.screenTop + 50;
+    window.open('', 'popupDetail', `width=1280, height=720, top=${scTop}, left=${scLeft}, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no`);
+
+    var $form = $('<form></form>');
+    $form.attr('action', '/manage_user_popup/changemoneydetail');
+    $form.attr('method', 'post');
+    $form.attr('target', 'popupDetail');
+    $form.appendTo('body');
+
+    var idx = $(`<input type="hidden" value="${strNickname}" name="strNickname">`);
+
+    $form.append(idx);
+    $form.submit();
+}

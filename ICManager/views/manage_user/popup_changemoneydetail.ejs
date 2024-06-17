@@ -47,22 +47,8 @@
 <body style="font-family:'Spoqa Han Sans Neo';">
 	<div class="sub_wrap">
 		<div class="container clearfix">
-			
-			<div class="content" style="position:relative; padding:0 10px 0 10px;">
-				<ul class="list_tab" style="margin-bottom:10px;width:75%;z-index:10000;">
-					<li class="off">
-						<a href="#" id="user_changemoney"><%=__('UserList')%></a>
-					</li>
-					<li class="on">
-						<a href="#" id="user_changemoneylist">전환 내역</a>
-					</li>
-				</ul>
 
-				<ul class="list_tab" style="margin-left:90%;margin-top:-40px;margin-bottom:10px;height:30px;">
-				</ul>
-			</div>
-
-			<div id="search_date">
+			<div id="search_date" style="margin-top: 15px;">
 			</div>
 
 			<div class="search_wrap" style="margin-top: 15px;">
@@ -151,6 +137,7 @@
 	<script type="text/javascript" src="js/popup_changemoney_menu.js"></script>
 	<script type="text/javascript">
 		let user = JSON.parse('<%-JSON.stringify(user)%>');
+		const strNickname = JSON.parse('<%-JSON.stringify(strSearch)%>');
 
 		const strNoRecord = '<%=__("NoRecord")%>';
 		const strConfirmGive = '<%=__("ConfirmGive")%>';
@@ -178,7 +165,7 @@
 		let endDate = GetCurrentDate();
 
 		$(document).ready(() => {
-			SetSeachButtons("#search_date",9,i18nTexts,user,4);
+			SetSeachButtons("#search_date",10,i18nTexts,user,4);
 			DatePicker();
 
 			$('#datepicker1').val(GetCurrentDate());
@@ -297,15 +284,15 @@
 		}
 
 		let OnClickSearch = () => {
-			let strNickname = $('#strNickname').val();
-			if ( strNickname == undefined )
-				strNickname = '';
+			// let strNickname = $('#strNickname').val();
+			// if ( strNickname == undefined )
+			// 	strNickname = '';
 			RequestGTRecord('TO', strNickname);
 			RequestGTRecord('FROM', strNickname);
 		}
 
 		let OnClickSearchBy = () => {
-			let strNickname = $('#strNickname').val();
+			// let strNickname = $('#strNickname').val();
 			RequestGTRecord('TO', strNickname);
 			RequestGTRecord('FROM', strNickname);
 		}

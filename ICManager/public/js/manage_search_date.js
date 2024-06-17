@@ -320,6 +320,39 @@ let SetSeachButtons = (strSearchTag, iRender, i18nTexts, objectData, iTargetClas
         </div>
         `;
     }
+    else if(iRender == 9) {
+        tag = `
+        <div style="background-color:#ffffff;padding-right:5px;padding-top:0px;padding-bottom:0px;" colspan="19">
+            <div style="overflow: hidden;">
+                <div style="float: right; text-align: right;">
+                    <input style="width:100px;" type="text" id="datepicker1" class="datepicker"/>~
+                    <input style="width:100px;" type="text" id="datepicker2" class="datepicker"/>
+                    <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearch();">${i18nTexts.Search}</button>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    ${i18nTexts.Search}
+                    <select id="select_roomno" style="width:80px;">
+                        <option>${i18nTexts.Nickname}</option>
+                    </select>
+                    <input style="margin-left:0px;width:100px;" id="strSearchNickname" type="text"/>
+                    <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearchNickname();">${i18nTexts.Search}</button>
+                </div>
+            </div>
+        </div>
+        `;
+    }
+    else if(iRender == 10) {
+        tag = `
+        <div style="background-color:#ffffff;padding-right:5px;padding-top:0px;padding-bottom:0px;" colspan="19">
+            <div style="overflow: hidden;">
+                <div style="float: right; text-align: right;">
+                    <input style="width:100px;" type="text" id="datepicker1" class="datepicker"/>~
+                    <input style="width:100px;" type="text" id="datepicker2" class="datepicker"/>
+                    <button class="btn_blue" style="border:1px solid rgb(95, 93, 93);width:70px;height:25px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickSearch();">${i18nTexts.Search}</button>
+                </div>
+            </div>
+        </div>
+        `;
+    }
     else {
         tag = `
         <div style="background-color:#ffffff;padding-right:5px;padding-top:0px;padding-bottom:0px;" colspan="19">

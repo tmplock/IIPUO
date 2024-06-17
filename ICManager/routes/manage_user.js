@@ -139,6 +139,19 @@ router.post('/request_userlist', isLoggedIn, async ( req, res ) => {
     res.send({userlist:result, shoplist:listShops, agentlist:listAgents, vadminlist:[], proadminlist: [], iRootClass: req.user.iClass, iPermission: req.user.iPermission});
 });
 
+router.post('/request_userlistchangemoney', isLoggedIn, async ( req, res ) => {
+
+    console.log(`/request_userlistchangemoney : ${req.body.dateStart}, ${req.body.dateEnd}`);
+
+    let result = await IAgent.GetUserList(req.body.dateStart, req.body.dateEnd, req.body.strGroupID, req.body.strSearchNickname);
+    let listShops = await IAgent.GetShopListChangeMoney(req.body.dateStart, req.body.dateEnd, req.body.strGroupID, req.body.strSearchNickname);
+    let listAgents = await IAgent.GetAgentListChangeMoney(req.body.dateStart, req.body.dateEnd, req.body.strGroupID, req.body.strSearchNickname);
+    // let listViceAdmins = await GetViceAdminList(req.body.dateStart, req.body.dateEnd, req.body.strGroupID, req.body.strSearchNickname);
+    // let listProAdmins = await GetProAdminList(req.body.dateStart, req.body.dateEnd, req.body.strGroupID, req.body.strSearchNickname);
+
+    res.send({userlist:result, shoplist:listShops, agentlist:listAgents, vadminlist:[], proadminlist: [], iRootClass: req.user.iClass, iPermission: req.user.iPermission});
+});
+
 let GetNicknameList = (strGroupID, listUsers) => {
 
     let list = [];

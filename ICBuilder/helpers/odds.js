@@ -738,6 +738,20 @@ exports.JoinGroupDailyOverview = (list, listAdd) =>
     }    
 }
 
+let GetPlayingCount = (objectArg) => {
+
+    let objectRet = {iNumPlayB:0, iNumPlayUO:0, iNumPlayS:0};
+
+    if ( objectArg.iBetB > 0 )
+        objectRet.iNumPlayB = 1;
+    if ( objectArg.iBetUO > 0 )
+        objectRet.iNumPlayUO = 1;
+    if ( objectArg.iBetS > 0 )
+        objectRet.iNumPlayS = 1;
+
+    return objectRet;
+}
+
 let ProcessGroupDailyOverview = (objectRolling, objectArg, strDate) => {
 
     console.log(`##### ProcessGroupDailyOverview`);
@@ -755,12 +769,14 @@ let ProcessGroupDailyOverview = (objectRolling, objectArg, strDate) => {
     let iAgentRollingPBA = oa.iPAdminRPBA + oa.iVAdminRPBA + oa.iAgentRPBA + oa.iShopRPBA + oa.iUserRPBA;
     let iAgentRollingPBB = oa.iPAdminRPBB + oa.iVAdminRPBB + oa.iAgentRPBB + oa.iShopRPBB + oa.iUserRPBB;
 
+    let iNumPlayB = 0;
+
     //  HQ
     let oData = ProcessOverviewUnit(strDate, o.strHQID, o.strHQGroupID, 1, 
         0, 0, 0, 0, 0, 0, 0, 0, 
         0, 0, 0, 0, 0, 
         oa.iBetB, oa.iBetUO, oa.iBetS, oa.iBetPB, oa.iWinB, oa.iWinUO, oa.iWinS, oa.iWinPB,
-        iAgentRollingB, iAgentRollingUO, iAgentRollingS, iAgentRollingPBA, iAgentRollingPBB, oa.iNumPlayB, oa.iNumPlayUO, oa.iNumPlayS);
+        iAgentRollingB, iAgentRollingUO, iAgentRollingS, iAgentRollingPBA, iAgentRollingPBB, 0, 0, 0);
     listFinal.push(oData);
 
     //  V-HQ
@@ -768,7 +784,7 @@ let ProcessGroupDailyOverview = (objectRolling, objectArg, strDate) => {
         0, 0, 0, 0, 0, 0, 0, 0, 
         0, 0, 0, 0, 0, 
         oa.iBetB, oa.iBetUO, oa.iBetS, oa.iBetPB, oa.iWinB, oa.iWinUO, oa.iWinS, oa.iWinPB,
-        iAgentRollingB, iAgentRollingUO, iAgentRollingS, iAgentRollingPBA, iAgentRollingPBB, oa.iNumPlayB, oa.iNumPlayUO, oa.iNumPlayS);
+        iAgentRollingB, iAgentRollingUO, iAgentRollingS, iAgentRollingPBA, iAgentRollingPBB, 0, 0, 0);
     listFinal.push(oData);
 
     //  ADMIN
@@ -776,7 +792,7 @@ let ProcessGroupDailyOverview = (objectRolling, objectArg, strDate) => {
         0, 0, 0, 0, 0, 0, 0, 0, 
         0, 0, 0, 0, 0, 
         oa.iBetB, oa.iBetUO, oa.iBetS, oa.iBetPB, oa.iWinB, oa.iWinUO, oa.iWinS, oa.iWinPB,
-        iAgentRollingB, iAgentRollingUO, iAgentRollingS, iAgentRollingPBA, iAgentRollingPBB, oa.iNumPlayB, oa.iNumPlayUO, oa.iNumPlayS);
+        iAgentRollingB, iAgentRollingUO, iAgentRollingS, iAgentRollingPBA, iAgentRollingPBB, 0, 0, 0);
     listFinal.push(oData);
 
     //  PADMIN
@@ -784,7 +800,7 @@ let ProcessGroupDailyOverview = (objectRolling, objectArg, strDate) => {
         0, 0, 0, 0, 0, 0, 0, 0, 
         oa.iPAdminRB, oa.iPAdminRUO, oa.iPAdminRS, oa.iPAdminRPBA, oa.iPAdminRPBB, 
         oa.iBetB, oa.iBetUO, oa.iBetS, oa.iBetPB, oa.iWinB, oa.iWinUO, oa.iWinS, oa.iWinPB,
-        iAgentRollingB, iAgentRollingUO, iAgentRollingS, iAgentRollingPBA, iAgentRollingPBB, oa.iNumPlayB, oa.iNumPlayUO, oa.iNumPlayS);
+        iAgentRollingB, iAgentRollingUO, iAgentRollingS, iAgentRollingPBA, iAgentRollingPBB, 0, 0, 0);
     listFinal.push(oData);
 
     //  VADMIN
@@ -798,8 +814,10 @@ let ProcessGroupDailyOverview = (objectRolling, objectArg, strDate) => {
         0, 0, 0, 0, 0, 0, 0, 0, 
         oa.iVAdminRB, oa.iVAdminRUO, oa.iVAdminRS, oa.iVAdminRPBA, oa.iVAdminRPBB, 
         oa.iBetB, oa.iBetUO, oa.iBetS, oa.iBetPB, oa.iWinB, oa.iWinUO, oa.iWinS, oa.iWinPB,
-        iAgentRollingB, iAgentRollingUO, iAgentRollingS, iAgentRollingPBA, iAgentRollingPBB, oa.iNumPlayB, oa.iNumPlayUO, oa.iNumPlayS);
+        iAgentRollingB, iAgentRollingUO, iAgentRollingS, iAgentRollingPBA, iAgentRollingPBB, 0, 0, 0);
     listFinal.push(oData);
+
+    const cCount = GetPlayingCount(oa);
 
     if ( o.strUserID != '' )
     {
@@ -810,11 +828,12 @@ let ProcessGroupDailyOverview = (objectRolling, objectArg, strDate) => {
         iAgentRollingPBA = oa.iAgentRPBA + oa.iShopRPBA + oa.iUserRPBA;
         iAgentRollingPBB = oa.iAgentRPBB + oa.iShopRPBB + oa.iUserRPBB;
 
+
         oData = ProcessOverviewUnit(strDate, o.strAgentID, o.strAgentGroupID, 6, 
             0, 0, 0, 0, 0, 0, 0, 0, 
             oa.iAgentRB, oa.iAgentRUO, oa.iAgentRS, oa.iAgentRPBA, oa.iAgentRPBB, 
             oa.iBetB, oa.iBetUO, oa.iBetS, oa.iBetPB, oa.iWinB, oa.iWinUO, oa.iWinS, oa.iWinPB,
-            iAgentRollingB, iAgentRollingUO, iAgentRollingS, iAgentRollingPBA, iAgentRollingPBB, oa.iNumPlayB, oa.iNumPlayUO, oa.iNumPlayS);
+            iAgentRollingB, iAgentRollingUO, iAgentRollingS, iAgentRollingPBA, iAgentRollingPBB, 0, 0, 0);
         listFinal.push(oData);
 
         //  SHOP
@@ -828,7 +847,7 @@ let ProcessGroupDailyOverview = (objectRolling, objectArg, strDate) => {
             0, 0, 0, 0, 0, 0, 0, 0, 
             oa.iShopRB, oa.iShopRUO, oa.iShopRS, oa.iShopRPBA, oa.iShopRPBB, 
             oa.iBetB, oa.iBetUO, oa.iBetS, oa.iBetPB, oa.iWinB, oa.iWinUO, oa.iWinS, oa.iWinPB,
-            iAgentRollingB, iAgentRollingUO, iAgentRollingS, iAgentRollingPBA, iAgentRollingPBB, oa.iNumPlayB, oa.iNumPlayUO, oa.iNumPlayS);
+            iAgentRollingB, iAgentRollingUO, iAgentRollingS, iAgentRollingPBA, iAgentRollingPBB, 0, 0, 0);
         listFinal.push(oData);
 
         //  USER
@@ -842,7 +861,7 @@ let ProcessGroupDailyOverview = (objectRolling, objectArg, strDate) => {
             oa.iBetB, oa.iBetUO, oa.iBetS, oa.iBetPB, oa.iWinB, oa.iWinUO, oa.iWinS, oa.iWinPB, 
             oa.iUserRB, oa.iUserRUO, oa.iUserRS, oa.iUserRPBA, oa.iUserRPBB, 
             oa.iBetB, oa.iBetUO, oa.iBetS, oa.iBetPB, oa.iWinB, oa.iWinUO, oa.iWinS, oa.iWinPB,
-            iAgentRollingB, iAgentRollingUO, iAgentRollingS, iAgentRollingPBA, iAgentRollingPBB, oa.iNumPlayB, oa.iNumPlayUO, oa.iNumPlayS);
+            iAgentRollingB, iAgentRollingUO, iAgentRollingS, iAgentRollingPBA, iAgentRollingPBB, cCount.iNumPlayB, cCount.iNumPlayUO, cCount.iNumPlayS);
         listFinal.push(oData);
     }
     else if ( o.strShopID != '' )
@@ -858,7 +877,7 @@ let ProcessGroupDailyOverview = (objectRolling, objectArg, strDate) => {
             0, 0, 0, 0, 0, 0, 0, 0, 
             oa.iAgentRB, oa.iAgentRUO, oa.iAgentRS, oa.iAgentRPBA, oa.iAgentRPBB, 
             oa.iBetB, oa.iBetUO, oa.iBetS, oa.iBetPB, oa.iWinB, oa.iWinUO, oa.iWinS, oa.iWinPB,
-            iAgentRollingB, iAgentRollingUO, iAgentRollingS, iAgentRollingPBA, iAgentRollingPBB, oa.iNumPlayB, oa.iNumPlayUO, oa.iNumPlayS);
+            iAgentRollingB, iAgentRollingUO, iAgentRollingS, iAgentRollingPBA, iAgentRollingPBB, 0, 0, 0);
         listFinal.push(oData);
 
         //  SHOP
@@ -872,7 +891,7 @@ let ProcessGroupDailyOverview = (objectRolling, objectArg, strDate) => {
             oa.iBetB, oa.iBetUO, oa.iBetS, oa.iBetPB, oa.iWinB, oa.iWinUO, oa.iWinS, oa.iWinPB, 
             oa.iShopRB, oa.iShopRUO, oa.iShopRS, oa.iShopRPBA, oa.iShopRPBB, 
             oa.iBetB, oa.iBetUO, oa.iBetS, oa.iBetPB, oa.iWinB, oa.iWinUO, oa.iWinS, oa.iWinPB,
-            iAgentRollingB, iAgentRollingUO, iAgentRollingS, iAgentRollingPBA, iAgentRollingPBB, oa.iNumPlayB, oa.iNumPlayUO, oa.iNumPlayS);
+            iAgentRollingB, iAgentRollingUO, iAgentRollingS, iAgentRollingPBA, iAgentRollingPBB, cCount.iNumPlayB, cCount.iNumPlayUO, cCount.iNumPlayS);
         listFinal.push(oData);
     }
     else if ( o.strAgentID != '' )
@@ -888,7 +907,7 @@ let ProcessGroupDailyOverview = (objectRolling, objectArg, strDate) => {
             oa.iBetB, oa.iBetUO, oa.iBetS, oa.iBetPB, oa.iWinB, oa.iWinUO, oa.iWinS, oa.iWinPB, 
             oa.iAgentRB, oa.iAgentRUO, oa.iAgentRS, oa.iAgentRPBA, oa.iAgentRPBB, 
             oa.iBetB, oa.iBetUO, oa.iBetS, oa.iBetPB, oa.iWinB, oa.iWinUO, oa.iWinS, oa.iWinPB,
-            iAgentRollingB, iAgentRollingUO, iAgentRollingS, iAgentRollingPBA, iAgentRollingPBB, oa.iNumPlayB, oa.iNumPlayUO, oa.iNumPlayS);
+            iAgentRollingB, iAgentRollingUO, iAgentRollingS, iAgentRollingPBA, iAgentRollingPBB, cCount.iNumPlayB, cCount.iNumPlayUO, cCount.iNumPlayS);
         listFinal.push(oData);
     }
 

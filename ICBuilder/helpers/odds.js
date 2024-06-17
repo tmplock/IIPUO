@@ -817,7 +817,7 @@ let ProcessGroupDailyOverview = (objectRolling, objectArg, strDate) => {
         iAgentRollingB, iAgentRollingUO, iAgentRollingS, iAgentRollingPBA, iAgentRollingPBB, 0, 0, 0);
     listFinal.push(oData);
 
-    const cCount = GetPlayingCount(oa);
+    //const cCount = GetPlayingCount(oa);
 
     if ( o.strUserID != '' )
     {
@@ -861,7 +861,7 @@ let ProcessGroupDailyOverview = (objectRolling, objectArg, strDate) => {
             oa.iBetB, oa.iBetUO, oa.iBetS, oa.iBetPB, oa.iWinB, oa.iWinUO, oa.iWinS, oa.iWinPB, 
             oa.iUserRB, oa.iUserRUO, oa.iUserRS, oa.iUserRPBA, oa.iUserRPBB, 
             oa.iBetB, oa.iBetUO, oa.iBetS, oa.iBetPB, oa.iWinB, oa.iWinUO, oa.iWinS, oa.iWinPB,
-            iAgentRollingB, iAgentRollingUO, iAgentRollingS, iAgentRollingPBA, iAgentRollingPBB, cCount.iNumPlayB, cCount.iNumPlayUO, cCount.iNumPlayS);
+            iAgentRollingB, iAgentRollingUO, iAgentRollingS, iAgentRollingPBA, iAgentRollingPBB, oa.iNumPlayB, oa.iNumPlayUO, oa.iNumPlayS);
         listFinal.push(oData);
     }
     else if ( o.strShopID != '' )
@@ -891,7 +891,7 @@ let ProcessGroupDailyOverview = (objectRolling, objectArg, strDate) => {
             oa.iBetB, oa.iBetUO, oa.iBetS, oa.iBetPB, oa.iWinB, oa.iWinUO, oa.iWinS, oa.iWinPB, 
             oa.iShopRB, oa.iShopRUO, oa.iShopRS, oa.iShopRPBA, oa.iShopRPBB, 
             oa.iBetB, oa.iBetUO, oa.iBetS, oa.iBetPB, oa.iWinB, oa.iWinUO, oa.iWinS, oa.iWinPB,
-            iAgentRollingB, iAgentRollingUO, iAgentRollingS, iAgentRollingPBA, iAgentRollingPBB, cCount.iNumPlayB, cCount.iNumPlayUO, cCount.iNumPlayS);
+            iAgentRollingB, iAgentRollingUO, iAgentRollingS, iAgentRollingPBA, iAgentRollingPBB, oa.iNumPlayB, oa.iNumPlayUO, oa.iNumPlayS);
         listFinal.push(oData);
     }
     else if ( o.strAgentID != '' )
@@ -907,7 +907,7 @@ let ProcessGroupDailyOverview = (objectRolling, objectArg, strDate) => {
             oa.iBetB, oa.iBetUO, oa.iBetS, oa.iBetPB, oa.iWinB, oa.iWinUO, oa.iWinS, oa.iWinPB, 
             oa.iAgentRB, oa.iAgentRUO, oa.iAgentRS, oa.iAgentRPBA, oa.iAgentRPBB, 
             oa.iBetB, oa.iBetUO, oa.iBetS, oa.iBetPB, oa.iWinB, oa.iWinUO, oa.iWinS, oa.iWinPB,
-            iAgentRollingB, iAgentRollingUO, iAgentRollingS, iAgentRollingPBA, iAgentRollingPBB, cCount.iNumPlayB, cCount.iNumPlayUO, cCount.iNumPlayS);
+            iAgentRollingB, iAgentRollingUO, iAgentRollingS, iAgentRollingPBA, iAgentRollingPBB, oa.iNumPlayB, oa.iNumPlayUO, oa.iNumPlayS);
         listFinal.push(oData);
     }
 

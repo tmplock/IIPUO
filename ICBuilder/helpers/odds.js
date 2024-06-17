@@ -1020,6 +1020,10 @@ exports.UpdateOverview = async (list, fBaccaratRR, fSlotRR) => {
             }
             else
             {
+                const iNumPlayB = dbdata.iNumPlayB != null ? dbdata.iNumPlayB+t.iNumPlayB : t.iNumPlayB;
+                const iNumPlayUO = dbdata.iNumPlayUO != null ? dbdata.iNumPlayUO+t.iNumPlayUO : t.iNumPlayUO; 
+                const iNumPlayS = dbdata.iNumPlayS != null ? dbdata.iNumPlayS+t.iNumPlayS : t.iNumPlayS;
+
                 console.log('##### NOT NULL');
                 console.log(t);
                 await db.RecordDailyOverviews.update(
@@ -1050,9 +1054,9 @@ exports.UpdateOverview = async (list, fBaccaratRR, fSlotRR) => {
                         iAgentRollingS:dbdata.iAgentRollingS+t.iAgentRollingS,
                         iAgentRollingPBA:dbdata.iAgentRollingPBA+t.iAgentRollingPBA,
                         iAgentRollingPBB:dbdata.iAgentRollingPBB+t.iAgentRollingPBB,
-                        iNumPlayB:dbdata.iNumPlayB+t.iNumPlayB,
-                        iNumPlayUO:dbdata.iNumPlayUO+t.iNumPlayUO,
-                        iNumPlayS:dbdata.iNumPlayS+t.iNumPlayS,
+                        iNumPlayB:iNumPlayB,
+                        iNumPlayUO:iNumPlayUO,
+                        iNumPlayS:iNumPlayS,
                     },
                     {where:{strID:t.strID, strDate:t.strDate}});
             }

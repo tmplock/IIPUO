@@ -116,6 +116,15 @@ module.exports = (sequelize, DataTypes) => {
         iAgentRollingPBB: {
             type: DataTypes.DOUBLE(17,4),
         },
+        iNumPlayB: {
+            type:DataTypes.INTEGER,
+        },
+        iNumPlayUO: {
+            type:DataTypes.INTEGER,
+        },
+        iNumPlayS: {
+            type:DataTypes.INTEGER,
+        },
         createdAt: {
             type: DataTypes.DATE,
             get() {

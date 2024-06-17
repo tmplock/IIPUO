@@ -565,14 +565,8 @@ let CalculateRollingAmount = (strID, cAmount, fMine, fChild) => {
 
     if ( fOdds > 0 )
     {
-        // const c = parseInt(cAmount) * fOdds * 0.01;
-        // return c;
-
         const c = parseInt(cAmount) * fOdds * 0.01;
-
-        const value = parseInt(c/1.2);
-        return value;
-
+        return c;
     }
     return 0;
 }
@@ -1180,7 +1174,7 @@ let ProcessGroupDailyOverview = (objectRolling, objectArg, strDate) => {
     return listFinal;    
 }
 
-exports.UpdateOverview = async (list) => {
+exports.UpdateOverview = async (list, fBaccaratRR, fSlotRR) => {
 
     if ( list.length > 0 )
     {
@@ -1201,8 +1195,9 @@ exports.UpdateOverview = async (list) => {
 
             // 소수점 정리
             // const cRolling = parseInt(t.iRollingB) + parseInt(t.iRollingUO) + parseInt(t.iRollingS) + parseInt(t.iRollingPBA) + parseInt(t.iRollingPBB);
-            const cRolling = t.iRollingB + t.iRollingUO + t.iRollingS + t.iRollingPBA + t.iRollingPBB; // 요게 맞음
-
+            //const cRolling = t.iRollingB + t.iRollingUO + t.iRollingS + t.iRollingPBA + t.iRollingPBB; // 요게 맞음
+            
+            const cRolling = t.iRollingB/fBaccaratRR+ t.iRollingUO + t.iRollingS/fSlotRR + t.iRollingPBA + t.iRollingPBB; // 요게 맞음
 
             //continue;
             console.log(`##### cRolling : ${cRolling}, strID : ${t.strID}`);
@@ -1246,6 +1241,7 @@ exports.UpdateOverview = async (list) => {
                     iAgentRollingS:t.iAgentRollingS,
                     iAgentRollingPBA:t.iAgentRollingPBA,
                     iAgentRollingPBB:t.iAgentRollingPBB,
+                    
                 });
             }
             else

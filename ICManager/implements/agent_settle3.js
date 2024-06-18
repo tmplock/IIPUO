@@ -140,12 +140,14 @@ var inline_GetAgentListForSettleRecord = async (strGroupID, iClass, strQuater, d
 exports.GetAgentListForSettleRecord = inline_GetAgentListForSettleRecord;
 
 
-let inline_CalculateOverviewSettleCurrent = async (strGroupID, strQuater) => {
+let inline_CalculateOverviewSettleCurrent = async (strGroupID, strQuater, iSettleDays, iSettleType) => {
     let data = {iSettlePlus:0, iSettleMinus:0, iCurrentTotalSettle:0};
 
     let list = await db.SettleRecords.findAll({
         where: {
             strQuater: strQuater,
+            iSettleDays:iSettleDays,
+            iSettleType:iSettleType,
             iClass: {
                 [Op.in]:[4,5]
             },
@@ -159,6 +161,8 @@ let inline_CalculateOverviewSettleCurrent = async (strGroupID, strQuater) => {
         list = await db.SettleRecords.findAll({
             where: {
                 strQuater: GetBeforeQuater(strQuater),
+                iSettleDays:iSettleDays,
+                iSettleType:iSettleType,
                 iClass: {
                     [Op.in]:[4,5]
                 },
@@ -181,11 +185,11 @@ let inline_CalculateOverviewSettleCurrent = async (strGroupID, strQuater) => {
     return data;
 };
 exports.CalculateOverviewSettleCurrent = inline_CalculateOverviewSettleCurrent;
-let inline_CalculateOverviewSettle = async (strGroupID, iClass, strQuater, dateStart, dateEnd) => {
+let inline_CalculateOverviewSettle = async (strGroupID, iClass, strQuater, dateStart, dateEnd, iSettleDays, iSettleType) => {
 
-    let iTotalSettle = `IFNULL((SELECT sum(iSettle) FROM SettleRecords WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND strQuater = '${strQuater}'),0) as iTotalSettle,`;
+    let iTotalSettle = `IFNULL((SELECT sum(iSettle) FROM SettleRecords WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND strQuater = '${strQuater}' AND iSettleDays=${iSettleDays} AND iSettleType = ${iSettleType}),0) as iTotalSettle,`;
     if (iClass > 3) {
-        iTotalSettle = `IFNULL((SELECT sum(iSettle) FROM SettleRecords WHERE strNickname = t1.strNickname AND strQuater = '${strQuater}'),0) as iTotalSettle,`;
+        iTotalSettle = `IFNULL((SELECT sum(iSettle) FROM SettleRecords WHERE strNickname = t1.strNickname AND strQuater = '${strQuater}' AND iSettleDays=${iSettleDays} AND iSettleType = ${iSettleType}),0) as iTotalSettle,`;
     }
     let iRolling = `IFNULL((SELECT SUM(iRolling) FROM Users WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND iClass > '3' ),0) as iRolling,`;
     if (iClass > 4) {
@@ -224,14 +228,14 @@ let inline_CalculateOverviewSettle = async (strGroupID, iClass, strQuater, dateS
     const [list] = await db.sequelize.query(`
         SELECT
         IFNULL(t1.fCommission, ${cfCommission}) AS fCommission,
-        IFNULL((SELECT COUNT(id) FROM SettleRecords WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND strQuater = '${strQuater}'),0) as iSettleCount,
+        IFNULL((SELECT COUNT(id) FROM SettleRecords WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND strQuater = '${strQuater}' AND iSettleDays=${iSettleDays} AND iSettleType = ${iSettleType}),0) as iSettleCount,
         ${iTotalSettle}
-        IFNULL((SELECT SUM(iSettleAccTotal) FROM SettleRecords WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND strQuater = '${strQuater}') ,0) as iTotalSettleAcc,
-        IFNULL((SELECT SUM(iSettleAcc - iPayback) FROM SettleRecords WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND strQuater = '${strQuater}') ,0) as iTotalSettleBeforeAcc1,
-        IFNULL((SELECT SUM(iSettleBeforeAcc + iPayback) FROM SettleRecords WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND strQuater = '${strQuater}') ,0) as iTotalSettleBeforeAcc2,
-        IFNULL((SELECT sum(iCommissionB)+sum(iCommissionS) FROM SettleRecords WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND strQuater = '${strQuater}'),0) as iTotalCommission,
-        IFNULL((SELECT sum(iSettleGive) FROM SettleRecords WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND strQuater = '${strQuater}' AND iClass IN (4,5)),0) as iSettleGive,
-        IFNULL((SELECT sum(iSWinlose) FROM SettleRecords WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND strQuater = '${strQuater}' AND iClass = 4 AND fSettleSlot = 0),0) as iSWinlose,
+        IFNULL((SELECT SUM(iSettleAccTotal) FROM SettleRecords WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND strQuater = '${strQuater}' AND iSettleDays=${iSettleDays} AND iSettleType = ${iSettleType}) ,0) as iTotalSettleAcc,
+        IFNULL((SELECT SUM(iSettleAcc - iPayback) FROM SettleRecords WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND strQuater = '${strQuater}' AND iSettleDays=${iSettleDays} AND iSettleType = ${iSettleType}) ,0) as iTotalSettleBeforeAcc1,
+        IFNULL((SELECT SUM(iSettleBeforeAcc + iPayback) FROM SettleRecords WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND strQuater = '${strQuater}' AND iSettleDays=${iSettleDays} AND iSettleType = ${iSettleType}) ,0) as iTotalSettleBeforeAcc2,
+        IFNULL((SELECT sum(iCommissionB)+sum(iCommissionS) FROM SettleRecords WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND strQuater = '${strQuater}' AND iSettleDays=${iSettleDays} AND iSettleType = ${iSettleType}),0) as iTotalCommission,
+        IFNULL((SELECT sum(iSettleGive) FROM SettleRecords WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND strQuater = '${strQuater}' AND iClass IN (4,5) AND iSettleDays=${iSettleDays} AND iSettleType = ${iSettleType}),0) as iSettleGive,
+        IFNULL((SELECT sum(iSWinlose) FROM SettleRecords WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND strQuater = '${strQuater}' AND iClass = 4 AND fSettleSlot = 0 AND iSettleDays=${iSettleDays} AND iSettleType = ${iSettleType}),0) as iSWinlose,
         IFNULL((SELECT sum(iAmount) FROM GTs WHERE eType='ROLLING' AND strGroupID LIKE CONCAT('${strGroupID}', '%') AND date(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iRollingTranslate,
         IFNULL((SELECT sum(iAmount) FROM GTs WHERE eType='SETTLE' AND strGroupID LIKE CONCAT('${strGroupID}', '%') AND date(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iSettleTranslate,
         ${iRolling}

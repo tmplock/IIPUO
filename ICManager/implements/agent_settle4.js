@@ -317,11 +317,41 @@ exports.GetSettleClass = async (strGroupID, iClass, strQuater, dateStart, dateEn
     let strQuater2 = GetBeforeQuater(strQuater, iSettleDays);
 
     if (iClass == 4) {
-        // let subQuery = `AND t4.iSettleDays = ${iSettleDays} AND t4.iSettleType = ${iSettleType}`;
-        let subQuery = ``;
-        if (strGroupID.length == 5) {
-            subQuery = `AND t3.iSettleDays = ${iSettleDays} AND t3.iSettleType = ${iSettleType}`;
+        let subQuery = `AND t4.iSettleDays = ${iSettleDays} AND t4.iSettleType = ${iSettleType}`;
+
+        let subQuery2 = '';
+        // 리셋은 하부 합으로 가져오기
+        if (iSettleType == 1) {
+            let subQuery3 = `AND iClass = ${parseInt(iClass) + 1}`;
+            subQuery2 = `
+                IFNULL((SELECT sum(iTotal) FROM SettleRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}' ${subQuery3}),0) as iTotal,
+                IFNULL((SELECT sum(iTotal) FROM SettleRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}' AND iTotal < 0 ${subQuery3}),0) as iTotalLose,
+                IFNULL((SELECT sum(iRolling) FROM SettleRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}' ${subQuery3}),0) as iRolling,
+                IFNULL((SELECT sum(iSettleVice) FROM SettleRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}' ${subQuery3}),0) as iSettleVice,
+                IFNULL((SELECT sum(iCommissionB) FROM SettleRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}' ${subQuery3}),0) as iCommissionBaccarat,
+                IFNULL((SELECT sum(iCommissionS) FROM SettleRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}' ${subQuery3}),0) as iCommissionSlot,
+                IFNULL((SELECT sum(iBWinlose) FROM SettleRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}' ${subQuery3}),0) as iBaccaratWinLose,
+                IFNULL((SELECT sum(iUWinlose) FROM SettleRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}' ${subQuery3}),0) as iUnderOverWinLose,
+                IFNULL((SELECT sum(iSWinlose) FROM SettleRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}' ${subQuery3}),0) as iSlotWinLose,
+                IFNULL((SELECT sum(iSettleVice) FROM SettleRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}' ${subQuery3}),0) as iSettle,
+                IFNULL((SELECT sum(iSettleVice) FROM SettleRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}' ${subQuery3}),0) as iTotalViceAdmin
+            `;
+        } else { // 누진은
+            subQuery2 = `
+                IFNULL((SELECT sum(iTotal) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}'),0) as iTotal,
+                IFNULL((SELECT sum(iTotal) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}' AND iTotal < 0),0) as iTotalLose,
+                IFNULL((SELECT sum(iRolling) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}'),0) as iRolling,
+                IFNULL((SELECT sum(iSettleVice) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}'),0) as iSettleVice,
+                IFNULL((SELECT sum(iCommissionB) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}'),0) as iCommissionBaccarat,
+                IFNULL((SELECT sum(iCommissionS) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}'),0) as iCommissionSlot,
+                IFNULL((SELECT sum(iBWinlose) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}'),0) as iBaccaratWinLose,
+                IFNULL((SELECT sum(iUWinlose) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}'),0) as iUnderOverWinLose,
+                IFNULL((SELECT sum(iSWinlose) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}'),0) as iSlotWinLose,
+                IFNULL((SELECT sum(iSettleViceAdmin) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}'),0) as iSettle,
+                IFNULL((SELECT sum(iTotalViceAdmin) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}'),0) as iTotalViceAdmin
+            `;
         }
+
         let list = await db.sequelize.query(`
             SELECT
                 t3.strID AS strAdminID, t3.strNickname AS strAdminNickname, 
@@ -347,24 +377,13 @@ exports.GetSettleClass = async (strGroupID, iClass, strQuater, dateStart, dateEn
                 IFNULL((SELECT iSettleOrigin FROM SettleRecords WHERE strNickname = t4.strNickname AND strQuater='${strQuater}'),0) as iSettleOrigin,
                 IFNULL((SELECT (iSettleAcc - iPayback) FROM SettleRecords WHERE strNickname = t4.strNickname AND strQuater='${strQuater}'),0) as iSettleAcc,
                 IFNULL((SELECT iPayback FROM SettleRecords WHERE strNickname = t4.strNickname AND strQuater='${strQuater}'),0) as iPayback,
-                
-                IFNULL((SELECT sum(iTotal) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}'),0) as iTotal,
-                IFNULL((SELECT sum(iTotal) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}' AND iTotal < 0),0) as iTotalLose,
-                IFNULL((SELECT sum(iRolling) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}'),0) as iRolling,
-                IFNULL((SELECT sum(iSettleVice) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}'),0) as iSettleVice,
-                IFNULL((SELECT sum(iCommissionB) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}'),0) as iCommissionBaccarat,
-                IFNULL((SELECT sum(iCommissionS) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}'),0) as iCommissionSlot,
-                IFNULL((SELECT sum(iBWinlose) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}'),0) as iBaccaratWinLose,
-                IFNULL((SELECT sum(iUWinlose) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}'),0) as iUnderOverWinLose,
-                IFNULL((SELECT sum(iSWinlose) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}'),0) as iSlotWinLose,
-                IFNULL((SELECT sum(iSettleViceAdmin) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}'),0) as iSettle,
-                IFNULL((SELECT sum(iTotalViceAdmin) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}'),0) as iTotalViceAdmin
+                ${subQuery2}
             FROM Users t4
                      LEFT JOIN Users t3 ON t3.id = t4.iParentID
                      LEFT JOIN (
                          SELECT fSettleBaccarat, fSettleSlot, fSettlePBA, fSettlePBB, strID FROM SettleRecords WHERE strQuater='${strQuater}'
                      ) sr4 ON sr4.strID=t4.strID
-            WHERE t4.iClass = ${iClass} AND t4.strGroupID LIKE CONCAT('${strGroupID}', '%') 
+            WHERE t4.iClass = ${iClass} AND t4.strGroupID LIKE CONCAT('${strGroupID}', '%')
             ${subQuery}
             ${lastDateQuery}
             ORDER BY settleCount ASC, strAdminNickname ASC, t4.strNickname ASC, t4.strGroupID ASC
@@ -374,12 +393,7 @@ exports.GetSettleClass = async (strGroupID, iClass, strQuater, dateStart, dateEn
 
         return list;
     } else if (iClass == 5) {
-        // let subQuery = `AND t5.iSettleDays = ${iSettleDays} AND t5.iSettleType = ${iSettleType}`;
-        let subQuery = '';
-        // 총본에서 조회할 경우
-        if (strGroupID.length == 5) {
-            subQuery = `AND t3.iSettleDays = ${iSettleDays} AND t3.iSettleType = ${iSettleType}`;
-        }
+        let subQuery = `AND t4.iSettleDays = ${iSettleDays} AND t4.iSettleType = ${iSettleType}`;
         let list = await db.sequelize.query(`
             SELECT
                 t3.strID AS strAdminID, t3.strNickname AS strAdminNickname,
@@ -452,10 +466,6 @@ exports.GetSettleClass = async (strGroupID, iClass, strQuater, dateStart, dateEn
 
 exports.GetSettleExistList = async (strGroupID, strQuater, iClass, iSettleDays, iSettleType) => {
     let subQuery = '';
-    // 총본에서 조회할 경우
-    if (strGroupID.length == 5) {
-        // subQuery = `AND t3.iSettleDays = ${iSettleDays} AND t3.iSettleType = ${iSettleType}`;
-    }
     if (iClass == 5) {
         let list = await db.sequelize.query(`
             SELECT sr.* 
@@ -573,6 +583,58 @@ let GetBeforeQuater = (strQuater, iSettleDays) => {
     return `${iMonth}-${quater}`;
 }
 exports.GetBeforeQuater = GetBeforeQuater;
+
+let GetQuaterStartDate = (strQuater, iSettleDays) => {
+    let quaterList = strQuater.split('-');
+    let iMonth = quaterList[0];
+    let quater = quaterList[1];
+    let sDay = 0;
+    let eDay = 0;
+    if (iSettleDays == 5) {
+        if (quater == 1) {
+            sDay = 1;
+            eDay = 5;
+        } else if (quater == 2) {
+            sDay = 6;
+            eDay = 10;
+        } else if (quater == 3) {
+            sDay = 11;
+            eDay = 15;
+        } else if (quater == 4) {
+            sDay = 16;
+            eDay = 20;
+        } else if (quater == 5) {
+            sDay = 21;
+            eDay = 25;
+        } else if (quater == 6) {
+            sDay = 26;
+            eDay = 31;
+        }
+    } else if (iSettleDays == 10) {
+        if (quater == 1) {
+            sDay = 1;
+            eDay = 10;
+        } else if (quater == 2) {
+            sDay = 11;
+            eDay = 20;
+        } else if (quater == 3) {
+            sDay = 21;
+            eDay = 31;
+        }
+    } else if (iSettleDays == 15) {
+        if (quater == 1) {
+            sDay = 1;
+            eDay = 15;
+        } else if (quater == 2) {
+            sDay = 16;
+            eDay = 31;
+        }
+    }
+    let date = new Date();
+    date = new Date(date.getFullYear(), iMonth-1, sDay);
+    return moment(date).format('YYYY-MM-DD');
+}
+exports.GetQuaterStartDate = GetQuaterStartDate;
 
 let GetQuaterEndDate = (strQuater, iSettleDays) => {
     let quaterList = strQuater.split('-');

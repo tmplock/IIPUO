@@ -81,23 +81,14 @@ router.post('/settle_all2', isLoggedIn, async(req, res) => {
 
     let iocount = await IInout.GetProcessing(user.strGroupID, user.strNickname, dbuser.iClass);
 
-    let date = new Date();
-    let iMonth = date.getMonth();
-    let strQuater = '';
-    let dateStart = '';
-    let dateEnd = '';
-    if ( date.getDate() < 16 ) {
-        strQuater = `${iMonth+1}-1`;
-        dateStart = ITime.get1QuaterStartDate(iMonth);
-        dateEnd = ITime.get1QuaterEndDate(iMonth);
-    } else {
-        strQuater = `${iMonth+1}-2`;
-        dateStart = ITime.get2QuaterStartDate(iMonth);
-        dateEnd = ITime.get2QuaterEndDate(iMonth);
-    }
+    let strQuater = req.body.strQuater;
+    let dateStart = req.body.dateStart;
+    let dateEnd = req.body.dateEnd;
+    let iSettleDays = req.body.iSettleDays;
+    let iSettleType = req.body.iSettleType;
 
 
-    let overviewList = await IAgentSettle.CalculateOverviewSettle(req.body.strGroupID, req.body.iClass, strQuater, dateStart, dateEnd);
+    let overviewList = await IAgentSettle.CalculateOverviewSettle(req.body.strGroupID, req.body.iClass, strQuater, dateStart, dateEnd, iSettleDays, iSettleType);
     let overview = {};
     if (overviewList.length > 0) {
         overview = overviewList[0];
@@ -107,7 +98,7 @@ router.post('/settle_all2', isLoggedIn, async(req, res) => {
 
     if (dbuser.iClass <= 3) {
         // 대.부본 보관죽장*
-        let settleCurrent = await IAgentSettle.CalculateOverviewSettleCurrent(req.body.strGroupID, strQuater);
+        let settleCurrent = await IAgentSettle.CalculateOverviewSettleCurrent(req.body.strGroupID, strQuater, iSettleDays, iSettleType);
         overview.iSettlePlus = settleCurrent.iSettlePlus;
         overview.iSettleMinus = settleCurrent.iSettleMinus;
         overview.iCurrentTotalSettle = settleCurrent.iCurrentTotalSettle;
@@ -138,7 +129,10 @@ router.post('/settle_all4', isLoggedIn, async(req, res) => {
 
     let iSettleDays = 15;
     let iSettleType = 0;
-    if (dbuser.iClass >= 4) {
+    if (dbuser.iClass <= 3) {
+        iSettleType = -1;
+        iSettleDays = -1;
+    } else if (dbuser.iClass >= 4) {
         const padminUser = await IAgent.GetPAdminInfo(dbuser);
         iSettleDays = padminUser.iSettleDays;
         iSettleType = padminUser.iSettleType;
@@ -232,12 +226,18 @@ router.post('/request_overview', isLoggedIn, async (req, res) => {
     console.log(`/request_overview`);
     console.log(req.body);
 
-    let overviewList = await IAgentSettle.CalculateOverviewSettle(req.body.strGroupID, req.body.iClass, req.body.strQuater, req.body.dateStart, req.body.dateEnd);
+    let strQuater = req.body.strQuater;
+    let dateStart = req.body.dateStart;
+    let dateEnd = req.body.dateEnd;
+    let iSettleDays = req.body.iSettleDays;
+    let iSettleType = req.body.iSettleType;
+
+    let overviewList = await IAgentSettle.CalculateOverviewSettle(req.body.strGroupID, req.body.iClass, req.body.strQuater, req.body.dateStart, req.body.dateEnd, iSettleDays, iSettleType);
     let overview = {};
     if (overviewList.length > 0) {
         overview = overviewList[0];
     }
-    let settleCurrent = await IAgentSettle.CalculateOverviewSettleCurrent(req.body.strGroupID, req.body.strQuater);
+    let settleCurrent = await IAgentSettle.CalculateOverviewSettleCurrent(req.body.strGroupID, req.body.strQuater, iSettleDays, iSettleType);
     overview.iSettlePlus = settleCurrent.iSettlePlus;
     overview.iSettleMinus = settleCurrent.iSettleMinus;
     overview.iCurrentTotalSettle = settleCurrent.iCurrentTotalSettle;

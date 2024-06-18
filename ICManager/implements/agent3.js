@@ -1519,10 +1519,10 @@ exports.GetAdminInfo = async (user) => {
 }
 
 exports.GetPAdminInfo = async (user) => {
-    if (user.iClass < 3) {
+    if (user.iClass < 4) {
         return null;
     }
-    if (user.iClass == 3) {
+    if (user.iClass == 4) {
         return user;
     }
     let parentInfo = await this.GetParentList(user.strGroupID, user.iClass, user);

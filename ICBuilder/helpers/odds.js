@@ -85,7 +85,11 @@ exports.CalculateOdds = async (strID, iClass) => {
         fUserPBR:0,
         fUserPBSingleR:0,
         fUserPBDoubleR:0,
-        fUserPBTripleR:0
+        fUserPBTripleR:0,
+
+        fRRB:0,
+        fRRUO:0,
+        fRRS:0
     }
 
     let strQuery = ``;
@@ -168,6 +172,10 @@ exports.CalculateOdds = async (strID, iClass) => {
             objectOdds.fVAdminPBSingleR = result[0].fVAdminPBSingleR;
             objectOdds.fVAdminPBDoubleR = result[0].fVAdminPBDoubleR;
             objectOdds.fVAdminPBTripleR = result[0].fVAdminPBTripleR;
+
+            objectOdds.fRRB = result[0].fRRB;
+            objectOdds.fRRUO = result[0].fRRUO;
+            objectOdds.fRRS = result[0].fRRS;
         }
         return objectOdds;
     }
@@ -274,6 +282,10 @@ exports.CalculateOdds = async (strID, iClass) => {
             objectOdds.fAgentPBSingleR = result[0].fAgentPBSingleR;
             objectOdds.fAgentPBDoubleR = result[0].fAgentPBDoubleR;
             objectOdds.fAgentPBTripleR = result[0].fAgentPBTripleR;
+
+            objectOdds.fRRB = result[0].fRRB;
+            objectOdds.fRRUO = result[0].fRRUO;
+            objectOdds.fRRS = result[0].fRRS;
         }
         return objectOdds;
     }
@@ -398,6 +410,10 @@ exports.CalculateOdds = async (strID, iClass) => {
             objectOdds.fShopPBSingleR = result[0].fShopPBSingleR;
             objectOdds.fShopPBDoubleR = result[0].fShopPBDoubleR;
             objectOdds.fShopPBTripleR = result[0].fShopPBTripleR;
+
+            objectOdds.fRRB = result[0].fRRB;
+            objectOdds.fRRUO = result[0].fRRUO;
+            objectOdds.fRRS = result[0].fRRS;
         }
         return objectOdds;
     }
@@ -544,6 +560,10 @@ exports.CalculateOdds = async (strID, iClass) => {
             objectOdds.fUserPBSingleR = result[0].fUserPBSingleR;
             objectOdds.fUserPBDoubleR = result[0].fUserPBDoubleR;
             objectOdds.fUserPBTripleR = result[0].fUserPBTripleR;
+
+            objectOdds.fRRB = result[0].fRRB;
+            objectOdds.fRRUO = result[0].fRRUO;
+            objectOdds.fRRS = result[0].fRRS;
         }
         return objectOdds;
     }

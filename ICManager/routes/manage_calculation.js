@@ -68,54 +68,55 @@ router.post('/calculation', isLoggedIn, async(req, res) => {
 /**
  * 전체 죽장 조회2
  */
-router.post('/settle_all2', isLoggedIn, async(req, res) => {
-
-    console.log(req.body);
-
-    const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
-
-    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle, strID:dbuser.strID,
-        iRootClass:req.user.iClass, iPermission:req.user.iPermission};
-
-    const agentinfo = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
-
-    let iocount = await IInout.GetProcessing(user.strGroupID, user.strNickname, dbuser.iClass);
-
-    let strQuater = req.body.strQuater;
-    let dateStart = req.body.dateStart;
-    let dateEnd = req.body.dateEnd;
-    let iSettleDays = req.body.iSettleDays;
-    let iSettleType = req.body.iSettleType;
-
-    let overview = {};
-    if (dateStart != '' && dateEnd != '') {
-        let overviewList = await IAgentSettle.CalculateOverviewSettle(req.body.strGroupID, req.body.iClass, strQuater, dateStart, dateEnd, iSettleDays, iSettleType);
-        if (overviewList.length > 0) {
-            overview = overviewList[0];
-        }
-    }
-
-    if (dbuser.iClass <= 3) {
-        // 대.부본 보관죽장*
-        let settleCurrent = await IAgentSettle.CalculateOverviewSettleCurrent(req.body.strGroupID, strQuater, iSettleDays, iSettleType);
-        overview.iSettlePlus = settleCurrent.iSettlePlus;
-        overview.iSettleMinus = settleCurrent.iSettleMinus;
-        overview.iCurrentTotalSettle = settleCurrent.iCurrentTotalSettle;
-
-        // 순이익, 배당금, 지분자 전월 이월, 지분자 총이월, 합계
-        let overviewShareList = await IAgentSettle.CalculateOverviewShare(req.body.strGroupID, strQuater);
-        if (overviewShareList.length > 0) {
-            overviewShare = overviewShareList[0];
-        }
-        // 지분자보관죽장*
-        let shareCurrent = await IAgentSettle.CalculateOverviewShareCurrent(req.body.strGroupID, strQuater);
-        overviewShare.iSharePlus = shareCurrent.iSharePlus;
-        overviewShare.iShareMinus = shareCurrent.iShareMinus;
-        overviewShare.iCurrentTotalShare = shareCurrent.iCurrentTotalShare;
-    }
-
-    res.render('manage_calculation/settle_all2', {iLayout:0, iHeaderFocus:6, user:user, agentinfo:agentinfo, iocount:iocount, list:[], overview:overview, overviewShare:overviewShare});
-});
+// router.post('/settle_all2', isLoggedIn, async(req, res) => {
+//
+//     console.log(req.body);
+//     return;
+//
+//     const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
+//
+//     const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle, strID:dbuser.strID,
+//         iRootClass:req.user.iClass, iPermission:req.user.iPermission};
+//
+//     const agentinfo = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
+//
+//     let iocount = await IInout.GetProcessing(user.strGroupID, user.strNickname, dbuser.iClass);
+//
+//     let strQuater = req.body.strQuater;
+//     let dateStart = req.body.dateStart;
+//     let dateEnd = req.body.dateEnd;
+//     let iSettleDays = req.body.iSettleDays;
+//     let iSettleType = req.body.iSettleType;
+//
+//     let overview = {};
+//     if (dateStart != '' && dateEnd != '') {
+//         let overviewList = await IAgentSettle.CalculateOverviewSettle(req.body.strGroupID, req.body.iClass, strQuater, dateStart, dateEnd, iSettleDays, iSettleType);
+//         if (overviewList.length > 0) {
+//             overview = overviewList[0];
+//         }
+//     }
+//
+//     if (dbuser.iClass <= 3) {
+//         // 대.부본 보관죽장*
+//         let settleCurrent = await IAgentSettle.CalculateOverviewSettleCurrent(req.body.strGroupID, strQuater, iSettleDays, iSettleType);
+//         overview.iSettlePlus = settleCurrent.iSettlePlus;
+//         overview.iSettleMinus = settleCurrent.iSettleMinus;
+//         overview.iCurrentTotalSettle = settleCurrent.iCurrentTotalSettle;
+//
+//         // 순이익, 배당금, 지분자 전월 이월, 지분자 총이월, 합계
+//         let overviewShareList = await IAgentSettle.CalculateOverviewShare(req.body.strGroupID, strQuater);
+//         if (overviewShareList.length > 0) {
+//             overviewShare = overviewShareList[0];
+//         }
+//         // 지분자보관죽장*
+//         let shareCurrent = await IAgentSettle.CalculateOverviewShareCurrent(req.body.strGroupID, strQuater);
+//         overviewShare.iSharePlus = shareCurrent.iSharePlus;
+//         overviewShare.iShareMinus = shareCurrent.iShareMinus;
+//         overviewShare.iCurrentTotalShare = shareCurrent.iCurrentTotalShare;
+//     }
+//
+//     res.render('manage_calculation/settle_all2', {iLayout:0, iHeaderFocus:6, user:user, agentinfo:agentinfo, iocount:iocount, list:[], overview:overview, overviewShare:overviewShare});
+// });
 
 /**
  * 리셋 죽장 조회

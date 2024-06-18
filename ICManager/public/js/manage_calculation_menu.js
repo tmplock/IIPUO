@@ -15,24 +15,6 @@ $(document).on('click', '#calculation_calculation', ()=> {
 
 });
 
-$(document).on('click', '#calculation_settle_all2', ()=> {
-
-    var $form = $('<form></form>');
-    $form.attr('action', '/manage_calculation/settle_all2');
-    $form.attr('method', 'post');
-    $form.appendTo('body');
-
-    var strNickname = $(`<input type="hidden" value="${user.strNickname}" name="strNickname">`);
-    var strGroupID = $(`<input type="hidden" value="${user.strGroupID}" name="strGroupID">`);
-    var iClass = $(`<input type="hidden" value=${user.iClass} name="iClass">`);
-    var iPermission = $(`<input type="hidden" value=${user.iPermission} name="iPermission">`);
-
-    $form.append(strNickname).append(strGroupID).append(iClass).append(iPermission);
-    $form.submit();
-
-});
-
-
 $(document).on('click', '#calculation_settle_all4', ()=> {
 
     var $form = $('<form></form>');
@@ -148,11 +130,8 @@ let SetCalculationHeader = (iSection, iClass) => {
         {
             subtag1 =
                 `
-                <li class=${GetCalculationSectionClass(iSection, 110)}>
-                    <a href="#" style="color:${GetCalculationSectionColor(iSection, 110)};" id="calculation_settle_all2">죽장 정산</a>
-                </li>
                 <li class=${GetCalculationSectionClass(iSection, 111)}>
-                    <a href="#" style="color:${GetCalculationSectionColor(iSection, 111)};" id="calculation_settle_all4">죽장 정산4</a>
+                    <a href="#" style="color:${GetCalculationSectionColor(iSection, 111)};" id="calculation_settle_all4">죽장 정산</a>
                 </li>
             `;
             tag += subtag1;
@@ -161,11 +140,8 @@ let SetCalculationHeader = (iSection, iClass) => {
         {
             subtag1 =
                 `
-                <li class=${GetCalculationSectionClass(iSection, 110)}>
-                    <a href="#" style="color:${GetCalculationSectionColor(iSection, 110)};" id="calculation_settle_all2">죽장 정산</a>
-                </li>
                 <li class=${GetCalculationSectionClass(iSection, 111)}>
-                    <a href="#" style="color:${GetCalculationSectionColor(iSection, 111)};" id="calculation_settle_all4">죽장 정산4</a>
+                    <a href="#" style="color:${GetCalculationSectionColor(iSection, 111)};" id="calculation_settle_all4">죽장 정산</a>
                 </li>
             `;
             tag += subtag1;

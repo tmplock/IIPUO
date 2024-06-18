@@ -78,12 +78,17 @@ cron.schedule('*/1 * * * * ', async ()=> {
     console.log(`##### listBetDB.length = ${listBetDB.length}`);
 
     //
-    const strDate = cData.createdAt.substr(0,10);
-    let listOverviewDB = await db.RecordDailyOverviews.findAll({
-        where:{
-            strDate:strDate,
-        }
-    });
+    let listOverviewDB = null;
+
+    if ( listBetDB.length > 0 )
+    {
+        const strDate = listBetDB[0].createdAt.substr(0,10);
+        listOverviewDB = await db.RecordDailyOverviews.findAll({
+            where:{
+                strDate:strDate,
+            }
+        });
+    }
     //
 
     strCurrentStep = '# : GET DB COMPLETE';

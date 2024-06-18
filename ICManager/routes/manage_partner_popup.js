@@ -1364,10 +1364,6 @@ router.post('/request_bank', isLoggedIn, async (req, res) => {
         if (dbuser.iClass == 4) {
             iSettleDays = dbuser.iSettleDays ?? 15;
             iSettleType = dbuser.iSettleType ?? 0;
-        } else if (dbuser.iClass > 4) {
-            let padminUser = await IAgent.GetPAdminInfo(dbuser);
-            iSettleDays = padminUser.iSettleDays;
-            iSettleType = padminUser.iSettleType;
         }
         // 본인 옵션
         let iSettleCommission = dbuser.iSettleCommission ?? 0;
@@ -1457,6 +1453,8 @@ router.post('/request_agentinfo_modify', isLoggedIn,async (req, res) => {
                 }
             }
 
+            // 대본사 죽장옵션
+            let padminSettleType = 0;
             if ( user.iParentID != null )
             {
                 let parent = await db.Users.findOne({where:{id:user.iParentID}});
@@ -1471,7 +1469,6 @@ router.post('/request_agentinfo_modify', isLoggedIn,async (req, res) => {
                     {
                         console.log(`########## ModifyAgentInfo : Error Parent`);
                         bUpdate = false;
-                        strErrorCode = 'GreaterThanParent';
                         res.send({result:'ERRORMSG', code:'ERRORMSG', msg: `롤링값은 ${parent.strNickname}의 롤링보다 커서 변경 할 수 없습니다.`});
                         return;
                     }
@@ -1479,6 +1476,8 @@ router.post('/request_agentinfo_modify', isLoggedIn,async (req, res) => {
                     // 죽장은 본사 ~ 대본만 체크
                     let padmin = await IAgent.GetPAdminInfo(parent);
                     if (padmin != null && padmin.iSettleType != 1) { // 리셋은 죽장을 자유롭게 설정 가능
+                        padminSettleType = padmin.iSettleType;
+
                         if (parent.iClass == 4 || parent.iClass == 5) {
                             if (
                                 parent.fSettleBaccarat < fSettleBaccarat ||
@@ -1487,7 +1486,6 @@ router.post('/request_agentinfo_modify', isLoggedIn,async (req, res) => {
                             {
                                 console.log(`########## ModifyAgentInfo : Error Parent`);
                                 bUpdate = false;
-                                strErrorCode = 'GreaterThanParent';
                                 res.send({result:'ERROR', code:'ERRORMSG', msg: `죽장값은 ${parent.strNickname}의 죽장보다 커서 변경 할 수 없습니다.`});
                                 return;
                             }
@@ -1508,8 +1506,6 @@ router.post('/request_agentinfo_modify', isLoggedIn,async (req, res) => {
                     }
                 });
 
-                let padmin = await IAgent.GetPAdminInfo(parent);
-                let padminSettleType = padmin.iSettleType;
                 for ( let i in children )
                 {
                     let child = children[i];
@@ -1521,8 +1517,7 @@ router.post('/request_agentinfo_modify', isLoggedIn,async (req, res) => {
                     {
                         console.log(`########## ModifyAgentInfo : Error Children`);
                         bUpdate = false;
-                        strErrorCode = 'LessThanChild';
-                        res.send({result:'ERROR', code:strErrorCode});
+                        res.send({result:'ERROR', code:'ERRORMSG', msg: `${child.strNickname}의 롤링보다 작아서 변경 할 수 없습니다.`});
                         return;
                     }
 
@@ -1538,20 +1533,9 @@ router.post('/request_agentinfo_modify', isLoggedIn,async (req, res) => {
                                 console.log(`########## ModifyAgentInfo : Error Children`);
                                 bUpdate = false;
                                 strErrorCode = 'LessThanChild';
-                                res.send({result:'ERROR', code:strErrorCode});
+                                res.send({result:'ERROR', code:'ERRORMSG', msg: `${child.strNickname}의 죽장이 작아서 변경 할 수 없습니다.`});
                                 return;
                             }
-                            // if (iSettleDays == null) {
-                            //     strErrorCode = 'ERRORMSG';
-                            //     res.send({result:'ERROR', code:strErrorCode, msg: '죽장일자를 확인해주세요'});
-                            //     return;
-                            // }
-                            //
-                            // if (iSettleType == null) {
-                            //     strErrorCode = 'ERRORMSG';
-                            //     res.send({result:'ERROR', code:strErrorCode, msg: '죽장일자를 확인해주세요'});
-                            //     return;
-                            // }
                         }
                     }
                 }

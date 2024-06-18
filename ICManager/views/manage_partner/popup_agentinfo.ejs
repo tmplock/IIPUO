@@ -729,13 +729,13 @@
 					$('#member_password2').val(data.pass);
 					$("#member_password2").removeAttr("disabled");
 
-					<% if (agent.iRootClass == 2 && agent.iPermission == 0) { %>
+					<% if (agent.iRootClass <= 3 && agent.iPermission == 0) { %>
 						if (data.gradelist.length > 0) {
 							SetGradeList(data.gradelist, data.grade);
 						}
 					<% } %>
 
-					<% if (agent.iRootClass <= 3 && agent.iClass >= 3 && agent.iClass <= 5) { %>
+					<% if (agent.iRootClass <= 3 && agent.iClass == 4) { %>
 						SetSettleOption(data.iSettleDays, data.iSettleType, data.iSettleCommission);
 					<% } %>
 				}

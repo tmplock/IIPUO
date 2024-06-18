@@ -77,13 +77,22 @@ cron.schedule('*/1 * * * * ', async ()=> {
     });
     console.log(`##### listBetDB.length = ${listBetDB.length}`);
 
+    //
+    const strDate = cData.createdAt.substr(0,10);
+    let listOverviewDB = await db.RecordDailyOverviews.findAll({
+        where:{
+            strDate:strDate,
+        }
+    });
+    //
+
     strCurrentStep = '# : GET DB COMPLETE';
 
     let listOdds = await ODDS.FullCalculteOdds(listBetDB);
 
     strCurrentStep = '# : START PROCESSING';
 
-    Processor.ProcessOverview(listBetDB, listOverview, listOdds, listUpdateDB);
+    Processor.ProcessOverview(listBetDB, listOverviewDB, listOverview, listOdds, listUpdateDB);
 
     //  ##### UPDATE BET
     console.log(`##### UPDATE RECORD BET : Length : ${listUpdateDB.length}`);
@@ -99,10 +108,7 @@ cron.schedule('*/1 * * * * ', async ()=> {
     //  ##### OVERVIEW
     console.log(`##### UPDATE OVERVIEW : Length : ${listOverview.length}`);
 
-    const fBaccaratRR = 1.2;
-    const fSlotRR = 1.2;
-
-    await ODDS.UpdateOverview(listOverview, fBaccaratRR, fSlotRR);
+    await ODDS.UpdateOverview(listOverview, listOverviewDB);
     
     lProcessID = -1;
     strCurrentStep = '';

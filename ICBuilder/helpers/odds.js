@@ -1324,10 +1324,10 @@ exports.ProcessRolling = (oRO, listBet, cPBType, cPBTarget, strDate, listOvervie
                 objectData.iWinUO += cWinAmount;
                 objectData.iWinLoseUO += (cBetAmount-cWinAmount);
 
-                if ( oOverview != null )
-                {
-                    cBetAmount2 = parseInt(cBetAmount2/o.fRRUO);
-                }
+                // if ( oOverview != null && oOverview.iNumPlayUO > 20 )
+                // {
+                //     cBetAmount2 = parseInt(cBetAmount2/o.fRRUO);
+                // }
                 objectData.iPAdminRUO += CalculateRollingAmount(o.strPAdminID, cBetAmount2, o.fPAdminUnderOverR, o.fVAdminUnderOverR);
                 objectData.iVAdminRUO += CalculateRollingAmount(o.strVAdminID, cBetAmount2, o.fVAdminUnderOverR, o.fAgentUnderOverR);
                 objectData.iAgentRUO += CalculateRollingAmount(o.strAgentID, cBetAmount2, o.fAgentUnderOverR, o.fShopUnderOverR);
@@ -1345,7 +1345,7 @@ exports.ProcessRolling = (oRO, listBet, cPBType, cPBTarget, strDate, listOvervie
                 objectData.iWinS += cWinAmount;
                 objectData.iWinLoseS += (cBetAmount-cWinAmount);
 
-                if ( oOverview != null )
+                if ( oOverview != null && oOverview.iNumPlayS > 20 )
                 {
                     cBetAmount2 = parseInt(cBetAmount2/o.fRRS);
                 }
@@ -1365,7 +1365,7 @@ exports.ProcessRolling = (oRO, listBet, cPBType, cPBTarget, strDate, listOvervie
                 objectData.iWinB += cWinAmount;
                 objectData.iWinLoseB += (cBetAmount-cWinAmount);
 
-                if ( oOverview != null )
+                if ( oOverview != null && oOverview.iNumPlayB > 20 )
                 {
                     cBetAmount2 = parseInt(cBetAmount2/o.fRRB);
                 }
@@ -1409,10 +1409,10 @@ exports.ProcessRollingBet = (oRO, iGameCode, iBet, strDate, listOverviewDB) => {
         case Enum.EGameCode.UnderOver:
             console.log(`##### 100`);
             objectData.iBetUO += cBetAmount;
-            if ( oOverview != null )
-            {
-                cBetAmount2 = parseInt(cBetAmount2/o.fRRUO);
-            }
+            // if ( oOverview != null )
+            // {
+            //     cBetAmount2 = parseInt(cBetAmount2/o.fRRUO);
+            // }
             objectData.iPAdminRUO += CalculateRollingAmount(o.strPAdminID, cBetAmount2, o.fPAdminUnderOverR, o.fVAdminUnderOverR);
             objectData.iVAdminRUO += CalculateRollingAmount(o.strVAdminID, cBetAmount2, o.fVAdminUnderOverR, o.fAgentUnderOverR);
             objectData.iAgentRUO += CalculateRollingAmount(o.strAgentID, cBetAmount2, o.fAgentUnderOverR, o.fShopUnderOverR);
@@ -1426,7 +1426,7 @@ exports.ProcessRollingBet = (oRO, iGameCode, iBet, strDate, listOverviewDB) => {
         case Enum.EGameCode.Slot:
             console.log(`##### 200`);
             objectData.iBetS += cBetAmount;
-            if ( oOverview != null )
+            if ( oOverview != null && oOverview.iNumPlayS > 20 )
             {
                 cBetAmount2 = parseInt(cBetAmount2/o.fRRS);
             }
@@ -1444,7 +1444,7 @@ exports.ProcessRollingBet = (oRO, iGameCode, iBet, strDate, listOverviewDB) => {
             console.log(`##### 0`);
 
             objectData.iBetB += cBetAmount;
-            if ( oOverview != null )
+            if ( oOverview != null && oOverview.iNumPlayB > 20 )
             {
                 cBetAmount2 = parseInt(cBetAmount2/o.fRRB);
             }
@@ -1527,10 +1527,10 @@ exports.ProcessRollingBetWin = (oRO, iGameCode, iBet, iWin, strDate, listOvervie
             console.log(`##### 100`);
 
             objectData.iBetUO += cBetAmount;
-            if ( oOverview != null )
-            {
-                cBetAmount2 = parseInt(cBetAmount2/o.fRRUO);
-            }
+            // if ( oOverview != null )
+            // {
+            //     cBetAmount2 = parseInt(cBetAmount2/o.fRRUO);
+            // }
             objectData.iPAdminRUO += CalculateRollingAmount(o.strPAdminID, cBetAmount2, o.fPAdminUnderOverR, o.fVAdminUnderOverR);
             objectData.iVAdminRUO += CalculateRollingAmount(o.strVAdminID, cBetAmount2, o.fVAdminUnderOverR, o.fAgentUnderOverR);
             objectData.iAgentRUO += CalculateRollingAmount(o.strAgentID, cBetAmount2, o.fAgentUnderOverR, o.fShopUnderOverR);
@@ -1545,7 +1545,7 @@ exports.ProcessRollingBetWin = (oRO, iGameCode, iBet, iWin, strDate, listOvervie
             console.log(`##### 200`);
 
             objectData.iBetS += cBetAmount;
-            if ( oOverview != null )
+            if ( oOverview != null && oOverview.iNumPlayS > 20 )
             {
                 cBetAmount2 = parseInt(cBetAmount2/o.fRRS);
             }
@@ -1563,7 +1563,7 @@ exports.ProcessRollingBetWin = (oRO, iGameCode, iBet, iWin, strDate, listOvervie
             console.log(`##### 0`);
 
             objectData.iBetB += cBetAmount;
-            if ( oOverview != null )
+            if ( oOverview != null && oOverview.iNumPlayB > 20 )
             {
                 cBetAmount2 = parseInt(cBetAmount2/o.fRRB);
             }

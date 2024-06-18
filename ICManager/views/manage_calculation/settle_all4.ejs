@@ -620,8 +620,9 @@
 				$(`#view_class`).empty();
 				if (iSettleType == 1) {
 					$(`#view_class`).append(`
-						<button id="button_viceadmin" class="menu1" style="border:0px solid rgb(95, 93, 93);width:170px;height:25px;text-align:center;color:white" onclick="OnClickSelectPartner(5);">부본사</button>
-						<button id="button_proadmin" class="menu5" style="border:0px solid rgb(95, 93, 93);width:170px;height:25px;text-align:center;color:white" onclick="OnClickSelectPartner(4);">대본사</button>
+						<button id="button_agent" class="menu1" style="border:0px solid rgb(95, 93, 93);width:170px;height:25px;text-align:center;color:white" onclick="OnClickSelectPartner(6);">총판</button>
+						<button id="button_viceadmin" class="menu5" style="border:0px solid rgb(95, 93, 93);width:170px;height:25px;text-align:center;color:white" onclick="OnClickSelectPartner(5);">부본사</button>
+						<button id="button_proadmin" class="menu1" style="border:0px solid rgb(95, 93, 93);width:170px;height:25px;text-align:center;color:white" onclick="OnClickSelectPartner(4);">대본사</button>
 					`);
 				} else {
 					$(`#view_class`).append(`
@@ -635,7 +636,24 @@
 				$(`#view_class`).empty();
 				if (iSettleType == 1) {
 					$(`#view_class`).append(`
+						<button id="button_agent" class="menu5" style="border:0px solid rgb(95, 93, 93);width:170px;height:25px;text-align:center;color:white" onclick="OnClickSelectPartner(6);">총판</button>
+						<button id="button_viceadmin" class="menu1" style="border:0px solid rgb(95, 93, 93);width:170px;height:25px;text-align:center;color:white" onclick="OnClickSelectPartner(5);">부본사</button>
+						<button id="button_proadmin" class="menu1" style="border:0px solid rgb(95, 93, 93);width:170px;height:25px;text-align:center;color:white" onclick="OnClickSelectPartner(4);">대본사</button>
+					`);
+				} else {
+					$(`#view_class`).append(`
 						<button id="button_viceadmin" class="menu5" style="border:0px solid rgb(95, 93, 93);width:170px;height:25px;text-align:center;color:white" onclick="OnClickSelectPartner(5);">부본사</button>
+						<button id="button_proadmin" class="menu1" style="border:0px solid rgb(95, 93, 93);width:170px;height:25px;text-align:center;color:white" onclick="OnClickSelectPartner(4);">대본사</button>
+						<button id="button_settle" class="menu1" style="border:0px solid rgb(95, 93, 93);width:170px;height:25px;text-align:center;color:white" onclick="OnClickSettleCal();">죽장 계산</button>
+					`);
+				}
+			} else if (iClass == 6) {
+				iViewClass = iClass;
+				$(`#view_class`).empty();
+				if (iSettleType == 1) {
+					$(`#view_class`).append(`
+						<button id="button_agent" class="menu5" style="border:0px solid rgb(95, 93, 93);width:170px;height:25px;text-align:center;color:white" onclick="OnClickSelectPartner(6);">총판</button>
+						<button id="button_viceadmin" class="menu1" style="border:0px solid rgb(95, 93, 93);width:170px;height:25px;text-align:center;color:white" onclick="OnClickSelectPartner(5);">부본사</button>
 						<button id="button_proadmin" class="menu1" style="border:0px solid rgb(95, 93, 93);width:170px;height:25px;text-align:center;color:white" onclick="OnClickSelectPartner(4);">대본사</button>
 					`);
 				} else {
@@ -651,6 +669,12 @@
 			$(`#view_class`).empty();
 			$(`#view_class`).append(`
 				<button id="button_viceadmin" class="menu5" style="border:0px solid rgb(95, 93, 93);width:170px;height:25px;text-align:center;color:white" onclick="OnClickSelectPartner(5);">부본사</button>
+			`);
+		} else if (user.iClass == 6) {
+			iViewClass = iClass;
+			$(`#view_class`).empty();
+			$(`#view_class`).append(`
+				<button id="button_agent" class="menu5" style="border:0px solid rgb(95, 93, 93);width:170px;height:25px;text-align:center;color:white" onclick="OnClickSelectPartner(6);">총판</button>
 			`);
 		}
 
@@ -718,6 +742,13 @@
 				obj.parentID = obj.strAdminID;
 				obj.parentNickname = obj.strAdminNickname;
 				let tag = AddPartner(5, obj, !ExistSettle(obj.strID), i);
+				$('#list_agents').append(tag);
+				dataList.push(obj);
+			} else if (obj.iClass == 6) {
+				CalculateSettle(obj);
+				obj.parentID = obj.strAdminID;
+				obj.parentNickname = obj.strAdminNickname;
+				let tag = AddPartner(6, obj, !ExistSettle(obj.strID), i);
 				$('#list_agents').append(tag);
 				dataList.push(obj);
 			}
@@ -1018,7 +1049,7 @@
 			// 대본 S알값
 			subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetInversedColor(data.iCommissionSlot)}" id='commissions_${aObject.strNickname}'>${GetNumber(data.iCommissionSlot)}</font></td>`;
 			// 대본 죽장
-			if (aObject.iClass == 5) {
+			if (aObject.iClass == 5 || aObject.iClass == 6) {
 				subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetInversedColor(0)}" id='settlepro_${aObject.strNickname}'>${GetSettleNumber(0)}</font></td>`;
 			} else {
 				subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetInversedColor(aObject.iSettle)}" id='settlepro_${aObject.strNickname}'>${GetSettleNumber(data.iSettle)}</font></td>`;
@@ -1632,7 +1663,7 @@
 		for ( let i in settleList )
 		{
 			let iClass = $(`#class_${settleList[i].strNickname}`).val();
-			if (iClass > 5) // 정산 불필요(총판이하)
+			if (iClass > 6) // 정산 불필요
 				continue;
 
 			let iCommissionB = $(`#commissionb_${settleList[i].strNickname}`).text();
@@ -1714,7 +1745,7 @@
 			list.push(iClass);
 			list.push(settleList[i].strID);
 			list.push(settleList[i].parentNickname);
-			if (iClass == 5) {
+			if (iClass == 5 || iClass == 6) {
 				list.push(settleList[i].iSettle);
 			} else if (iClass == 4) {
 				list.push(settleList[i].iSettleVice);
@@ -2023,6 +2054,7 @@
 		if (user.iClass <= 4) {
 			if (iSettleType == 1) {
 				$(`#view_class`).append(`
+					<button id="button_agent" class="${iViewClass == 6 ? 'menu5' : 'menu1'}" style="border:0; solid rgb(95, 93, 93);width:170px;height:25px;text-align:center;color:white" onclick="OnClickSelectPartner(6);">총판</button>
 					<button id="button_viceadmin" class="${iViewClass == 5 ? 'menu5' : 'menu1'}" style="border:0; solid rgb(95, 93, 93);width:170px;height:25px;text-align:center;color:white" onclick="OnClickSelectPartner(5);">부본사</button>
 					<button id="button_proadmin" class="${iViewClass == 4 ? 'menu5' : 'menu1'}" style="border:0; solid rgb(95, 93, 93);width:170px;height:25px;text-align:center;color:white" onclick="OnClickSelectPartner(4);">대본사</button>
 				`);
@@ -2037,6 +2069,10 @@
 		} else if (user.iClass == 5) {
 			$(`#view_class`).append(`
 				<button id="button_viceadmin" class="menu5" style="border:0; solid rgb(95, 93, 93);width:170px;height:25px;text-align:center;color:white" onclick="OnClickSelectPartner(5);">부본사</button>
+			`);
+		} else if (user.iClass == 6) {
+			$(`#view_class`).append(`
+				<button id="button_agent" class="menu5" style="border:0; solid rgb(95, 93, 93);width:170px;height:25px;text-align:center;color:white" onclick="OnClickSelectPartner(6);">총판</button>
 			`);
 		}
 		RequestList(user.strGroupID, strQuater, dateQuaterStart, dateQuaterEnd, iClass);

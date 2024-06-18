@@ -832,6 +832,8 @@ let GetSettleClass = async (strGroupID, strQuater, dateStart, dateEnd, iClass, i
             }
         } else if (obj.iClass == 5) {
             obj.iSettleVice = 0;
+        } else if (obj.iClass == 6) {
+
         }
         list.push(obj);
     }

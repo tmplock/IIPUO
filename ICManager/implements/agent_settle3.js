@@ -149,7 +149,7 @@ let inline_CalculateOverviewSettleCurrent = async (strGroupID, strQuater, iSettl
             iSettleDays:iSettleDays,
             iSettleType:iSettleType,
             iClass: {
-                [Op.in]:[4,5]
+                [Op.in]:[4,5,6]
             },
             strGroupID: {
                 [Op.like]:`${strGroupID}%`
@@ -164,7 +164,7 @@ let inline_CalculateOverviewSettleCurrent = async (strGroupID, strQuater, iSettl
                 iSettleDays:iSettleDays,
                 iSettleType:iSettleType,
                 iClass: {
-                    [Op.in]:[4,5]
+                    [Op.in]:[4,5,6]
                 },
                 strGroupID: {
                     [Op.like]:`${strGroupID}%`
@@ -193,7 +193,7 @@ let inline_CalculateOverviewSettle = async (strGroupID, iClass, strQuater, dateS
     }
     let iRolling = `IFNULL((SELECT SUM(iRolling) FROM Users WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND iClass > '3' ),0) as iRolling,`;
     if (iClass > 4) {
-        iRolling = `IFNULL((SELECT SUM(iRolling) FROM Users WHERE strNickname = t1.strNickname AND iClass > '4' ),0) as iRolling,`;
+        iRolling = `IFNULL((SELECT SUM(iRolling) FROM Users WHERE strNickname = t1.strNickname AND iClass > ${iClass} ),0) as iRolling,`;
     }
 
     let subQuery = `
@@ -234,7 +234,7 @@ let inline_CalculateOverviewSettle = async (strGroupID, iClass, strQuater, dateS
         IFNULL((SELECT SUM(iSettleAcc - iPayback) FROM SettleRecords WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND strQuater = '${strQuater}' AND iSettleDays=${iSettleDays} AND iSettleType = ${iSettleType}) ,0) as iTotalSettleBeforeAcc1,
         IFNULL((SELECT SUM(iSettleBeforeAcc + iPayback) FROM SettleRecords WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND strQuater = '${strQuater}' AND iSettleDays=${iSettleDays} AND iSettleType = ${iSettleType}) ,0) as iTotalSettleBeforeAcc2,
         IFNULL((SELECT sum(iCommissionB)+sum(iCommissionS) FROM SettleRecords WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND strQuater = '${strQuater}' AND iSettleDays=${iSettleDays} AND iSettleType = ${iSettleType}),0) as iTotalCommission,
-        IFNULL((SELECT sum(iSettleGive) FROM SettleRecords WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND strQuater = '${strQuater}' AND iClass IN (4,5) AND iSettleDays=${iSettleDays} AND iSettleType = ${iSettleType}),0) as iSettleGive,
+        IFNULL((SELECT sum(iSettleGive) FROM SettleRecords WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND strQuater = '${strQuater}' AND iClass IN (4,5,6) AND iSettleDays=${iSettleDays} AND iSettleType = ${iSettleType}),0) as iSettleGive,
         IFNULL((SELECT sum(iSWinlose) FROM SettleRecords WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND strQuater = '${strQuater}' AND iClass = 4 AND fSettleSlot = 0 AND iSettleDays=${iSettleDays} AND iSettleType = ${iSettleType}),0) as iSWinlose,
         IFNULL((SELECT sum(iAmount) FROM GTs WHERE eType='ROLLING' AND strGroupID LIKE CONCAT('${strGroupID}', '%') AND date(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iRollingTranslate,
         IFNULL((SELECT sum(iAmount) FROM GTs WHERE eType='SETTLE' AND strGroupID LIKE CONCAT('${strGroupID}', '%') AND date(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iSettleTranslate,

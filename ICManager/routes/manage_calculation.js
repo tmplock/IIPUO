@@ -87,14 +87,13 @@ router.post('/settle_all2', isLoggedIn, async(req, res) => {
     let iSettleDays = req.body.iSettleDays;
     let iSettleType = req.body.iSettleType;
 
-
-    let overviewList = await IAgentSettle.CalculateOverviewSettle(req.body.strGroupID, req.body.iClass, strQuater, dateStart, dateEnd, iSettleDays, iSettleType);
     let overview = {};
-    if (overviewList.length > 0) {
-        overview = overviewList[0];
+    if (dateStart != '' && dateEnd != '') {
+        let overviewList = await IAgentSettle.CalculateOverviewSettle(req.body.strGroupID, req.body.iClass, strQuater, dateStart, dateEnd, iSettleDays, iSettleType);
+        if (overviewList.length > 0) {
+            overview = overviewList[0];
+        }
     }
-
-    let overviewShare = {};
 
     if (dbuser.iClass <= 3) {
         // 대.부본 보관죽장*

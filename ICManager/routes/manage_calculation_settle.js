@@ -786,7 +786,7 @@ router.post('/request_settle_all_reset', isLoggedIn, async(req, res) => {
 
         let lastDate = IAgentSettle.GetQuaterEndDate(req.body.strQuater, iSettleDays);
 
-        let list = await GetSettleAllReset(req.body.strGroupID, req.body.strQuater, req.body.dateStart, req.body.dateEnd, req.body.iClass, iOffset, iLimit, lastDate, iSettleDays, iSettleType);
+        let list = await GetSettleClass(req.body.strGroupID, req.body.strQuater, req.body.dateStart, req.body.dateEnd, req.body.iClass, iOffset, iLimit, lastDate, iSettleDays, iSettleType);
 
         const targetUserCount = await IAgentSettle.GetSettleTargetUserCount(req.body.strQuater, req.body.iClass, req.body.strGroupID, iSettleDays, iSettleType);
 
@@ -810,7 +810,7 @@ router.post('/request_settle_all_reset', isLoggedIn, async(req, res) => {
 });
 
 
-let GetSettleAllReset = async (strGroupID, strQuater, dateStart, dateEnd, iClass, iOffset, iLimit, lastDate, iSettleDays, iSettleType) => {
+let GetSettleClass = async (strGroupID, strQuater, dateStart, dateEnd, iClass, iOffset, iLimit, lastDate, iSettleDays, iSettleType) => {
     let start = dateStart ?? '';
     let end = dateEnd ?? '';
 

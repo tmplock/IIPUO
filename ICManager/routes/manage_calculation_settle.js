@@ -272,7 +272,7 @@ let GetSettlePartnerList = async (strGroupID, iClass, strQuater, dateStart, date
     let subQuery = '';
     // 총본에서 조회할 경우
     if (strGroupID.length == 5) {
-        subQuery = `AND t3.iSettleDays = ${iSettleDays} AND t3.iSettleType = ${iSettleType}`;
+        subQuery = `AND t4.iSettleDays = ${iSettleDays} AND t4.iSettleType = ${iSettleType}`;
     }
     let list = await db.sequelize.query(`
             SELECT
@@ -774,14 +774,6 @@ router.post('/request_settle_all_reset', isLoggedIn, async(req, res) => {
         let iSettleType = req.body.iSettleType;
         let iSettleDays = req.body.iSettleDays;
 
-        // let exist = await db.SettleRecords.findAll({where:{
-        //         strQuater:req.body.strQuater,
-        //         // iSettleType: iSettleType,
-        //         // iSettleDays: iSettleDays,
-        //         iClass:req.body.iClass,
-        //         strGroupID:{[Op.like]:req.body.strGroupID+'%'},
-        //     }, order: [['createdAt', 'DESC']]
-        // });
         let exist = await IAgentSettle.GetSettleExistList(req.body.strGroupID, req.body.strQuater, req.body.iClass, iSettleDays, iSettleType);
 
         let lastDate = IAgentSettle.GetQuaterEndDate(req.body.strQuater, iSettleDays);

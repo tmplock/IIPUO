@@ -330,9 +330,9 @@ exports.GetSettleClass = async (strGroupID, iClass, strQuater, dateStart, dateEn
                 IFNULL((SELECT sum(iSettleVice) FROM SettleRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}' ${subQuery3}),0) as iSettleVice,
                 IFNULL((SELECT sum(iCommissionB) FROM SettleRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}' ${subQuery3}),0) as iCommissionBaccarat,
                 IFNULL((SELECT sum(iCommissionS) FROM SettleRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}' ${subQuery3}),0) as iCommissionSlot,
-                IFNULL((SELECT sum(iBWinlose) FROM SettleRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}' ${subQuery3}),0) as iBaccaratWinLose,
-                IFNULL((SELECT sum(iUWinlose) FROM SettleRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}' ${subQuery3}),0) as iUnderOverWinLose,
-                IFNULL((SELECT sum(iSWinlose) FROM SettleRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}' ${subQuery3}),0) as iSlotWinLose,
+                IFNULL((SELECT sum(iAgentBetB - iAgentWinB) FROM RecordDailyOverviews WHERE strID = t4.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iBaccaratWinLose,
+                IFNULL((SELECT sum(iAgentBetUO - iAgentWinUO) FROM RecordDailyOverviews WHERE strID = t4.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iUnderOverWinLose,
+                IFNULL((SELECT sum(iAgentBetS - iAgentWinS) FROM RecordDailyOverviews WHERE strID = t4.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iSlotWinLose,
                 IFNULL((SELECT sum(iSettleVice) FROM SettleRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}' ${subQuery3}),0) as iSettle,
                 IFNULL((SELECT sum(iSettleVice) FROM SettleRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}' ${subQuery3}),0) as iTotalViceAdmin
             `;
@@ -397,6 +397,7 @@ exports.GetSettleClass = async (strGroupID, iClass, strQuater, dateStart, dateEn
         let list = await db.sequelize.query(`
             SELECT
                 t3.strID AS strAdminID, t3.strNickname AS strAdminNickname,
+                t4.strID AS strPAdminID, t4.strNickname AS strPAdminNickname,
                 t5.strID, t5.strNickname, t5.strGroupID, t5.iClass, t5.strSettleMemo,
                 t5.fBaccaratR, t5.fSlotR, t5.fUnderOverR, t5.fPBR, t5.fPBSingleR, t5.fPBDoubleR, t5.fPBTripleR,
                 t5.fSettleBaccarat AS fSettleBaccarat5, t5.fSettleSlot AS fSettleSlot5, 0 AS fSettlePBA5, 0 AS fSettlePBB5,

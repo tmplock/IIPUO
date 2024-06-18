@@ -1621,7 +1621,7 @@ router.post('/request_agentinfo_modify', isLoggedIn,async (req, res) => {
                 }
 
                 // 대본사일 경우에만 죽장옵션 수정 가능
-                if (user.iRootClass <= 3 && user.iClass == 4) {
+                if (req.user.iClass <= 3 && user.iClass == 4) {
                     let iSettleDays = parseInt(req.body.iSettleDays ?? -1);
                     if (iSettleDays != -1) {
                         data['iSettleDays'] = iSettleDays;

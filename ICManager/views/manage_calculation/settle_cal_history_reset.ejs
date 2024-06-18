@@ -1,0 +1,164 @@
+<div class="sub_wrap">
+    <div class="container clearfix">
+        <div class="content" style="position:relative; padding:0 10px 0 10px;">
+			<ul class="list_tab" style="margin-bottom:10px;width:75%;z-index:10000;" id="calculation_header">
+			</ul>
+        </div>
+
+        <div class="list">
+			<div id = "list_tit" class="list_tit">
+			</div>
+
+			<div class="search_wrap" id="div_realtimebet">
+	
+				<table class="search_list">
+					<caption><%=__('SearchResult')%></caption>
+					<thead>
+						<tr>
+							<th scope="col">순번</th>
+							<th scope="col"><%=__('ID')%></th>
+							<th scope="col"><%=__('Nickname')%></th>
+							<th scope="col">부본 합계</th>
+							<th scope="col">부본 죽장</th>
+							<th scope="col">B<%=__('WinLose')%></th>
+							<th scope="col">S<%=__('WinLose')%></th>
+							<th scope="col">합계</th>
+						</tr>
+					</thead>
+					<tbody id="list_agents">
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript" src="js/constants.js"></script>
+<script type="text/javascript" src="js/enum.js"></script>
+<script type="text/javascript" src="js/time.js"></script>
+<script type="text/javascript" src="js/manage_calculation_menu.js"></script>
+<script type="text/javascript" src="js/manage_setting_ref.js"></script>
+<script type="text/javascript" src="js/manage_user_menu.js"></script>
+<script type="text/javascript" src="js/pagination.js"></script>
+<script type="text/javascript" src="js/util.js"></script>
+<script>
+	let user = JSON.parse('<%-JSON.stringify(user)%>');
+	let adminList = JSON.parse('<%-JSON.stringify(list)%>');
+	let strQuater = JSON.parse('<%-JSON.stringify(strQuater)%>');
+
+	let settleList = [];
+	let bSending = false;
+
+	$(document).ready(() => {
+		SetList(adminList);
+	});
+
+	let SetList = (list) => {
+		$(`#main_title`).empty();
+		$(`#main_title`).append(`
+				<h3>
+					<a class="btn_gray" style="font-weight:bold; font-size:18px; position:absolute; left:50px; top:25px;">${strQuater}분기 죽장 계산</a>
+				</h3>
+			`);
+
+		$(`#list_tit`).empty();
+		$(`#list_tit`).append(`
+							<h3>${strQuater}분기 죽장 계산
+							</h3>
+						`);
+
+		$('#list_agents').empty();
+		let dataList = [];
+		for (let i in list) {
+			let obj = list[i];
+			let tag = AddPartner(5, obj, i);
+			$('#list_agents').append(tag);
+			dataList.push(obj);
+		}
+
+		let totalObj = {iTotal: 0, iSettleVice: 0,
+			iBWinlose: 0, iUWinlose: 0, iSWinlose: 0,
+			iTotalViceAdmin:0
+		};
+
+		for (let i in dataList) {
+			totalObj.iTotal += dataList[i].iTotal ?? 0;
+			totalObj.iSettleVice += dataList[i].iSettleVice ?? 0;
+			totalObj.iBWinlose += dataList[i].iBWinlose ?? 0;
+			totalObj.iUWinlose += dataList[i].iUWinlose ?? 0;
+			totalObj.iSWinlose += dataList[i].iSWinlose ?? 0;
+			totalObj.iTotalViceAdmin += dataList[i].iTotalViceAdmin ?? 0;
+		}
+		let tagTotal = AddTotal(totalObj);
+		$('#list_agents').append(tagTotal);
+
+		// 정산용 데이터
+		settleList = dataList;
+	}
+
+	let AddPartner = (iRootClass, aObject, index) => {
+		let color = '#ffffff';
+		let headtag = '';
+		headtag += `<td >${parseInt(index) + 1}</td>`;
+
+		var subtag = `
+
+			<tr id=${aObject.strNickname} class='Agent' onmouseover="this.style.backgroundColor='#FFFFFF'" onmouseout="this.style.background='blue'">
+
+				${headtag}
+
+				<input type='hidden' id='iClass${aObject.strNickname}' value='${aObject.iClass}' >`
+
+		subtag += `
+
+				<td style="background-color:${color};"  class="parent_row_31">
+
+				<a href="#" onclick="OnClickNickname('${aObject.strNickname}')" style="color:blue;">${aObject.strID}</a>
+
+				</td>
+
+				<td style="background-color:${color};"  class="parent_row_31">
+					<a id="request_partneragents" href="#" onclick="OnClickNickname('${aObject.strNickname}')" style="color:blue;">${aObject.strNickname}</a>
+				</td>
+		`;
+
+		subtag += `<td style="background-color:${color};"  class="parent_row_31"><a><font color="${GetColor(aObject.iTotal)}" id='total_${aObject.strNickname}'>${GetNumber(aObject.iTotal)}</font></a></td>`;
+
+		// 부본 죽장
+		subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetInversedColor(aObject.iSettleVice)}" id='settleevice_${aObject.strNickname}'>${GetNumber((aObject.iSettleVice))}</font></td>`;
+
+		if ( aObject.iClass > 4 )
+		{
+			subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetColor(aObject.iBWinlose+aObject.iUWinlose)}" id='bwinlose_${aObject.strNickname}'>${GetNumber((aObject.iBWinlose+aObject.iUWinlose))}</font></td>`;
+			subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetColor(aObject.iSWinlose)}" id='swinlose_${aObject.strNickname}'>${GetNumber((aObject.iSWinlose))}</font></td>`;
+		}
+		else // 대본사 하위는 윈로스 값 붎필요 비표시
+		{
+			subtag += `<td style="background-color:${color};"  class="parent_row_31"></td>`;
+			subtag += `<td style="background-color:${color};"  class="parent_row_31"></td>`;
+		}
+
+		// 합계
+		subtag += `<td style="background-color:${color};"  class="parent_row_31"><a><font color="${GetColor(aObject.iTotalViceAdmin)}" id='total_${aObject.strNickname}'>${GetNumber(aObject.iTotalViceAdmin)}</font></a></td>`;
+
+		subtag += `</tr>`;
+
+		return subtag;
+	}
+
+	let AddTotal = (aObject) => {
+		let color = '#ffffff';
+		let subtag = '<td colspan="3">합계</td>';
+		subtag += `<td style="background-color:${color};"  class="parent_row_31"><a><font color="${GetColor(aObject.iTotal)}" id='total_${aObject.strNickname}'>${GetNumber(aObject.iTotal)}</font></a></td>`;
+		// 부본 죽장
+		subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetInversedColor((aObject.iSettleVice))}" id='settleevice_${aObject.strNickname}'>${GetNumber((aObject.iSettleVice))}</font></td>`;
+		// 바카라 윈로스
+		subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetColor(aObject.iBWinlose+aObject.iUWinlose)}" id='bwinlose_${aObject.strNickname}'>${GetNumber((aObject.iBWinlose+aObject.iUWinlose))}</font></td>`;
+		// 슬롯 윈로스
+		subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetColor(aObject.iSWinlose)}" id='swinlose_${aObject.strNickname}'>${GetNumber((aObject.iSWinlose))}</font></td>`;
+		// 합계
+		subtag += `<td style="background-color:${color};"  class="parent_row_31"><font color="${GetColor(aObject.iTotalViceAdmin)}" id='result_${aObject.strNickname}'>${GetNumber(aObject.iTotalViceAdmin)}</font></td>`;
+
+		return `<tr style="font-weight: bold">${subtag}</tr>`;
+	}
+
+</script>

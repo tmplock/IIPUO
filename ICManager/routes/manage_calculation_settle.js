@@ -212,6 +212,9 @@ router.post('/request_settle_cal', isLoggedIn, async(req, res) => {
         {
             // 죽장 가능 여부
             let bEnableSettle = IAgentSettle.IsSettleEnableDate(req.body.strQuater, iSettleDays);
+            if (exist.length == list.length) {
+                bEnableSettle = false;
+            }
             res.send({result:'OK', list:list, iRootClass: req.user.iClass, exist: exist, msg: '정상조회', totalCount: targetUserCount, bEnableSettle:bEnableSettle});
         }
     } catch (err) {
@@ -268,8 +271,8 @@ let GetSettlePartnerList = async (strGroupID, iClass, strQuater, dateStart, date
     // let subQuery = `AND t5.iSettleDays = ${iSettleDays} AND t5.iSettleType = ${iSettleType}`;
     let subQuery = '';
     // 총본에서 조회할 경우
-    if (strGroupID.length == 3) {
-        subQuery = `AND t3.iSettleDays = ${iSettleDays} AND t3.iSettleType = ${iSettleType}`;
+    if (strGroupID.length == 5) {
+        subQuery = `AND t4.iSettleDays = ${iSettleDays} AND t4.iSettleType = ${iSettleType}`;
     }
     let list = await db.sequelize.query(`
             SELECT
@@ -335,13 +338,13 @@ router.post('/settle_cal', isLoggedIn, async (req, res) => {
     let iSettleType = 0;
 
     const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
-    if (dbuser.iClass < 3) {
+    if (dbuser.iClass < 4) {
         iSettleDays = req.body.iSettleDays;
         iSettleType = req.body.iSettleType;
     } else {
-        const adminUser = await IAgent.GetAdminInfo(dbuser);
-        iSettleDays = adminUser.iSettleDays;
-        iSettleType = adminUser.iSettleType;
+        const padminUser = await IAgent.GetPAdminInfo(dbuser);
+        iSettleDays = padminUser.iSettleDays;
+        iSettleType = padminUser.iSettleType;
     }
 
     const user = {strNickname:req.body.strNickname, strGroupID:dbuser.strGroupID, iClass:parseInt(dbuser.iClass), strID:dbuser.strID,
@@ -360,30 +363,53 @@ router.post('/settle_cal_history', isLoggedIn, async (req, res) => {
     const user = {strNickname:dbuser.strNickname, strGroupID:dbuser.strGroupID, iClass:parseInt(dbuser.iClass), strID:dbuser.strID,
         iRootClass: req.user.iClass, iPermission: req.user.iPermission};
 
+    let strQuater = req.body.strQuater;
     let iSettleDays = 15;
     let iSettleType = 0;
-    const admin = await IAgent.GetAdminInfo(dbuser);
-    iSettleDays = admin.iSettleDays;
-    iSettleType = admin.iSettleType;
+    const padmin = await IAgent.GetPAdminInfo(dbuser);
+    if (padmin == null) {
+        res.render('manage_calculation/settle_cal_history', {iLayout:9, iHeaderFocus:0, user:user, list:[], strQuater:strQuater});
+        return;
+    }
+    iSettleDays = padmin.iSettleDays;
+    iSettleType = padmin.iSettleType;
 
-    // let list = await db.SettleSubRecords.findAll({where:{
-    //         strQuater:req.body.strQuater,
-    //         iClass:req.body.iClass,
-    //         strGroupID:{[Op.like]:req.body.strGroupID+'%'},
-    //     }, order: [['strNickname', 'DESC']]
-    // });
-
-    let list = await db.sequelize.query(`
-        SELECT ss.*, u.strNickname
-        FROM SettleSubRecords ss
-        LEFT JOIN Users u ON u.strID = ss.strID
-        WHERE ss.strQuater = '${req.body.strQuater}'
-          AND ss.iSettleDays = ${iSettleDays} AND ss.iSettleType = ${iSettleType} 
-          AND ss.iClass = ${parseInt(req.body.iClass) + 1} 
-          AND ss.strGroupID LIKE '${req.body.strGroupID}%'
-    `);
-
-    res.render('manage_calculation/settle_cal_history', {iLayout:9, iHeaderFocus:0, user:user, list:list[0], strQuater:req.body.strQuater});
+    if (iSettleType == 1) {
+        let dateStart = IAgentSettle.GetQuaterStartDate(strQuater, iSettleDays);
+        let dateEnd = IAgentSettle.GetQuaterEndDate(strQuater, iSettleDays);
+        let [list] = await db.sequelize.query(`
+            SELECT s.*, u.strNickname, 
+                    IFNULL((SELECT sum(iAgentBetB - iAgentWinB) FROM RecordDailyOverviews WHERE strID = s.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iBWinlose,
+                    IFNULL((SELECT sum(iAgentBetUO - iAgentWinUO) FROM RecordDailyOverviews WHERE strID = s.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iUWinlose,
+                    IFNULL((SELECT sum(iAgentBetS - iAgentWinS) FROM RecordDailyOverviews WHERE strID = s.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iSWinlose
+            FROM SettleRecords s
+            LEFT JOIN Users u ON u.strID = s.strID
+            WHERE s.strQuater = '${req.body.strQuater}'
+              AND s.iSettleDays = ${iSettleDays}
+              AND s.iSettleType = ${iSettleType} 
+              AND s.iClass = ${parseInt(req.body.iClass) + 1} 
+              AND s.strGroupID LIKE '${req.body.strGroupID}%'
+        `);
+        let newList = [];
+        for (let i in list) {
+            let obj = list[i];
+            obj.iTotalViceAdmin = obj.iTotal - obj.iSettleVice;
+            newList.push(obj);
+        }
+        res.render('manage_calculation/settle_cal_history_reset', {iLayout:9, iHeaderFocus:0, user:user, list:newList, strQuater:strQuater});
+    } else {
+        let list = await db.sequelize.query(`
+            SELECT ss.*, u.strNickname
+            FROM SettleSubRecords ss
+            LEFT JOIN Users u ON u.strID = ss.strID
+            WHERE ss.strQuater = '${strQuater}'
+              AND ss.iSettleDays = ${iSettleDays}
+              AND ss.iSettleType = ${iSettleType} 
+              AND ss.iClass = ${parseInt(req.body.iClass) + 1} 
+              AND ss.strGroupID LIKE '${req.body.strGroupID}%'
+        `);
+        res.render('manage_calculation/settle_cal_history', {iLayout:9, iHeaderFocus:0, user:user, list:list[0], strQuater:strQuater});
+    }
 });
 
 router.post('/request_applysettle_all', isLoggedIn, async (req, res) => {
@@ -748,19 +774,11 @@ router.post('/request_settle_all_reset', isLoggedIn, async(req, res) => {
         let iSettleType = req.body.iSettleType;
         let iSettleDays = req.body.iSettleDays;
 
-        // let exist = await db.SettleRecords.findAll({where:{
-        //         strQuater:req.body.strQuater,
-        //         // iSettleType: iSettleType,
-        //         // iSettleDays: iSettleDays,
-        //         iClass:req.body.iClass,
-        //         strGroupID:{[Op.like]:req.body.strGroupID+'%'},
-        //     }, order: [['createdAt', 'DESC']]
-        // });
         let exist = await IAgentSettle.GetSettleExistList(req.body.strGroupID, req.body.strQuater, req.body.iClass, iSettleDays, iSettleType);
 
         let lastDate = IAgentSettle.GetQuaterEndDate(req.body.strQuater, iSettleDays);
 
-        let list = await GetSettleAllReset(req.body.strGroupID, req.body.strQuater, req.body.dateStart, req.body.dateEnd, req.body.iClass, iOffset, iLimit, lastDate, iSettleDays, iSettleType);
+        let list = await GetSettleClass(req.body.strGroupID, req.body.strQuater, req.body.dateStart, req.body.dateEnd, req.body.iClass, iOffset, iLimit, lastDate, iSettleDays, iSettleType);
 
         const targetUserCount = await IAgentSettle.GetSettleTargetUserCount(req.body.strQuater, req.body.iClass, req.body.strGroupID, iSettleDays, iSettleType);
 
@@ -772,6 +790,9 @@ router.post('/request_settle_all_reset', isLoggedIn, async(req, res) => {
         {
             // 죽장 가능 여부
             let bEnableSettle = IAgentSettle.IsSettleEnableDate(req.body.strQuater, iSettleDays);
+            if (exist.length == list.length) {
+                bEnableSettle = false;
+            }
             res.send({result:'OK', list:list, iRootClass: req.user.iClass, exist: exist, msg: '정상조회', totalCount: targetUserCount, bEnableSettle:bEnableSettle});
         }
     } catch (err) {
@@ -781,7 +802,7 @@ router.post('/request_settle_all_reset', isLoggedIn, async(req, res) => {
 });
 
 
-let GetSettleAllReset = async (strGroupID, strQuater, dateStart, dateEnd, iClass, iOffset, iLimit, lastDate, iSettleDays, iSettleType) => {
+let GetSettleClass = async (strGroupID, strQuater, dateStart, dateEnd, iClass, iOffset, iLimit, lastDate, iSettleDays, iSettleType) => {
     let start = dateStart ?? '';
     let end = dateEnd ?? '';
 
@@ -791,12 +812,16 @@ let GetSettleAllReset = async (strGroupID, strQuater, dateStart, dateEnd, iClass
     let list = [];
     for (let i in partnerList) {
         let obj = partnerList[i];
-        if (obj.strNickname == '강동구1테') {
-            console.log('1111##################');
-            console.log(obj);
-        }
         if (obj.iClass == 4) {
-            // obj.iSettleVice = GetSettleVice(obj);
+            // 리셋일 경우 죽장값을 재 계산하기(합계 * 죽장)
+            if (iSettleType == 1) {
+                if (obj.iTotal > 0) {
+                    obj.iSettle = obj.iTotal * obj.fSettleBaccarat4 * 0.01;
+                } else {
+                    obj.iSettle = 0;
+                }
+                obj.iTotalViceAdmin = obj.iTotal - obj.iSettle - obj.iSettleVice - obj.iCommissionSlot - obj.iCommissionBaccarat;
+            }
         } else if (obj.iClass == 5) {
             obj.iSettleVice = 0;
         }

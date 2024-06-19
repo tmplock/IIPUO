@@ -77,16 +77,16 @@ let GetCurrentDateEnd = (day) => {
     return res;
 }
 
-let GetMonthlyStartDate = () => {
+let GetMonthlyStartDate = (month) => {
     let date = new Date();
-    let res = new Date(date.getFullYear(), date.getMonth(), 1);
+    let res = month == undefined ? new Date(date.getFullYear(), date.getMonth(), 1) : new Date(date.getFullYear(), month, 1);
     res = new Date(+res + 3240 * 10000).toISOString().split("T")[0];
     return res;
 }
 
-let GetMonthlyEndDate = () => {
+let GetMonthlyEndDate = (month) => {
     let date = new Date();
-    let res = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+    let res = month == undefined ? new Date(date.getFullYear(), date.getMonth()+1, 0) : new Date(date.getFullYear(), month+1, 0);
     res = new Date(+res + 3240 * 10000).toISOString().split("T")[0];
     return res;
 }

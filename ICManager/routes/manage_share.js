@@ -498,71 +498,64 @@ router.post('/request_share_list', isLoggedIn, async(req, res) => {
     console.log(req.body);
 
     let strID = req.body.strID;
+    let iMonth = req.body.iMonth;
+    let strGroupID = req.body.strGroupID;
 
     // 해당 분기 죽장 완료 체크
-    let strQuater = req.body.strQuater;
-    let strGroupID = req.body.strGroupID;
-    if (strQuater == '' || strQuater == undefined || strGroupID == '' || strGroupID == undefined) {
+    if (iMonth == undefined || iMonth == '' || strGroupID == '' || strGroupID == undefined) {
         res.send({result: 'FAIL', msg: '필수 입력값 없음'});
         return;
     }
 
-    let exist = await db.SettleRecords.findAll({where:{
-            strQuater:req.body.strQuater,
-            iClass: {
-                [Op.in]:[4,5]
-            },
-            strGroupID:{[Op.like]:req.body.strGroupID+'%'},
-        }, order: [['createdAt', 'DESC']]
-    });
+    // let exist = await db.SettleRecords.findAll({where:{
+    //         strQuater: {
+    //             [Op.like]:`${iMonth}-%`
+    //         },
+    //         iClass: {
+    //             [Op.in]:[4,5]
+    //         },
+    //         strGroupID:{[Op.like]:req.body.strGroupID+'%'},
+    //     }, order: [['createdAt', 'DESC']]
+    // });
 
-    const targetUserCount = await getSettleTargetUserCount(req.body.strQuater, req.body.strGroupID);
-    // 이용자는 추후에 삭제가 가능함
-    if ( targetUserCount > exist.length ) {
-        res.send({result:'FAIL', msg: '죽장 완료 후 조회 가능합니다'});
-        return;
-    }
+    // const targetUserCount = await getSettleTargetUserCount(req.body.strQuater, req.body.strGroupID);
+    // // 이용자는 추후에 삭제가 가능함
+    // if ( targetUserCount > exist.length ) {
+    //     res.send({result:'FAIL', msg: '죽장 완료 후 조회 가능합니다'});
+    //     return;
+    // }
 
     // 완료여부
-    let lastDate = GetQuaterEndDate(strQuater);
-    let shares = await db.ShareUsers.findAll({
-        where: {
-            strGroupID: {
-                [Op.like]:`${strGroupID}%`
-            },
-            createdAt: {[Op.lt]: lastDate}
-        }
-    });
+    // let shares = await db.ShareUsers.findAll({
+    //     where: {
+    //         strGroupID: {
+    //             [Op.like]:`${strGroupID}%`
+    //         },
+    //         createdAt: {[Op.lt]: req.body.dateEnd}
+    //     }
+    // });
 
-    let shareExist = await db.ShareRecords.findAll({
-        where: {
-            strQuater: strQuater,
-            strGroupID: {
-                [Op.like]:`${strGroupID}%`
-            }
-        }
-    });
+    // let shareExist = await db.ShareRecords.findAll({
+    //     where: {
+    //         strQuater: strQuater,
+    //         strGroupID: {
+    //             [Op.like]:`${strGroupID}%`
+    //         }
+    //     }
+    // });
     // 지분자는 추후에 삭제가 가능함
-    if (shares.length <= shareExist.length) {
-        let list = await IAgent.GetPopupGetShareInfo(strID, strGroupID, strQuater);
-        res.send({result: 'OK', list: list, enable: false});
-        return;
-    }
-
-    let strQuater2 = '';
-    let quaterList = strQuater.split('-');
-    if (quaterList[1] == '2') {
-        strQuater2 = `${quaterList[0]}-1`;
-    } else {
-        strQuater2 = `${parseInt(quaterList[0])-1}-2`;
-    }
+    // if (shares.length <= shareExist.length) {
+    //     let list = await IAgent.GetPopupGetShareInfo(strID, strGroupID, strQuater);
+    //     res.send({result: 'OK', list: list, enable: false});
+    //     return;
+    // }
 
     let list = await db.sequelize.query(`
             SELECT u.strNickname AS parentNickname, su.strNickname AS strNickname, su.fShareR AS fShareR, su.strID AS strID, su.iShareAccBefore AS iShareAccBefore,
-                IFNULL((SELECT SUM(iTotalViceAdmin) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(su.strGroupID,'%') AND strQuater = '${strQuater}'),0) as iShareOrgin,
-                IFNULL((SELECT sum(iSettle) FROM SettleRecords WHERE strGroupID LIKE CONCAT(su.strGroupID,'%') AND strQuater = '${strQuater}' AND iClass IN (4, 5) AND iSettle < 0),0) as iShareReceive,
-                IFNULL((SELECT sum(iPayback) FROM SettleRecords WHERE strGroupID LIKE CONCAT(su.strGroupID,'%') AND strQuater = '${strQuater}' AND iClass IN (4, 5)),0) as iPayback,
-                IFNULL((SELECT sum(iSWinlose) FROM SettleRecords WHERE strGroupID LIKE CONCAT(su.strGroupID,'%') AND strQuater = '${strQuater}' AND iClass = 4 AND fSettleSlot = 0),0) as iSWinlose,
+                IFNULL((SELECT SUM(iResult) FROM SettleRecords WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND strQuater LIKE CONCAT('${iMonth}-','%') AND iClass = 4),0) as iShareOrgin,
+                IFNULL((SELECT sum(iSettle) FROM SettleRecords WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND strQuater LIKE CONCAT('${iMonth}-','%') AND iClass = 4 AND iSettle < 0),0) as iShareReceive,
+                IFNULL((SELECT sum(iPayback) FROM SettleRecords WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND strQuater LIKE CONCAT('${iMonth}-','%')AND iClass = 4),0) as iPayback,
+                IFNULL((SELECT sum(iSWinlose) FROM SettleRecords WHERE strGroupID LIKE CONCAT('${strGroupID}','%') AND strQuater LIKE CONCAT('${iMonth}-','%') AND iClass = 4 AND fSettleSlot = 0),0) as iSWinlose,
                 0 AS iShare,
                 su.iCreditAfter AS iShareAccBefore,
                 0 AS iCreditBefore,
@@ -572,14 +565,11 @@ router.post('/request_share_list', isLoggedIn, async(req, res) => {
             LEFT JOIN Users u ON u.strID = su.strID
             LEFT JOIN ( SELECT * 
                         FROM ShareRecords
-                        WHERE strQuater = '${strQuater2}'
+                        WHERE strQuater LIKE CONCAT('${iMonth-1}-', '%')
                 ) sr ON su.strNickname = sr.strNickname
             WHERE su.strGroupID LIKE CONCAT('${strGroupID}', '%')
             ORDER BY parentNickname ASC, strNickname ASC
         `);
-    // 완료여부
-    let complete = true;
-
     res.send({result: 'OK', list: list[0], enable: true});
 });
 

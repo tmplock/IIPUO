@@ -20,8 +20,9 @@
                 <option value="10">11</option>
                 <option value="11">12</option>
             </select>월
-            <button id="button_quater1" class="menu1" data-menu="2" style="border:1px solid rgb(95, 93, 93);width:170px;height:25px;text-align:center;color:white" onclick="Request1stHalf();"><%=__('Half1')%></button>
-            <button id="button_quater2" class="menu1" data-menu="3" style="border:1px solid rgb(95, 93, 93);width:170px;height:25px;text-align:center;color:white" onclick="Request2ndHalf();"><%=__('Half2')%></button>
+            <button id="button_search" class="menu1" data-menu="2" style="border:1px solid rgb(95, 93, 93);width:170px;height:25px;text-align:center;color:white" onclick="RequestSearch();">조회</button>
+<!--            <button id="button_quater1" class="menu1" data-menu="2" style="border:1px solid rgb(95, 93, 93);width:170px;height:25px;text-align:center;color:white" onclick="Request1stHalf();"><%=__('Half1')%></button>-->
+<!--            <button id="button_quater2" class="menu1" data-menu="3" style="border:1px solid rgb(95, 93, 93);width:170px;height:25px;text-align:center;color:white" onclick="Request2ndHalf();"><%=__('Half2')%></button>-->
             <% if (user.iPermission != 100) { %>
                 <button id="button_share_regist" class="button_blue" data-menu="2" style="border:1px solid rgb(95, 93, 93);width:130px;height:25px;text-align:center;color:white" onclick="OnClickRegisterShare('<%=user.strNickname%>', '<%=user.strGroupID%>', '<%=user.iClass%>');">지분자등록</button>
             <% } %>
@@ -86,40 +87,38 @@
     let agent = JSON.parse('<%-JSON.stringify(agent)%>');
     let user = JSON.parse('<%-JSON.stringify(user)%>');
     let list = JSON.parse('<%-JSON.stringify(list)%>');
-    let strQuater = '';
+    // let strQuater = '';
     let dateQuaterStart = '';
     let dateQuaterEnd = '';
     let selectQuaterMonth = '';
-    let selectQuater = 0;
+    // let selectQuater = 0;
     let shareList = [];
 
     DatePicker();
 
     let date = new Date();
 
-    $('#quater_month').on('change', () => {
-        $('#button_quater1').attr('class', 'menu1');
-        $('#button_quater2').attr('class', 'menu1');
-    });
+    // $('#quater_month').on('change', () => {
+    //     $('#button_quater1').attr('class', 'menu1');
+    //     $('#button_quater2').attr('class', 'menu1');
+    // });
 
     $(document).ready( ()=> {
         $('#quater_month').val(date.getMonth());
-        selectQuaterMonth = date.getMonth();
-
         SetList(list, false);
     });
 
-    $(document).on('click', '#button_quater1', (e) => {
-        let iMonth = parseInt($('#quater_month').val());
-        $('.menu5').attr('class', 'menu1');
-        $(e.currentTarget).attr('class', 'menu5');
-    });
-
-    $(document).on('click', '#button_quater2', (e) => {
-        let iMonth = parseInt($('#quater_month').val());
-        $('.menu5').attr('class', 'menu1');
-        $(e.currentTarget).attr('class', 'menu5');
-    });
+    // $(document).on('click', '#button_quater1', (e) => {
+    //     let iMonth = parseInt($('#quater_month').val());
+    //     $('.menu5').attr('class', 'menu1');
+    //     $(e.currentTarget).attr('class', 'menu5');
+    // });
+    //
+    // $(document).on('click', '#button_quater2', (e) => {
+    //     let iMonth = parseInt($('#quater_month').val());
+    //     $('.menu5').attr('class', 'menu1');
+    //     $(e.currentTarget).attr('class', 'menu5');
+    // });
 
     let SetList = (list, enable) => {
         console.log('SetList');
@@ -448,23 +447,31 @@
         });
     }
 
-    let Request1stHalf = () => {
+    let RequestSearch = () => {
         let iMonth = parseInt($('#quater_month').val());
-        dateQuaterStart = Get1QuaterStartDate(iMonth);
-        dateQuaterEnd = Get1QuaterEndDate(iMonth);
-        strQuater = `${parseInt(iMonth)+1}-1`;
-        selectQuater = 1;
+        dateQuaterStart = GetMonthlyStartDate(iMonth);
+        dateQuaterEnd = GetMonthlyEndDate(iMonth);
+        selectQuaterMonth = iMonth+1;
         RequestShareList();
     }
 
-    let Request2ndHalf = () => {
-        let iMonth = parseInt($('#quater_month').val());
-        dateQuaterStart = Get2QuaterStartDate(iMonth);
-        dateQuaterEnd = Get2QuaterEndDate(iMonth);
-        strQuater = `${parseInt(iMonth)+1}-2`;
-        selectQuater = 2;
-        RequestShareList();
-    }
+    // let Request1stHalf = () => {
+    //     let iMonth = parseInt($('#quater_month').val());
+    //     dateQuaterStart = Get1QuaterStartDate(iMonth);
+    //     dateQuaterEnd = Get1QuaterEndDate(iMonth);
+    //     strQuater = `${parseInt(iMonth)+1}-1`;
+    //     selectQuater = 1;
+    //     RequestShareList();
+    // }
+    //
+    // let Request2ndHalf = () => {
+    //     let iMonth = parseInt($('#quater_month').val());
+    //     dateQuaterStart = Get2QuaterStartDate(iMonth);
+    //     dateQuaterEnd = Get2QuaterEndDate(iMonth);
+    //     strQuater = `${parseInt(iMonth)+1}-2`;
+    //     selectQuater = 2;
+    //     RequestShareList();
+    // }
 
     let RequestShareList = () => {
 
@@ -477,9 +484,7 @@
                 strNickname:user.strNickname,
                 dateStart: dateQuaterStart,
                 dateEnd: dateQuaterEnd,
-                strQuater:strQuater,
                 iMonth: selectQuaterMonth,
-                iQuater: selectQuater,
             },
             dataType: "json",
             success: function (obj) {

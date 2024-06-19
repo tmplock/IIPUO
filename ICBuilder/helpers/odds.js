@@ -145,7 +145,8 @@ exports.CalculateOdds = async (strID, iClass) => {
 
         fRRB:0,
         fRRUO:0,
-        fRRS:0
+        fRRS:0,
+        iRRTurn:20,
     }
 
     let strQuery = ``;
@@ -183,7 +184,8 @@ exports.CalculateOdds = async (strID, iClass) => {
             t5.strGroupID as strVAdminGroupID,
             t5.fRRB as fRRB,
             t5.fRRUO as fRRUO,
-            t5.fRRS as fRRS
+            t5.fRRS as fRRS,
+            t5.iRRTurn as iRRTurn
 
         FROM Users AS t1
         LEFT JOIN Users AS t2 ON t2.iParentID = t1.id
@@ -232,6 +234,7 @@ exports.CalculateOdds = async (strID, iClass) => {
             objectOdds.fRRB = result[0].fRRB;
             objectOdds.fRRUO = result[0].fRRUO;
             objectOdds.fRRS = result[0].fRRS;
+            objectOdds.iRRTurn = result[0].iRRTurn;
         }
         return objectOdds;
     }
@@ -281,7 +284,8 @@ exports.CalculateOdds = async (strID, iClass) => {
 
             t6.fRRB as fRRB,
             t6.fRRUO as fRRUO,
-            t6.fRRS as fRRS
+            t6.fRRS as fRRS,
+            t6.iRRTurn as iRRTurn
 
 
         FROM Users AS t1
@@ -342,6 +346,7 @@ exports.CalculateOdds = async (strID, iClass) => {
             objectOdds.fRRB = result[0].fRRB;
             objectOdds.fRRUO = result[0].fRRUO;
             objectOdds.fRRS = result[0].fRRS;
+            objectOdds.iRRTurn = result[0].iRRTurn;
         }
         return objectOdds;
     }
@@ -400,7 +405,8 @@ exports.CalculateOdds = async (strID, iClass) => {
 
             t7.fRRB as fRRB,
             t7.fRRUO as fRRUO,
-            t7.fRRS as fRRS
+            t7.fRRS as fRRS,
+            t7.iRRTurn as iRRTurn
 
 
         FROM Users AS t1
@@ -470,6 +476,7 @@ exports.CalculateOdds = async (strID, iClass) => {
             objectOdds.fRRB = result[0].fRRB;
             objectOdds.fRRUO = result[0].fRRUO;
             objectOdds.fRRS = result[0].fRRS;
+            objectOdds.iRRTurn = result[0].iRRTurn;
         }
         return objectOdds;
     }
@@ -539,7 +546,8 @@ exports.CalculateOdds = async (strID, iClass) => {
 
             t8.fRRB as fRRB,
             t8.fRRUO as fRRUO,
-            t8.fRRS as fRRS
+            t8.fRRS as fRRS,
+            t8.iRRTurn as iRRTurn
 
 
         FROM Users AS t1
@@ -620,6 +628,7 @@ exports.CalculateOdds = async (strID, iClass) => {
             objectOdds.fRRB = result[0].fRRB;
             objectOdds.fRRUO = result[0].fRRUO;
             objectOdds.fRRS = result[0].fRRS;
+            objectOdds.iRRTurn = result[0].iRRTurn;
         }
         return objectOdds;
     }
@@ -1401,7 +1410,7 @@ exports.ProcessRolling = (oRO, listBet, cPBType, cPBTarget, strDate, listOvervie
                 objectData.iWinS += cWinAmount;
                 objectData.iWinLoseS += (cBetAmount-cWinAmount);
 
-                if ( oOverview != null && oOverview.iNumPlayS > 20 )
+                if ( oOverview != null && oOverview.iNumPlayS > o.iRRTurn )
                 {
                     cBetAmount2 = GetNumberUnit(cBetAmount, o.fRRS);
 
@@ -1423,7 +1432,7 @@ exports.ProcessRolling = (oRO, listBet, cPBType, cPBTarget, strDate, listOvervie
                 objectData.iWinB += cWinAmount;
                 objectData.iWinLoseB += (cBetAmount-cWinAmount);
 
-                if ( oOverview != null && oOverview.iNumPlayB > 20 )
+                if ( oOverview != null && oOverview.iNumPlayB > o.iRRTurn )
                 {
                     //cBetAmount2 = parseInt(cBetAmount2/o.fRRB);
                     cBetAmount2 = GetNumberUnit(cBetAmount, o.fRRB);
@@ -1485,7 +1494,7 @@ exports.ProcessRollingBet = (oRO, iGameCode, iBet, strDate, listOverviewDB) => {
         case Enum.EGameCode.Slot:
             console.log(`##### 200`);
             objectData.iBetS += cBetAmount;
-            if ( oOverview != null && oOverview.iNumPlayS > 20 )
+            if ( oOverview != null && oOverview.iNumPlayS > o.iRRTurn )
             {
                 //cBetAmount2 = parseInt(cBetAmount2/o.fRRS);
                 cBetAmount2 = GetNumberUnit(cBetAmount, o.fRRS);
@@ -1504,7 +1513,7 @@ exports.ProcessRollingBet = (oRO, iGameCode, iBet, strDate, listOverviewDB) => {
             console.log(`##### 0`);
 
             objectData.iBetB += cBetAmount;
-            if ( oOverview != null && oOverview.iNumPlayB > 20 )
+            if ( oOverview != null && oOverview.iNumPlayB > o.iRRTurn )
             {
                 //cBetAmount2 = parseInt(cBetAmount2/o.fRRB);
                 cBetAmount2 = GetNumberUnit(cBetAmount, o.fRRB);
@@ -1606,7 +1615,7 @@ exports.ProcessRollingBetWin = (oRO, iGameCode, iBet, iWin, strDate, listOvervie
             console.log(`##### 200`);
 
             objectData.iBetS += cBetAmount;
-            if ( oOverview != null && oOverview.iNumPlayS > 20 )
+            if ( oOverview != null && oOverview.iNumPlayS > o.iRRTurn )
             {
                 //cBetAmount2 = parseInt(cBetAmount2/o.fRRS);
                 cBetAmount2 = GetNumberUnit(cBetAmount, o.fRRS);
@@ -1625,7 +1634,7 @@ exports.ProcessRollingBetWin = (oRO, iGameCode, iBet, iWin, strDate, listOvervie
             console.log(`##### 0`);
 
             objectData.iBetB += cBetAmount;
-            if ( oOverview != null && oOverview.iNumPlayB > 20 )
+            if ( oOverview != null && oOverview.iNumPlayB > o.iRRTurn )
             {
                 //cBetAmount2 = parseInt(cBetAmount2/o.fRRB);
                 cBetAmount2 = GetNumberUnit(cBetAmount, o.fRRB);

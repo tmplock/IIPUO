@@ -330,6 +330,8 @@ exports.GetSettleClass = async (strGroupID, iClass, strQuater, dateStart, dateEn
                 IFNULL((SELECT sum(iSettleVice) FROM SettleRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}' ${subQuery3}),0) as iSettleVice,
                 IFNULL((SELECT sum(iCommissionB) FROM SettleRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}' ${subQuery3}),0) as iCommissionBaccarat,
                 IFNULL((SELECT sum(iCommissionS) FROM SettleRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}' ${subQuery3}),0) as iCommissionSlot,
+                
+                IFNULL((SELECT sum(iAgentRollingB + iAgentRollingUO + iAgentRollingS) FROM RecordDailyOverviews WHERE strID = t4.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iTotalRolling,
                 IFNULL((SELECT sum(iAgentBetB - iAgentWinB) FROM RecordDailyOverviews WHERE strID = t4.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iBaccaratWinLose,
                 IFNULL((SELECT sum(iAgentBetUO - iAgentWinUO) FROM RecordDailyOverviews WHERE strID = t4.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iUnderOverWinLose,
                 IFNULL((SELECT sum(iAgentBetS - iAgentWinS) FROM RecordDailyOverviews WHERE strID = t4.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iSlotWinLose,
@@ -337,6 +339,9 @@ exports.GetSettleClass = async (strGroupID, iClass, strQuater, dateStart, dateEn
                 IFNULL((SELECT sum(iSettleVice) FROM SettleRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}' ${subQuery3}),0) as iTotalViceAdmin
             `;
         } else { // 누진은
+            if (iSettleType == 0 && iSettleDays == 15 && (strQuater == '5-1' || strQuater == '5-2' || strQuater == '4-2' || strQuater == '4-1' || strQuater == '3-1' || strQuater == '3-2')) {
+                subQuery = '';
+            }
             subQuery2 = `
                 IFNULL((SELECT sum(iTotal) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}'),0) as iTotal,
                 IFNULL((SELECT sum(iTotal) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}' AND iTotal < 0),0) as iTotalLose,
@@ -394,6 +399,9 @@ exports.GetSettleClass = async (strGroupID, iClass, strQuater, dateStart, dateEn
         return list;
     } else if (iClass == 5) {
         let subQuery = `AND t4.iSettleDays = ${iSettleDays} AND t4.iSettleType = ${iSettleType}`;
+        if (iSettleType == 0 && iSettleDays == 15 && (strQuater == '5-1' || strQuater == '5-2' || strQuater == '4-2' || strQuater == '4-1' || strQuater == '3-1' || strQuater == '3-2')) {
+            subQuery = '';
+        }
         let list = await db.sequelize.query(`
             SELECT
                 t3.strID AS strAdminID, t3.strNickname AS strAdminNickname,
@@ -456,7 +464,7 @@ exports.GetSettleClass = async (strGroupID, iClass, strQuater, dateStart, dateEn
             WHERE t5.iClass = ${iClass} AND t5.strGroupID LIKE CONCAT('${strGroupID}', '%') 
             ${subQuery}
             ${lastDateQuery}
-            ORDER BY settleCount ASC, strAdminNickname ASC, t5.strNickname ASC, t5.strGroupID ASC
+            ORDER BY settleCount ASC, strPAdminNickname ASC, t5.strNickname ASC, t5.strGroupID ASC
             LIMIT ${limit}
             OFFSET ${offset}
         `);

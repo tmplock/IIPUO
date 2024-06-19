@@ -815,6 +815,8 @@ let GetSettleClass = async (strGroupID, strQuater, dateStart, dateEnd, iClass, i
         if (obj.iClass == 4) {
             // 리셋일 경우 죽장값을 재 계산하기(합계 * 죽장)
             if (iSettleType == 1) {
+                obj.iTotal = obj.iBaccaratWinLose + obj.iUnderOverWinLose + obj.iSlotWinLose - obj.iTotalRolling;
+
                 if (obj.iTotal > 0) {
                     obj.iSettle = obj.iTotal * obj.fSettleBaccarat4 * 0.01;
                 } else {

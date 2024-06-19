@@ -40,7 +40,7 @@
 		</div>
 
 		<div class="list">
-			<div class="search_wrap" id="overview">
+			<div class="search_wrap" id="overview" style="display: none">
 				<table class="search_list" style="margin-bottom:20px;">
 					<thead>
 					<tr>
@@ -119,7 +119,7 @@
 				</table>
 			</div>
 
-			<div class="search_wrap" id="overview_share">
+			<div class="search_wrap" id="overview_share" style="display: none">
 			</div>
 
 			<div class="list_tit" id = "list_tit">
@@ -280,8 +280,8 @@
 		$(`#list_tit`).empty();
 		$(`#list_tit`).append(`<h3>죽장 정산</h3>`);
 
-		SetOverview(overview, '#overview', true, '', '');
-		SetOverviewShare(overviewShare, overview, '#overview_share');
+		// SetOverview(overview, '#overview', true, '', '');
+		// SetOverviewShare(overviewShare, overview, '#overview_share');
 
 		AddButtonEvent();
 		iSettleDays = user.iSettleDays;
@@ -349,7 +349,7 @@
 					adminList = obj.list;
 					exist = obj.exist;
 					bEnableSettle = obj.bEnableSettle;
-					RequestOverview(user.strGroupID, user.iClass, strQuater, dateQuaterStart, dateQuaterEnd, user.strID);
+					// RequestOverview(user.strGroupID, user.iClass, strQuater, dateQuaterStart, dateQuaterEnd, user.strID);
 					SetList(obj.list, iClass, true);
 				}
 				else if (obj.result == 'EXIST')
@@ -357,7 +357,7 @@
 					adminList = obj.list;
 					exist = obj.exist;
 					bEnableSettle = false;
-					RequestOverview(user.strGroupID, user.iClass, strQuater, dateQuaterStart, dateQuaterEnd, user.strID);
+					// RequestOverview(user.strGroupID, user.iClass, strQuater, dateQuaterStart, dateQuaterEnd, user.strID);
 					SetList(obj.list, iClass, false);
 				}
 				else
@@ -723,7 +723,7 @@
 				$('#list_agents').append(tag);
 				dataList.push(obj);
 			} else if (obj.iClass == 5) {
-				CalculateSettle(obj);
+				CalculateCommission(obj);
 				obj.parentID = obj.strAdminID;
 				obj.parentNickname = obj.strAdminNickname;
 				let tag = AddPartner(5, obj, !ExistSettle(obj.strID), i);
@@ -753,9 +753,9 @@
 					}
 				}
 				if (iClass == 5) {
-					totalObj.iSettleVice += parseFloat(dataList[i].iSettle ?? 0);
+					totalObj.iSettleVice += parseFloat(dataList[i].iSettleVice ?? 0);
 					totalObj.iSettle = 0; // 대본죽장은 0
-					totalObj.iQuarterSettle += parseFloat(dataList[i].iSettle ?? 0);
+					totalObj.iQuarterSettle += parseFloat(dataList[i].iSettleVice ?? 0);
 				} else {
 					totalObj.iSettleVice += parseFloat(dataList[i].iSettleVice ?? 0);
 					totalObj.iSettle += parseFloat(dataList[i].iSettle ?? 0);
@@ -776,53 +776,6 @@
 
 		// 정산용 데이터
 		settleList = dataList;
-	}
-
-	/**
-	 * 죽장 계산
-	 * 부본 : 합계 * 죽장률
-	 * 대본 : (합계 - 부본죽장 - 알값) * 죽장률
-	 *
-	 * 죽장 계산 변경
-	 * 전체 죽장 : (합계 - 알값) * 대본 죽장률
-	 * 부본 : 전체 죽장 * 죽장률
-	 * 대본 : 전체 죽장 - 부본 죽장
-	 */
-	let CalculateSettle = (obj) => {
-		// 수수료 계산 처리
-		CalculateCommission(obj);
-
-		// 전체 죽장 계산
-		let iSettleBaccarat = 0;
-		let iSettleSlot = 0;
-
-		// 부본
-		let iSettleBaccarat5 = 0;
-		let iSettleSlot5 = 0;
-
-		// 죽장률 부본
-		let fSettleBaccarat5 = 0.0;
-		let fSettleSlot5 = 0.0;
-
-		fSettleBaccarat5 = obj.fSettleBaccarat5 ?? 0;
-		fSettleSlot5 = obj.fSettleBaccarat5 ?? 0;
-
-		// 전체 죽장 계산
-		let iBTotal = parseFloat(obj.iBaccaratTotal) + parseFloat(obj.iUnderOverTotal);
-		let iSTotal = parseFloat(obj.iSlotTotal);
-
-		iBTotal = parseFloat(obj.iBaccaratTotal) + parseFloat(obj.iUnderOverTotal) - parseFloat(obj.iCommissionBaccarat ?? 0) - parseFloat(iSettleBaccarat);
-		iSTotal = (parseFloat(obj.iSlotTotal) - parseFloat(obj.iCommissionSlot) - parseFloat(iSettleSlot));
-
-		if (obj.iClass == 5) {
-			// 부본 죽장 계산
-			iSettleBaccarat5 = iBTotal * fSettleBaccarat5 * 0.01;
-			iSettleSlot5 = iSTotal * fSettleSlot5 * 0.01;
-			obj.iSettle = parseFloat(iSettleBaccarat5 + iSettleSlot5);
-			if (obj.iSettle < 0 && iSettleType == 1) {
-				obj.iSettle = 0;
-			}
-		}
 	}
 
 	/**
@@ -1386,7 +1339,7 @@
 			fSettlePBB: 0,
 		};
 		if (bEnableSettle) {
-			data.iTotal = parseFloat(aObject.iBaccaratTotal) + parseFloat(aObject.iUnderOverTotal) + parseFloat(aObject.iSlotTotal) + parseFloat(aObject.iPBATotal) + parseFloat(aObject.iPBBTotal);
+			data.iTotal = parseFloat(aObject.iTotal);
 			data.iRolling = parseFloat(aObject.iRollingMoney);
 			data.iBaccaratWinLose = parseFloat(aObject.iBaccaratWinLose);
 			data.iUnderOverWinLose = parseFloat(aObject.iUnderOverWinLose);
@@ -1402,13 +1355,9 @@
 			data.fSettleSlot = parseFloat(aObject.fSettleSlot5 ?? 0);
 			data.fSettlePBA = 0;
 			data.fSettlePBB = 0;
-			data.iSettle = parseFloat(aObject.iSettle ?? 0);
-			data.iSettleVice = parseFloat(aObject.iSettle ?? 0);
-			if (iSettleType == 1) {
-				data.iResult = data.iTotal - parseFloat(data.iSettleVice ?? 0) - parseFloat(aObject.iCommissionBaccarat) - parseFloat(aObject.iCommissionSlot) - parseFloat(aObject.iSettle);
-			} else {
-				data.iResult = data.iTotal - parseFloat(aObject.iCommissionBaccarat) - parseFloat(aObject.iCommissionSlot) - parseFloat(aObject.iSettle);
-			}
+			data.iSettle = 0;
+			data.iSettleVice = parseFloat(aObject.iSettleVice ?? 0);
+			data.iResult = data.iTotal - parseFloat(data.iSettleVice ?? 0) - parseFloat(aObject.iCommissionBaccarat) - parseFloat(aObject.iCommissionSlot);
 		} else {  // 죽장 완료
 			data.iTotal = parseFloat(aObject.iBaccaratTotal) + parseFloat(aObject.iUnderOverTotal) + parseFloat(aObject.iSlotTotal) + parseFloat(aObject.iPBATotal) + parseFloat(aObject.iPBBTotal);
 			data.iRolling = parseFloat(aObject.iRollingMoney);
@@ -1420,7 +1369,7 @@
 			data.iSettleBeforeAcc = parseFloat(aObject.iSettleBeforeAcc ?? 0);
 			data.iSettleAfter = parseFloat(aObject.iSettleAfter ?? 0);
 			data.iSettleAccTotal = parseFloat(aObject.iSettleAfter ?? 0);
-			data.iSettle = parseFloat(aObject.iSettle);
+			data.iSettle = 0;
 			data.iSettleVice = parseFloat(aObject.iSettleVice ?? 0);
 			data.iSettleQuater = parseFloat(aObject.iSettle ?? 0);
 			data.iPayback = parseFloat(aObject.iPayback ?? 0);
@@ -1430,8 +1379,8 @@
 			data.fSettleSlot = parseFloat(aObject.fSettleSlot52 ?? 0);
 			data.fSettlePBA = 0;
 			data.fSettlePBB = 0;
-			data.iSettleVice = parseFloat(aObject.iSettle ?? 0);
-			data.iResult = data.iTotal - parseFloat(aObject.iSettleVice ?? 0) - parseFloat(aObject.iCommissionBaccarat) - parseFloat(aObject.iCommissionSlot) - parseFloat(aObject.iSettle);
+			data.iSettleVice = parseFloat(aObject.iSettleVice ?? 0);
+			data.iResult = data.iTotal - parseFloat(aObject.iSettleVice ?? 0) - parseFloat(aObject.iCommissionBaccarat) - parseFloat(aObject.iCommissionSlot);
 		}
 
 		data.iCommissionBaccarat = parseFloat(aObject.iCommissionBaccarat ?? 0);
@@ -1508,6 +1457,7 @@
 			data.iSlotWinLose = parseFloat(aObject.iSlotWinLose);
 			data.iPBWinLose = 0;
 			data.iResult = parseFloat(aObject.iTotalViceAdmin ?? 0);
+
 			data.iSettleBeforeAcc = parseFloat(aObject.iSettleAccUser ?? 0);
 			data.iSettleAccTotal = 0;
 			// 부본 죽장
@@ -1664,7 +1614,7 @@
 			let iSWinlose = $(`#swinlose_${settleList[i].strNickname}`).text();
 			let iPWinlose = $(`#pwinlose_${settleList[i].strNickname}`).text();
 			let iRolling = $(`#rolling_${settleList[i].strNickname}`).text();
-			let iResult = $(`#result_${settleList[i].strNickname}`).text();
+			let iResult = settleList[i].iResult ?? 0;
 
 			let fSettleBarccarat = parseFloat($(`#fSettleBaccarat${settleList[i].strNickname}`).val());
 			let fSettleSlot = parseFloat($(`#fSettleSlot${settleList[i].strNickname}`).val());
@@ -1679,7 +1629,6 @@
 			iSWinlose = iSWinlose?.replace(/,/g, '') ?? '0';
 			iPWinlose = iPWinlose?.replace(/,/g, '') ?? '0';
 			iRolling = iRolling?.replace(/,/g, '') ?? '0';
-			iResult = iResult?.replace(/,/g, '') ?? '0';
 			iInputSettle = parseInt(iInputSettle);
 
 			if ( iQuaterSettle > 0 && iQuaterSettle < iInputSettle )
@@ -1732,9 +1681,9 @@
 			list.push(settleList[i].strID);
 			list.push(settleList[i].parentNickname);
 			if (iClass == 5) {
-				list.push(settleList[i].iSettle);
-			} else if (iClass == 4) {
 				list.push(settleList[i].iSettleVice);
+			} else if (iClass == 4) {
+				list.push(settleList[i].iSettle);
 			} else {
 				list.push(0);
 			}

@@ -191,6 +191,9 @@ module.exports = (sequelize, DataTypes) => {
         fRRS: {
             type: DataTypes.FLOAT,
         },
+        iRRTurn:{
+            type: DataTypes.INTEGER,
+        },
 
     }, {
         indexes: [

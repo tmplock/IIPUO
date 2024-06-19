@@ -322,12 +322,14 @@ exports.GetSettleClass = async (strGroupID, iClass, strQuater, dateStart, dateEn
         let subQuery2 = '';
         // 리셋은 하부 합으로 가져오기
         if (iSettleType == 1) {
-            let subQuery3 = `AND iClass = ${parseInt(iClass) + 1}`;
+            let subQuery3 = `AND iClass = ${parseInt(iClass)}`;
+            let subQuery4 = `AND iClass = ${parseInt(iClass) + 1}`;
             subQuery2 = `
                 IFNULL((SELECT sum(iTotal) FROM SettleRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}' ${subQuery3}),0) as iTotal,
                 IFNULL((SELECT sum(iTotal) FROM SettleRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}' AND iTotal < 0 ${subQuery3}),0) as iTotalLose,
                 IFNULL((SELECT sum(iRolling) FROM SettleRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}' ${subQuery3}),0) as iRolling,
-                IFNULL((SELECT sum(iSettleVice) FROM SettleRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}' ${subQuery3}),0) as iSettleVice,
+                IFNULL((SELECT sum(iSettle) FROM SettleRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}' ${subQuery3}),0) as iSettle,
+                IFNULL((SELECT sum(iSettleVice) FROM SettleRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}' ${subQuery4}),0) as iSettleVice,
                 IFNULL((SELECT sum(iCommissionB) FROM SettleRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}' ${subQuery3}),0) as iCommissionBaccarat,
                 IFNULL((SELECT sum(iCommissionS) FROM SettleRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}' ${subQuery3}),0) as iCommissionSlot,
                 
@@ -335,8 +337,7 @@ exports.GetSettleClass = async (strGroupID, iClass, strQuater, dateStart, dateEn
                 IFNULL((SELECT sum(iAgentBetB - iAgentWinB) FROM RecordDailyOverviews WHERE strID = t4.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iBaccaratWinLose,
                 IFNULL((SELECT sum(iAgentBetUO - iAgentWinUO) FROM RecordDailyOverviews WHERE strID = t4.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iUnderOverWinLose,
                 IFNULL((SELECT sum(iAgentBetS - iAgentWinS) FROM RecordDailyOverviews WHERE strID = t4.strID AND date(strDate) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iSlotWinLose,
-                IFNULL((SELECT sum(iSettleVice) FROM SettleRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}' ${subQuery3}),0) as iSettle,
-                IFNULL((SELECT sum(iSettleVice) FROM SettleRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}' ${subQuery3}),0) as iTotalViceAdmin
+                IFNULL((SELECT sum(iSettleVice) FROM SettleRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}' ${subQuery4}),0) as iTotalViceAdmin
             `;
         } else { // 누진은
             if (iSettleType == 0 && iSettleDays == 15 && (strQuater == '5-1' || strQuater == '5-2' || strQuater == '4-2' || strQuater == '4-1' || strQuater == '3-1' || strQuater == '3-2')) {
@@ -346,13 +347,14 @@ exports.GetSettleClass = async (strGroupID, iClass, strQuater, dateStart, dateEn
                 IFNULL((SELECT sum(iTotal) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}'),0) as iTotal,
                 IFNULL((SELECT sum(iTotal) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}' AND iTotal < 0),0) as iTotalLose,
                 IFNULL((SELECT sum(iRolling) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}'),0) as iRolling,
+                IFNULL((SELECT sum(iSettle) FROM SettleRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}'),0) as iSettle,
                 IFNULL((SELECT sum(iSettleVice) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}'),0) as iSettleVice,
                 IFNULL((SELECT sum(iCommissionB) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}'),0) as iCommissionBaccarat,
                 IFNULL((SELECT sum(iCommissionS) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}'),0) as iCommissionSlot,
                 IFNULL((SELECT sum(iBWinlose) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}'),0) as iBaccaratWinLose,
                 IFNULL((SELECT sum(iUWinlose) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}'),0) as iUnderOverWinLose,
                 IFNULL((SELECT sum(iSWinlose) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}'),0) as iSlotWinLose,
-                IFNULL((SELECT sum(iSettleViceAdmin) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}'),0) as iSettle,
+                IFNULL((SELECT sum(iSettleViceAdmin) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}'),0) as iSettleVice,
                 IFNULL((SELECT sum(iTotalViceAdmin) FROM SettleSubRecords WHERE strGroupID LIKE CONCAT(t4.strGroupID, '%') AND strQuater='${strQuater}'),0) as iTotalViceAdmin
             `;
         }
@@ -380,6 +382,7 @@ exports.GetSettleClass = async (strGroupID, iClass, strQuater, dateStart, dateEn
                 IFNULL((SELECT iSettleAfter FROM SettleRecords WHERE strNickname = t4.strNickname AND strQuater='${strQuater}'),0) as iSettleAfter,
                 IFNULL((SELECT iSettleAccTotal FROM SettleRecords WHERE strNickname = t4.strNickname AND strQuater='${strQuater2}'),0) as iSettleAfter2,
                 IFNULL((SELECT iSettleOrigin FROM SettleRecords WHERE strNickname = t4.strNickname AND strQuater='${strQuater}'),0) as iSettleOrigin,
+                IFNULL((SELECT iResult FROM SettleRecords WHERE strNickname = t4.strNickname AND strQuater='${strQuater}'),0) as iResult,
                 IFNULL((SELECT (iSettleAcc - iPayback) FROM SettleRecords WHERE strNickname = t4.strNickname AND strQuater='${strQuater}'),0) as iSettleAcc,
                 IFNULL((SELECT iPayback FROM SettleRecords WHERE strNickname = t4.strNickname AND strQuater='${strQuater}'),0) as iPayback,
                 ${subQuery2}
@@ -421,6 +424,7 @@ exports.GetSettleClass = async (strGroupID, iClass, strQuater, dateStart, dateEn
                 IFNULL((SELECT iSettleAccTotal FROM SettleRecords WHERE strNickname = t5.strNickname AND strQuater='${strQuater}'),0) as iSettleAccTotal,
                 IFNULL((SELECT iSettleAcc FROM SettleRecords WHERE strNickname = t5.strNickname AND strQuater='${strQuater}'),0) as iSettleAccQuater,
                 IFNULL((SELECT iSettle FROM SettleRecords WHERE strNickname = t5.strNickname AND strQuater='${strQuater}'),0) as iSettleComplete,
+                IFNULL((SELECT iSettleVice FROM SettleRecords WHERE strNickname = t5.strNickname AND strQuater='${strQuater}'),0) as iSettleVice,
                 IFNULL((SELECT iSettleGive FROM SettleRecords WHERE strNickname = t5.strNickname AND strQuater='${strQuater}'),0) as iSettleGive,
                 IFNULL((SELECT iSettleBeforeAcc FROM SettleRecords WHERE strNickname = t5.strNickname AND strQuater='${strQuater}'),0) as iSettleBeforeAcc,
                 IFNULL((SELECT iSettleAfter FROM SettleRecords WHERE strNickname = t5.strNickname AND strQuater='${strQuater}'),0) as iSettleAfter,
@@ -428,6 +432,9 @@ exports.GetSettleClass = async (strGroupID, iClass, strQuater, dateStart, dateEn
                 IFNULL((SELECT iSettleOrigin FROM SettleRecords WHERE strNickname = t5.strNickname AND strQuater='${strQuater}'),0) as iSettleOrigin,
                 IFNULL((SELECT (iSettleAcc - iPayback) FROM SettleRecords WHERE strNickname = t5.strNickname AND strQuater='${strQuater}'),0) as iSettleAcc,
                 IFNULL((SELECT iPayback FROM SettleRecords WHERE strNickname = t5.strNickname AND strQuater='${strQuater}'),0) as iPayback,
+
+                IFNULL((SELECT iTotal FROM SettleRecords WHERE strNickname = t5.strNickname AND strQuater='${strQuater}'),0) as iTotal,
+                IFNULL((SELECT iSettleVice FROM SettleRecords WHERE strNickname = t5.strNickname AND strQuater='${strQuater}'),0) as iSettleVice,
 
                 IFNULL((SELECT sum(iAmount) FROM GTs WHERE eType='ROLLING' AND strGroupID LIKE CONCAT(t5.strGroupID, '%') AND date(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iRollingTranslate,
                 IFNULL((SELECT sum(iAmount) FROM GTs WHERE eType='SETTLE' AND strGroupID LIKE CONCAT(t5.strGroupID, '%') AND date(createdAt) BETWEEN '${dateStart}' AND '${dateEnd}'),0) as iSettleTranslate,

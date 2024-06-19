@@ -815,17 +815,31 @@ let GetSettleClass = async (strGroupID, strQuater, dateStart, dateEnd, iClass, i
         if (obj.iClass == 4) {
             // 리셋일 경우 죽장값을 재 계산하기(합계 * 죽장)
             if (iSettleType == 1) {
-                obj.iTotal = obj.iBaccaratWinLose + obj.iUnderOverWinLose + obj.iSlotWinLose - obj.iTotalRolling;
+                if (obj.settleCount == 0) {
+                    obj.iTotal = obj.iBaccaratWinLose + obj.iUnderOverWinLose + obj.iSlotWinLose - obj.iTotalRolling;
 
-                if (obj.iTotal > 0) {
-                    obj.iSettle = obj.iTotal * obj.fSettleBaccarat4 * 0.01;
+                    if (obj.iTotal > 0) {
+                        obj.iSettle = obj.iTotal * obj.fSettleBaccarat4 * 0.01;
+                    } else {
+                        obj.iSettle = 0;
+                    }
+                    obj.iTotalViceAdmin = obj.iTotal - obj.iSettle - obj.iSettleVice - obj.iCommissionSlot - obj.iCommissionBaccarat;
                 } else {
-                    obj.iSettle = 0;
+                    obj.iTotalViceAdmin = obj.iResult;
                 }
-                obj.iTotalViceAdmin = obj.iTotal - obj.iSettle - obj.iSettleVice - obj.iCommissionSlot - obj.iCommissionBaccarat;
             }
         } else if (obj.iClass == 5) {
-            obj.iSettleVice = 0;
+            if (iSettleType == 1) {
+                if (obj.settleCount == 0) {
+                    obj.iTotal = obj.iBaccaratTotal + obj.iUnderOverTotal + obj.iSlotTotal;
+                    if (obj.iTotal > 0) {
+                        obj.iSettleVice = obj.iTotal * obj.fSettleBaccarat5 * 0.01;
+                    } else {
+                        obj.iSettleVice = 0;
+                    }
+                }
+            }
+            obj.iSettle = 0;
         }
         list.push(obj);
     }

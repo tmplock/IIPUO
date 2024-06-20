@@ -1,0 +1,185 @@
+<br><br><br>
+<div class="container">
+    <!--서브페이지들-->
+    <div class="sub-wrap">
+        <div class="subscr">
+            <div class="subtitle">
+                <h1>받은 쪽지함</h1>
+                <button id="used" style="outline:none;width:100px;height:30px;display:inline-block;float:right;margin-top:35px;background-color: rgb(255, 102, 0);color:white;border-radius:3px;" onclick="location.href='/letter/list_write'">보낸 쪽지함</button>
+            </div>
+            <table>
+                <colgroup>
+                    <col style="width:14%;">
+                    <col style="width:10%;">
+                    <col style="width:13%;">
+                    <col style="width:13%;">
+                    <col style="width:10%;">
+                    <col style="width:13%;">
+                </colgroup>
+                <thead>
+                <tr>
+                    <th>구분</th>
+                    <th>제목</th>
+                    <th>내용</th>
+                    <th>날짜</th>
+                    <th>상태</th>
+                    <th>삭제</th>
+                </tr>
+                </thead>
+                <tbody style="text-align: center;" id="listTable">
+                    <!-- <tr>
+                        <td>2023.12.30</td>
+                        <td>로얄카지노</td>
+                        <td>500,000</td>
+                        <td>2024.12.30</td>
+                        <td>로얄카지노</td>
+                        <td><button id="used">삭제</button></td>
+                    </tr>
+                    <tr>
+                        <td>2023.12.30</td>
+                        <td>로얄카지노</td>
+                        <td>500,000</td>
+                        <td>2024.12.30</td>
+                        <td>로얄카지노</td>
+                        <td><button id="used">삭제</button></td>
+                    </tr> -->
+
+                    <!--  게시판 반복 리스트소스 시작-->
+
+                    <!-- <tr>
+                        <td height="34" align="center" class="color_white" colspan="6">받은 쪽지가 없습니다.</td>
+                    </tr> -->
+
+                    <!--  게시판 반복 리스트소스 끝-->
+
+
+                </tbody>
+            </table>
+            <p align="center" style="display: block;font-weight: 400; font-size:14px; color:#DC4F00;">회원님께 수신된 쪽지내역입니다.</p>
+
+            <div class="btn_area_one">
+                <button type="button" onclick="location.href='/letter/write'">쪽지 보내기</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+
+    let RemoveLetter = (id) => {
+
+        //console.log(`RemoveLetter : ${id}`);
+
+        if ( confirm(`쪽지를 삭제 하시겠습니까?`) )
+        {
+            $.ajax({
+                url:"/letter/request_removeletter",
+                type:"POST",
+                context: document.body,
+                data: {
+                    id:id
+                },
+                success: function (obj) {
+
+                    if( obj.result == 'OK' )
+                    {
+                        alert('삭제 되었습니다.');
+                        location.reload();					
+                    }
+                }
+            });
+        }
+    }
+
+    let ToggleContents = (id) => {
+
+        //console.log(`ToggleContents : ${id}`);
+
+        
+        const eState = $(`#${id}_state`).text();
+        //console.log(eState);
+        if ( eState == '읽지않음' )
+        {
+            $.ajax({
+                type:'post',
+                url: "/letter/request_letterread",
+                context: document.body,
+                data:{id:id},
+
+                success:function(data) {
+
+                    //console.log(data);
+
+                    if ( data.result == 'OK' )
+                    {
+                        $(`#${id}_state`).css("color", "red");
+                        $(`#${id}_state`).text("읽음");
+                        $(`#${id}`).show();
+                    }
+                }
+            });
+        }
+        else
+        {
+            $(`#${id}`).show();
+        }
+    }
+
+    let RequestLetterWrite = () => {
+
+        $.ajax({
+            type:'post',
+            url: "/letter/request_listreceivingletter",
+            context: document.body,
+            data:{strID:user.strNickname},
+
+            success:function(data) {
+
+                //console.log(data);
+
+                let tag = '';
+                if ( data.length > 0 )
+                {
+                    for ( let i in data )
+                    {
+                        let eState = '읽지않음';
+                        let color = 'white';
+                        if ( data[i].eRead == 'READED' ){
+                            eState = '읽음';
+                            color = 'red';
+                        }
+                        tag += 
+                        `
+                            <tr>
+                                <td>${i}</td>
+                                <td>${data[i].strSubject}</td>
+                                <td><a href="javascript:ToggleContents('${data[i].id}')">${data[i].strContents}</a></td>
+                                <td>${data[i].createdAt}</td>
+                                <td id="${data[i].id}_state" style="color:${color}">${eState}</td>
+                                <td><button onclick="RemoveLetter(${data[i].id});">삭제</button></td>
+                            </tr>
+                            <tr id="${data[i].id}" style="display:none;">
+                                <td class="list1">내용:</td>
+                                <td class="list2" colspan="3">${data[i].strContents}</td>                                                          
+                            </tr>
+
+                        `;
+                    }
+                }
+                else
+                {
+                    tag = 
+                    `
+                        <tr>
+                            <td height="34" align="center" class="color_white" colspan="6">받은 쪽지가 없습니다.</td>
+                        </tr>
+                    `;
+                }
+                $('#listTable').append(tag);
+            }
+        });
+    }
+
+    RequestLetterWrite();
+</script>

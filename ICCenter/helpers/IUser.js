@@ -19,7 +19,7 @@ exports.FindUserFromDB = async (strID) => {
 exports.AddUser = async (strID, strNickname, strGroupID, iClass, iCash) => {
 
     console.log(`##### IUser::AddUser`);
-    await redis.GetAllKeys();
+    await redis.GetAllContainedKeys(REDISKEY_USER);
 
     const exist = await redis.GetCache(`${REDISKEY_USER}${strID}`);
     if ( exist == null )
@@ -36,7 +36,7 @@ exports.AddUser = async (strID, strNickname, strGroupID, iClass, iCash) => {
 exports.GetUser = async (strID) => {
 
     console.log(`IUser::GetUser `);
-    await redis.GetAllKeys();
+    await redis.GetAllContainedKeys(REDISKEY_USER);
 
     const exist = await redis.GetCache(`${REDISKEY_USER}${strID}`);
     if ( exist != null )
@@ -70,7 +70,7 @@ exports.GetUserCash = async (strID) => {
 exports.UpdateUserCash = async (strID, iCash) => {
 
     console.log(`IUser::UpdateUserCash `);
-    await redis.GetAllKeys();
+    await redis.GetAllContainedKeys(REDISKEY_USER);
 
     let objectData = await this.GetUser(strID);
 
@@ -91,7 +91,7 @@ exports.UpdateUserCash = async (strID, iCash) => {
 exports.IncrementUserCash = async (strID, iAmount) => {
     
     console.log(`IUser::IncrementUserCash `);
-    await redis.GetAllKeys();
+    await redis.GetAllContainedKeys(REDISKEY_USER);
 
     let objectData = await this.GetUser(strID);
     if ( objectData != null )
@@ -106,7 +106,7 @@ exports.IncrementUserCash = async (strID, iAmount) => {
 exports.DecrementUserCash = async (strID, iAmount) => {
 
     console.log(`IUser::DecrementUserCash `);
-    await redis.GetAllKeys();
+    await redis.GetAllContainedKeys(REDISKEY_USER);
 
     let objectData = await this.GetUser(strID);
     if ( objectData != null )

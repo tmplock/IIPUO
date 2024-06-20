@@ -87,8 +87,24 @@ exports.GetAllKeys = async () => {
 
 exports.DeleteAllKeys = async () => {
 
-    const keys = await redis.keys('PATTERN:*');
-    //const keys = await redis.keys('*');
+    // const keys = await redis.keys('PATTERN:*');
+    // //const keys = await redis.keys('*');
 
-    await redis.del(keys);
+    // await redis.del(keys);
+
+    const keys = await redis.keys('*');
+
+    if ( keys.length > 0 )
+    {
+        for ( let i in keys )
+        {
+            await redis.del(keys[i]);
+        }
+        // const values = await redis.mget(keys);
+
+        // for ( let i in values )
+        // {
+        //     list.push(JSON.parse(values[i]))
+        // }
+    }
 }

@@ -76,20 +76,27 @@ exports.GetUserCash = async (strID) => {
 
 exports.UpdateUserCash = async (strID, iCash, eType) => {
 
-    console.log(`IUser::UpdateUserCash ${strID}, ${iCash}, ${eType}`);
-    await redis.GetAllContainedKeys(REDISKEY_USER);
-
-    let objectData = await this.GetUser(strID);
-
-    if ( objectData != null )
+    try
     {
-        objectData.iCash = iCash;
-
-        await redis.SetCache(`${REDISKEY_USER}${strID}`, objectData);
-
-        await db.Users.update({iCash:iCash}, {where:{strID:strID}});
-
-        return objectData;
+        console.log(`IUser::UpdateUserCash ${strID}, ${iCash}, ${eType}`);
+        await redis.GetAllContainedKeys(REDISKEY_USER);
+    
+        let objectData = await this.GetUser(strID);
+    
+        if ( objectData != null )
+        {
+            objectData.iCash = iCash;
+    
+            await redis.SetCache(`${REDISKEY_USER}${strID}`, objectData);
+    
+            await db.Users.update({iCash:iCash}, {where:{strID:strID}});
+    
+            return objectData;
+        }
+    }
+    catch 
+    {
+        return null;
     }
 
     return null;

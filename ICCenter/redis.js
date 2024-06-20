@@ -87,8 +87,8 @@ exports.GetAllKeys = async () => {
 
 exports.DeleteAllKeys = async () => {
 
-    //const keys = await redis.keys('PATTERN:*');
-    const keys = await redis.keys('*');
+    const keys = await redis.keys('PATTERN:*');
+    //const keys = await redis.keys('*');
 
     await redis.del(keys);
 }

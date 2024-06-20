@@ -7,32 +7,36 @@ router.use(express.urlencoded({extended:false}));
 const db = require('../db');
 
 const IBettingManager = require('../helpers/IBettingManager');
+const IUser = require('../helpers/IUser');
 
 router.post('/authenticate', async (req, res) => {
 
     console.log('##################################################/game/authenticate');
     console.log(req.body);
 
-    if ( req.body.strToken != undefined )
+    // if ( req.body.strToken != undefined )
+    // {
+    //     const user = await db.Users.findOne({where:{vivoToken:req.body.strToken}});
+
+    //     if ( user != null )
+    //     {
+    //         //res.send({result:'OK', strID:user.strID, strNickname:user.strNickname, iCash:user.iCash, iSessionID:req.session.id, strIP: user.strIP});
+    //     }
+    //     else
+    //     {
+    //         res.send({result:'Error'});
+    //     }
+    // }
+    // else if ( req.body.strID != undefined )
+    if ( req.body.strID != undefined )
     {
-        const user = await db.Users.findOne({where:{vivoToken:req.body.strToken}});
+        //const user = await db.Users.findOne({where:{strID:req.body.strID}});
+        const user = await IUser.GetUser(req.body.strID);
 
         if ( user != null )
         {
-            res.send({result:'OK', strID:user.strID, strNickname:user.strNickname, iCash:user.iCash, iSessionID:req.session.id, strIP: user.strIP});
-        }
-        else
-        {
-            res.send({result:'Error'});
-        }
-    }
-    else if ( req.body.strID != undefined )
-    {
-        const user = await db.Users.findOne({where:{strID:req.body.strID}});
-
-        if ( user != null )
-        {
-            res.send({result:'OK', strID:user.strID, strNickname:user.strNickname, iCash:user.iCash, iSessionID:req.session.id, strIP: user.strIP});
+            //res.send({result:'OK', strID:user.strID, strNickname:user.strNickname, iCash:user.iCash, iSessionID:req.session.id, strIP: user.strIP});
+            res.send({result:'OK', strID:user.strID, strNickname:user.strNickname, iCash:user.iCash, iSessionID:'', strIP:''});
         }
         else
         {

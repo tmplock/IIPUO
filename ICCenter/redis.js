@@ -80,7 +80,7 @@ exports.GetAllKeys = async () => {
         }
     }
 
-    console.log(list);
+    //console.log(list);
     //console.log(values);
     return list;
 }
@@ -101,7 +101,7 @@ exports.GetAllContainedKeys = async (strToken) => {
         }
     }
 
-    console.log(list);
+    //console.log(list);
     return list;
 }
 

@@ -9,7 +9,7 @@ exports.FindUserFromDB = async (strID) => {
     const user = await db.Users.findOne({where:{strID:strID}});
     if ( user != null )
     {
-        const data = {strNickname:user.strNickname, strGroupID:user.strGroupID, iClass:user.iClass, iCash:user.iCash};
+        const data = {strID:strID, strNickname:user.strNickname, strGroupID:user.strGroupID, iClass:user.iClass, iCash:user.iCash};
         return data;
     }
 
@@ -24,7 +24,7 @@ exports.AddUser = async (strID, strNickname, strGroupID, iClass, iCash) => {
     const exist = await redis.GetCache(`${REDISKEY_USER}${strID}`);
     if ( exist == null )
     {
-        const data = {strNickname:strNickname, strGroupID:strGroupID, iClass:iClass, iCash:iCash};
+        const data = {strID:strID, strNickname:strNickname, strGroupID:strGroupID, iClass:iClass, iCash:iCash};
         await redis.SetCache(`USER_${strID}`, data);
     }
     else

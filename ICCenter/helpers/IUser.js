@@ -129,7 +129,7 @@ exports.DecrementUserCash = async (strID, iAmount, eType) => {
     }
 }
 
-cron.schedule('*/10 * * * * ', async ()=> {
+cron.schedule('*/10 *  * * * * ', async ()=> {
 
     let listUsers = await redis.GetAllContainedKeys(REDISKEY_USER);
 

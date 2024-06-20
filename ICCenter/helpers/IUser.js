@@ -48,7 +48,7 @@ exports.GetUser = async (strID) => {
         const found = await this.FindUserFromDB(strID);
         if ( found != null )
         {
-            await this.AddUser(found.strID, found.strNickname, found.strGroupID, found.iClass, found.iCash);
+            await this.AddUser(strID, found.strNickname, found.strGroupID, found.iClass, found.iCash);
             return found;
         }        
     }

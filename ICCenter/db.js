@@ -41,6 +41,7 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 db.Users = require('./models/user')(sequelize, Sequelize);
+db.RecordBets = require('./models/recordbet')(sequelize, Sequelize);
 // db.RecordBets = require('./models/recordbet')(sequelize, Sequelize);
 // db.RecordDailyOverviews = require('./models/RecordDailyOverview')(sequelize, Sequelize);
 // db.Inouts = require('./models/inout')(sequelize, Sequelize);

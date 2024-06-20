@@ -76,7 +76,7 @@ exports.GetUserCash = async (strID) => {
 
 exports.UpdateUserCash = async (strID, iCash, eType) => {
 
-    console.log(`IUser::UpdateUserCash ${strID}, ${iAmount}, ${eType}`);
+    console.log(`IUser::UpdateUserCash ${strID}, ${iCash}, ${eType}`);
     await redis.GetAllContainedKeys(REDISKEY_USER);
 
     let objectData = await this.GetUser(strID);

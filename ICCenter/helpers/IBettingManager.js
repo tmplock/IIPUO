@@ -32,7 +32,7 @@ exports.ProcessBet = async (strID, strNickname, strGroupID, iClass, iBalance, iG
 
     console.log(`##### exports.ProcessBet : ${strID}`);
     //await UpdateUserCash(strID, -parseInt(iBet), `BET:${strVender},${strGameID},${strTableID}`);
-    await IUser.DecrementUserCash(strID, iBet);
+    await IUser.DecrementUserCash(strID, iBet, 'BET');
 
     await CreateBet(strID, strNickname, strGroupID, iClass, iBalance, iGameCode, strVender, strGameID, strTableID, strRound, strUniqueID, strDetail, strResult, iTarget, iBet, 0, 'STANDBY', 'BET', strURL);
 }
@@ -42,7 +42,7 @@ exports.ProcessWin = async (strID, strNickname, strGroupID, iClass, iBalance, iG
     if ( parseInt(iWin) <= 0 )
         return;
 
-    await IUser.IncrementUserCash(strID, iWin);
+    await IUser.IncrementUserCash(strID, iWin, 'WIN');
 
     await CreateBet(strID, strNickname, strGroupID, iClass, iBalance, iGameCode, strVender, strGameID, strTableID, strRound, strUniqueID, strDetail, strResult, iTarget, 0, iWin, 'STANDBY', 'WIN', strURL);
     //await UpdateUserCash(strID, iWin, `WIN:${strVender},${strGameID},${strTableID}`);
@@ -117,7 +117,7 @@ exports.ProcessCancel = async (strUniqueID) => {
                     await db.RecordBets.update({eState:'COMPLETE', eType:'CANCEL_BET'}, {where:{id:bet.id}});
 
                 //await UpdateUserCash(bet.strID, bet.iBet, `CANCEL:${bet.strVender},${bet.strGameID},${bet.strTableID}`);
-                await IUser.IncrementUserCash(strID, bet.iBet);
+                await IUser.IncrementUserCash(strID, bet.iBet, 'CANCEL');
                 break;
             case 'WIN':
                 if ( bet.eState == 'COMPLETE' )
@@ -126,7 +126,7 @@ exports.ProcessCancel = async (strUniqueID) => {
                     await db.RecordBets.update({eState:'COMPLETE', eType:'CANCEL_WIN'}, {where:{id:bet.id}});
 
                 //await UpdateUserCash(bet.strID, -parseInt(bet.iWin), `CANCEL:${bet.strVender},${bet.strGameID},${bet.strTableID}`);
-                await IUser.DecrementUserCash(strID, bet.iWin);
+                await IUser.DecrementUserCash(strID, bet.iWin, 'CANCEL');
                 break;
             // case 'BETWIN':
             //     {

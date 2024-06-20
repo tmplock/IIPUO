@@ -90,15 +90,11 @@ exports.GetAllContainedKeys = async (strToken) => {
     let list = [];
 
     const keys = await redis.keys(`${strToken}*`);
-    //console.log(keys);
 
     if ( keys.length > 0 )
     {
         const values = await redis.mget(keys);
 
-        // console.log(`################################################## REDIS GET ALL KEYS`);
-        // console.log(values);
-    
         for ( let i in values )
         {
             list.push(JSON.parse(values[i]))
@@ -106,7 +102,6 @@ exports.GetAllContainedKeys = async (strToken) => {
     }
 
     console.log(list);
-    //console.log(values);
     return list;
 }
 

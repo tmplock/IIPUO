@@ -1,5 +1,7 @@
-const db = require('../db');
 
+const cron = require('node-cron');
+
+const db = require('../db');
 const redis = require('../redis');
 
 const REDISKEY_USER = 'USER_';
@@ -26,7 +28,6 @@ exports.FindUserFromDB = async (strID) => {
 exports.AddUser = async (strID, strNickname, strGroupID, iClass, iCash) => {
 
     console.log(`##### IUser::AddUser`);
-    await redis.GetAllContainedKeys(REDISKEY_USER);
 
     try 
     {
@@ -43,7 +44,6 @@ exports.AddUser = async (strID, strNickname, strGroupID, iClass, iCash) => {
 exports.GetUser = async (strID) => {
 
     console.log(`IUser::GetUser `);
-    await redis.GetAllContainedKeys(REDISKEY_USER);
 
     const exist = await redis.GetCache(`${REDISKEY_USER}${strID}`);
     if ( exist != null )
@@ -79,7 +79,6 @@ exports.UpdateUserCash = async (strID, iCash, eType) => {
     try
     {
         console.log(`IUser::UpdateUserCash ${strID}, ${iCash}, ${eType}`);
-        await redis.GetAllContainedKeys(REDISKEY_USER);
     
         let objectData = await this.GetUser(strID);
     
@@ -105,7 +104,6 @@ exports.UpdateUserCash = async (strID, iCash, eType) => {
 exports.IncrementUserCash = async (strID, iAmount, eType) => {
     
     console.log(`IUser::IncrementUserCash ${strID}, ${iAmount}, ${eType}`);
-    await redis.GetAllContainedKeys(REDISKEY_USER);
 
     let objectData = await this.GetUser(strID);
     if ( objectData != null )
@@ -120,7 +118,6 @@ exports.IncrementUserCash = async (strID, iAmount, eType) => {
 exports.DecrementUserCash = async (strID, iAmount, eType) => {
 
     console.log(`IUser::DecrementUserCash ${strID}, ${iAmount}, ${eType}`);
-    await redis.GetAllContainedKeys(REDISKEY_USER);
 
     let objectData = await this.GetUser(strID);
     if ( objectData != null )
@@ -131,3 +128,14 @@ exports.DecrementUserCash = async (strID, iAmount, eType) => {
         await this.UpdateUserCash(strID, iCash, eType);
     }
 }
+
+cron.schedule('*/10 * * * * ', async ()=> {
+
+    let listUsers = await redis.GetAllContainedKeys(REDISKEY_USER);
+
+    console.log(`################################################## REDIS USERS`);
+    for ( let i in listUsers )
+    {
+        console.log(`strID : ${listUsers[i].strID}, iCash : ${listUsers[i].iCash}`);        
+    }
+});

@@ -9,7 +9,7 @@ exports.FindUserFromDB = async (strID) => {
     const user = await db.Users.findOne({where:{strID:strID}});
     if ( user != null )
     {
-        const data = {strNickname:strNickname, strGroupID:strGroupID, iClass:iClass, iCash:iCash};
+        const data = {strNickname:user.strNickname, strGroupID:user.strGroupID, iClass:user.iClass, iCash:user.iCash};
         return data;
     }
 

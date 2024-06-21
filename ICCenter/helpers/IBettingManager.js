@@ -117,7 +117,7 @@ exports.ProcessCancel = async (strUniqueID) => {
                     await db.RecordBets.update({eState:'COMPLETE', eType:'CANCEL_BET'}, {where:{id:bet.id}});
 
                 //await UpdateUserCash(bet.strID, bet.iBet, `CANCEL:${bet.strVender},${bet.strGameID},${bet.strTableID}`);
-                await IUser.IncrementUserCash(strID, bet.iBet, 'CANCEL');
+                await IUser.IncrementUserCash(bet.strID, bet.iBet, 'CANCEL');
                 break;
             case 'WIN':
                 if ( bet.eState == 'COMPLETE' )
@@ -126,7 +126,7 @@ exports.ProcessCancel = async (strUniqueID) => {
                     await db.RecordBets.update({eState:'COMPLETE', eType:'CANCEL_WIN'}, {where:{id:bet.id}});
 
                 //await UpdateUserCash(bet.strID, -parseInt(bet.iWin), `CANCEL:${bet.strVender},${bet.strGameID},${bet.strTableID}`);
-                await IUser.DecrementUserCash(strID, bet.iWin, 'CANCEL');
+                await IUser.DecrementUserCash(bet.strID, bet.iWin, 'CANCEL');
                 break;
             // case 'BETWIN':
             //     {

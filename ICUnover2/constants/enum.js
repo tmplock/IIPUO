@@ -1,24 +1,3 @@
-// const EnumPopupPage = Object.freeze(
-//     {
-//         "eNone":0, 
-//         "eLogin":1, 
-//         "eRegister":2, 
-//         "eInput":3, 
-//         "Banker":4, 
-//         "BankerUnder":5, 
-//         "BankerOver":6, 
-//         "PlayerPair":7, 
-//         "BankerPair":8, 
-//         "EitherPair":9, 
-//         "PerfectPair":10, 
-//         //
-//         "Evolution":11,
-//         "Blackjack":12,
-//         "Roulette":13,
-//         "Slot":14,
-//         "Max":15
-//     }
-// );
 const EnumPopupPage = Object.freeze({
     "eNone":0, 
     "eLogin":1, 

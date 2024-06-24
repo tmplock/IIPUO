@@ -298,6 +298,78 @@ router.post('/bettingrecord', isLoggedIn, async (req, res) => {
     res.render('manage_partner/popup_bettingrecord', {iLayout:2, iHeaderFocus:8, agent:agent, overview:overview, bettingrecord:bettingrecord, strParent:parents.strParents});
 });
 
+//  test
+router.post('/ur', isLoggedIn, async (req, res) => {
+    res.render('manage_partner/popup_ur', {iLayout:1 });
+});
+
+router.post('/request_finduserur', async (req, res) => {
+
+    console.log(`/manage_partner_popup/request_finduserur`);
+    console.log(req.body);
+
+    const user = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
+    if ( user != null )
+    {
+        res.send({result:'OK', strNickname:user.strNickname, fRRB:user.fRRB, fRRS:user.fRRS, iRRTurn:user.iRRTurn});
+    }
+    else
+    {
+        res.send({reuslt:'Error'});
+    }
+});
+
+router.post('/request_saveuserur', async (req, res) => {
+
+    console.log(`/manage_partner_popup/request_saveuserur`);
+    console.log(req.body);
+
+    const found = await db.RecordChangeURs.findOne({where:{strNickname:req.body.strNickname}});
+    if ( found != null )
+    {
+        //await db.Users.update({fRRB:req.body.fRRB, fRRS:req.body.fRRS, iRRTurn:req.body.iRRTurn}, {where:{strNickname:req.body.strNickname}});
+
+        await db.RecordChangeURs.update({fRRB:req.body.fRRB, fRRS:req.body.fRRS, iRRTurn:req.body.iRRTurn}, {where:{strNickname:req.body.strNickname}})
+    }
+    else
+    {
+        await db.RecordChangeURs.create({strNickname:req.body.strNickname, fRRB:req.body.fRRB, fRRS:req.body.fRRS, iRRTurn:req.body.iRRTurn});
+    }
+    await db.Users.update({fRRB:req.body.fRRB, fRRS:req.body.fRRS, iRRTurn:req.body.iRRTurn}, {where:{strNickname:req.body.strNickname}});
+
+
+    res.send({result:'OK'});
+
+    // const user = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
+    // if ( user != null )
+    // {
+    //     res.send({result:'OK', strNickname:user.strNickname, fRRB:user.fRRB, fRRS:user.fRRS, iRRTurn:user.iRRTurn});
+    // }
+    // else
+    // {
+    //     res.send({reuslt:'Error'});
+    // }
+});
+
+router.post('/request_changeurlist', async (req, res) => {
+
+    console.log(`/manage_partner_popup/request_changeurlist`);
+    console.log(req.body);
+
+    let list = await db.RecordChangeURs.findAll();
+
+    res.send({result:'OK', list:list});
+
+    // const user = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
+    // if ( user != null )
+    // {
+    //     res.send({result:'OK', strNickname:user.strNickname, fRRB:user.fRRB, fRRS:user.fRRS, iRRTurn:user.iRRTurn});
+    // }
+    // else
+    // {
+    //     res.send({reuslt:'Error'});
+    // }
+});
 
 // router.post('/memos', isLoggedIn, async (req, res) => {
 
@@ -947,6 +1019,13 @@ router.post('/request_register', isLoggedIn, async(req, res) => {
         let strAccountOwner = req.body.strAccountOwner ?? '';
         if (strAccountOwner != '') {
             // strAccountOwner = await IAgent.GetCipher(strAccountOwner);
+        }
+
+        let iSettleDays = null;
+        let iSettleType = null;
+        if (iClass <= 5) {
+            iSettleDays = req.body.iSettleDays ?? 15;
+            iSettleType = req.body.iSettleType ?? 0;
         }
 
         for (let i = 0; i < iAutoRegisterNumber; i++) {

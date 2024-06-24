@@ -934,7 +934,8 @@ router.post('/request_outputstate', isLoggedIn, async (req, res) => {
     console.log(req.body);
 
     // 권한체크
-    if (req.user.iPermission == 100 || req.user.iClass != 2) {
+    //if (req.user.iPermission == 100 || req.user.iClass != 2) {
+    if (req.user.iPermission == 100 || req.user.iClass < 3 || req.user.iClass <= 1 ) {
         res.send({result:"FAIL"});
         return;
     }

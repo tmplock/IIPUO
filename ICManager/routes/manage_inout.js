@@ -558,8 +558,15 @@ router.post('/request_inputstate', isLoggedIn, async (req, res) => {
     console.log(req.body);
 
     // 권한체크
+    if ( req.user.iClass != 2 && req.user.iClass != 3 )
+    {
+        res.send({result:"FAIL"});
+        return;
+    }
+    
+
     //if (req.user.iPermission == 100 || req.user.iClass != 2) {
-    if (req.user.iPermission == 100 || req.user.iClass < 3 || req.user.iClass <= 1 ) {
+        if (req.user.iPermission == 100 ) {
         res.send({result:"ERROR"});
         return;
     }
@@ -935,7 +942,17 @@ router.post('/request_outputstate', isLoggedIn, async (req, res) => {
 
     // 권한체크
     //if (req.user.iPermission == 100 || req.user.iClass != 2) {
-    if (req.user.iPermission == 100 || req.user.iClass < 3 || req.user.iClass <= 1 ) {
+    //if (req.user.iPermission == 100 || req.user.iClass < 3 || req.user.iClass <= 1 ) {
+
+    if ( req.user.iClass != 2 && req.user.iClass != 3 )
+    {
+        res.send({result:"FAIL"});
+        return;
+        
+    }
+
+    if ( req.user.iPermission == 100 ) {
+
         res.send({result:"FAIL"});
         return;
     }

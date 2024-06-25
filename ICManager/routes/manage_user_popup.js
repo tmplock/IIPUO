@@ -347,16 +347,22 @@ router.post('/request_targetclassagentlist', isLoggedIn, async(req, res) => {
 
 router.post('/request_gt', isLoggedIn, async(req, res) => {
     console.log(req.body);
-
+    
     if ( req.body.eType == 'GIVE' )
     {
-        if (req.user.iClass == 3 || req.user.iPermission == 100) {
-            res.send({result:'FAIL', reason:''});
-            return;
-        }
+        
+        // if (req.user.iClass == 3 || req.user.iPermission == 100) {
+        //     res.send({result:'FAIL', reason:''});
+        //     return;
+        // }
 
         let to = await db.Users.findOne({where:{strNickname:req.body.strTo}});
         let from = await db.Users.findOne({where:{strNickname:req.body.strFrom}});
+        if(req.body.strPassword != from.strPassword)
+        {
+            res.send({result:'FAIL', reason:'Password Wong'});
+            return;
+        }
 
         let cAmount = parseInt(req.body.iAmount);
         if (Number.isNaN(cAmount)) {
@@ -418,13 +424,19 @@ router.post('/request_gt', isLoggedIn, async(req, res) => {
     }
     else if ( req.body.eType == 'TAKE' )
     {
-        if (req.user.iClass == 3 || req.user.iPermission == 100) {
-            res.send({result:'FAIL', reason:''});
-            return;
-        }
+        // if (req.user.iClass == 3 || req.user.iPermission == 100) {
+        //     res.send({result:'FAIL', reason:''});
+        //     return;
+        // }
 
         let to = await db.Users.findOne({where:{strNickname:req.body.strTo}});
         let from = await db.Users.findOne({where:{strNickname:req.body.strFrom}});
+
+        if(req.body.strPassword != from.strPassword)
+        {
+            res.send({result:'FAIL', reason:'Password Wong'});
+            return;
+        }
 
         const iFromCash = from.iCash + parseInt(req.body.iAmount);
         const iToCash = to.iCash - parseInt(req.body.iAmount);

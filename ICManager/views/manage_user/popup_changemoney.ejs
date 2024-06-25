@@ -20,7 +20,7 @@
 	<link href='//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css' rel='stylesheet' type='text/css'>
 </head>
 
-<body style="font-family:'Spoqa Han Sans Neo';">
+<body style="font-family:'Spoqa Han Sans Neo'; font-size: 20px;">
 	<div class="sub_wrap">
 		<div class="container clearfix">
 			
@@ -78,13 +78,13 @@
 						<colgroup>
 							<col style="width:8%">
 							<col style="width:8%">
+							<col style="width:15%">
+							<col style="width:15%">
+							<col style="width:15%">
+							<col style="width:15%">
+							<col style="width:15%">
+							<col style="width:15%">
 							<col style="width:10%">
-							<col style="width:15%">
-							<col style="width:15%">
-							<col style="width:15%">
-							<col style="width:15%">
-							<col style="width:15%">
-							<col style="width:8%">
 						</colgroup>
 						<thead>
 							<tr>
@@ -140,7 +140,7 @@
 		</div>
 	</div>
 
-	<div class="modal-process" id="modal_alert">
+	<div class="modal-process" id="modal_alert" style="z-index: 9999;">
 		<div class="modal_body" id="modal_body">
 			<h2>처리중입니다</h2>
 			<p style="font-size: 16px;">잠시만 기다려 주세요</p>
@@ -259,8 +259,8 @@
             //                 </td>`;
             // }
 			let inoutTag = `<td style="background-color:${bgcolor};">
-                            <a id="pay_${userlist[i].strNickname}" class="pay-btn" style="border: 1px solid green;display:inline-block;font-weight:bold;border-radius:4px;background-color:blue;width:30px;color:white;" href="#" id="partner_adjustinput" iCash="${user.iCash}" strnickname="${userlist[i].strNickname}" strgroupid="${userlist[i].strGroupID}" iclass="${userlist[i].iClass}">지급</a>
-                            <a id="deduct_${userlist[i].strNickname}" class="deduct-btn" style="border: 1px solid green;display:inline-block;font-weight:bold;border-radius:4px;background-color:red;width:30px;color:white;" href="#" id="partner_adjustoutput" iCash="${userlist[i].iCash}" strnickname="${userlist[i].strNickname}" strgroupid="${userlist[i].strGroupID}" iclass="${userlist[i].iClass}">차감</a>
+                            <a id="pay_${userlist[i].strNickname}" class="pay-btn" style="border: 1px solid red; display:inline-block; font-weight:bold; border-radius:4px; background-color:transparent; width:70px; color:black;" href="#" id="partner_adjustinput" iCash="${user.iCash}" strnickname="${userlist[i].strNickname}" strgroupid="${userlist[i].strGroupID}" iclass="${userlist[i].iClass}">알지급</a>
+                            <a id="deduct_${userlist[i].strNickname}" class="deduct-btn" style="border: 1px solid blue; display:inline-block; font-weight:bold; border-radius:4px; background-color:transparent; width:70px; color:black;" href="#" id="partner_adjustoutput" iCash="${userlist[i].iCash}" strnickname="${userlist[i].strNickname}" strgroupid="${userlist[i].strGroupID}" iclass="${userlist[i].iClass}">알차감</a>
                         </td>`;
             // let class4 = userlist[i].iClass >= 4 ? `${userlist[i].lev2}` : '';
             // let class5 = userlist[i].iClass >= 5 ? `${userlist[i].lev3}` : '';
@@ -295,7 +295,7 @@
                     <td style='background-color:${bgcolor};'><font color="${GetClassSettleColor(userlist[i].iCurrentRolling, iRootClass)}">${GetNumber(userlist[i].iCurrentRolling)}</font></td>
                     <td style='background-color:${bgcolor};'>${strCreatedAt}</td>
                     <td style='background-color:${bgcolor};'>
-						<a id="adjust_${userlist[i].strNickname}" href="#" style="border: 1px solid green; display:inline-block; font-weight:bold; border-radius:4px; background-color:blue; width:30px; color:white;"onclick="openDetail('${userlist[i].strNickname}','${userlist[i].strGroupID}','${userlist[i].iClass}','${userlist[i].iPermission}')">상세보기</a>
+						<a id="adjust_${userlist[i].strNickname}" href="#" style="border: 1px solid black; display:inline-block; font-weight:bold; border-radius:4px; background-color:white; width:80px; color:black;"onclick="OnClickNickname('${userlist[i].strNickname}')">상세보기</a>
 					</td>
                 </tr>`;
 
@@ -486,6 +486,7 @@
 
 			let strTarget = $('#strNickname').val();
 			let iMoney = $('#exchangeAmount').val();
+			let strPassword = $('#changemoneypw').val();
 			iMoney = parseInt(iMoney.replace(/,/g, ''));
 			// iMoney = parseInt(iMoney);
 			if (Number.isNaN(iMoney)) {
@@ -516,7 +517,7 @@
 					type: 'post',
 					url: "/manage_user_popup/request_gt",
 					context: document.body,
-					data: {strTo: strTarget, strFrom: user.strNickname, iAmount: iMoney, eType: eGTType},
+					data: {strTo: strTarget, strFrom: user.strNickname, iAmount: iMoney, eType: eGTType, strPassword:strPassword},
 
 					success: (obj) => {
 						isSending = false;
@@ -526,7 +527,10 @@
 						} else {
 							if (obj.reason == 'NOTENOUGH') {
 								alert(strAlertErrorNotEnoughMoney);
-							} else {
+							} else if(obj.reason == 'Password Wong'){
+								alert('비밀번호가 일치하지 않습니다.');
+							}
+							else {
 								alert(strAlertComplete);
 								window.opener.location.reload(true);
 							}

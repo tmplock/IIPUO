@@ -9,6 +9,7 @@ const {Op} = require('sequelize');
 
 app.use('/account', require('./routes/account'));
 app.use('/game', require('./routes/game'));
+app.use('/inout', require('./routes/inout'));
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');

@@ -32,7 +32,7 @@ exports.AddUser = async (strID, strNickname, strGroupID, iClass, iCash) => {
     try 
     {
         const data = {strID:strID, strNickname:strNickname, strGroupID:strGroupID, iClass:iClass, iCash:iCash};
-        await redis.SetCache(`USER_${strID}`, data);
+        await redis.SetCache(`${REDISKEY_USER}${strID}`, data);
         return data;
     }
     catch

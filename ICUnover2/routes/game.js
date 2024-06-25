@@ -55,11 +55,6 @@ router.post('/sm', async (req, res) => {
     console.log('################################################## /game/sm');
     console.log(req.body);
 
-    if (process.env.IS_TEST == 1) {
-        res.render('sm', {iLayout:1, strVender:req.body.strGame, listGames:[], data: {}, count:0, ePublishing:global.ePublishing});
-        return;
-    }
-
     let objectData = {strVender:req.body.strGame, strGameKey:req.body.strGameKey, strID:req.user.strID};
     let res_axios = await RequestAxios(`${global.strVenderAddress}/game/slotlist`, objectData);
 
@@ -85,11 +80,6 @@ router.post('/', async (req, res) => {
     }
     else
     {
-        if (process.env.IS_TEST == 1) {
-            if (req.body.strGame != 'LIVE_EZUGI') {
-                return res.send('');
-            }
-        }
         //let objectData = {strID:req.user.strID, strAgentCode:IAccount.strAgentCode, strSecretCode:IAccount.strSecretCode, strGameKey:req.body.strGameKey};
         let objectData = {strID:req.user.strID, strAgentCode:IAccount.strAgentCode, strSecretCode:IAccount.strSecretCode, strVender:req.body.strGame, strGameKey:req.body.strGameKey, strReturnURL:req.get('origin')+'/game'};
 

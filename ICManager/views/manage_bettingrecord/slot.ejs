@@ -141,7 +141,7 @@
                 if ( obj.result == 'OK' )
                 {
                     const total = obj.totalCount ?? 0;
-                    SetSlotBettingList(obj.data, getNo(iLimit, total, iCurrentPage, 0));
+                    SetSlotBettingList(obj.data, getNo(iLimit, total, iCurrentPage, 0), user.iClass);
 
                     $('#pagination').empty();
                     $('#pagination').append(getPagination(iLimit, obj.totalCount, iCurrentPage));

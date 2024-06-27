@@ -212,3 +212,21 @@ $(document).on('click', "#manage_bankaccount", (event) => {
     $form.append(strNickname).append(strGroupID).append(iClass).append(iPermission);
     $form.submit();
 })
+
+$(document).on('click', '#manage_change_money', (event)=> {
+    // window.open('', 'popupChk', 'width=1280, height=720, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
+
+    var $form = $('<form></form>');
+    $form.attr('action', '/manage_user/changemoney');
+    $form.attr('method', 'post');
+    // $form.attr('target', 'popupChk');
+    $form.appendTo('body');
+
+    var idx = $(`<input type="hidden" value="${user.strNickname}" name="strNickname">`);
+    var page = $(`<input type="hidden" value="${user.strGroupID}" name="strGroupID">`);
+    var category = $(`<input type="hidden" value=${parseInt(user.iClass)} name="iClass">`);
+
+    $form.append(idx).append(page).append(category);
+    $form.submit();
+
+});

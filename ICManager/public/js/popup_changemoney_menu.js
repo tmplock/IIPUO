@@ -1,7 +1,7 @@
 $(document).on('click', '#user_changemoney', ()=> {
 
     var $form = $('<form></form>');
-    $form.attr('action', '/manage_user_popup/changemoney');
+    $form.attr('action', '/manage_user/changemoney');
     $form.attr('method', 'post');
     $form.appendTo('body');
 

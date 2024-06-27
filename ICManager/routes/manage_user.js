@@ -152,6 +152,48 @@ router.post('/request_userlistchangemoney', isLoggedIn, async ( req, res ) => {
     res.send({userlist:result, shoplist:listShops, agentlist:listAgents, vadminlist:[], proadminlist: [], iRootClass: req.user.iClass, iPermission: req.user.iPermission});
 });
 
+router.post('/changemoney', isLoggedIn, async(req, res) => {
+    console.log(req.user);
+    const dbuser = await IAgent.GetUserInfo(req.user.strNickname);
+
+    const user = {strNickname:req.user.strNickname, strGroupID:req.user.strGroupID, iClass:parseInt(req.user.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle,
+        iRootClass: req.user.iClass, iPermission: req.user.iPermission, strID: dbuser.strID};
+
+    const strTimeStart = ITime.getTodayStart();
+    const strTimeEnd = ITime.getTodayEnd();
+
+    let result = await IAgent.GetUserList(strTimeStart, strTimeEnd, user.strGroupID);
+    let listShops = await IAgent.GetShopListChangeMoney(strTimeStart, strTimeEnd, user.strGroupID);
+    let listAgents = await IAgent.GetAgentListChangeMoney(strTimeStart, strTimeEnd, user.strGroupID);
+    let listViceAdmins = [];
+    let listProAdmins = [];
+    // let listViceAdmins = await GetViceAdminList(strTimeStart, strTimeEnd, user.strGroupID);
+    // let listProAdmins = await  GetProAdminList(strTimeStart, strTimeEnd, user.strGroupID);
+
+    let total = {iTotalCash:0};
+
+    for ( let i in result )
+    {
+        if ( result[i].lev5 == null )
+        {
+            result.splice(i, 1);
+        }
+        else
+            total.iTotalCash += parseFloat(result[i].iCash);
+    }
+    //  Shops
+    var bobj = {overview:null};
+
+    const agentinfo = await IAgent.GetPopupAgentInfo(req.user.strGroupID, parseInt(req.user.iClass), req.user.strNickname);
+    let iocount = await IInout.GetProcessing(user.strGroupID, user.strNickname, dbuser.iClass);
+
+    console.log(`###################################################### ${req.user.iClass}, ${req.user.strNickname}`);
+    console.log(agentinfo);
+    
+    res.render('manage_user/changemoney', {iLayout:0, iHeaderFocus:10, user:user, userlist:result, shoplist:listShops, agentlist:listAgents, vadminlist:listViceAdmins, proadminlist: listProAdmins, total:total, data:bobj, agentinfo:agentinfo, iocount:iocount});
+
+});
+
 let GetNicknameList = (strGroupID, listUsers) => {
 
     let list = [];

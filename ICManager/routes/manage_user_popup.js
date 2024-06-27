@@ -207,11 +207,12 @@ router.post('/changemoney', isLoggedIn, async(req, res) => {
     var bobj = {overview:null};
 
     const agentinfo = await IAgent.GetPopupAgentInfo(req.user.strGroupID, parseInt(req.user.iClass), req.user.strNickname);
+    let parents = await IAgent.GetParentList(req.body.strGroupID, req.body.iClass, user);
 
     console.log(`###################################################### ${req.user.iClass}, ${req.user.strNickname}`);
     console.log(agentinfo);
 
-    res.render('manage_user/popup_changemoney', {iLayout:1, iHeaderFocus:0, user:user, userlist:result, shoplist:listShops, agentlist:listAgents, vadminlist:listViceAdmins, proadminlist: listProAdmins, total:total, data:bobj, agentinfo:agentinfo});
+    res.render('manage_user/popup_changemoney', {iLayout:3, iHeaderFocus:0, agent:user, userlist:result, shoplist:listShops, agentlist:listAgents, vadminlist:listViceAdmins, proadminlist: listProAdmins, total:total, data:bobj, agentinfo:agentinfo, parents:parents});
 
 });
 
@@ -358,11 +359,6 @@ router.post('/request_gt', isLoggedIn, async(req, res) => {
 
         let to = await db.Users.findOne({where:{strNickname:req.body.strTo}});
         let from = await db.Users.findOne({where:{strNickname:req.body.strFrom}});
-        if(req.body.strPassword != from.strPassword)
-        {
-            res.send({result:'FAIL', reason:'Password Wong'});
-            return;
-        }
 
         let cAmount = parseInt(req.body.iAmount);
         if (Number.isNaN(cAmount)) {
@@ -431,12 +427,6 @@ router.post('/request_gt', isLoggedIn, async(req, res) => {
 
         let to = await db.Users.findOne({where:{strNickname:req.body.strTo}});
         let from = await db.Users.findOne({where:{strNickname:req.body.strFrom}});
-
-        if(req.body.strPassword != from.strPassword)
-        {
-            res.send({result:'FAIL', reason:'Password Wong'});
-            return;
-        }
 
         const iFromCash = from.iCash + parseInt(req.body.iAmount);
         const iToCash = to.iCash - parseInt(req.body.iAmount);

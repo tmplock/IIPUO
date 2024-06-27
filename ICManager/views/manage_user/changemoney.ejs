@@ -1,0 +1,684 @@
+<!-- <!DOCTYPE html>
+	<html lang="ko">
+	<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="format-detection" content="telephone=no">
+	<meta name="Keywords" content="">
+	<meta name="Description" content="">
+	<title>Inout</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	<script type="text/javascript" src="../../js/jquery.bxslider.min.js"></script>
+	<script type="text/javascript" src="../../js/placeholders.js"></script>
+	<script type="text/javascript" src="../../js/layout.js"></script>
+	<script type="text/javascript" src="../../js/common_js.js"></script>
+	<link rel="stylesheet" type="text/css" href="../../css/general.css"/>
+	<link rel="stylesheet" type="text/css" href="../../css/button.css"/>
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css" type="text/css" /> 
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>  
+	<script src="https://code.jquery.com/ui/1.8.18/jquery-ui.min.js"></script>
+	<link href='//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css' rel='stylesheet' type='text/css'>
+</head> -->
+
+<body style="font-family:'Spoqa Han Sans Neo'; font-size: 15px;">
+	<div class="sub_wrap">
+		<div class="container clearfix">
+			
+			<div class="content" style="position:relative; padding:0 10px 0 10px;">
+				<ul class="list_tab" style="margin-bottom:10px;width:75%;z-index:10000;">
+					<li class="on">
+						<a href="#" id="user_changemoney"><%=__('UserList')%></a>
+					</li>
+					<li class="off">
+						<a href="#" id="user_changemoneylist">전환 내역</a>
+					</li>
+				</ul>
+
+				<ul class="list_tab" style="margin-left:90%;margin-top:-40px;margin-bottom:10px;height:30px;">
+				</ul>
+			</div>
+
+				<div class="list">
+					<div id="search_date">
+					</div>
+
+					<div class="list_tit">
+						<h3><%=__('All')%> <%=__('User')%>
+							<% if ( user.iClass > 3 ) { %>
+								<div style="text-align:right;margin-top:-55px;">
+									<% if ( user.iClass <= 5 ) { %>
+										<td colspan="3">
+											<button class="btn_gray" id="openRollingModal"><%=__('Rolling')%><%=__('Exchange')%></button>
+											<button class="btn_gray" id="openSettleModal"><%=__('Settle')%><%=__('Exchange')%></button>
+										</td>
+									<% } else { %>
+											<td colspan="3">
+												<button class="btn_gray" id="openRollingModal"><%=__('Rolling')%><%=__('Exchange')%></button>
+											</td>
+									<% } %>
+									<span id="top_total_point_area">
+										<font style="color:#00FFFF;font-size:15px;font-weight:bold;"><%=__('Cash')%> :</font><font style="color:yellow;font-size:15px;font-weight:bold;"><%=parseInt(agentinfo.iCash).toLocaleString()%></font>
+										&nbsp;&nbsp;
+										<font style="color:#00FFFF;font-size:15px;font-weight:bold;"><%=__('Rolling')%> :</font><font style="color:yellow;font-size:15px;font-weight:bold;"><%=parseInt(agentinfo.iRolling).toLocaleString()%></font>
+										&nbsp;&nbsp;
+										<% if ( user.iClass < 6 ) { %>
+											<font style="color:#00FFFF;font-size:15px;font-weight:bold;"><%=__('Settle')%> :</font><font style="color:yellow;font-size:15px;font-weight:bold;"><%=parseInt(agentinfo.iSettle).toLocaleString()%></font>
+											&nbsp;&nbsp;&nbsp;
+										<% } %>
+									</span>
+								</div>
+							<%}%>
+						</h3>
+					</div>
+
+				<div class="search_wrap">
+
+					<table class="search_list">
+						<caption><%=__('SearchResult')%></caption>
+						<colgroup>
+							<col style="width:8%">
+							<col style="width:8%">
+							<col style="width:8%">
+							<col style="width:15%">
+							<col style="width:15%">
+							<col style="width:10%">
+							<col style="width:12%">
+							<col style="width:10%">
+							<col style="width:15%">
+							<col style="width:10%">
+						</colgroup>
+						<thead>
+							<tr>
+								<th scope="col"><%=__('Shop')%></th>
+								<th scope="col"><%=__('ID')%></th>
+								<th scope="col"><%=__('Nickname')%></th>
+								<th scope="col">머니전환</th>
+								<th scope="col"><%=__('Input')%>/<%=__('Output')%></th>
+								<th scope="col"><%=__('MyCash')%></th>
+								<th scope="col">합계</th>
+								<th scope="col">롤링</th>
+								<th scope="col">IP</th>
+								<th scope="col">상세보기</th>
+							</tr>
+						</thead>
+						<tbody id = "userlist">
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="myModal" class="modal-moneychange">
+
+	</div>
+
+	<!-- Rolling Exchange Modal -->
+	<div id="rollingModal" class="modal-translate" style="display: none;">
+		<div class="modal-content">
+			<span class="close">&times;</span>
+			<h2><%=__('Rolling')%><%=__('Exchange')%></h2>
+			<div class="input-group">
+				<label for="translate_rolling">전환 금액</label>
+				<input type="number" min="0" id="translate_rolling" value="" style="height: 25px;font-size: 16px;">
+			</div>
+			<div class="submit-button-container">
+				<button class="submit-button" onclick="OnClickTranslate('ROLLING')"><%=__('Exchange')%></button>
+			</div>
+		</div>
+	</div>
+
+	<!-- Settle Exchange Modal -->
+	<div id="settleModal" class="modal-translate" style="display: none;">
+		<div class="modal-content">
+			<span class="close">&times;</span>
+			<h2><%=__('Settle')%><%=__('Exchange')%></h2>
+			<div class="input-group">
+				<label for="translate_settle">전환 금액</label>
+				<input type="number" min="0" id="translate_settle" value="">
+			</div>
+			<div class="submit-button-container">
+				<button class="submit-button" onclick="OnClickTranslate('SETTLE')"><%=__('Exchange')%></button>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal-process" id="modal_alert" style="z-index: 9999;">
+		<div class="modal_body" id="modal_body">
+			<h2>처리중입니다</h2>
+			<p style="font-size: 16px;">잠시만 기다려 주세요</p>
+		</div>
+	</div>
+
+	<script>
+		const modal = document.querySelector('.modal-process');
+		function openAlertModal() {
+			modal.style.display="flex";
+		}
+		function closeAlertModal() {
+			modal.style.display = "none";
+		}
+	</script>
+
+	<script type="text/javascript" src="js/enum.js"></script>
+	<script type="text/javascript" src="js/time.js"></script>
+	<script type="text/javascript" src="js/manage_setting_ref.js"></script>
+	<script type="text/javascript" src="js/manage_partner_ref.js"></script>
+	<script type="text/javascript" src="js/manage_search_date.js"></script>
+	<script type="text/javascript" src="js/popup_changemoney.js"></script>
+	<script type="text/javascript" src="js/popup_changemoney_menu.js"></script>
+	<script type="text/javascript" src="js/socket.js"></script>
+</body>
+<script>
+    let user = JSON.parse('<%-JSON.stringify(user)%>');
+    let userlist = JSON.parse('<%-JSON.stringify(userlist)%>');
+    let shoplist = JSON.parse('<%-JSON.stringify(shoplist)%>');
+    let agentlist = JSON.parse('<%-JSON.stringify(agentlist)%>');
+    let vadminlist = JSON.parse('<%-JSON.stringify(vadminlist)%>');
+    let proadminlist = JSON.parse('<%-JSON.stringify(proadminlist)%>');
+	let iocount = JSON.parse('<%-JSON.stringify(iocount)%>');
+
+	// const strNoRecord = '<%=__("NoRecord")%>';
+	// const strConfirmGive = '<%=__("ConfirmGive")%>';
+	// const strConfirmTake = '<%=__("ConfirmTake")%>';
+	// const strGive = '<%=__("Give")%>';
+	// const strTake = '<%=__("Take")%>';
+	// const strConfirmExchange = '<%=__("ConfirmExchange")%>';
+	// const strAlertIncorrectInputValue = '<%=__("AlertIncorrectInputValue")%>';
+	// const strAlertErrorNotEnoughMoney = '<%=__("AlertErrorNotEnoughMoney")%>';
+	// const strAlertComplete = '<%=__("AlertComplete")%>';
+
+    var i18nTexts = {
+        Search: "<%=__('Search')%>",
+        Today : "<%=__('Today')%>",
+        Half1: "<%=__('Half1')%>",
+        Half2: "<%=__('Half2')%>",
+        Open: "<%=__('Open')%>",
+		Nickname: "<%=__('Nickname')%>",
+        ProAdmin: "<%=__('ProAdmin')%>",
+		strNormal: "<%=__('Normal')%>",
+		strNotice: "<%=__('Notice')%>",
+		strBlock: "<%=__('Block')%>",
+		strTotal: "<%=__('Total')%>"
+    };
+
+    let startDate = GetCurrentDate();
+	let endDate = GetCurrentDate();
+
+	
+    Alert(iocount, "<%=__('RequestInput')%>", "<%=__('RequestOutput')%>","<%=__('LetterSend')%>");
+
+    // $(document).on('click', '.menu1', (e) => {
+
+    //     $('.menu5').attr('class', 'menu1');
+
+    //     $(e.currentTarget).attr('class', 'menu5');
+    // });
+
+    let bToggleRecord = false;
+	let isSending = false;
+	let iLimit = 50;
+
+    let SetUserList = (userlist, iClass, iRootClass) => {
+
+        console.log(userlist);
+
+        let total = {cash:0, input:0, output:0, rolling:0, loan:0, total:0, totalRolling: 0};
+
+        for ( let i in userlist )
+        {
+            let strColor = 'rgb(0, 126, 199)';
+            let strState = i18nTexts.strNormal;
+
+            let bgcolor = 'white';
+            if ( iClass == 7 )
+                bgcolor = '#f3e9d9';
+            else if ( iClass == 6 )
+                bgcolor = '#ece7ab';
+            else if ( iClass == 5 )
+                bgcolor = '#c9c9c4';
+
+            console.log(userlist[i]);
+
+            if ( userlist[i].eState == 'BLOCK' )
+            {
+                strColor = 'rgb(207, 61, 4)';
+                bgcolor = '#fcd7e6';
+            }
+            else if ( userlist[i].eState == 'NOTICE' )
+            {
+                strColor = 'rgb(207, 100, 4)';
+                bgcolor = '#faecd9';
+            }
+
+            let strLoginedAt = '';
+            if ( userlist[i].loginedAt != null )
+                strLoginedAt = userlist[i].loginedAt.replace(/T/, ' ').replace(/\..+/, '');
+            let strCreatedAt = '';
+                strCreatedAt = userlist[i].createdAt.replace(/T/, ' ').replace(/\..+/, '');
+			let strIDTag = `<td style='background-color:${bgcolor};'><a href="javascript:OnClickNickname('${userlist[i].strNickname}');" style="color:blue;">${userlist[i].strID}</a></td>`;
+            let strClassTag = `<td style='background-color:${bgcolor};'><a href="javascript:OnClickNickname('${userlist[i].strNickname}');" style="color:blue;">${userlist[i].strNickname}</a></td>`;
+            // let inoutTag = ``;
+            // if (user.iRootClass <= 3 && user.iPermission != 100) {
+            //     inoutTag = `<td style="background-color:${bgcolor};">
+            //                     <a style="border: 1px solid green;display:inline-block;font-weight:bold;border-radius:4px;background-color:blue;width:30px;color:white;" href="#" id="partner_adjustinput" strnickname="${userlist[i].strNickname}" strgroupid="${userlist[i].strGroupID}" iclass="${userlist[i].iClass}">입금</a>
+            //                     <a style="border: 1px solid green;display:inline-block;font-weight:bold;border-radius:4px;background-color:red;width:30px;color:white;" href="#" id="partner_adjustoutput" strnickname="${userlist[i].strNickname}" strgroupid="${userlist[i].strGroupID}" iclass="${userlist[i].iClass}">출금</a>
+            //                 </td>`;
+            // }
+			let inoutTag = `<td style="background-color:${bgcolor};">
+                            <a id="pay_${userlist[i].strNickname}" class="pay-btn" style="border: 1px solid red; display:inline-block; border-radius:4px; background-color:transparent; width:70px; color:black;" href="#" id="partner_adjustinput" strID="${userlist[i].strID}" iCash="${user.iCash}" strnickname="${userlist[i].strNickname}" strgroupid="${userlist[i].strGroupID}" iclass="${userlist[i].iClass}">알지급</a>
+                            <a id="deduct_${userlist[i].strNickname}" class="deduct-btn" style="border: 1px solid blue; display:inline-block; border-radius:4px; background-color:transparent; width:70px; color:black;" href="#" id="partner_adjustoutput" strID="${userlist[i].strID}" iCash="${userlist[i].iCash}" strnickname="${userlist[i].strNickname}" strgroupid="${userlist[i].strGroupID}" iclass="${userlist[i].iClass}">알차감</a>
+                        </td>`;
+            // let class4 = userlist[i].iClass >= 4 ? `${userlist[i].lev2}` : '';
+            // let class5 = userlist[i].iClass >= 5 ? `${userlist[i].lev3}` : '';
+            // let class6 = userlist[i].iClass >= 6 ? `${userlist[i].lev4}` : '';
+            let class7 = userlist[i].iClass >= 7 ? `${userlist[i].lev5}` : '';
+            // let tag = `
+            //     <tr>
+            //         <td style='background-color:${bgcolor};'>${class4}</td>
+            //         <td style='background-color:${bgcolor};'>${class5}</td>
+            //         <td style='background-color:${bgcolor};'>${class6}</td>
+            //         <td style='background-color:${bgcolor};'>${class7}</td>
+            //         ${strClassTag}
+			// 		${inoutTag}}
+            //         <td style='background-color:${bgcolor};'>${GetNumber(userlist[i].iInput)}</td>
+            //         <td style='background-color:${bgcolor};'>${GetNumber(userlist[i].iOutput)}</td>
+            //         <td style='background-color:${bgcolor};'>${GetNumber(userlist[i].iCash)}</td>
+            //         <td style='background-color:${bgcolor};'><font color="${GetClassSettleColor(userlist[i].iMyRollingMoney, iRootClass)}">${GetNumber(userlist[i].iMyRollingMoney)}</font></td>
+            //         <td style='background-color:${bgcolor};'><font color="${GetClassSettleColor(userlist[i].iCurrentRolling, iRootClass)}">${GetNumber(userlist[i].iCurrentRolling)}</font></td>
+            //         <td style='background-color:${bgcolor};'>${strCreatedAt}</td>
+            //         <td style='background-color:${bgcolor};'>
+			// 			<a id="adjust_${userlist[i].strNickname}" href="#" style="border: 1px solid green; display:inline-block; font-weight:bold; border-radius:4px; background-color:blue; width:30px; color:white;">상세보기</a>
+			// 		</td>
+            //     </tr>`;
+			let tag = `
+                <tr>
+                    <td style='background-color:${bgcolor}; padding: 10px 0;'>${class7}</td>
+                    ${strIDTag}
+					${strClassTag}
+					${inoutTag}}
+                    <td style='background-color:${bgcolor};'>${GetNumber(userlist[i].iInput) || 0} / ${GetNumber(userlist[i].iOutput) || 0}</td>
+                    <td style='background-color:${bgcolor};'>${GetNumber(userlist[i].iCash)}</td>
+                    <td style='background-color:${bgcolor};'>${GetNumber(userlist[i].iTotal)}</td>
+                    <td style='background-color:${bgcolor};'><font color="${GetClassSettleColor(userlist[i].iCurrentRolling, iRootClass)}">${GetNumber(userlist[i].iCurrentRolling)}</font></td>
+                    <td style='background-color:${bgcolor};'>${userlist[i].strIP}</td>
+                    <td style='background-color:${bgcolor};'>
+						<a id="adjust_${userlist[i].strNickname}" href="#" style="border: 1px solid black; display:inline-block; font-weight:bold; border-radius:4px; background-color:white; width:80px; color:black;"onclick="OnClickNickname('${userlist[i].strNickname}')">상세보기</a>
+					</td>
+                </tr>`;
+
+            $('#userlist').append(tag);
+
+            total.cash += parseFloat(userlist[i].iCash);
+            total.input += parseFloat(userlist[i].iInput);
+            total.output += parseFloat(userlist[i].iOutput);
+            total.rolling += parseFloat(userlist[i].iMyRollingMoney);
+            total.loan += parseFloat(userlist[i].iLoan);
+            total.total += parseFloat(userlist[i].iTotal);
+            total.totalRolling += parseFloat(userlist[i].iCurrentRolling);
+        }
+
+        return total;
+    }
+
+    // let AddEndTag = (total1, total2, total3, total4, iRootClass) => {
+    //     let total = {
+    //     input:  total1.input + total2.input + total3.input + total4.input,
+    //     output: total1.output + total2.output + total3.output + total4.output,
+    //     cash:   total1.cash + total2.cash + total3.cash + total4.cash,
+    //     rolling:total1.rolling + total2.rolling + total3.rolling + total4.rolling,
+    //     total:  total1.total + total2.total + total3.total + total4.total,
+    //     totalRolling: total1.totalRolling + total2.totalRolling + total3.totalRolling + total4.totalRolling
+    //     };
+
+    //     let total_f = parseFloat(total.total) - parseFloat(total.rolling);
+
+    //     let endtag = `
+    //     <tr>
+    //         <td colspan="5">${i18nTexts.strTotal}</td>
+    //         <% if (user.iRootClass <= 3 && user.iPermission != 100) { %>
+    //             <td></td>
+    //             <td></td>
+    //         <%}%>
+    //         <td>${GetNumber(total.input)}</td>
+    //         <td>${GetNumber(total.output)}</td>
+    //         <td>${GetNumber(total.cash)}</td>
+    //         <td><font color='${GetClassSettleColor(total.rolling, iRootClass)}'>${GetNumber(total.rolling)}</font></td>
+    //         <td><font color=${GetClassColor(total.total, iRootClass)}>${GetNumber(total.total-total.rolling)}</font></td>
+    //         <td><font color='${GetClassSettleColor(total.totalRolling, iRootClass)}'>${GetNumber(total.totalRolling)}</font></td>
+    //         <% if (user.iRootClass <= 3 && user.iPermission != 100) { %>
+    //             <td></td>
+    //         <%}%>
+    //         <td></td>
+    //         <td></td>
+    //         <td></td>
+    //         <td></td>
+    //     </tr>`;
+
+    //     $('#userlist').append(endtag);
+    // }
+
+    let OnClickTodayRecord = () => {
+
+        startDate = GetCurrentDate();
+		endDate = GetCurrentDate();
+		$('#datepicker1').val(startDate);
+		$('#datepicker2').val(endDate);
+
+        RequestUserList(user.iClass, user.strGroupID, user.iClass);
+    }
+
+    let OnClickMonthly1stRecord = () => {
+
+        startDate = GetMonthly1stStartDate();
+		endDate = GetMonthly1stEndDate();
+		$('#datepicker1').val(startDate);
+		$('#datepicker2').val(endDate);
+
+        RequestUserList(user.iClass, user.strGroupID, user.iClass);
+    }
+
+    let OnClickMonthly2ndRecord = () => {
+
+        startDate = GetMonthly2ndStartDate();
+		endDate = GetMonthly2ndEndDate();
+		$('#datepicker1').val(startDate);
+		$('#datepicker2').val(endDate);
+
+        RequestUserList(user.iClass, user.strGroupID, user.iClass);
+    }
+
+    let OnClickDayPeriod = (startDay) => {
+		startDate = GetDateStart(startDate, startDay);
+		endDate = GetDateEnd(endDate, startDay+4);
+
+		$('#datepicker1').val(startDate);
+		$('#datepicker2').val(endDate);
+
+		RequestUserList(user.iClass, user.strGroupID, user.iClass);
+	}
+
+    let OnClickSearch = (iTargetClass, strGroupID, iClass) => {
+		
+        RequestUserList(iTargetClass, strGroupID, iClass);
+	}
+
+    let RequestUserList = (iTargetClass, strGroupID, iClass) => {
+
+        const dateStart = $('#datepicker1').val();
+        const dateEnd = $('#datepicker2').val();
+        const strNickname = $('#strSearchNickname').val();
+
+        $.ajax({
+            type:'post',
+            url: "/manage_user/request_userlistchangemoney",
+            context: document.body,
+            data:{iTargetClass:iTargetClass, strGroupID:strGroupID, iClass:iClass, dateStart:dateStart, dateEnd:dateEnd, strSearchNickname:strNickname},
+
+            success: (obj) => {
+
+                $('#userlist').empty();
+                let total1 = SetUserList(obj.vadminlist, 5, obj.iRootClass);
+                let total2 = SetUserList(obj.agentlist, 6, obj.iRootClass);
+                let total3 = SetUserList(obj.shoplist, 7, obj.iRootClass);
+                let total4 = SetUserList(obj.userlist, 8, obj.iRootClass);
+
+                // AddEndTag(total1, total2, total3, total4, obj.iRootClass);
+            },
+            error:function(request,status,error){
+                alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+            }
+        });
+
+    }
+
+    let OnClickSearchNickname = () => {
+
+        RequestUserList(user.iClass, user.strGroupID, user.iClass);
+    }
+
+    let OnClickSearchAgentNickname = () => {
+
+        const strNickname = $('#strAgentNickname').val();
+        if ( strNickname == '' )
+        {
+            RequestUserList(user.iClass, user.strGroupID, user.iClass);
+        }
+        else
+        {
+            $.ajax({
+                type:'post',
+                url: "/manage_setting/request_agentinfo",
+                context: document.body,
+                data:{strNickname:strNickname},
+        
+                success:function(data) {
+                    
+                    if ( data.result == 'OK' )
+                    {
+                        console.log(data.data);
+
+                        RequestUserList(data.data.iClass, data.data.strGroupID, data.data.iClass);
+
+                    }
+                    else
+                    {
+                        alert(strAlertNoRecord);
+                    }
+                    console.log(data);
+                }
+            });            
+        }
+    }
+
+	let setAmount = (iAmount) => {
+		console.log(`setAmount : ${iAmount}`);
+		if (iAmount === 'ALL') {
+			let withdrawableAmount = parseInt($('#withdrawable').text().replace(/,/g, '')) || 0;
+			$('#exchangeAmount').val(withdrawableAmount.toLocaleString());
+		} else if (iAmount === 'RESET') {
+			$('#exchangeAmount').val(0);
+		} else {
+			let currentAmount = parseInt($('#exchangeAmount').val().replace(/,/g, '')) || 0;
+			let newAmount = currentAmount + iAmount;
+			$('#exchangeAmount').val(newAmount.toLocaleString());
+		}
+	}
+
+	let OnClickProcess = async (eGTType) => {
+			if (isSending) {
+				alert('처리중입니다');
+				return;
+			}
+			isSending = true;
+
+			let strTarget = $('#strNickname').val();
+			let iMoney = $('#exchangeAmount').val();
+			iMoney = parseInt(iMoney.replace(/,/g, ''));
+			// iMoney = parseInt(iMoney);
+			if (Number.isNaN(iMoney)) {
+				iMoney = 0;
+			}
+
+			if (strTarget == null || strTarget == '' || iMoney == null || iMoney == '' || iMoney <= 0) {
+				alert(strAlertIncorrectInputValue);
+				isSending = false;
+				return;
+			}
+
+			let strConfirm = '';
+			if (eGTType == 'TAKE') {
+				strConfirm = strConfirmTake;
+			}
+			else
+			{
+				strConfirm = strConfirmGive;
+			}
+
+			if (confirm(strConfirm)) {
+				if (eGTType == 'TAKE') {
+					openAlertModal();
+					await sleep(5000);
+				}
+				$.ajax({
+					type: 'post',
+					url: "/manage_user_popup/request_gt",
+					context: document.body,
+					data: {strTo: strTarget, strFrom: user.strNickname, iAmount: iMoney, eType: eGTType},
+
+					success: (obj) => {
+						isSending = false;
+						closeAlertModal();
+						if (obj.result == 'OK') {
+							window.opener.location.reload(true);
+						} else {
+							if (obj.reason == 'NOTENOUGH') {
+								alert(strAlertErrorNotEnoughMoney);
+							} else if(obj.reason == 'Password Wong'){
+								alert('비밀번호가 일치하지 않습니다.');
+							}
+							else {
+								alert(strAlertComplete); 
+								window.opener.location.reload(true);
+							}
+						}
+						location.reload();
+					},
+					error: function (request, status, error) {
+						isSending = false;
+						alert("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
+					}
+				});
+			}
+		}
+
+	function sleep(ms) {
+		return new Promise(resolve => setTimeout(resolve, ms));
+	}
+
+	let OnClickTranslate = (eType) => {
+
+		let iSettle = $('#translate_settle').val();
+		iSettle = parseInt(iSettle);
+		let iRolling = $('#translate_rolling').val();
+		iRolling = parseInt(iRolling);
+		let strType = '';
+		let iMoney = 0;
+
+		if ( eType == 'SETTLE' )
+		{
+			strType = '죽장';
+			// if ( iSettle > 0 && iSettle <= user.iSettle )
+			// 	iMoney = iSettle;
+
+			if(user.iSettle == 0)
+			{
+				alert(strAlertErrorNotEnoughMoney);
+				return;
+			}
+		}
+		else if ( eType == 'ROLLING' )
+		{
+			strType = '롤링';
+			// if ( iRolling > 0 && iRolling <= user.iRolling )
+			// 	iMoney = iRolling;
+			if(user.iRolling == 0)
+			{
+				alert(strAlertErrorNotEnoughMoney);
+				return;
+			}
+		}
+
+		
+		
+		if ( iMoney == '' || iMoney == 0 || iMoney < 0 )
+		{
+			alert(strAlertIncorrectInputValue);
+			return;
+		}
+
+		if ( confirm(strConfirmExchange) )
+		{
+			$.ajax({
+				type:'post',
+				url: "/manage_user_popup/request_gt",
+				context: document.body,
+				data:{strTo:user.strNickname, strFrom:user.strNickname, iAmount:iMoney, eType:eType},
+				success: (obj) => {
+					if ( obj.result == 'OK' )
+					{
+						location.reload();
+					}
+					else {
+						if ( obj.reason == 'NOTENOUGH')
+						{
+							alert(strAlertErrorNotEnoughMoney);
+						}
+						else
+							alert(strAlertError);
+					}
+				},
+				error:function(request,status,error){
+					alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+				}
+			});
+		}
+	}
+
+	$(document).ready(() => {
+		SetSeachButtons("#search_date",8,i18nTexts,user,4);
+        DatePicker();
+
+        $('#datepicker1').val(GetCurrentDate());
+        $('#datepicker2').val(GetCurrentDate());
+
+        $("#table_record_list").hide();
+
+        $('#userlist').empty();
+        // let total0 = SetUserList(proadminlist, 4);
+        let total1 = SetUserList(vadminlist, 5, user.iRootClass);
+        let total2 = SetUserList(agentlist, 6, user.iRootClass);
+        let total3 = SetUserList(shoplist, 7, user.iRootClass);
+        let total4 = SetUserList(userlist, 8, user.iRootClass);
+        // AddEndTag(total1, total2, total3, total4, user.iRootClass);
+
+		var rollingModal = $("#rollingModal");
+    	var settleModal = $("#settleModal");
+
+		var openRollingModalBtn = $("#openRollingModal");
+		var openSettleModalBtn = $("#openSettleModal");
+
+		var closeRollingModal = rollingModal.find(".close");
+    	var closeSettleModal = settleModal.find(".close");
+		settleModal.hide();
+		rollingModal.hide();
+
+		openRollingModalBtn.on("click", function() {
+			rollingModal.show();
+		});
+
+		// When the user clicks the button, open the settle modal 
+		openSettleModalBtn.on("click", function() {
+			settleModal.show();
+		});
+
+		// When the user clicks on <span> (x), close the rolling modal
+		closeRollingModal.on("click", function() {
+			rollingModal.hide();
+		});
+
+		// When the user clicks on <span> (x), close the settle modal
+		closeSettleModal.on("click", function() {
+			settleModal.hide();
+		});
+
+		// When the user clicks anywhere outside of the modal, close it
+		$(window).on("click", function(event) {
+			if ($(event.target).is(rollingModal)) {
+				rollingModal.hide();
+			}
+			if ($(event.target).is(settleModal)) {
+				settleModal.hide();
+			}
+		});
+	});
+</script>

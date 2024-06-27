@@ -322,11 +322,11 @@ $(document).on('click', '#popup_share_history', ()=> {
 });
 
 $(document).on('click', '#popup_changemoney', ()=> {
-    window.open('', 'popupChk_changemoney', 'width=1280, height=720, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
+    // window.open('', 'popupChk_changemoney', 'width=1280, height=720, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
     let $form = $('<form></form>');
-    $form.attr('action', '/manage_user_popup/changemoney');
+    $form.attr('action', '/manage_user/changemoney');
     $form.attr('method', 'post');
-    $form.attr('target', 'popupChk_changemoney');
+    // $form.attr('target', 'popupChk_changemoney');
     $form.appendTo('body');
 
     let idx = $(`<input type="hidden" value="${agent.strNickname}" name="strNickname">`);

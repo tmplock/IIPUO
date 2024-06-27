@@ -1043,44 +1043,6 @@ exports.GetUserList = async (strTimeStart, strTimeEnd, strGroupID, strSearchNick
         tagSearch = `${tagSearch} AND DATE(t6.createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'`;
     }
 
-    // const [result] = await db.sequelize.query(
-    //     `
-    //     SELECT t1.strNickname AS lev1, t2.strNickname as lev2, t3.strNickname as lev3, t4.strNickname as lev4, t5.strNickname as lev5, t6.strNickname as lev6, t6.iClass, t6.strID, t6.strNickname,
-    //     t6.iCash, t6.iClass, t6.strGroupID, t6.eState, DATE_FORMAT(t6.createdAt,'%Y-%m-%d %H:%i:%S') AS createdAt, DATE_FORMAT(t6.loginedAt,'%Y-%m-%d %H:%i:%S') AS loginedAt, t6.strIP,
-    //     IFNULL(charges.iInput,0) AS iInput, 
-    //     IFNULL(exchanges.iOutput,0) AS iOutput, 
-    //     IFNULL(dailyBetting.iMyRollingMoney,0) AS iMyRollingMoney, 
-    //     IFNULL((SELECT sum(iBetB + iBetUO + iBetS + iBetPB)-sum(iWinB + iWinUO + iWinS + iWinPB) FROM RecordDailyOverviews WHERE t6.strID = strID AND date(strDate) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'),0) as iTotal,
-    //     t6.iRolling AS iCurrentRolling,
-    //     t6.iLoan
-    //     FROM Users AS t1
-    //     LEFT JOIN Users AS t2 ON t2.iParentID = t1.id
-    //     LEFT JOIN Users AS t3 ON t3.iParentID = t2.id
-    //     LEFT JOIN Users AS t4 ON t4.iParentID = t3.id
-    //     LEFT JOIN Users AS t5 ON t5.iParentID = t4.id
-    //     LEFT JOIN Users AS t6 ON t6.iParentID = t5.id
-    //     LEFT JOIN ( SELECT strID, sum(iAmount) as iInput
-    //                 FROM Inouts
-    //                 where DATE(completedAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'
-    //                 AND eState = 'COMPLETE'
-    //                 AND eType = 'INPUT'
-    //                 GROUP BY strID) charges
-    //             ON t6.strNickname = charges.strID
-    //     LEFT JOIN ( SELECT strID, sum(iAmount) as iOutput
-    //                 FROM Inouts
-    //                 where DATE(completedAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'
-    //                 AND eState = 'COMPLETE'
-    //                 AND eType = 'OUTPUT'
-    //                 GROUP BY strID) exchanges
-    //             ON t6.strNickname = exchanges.strID
-    //     LEFT JOIN ( SELECT strID, sum(iRollingB + iRollingUO + iRollingS + iRollingPBA + iRollingPBB) as iMyRollingMoney
-    //                 FROM RecordDailyOverviews
-    //                 where DATE(createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'
-    //                 GROUP BY strID) dailyBetting
-    //             ON t6.strID = dailyBetting.strID
-    //     WHERE t6.iClass=${EAgent.eUser} AND t6.strGroupID LIKE CONCAT('${strGroupID}', '%') ${tagSearch};
-    //     `
-    // );
     const [result] = await db.sequelize.query(
         `
         SELECT t1.strNickname AS lev1, t2.strNickname as lev2, t3.strNickname as lev3, t4.strNickname as lev4, t5.strNickname as lev5, t6.strNickname as lev6, t6.iClass, t6.strID, t6.strNickname,
@@ -1088,7 +1050,7 @@ exports.GetUserList = async (strTimeStart, strTimeEnd, strGroupID, strSearchNick
         IFNULL(charges.iInput,0) AS iInput, 
         IFNULL(exchanges.iOutput,0) AS iOutput, 
         IFNULL(dailyBetting.iMyRollingMoney,0) AS iMyRollingMoney, 
-        IFNULL((SELECT sum(iAgentBetB2 + iAgentBetUO2 + iAgentBetS2 + iAgentBetPB2)-sum(iWinB + iWinUO + iWinS + iWinPB) FROM RecordDailyOverviews WHERE t6.strID = strID AND date(strDate) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'),0) as iTotal,
+        IFNULL((SELECT sum(iBetB + iBetUO + iBetS + iBetPB)-sum(iWinB + iWinUO + iWinS + iWinPB) FROM RecordDailyOverviews WHERE t6.strID = strID AND date(strDate) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'),0) as iTotal,
         t6.iRolling AS iCurrentRolling,
         t6.iLoan
         FROM Users AS t1

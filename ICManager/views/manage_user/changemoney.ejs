@@ -298,7 +298,7 @@
 					${inoutTag}}
                     <td style='background-color:${bgcolor};'>${GetNumber(userlist[i].iInput) || 0} / ${GetNumber(userlist[i].iOutput) || 0}</td>
                     <td style='background-color:${bgcolor};'>${GetNumber(userlist[i].iCash)}</td>
-                    <td style='background-color:${bgcolor};'>${GetNumber(userlist[i].iTotal)}</td>
+                    <td style='background-color:${bgcolor};'><font color="${GetClassColor(userlist[i].iTotal-userlist[i].iMyRollingMoney, iRootClass)}">${GetNumber(userlist[i].iTotal-userlist[i].iMyRollingMoney)}</font></td>
                     <td style='background-color:${bgcolor};'><font color="${GetClassSettleColor(userlist[i].iCurrentRolling, iRootClass)}">${GetNumber(userlist[i].iCurrentRolling)}</font></td>
                     <td style='background-color:${bgcolor};'>${userlist[i].strIP}</td>
                     <td style='background-color:${bgcolor};'>
@@ -529,7 +529,7 @@
 						isSending = false;
 						closeAlertModal();
 						if (obj.result == 'OK') {
-							window.opener.location.reload(true);
+							location.reload();
 						} else {
 							if (obj.reason == 'NOTENOUGH') {
 								alert(strAlertErrorNotEnoughMoney);
@@ -538,7 +538,7 @@
 							}
 							else {
 								alert(strAlertComplete); 
-								window.opener.location.reload(true);
+								location.reload();
 							}
 						}
 						location.reload();

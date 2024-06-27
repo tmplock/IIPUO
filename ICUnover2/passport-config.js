@@ -5,7 +5,8 @@ var requestIp = require('request-ip');
 
 
 // var seq = require('./db');
-var db = require('./models');
+//var db = require('./models');
+const db = require('./db');
 //var User = require('../models/user')(seq.sequelize, seq.Sequelize);
 // var User = seq.Users;
 

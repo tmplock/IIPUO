@@ -567,29 +567,16 @@
 		if ( eType == 'SETTLE' )
 		{
 			strType = '죽장';
-			// if ( iSettle > 0 && iSettle <= user.iSettle )
-			// 	iMoney = iSettle;
-
-			if(user.iSettle == 0)
-			{
-				alert(strAlertErrorNotEnoughMoney);
-				return;
-			}
+			if ( iSettle > 0 && iSettle <= user.iSettle )
+				iMoney = iSettle;
 		}
 		else if ( eType == 'ROLLING' )
 		{
 			strType = '롤링';
-			// if ( iRolling > 0 && iRolling <= user.iRolling )
-			// 	iMoney = iRolling;
-			if(user.iRolling == 0)
-			{
-				alert(strAlertErrorNotEnoughMoney);
-				return;
-			}
+			if ( iRolling > 0 && iRolling <= user.iRolling )
+				iMoney = iRolling;
 		}
 
-		
-		
 		if ( iMoney == '' || iMoney == 0 || iMoney < 0 )
 		{
 			alert(strAlertIncorrectInputValue);
@@ -623,6 +610,76 @@
 			});
 		}
 	}
+	// 롤링 죽장 한번에 있는거 넘어가게 하기. 
+	// let OnClickTranslate = (eType) => {
+
+	// 	let iSettle = $('#translate_settle').val();
+	// 	iSettle = parseInt(iSettle);
+	// 	let iRolling = $('#translate_rolling').val();
+	// 	iRolling = parseInt(iRolling);
+	// 	let strType = '';
+	// 	let iMoney = 0;
+
+	// 	if ( eType == 'SETTLE' )
+	// 	{
+	// 		strType = '죽장';
+	// 		// if ( iSettle > 0 && iSettle <= user.iSettle )
+	// 		// 	iMoney = iSettle;
+
+	// 		if(user.iSettle == 0)
+	// 		{
+	// 			alert(strAlertErrorNotEnoughMoney);
+	// 			return;
+	// 		}
+	// 	}
+	// 	else if ( eType == 'ROLLING' )
+	// 	{
+	// 		strType = '롤링';
+	// 		// if ( iRolling > 0 && iRolling <= user.iRolling )
+	// 		// 	iMoney = iRolling;
+	// 		if(user.iRolling == 0)
+	// 		{
+	// 			alert(strAlertErrorNotEnoughMoney);
+	// 			return;
+	// 		}
+	// 	}
+
+
+
+	// 	// if ( iMoney == '' || iMoney == 0 || iMoney < 0 )
+	// 	// {
+	// 	// 	alert(strAlertIncorrectInputValue);
+	// 	// 	return;
+	// 	// }
+
+	// 	if ( confirm(strConfirmExchange) )
+	// 	{
+	// 		$.ajax({
+	// 			type:'post',
+	// 			url: "/manage_user_popup/request_gt",
+	// 			context: document.body,
+	// 			// data:{strTo:user.strNickname, strFrom:user.strNickname, iAmount:iMoney, eType:eType},
+	// 			data:{strTo:user.strNickname, strFrom:user.strNickname, eType:eType},
+	// 			success: (obj) => {
+	// 				if ( obj.result == 'OK' )
+	// 				{
+	// 					location.reload();
+	// 				}
+	// 				else {
+	// 					if ( obj.reason == 'NOTENOUGH')
+	// 					{
+	// 						alert(strAlertErrorNotEnoughMoney);
+	// 					}
+	// 					else
+	// 						alert(strAlertError);
+	// 				}
+	// 			},
+	// 			error:function(request,status,error){
+	// 				alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+	// 			}
+	// 		});
+	// 	}
+	// }
 
 	$(document).ready(() => {
 		SetSeachButtons("#search_date",8,i18nTexts,user,4);

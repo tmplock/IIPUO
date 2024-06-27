@@ -18,7 +18,7 @@ $(document).on('click', '#user_changemoney', ()=> {
 $(document).on('click', '#user_changemoneylist', ()=> {
 
     var $form = $('<form></form>');
-    $form.attr('action', '/manage_user_popup/changemoneylist');
+    $form.attr('action', '/manage_user/changemoneylist');
     $form.attr('method', 'post');
     //$form.attr('target', 'popupChk');
     $form.appendTo('body');

@@ -1,0 +1,299 @@
+<!-- <!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="format-detection" content="telephone=no">
+	<meta name="Keywords" content="">
+	<meta name="Description" content="">
+	<title>전환 내역</title>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	<script type="text/javascript" src="../../js/jquery.bxslider.min.js"></script>
+	<script type="text/javascript" src="../../js/placeholders.js"></script>
+	<script type="text/javascript" src="../../js/layout.js"></script>
+	<script type="text/javascript" src="../../js/common_js.js"></script>
+	<link rel="stylesheet" type="text/css" href="../../css/general.css"/>
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css" type="text/css" /> 
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>  
+	<script src="https://code.jquery.com/ui/1.8.18/jquery-ui.min.js"></script>  
+	<link href='//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css' rel='stylesheet' type='text/css'> -->
+	<style>
+		
+	</style>
+</head>
+
+<body style="font-family:'Spoqa Han Sans Neo'; font-size: 15px;">
+	<div class="sub_wrap">
+		<div class="container clearfix">
+			
+			<div class="content" style="position:relative; padding:0 10px 0 10px;">
+				<ul class="list_tab" style="margin-bottom:10px;width:75%;z-index:10000;">
+					<li class="off">
+						<a href="#" id="user_changemoney"><%=__('UserList')%></a>
+					</li>
+					<li class="on">
+						<a href="#" id="user_changemoneylist">전환 내역</a>
+					</li>
+				</ul>
+
+				<ul class="list_tab" style="margin-left:90%;margin-top:-40px;margin-bottom:10px;height:30px;">
+				</ul>
+			</div>
+
+			<div id="search_date">
+			</div>
+
+			<div class="search_wrap" style="margin-top: 15px;">
+				<table>
+					<tr>
+						<td style="width:49.5%" valign="top">
+							<p style="background-repeat:no-repeat; background-position:left center; font-size:15px; color:#454545; padding-left:22px;color:blue;"><%=__('RecordSend')%></p>
+							
+							<div id="adjust_list_cash">
+								<!-- 캐시 히스토리 영역 -->
+								<table class="search_list">
+									<thead>
+										<tr>
+											<th width="20%" style="font-size:15px;"><%=__('Index')%></th>
+											<th width="15%" style="font-size:15px;"><%=__('Target')%></th>
+											<th width="25%" style="font-size:15px;"><%=__('Modify')%><%=__('Money')%></th>
+											<th width="15%" style="font-size:15px;"><%=__('Input')%><%=__('Token')%></th>
+											<th width="25%" style="font-size:15px;"><%=__('Date')%></th>
+										</tr>
+									</thead>
+									<tbody id="gtrecord_cash">
+										<tr>
+											<td colspan="20" height="40"><strong><%=__('AlertNone')%></strong></td>
+										</tr>
+									</tbody>
+								</table>
+								<div class="pagination mt0" id="pagination">
+								</div>
+							</div>
+						</td>
+	
+						<td style="width:1%;background-color:#ffffff;"></td>
+	
+						<td style="width:49.5%" valign="top">
+							<p style="background-repeat:no-repeat; background-position:left center; font-size:15px; color:#454545; padding-left:22px;color:red;"><%=__('RecordReceive')%></p>
+						
+							<div id="adjust_list_point">
+								<!-- 로링비 히스토리 영역 -->
+								<table class="search_list">
+									<thead>
+										<tr>
+											<th width="20%" style="font-size:15px;"><%=__('Index')%></th>
+											<th width="15%" style="font-size:15px;"><%=__('Target')%></th>
+											<th width="25%" style="font-size:15px;"><%=__('Modify')%><%=__('Money')%></th>
+											<th width="15%" style="font-size:15px;"><%=__('Input')%><%=__('Token')%></th>
+											<th width="25%" style="font-size:15px;"><%=__('Date')%></th>
+										</tr>
+									</thead>
+									<tbody id="gtrecord_rolling">
+										<tr>
+											<td colspan="20" height="40"><strong><%=__('AlertNone')%></strong></td>
+										</tr>
+									</tbody>
+								</table>
+								<div class="pagination mt0">
+									<a href="javascript:get_data('inner_partner_list2.php', 'inner_content', 's_sido=13&s_gugun=parent_level=4&s_date=&e_date=&s_cate=&pageNo=1');" class="on" style="color:#ffb579;">1</a>
+								</div>
+	
+							</div>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</div>
+	<div class="modal-process" id="modal_alert" style="z-index: 9999;">
+		<div class="modal_body" id="modal_body">
+			<h2>처리중입니다</h2>
+			<p style="font-size: 16px;">잠시만 기다려 주세요</p>
+		</div>
+	</div>
+	<script>
+		const modal = document.querySelector('.modal');
+		function openAlertModal() {
+			modal.style.display="flex";
+		}
+		function closeAlertModal() {
+			modal.style.display = "none";
+		}
+	</script>
+	<script type="text/javascript" src="js/enum.js"></script>
+	<script type="text/javascript" src="js/time.js"></script>
+	<script type="text/javascript" src="js/pagination.js"></script>
+	<script type="text/javascript" src="js/manage_setting_ref.js"></script>
+	<script type="text/javascript" src="js/manage_partner_ref.js"></script>
+	<script type="text/javascript" src="js/manage_search_date.js"></script>
+	<script type="text/javascript" src="js/popup_changemoney_menu.js"></script>
+	<script type="text/javascript" src="js/socket.js"></script>
+	<script type="text/javascript">
+		let user = JSON.parse('<%-JSON.stringify(user)%>');
+
+		// const strNoRecord = '<%=__("NoRecord")%>';
+		// const strConfirmGive = '<%=__("ConfirmGive")%>';
+		// const strConfirmTake = '<%=__("ConfirmTake")%>';
+		// const strGive = '<%=__("Give")%>';
+		// const strTake = '<%=__("Take")%>';
+		// const strConfirmExchange = '<%=__("ConfirmExchange")%>';
+		// const strAlertIncorrectInputValue = '<%=__("AlertIncorrectInputValue")%>';
+		// const strAlertErrorNotEnoughMoney = '<%=__("AlertErrorNotEnoughMoney")%>';
+		// const strAlertComplete = '<%=__("AlertComplete")%>';
+
+		var i18nTexts = {
+			Search: "<%=__('Search')%>",
+			Today : "<%=__('Today')%>",
+			Half1: "<%=__('Half1')%>",
+			Half2: "<%=__('Half2')%>",
+			Open: "<%=__('Open')%>",
+			Nickname: "<%=__('Nickname')%>",
+			ProAdmin: "<%=__('ProAdmin')%>",
+		};
+
+		let iLimit = 50;
+
+		let startDate = GetCurrentDate();
+		let endDate = GetCurrentDate();
+
+		$(document).ready(() => {
+			SetSeachButtons("#search_date",9,i18nTexts,user,4);
+			DatePicker();
+
+			$('#datepicker1').val(GetCurrentDate());
+			$('#datepicker2').val(GetCurrentDate());
+
+			OnClickSearch();
+		});
+
+		let RequestGTRecord = (eType, strSearch) => {
+
+			let dateStart = $('#datepicker1').val();
+			let dateEnd = $('#datepicker2').val();
+
+			$.ajax({
+				type:'post',
+				url: "/manage_user_popup/request_gtrecord",
+				context: document.body,
+				data:{strNickname:user.strNickname, eType:eType, dateStart:dateStart, dateEnd:dateEnd, strSearch:strSearch, iClass: user.iClass},
+
+				success: (list) => {
+					console.log(list);
+					UpdateGTRecord(eType, list);
+
+					// $('#pagination').empty();
+					// $('#pagination').append(getPagination(iLimit, obj.totalCount, iCurrentPage));
+				},
+				error:function(request,status,error){
+					alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+				}
+			});
+		}
+
+		let GetGTType = (eType) => {
+			if ( eType == 'GIVE' )
+				return "지급";
+			else if ( eType == 'TAKE' )
+				return "차감";
+			else if ( eType == 'ROLLING')
+				return "롤링 전환";
+			else if ( eType == 'SETTLE' )
+				return "죽장 전환";
+			else if ( eType == 'GETSETTLE' )
+				return "죽장 지급";
+		}
+
+		let GetGTColor = (eType) => {
+			if ( eType == 'GIVE' )
+				//return "#000000";
+				return 'red';
+			else if ( eType == 'TAKE' )
+				//return "#000000";
+				return 'blue';
+			else if ( eType == 'ROLLING')
+				return "#7fbe18";
+			else if ( eType == 'SETTLE' )
+				return "#f56868";
+			else if ( eType == 'GETSETTLE' )
+				return "#ff6868";
+		}
+
+		let UpdateGTRecord = (eType, list) => {
+			let parent_id = '#gtrecord_cash';
+			if ( eType == "FROM")
+				parent_id = '#gtrecord_rolling';
+			$(parent_id).empty();
+			if ( list.length == 0 ) 
+			{
+				let tag = 
+				`
+				<tr>
+					<td colspan="20" height="40"><strong>${strNoRecord}</strong></td>
+				</tr>
+				`;
+				$(parent_id).append(tag);
+			}
+			else 
+			{
+				let iTotalGive = 0;
+				let iTotalTake = 0;
+				for ( let i in list )
+				{
+					let target = list[i].strTo;
+					if ( eType == 'FROM' )
+						target = list[i].strFrom;
+
+					if ( list[i].eType == 'GIVE')
+						iTotalGive += parseFloat(list[i].iAmount);
+					else if ( list[i].eType == 'TAKE' )
+						iTotalTake += parseFloat(list[i].iAmount);
+
+					let tag = 
+					`
+					<tr>
+						<td style="color:${GetGTColor(list[i].eType)};">${parseInt(i)+1}</td>
+						<td style="color:${GetGTColor(list[i].eType)};">${target}</td>
+						<td style="color:${GetGTColor(list[i].eType)};">${GetNumber(list[i].iAmount)}</td>
+						<td style="color:${GetGTColor(list[i].eType)};">${GetGTType(list[i].eType)}</td>
+						<td style="color:${GetGTColor(list[i].eType)};">${list[i].createdAt}</td>
+					</tr>
+					`;
+					$(parent_id).append(tag);
+				}
+
+				let total = parseFloat(iTotalGive) + parseFloat(iTotalTake);
+
+				let finaltag = `
+					<tr>
+						<td style="background-color:gray;color:white;">전체 : ${GetNumber(total)}</td>
+						<td style="background-color:gray;color:white;">지급총합</td>
+						<td style="background-color:gray;color:skyblue;">${GetNumber(iTotalGive)}</td>
+						<td style="background-color:gray;color:white;">차감총합</td>
+						<td style="background-color:gray;color:orange;">${GetNumber(iTotalTake)}</td>
+					</tr>`;
+				$(parent_id).append(finaltag);
+			}
+		}
+
+		let OnClickSearch = () => {
+			let strNickname = $('#strNickname').val();
+			if ( strNickname == undefined )
+				strNickname = '';
+			RequestGTRecord('TO', strNickname);
+			RequestGTRecord('FROM', strNickname);
+		}
+
+		let OnClickSearchBy = () => {
+			let strNickname = $('#strNickname').val();
+			RequestGTRecord('TO', strNickname);
+			RequestGTRecord('FROM', strNickname);
+		}
+
+		let OnClickSearchNickname = () => {
+			RequestAgentList(EAgent.eProAdmin, user.strGroupID, user.iClass);
+		}
+	</script>
+</body>
+</html>

@@ -194,6 +194,17 @@ router.post('/changemoney', isLoggedIn, async(req, res) => {
 
 });
 
+router.post('/changemoneylist', isLoggedIn, async(req, res) => {
+    console.log(req.body);
+    const user = await IAgent.GetUserInfo(req.body.strNickname);
+    console.log(`######################################################################## ChangeMoney`);
+    console.log(user);
+    let agent = {strNickname:user.strNickname, iClass:user.iClass, strGroupID:user.strGroupID, iCash:user.iCash, iSettle:user.iSettle, iRolling:user.iRolling, iSettleAcc:user.iSettleAcc,
+        iRootClass:req.user.iClass, iPermission:req.user.iPermission, iRootNickname:req.user.strNickname};
+    let iocount = await IInout.GetProcessing(user.strGroupID, user.strNickname, user.iClass);
+    res.render('manage_user/changemoneylist', {iLayout:0, iHeaderFocus:10, user:agent, iocount:iocount});
+});
+
 let GetNicknameList = (strGroupID, listUsers) => {
 
     let list = [];

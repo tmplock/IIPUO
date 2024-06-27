@@ -46,9 +46,8 @@ let SetModal = (strModalTag, iRender) => {
         <div class="modal-content">
             <span class="close">&times;</span>
             <h2>회수하기</h2>
-            <div class="input-group" style="text-align: center; font-size:20px">
+            <div style="text-align: center; font-size:20px">
                 <label for="balance">보유머니 : <span id="withdrawable">0</span> </label>
-                
             </div>
             <div class="input-group">
                 <label for="nickname">아이디</label>

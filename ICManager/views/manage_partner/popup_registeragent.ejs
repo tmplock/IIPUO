@@ -425,6 +425,8 @@
 		checkBlockNum(`#fSettleSlot`);
 
 		$(document).ready(() => {
+			SetRadioSettleDays(15);
+			SetRadioSettleType(0);
 			SetUsingPC(parent.iAgentClass);
 			SetAutoRegister(false);
 			SetUsingPassNewUser(parent.iAgentClass);
@@ -450,6 +452,9 @@
 			$('#fRollingBaccarat').val('');
 			$('#fRollingUnderOver').val('');
 			$('#fRollingSlot').val('');
+			SetRadioSettleDays(15);
+			SetRadioSettleType(0);
+
 			bCheckAutoRegister = false;
 			bCheckIDOrNicknameAutoRegister = false;
 			SetUsingPC(parent.iAgentClass);

@@ -1,0 +1,1328 @@
+
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>UNOVER CASINO</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, minimum-scale=1.0">
+		<link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+		<link href="csspb/common.css" rel="stylesheet" type="text/css">
+		<link href="csspb/basic.css" rel="stylesheet" type="text/css">
+		<link href="csspb/layout.css" rel="stylesheet" type="text/css">
+        <link href="csspb/layout_m.css" rel="stylesheet" type="text/css">
+		<link rel="stylesheet" href="css/animations.css"><!-- CSS animations1 -->
+
+        <!-- <script src='/socket.io/socket.io.js'></script> -->
+
+		<script  src="http://code.jquery.com/jquery-latest.min.js"></script>
+
+		<link href='//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css' rel='stylesheet' type='text/css'>
+	</head>
+
+
+
+<body class="overflow-x:hidden;" style="font-family:'Spoqa Han Sans Neo';">
+
+	<!-- <button onclick="toggle();">test</button> -->
+	<div id="wrap">
+	<div class="contents_wrap">
+		<div class="contents_box">
+			<div class="contents_left">
+				<div class="title1">
+					<span id="round"><em id="divTime3">00:00</em></span>
+				</div>
+
+					<div class="bg_game">
+						<!-- <iframe src="https://ntry.com/scores/powerball/live.php" width="830" height="641" scrolling="no" frameborder="0"></iframe> -->
+						<iframe src="https://www.powerballgame.co.kr/?view=powerballMiniView" width="830" height="270" scrolling="no" frameborder="0"></iframe>                
+					</div>
+				<div class="con_box10" style="position:relative;">  
+					<span class="check2" id="betting_view" style="display:black;">베팅이 마감되었습니다.</span>
+
+
+					<div class="po_title">파워볼<span style="float:right">
+						<!-- <span class="po_title_right" id="round"><em id="divTime3">00:00</em></span></span> -->
+						<!-- <label id="divTime" style="FONT-SIZE:1px;FONT-FAMILY: Arial;FONT-WEIGHT:bold;COLOR:#162d44;"></label>
+						<label id="divTime2" style="FONT-SIZE:1px;FONT-FAMILY: Arial;FONT-WEIGHT:bold;COLOR:#162d44;"></label> -->
+					</div>
+
+					<div class="po_box1">
+						<table width="100%" border="0" cellspacing="3" cellpadding="0" id="single1">
+							<tr>
+								<td width="10%">
+									<div class="po_box_wrap" id="id1_1" name="0" value='0' onclick="SetBettingTarget(0, '파워볼 홀');">
+										<!-- <span class="po_btn1">홀<span class="po_s_font">1.95</span></span> -->
+										<span class="po_btn1">홀<span class="po_s_font"><%=odds[0]%></span></span>
+									</div>
+								</td>
+								<td width="10%">
+									<div class="po_box_wrap" id="id2_1" name="1" onclick="SetBettingTarget(1, '파워볼 짝');">
+										<!-- <span class="po_btn2">짝<span class="po_s_font">1.95</span></span> -->
+										<span class="po_btn2">짝<span class="po_s_font"><%=odds[1]%></span></span>
+									</div>
+								</td>
+
+								<td width="10%">
+									<div class="po_box_wrap" id="id2_2" name="3" onclick="SetBettingTarget(3, '파워볼 언더');">
+										<!-- <span class="po_btn1">언더 <span class="po_s_font">1.95</span></span> -->
+										<span class="po_btn1">언더<span class="po_s_font"><%=odds[3]%></span></span>
+									</div>
+								</td>
+								<td width="10%">
+									<div class="po_box_wrap" id="id1_2" name="2" onclick="SetBettingTarget(2, '파워볼 오버');">
+										<!-- <span class="po_btn2">오버 <span class="po_s_font">1.95</span></span> -->
+										<span class="po_btn2">오버<span class="po_s_font"><%=odds[2]%></span></span>
+									</div>
+								</td>
+							</tr>                                                                      	
+						</table>
+
+						<table width="100%" border="0" cellspacing="3" cellpadding="0" id="double1">
+							<tr>
+								<td width="10%">
+									<div class="po_box_wrap" id="id2_3" name="5" onclick="SetBettingTarget(5, '파워볼 홀언더');">
+										<!-- <span class="po_btn5">홀+언더<span class="po_s_font">4.10</span></span> -->
+										<span class="po_btn5">홀+언더<span class="po_s_font"><%=odds[5]%></span></span>
+									</div>
+								</td>
+
+								<td width="10%">
+									<div class="po_box_wrap" id="id2_4" name="7" onclick="SetBettingTarget(7, '파워볼 짝언더');">
+										<!-- <span class="po_btn6">짝+언더 <span class="po_s_font">3.10</span></span> -->
+										<span class="po_btn6">짝+언더<span class="po_s_font"><%=odds[7]%></span></span>
+									</div>
+								</td>                                                                    
+
+								<td width="10%">
+									<div class="po_box_wrap" id="id1_3" name="4" onclick="SetBettingTarget(4, '파워볼 홀오버');">
+										<!-- <span class="po_btn5">홀+오버<span class="po_s_font">3.10</span></span> -->
+										<span class="po_btn5">홀+오버<span class="po_s_font"><%=odds[4]%></span></span>
+									</div>
+								</td>
+
+								<td width="10%">
+									<div class="po_box_wrap" id="id1_4" name="6" onclick="SetBettingTarget(6, '파워볼 짝오버');">
+										<!-- <span class="po_btn6">짝+오버 <span class="po_s_font">4.10</span></span> -->
+										<span class="po_btn6">짝+오버<span class="po_s_font"><%=odds[6]%></span></span>
+									</div>
+								</td>
+							</tr>                                                                      	
+						</table>                    
+					</div>
+
+
+					<div class="po_title">일반볼</div>
+					<div class="po_box1">
+						<table width="100%" border="0" cellspacing="3" cellpadding="0" id="single2">
+							<tr>
+								<td width="10%">
+									<div class="po_box_wrap" id="id1_5" name="8" onclick="SetBettingTarget(8, '일반볼 홀');">
+										<!-- <span class="po_btn1">홀 <span class="po_s_font">1.95</span></span> -->
+										<span class="po_btn1">홀 <span class="po_s_font"><%=odds[8]%></span></span>
+									</div>
+								</td>
+								<td width="10%">
+									<div class="po_box_wrap" id="id2_5" name="9" onclick="SetBettingTarget(9, '일반볼 짝');">
+										<!-- <span class="po_btn2">짝 <span class="po_s_font">1.95</span></span> -->
+										<span class="po_btn2">짝 <span class="po_s_font"><%=odds[9]%></span></span>
+									</div>
+								</td>
+
+								<td width="10%">
+									<div class="po_box_wrap" id="id2_6" name="11" onclick="SetBettingTarget(11, '일반볼 언더');">
+										<!-- <span class="po_btn1">언더 <span class="po_s_font">1.95</span></span> -->
+										<span class="po_btn1">언더 <span class="po_s_font"><%=odds[11]%></span></span>
+									</div>
+								</td>
+								<td width="10%">
+									<div class="po_box_wrap" id="id1_6" name="10" onclick="SetBettingTarget(10, '일반볼 오버');">
+										<!-- <span class="po_btn2">오버 <span class="po_s_font">1.95</span></span> -->
+										<span class="po_btn2">오버 <span class="po_s_font"><%=odds[10]%></span></span>
+									</div>
+								</td>
+							
+							</tr>                                                                      	
+						</table>
+
+						<table width="100%" border="0" cellspacing="3" cellpadding="0" id="double2">
+							<tr>
+								<td width="10%">
+									<div class="po_box_wrap" id="id2_8" name="16" onclick="SetBettingTarget(16, '일반볼 홀언더');">
+										<!-- <span class="po_btn5">홀+언더 <span class="po_s_font">3.72</span></span> -->
+										<span class="po_btn5">홀+언더 <span class="po_s_font"><%=odds[16]%></span></span>
+									</div>
+								</td>
+
+								<td width="10%">
+									<div class="po_box_wrap" id="id2_9" name="18" onclick="SetBettingTarget(18, '일반볼 짝언더');">
+										<!-- <span class="po_btn6">짝+언더 <span class="po_s_font">3.72</span></span> -->
+										<span class="po_btn6">짝+언더 <span class="po_s_font"><%=odds[18]%></span></span>
+									</div>
+								</td>              
+
+								<td width="10%">
+									<div class="po_box_wrap" id="id1_8" name="15" onclick="SetBettingTarget(15, '일반볼 홀오버');">
+										<!-- <span class="po_btn5">홀+오버 <span class="po_s_font">3.72</span></span> -->
+										<span class="po_btn5">홀+오버 <span class="po_s_font"><%=odds[15]%></span></span>
+									</div>
+								</td>
+
+								<td width="10%">
+									<div class="po_box_wrap" id="id1_9" name="17" onclick="SetBettingTarget(17, '일반볼 짝오버');">
+										<!-- <span class="po_btn6">짝+오버 <span class="po_s_font">3.72</span></span> -->
+										<span class="po_btn6">짝+오버 <span class="po_s_font"><%=odds[17]%></span></span>
+									</div>
+								</td>
+							</tr>                                                                      	
+						</table>
+					</div>
+
+					<div class="po_title" id="triple1">일반볼 + 파워볼</div>
+					<div class="po_box1" id="triple2">
+						<table width="100%" border="0" cellspacing="3" cellpadding="0">
+							<tr>
+								<td width="10%">
+									<div class="po_box_wrap" id="id2_6" name="25" onclick="SetBettingTarget(25, '홀+언더+P홀');">
+										<!-- <span class="po_btn7">홀+언더+P홀 <span class="po_s_font">7.10</span></span> -->
+										<span class="po_btn7">홀+언더+P홀 <span class="po_s_font"><%=odds[25]%></span></span>
+									</div>
+								</td>
+								<td width="10%">
+									<div class="po_box_wrap" id="id1_6" name="26" onclick="SetBettingTarget(26, '홀+언더+P짝');">
+										<!-- <span class="po_btn8">홀+언더+P짝<span class="po_s_font">7.10</span></span> -->
+										<span class="po_btn8">홀+언더+P짝<span class="po_s_font"><%=odds[26]%></span></span>
+									</div>
+								</td>
+
+								<td width="10%">
+									<div class="po_box_wrap" id="id2_9" name="27" onclick="SetBettingTarget(27, '홀+오버+P홀');">
+										<!-- <span class="po_btn7">홀+오버+P홀<span class="po_s_font">7.10</span></span> -->
+										<span class="po_btn7">홀+오버+P홀<span class="po_s_font"><%=odds[27]%></span></span>
+									</div>
+								</td>              
+								<td width="10%">
+									<div class="po_box_wrap" id="id1_9" name="28" onclick="SetBettingTarget(28, '홀+오버+P짝');">
+										<!-- <span class="po_btn8">홀+오버+P짝<span class="po_s_font">7.10</span></span> -->
+										<span class="po_btn8">홀+오버+P짝<span class="po_s_font"><%=odds[28]%></span></span>
+									</div>
+								</td>
+							</tr>                                                                      	
+						</table>
+
+						<table width="100%" border="0" cellspacing="3" cellpadding="0">
+							<tr>
+								<td width="10%">
+									<div class="po_box_wrap" id="id2_6" name="29" onclick="SetBettingTarget(29, '짝+언더+P홀');">
+										<!-- <span class="po_btn7">짝+언더+P홀 <span class="po_s_font">7.10</span></span> -->
+										<span class="po_btn7">짝+언더+P홀 <span class="po_s_font"><%=odds[29]%></span></span>
+									</div>
+								</td>
+								<td width="10%">
+									<div class="po_box_wrap" id="id1_6" name="30" onclick="SetBettingTarget(30, '짝+언더+P짝');">
+										<!-- <span class="po_btn8">짝+언더+P짝<span class="po_s_font">7.10</span></span> -->
+										<span class="po_btn8">짝+언더+P짝<span class="po_s_font"><%=odds[30]%></span></span>
+									</div>
+								</td>
+
+								<td width="10%">
+									<div class="po_box_wrap" id="id2_9" name="31" onclick="SetBettingTarget(31, '>짝+오버+P홀');">
+										<!-- <span class="po_btn7">짝+오버+P홀<span class="po_s_font">7.10</span></span> -->
+										<span class="po_btn7">짝+오버+P홀<span class="po_s_font"><%=odds[31]%></span></span>
+									</div>
+								</td>              
+								<td width="10%">
+									<div class="po_box_wrap" id="id1_9" name="32" onclick="SetBettingTarget(32, '짝+오버+P짝');">
+										<!-- <span class="po_btn8">짝+오버+P짝<span class="po_s_font">7.10</span></span> -->
+										<span class="po_btn8">짝+오버+P짝<span class="po_s_font"><%=odds[32]%></span></span>
+									</div>
+								</td>
+							</tr>                                                                      	
+						</table>
+					</div>
+
+					<div class="po_title">대중소</div>
+					<div class="po_box1">
+						<table width="100%" border="0" cellspacing="3" cellpadding="0" id="single3">
+							<tr>
+								<td width="10%">
+									<div class="po_box_wrap" id="id1_7" name="12" onclick="SetBettingTarget(12, '일반볼 대');">
+										<!-- <span class="po_btn3">대<span class="po_s_font">2.73</span></span> -->
+										<span class="po_btn3">대<span class="po_s_font"><%=odds[12]%></span></span>
+									</div>
+								</td>
+								<td width="10%">
+									<div class="po_box_wrap" id="id0_7" name="13" onclick="SetBettingTarget(13, '일반볼 중');">
+										<!-- <span class="po_btn3">중<span class="po_s_font">2.43</span></span> -->
+										<span class="po_btn3">중<span class="po_s_font"><%=odds[13]%></span></span>
+									</div>
+								</td>
+								<td width="10%">
+									<div class="po_box_wrap" id="id2_7" name="14" onclick="SetBettingTarget(14, '일반볼 소');">
+										<!-- <span class="po_btn3">소<span class="po_s_font">2.72</span></span> -->
+										<span class="po_btn3">소<span class="po_s_font"><%=odds[14]%></span></span>
+									</div>
+								</td>
+							</tr>                                                                      	
+						</table>
+						<table width="100%" border="0" cellspacing="3" cellpadding="0" id="double3">
+							<tr>
+								<td width="10%">
+									<table width="100%" border="0" cellspacing="3" cellpadding="0">
+										<tr>
+											<td width="10%">
+												<div class="po_box_wrap" id="id1_10" name="19" onclick="SetBettingTarget(19, '일반볼 홀대');">
+													<!-- <span class="po_btn4">홀+대<span class="po_s_font">4.40</span></span> -->
+													<span class="po_btn4">홀+대<span class="po_s_font"><%=odds[19]%></span></span>
+												</div>
+											</td>
+										</tr>
+										<tr>
+											<td width="10%">
+												<div class="po_box_wrap" id="id2_10" name="20" onclick="SetBettingTarget(20, '일반볼 짝대');">
+													<!-- <span class="po_btn4">짝+대<span class="po_s_font">4.40</span></span> -->
+													<span class="po_btn4">짝+대<span class="po_s_font"><%=odds[20]%></span></span>
+												</div>
+											</td>
+										</tr>
+									</table>
+								</td>
+
+								<td width="10%">
+									<table width="100%" border="0" cellspacing="3" cellpadding="0">
+										<tr>
+											<td width="10%">
+												<div class="po_box_wrap" id="id1_11" name="21" onclick="SetBettingTarget(21, '일반볼 홀중');">
+													<!-- <span class="po_btn4">홀+중<span class="po_s_font">4.20</span></span> -->
+													<span class="po_btn4">홀+중<span class="po_s_font"><%=odds[21]%></span></span>
+												</div>
+											</td>
+										</tr>
+										<tr>
+											<td width="10%">
+												<div class="po_box_wrap" id="id2_11" name="22" onclick="SetBettingTarget(22, '일반볼 짝중');">
+													<!-- <span class="po_btn4">짝+중<span class="po_s_font">4.20</span></span> -->
+													<span class="po_btn4">짝+중<span class="po_s_font"><%=odds[22]%></span></span>
+												</div>
+											</td>
+										</tr>
+									</table>
+								</td>
+
+								<td width="10%">
+									<table width="100%" border="0" cellspacing="3" cellpadding="0">
+										<tr>
+											<td width="10%">
+												<div class="po_box_wrap" id="id1_12" name="23" onclick="SetBettingTarget(23, '일반볼 홀소');">
+													<!-- <span class="po_btn4">홀+소<span class="po_s_font">4.40</span></span> -->
+													<span class="po_btn4">홀+소<span class="po_s_font"><%=odds[23]%></span></span>
+												</div>
+											</td>
+										</tr>
+										<tr>
+											<td width="10%">
+												<div class="po_box_wrap" id="id2_12" name="24" onclick="SetBettingTarget(24, '일반볼 짝소');">
+													<!-- <span class="po_btn4">짝+소<span class="po_s_font">4.40</span></span> -->
+													<span class="po_btn4">짝+소<span class="po_s_font"><%=odds[24]%></span></span>
+												</div>
+											</td>
+										</tr>
+									</table>
+								</td>
+							</tr>                                                                      	
+						</table>
+					</div>
+				</div>    
+
+				<div class="con_box50">
+					<div class="title1">베팅내역</div>            
+				</div>   
+				<div class="con_box00">
+					<table width="100%" border="0" cellspacing="0" cellpadding="0">
+						<tr>
+							<td width="3%" class="list_title1"><input name="" type="checkbox" value=""></td>
+							<td width="10%" class="list_title1">구매시간</td>                        
+							<td width="10%" class="list_title1">회차</td>
+							<td width="10%" class="list_title1">게임정보</td> 
+							<td width="10%" class="list_title1">베팅</td>                                                          
+							<td width="5%" class="list_title1">배당</td>                                                          
+							<td width="10%" class="list_title1">베팅금액</td>
+							<td width="10%" class="list_title1">당첨금액</td>
+							<td width="7%" class="list_title1">상태</td>                                                
+						</tr>
+
+						<tbody id = "betting_list">
+
+						</tbody>
+
+							<!-- 
+								<tr>
+									<td class="list1"><input name="" type="checkbox" value=""></td>
+							<td class="list1">00-00 00:00:00</td> 
+							<td class="list1">[000회]000회</td>                         
+							<td class="list1">일반볼</td>                                                 
+							<td class="list1">홀</td>
+							<td class="list1">0.00</td>                                                        
+							<td class="list1"><span class="font05">10,000,000</span></td>
+							<td class="list1"><span class="font06">10,000,000</span></td>                                      
+							<td class="list1"><span class="cart_r11">상태1</span></td>
+						</tr> -->
+
+					</table>
+				</div>   
+				<div class="con_box10">
+					<div class="btn_wrap_right">
+						<ul>
+							<!-- <li><a href="#"><span class="btn2_2">선택삭제</span></a></li>                                                             
+							<li><a href="#"><span class="btn2_1">전체삭제</span></a></li>                                                                                                              -->
+						</ul>
+					</div>
+				</div>  
+			</div>
+			<div class="contents_right">
+				<div id="con_box50r" style="Position: fixed">        
+					<div class="title1" style="width:55%;">
+						<span>보유금액 <span id="mycash"><%=user.iCash.toLocaleString()%></span></span>
+					</div>           
+					<div class="cart_box" style="width:55%;">
+						<table width="100%" border="0" align="center" cellspacing="0" cellpadding="0">
+							<!-- <tr>
+								<td height="40">보유금액</td>
+								<td align="right" id="mycash"><%=user.iCash.toLocaleString()%></td>                        
+							</tr>  -->
+							<tr>
+								<td height="40">배당율</td>
+								<td align="right"><span id="Odds">1.00</span></td>                        
+							</tr>                      
+							<tr>
+								<td height="40">베팅금액</td>
+								<!-- <td align="right"><input name="BetAmount" id="BetAmount" type="text" class="input_cart" onKeyup="foreCastDividendPriceCalc();" onkeypress="if(event.keyCode < 45 || event.keyCode > 57) event.returnValue = false;" value="0"></td>                         -->
+								<td align="right"><input name="BetAmount" id="BetAmount" type="text" class="input_cart2" value="0"></td>
+							</tr>  
+							<tr>
+								<td height="40">배당금</td>
+								<td align="right"><input name="TotalBenefit" id="TotalBenefit" type="text" class="input_cart2" style="color:#ffffff;" readonly></td>                        
+							</tr>                                                                                                                                                             
+							<!-- <tr>
+								<td height="40">베팅 구좌</td>
+								<td align="right"><input name="BettingTarget" id="BettingTarget" type="text" class="input_cart" style="color:#ffffff;" readonly></td>
+							</tr>                                                                                                                                                              -->
+
+							<input type='hidden' name="BettingTarget" id="BettingTarget" type="text" class="input_cart" style="color:#ffffff;" readonly>
+						</table>     
+						<div class="con_box05">
+							<strong id="cartTable"></strong>
+						</div>                             
+						<table width="100%" border="0" align="center" cellspacing="2" cellpadding="0">
+							<tr>
+								<td width="10%" align="center"><a onclick="SetBettingAmount(10000);"><span class="cart_btn1">10,000</span></a></td>
+								<td width="10%" align="center"><a onclick="SetBettingAmount(50000);"><span class="cart_btn1">50,000</span></a></td>
+								<td width="10%" align="center"><a onclick="SetBettingAmount(100000);"><span class="cart_btn1">100,000</span></a></td>
+								<td width="10%" align="center"><a onclick="SetBettingAmount(500000);"><span class="cart_btn1">500,000</span></a></td>
+							</tr>
+							<tr>
+								<!-- <td width="10%" align="center"><a onclick="SetBettingAmount(500000);"><span class="cart_btn1">50만</span></a></td>
+								<td width="10%" align="center"><a onclick="SetBettingAmount(1000000);"><span class="cart_btn1">백만</span></a></td>
+								<td width="10%" align="center"><a onclick="SetBettingAmount(5000000);"><span class="cart_btn1">5백만</span></a></td> -->
+								<td></td>
+								<td></td>
+								<td></td>
+								<td width="10%" align="center"><a onclick="SetBettingAmount(0);"><span class="cart_btn3">취소</span></a></td>
+							</tr>
+						</table>
+						<table width="100%" border="0" align="center" cellspacing="2" cellpadding="0">     
+							<tr>
+								<td width="10%" align="center"><a href="javascript:BettingGroup();"><span class="cart_btn2">베팅하기</span></a></td>                           
+							</tr>
+						</table>                                 
+						<table width="100%" border="0" align="center" cellspacing="0" cellpadding="0">
+							<tr>
+								<td height="40">총 베팅금액</td>
+								<td align="right"><input name="BetAmount" id="BetTotalAmount" type="text" class="input_cart2" value="0" readonly></td>
+							</tr>  
+							<tr>
+								<td height="40">당첨 금액</td>
+								<td align="right"><input name="TotalBenefit" id="BetWinAmount" type="text" class="input_cart2" style="color:#ffffff;" readonly></td>                        
+							</tr>                                                                                                                                                             
+						</table>     
+					</div> 
+					
+					<div class="con_box50r">
+						<div class="title1"><span id="recent_round"></span>회차 베팅내역</div>            
+
+						<div style="width:100%; height:450px; overflow:auto">
+							<table width="100%" border="0" cellspacing="0" cellpadding="0">
+								<tr>
+									<td width="10%" class="list_title1">번호</td> 
+									<td width="45%" class="list_title1">베팅</td>                                                          
+									<td width="25%" class="list_title1">베팅금액</td>
+									<td width="20%" class="list_title1">상태</td>  
+								</tr>
+		
+								<tbody id = "round_betting_list">
+
+
+								</tbody>
+							</table>
+						</div>
+					</div>   
+
+					<!-- <div class="con_box10">
+						<div class="btn_wrap_right">
+							<ul>
+								<li><a href="#"><span class="btn2_2">선택삭제</span></a></li>                                                             
+								<li><a href="#"><span class="btn2_1">전체삭제</span></a></li>                                                                                                             
+							</ul>
+						</div>
+					</div>   -->
+					
+				</div>                              
+			</div>
+		</div>
+	</div>
+
+
+	<script type="text/javascript">
+        var user = JSON.parse('<%-JSON.stringify(user)%>');
+        console.log(user);
+
+		const cType = parseInt(user.strPBOptionCode[0]);
+		const cSingle = parseInt(user.strPBOptionCode[1]);
+		const cDouble = parseInt(user.strPBOptionCode[2]);
+		const cTriple = parseInt(user.strPBOptionCode[3]);
+
+		const cPBLimit = parseInt(user.iPBLimit);
+		const cPBSingleLimit = parseInt(user.iPBSingleLimit);
+		const cPBDoubleLimit = parseInt(user.iPBDoubleLimit);
+		const cPBTripleLimit = parseInt(user.iPBTripleLimit);
+
+		console.log(`Type : ${cType}, Single : ${cSingle}, Double : ${cDouble}, Triple : ${cTriple}`);
+
+		console.log(`cPBLimit : ${cPBLimit}, cPBSingleLimit : ${cPBSingleLimit}, cPBDoubleLimit : ${cPBDoubleLimit}, cPBTripleLimit : ${cPBTripleLimit}`);
+
+        // let socket = io();
+
+        // socket.emit('RequestLogin', user.strID);
+
+
+		let listBettingAccount = [];
+		let iBettingAmount = 0;
+
+		let RemoveBettingAccount = (account) => {
+
+			for ( let i in listBettingAccount )
+			{
+				if ( listBettingAccount[i] == account )
+				{
+					listBettingAccount.splice(i, 1);
+					return;				
+				}
+			}
+		}
+
+		$(document).on('ready', ()=> {
+
+			console.log(`cSingle : ${cSingle}`);
+
+			if ( cSingle == 0 )
+			{
+				$('#single1').hide();
+				$('#single2').hide();
+				$('#single3').hide();
+			}
+			if ( cDouble == 0 )
+			{
+				$('#double1').hide();
+				$('#double2').hide();
+				$('#double3').hide();
+			}
+			if ( cTriple == 0 )
+			{
+				$('#triple1').hide();
+				$('#triple2').hide();
+			}
+
+			RequestRoundBettingRecord(true);
+		});
+
+		$(document).on('click', '.po_box_wrap', (event) => {
+
+			//alert($(event.currentTarget).attr('name'));
+			$('.po_box_wrap_on').attr('class', 'po_box_wrap');
+
+			$(event.currentTarget).attr('class', 'po_box_wrap_on');
+
+			let value = $(event.currentTarget).attr('name');
+
+			listBettingAccount = [];
+			listBettingAccount.push(value);
+			console.log(listBettingAccount);
+		});
+
+		$(document).on('click', '.po_box_wrap_on', (event) => {
+
+			//alert($(event.currentTarget).attr('name'));
+
+			$(event.currentTarget).attr('class', 'po_box_wrap');
+
+			let value = $(event.currentTarget).attr('name');
+			RemoveBettingAccount(value);
+			console.log(listBettingAccount);
+		});
+
+		const cOdds = JSON.parse('<%-JSON.stringify(odds)%>');
+		console.log(cOdds);
+		// const cOdds = 
+		// [
+		// 	1.95,//파워볼 홀
+		// 	1.95,//파워볼 짝
+		// 	1.95,//파워볼 오버
+		// 	1.95,//파워볼 언더
+		// 	3.10,//파워볼 홀오버
+		// 	4.10,//파워볼 홀언더
+		// 	4.10,//파워볼 짝오버
+		// 	3.10,//파워볼 짝언더
+
+		// 	1.95, //일반볼 홀
+		// 	1.95,//일반볼 짝
+		// 	1.95,//일반볼 오버
+		// 	1.95,//일반볼 언더
+
+		// 	2.73,//일반볼 대
+		// 	2.43,//일반볼 중
+		// 	2.72,//일반볼 소
+
+		// 	3.72,//일반볼 홀오버
+		// 	3.72,//일반볼 홀언더
+		// 	3.72,//일반볼 짝오버
+		// 	3.72,//일반볼 짝언더
+			
+		// 	4.40,//일반볼 홀대
+		// 	4.40,//일반볼 짝대
+
+		// 	4.20,//일반볼 홀중
+		// 	4.20,//일반볼 짝중
+
+		// 	4.40,//일반볼 홀소
+		// 	4.40,//일반볼 짝소
+
+		// 	7.10,//홀+언더+P홀
+		// 	7.10,//홀+언더+P짝
+		// 	7.10,//홀+오버+P홀
+		// 	7.10,//홀+오버+P짝
+		// 	7.10,//짝+언더+P홀
+		// 	7.10,//짝+언더+P짝
+		// 	7.10,//짝+오버+P홀
+		// 	7.10,//짝+오버+P짝
+		// ];
+
+		
+		let GetOdds = (target) => {
+			return cOdds[parseInt(target)];
+		}
+
+		let GetBallType = (target) => {
+
+			switch(parseInt(target))
+			{
+			case 0: //파워볼 홀
+			case 1: //파워볼 짝
+			case 2: //파워볼 오버
+			case 3: //파워볼 언더
+			case 4: //파워볼 홀오버
+			case 5: //파워볼 홀언더
+			case 6: //파워볼 짝오버
+			case 7: //파워볼 짝언더
+				return '파워볼';
+			case 8: //일반볼 홀
+			case 9: //일반볼 짝
+			case 10: //일반볼 오버
+			case 11: //일반볼 언더
+			case 12: //일반볼 대
+			case 13: //일반볼 중
+			case 14: //일반볼 소
+			case 15: //일반볼 홀오버
+			case 16: //일반볼 홀언더
+			case 17: //일반볼 짝오버
+			case 18: //일반볼 짝언더
+			case 19: //일반볼 홀대
+			case 20: //일반볼 짝대
+			case 21: //일반볼 홀중
+			case 22: //일반볼 짝중
+			case 23: //일반볼 홀소
+			case 24: //일반볼 짝소
+				return '일반볼';
+			case 25://홀+언더+P홀
+			case 26://홀+언더+P짝
+			case 27://홀+오버+P홀
+			case 28://홀+오버+P짝
+			case 29://짝+언더+P홀
+			case 30://짝+언더+P짝
+			case 31://짝+오버+P홀
+			case 32://짝+오버+P짝
+				return '일반볼+파워볼';
+			}
+		}
+
+		let GetTargetType = (target) => {
+
+			console.log(`GetBallType : ${target}`);
+
+			switch(parseInt(target))
+			{
+			case 0: //파워볼 홀
+				return '홀';
+			case 1: //파워볼 짝
+				return '짝';
+			case 2: //파워볼 오버
+				return '오버';			
+			case 3: //파워볼 언더
+				return '언더';
+			case 4: //파워볼 홀오버
+				return '홀+오버';
+			case 5: //파워볼 홀언더
+				return '홀+언더';
+			case 6: //파워볼 짝오버
+				return '짝+오버';
+			case 7: //파워볼 짝언더
+				return '짝+언더';
+			case 8: //일반볼 홀
+				return '홀';
+			case 9: //일반볼 짝
+				return '짝';
+			case 10: //일반볼 오버
+				return '오버';
+			case 11: //일반볼 언더
+				return '언더';
+			case 12: //일반볼 대
+				return '대';
+			case 13: //일반볼 중
+				return '중';
+			case 14: //일반볼 소
+				return '소';
+			case 15: //일반볼 홀오버
+				return '홀+오버';
+			case 16: //일반볼 홀언더
+				return '홀+언더';
+			case 17: //일반볼 짝오버
+				return '짝+오버';
+			case 18: //일반볼 짝언더
+				return '짝+언더';
+			case 19: //일반볼 홀대
+				return '홀+대';
+			case 20: //일반볼 짝대
+				return '짝+대';
+			case 21: //일반볼 홀중
+				return '홀+중';
+			case 22: //일반볼 짝중
+				return '짝+중';
+			case 23: //일반볼 홀소
+				return '홀+소';
+			case 24: //일반볼 짝소
+				return '짝+소';
+			case 25://홀+언더+P홀
+				return '홀+언더+P홀';
+			case 26://홀+언더+P짝
+				return '홀+언더+P짝';
+			case 27://홀+오버+P홀
+				return '홀+오버+P홀';
+			case 28://홀+오버+P짝
+				return '홀+오버+P짝';
+			case 29://짝+언더+P홀
+				return '짝+언더+P홀';
+			case 30://짝+언더+P짝
+				return '짝+언더+P짝';
+			case 31://짝+오버+P홀
+				return '짝+오버+P홀';
+			case 32://짝+오버+P짝
+				return '짝+오버+P짝';
+			}
+		}
+
+		// $('#betting_list').empty();
+
+		// for ( let i in betting_list )
+		// {
+		// 	const cTarget = parseInt(betting_list[i].strTableID);
+		// 	const odds = cOdds[cTarget];
+		// 	const cBallType = GetBallType(betting_list[i].strTableID);
+		// 	const cTargetType = GetTargetType(betting_list[i].strTableID);
+
+		// 	let tag =
+		// 	`
+		// 	<tr>
+		// 		<td class="list1"><input name="" type="checkbox" value=""></td>
+		// 		<td class="list1">${betting_list[i].createdAt}</td> 
+		// 		<td class="list1">${betting_list[i].strRound}회</td>                         
+		// 		<td class="list1">${cBallType}</td>                                                 
+		// 		<td class="list1">${cTargetType}</td>
+		// 		<td class="list1">${odds}</td>                                                        
+		// 		<td class="list1"><span class="font05">${betting_list[i].iBetting}</span></td>
+		// 		<td class="list1"><span class="font06">${betting_list[i].iWin}</span></td>`;
+
+		// 		if ( betting_list[i].iComplete == 1 )
+		// 			tag += `<td class="list1">완료</td>`;
+		// 		else
+		// 			tag += `<td class="list1"><span class="cart_r11">진행</span></td>`;
+				
+		// 	tag += `</tr>`;
+		// 	$('#betting_list').append(tag);
+		// }
+
+
+        let iTime = 0;
+        let iDelayTime = 10;
+        let iRound = 0;
+		let iBettingTarget = -1;
+
+		let iPreviousRound = 0;
+
+		let iTestCounter = 0;
+
+
+
+
+        socket.on('Time', (time, delay_time, aRound) => {
+
+            console.log(`ITime : ${time}, Delay : ${delay_time}, Round : ${aRound}, Counter : ${iTestCounter}`);
+
+            iRound = parseInt(aRound)+1;
+
+
+            iDelayTime = delay_time;
+            iTime = (time-20);
+            if ( iTime < 0 )
+                iTime = 0;
+
+			//RequestRoundBettingRecord(false);
+			//RequestRoundBettingRecord(true);
+			//location.reload();
+        });
+
+		
+        function putsTime() {
+
+			// if ( iRound != iPreviousRound )
+			// 	{
+			// 		iPreviousRound = iRound;
+			// 		location.reload();
+			// 	}
+
+			if ( iTime > 0 )
+				-- iTime;
+
+			if ( iDelayTime > 0 )
+				-- iDelayTime;
+
+			if ( iTime > 0 && iDelayTime == 0 )
+			{
+				if ( document.getElementById("betting_view").style.display == "block" )
+				{
+					console.log('restart betting');
+					iTestCounter ++;
+					if ( iTestCounter == 2 )
+					{
+						location.reload();
+					}
+				}
+
+				document.getElementById("betting_view").style.display = "none";
+				$('.cart_btn2').show();
+				$('.bg_game').hide();
+
+				//RequestRoundBettingRecord(true);
+			}
+			else
+			{
+				document.getElementById("betting_view").style.display = "block";
+				$('.bg_game').show();
+
+				$('.cart_r111').hide();
+
+				$('.cart_btn2').hide();
+				
+			}
+
+		//let value = `${iTime/60}분 ${iTime%60}초`;
+
+			let min = Math.floor(iTime/60);
+			let sec = Math.floor(iTime%60);
+
+			console.log(`Min : ${min}, Sec : ${sec}, Delay : ${iDelayTime}, Counter : ${iTestCounter}`);
+
+			//document.all.divTime3.innerHTML = "베팅마감(" + iRound +")" + min + "분 :" + sec + "초";
+			const value = `베팅 마감 (${iRound})   ${min}분 : ${sec} 초`;
+			$('#round').text(value);
+
+			setTimeout("putsTime()", 1000);
+		}
+		putsTime();
+
+	
+		
+
+
+		function SetBettingTarget(iTarget, strDesc) {
+
+			console.log(`SetBettingTarget ${iTarget}, ${strDesc}`);
+
+			iBettingTarget = iTarget;
+
+			$('#BettingTarget').val(strDesc);
+
+			$('#Odds').text(cOdds[iTarget]);
+
+			UpdateWin();
+		}
+
+		function SetBettingAmount(iAmount) {
+			
+			if (iAmount == 0) 
+			{
+				Init();
+
+				// $('.po_box_wrap_on').attr('class', 'po_box_wrap');
+				// listBettingAccount = [];
+				// iBettingAmount = 0;
+
+				$('#BetAmount').attr('style', 'color:white;');
+			}
+			else 
+			{
+				iBettingAmount += iAmount;
+
+				//$('#BetAmount').val(iAmount.toLocaleString());
+				$('#BetAmount').val(iBettingAmount.toLocaleString());
+				UpdateWin();
+
+				$('#BetAmount').attr('style', 'color:red; background-color:black; font-weight:bold;');
+
+			}
+			window.focus();
+		}
+
+		let UpdateWin = () => {
+
+
+
+			const odds = $('#Odds').text();
+			//let amount = $('#BetAmount').val();
+
+			let amount = GetInteger($('#BetAmount').val());
+
+			console.log(`amount : ${amount}`);
+
+			// var str = amount.replace(/,/gi, '');
+
+			// amount = parseInt(str);
+			// //if ( value)
+			// console.log(`UpdateWin : ${amount}, ${odds}`);
+
+			if ( amount != '' )
+			{
+				const benefit = odds * amount;
+
+				$('#TotalBenefit').val(benefit.toLocaleString());
+			}
+		}
+
+		let Init = () => {
+
+			$('#BettingTarget').val('');
+			$('#TotalBenefit').val('');
+			$('#BetAmount').val(0);
+			$('#Odds').text('');
+
+			$('.po_box_wrap_on').attr('class', 'po_box_wrap');
+			listBettingAccount = [];
+			iBettingAmount = 0;
+
+
+			iBettingTarget = -1;
+		}
+
+		let GetInteger = (val) => {
+			var str = val.replace(/,/gi, '');
+
+			const amount = parseInt(str);
+
+			return amount;
+		}
+
+		let BettingGroup = async () => {
+
+			if ( listBettingAccount.length == 0 )
+			{
+				alert('베팅 대상이 없습니다.');
+				return;
+			}
+			if ( iBettingAmount == 0 )
+			{
+				alert('베팅 금액이 없습니다.');
+				return;
+			}
+
+			$.ajax({
+				type:'post',
+				url: "/powerball/bettinggroup",
+				context: document.body,
+				data:{
+					strID:user.strID, 
+					strGroupID:user.strGroupID, 
+					iChip:iBettingAmount, 
+					iRound:iRound, 
+					fOdds:cOdds[iBettingTarget], 
+					cType:cType, 
+					listTarget:listBettingAccount.join()
+				},
+		
+				success:function(data) {
+
+					if ( data.result == 'OK' )
+					{
+						$('#mycash').text(data.cash.toLocaleString());
+
+						//alert('베팅에 성공 하였습니다.');
+						Init();
+
+						RequestBettingRecord();
+						RequestRoundBettingRecord(false);
+					}
+					else if ( data.result == 'Error' )
+					{
+						if ( data.code == 'NotEnough')
+						{
+							alert('금액이 부족하여 베팅에 실패 하였습니다.');
+							Init();
+						}
+						else if ( data.code == 'OverBet')
+						{
+							alert('회차의 최대 베팅 금액을 초과하여 베팅에 실패 하였습니다.');
+							Init();
+						}
+						else if ( data.code == 'OverBetAccount')
+						{
+							alert(`구좌 최대 베팅 금액이 초과되어 베팅에 실패 하였습니다.\r\n구좌 베팅 최대 금액은 ${data.amount}입니다.`);
+							Init();
+						}
+					}
+					else
+					{
+					}
+				}
+			});
+		}
+
+		// 	// for ( let i in listBettingAccount )
+		// 	// {
+		// 	// 	await Betting(listBettingAccount[i], iBettingAmount);				
+		// 	// }
+
+		// 	// alert();
+		// }
+
+		let Betting = (iTarget, iChip) => {
+
+			//const iTarget = $('#BettingTarget').val();
+			//const iChip = GetInteger($('#BetAmount').val());
+
+			// if ( -1 == iBettingTarget )
+			// {
+			// 	alert('베팅 대상이 없습니다.');
+
+			// 	return;
+			// }
+			// if ( iChip == '' )
+			// {
+			// 	alert('베팅 금액이 없습니다.');
+			// 	return;
+			// }
+
+			$.ajax({
+				type:'post',
+				url: "/powerball/betting",
+				context: document.body,
+				data:{strID:user.strID, strGroupID:user.strGroupID, iTarget:iTarget, iChip:iChip, iRound:iRound, fOdds:cOdds[iBettingTarget], cType:cType},
+		
+				success:function(data) {
+
+					if ( data.result == 'OK' )
+					{
+						$('#mycash').text(data.cash.toLocaleString());
+
+						//alert('베팅에 성공 하였습니다.');
+						Init();
+
+						RequestBettingRecord();
+						RequestRoundBettingRecord(false);
+					}
+					else if ( data.result == 'Error' )
+					{
+						if ( data.code == 'NotEnough')
+							alert('금액이 부족하여 베팅에 실패 하였습니다.');
+						else if ( data.code == 'OverBet')
+							alert('회차의 최대 베팅 금액을 초과하여 베팅에 실패 하였습니다.');
+						else if ( data.code == 'OverBetAccount')
+							alert(`구좌 최대 베팅 금액이 초과되어 베팅에 실패 하였습니다.\r\n구좌 베팅 최대 금액은 ${data.amount}입니다.`);
+					}
+					else
+					{
+					}
+				}
+			});
+		}
+
+		// let Betting = () => {
+
+		// 	//const iTarget = $('#BettingTarget').val();
+		// 	const iChip = GetInteger($('#BetAmount').val());
+
+		// 	if ( -1 == iBettingTarget )
+		// 	{
+		// 		alert('베팅 대상이 없습니다.');
+
+		// 		return;
+		// 	}
+		// 	if ( iChip == '' )
+		// 	{
+		// 		alert('베팅 금액이 없습니다.');
+		// 		return;
+		// 	}
+
+		// 	$.ajax({
+		// 		type:'post',
+		// 		url: "/powerball/betting",
+		// 		context: document.body,
+		// 		data:{strID:user.strID, strGroupID:user.strGroupID, iTarget:iBettingTarget, iChip:iChip, iRound:iRound, fOdds:cOdds[iBettingTarget], cType:cType},
+		
+		// 		success:function(data) {
+
+		// 			if ( data.result == 'OK' )
+		// 			{
+		// 				$('#mycash').text(data.cash.toLocaleString());
+
+		// 				alert('베팅에 성공 하였습니다.');
+		// 				Init();
+
+		// 				RequestBettingRecord();
+		// 				RequestRoundBettingRecord();
+		// 			}
+		// 			else if ( data.result == 'Error' )
+		// 			{
+		// 				if ( data.code == 'NotEnough')
+		// 					alert('금액이 부족하여 베팅에 실패 하였습니다.');
+		// 				else if ( data.code == 'OverBet')
+		// 					alert('회차의 최대 베팅 금액을 초과하여 베팅에 실패 하였습니다.');
+		// 				else if ( data.code == 'OverBetAccount')
+		// 					alert(`구좌 최대 베팅 금액이 초과되어 베팅에 실패 하였습니다.\r\n구좌 베팅 최대 금액은 ${data.amount}입니다.`);
+		// 			}
+		// 			else
+		// 			{
+		// 			}
+		// 		}
+		// 	});
+		// }
+
+		let RequestRoundBettingRecord = (bResult) => {
+
+			let aRound = iRound;
+			if ( bResult == true )
+			{
+				aRound = parseInt(iRound)-1;
+			}
+
+			console.log(`aRound ${aRound}`);
+
+
+			$.ajax({
+				type:'post',
+				url: "/powerball/request_roundbettingrecord",
+				context: document.body,
+				data:{
+					strNickname:user.strNickname,
+					//iRound:iRound
+					iRound:aRound,
+				},
+		
+				success:function(data) {
+
+					console.log(data);
+
+					if ( data.result == 'OK' )
+					{
+						$('#round_betting_list').empty();
+
+						let betting_list = data.data;
+
+						console.log(`${data.data.length}`);
+
+						let iTotalBet = 0;
+						let iTotalWin = 0;
+
+						for ( let i in betting_list )
+						{
+							let bgcolor = 'rgba(0,0,0,0)';
+							if ( betting_list[i].iWin > 0 )
+								bgcolor = 'rgba(32,128,32,0.2)';
+							if ( betting_list[i].iComplete == 2 )
+								bgcolor = 'rgba(255,0,0,0.2)';
+
+							$('#recent_round').text(betting_list[i].strRound);
+
+							if ( betting_list[i].iComplete != 2 )
+								iTotalBet += parseInt(betting_list[i].iBetting);
+							iTotalWin += parseInt(betting_list[i].iWin);
+							const cTarget = parseInt(betting_list[i].iTarget);
+							const odds = cOdds[cTarget];
+							const cBallType = GetBallType(betting_list[i].iTarget);
+							const cTargetType = GetTargetType(betting_list[i].iTarget);
+
+							let tagState = `<td class="list1" style="background-color:${bgcolor};"><span class="cart_r111"><a href='javascript:Cancel(${betting_list[i].iTransactionID});'>취소<a></span></td>`;
+
+							if ( data.current == false )
+								tagState = `<td class="list1" style="background-color:${bgcolor};"><span class="font05">${betting_list[i].iWin.toLocaleString()}</span></td>`;
+
+							if ( betting_list[i].iComplete == 2 )
+							 	tagState = `<td class="list1" style="background-color:${bgcolor};"><span style="color:red;font-weight:bold;">취소</span></td>`;
+
+
+							let tag =
+							`
+								<tr>
+									<td class="list1" style="background-color:${bgcolor};">${parseInt(i)+1}</td>
+									<td class="list1" style="background-color:${bgcolor};">${cBallType} ${cTargetType}(${odds})</td>
+									<td class="list1" style="background-color:${bgcolor};"><span class="font05">${betting_list[i].iBetting.toLocaleString()}</span></td>
+									${tagState}
+								</tr>
+							`;
+							$('#round_betting_list').append(tag);
+						}
+
+						$('#BetTotalAmount').val(iTotalBet.toLocaleString());
+						$('#BetWinAmount').val(iTotalWin.toLocaleString());
+					}
+				}
+			});
+		}
+
+		let Cancel = (iTransactionID) => {
+			
+			if ( document.getElementById("betting_view").style.display == "block" )
+			{
+				alert('추점중에는 취소 할 수 없습니다.');
+				return;
+			}
+
+			//if ( confirm('베팅을 취소 하시겠습니까?') )
+			//{
+				$.ajax({
+				type:'post',
+				url: "/powerball/request_bettingcancel",
+				context: document.body,
+				data:{iTransactionID:iTransactionID},
+		
+				success:function(data) {
+
+					console.log(data);
+
+					if ( data.result == 'OK' )
+					{
+						$('#mycash').text(data.cash.toLocaleString());
+						RequestRoundBettingRecord(false);
+						RequestBettingRecord();
+					}
+					else
+					{
+						alert('베팅 취소에 실패 하였습니다.');
+					}
+				}
+			});
+			//}
+		}
+
+		let RequestBettingRecord = () => {
+			$.ajax({
+				type:'post',
+				url: "/powerball/request_bettingrecord",
+				context: document.body,
+				data:{strNickname:user.strNickname},
+		
+				success:function(data) {
+
+					console.log(data);
+
+					if ( data.result == 'OK' )
+					{
+						$('#betting_list').empty();
+
+						let betting_list = data.data;
+
+						for ( let i in betting_list )
+						{
+							let bgcolor = 'rgba(0,0,0,0)';
+							if ( betting_list[i].iWin > 0 )
+								bgcolor = 'rgba(32,128,32,0.2)';
+							if ( betting_list[i].iComplete == 2 )
+								bgcolor = 'rgba(255,0,0,0.2)';
+
+							const cTarget = parseInt(betting_list[i].iTarget);
+							const odds = cOdds[cTarget];
+							const cBallType = GetBallType(betting_list[i].iTarget);
+							const cTargetType = GetTargetType(betting_list[i].iTarget);
+
+							let tag =
+							`
+							<tr>
+								<td class="list1" style='background-color:${bgcolor};'><input name="" type="checkbox" value=""></td>
+								<td class="list1" style='background-color:${bgcolor};'>${betting_list[i].createdAt}</td>
+								<td class="list1" style='background-color:${bgcolor};'>${betting_list[i].strRound}회</td>
+								<td class="list1" style='background-color:${bgcolor};'>${cBallType}</td>
+								<td class="list1" style='background-color:${bgcolor};'>${cTargetType}</td>
+								<td class="list1" style='background-color:${bgcolor};'>${odds}</td>
+								<td class="list1" style='background-color:${bgcolor};'><span class="font05">${betting_list[i].iBetting}</span></td>
+								<td class="list1" style='background-color:${bgcolor};'><span class="font06">${betting_list[i].iWin}</span></td>`;
+
+								if ( betting_list[i].iComplete == 1 )
+									tag += `<td class="list1" style='background-color:${bgcolor};'>완료</td>`;
+								else if ( betting_list[i].iComplete == 2 )
+									tag += `<td class="list1" style="background-color:${bgcolor}; color:red;">취소</td>`;
+								else
+									tag += `<td class="list1" style="background-color:${bgcolor};"><span class="cart_r11">진행</span></td>`;
+								
+							tag += `</tr>`;
+							$('#betting_list').append(tag);
+						}
+					}
+				}
+			});
+		}
+
+		RequestBettingRecord();
+		
+
+		let bToggle = false;
+		let toggle = () => {
+			// if ( bToggle == false )
+			// {
+			// 	$('.bg_game').hide();
+			// }
+			// else
+			// {
+			// 	$('.bg_game').show();
+			// }
+
+			// bToggle = !bToggle;
+			console.log('aa');
+
+			$('.cart_r111').hide();
+		}
+
+	</script>
+</body>
+
+</html>
+<iframe name="ifr" id="ifr" src="" width="0" height="0" frameborder=0></iframe>
+
+
+	
+<iframe name="ProcFrm" src="" width="0" height="0"></iframe>

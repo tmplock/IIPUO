@@ -41,6 +41,7 @@ db.ShareRecords = require('./models/share_record')(sequelize, Sequelize);
 db.ShareCreditRecords = require('./models/share_credit_record')(sequelize, Sequelize);
 db.DataLogs = require('./models/data_log')(sequelize, Sequelize);
 db.BankRecords = require('./models/bank_record')(sequelize, Sequelize);
+db.BankGradeRecords = require('./models/bank_grade_record')(sequelize, Sequelize);
 db.DailyBettingRecords = require('./models/daily_betting_record')(sequelize, Sequelize);
 db.DailyRecords = require('./models/daily_record')(sequelize, Sequelize);
 db.RecordBets = require('./models/recordbet')(sequelize, Sequelize);
@@ -52,5 +53,6 @@ db.BettingLogs = require('./models/betting_log')(sequelize, Sequelize);
 db.CashLogs = require('./models/CashLog')(sequelize, Sequelize);
 db.SettingRecords = require('./models/setting_record')(sequelize, Sequelize);
 db.RecordInoutAccounts = require('./models/recordinoutaccount')(sequelize, Sequelize);
+db.RecordChangeURs = require('./models/recordchangeur')(sequelize, Sequelize);
 
 module.exports = db;

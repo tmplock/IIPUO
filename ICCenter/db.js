@@ -19,7 +19,7 @@ const sequelize = new Sequelize({
     host: 'db-mysql-sgp1-62759-do-user-11246819-0.c.db.ondigitalocean.com',
     database: 'iipc',
     username: 'doadmin',
-    password: 'AVNS_FYsbSxfV0ADzDF4IiRJ',
+    password: 'AVNS_CHqkvP_p_JM6uWuOb73',
     dialect: 'mysql',
     port:25060,
     timezone:'Asia/Seoul'
@@ -41,6 +41,8 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 db.Users = require('./models/user')(sequelize, Sequelize);
+db.RecordBets = require('./models/recordbet')(sequelize, Sequelize);
+db.RecordCashs = require('./models/recordcash')(sequelize, Sequelize);
 // db.RecordBets = require('./models/recordbet')(sequelize, Sequelize);
 // db.RecordDailyOverviews = require('./models/RecordDailyOverview')(sequelize, Sequelize);
 // db.Inouts = require('./models/inout')(sequelize, Sequelize);

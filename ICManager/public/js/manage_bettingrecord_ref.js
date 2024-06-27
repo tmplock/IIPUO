@@ -158,7 +158,7 @@ let OnClickRoundDetail = (id) => {
     $form.submit();
 }
 
-let SetBettingList = (records, startIndex) => {
+let SetBettingList = (records, startIndex, iClass) => {
     $('#betting_list').empty();
 
     let iTotalBet = 0;
@@ -294,25 +294,27 @@ let SetBettingList = (records, startIndex) => {
         iTotalWin -= iCancelWin;
     }
 
-    let tagEnd = `
-    <tr style="font-weight: bold;">
-        <td colspan="7" style="font-weight: bold;">${strTotal}</td>
-        <td style="color:blue;">${GetNumber(iTotalBet)}</td>
-        <td style="color:red;">${GetNumber(iTotalWin)}</td>
-        <td style="color:blue;"></td>
-        <td style="color:red;">${GetNumber(iTotalWin)}</td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td style="color:${GetColor(iTotalBet-iTotalWin)};">${strTotal} : ${GetNumber(iTotalBet-iTotalWin)}</td>
-    </tr>											
-    `;
-    $('#betting_list').append(tagEnd);
-
+    if ( iClass == 2 )
+    {
+        let tagEnd = `
+        <tr style="font-weight: bold;">
+            <td colspan="7" style="font-weight: bold;">${strTotal}</td>
+            <td style="color:blue;">${GetNumber(iTotalBet)}</td>
+            <td style="color:red;">${GetNumber(iTotalWin)}</td>
+            <td style="color:blue;"></td>
+            <td style="color:red;">${GetNumber(iTotalWin)}</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td style="color:${GetColor(iTotalBet-iTotalWin)};">${strTotal} : ${GetNumber(iTotalBet-iTotalWin)}</td>
+        </tr>											
+        `;
+        $('#betting_list').append(tagEnd);
+    }
 }
 
 
-let SetSlotBettingList = (records, startIndex) => {
+let SetSlotBettingList = (records, startIndex, iClass) => {
     $('#betting_list').empty();
 
     let iTotalBet = 0;
@@ -389,20 +391,24 @@ let SetSlotBettingList = (records, startIndex) => {
         iTotalWin += iWin;
     }
 
-    let tagEnd = `
-        <tr style="font-weight: bold;">
-            <td colspan="5" style="font-weight: bold;">${strTotal}</td>
-            <td style="color:blue;"></td>            
-            <td style="color:blue;">${GetNumber(iTotalBet)}</td>
-            <td></td>
-            <td style="color:red;">${GetNumber(iTotalWin)}</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td style="color:${GetColor(iTotalBet-iTotalWin)};">${strTotal} : ${GetNumber(iTotalBet-iTotalWin)}</td>
-        </tr>											
-    `;
-    $('#betting_list').append(tagEnd);
+    if ( iClass == 2 )
+    {
+        let tagEnd = `
+            <tr style="font-weight: bold;">
+                <td colspan="5" style="font-weight: bold;">${strTotal}</td>
+                <td style="color:blue;"></td>            
+                <td style="color:blue;">${GetNumber(iTotalBet)}</td>
+                <td></td>
+                <td style="color:red;">${GetNumber(iTotalWin)}</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td style="color:${GetColor(iTotalBet-iTotalWin)};">${strTotal} : ${GetNumber(iTotalBet-iTotalWin)}</td>
+            </tr>											
+        `;
+        $('#betting_list').append(tagEnd);
+
+    }
 
 }
 

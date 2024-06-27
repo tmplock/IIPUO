@@ -121,7 +121,9 @@ router.post('/bettingrecord', isLoggedIn, async(req, res) => {
 
     const dateStart = ITime.getTodayStart();
     const dateEnd = ITime.getTodayEnd();
-    var overview = await IAgent.CalculateSelfBettingRecord(req.body.strGroupID, req.body.iClass, dateStart, dateEnd, user.strNickname, user.strID);
+    //var overview = await IAgent.CalculateSelfBettingRecord(req.body.strGroupID, req.body.iClass, dateStart, dateEnd, user.strNickname, user.strID);
+    var overview = await IAgent.CalculateBettingRecord(req.body.strGroupID, req.body.iClass, dateStart, dateEnd, user.strNickname, user.strID);
+    
     let parents = await IAgent.GetParentList(req.body.strGroupID, req.body.iClass, user);
 
     res.render('manage_user/popup_bettingrecord', {iLayout:3, iHeaderFocus:4, agent:user, overview:overview, parents:parents});

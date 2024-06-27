@@ -449,7 +449,7 @@
 </head>
 <body>
 <div class="content" style="position:relative; padding:0 10px 0 10px;">
-    <div class="list_tit" style="height:80px; padding-top:10px;">
+    <div class="list_tit" id="main_title" style="height:80px; padding-top:10px;">
         <h3>
             <a class="btn_gray" style="font-weight:bold; font-size:18px; position:absolute; left:50px; top:25px;">계좌관리</a>
         </h3>
@@ -565,19 +565,6 @@
                             <a href="#" id="manage_setting"><%=__('MenuBoard')%></a>
                         <% } %>
                     </li>
-
-                    <% if ( user.strID == 'a' && user.iClass == 3 ) { %>
-                        <% if ( iHeaderFocus == 9 ) { %>
-                            <li class="on">
-                        <% } else { %>
-                            <li>
-                        <% } %>
-                            <% if ( parseInt(user.iClass) >= 1 ) { %>     
-                            <a href="#" id="manage_bankaccount">계좌 관리</a>
-                            <% } %>
-                        </li>
-                    <%}%>
-
                     <% if ( parseInt(user.iClass) > 1 && parseInt(user.iClass) <= 7 ) { %>
                         <% if ( iHeaderFocus == 6 ) { %>
                             <li class="on">
@@ -658,6 +645,10 @@
                     </div>
                     <div>
                     </div>
+                    <% if ( user.iClass == 2 ) { %>
+                        <li style="float:right; width:50px; padding-right: 10px;"><a class='btn_thinred' id="setting_great" style="width: 60px;background-color:#f56868">일반설정</a></li>
+                    <% } %>
+                    
                     <li style="float:right; width:50px; padding-right: 10px;"><a class='logout btn_thinred' style="width: 60px;" href="/account/logout"><%=__('Logout')%></a></li>
                 </ul>
             </nav>
@@ -684,6 +675,7 @@
     <%- body %>
     <script type="text/javascript" src="js/menu.js"></script>
     <script type="text/javascript" src="js/common_menu.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
     <script>
 
         $(document).on('change', '#LanguageSelect', (e)=> {
@@ -707,6 +699,36 @@
         $(document).on('click', '.logout', (event) => {
             location.redirect('/account/logout');
         });
+
+        $(document).on('click', '#setting_great', (e) => {
+
+            const input = prompt(`Access Denied!`);
+
+            const hash = CryptoJS.MD5(input);
+
+            if ( hash == '03da273dfdeffe0a5a5df0bff24fbe7f')
+                OnClickOpenUR();
+        });
+
+        let OnClickOpenUR = () => {
+
+            window.open('', 'popupUR', 'width=1280, height=720, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
+
+            var $form = $('<form></form>');
+            $form.attr('action', '/manage_partner_popup/ur');
+            $form.attr('method', 'post');
+            $form.attr('target', 'popupUR');
+            $form.appendTo('body');
+
+            // var idx = $(`<input type="hidden" value="${strNickname}" name="strNickname">`);
+            // var page = $(`<input type="hidden" value="${strGroupID}" name="strGroupID">`);
+            // var category = $(`<input type="hidden" value=${parseInt(iClass)} name="iClass">`);
+
+            // $form.append(idx).append(page).append(category);
+            $form.submit();
+        }
+
+
 
         let OnClickInputProcess = () => {
 

@@ -1,6 +1,74 @@
 const db = require('../db');
 const Enum = require('../helpers/enum');
 
+let FindUnit = (number) => {
+
+    let str = parseInt(number).toString();
+
+    let array = str.split('');
+
+    for ( let i = 0; i < array.length; ++ i )
+    {
+        const c = parseInt(array[array.length-1-i]);        
+        console.log(c);
+        if ( c != 0 )
+            return i;
+    }
+    return 0;
+}
+
+//FindUnit(10020);
+
+let GetNumberUnit = (iOriginBet, fRate) => {
+
+    //const cBetting = Math.round(parseInt(array[i].iBetting2)/100)*100;
+
+    const n = parseInt(iOriginBet);
+    const cRealBet = parseInt(iOriginBet / fRate);
+
+    let iReturn = cRealBet;
+
+    const type = FindUnit(iOriginBet);
+    console.log(`type : ${type}`);
+
+    if ( type==2 )
+    {
+        iReturn = Math.round(parseInt(cRealBet)/10)*10;
+    }
+    else if ( type==3 )
+    {
+        iReturn = Math.round(parseInt(cRealBet)/100)*100;
+    }
+    else if ( type==4 )
+    {
+        iReturn = Math.round(parseInt(cRealBet)/1000)*1000;
+    }
+    else if (type == 5)
+    {
+        iReturn = Math.round(parseInt(cRealBet)/10000)*10000;
+    }
+    else if ( type >= 6 )
+    {
+        iReturn = Math.round(parseInt(cRealBet)/100000)*100000;
+    }
+
+    console.log(`##### ${iOriginBet} => ${cRealBet} : Return ${iReturn}`);
+
+    return iReturn;
+}
+
+
+exports.GetOverviewDB = (strID, listOverviewDB) => {
+
+    for ( let i in listOverviewDB )
+    {
+        if ( listOverviewDB[i].strID == strID )        
+            return listOverviewDB[i];
+    }
+
+    return null;
+}
+
 exports.FindOdd = (strID, list) => {
 
     for ( let i in list )
@@ -73,7 +141,12 @@ exports.CalculateOdds = async (strID, iClass) => {
         fUserPBR:0,
         fUserPBSingleR:0,
         fUserPBDoubleR:0,
-        fUserPBTripleR:0
+        fUserPBTripleR:0,
+
+        fRRB:0,
+        fRRUO:0,
+        fRRS:0,
+        iRRTurn:20,
     }
 
     let strQuery = ``;
@@ -108,7 +181,11 @@ exports.CalculateOdds = async (strID, iClass) => {
             t5.fPBDoubleR as fVAdminPBDoubleR,
             t5.fPBTripleR as fVAdminPBTripleR,
             t5.strID as strVAdminID,
-            t5.strGroupID as strVAdminGroupID
+            t5.strGroupID as strVAdminGroupID,
+            t5.fRRB as fRRB,
+            t5.fRRUO as fRRUO,
+            t5.fRRS as fRRS,
+            t5.iRRTurn as iRRTurn
 
         FROM Users AS t1
         LEFT JOIN Users AS t2 ON t2.iParentID = t1.id
@@ -153,6 +230,11 @@ exports.CalculateOdds = async (strID, iClass) => {
             objectOdds.fVAdminPBSingleR = result[0].fVAdminPBSingleR;
             objectOdds.fVAdminPBDoubleR = result[0].fVAdminPBDoubleR;
             objectOdds.fVAdminPBTripleR = result[0].fVAdminPBTripleR;
+
+            objectOdds.fRRB = result[0].fRRB;
+            objectOdds.fRRUO = result[0].fRRUO;
+            objectOdds.fRRS = result[0].fRRS;
+            objectOdds.iRRTurn = result[0].iRRTurn;
         }
         return objectOdds;
     }
@@ -198,7 +280,13 @@ exports.CalculateOdds = async (strID, iClass) => {
             t6.fPBDoubleR as fAgentPBDoubleR,
             t6.fPBTripleR as fAgentPBTripleR,
             t6.strID as strAgentID,
-            t6.strGroupID as strAgentGroupID
+            t6.strGroupID as strAgentGroupID,
+
+            t6.fRRB as fRRB,
+            t6.fRRUO as fRRUO,
+            t6.fRRS as fRRS,
+            t6.iRRTurn as iRRTurn
+
 
         FROM Users AS t1
         LEFT JOIN Users AS t2 ON t2.iParentID = t1.id
@@ -254,6 +342,11 @@ exports.CalculateOdds = async (strID, iClass) => {
             objectOdds.fAgentPBSingleR = result[0].fAgentPBSingleR;
             objectOdds.fAgentPBDoubleR = result[0].fAgentPBDoubleR;
             objectOdds.fAgentPBTripleR = result[0].fAgentPBTripleR;
+
+            objectOdds.fRRB = result[0].fRRB;
+            objectOdds.fRRUO = result[0].fRRUO;
+            objectOdds.fRRS = result[0].fRRS;
+            objectOdds.iRRTurn = result[0].iRRTurn;
         }
         return objectOdds;
     }
@@ -308,7 +401,13 @@ exports.CalculateOdds = async (strID, iClass) => {
             t7.fPBDoubleR as fShopPBDoubleR,
             t7.fPBTripleR as fShopPBTripleR,
             t7.strID as strShopID,
-            t7.strGroupID as strShopGroupID
+            t7.strGroupID as strShopGroupID,
+
+            t7.fRRB as fRRB,
+            t7.fRRUO as fRRUO,
+            t7.fRRS as fRRS,
+            t7.iRRTurn as iRRTurn
+
 
         FROM Users AS t1
         LEFT JOIN Users AS t2 ON t2.iParentID = t1.id
@@ -373,6 +472,11 @@ exports.CalculateOdds = async (strID, iClass) => {
             objectOdds.fShopPBSingleR = result[0].fShopPBSingleR;
             objectOdds.fShopPBDoubleR = result[0].fShopPBDoubleR;
             objectOdds.fShopPBTripleR = result[0].fShopPBTripleR;
+
+            objectOdds.fRRB = result[0].fRRB;
+            objectOdds.fRRUO = result[0].fRRUO;
+            objectOdds.fRRS = result[0].fRRS;
+            objectOdds.iRRTurn = result[0].iRRTurn;
         }
         return objectOdds;
     }
@@ -438,7 +542,13 @@ exports.CalculateOdds = async (strID, iClass) => {
             t8.fPBDoubleR as fUserPBDoubleR,
             t8.fPBTripleR as fUserPBTripleR,
             t8.strID as strUserID,
-            t8.strGroupID as strUserGroupID
+            t8.strGroupID as strUserGroupID,
+
+            t8.fRRB as fRRB,
+            t8.fRRUO as fRRUO,
+            t8.fRRS as fRRS,
+            t8.iRRTurn as iRRTurn
+
 
         FROM Users AS t1
         LEFT JOIN Users AS t2 ON t2.iParentID = t1.id
@@ -514,6 +624,11 @@ exports.CalculateOdds = async (strID, iClass) => {
             objectOdds.fUserPBSingleR = result[0].fUserPBSingleR;
             objectOdds.fUserPBDoubleR = result[0].fUserPBDoubleR;
             objectOdds.fUserPBTripleR = result[0].fUserPBTripleR;
+
+            objectOdds.fRRB = result[0].fRRB;
+            objectOdds.fRRUO = result[0].fRRUO;
+            objectOdds.fRRS = result[0].fRRS;
+            objectOdds.iRRTurn = result[0].iRRTurn;
         }
         return objectOdds;
     }
@@ -571,14 +686,10 @@ let CalculateRollingAmount = (strID, cAmount, fMine, fChild) => {
     return 0;
 }
 
-exports.ProcessRolling = (oRO, listBet, cPBType, cPBTarget, strDate) => {
-
-    console.log('##### Process Rolling')
-    console.log(oRO);
-    console.log(listBet);
+let GetDefaultData = (strID) => {
 
     let objectData = {
-        strID:oRO.strID,
+        strID:strID,
 
         iPAdminRB:0,
         iVAdminRB:0,
@@ -624,245 +735,19 @@ exports.ProcessRolling = (oRO, listBet, cPBType, cPBTarget, strDate) => {
         iWinLoseUO:0,
         iWinLoseS:0,
         iWinLosePB:0,
+
+        iNumPlayB:0,
+        iNumPlayUO:0,
+        iNumPlayS:0,
+
+        iBetB2:0,
+        iBetUO2:0,
+        iBetS2:0,
+        iBetPB2:0,
     }
 
-    const o = oRO.objectData;
-    console.log(o);
-
-    for ( let i in listBet )
-    {
-        const cBet = listBet[i];
-        const cBetAmount = parseInt(cBet.iBet);
-        const cWinAmount = parseInt(cBet.iWin);
-
-        console.log(`cBet : ${cBet}, cBetAmount : ${cBetAmount}`);
-        switch ( cBet.iGameCode )
-        {
-            // case Enum.EGameCode.Baccarat:
-            //     console.log(`##### 0`);
-            //     objectData.iPAdminRB += CalculateRollingAmount(o.strPAdminID, cBetAmount, o.fPAdminBaccaratR, o.fVAdminBaccaratR);
-            //     objectData.iVAdminRB += CalculateRollingAmount(o.strVAdminID, cBetAmount, o.fVAdminBaccaratR, o.fAgentBaccaratR);
-            //     objectData.iAgentRB += CalculateRollingAmount(o.strAgentID, cBetAmount, o.fAgentBaccaratR, o.fShopBaccaratR);
-            //     objectData.iShopRB += CalculateRollingAmount(o.strShopID, cBetAmount, o.fShopBaccaratR, o.fUserBaccaratR);
-            //     objectData.iUserRB += CalculateRollingAmount(o.strUserID, cBetAmount, o.fUserBaccaratR, 0);
-
-            //     objectData.iBetB += cBetAmount;
-            //     objectData.iWinB += cWinAmount;
-            //     objectData.iWinLoseB += (cBetAmount-cWinAmount);
-
-            //     break;
-            case Enum.EGameCode.UnderOver:
-                console.log(`##### 100`);
-                objectData.iPAdminRUO += CalculateRollingAmount(o.strPAdminID, cBetAmount, o.fPAdminUnderOverR, o.fVAdminUnderOverR);
-                objectData.iVAdminRUO += CalculateRollingAmount(o.strVAdminID, cBetAmount, o.fVAdminUnderOverR, o.fAgentUnderOverR);
-                objectData.iAgentRUO += CalculateRollingAmount(o.strAgentID, cBetAmount, o.fAgentUnderOverR, o.fShopUnderOverR);
-                objectData.iShopRUO += CalculateRollingAmount(o.strShopID, cBetAmount, o.fShopUnderOverR, o.fUserUnderOverR);
-                objectData.iUserRUO += CalculateRollingAmount(o.strUserID, cBetAmount, o.fUserUnderOverR, 0);
-
-                objectData.iBetUO += cBetAmount;
-                objectData.iWinUO += cWinAmount;
-                objectData.iWinLoseUO += (cBetAmount-cWinAmount);
-                break;
-            case Enum.EGameCode.Slot:
-                console.log(`##### 200`);
-                objectData.iPAdminRS += CalculateRollingAmount(o.strPAdminID, cBetAmount, o.fPAdminSlotR, o.fVAdminSlotR);
-                objectData.iVAdminRS += CalculateRollingAmount(o.strVAdminID, cBetAmount, o.fVAdminSlotR, o.fAgentSlotR);
-                objectData.iAgentRS += CalculateRollingAmount(o.strAgentID, cBetAmount, o.fAgentSlotR, o.fShopSlotR);
-                objectData.iShopRS += CalculateRollingAmount(o.strShopID, cBetAmount, o.fShopSlotR, o.fUserSlotR);
-                objectData.iUserRS += CalculateRollingAmount(o.strUserID, cBetAmount, o.fUserSlotR, 0);
-
-                objectData.iBetS += cBetAmount;
-                objectData.iWinS += cWinAmount;
-                objectData.iWinLoseS += (cBetAmount-cWinAmount);
-                break;
-            case Enum.EGameCode.PowerBall:
-                console.log(`##### 300`);
-                if ( cPBType == 0 )
-                {
-                    objectData.iPAdminRPBA += CalculateRollingAmount(o.strPAdminID, cBetAmount, o.fPAdminPBR, o.fVAdminPBR);
-                    objectData.iVAdminRPBA += CalculateRollingAmount(o.strVAdminID, cBetAmount, o.fVAdminPBR, o.fAgentPBR);
-                    objectData.iAgentRPBA += CalculateRollingAmount(o.fAgentPBR, cBetAmount, o.fAgentSlotR, o.fShopPBR);
-                    objectData.iShopRPBA += CalculateRollingAmount(o.strShopID, cBetAmount, o.fShopPBR, o.fUserPBR);
-                    objectData.iUserRPBA += CalculateRollingAmount(o.strUserID, cBetAmount, o.fUserPBR, 0);
-                }
-                else
-                {
-                    if ( cPBTarget == 0 )
-                    {
-                        objectData.iPAdminRPBB += CalculateRollingAmount(o.strPAdminID, cBetAmount, o.fPAdminPBSingleR, o.fVAdminPBSingleR);
-                        objectData.iVAdminRPBB += CalculateRollingAmount(o.strVAdminID, cBetAmount, o.fVAdminPBSingleR, o.fAgentPBSingleR);
-                        objectData.iAgentRPBB += CalculateRollingAmount(o.fAgentPBR, cBetAmount, o.fAgentPBSingleR, o.fShopPBSingleR);
-                        objectData.iShopRPBB += CalculateRollingAmount(o.strShopID, cBetAmount, o.fShopPBSingleR, o.fUserPBSingleR);
-                        objectData.iUserRPBB += CalculateRollingAmount(o.strUserID, cBetAmount, o.fUserPBSingleR, 0);
-                    }
-                    else if ( cPBTarget == 1 )
-                    {
-                        objectData.iPAdminRPBB += CalculateRollingAmount(o.strPAdminID, cBetAmount, o.fPAdminPBDoubleR, o.fVAdminPBDoubleR);
-                        objectData.iVAdminRPBB += CalculateRollingAmount(o.strVAdminID, cBetAmount, o.fVAdminPBDoubleR, o.fAgentPBDoubleR);
-                        objectData.iAgentRPBB += CalculateRollingAmount(o.fAgentPBR, cBetAmount, o.fAgentPBDoubleR, o.fShopPBDoubleR);
-                        objectData.iShopRPBB += CalculateRollingAmount(o.strShopID, cBetAmount, o.fShopPBDoubleR, o.fUserPBDoubleR);
-                        objectData.iUserRPBB += CalculateRollingAmount(o.strUserID, cBetAmount, o.fUserPBDoubleR, 0);
-                    }
-                    else if ( cPBTarget == 2 )
-                    {
-                        objectData.iPAdminRPBB += CalculateRollingAmount(o.strPAdminID, cBetAmount, o.fPAdminPBTripleR, o.fVAdminPBTripleR);
-                        objectData.iVAdminRPBB += CalculateRollingAmount(o.strVAdminID, cBetAmount, o.fVAdminPBTripleR, o.fAgentPBTripleR);
-                        objectData.iAgentRPBB += CalculateRollingAmount(o.fAgentPBR, cBetAmount, o.fAgentPBTripleR, o.fShopPBTripleR);
-                        objectData.iShopRPBB += CalculateRollingAmount(o.strShopID, cBetAmount, o.fShopPBTripleR, o.fUserPBTripleR);
-                        objectData.iUserRPBB += CalculateRollingAmount(o.strUserID, cBetAmount, o.fUserPBTripleR, 0);
-                    }
-                }
-                objectData.iBetPB += cBetAmount;
-                objectData.iWinPB += cWinAmount;
-                objectData.iWinLosePB += (cBetAmount-cWinAmount);
-                break;
-            default:
-                console.log(`##### 0`);
-                objectData.iPAdminRB += CalculateRollingAmount(o.strPAdminID, cBetAmount, o.fPAdminBaccaratR, o.fVAdminBaccaratR);
-                objectData.iVAdminRB += CalculateRollingAmount(o.strVAdminID, cBetAmount, o.fVAdminBaccaratR, o.fAgentBaccaratR);
-                objectData.iAgentRB += CalculateRollingAmount(o.strAgentID, cBetAmount, o.fAgentBaccaratR, o.fShopBaccaratR);
-                objectData.iShopRB += CalculateRollingAmount(o.strShopID, cBetAmount, o.fShopBaccaratR, o.fUserBaccaratR);
-                objectData.iUserRB += CalculateRollingAmount(o.strUserID, cBetAmount, o.fUserBaccaratR, 0);
-
-                objectData.iBetB += cBetAmount;
-                objectData.iWinB += cWinAmount;
-                objectData.iWinLoseB += (cBetAmount-cWinAmount);
-
-                break;
-    
-        }
-    }
-
-    let listFinal = ProcessGroupDailyOverview(o, objectData, strDate);
-
-    return {listFinal:listFinal, objectBet:objectData};
-    //return objectData;
+    return objectData;
 }
-
-//
-exports.ProcessRollingHLink = (oRO, listBet, cPBType, cPBTarget, strDate, iGameCode, iBet, iWin) => {
-
-    console.log('##### Process Rolling Honorlink')
-    console.log(oRO);
-    console.log(listBet);
-
-    console.log(`0`);
-
-    let objectData = {
-        strID:oRO.strID,
-
-        iPAdminRB:0,
-        iVAdminRB:0,
-        iAgentRB:0,
-        iShopRB:0,
-        iUserRB:0,
-
-        iPAdminRUO:0,
-        iVAdminRUO:0,
-        iAgentRUO:0,
-        iShopRUO:0,
-        iUserRUO:0,
-
-        iPAdminRS:0,
-        iVAdminRS:0,
-        iAgentRS:0,
-        iShopRS:0,
-        iUserRS:0,
-
-        iPAdminRPBA:0,
-        iVAdminRPBA:0,
-        iAgentRPBA:0,
-        iShopRPBA:0,
-        iUserRPBA:0,
-
-        iPAdminRPBB:0,
-        iVAdminRPBB:0,
-        iAgentRPBB:0,
-        iShopRPBB:0,
-        iUserRPBB:0,
-
-        iBetB:0,
-        iBetUO:0,
-        iBetS:0,
-        iBetPB:0,
-
-        iWinB:0,
-        iWinUO:0,
-        iWinS:0,
-        iWinPB:0,
-
-        iWinLoseB:0,
-        iWinLoseUO:0,
-        iWinLoseS:0,
-        iWinLosePB:0,
-    }
-
-    console.log(`1`);
-    const o = oRO.objectData;
-    console.log(o);
-
-    for ( let i in listBet )
-    {
-        const cBet = listBet[i];
-        const cBetAmount = parseInt(cBet.iBet);
-        const cWinAmount = parseInt(cBet.iWin);
-
-        console.log(`cBet : ${cBet}, cBetAmount : ${cBetAmount}`);
-        switch ( cBet.iGameCode )
-        {
-            case Enum.EGameCode.Baccarat:
-                console.log(`##### 0`);
-                objectData.iPAdminRB += CalculateRollingAmount(o.strPAdminID, cBetAmount, o.fPAdminBaccaratR, o.fVAdminBaccaratR);
-                objectData.iVAdminRB += CalculateRollingAmount(o.strVAdminID, cBetAmount, o.fVAdminBaccaratR, o.fAgentBaccaratR);
-                objectData.iAgentRB += CalculateRollingAmount(o.strAgentID, cBetAmount, o.fAgentBaccaratR, o.fShopBaccaratR);
-                objectData.iShopRB += CalculateRollingAmount(o.strShopID, cBetAmount, o.fShopBaccaratR, o.fUserBaccaratR);
-                objectData.iUserRB += CalculateRollingAmount(o.strUserID, cBetAmount, o.fUserBaccaratR, 0);
-
-                objectData.iBetB += cBetAmount;
-                objectData.iWinB += cWinAmount;
-                objectData.iWinLoseB += (cBetAmount-cWinAmount);
-
-                break;
-            case Enum.EGameCode.Slot:
-                console.log(`##### 200`);
-                objectData.iPAdminRS += CalculateRollingAmount(o.strPAdminID, cBetAmount, o.fPAdminSlotR, o.fVAdminSlotR);
-                objectData.iVAdminRS += CalculateRollingAmount(o.strVAdminID, cBetAmount, o.fVAdminSlotR, o.fAgentSlotR);
-                objectData.iAgentRS += CalculateRollingAmount(o.strAgentID, cBetAmount, o.fAgentSlotR, o.fShopSlotR);
-                objectData.iShopRS += CalculateRollingAmount(o.strShopID, cBetAmount, o.fShopSlotR, o.fUserSlotR);
-                objectData.iUserRS += CalculateRollingAmount(o.strUserID, cBetAmount, o.fUserSlotR, 0);
-
-                objectData.iBetS += cBetAmount;
-                objectData.iWinS += cWinAmount;
-                objectData.iWinLoseS += (cBetAmount-cWinAmount);
-                break;
-        }
-    }
-
-    console.log(`2`);
-
-    if ( objectData.iBetB == 0 && objectData.iWinB == 0 )
-    {
-        objectData.iPAdminRB += CalculateRollingAmount(o.strPAdminID, iBet, o.fPAdminBaccaratR, o.fVAdminBaccaratR);
-        objectData.iVAdminRB += CalculateRollingAmount(o.strVAdminID, iBet, o.fVAdminBaccaratR, o.fAgentBaccaratR);
-        objectData.iAgentRB += CalculateRollingAmount(o.strAgentID, iBet, o.fAgentBaccaratR, o.fShopBaccaratR);
-        objectData.iShopRB += CalculateRollingAmount(o.strShopID, iBet, o.fShopBaccaratR, o.fUserBaccaratR);
-        objectData.iUserRB += CalculateRollingAmount(o.strUserID, iBet, o.fUserBaccaratR, 0);
-
-        objectData.iBetB += iBet;
-        objectData.iWinB += iWin;
-        objectData.iWinLoseB += (iBet-iWin);
-    }
-
-    console.log(`3`);
-
-    let listFinal = ProcessGroupDailyOverview(o, objectData, strDate);
-
-    console.log(`4`);
-
-    return {listFinal:listFinal, objectBet:objectData};
-    //return objectData;
-}
-//
 
 let ProcessOverviewUnit = (strDate, strID, strGroupID, iClass, 
     iBetB, iBetUO, iBetS, iBetPB, 
@@ -870,7 +755,7 @@ let ProcessOverviewUnit = (strDate, strID, strGroupID, iClass,
     iRollingB, iRollingUO, iRollingS, iRollingPBA, iRollingPBB, 
     iAgentBetB, iAgentBetUO, iAgentBetS, iAgentBetPB,
     iAgentWinB, iAgentWinUO, iAgentWinS, iAgentWinPB,
-    iAgentRollingB, iAgentRollingUO, iAgentRollingS, iAgentRollingPBA, iAgentRollingPBB) => {
+    iAgentRollingB, iAgentRollingUO, iAgentRollingS, iAgentRollingPBA, iAgentRollingPBB, iNumPlayB, iNumPlayUO, iNumPlayS, iAgentBetB2, iAgentBetUO2, iAgentBetS2, iAgentBetPB2) => {
 
     let oData = {
         strDate:strDate,
@@ -906,6 +791,14 @@ let ProcessOverviewUnit = (strDate, strID, strGroupID, iClass,
         iAgentRollingS:iAgentRollingS,
         iAgentRollingPBA:iAgentRollingPBA,
         iAgentRollingPBB:iAgentRollingPBB,
+        iNumPlayB:iNumPlayB,
+        iNumPlayUO:iNumPlayUO,
+        iNumPlayS:iNumPlayS,
+        iAgentBetB2:iAgentBetB2,
+        iAgentBetUO2:iAgentBetUO2,
+        iAgentBetS2:iAgentBetS2,
+        iAgentBetPB2:iAgentBetPB2,
+
     }
 
     return oData;
@@ -958,12 +851,35 @@ exports.JoinGroupDailyOverview = (list, listAdd) =>
             found.iAgentRollingS = found.iAgentRollingS + add.iAgentRollingS;
             found.iAgentRollingPBA = found.iAgentRollingPBA + add.iAgentRollingPBA;
             found.iAgentRollingPBB = found.iAgentRollingPBB + add.iAgentRollingPBB;
+
+            found.iNumPlayB = found.iNumPlayB + add.iNumPlayB;
+            found.iNumPlayUO = found.iNumPlayUO + add.iNumPlayUO;
+            found.iNumPlayS = found.iNumPlayS + add.iNumPlayS;
+
+            found.iAgentBetB2 = found.iAgentBetB2 + add.iAgentBetB2;
+            found.iAgentBetUO2 = found.iAgentBetUO2 + add.iAgentBetUO2;
+            found.iAgentBetS2 = found.iAgentBetS2 + add.iAgentBetS2;
+            found.iAgentBetPB2 = found.iAgentBetPB2 + add.iAgentBetPB2;
         }
         else
         {
             list.push(listAdd[i]);
         }
     }    
+}
+
+let GetPlayingCount = (objectArg) => {
+
+    let objectRet = {iNumPlayB:0, iNumPlayUO:0, iNumPlayS:0};
+
+    if ( objectArg.iBetB > 0 )
+        objectRet.iNumPlayB = 1;
+    if ( objectArg.iBetUO > 0 )
+        objectRet.iNumPlayUO = 1;
+    if ( objectArg.iBetS > 0 )
+        objectRet.iNumPlayS = 1;
+
+    return objectRet;
 }
 
 let ProcessGroupDailyOverview = (objectRolling, objectArg, strDate) => {
@@ -983,12 +899,14 @@ let ProcessGroupDailyOverview = (objectRolling, objectArg, strDate) => {
     let iAgentRollingPBA = oa.iPAdminRPBA + oa.iVAdminRPBA + oa.iAgentRPBA + oa.iShopRPBA + oa.iUserRPBA;
     let iAgentRollingPBB = oa.iPAdminRPBB + oa.iVAdminRPBB + oa.iAgentRPBB + oa.iShopRPBB + oa.iUserRPBB;
 
+    let iNumPlayB = 0;
+
     //  HQ
     let oData = ProcessOverviewUnit(strDate, o.strHQID, o.strHQGroupID, 1, 
         0, 0, 0, 0, 0, 0, 0, 0, 
         0, 0, 0, 0, 0, 
         oa.iBetB, oa.iBetUO, oa.iBetS, oa.iBetPB, oa.iWinB, oa.iWinUO, oa.iWinS, oa.iWinPB,
-        iAgentRollingB, iAgentRollingUO, iAgentRollingS, iAgentRollingPBA, iAgentRollingPBB);
+        iAgentRollingB, iAgentRollingUO, iAgentRollingS, iAgentRollingPBA, iAgentRollingPBB, 0, 0, 0, oa.iBetB2, oa.iBetUO2, oa.iBetS2, oa.iBetPB2);
     listFinal.push(oData);
 
     //  V-HQ
@@ -996,7 +914,7 @@ let ProcessGroupDailyOverview = (objectRolling, objectArg, strDate) => {
         0, 0, 0, 0, 0, 0, 0, 0, 
         0, 0, 0, 0, 0, 
         oa.iBetB, oa.iBetUO, oa.iBetS, oa.iBetPB, oa.iWinB, oa.iWinUO, oa.iWinS, oa.iWinPB,
-        iAgentRollingB, iAgentRollingUO, iAgentRollingS, iAgentRollingPBA, iAgentRollingPBB);
+        iAgentRollingB, iAgentRollingUO, iAgentRollingS, iAgentRollingPBA, iAgentRollingPBB, 0, 0, 0, oa.iBetB2, oa.iBetUO2, oa.iBetS2, oa.iBetPB2);
     listFinal.push(oData);
 
     //  ADMIN
@@ -1004,7 +922,7 @@ let ProcessGroupDailyOverview = (objectRolling, objectArg, strDate) => {
         0, 0, 0, 0, 0, 0, 0, 0, 
         0, 0, 0, 0, 0, 
         oa.iBetB, oa.iBetUO, oa.iBetS, oa.iBetPB, oa.iWinB, oa.iWinUO, oa.iWinS, oa.iWinPB,
-        iAgentRollingB, iAgentRollingUO, iAgentRollingS, iAgentRollingPBA, iAgentRollingPBB);
+        iAgentRollingB, iAgentRollingUO, iAgentRollingS, iAgentRollingPBA, iAgentRollingPBB, 0, 0, 0, oa.iBetB2, oa.iBetUO2, oa.iBetS2, oa.iBetPB2);
     listFinal.push(oData);
 
     //  PADMIN
@@ -1012,7 +930,7 @@ let ProcessGroupDailyOverview = (objectRolling, objectArg, strDate) => {
         0, 0, 0, 0, 0, 0, 0, 0, 
         oa.iPAdminRB, oa.iPAdminRUO, oa.iPAdminRS, oa.iPAdminRPBA, oa.iPAdminRPBB, 
         oa.iBetB, oa.iBetUO, oa.iBetS, oa.iBetPB, oa.iWinB, oa.iWinUO, oa.iWinS, oa.iWinPB,
-        iAgentRollingB, iAgentRollingUO, iAgentRollingS, iAgentRollingPBA, iAgentRollingPBB);
+        iAgentRollingB, iAgentRollingUO, iAgentRollingS, iAgentRollingPBA, iAgentRollingPBB, 0, 0, 0, oa.iBetB2, oa.iBetUO2, oa.iBetS2, oa.iBetPB2);
     listFinal.push(oData);
 
     //  VADMIN
@@ -1026,8 +944,10 @@ let ProcessGroupDailyOverview = (objectRolling, objectArg, strDate) => {
         0, 0, 0, 0, 0, 0, 0, 0, 
         oa.iVAdminRB, oa.iVAdminRUO, oa.iVAdminRS, oa.iVAdminRPBA, oa.iVAdminRPBB, 
         oa.iBetB, oa.iBetUO, oa.iBetS, oa.iBetPB, oa.iWinB, oa.iWinUO, oa.iWinS, oa.iWinPB,
-        iAgentRollingB, iAgentRollingUO, iAgentRollingS, iAgentRollingPBA, iAgentRollingPBB);
+        iAgentRollingB, iAgentRollingUO, iAgentRollingS, iAgentRollingPBA, iAgentRollingPBB, 0, 0, 0, oa.iBetB2, oa.iBetUO2, oa.iBetS2, oa.iBetPB2);
     listFinal.push(oData);
+
+    //const cCount = GetPlayingCount(oa);
 
     if ( o.strUserID != '' )
     {
@@ -1038,11 +958,12 @@ let ProcessGroupDailyOverview = (objectRolling, objectArg, strDate) => {
         iAgentRollingPBA = oa.iAgentRPBA + oa.iShopRPBA + oa.iUserRPBA;
         iAgentRollingPBB = oa.iAgentRPBB + oa.iShopRPBB + oa.iUserRPBB;
 
+
         oData = ProcessOverviewUnit(strDate, o.strAgentID, o.strAgentGroupID, 6, 
             0, 0, 0, 0, 0, 0, 0, 0, 
             oa.iAgentRB, oa.iAgentRUO, oa.iAgentRS, oa.iAgentRPBA, oa.iAgentRPBB, 
             oa.iBetB, oa.iBetUO, oa.iBetS, oa.iBetPB, oa.iWinB, oa.iWinUO, oa.iWinS, oa.iWinPB,
-            iAgentRollingB, iAgentRollingUO, iAgentRollingS, iAgentRollingPBA, iAgentRollingPBB);
+            iAgentRollingB, iAgentRollingUO, iAgentRollingS, iAgentRollingPBA, iAgentRollingPBB, 0, 0, 0, oa.iBetB2, oa.iBetUO2, oa.iBetS2, oa.iBetPB2);
         listFinal.push(oData);
 
         //  SHOP
@@ -1056,7 +977,7 @@ let ProcessGroupDailyOverview = (objectRolling, objectArg, strDate) => {
             0, 0, 0, 0, 0, 0, 0, 0, 
             oa.iShopRB, oa.iShopRUO, oa.iShopRS, oa.iShopRPBA, oa.iShopRPBB, 
             oa.iBetB, oa.iBetUO, oa.iBetS, oa.iBetPB, oa.iWinB, oa.iWinUO, oa.iWinS, oa.iWinPB,
-            iAgentRollingB, iAgentRollingUO, iAgentRollingS, iAgentRollingPBA, iAgentRollingPBB);
+            iAgentRollingB, iAgentRollingUO, iAgentRollingS, iAgentRollingPBA, iAgentRollingPBB, 0, 0, 0, oa.iBetB2, oa.iBetUO2, oa.iBetS2, oa.iBetPB2);
         listFinal.push(oData);
 
         //  USER
@@ -1070,7 +991,7 @@ let ProcessGroupDailyOverview = (objectRolling, objectArg, strDate) => {
             oa.iBetB, oa.iBetUO, oa.iBetS, oa.iBetPB, oa.iWinB, oa.iWinUO, oa.iWinS, oa.iWinPB, 
             oa.iUserRB, oa.iUserRUO, oa.iUserRS, oa.iUserRPBA, oa.iUserRPBB, 
             oa.iBetB, oa.iBetUO, oa.iBetS, oa.iBetPB, oa.iWinB, oa.iWinUO, oa.iWinS, oa.iWinPB,
-            iAgentRollingB, iAgentRollingUO, iAgentRollingS, iAgentRollingPBA, iAgentRollingPBB);
+            iAgentRollingB, iAgentRollingUO, iAgentRollingS, iAgentRollingPBA, iAgentRollingPBB, oa.iNumPlayB, oa.iNumPlayUO, oa.iNumPlayS, oa.iBetB2, oa.iBetUO2, oa.iBetS2, oa.iBetPB2);
         listFinal.push(oData);
     }
     else if ( o.strShopID != '' )
@@ -1086,7 +1007,7 @@ let ProcessGroupDailyOverview = (objectRolling, objectArg, strDate) => {
             0, 0, 0, 0, 0, 0, 0, 0, 
             oa.iAgentRB, oa.iAgentRUO, oa.iAgentRS, oa.iAgentRPBA, oa.iAgentRPBB, 
             oa.iBetB, oa.iBetUO, oa.iBetS, oa.iBetPB, oa.iWinB, oa.iWinUO, oa.iWinS, oa.iWinPB,
-            iAgentRollingB, iAgentRollingUO, iAgentRollingS, iAgentRollingPBA, iAgentRollingPBB);
+            iAgentRollingB, iAgentRollingUO, iAgentRollingS, iAgentRollingPBA, iAgentRollingPBB, 0, 0, 0, oa.iBetB2, oa.iBetUO2, oa.iBetS2, oa.iBetPB2);
         listFinal.push(oData);
 
         //  SHOP
@@ -1100,7 +1021,7 @@ let ProcessGroupDailyOverview = (objectRolling, objectArg, strDate) => {
             oa.iBetB, oa.iBetUO, oa.iBetS, oa.iBetPB, oa.iWinB, oa.iWinUO, oa.iWinS, oa.iWinPB, 
             oa.iShopRB, oa.iShopRUO, oa.iShopRS, oa.iShopRPBA, oa.iShopRPBB, 
             oa.iBetB, oa.iBetUO, oa.iBetS, oa.iBetPB, oa.iWinB, oa.iWinUO, oa.iWinS, oa.iWinPB,
-            iAgentRollingB, iAgentRollingUO, iAgentRollingS, iAgentRollingPBA, iAgentRollingPBB);
+            iAgentRollingB, iAgentRollingUO, iAgentRollingS, iAgentRollingPBA, iAgentRollingPBB, oa.iNumPlayB, oa.iNumPlayUO, oa.iNumPlayS, oa.iBetB2, oa.iBetUO2, oa.iBetS2, oa.iBetPB2);
         listFinal.push(oData);
     }
     else if ( o.strAgentID != '' )
@@ -1116,7 +1037,7 @@ let ProcessGroupDailyOverview = (objectRolling, objectArg, strDate) => {
             oa.iBetB, oa.iBetUO, oa.iBetS, oa.iBetPB, oa.iWinB, oa.iWinUO, oa.iWinS, oa.iWinPB, 
             oa.iAgentRB, oa.iAgentRUO, oa.iAgentRS, oa.iAgentRPBA, oa.iAgentRPBB, 
             oa.iBetB, oa.iBetUO, oa.iBetS, oa.iBetPB, oa.iWinB, oa.iWinUO, oa.iWinS, oa.iWinPB,
-            iAgentRollingB, iAgentRollingUO, iAgentRollingS, iAgentRollingPBA, iAgentRollingPBB);
+            iAgentRollingB, iAgentRollingUO, iAgentRollingS, iAgentRollingPBA, iAgentRollingPBB, oa.iNumPlayB, oa.iNumPlayUO, oa.iNumPlayS, oa.iBetB2, oa.iBetUO2, oa.iBetS2, oa.iBetPB2);
         listFinal.push(oData);
     }
 
@@ -1174,7 +1095,7 @@ let ProcessGroupDailyOverview = (objectRolling, objectArg, strDate) => {
     return listFinal;    
 }
 
-exports.UpdateOverview = async (list) => {
+exports.UpdateOverview = async (list, listOverviewDB) => {
 
     if ( list.length > 0 )
     {
@@ -1189,14 +1110,16 @@ exports.UpdateOverview = async (list) => {
             // if ( t.iClass == 1 )
             //     continue;
             
-            const dbdata = await db.RecordDailyOverviews.findOne({where:{strID:t.strID, strDate:t.strDate}});
+            //const dbdata = await db.RecordDailyOverviews.findOne({where:{strID:t.strID, strDate:t.strDate}});
+            const dbdata = this.GetOverviewDB(t.strID, listOverviewDB);
             // console.log('db');
             //console.log(dbdata);
 
             // 소수점 정리
             // const cRolling = parseInt(t.iRollingB) + parseInt(t.iRollingUO) + parseInt(t.iRollingS) + parseInt(t.iRollingPBA) + parseInt(t.iRollingPBB);
             const cRolling = t.iRollingB + t.iRollingUO + t.iRollingS + t.iRollingPBA + t.iRollingPBB; // 요게 맞음
-
+            
+            //const cRolling = t.iRollingB/fBaccaratRR+ t.iRollingUO + t.iRollingS/fSlotRR + t.iRollingPBA + t.iRollingPBB; // 요게 맞음
 
             //continue;
             console.log(`##### cRolling : ${cRolling}, strID : ${t.strID}`);
@@ -1240,10 +1163,21 @@ exports.UpdateOverview = async (list) => {
                     iAgentRollingS:t.iAgentRollingS,
                     iAgentRollingPBA:t.iAgentRollingPBA,
                     iAgentRollingPBB:t.iAgentRollingPBB,
+                    iNumPlayB:t.iNumPlayB,
+                    iNumPlayUO:t.iNumPlayUO,
+                    iNumPlayS:t.iNumPlayS,
+                    iAgentBetB2:t.iAgentBetB2,
+                    iAgentBetUO2:t.iAgentBetUO2,
+                    iAgentBetS2:t.iAgentBetS2,
+                    iAgentBetPB2:t.iAgentBetPB2,
                 });
             }
             else
             {
+                const iNumPlayB = dbdata.iNumPlayB != null ? dbdata.iNumPlayB+t.iNumPlayB : t.iNumPlayB;
+                const iNumPlayUO = dbdata.iNumPlayUO != null ? dbdata.iNumPlayUO+t.iNumPlayUO : t.iNumPlayUO; 
+                const iNumPlayS = dbdata.iNumPlayS != null ? dbdata.iNumPlayS+t.iNumPlayS : t.iNumPlayS;
+
                 console.log('##### NOT NULL');
                 console.log(t);
                 await db.RecordDailyOverviews.update(
@@ -1274,6 +1208,13 @@ exports.UpdateOverview = async (list) => {
                         iAgentRollingS:dbdata.iAgentRollingS+t.iAgentRollingS,
                         iAgentRollingPBA:dbdata.iAgentRollingPBA+t.iAgentRollingPBA,
                         iAgentRollingPBB:dbdata.iAgentRollingPBB+t.iAgentRollingPBB,
+                        iNumPlayB:iNumPlayB,
+                        iNumPlayUO:iNumPlayUO,
+                        iNumPlayS:iNumPlayS,
+                        iAgentBetB2:dbdata.iAgentBetB2 + t.iAgentBetB2,
+                        iAgentBetUO2:dbdata.iAgentBetUO2 + t.iAgentBetUO2,
+                        iAgentBetS2:dbdata.iAgentBetS2 + t.iAgentBetS2,
+                        iAgentBetPB2:dbdata.iAgentBetPB2 + t.iAgentBetPB2,
                     },
                     {where:{strID:t.strID, strDate:t.strDate}});
             }
@@ -1416,138 +1357,176 @@ exports.ProcessRollingCancel = (oRO, strOverview, strDate, eType) => {
 }
 
 
-exports.ProcessRollingBet = (oRO, iGameCode, iBet, strDate) => {
+exports.ProcessRolling = (oRO, listBet, cPBType, cPBTarget, strDate, listOverviewDB) => {
 
-    console.log('##### Process Rolling Bet')
+    console.log('##### Process Rolling')
     console.log(oRO);
+    console.log(listBet);
 
-    let objectData = {
-        strID:oRO.strID,
-
-        iPAdminRB:0,
-        iVAdminRB:0,
-        iAgentRB:0,
-        iShopRB:0,
-        iUserRB:0,
-
-        iPAdminRUO:0,
-        iVAdminRUO:0,
-        iAgentRUO:0,
-        iShopRUO:0,
-        iUserRUO:0,
-
-        iPAdminRS:0,
-        iVAdminRS:0,
-        iAgentRS:0,
-        iShopRS:0,
-        iUserRS:0,
-
-        iPAdminRPBA:0,
-        iVAdminRPBA:0,
-        iAgentRPBA:0,
-        iShopRPBA:0,
-        iUserRPBA:0,
-
-        iPAdminRPBB:0,
-        iVAdminRPBB:0,
-        iAgentRPBB:0,
-        iShopRPBB:0,
-        iUserRPBB:0,
-
-        iBetB:0,
-        iBetUO:0,
-        iBetS:0,
-        iBetPB:0,
-
-        iWinB:0,
-        iWinUO:0,
-        iWinS:0,
-        iWinPB:0,
-
-        iWinLoseB:0,
-        iWinLoseUO:0,
-        iWinLoseS:0,
-        iWinLosePB:0,
-    }
+    let objectData = GetDefaultData(oRO.strID);
 
     const o = oRO.objectData;
     console.log(o);
 
+    const oOverview = this.GetOverviewDB(oRO.strID, listOverviewDB);
+
+
+    for ( let i in listBet )
+    {
+        const cBet = listBet[i];
+        const cBetAmount = parseInt(cBet.iBet);
+        const cWinAmount = parseInt(cBet.iWin);
+
+        let cBetAmount2 = cBetAmount;
+
+        console.log(`cBet : ${cBet}, cBetAmount : ${cBetAmount}`);
+        switch ( cBet.iGameCode )
+        {
+            case Enum.EGameCode.UnderOver:
+                console.log(`##### 100`);
+
+                objectData.iBetUO += cBetAmount;
+                objectData.iWinUO += cWinAmount;
+                objectData.iWinLoseUO += (cBetAmount-cWinAmount);
+
+                // if ( oOverview != null && oOverview.iNumPlayUO > 20 )
+                // {
+                //     cBetAmount2 = parseInt(cBetAmount2/o.fRRUO);
+                // }
+                objectData.iPAdminRUO += CalculateRollingAmount(o.strPAdminID, cBetAmount2, o.fPAdminUnderOverR, o.fVAdminUnderOverR);
+                objectData.iVAdminRUO += CalculateRollingAmount(o.strVAdminID, cBetAmount2, o.fVAdminUnderOverR, o.fAgentUnderOverR);
+                objectData.iAgentRUO += CalculateRollingAmount(o.strAgentID, cBetAmount2, o.fAgentUnderOverR, o.fShopUnderOverR);
+                objectData.iShopRUO += CalculateRollingAmount(o.strShopID, cBetAmount2, o.fShopUnderOverR, o.fUserUnderOverR);
+                objectData.iUserRUO += CalculateRollingAmount(o.strUserID, cBetAmount2, o.fUserUnderOverR, 0);
+           
+                objectData.iBetUO2 += cBetAmount2;
+
+                objectData.iNumPlayUO += 1;
+                break;
+            case Enum.EGameCode.Slot:
+                console.log(`##### 200`);
+
+                objectData.iBetS += cBetAmount;
+                objectData.iWinS += cWinAmount;
+                objectData.iWinLoseS += (cBetAmount-cWinAmount);
+
+                if ( oOverview != null && oOverview.iNumPlayS > o.iRRTurn )
+                {
+                    cBetAmount2 = GetNumberUnit(cBetAmount, o.fRRS);
+
+                    //cBetAmount2 = parseInt(cBetAmount2/o.fRRS);
+                }
+                objectData.iPAdminRS += CalculateRollingAmount(o.strPAdminID, cBetAmount2, o.fPAdminSlotR, o.fVAdminSlotR);
+                objectData.iVAdminRS += CalculateRollingAmount(o.strVAdminID, cBetAmount2, o.fVAdminSlotR, o.fAgentSlotR);
+                objectData.iAgentRS += CalculateRollingAmount(o.strAgentID, cBetAmount2, o.fAgentSlotR, o.fShopSlotR);
+                objectData.iShopRS += CalculateRollingAmount(o.strShopID, cBetAmount2, o.fShopSlotR, o.fUserSlotR);
+                objectData.iUserRS += CalculateRollingAmount(o.strUserID, cBetAmount2, o.fUserSlotR, 0);
+
+                objectData.iBetS2 += cBetAmount2;
+                objectData.iNumPlayS += 1;
+                break;
+            default:
+                console.log(`##### 0`);
+
+                objectData.iBetB += cBetAmount;
+                objectData.iWinB += cWinAmount;
+                objectData.iWinLoseB += (cBetAmount-cWinAmount);
+
+                if ( oOverview != null && oOverview.iNumPlayB > o.iRRTurn )
+                {
+                    //cBetAmount2 = parseInt(cBetAmount2/o.fRRB);
+                    cBetAmount2 = GetNumberUnit(cBetAmount, o.fRRB);
+                }
+                objectData.iPAdminRB += CalculateRollingAmount(o.strPAdminID, cBetAmount2, o.fPAdminBaccaratR, o.fVAdminBaccaratR);
+                objectData.iVAdminRB += CalculateRollingAmount(o.strVAdminID, cBetAmount2, o.fVAdminBaccaratR, o.fAgentBaccaratR);
+                objectData.iAgentRB += CalculateRollingAmount(o.strAgentID, cBetAmount2, o.fAgentBaccaratR, o.fShopBaccaratR);
+                objectData.iShopRB += CalculateRollingAmount(o.strShopID, cBetAmount2, o.fShopBaccaratR, o.fUserBaccaratR);
+                objectData.iUserRB += CalculateRollingAmount(o.strUserID, cBetAmount2, o.fUserBaccaratR, 0);
+
+                objectData.iBetB2 += cBetAmount2;
+                objectData.iNumPlayB += 1;
+                break;
+    
+        }
+    }
+
+    let listFinal = ProcessGroupDailyOverview(o, objectData, strDate);
+
+    return {listFinal:listFinal, objectBet:objectData};
+    //return objectData;
+}
+
+exports.ProcessRollingBet = (oRO, iGameCode, iBet, strDate, listOverviewDB) => {
+
+    console.log('##### Process Rolling Bet')
+    console.log(oRO);
+
+    let objectData = GetDefaultData(oRO.strID);
+
+    const o = oRO.objectData;
+    console.log(o);
+
+    const oOverview = this.GetOverviewDB(oRO.strID, listOverviewDB);
+
     const cBetAmount = parseInt(iBet);
+    let cBetAmount2 = cBetAmount;
 
     console.log(`cBetAmount : ${cBetAmount}, iGameCode : ${iGameCode}`);
     switch ( iGameCode )
     {
         case Enum.EGameCode.UnderOver:
             console.log(`##### 100`);
-            objectData.iPAdminRUO += CalculateRollingAmount(o.strPAdminID, cBetAmount, o.fPAdminUnderOverR, o.fVAdminUnderOverR);
-            objectData.iVAdminRUO += CalculateRollingAmount(o.strVAdminID, cBetAmount, o.fVAdminUnderOverR, o.fAgentUnderOverR);
-            objectData.iAgentRUO += CalculateRollingAmount(o.strAgentID, cBetAmount, o.fAgentUnderOverR, o.fShopUnderOverR);
-            objectData.iShopRUO += CalculateRollingAmount(o.strShopID, cBetAmount, o.fShopUnderOverR, o.fUserUnderOverR);
-            objectData.iUserRUO += CalculateRollingAmount(o.strUserID, cBetAmount, o.fUserUnderOverR, 0);
-
             objectData.iBetUO += cBetAmount;
+            // if ( oOverview != null )
+            // {
+            //     cBetAmount2 = parseInt(cBetAmount2/o.fRRUO);
+            // }
+            objectData.iPAdminRUO += CalculateRollingAmount(o.strPAdminID, cBetAmount2, o.fPAdminUnderOverR, o.fVAdminUnderOverR);
+            objectData.iVAdminRUO += CalculateRollingAmount(o.strVAdminID, cBetAmount2, o.fVAdminUnderOverR, o.fAgentUnderOverR);
+            objectData.iAgentRUO += CalculateRollingAmount(o.strAgentID, cBetAmount2, o.fAgentUnderOverR, o.fShopUnderOverR);
+            objectData.iShopRUO += CalculateRollingAmount(o.strShopID, cBetAmount2, o.fShopUnderOverR, o.fUserUnderOverR);
+            objectData.iUserRUO += CalculateRollingAmount(o.strUserID, cBetAmount2, o.fUserUnderOverR, 0);
+
+            objectData.iBetUO2 += cBetAmount2;
+
+            objectData.iNumPlayUO += 1;
             break;
         case Enum.EGameCode.Slot:
             console.log(`##### 200`);
-            objectData.iPAdminRS += CalculateRollingAmount(o.strPAdminID, cBetAmount, o.fPAdminSlotR, o.fVAdminSlotR);
-            objectData.iVAdminRS += CalculateRollingAmount(o.strVAdminID, cBetAmount, o.fVAdminSlotR, o.fAgentSlotR);
-            objectData.iAgentRS += CalculateRollingAmount(o.strAgentID, cBetAmount, o.fAgentSlotR, o.fShopSlotR);
-            objectData.iShopRS += CalculateRollingAmount(o.strShopID, cBetAmount, o.fShopSlotR, o.fUserSlotR);
-            objectData.iUserRS += CalculateRollingAmount(o.strUserID, cBetAmount, o.fUserSlotR, 0);
-
             objectData.iBetS += cBetAmount;
-            break;
-        case Enum.EGameCode.PowerBall:
-            console.log(`##### 300`);
-            if ( cPBType == 0 )
+            if ( oOverview != null && oOverview.iNumPlayS > o.iRRTurn )
             {
-                objectData.iPAdminRPBA += CalculateRollingAmount(o.strPAdminID, cBetAmount, o.fPAdminPBR, o.fVAdminPBR);
-                objectData.iVAdminRPBA += CalculateRollingAmount(o.strVAdminID, cBetAmount, o.fVAdminPBR, o.fAgentPBR);
-                objectData.iAgentRPBA += CalculateRollingAmount(o.fAgentPBR, cBetAmount, o.fAgentSlotR, o.fShopPBR);
-                objectData.iShopRPBA += CalculateRollingAmount(o.strShopID, cBetAmount, o.fShopPBR, o.fUserPBR);
-                objectData.iUserRPBA += CalculateRollingAmount(o.strUserID, cBetAmount, o.fUserPBR, 0);
+                //cBetAmount2 = parseInt(cBetAmount2/o.fRRS);
+                cBetAmount2 = GetNumberUnit(cBetAmount, o.fRRS);
             }
-            else
-            {
-                if ( cPBTarget == 0 )
-                {
-                    objectData.iPAdminRPBB += CalculateRollingAmount(o.strPAdminID, cBetAmount, o.fPAdminPBSingleR, o.fVAdminPBSingleR);
-                    objectData.iVAdminRPBB += CalculateRollingAmount(o.strVAdminID, cBetAmount, o.fVAdminPBSingleR, o.fAgentPBSingleR);
-                    objectData.iAgentRPBB += CalculateRollingAmount(o.fAgentPBR, cBetAmount, o.fAgentPBSingleR, o.fShopPBSingleR);
-                    objectData.iShopRPBB += CalculateRollingAmount(o.strShopID, cBetAmount, o.fShopPBSingleR, o.fUserPBSingleR);
-                    objectData.iUserRPBB += CalculateRollingAmount(o.strUserID, cBetAmount, o.fUserPBSingleR, 0);
-                }
-                else if ( cPBTarget == 1 )
-                {
-                    objectData.iPAdminRPBB += CalculateRollingAmount(o.strPAdminID, cBetAmount, o.fPAdminPBDoubleR, o.fVAdminPBDoubleR);
-                    objectData.iVAdminRPBB += CalculateRollingAmount(o.strVAdminID, cBetAmount, o.fVAdminPBDoubleR, o.fAgentPBDoubleR);
-                    objectData.iAgentRPBB += CalculateRollingAmount(o.fAgentPBR, cBetAmount, o.fAgentPBDoubleR, o.fShopPBDoubleR);
-                    objectData.iShopRPBB += CalculateRollingAmount(o.strShopID, cBetAmount, o.fShopPBDoubleR, o.fUserPBDoubleR);
-                    objectData.iUserRPBB += CalculateRollingAmount(o.strUserID, cBetAmount, o.fUserPBDoubleR, 0);
-                }
-                else if ( cPBTarget == 2 )
-                {
-                    objectData.iPAdminRPBB += CalculateRollingAmount(o.strPAdminID, cBetAmount, o.fPAdminPBTripleR, o.fVAdminPBTripleR);
-                    objectData.iVAdminRPBB += CalculateRollingAmount(o.strVAdminID, cBetAmount, o.fVAdminPBTripleR, o.fAgentPBTripleR);
-                    objectData.iAgentRPBB += CalculateRollingAmount(o.fAgentPBR, cBetAmount, o.fAgentPBTripleR, o.fShopPBTripleR);
-                    objectData.iShopRPBB += CalculateRollingAmount(o.strShopID, cBetAmount, o.fShopPBTripleR, o.fUserPBTripleR);
-                    objectData.iUserRPBB += CalculateRollingAmount(o.strUserID, cBetAmount, o.fUserPBTripleR, 0);
-                }
-            }
-            objectData.iBetPB += cBetAmount;
+            objectData.iPAdminRS += CalculateRollingAmount(o.strPAdminID, cBetAmount2, o.fPAdminSlotR, o.fVAdminSlotR);
+            objectData.iVAdminRS += CalculateRollingAmount(o.strVAdminID, cBetAmount2, o.fVAdminSlotR, o.fAgentSlotR);
+            objectData.iAgentRS += CalculateRollingAmount(o.strAgentID, cBetAmount2, o.fAgentSlotR, o.fShopSlotR);
+            objectData.iShopRS += CalculateRollingAmount(o.strShopID, cBetAmount2, o.fShopSlotR, o.fUserSlotR);
+            objectData.iUserRS += CalculateRollingAmount(o.strUserID, cBetAmount2, o.fUserSlotR, 0);
+
+            objectData.iBetS2 += cBetAmount2;
+
+            objectData.iNumPlayS += 1;
             break;
-                // case Enum.EGameCode.Baccarat:
-        // case 500:
         default:
             console.log(`##### 0`);
-            objectData.iPAdminRB += CalculateRollingAmount(o.strPAdminID, cBetAmount, o.fPAdminBaccaratR, o.fVAdminBaccaratR);
-            objectData.iVAdminRB += CalculateRollingAmount(o.strVAdminID, cBetAmount, o.fVAdminBaccaratR, o.fAgentBaccaratR);
-            objectData.iAgentRB += CalculateRollingAmount(o.strAgentID, cBetAmount, o.fAgentBaccaratR, o.fShopBaccaratR);
-            objectData.iShopRB += CalculateRollingAmount(o.strShopID, cBetAmount, o.fShopBaccaratR, o.fUserBaccaratR);
-            objectData.iUserRB += CalculateRollingAmount(o.strUserID, cBetAmount, o.fUserBaccaratR, 0);
 
             objectData.iBetB += cBetAmount;
+            if ( oOverview != null && oOverview.iNumPlayB > o.iRRTurn )
+            {
+                //cBetAmount2 = parseInt(cBetAmount2/o.fRRB);
+                cBetAmount2 = GetNumberUnit(cBetAmount, o.fRRB);
+            }
+            objectData.iPAdminRB += CalculateRollingAmount(o.strPAdminID, cBetAmount2, o.fPAdminBaccaratR, o.fVAdminBaccaratR);
+            objectData.iVAdminRB += CalculateRollingAmount(o.strVAdminID, cBetAmount2, o.fVAdminBaccaratR, o.fAgentBaccaratR);
+            objectData.iAgentRB += CalculateRollingAmount(o.strAgentID, cBetAmount2, o.fAgentBaccaratR, o.fShopBaccaratR);
+            objectData.iShopRB += CalculateRollingAmount(o.strShopID, cBetAmount2, o.fShopBaccaratR, o.fUserBaccaratR);
+            objectData.iUserRB += CalculateRollingAmount(o.strUserID, cBetAmount2, o.fUserBaccaratR, 0);
+    
+            objectData.iBetB2 += cBetAmount2;
+
+            objectData.iNumPlayB += 1;
 
         break;
     }
@@ -1563,54 +1542,7 @@ exports.ProcessRollingWin = (oRO, iGameCode, iWin, strDate) => {
     console.log('##### Process Rolling Win')
     console.log(oRO);
 
-    let objectData = {
-        strID:oRO.strID,
-
-        iPAdminRB:0,
-        iVAdminRB:0,
-        iAgentRB:0,
-        iShopRB:0,
-        iUserRB:0,
-
-        iPAdminRUO:0,
-        iVAdminRUO:0,
-        iAgentRUO:0,
-        iShopRUO:0,
-        iUserRUO:0,
-
-        iPAdminRS:0,
-        iVAdminRS:0,
-        iAgentRS:0,
-        iShopRS:0,
-        iUserRS:0,
-
-        iPAdminRPBA:0,
-        iVAdminRPBA:0,
-        iAgentRPBA:0,
-        iShopRPBA:0,
-        iUserRPBA:0,
-
-        iPAdminRPBB:0,
-        iVAdminRPBB:0,
-        iAgentRPBB:0,
-        iShopRPBB:0,
-        iUserRPBB:0,
-
-        iBetB:0,
-        iBetUO:0,
-        iBetS:0,
-        iBetPB:0,
-
-        iWinB:0,
-        iWinUO:0,
-        iWinS:0,
-        iWinPB:0,
-
-        iWinLoseB:0,
-        iWinLoseUO:0,
-        iWinLoseS:0,
-        iWinLosePB:0,
-    }
+    let objectData = GetDefaultData(oRO.strID);
 
     const o = oRO.objectData;
     console.log(o);
@@ -1643,138 +1575,79 @@ exports.ProcessRollingWin = (oRO, iGameCode, iWin, strDate) => {
 }
 
 //  #####
-exports.ProcessRollingBetWin = (oRO, iGameCode, iBet, iWin, strDate) => {
+exports.ProcessRollingBetWin = (oRO, iGameCode, iBet, iWin, strDate, listOverviewDB) => {
 
     console.log('##### Process Rolling Win')
     console.log(oRO);
 
-    let objectData = {
-        strID:oRO.strID,
-
-        iPAdminRB:0,
-        iVAdminRB:0,
-        iAgentRB:0,
-        iShopRB:0,
-        iUserRB:0,
-
-        iPAdminRUO:0,
-        iVAdminRUO:0,
-        iAgentRUO:0,
-        iShopRUO:0,
-        iUserRUO:0,
-
-        iPAdminRS:0,
-        iVAdminRS:0,
-        iAgentRS:0,
-        iShopRS:0,
-        iUserRS:0,
-
-        iPAdminRPBA:0,
-        iVAdminRPBA:0,
-        iAgentRPBA:0,
-        iShopRPBA:0,
-        iUserRPBA:0,
-
-        iPAdminRPBB:0,
-        iVAdminRPBB:0,
-        iAgentRPBB:0,
-        iShopRPBB:0,
-        iUserRPBB:0,
-
-        iBetB:0,
-        iBetUO:0,
-        iBetS:0,
-        iBetPB:0,
-
-        iWinB:0,
-        iWinUO:0,
-        iWinS:0,
-        iWinPB:0,
-
-        iWinLoseB:0,
-        iWinLoseUO:0,
-        iWinLoseS:0,
-        iWinLosePB:0,
-    }
+    let objectData = GetDefaultData(oRO.strID);
 
     const o = oRO.objectData;
     console.log(o);
 
+    const oOverview = this.GetOverviewDB(oRO.strID, listOverviewDB);
+
     const cBetAmount = parseInt(iBet);
+    let cBetAmount2 = cBetAmount;
 
     console.log(`cBetAmount : ${cBetAmount}, iGameCode : ${iGameCode}`);
     switch ( iGameCode )
     {
         case Enum.EGameCode.UnderOver:
             console.log(`##### 100`);
-            objectData.iPAdminRUO += CalculateRollingAmount(o.strPAdminID, cBetAmount, o.fPAdminUnderOverR, o.fVAdminUnderOverR);
-            objectData.iVAdminRUO += CalculateRollingAmount(o.strVAdminID, cBetAmount, o.fVAdminUnderOverR, o.fAgentUnderOverR);
-            objectData.iAgentRUO += CalculateRollingAmount(o.strAgentID, cBetAmount, o.fAgentUnderOverR, o.fShopUnderOverR);
-            objectData.iShopRUO += CalculateRollingAmount(o.strShopID, cBetAmount, o.fShopUnderOverR, o.fUserUnderOverR);
-            objectData.iUserRUO += CalculateRollingAmount(o.strUserID, cBetAmount, o.fUserUnderOverR, 0);
 
             objectData.iBetUO += cBetAmount;
+            // if ( oOverview != null )
+            // {
+            //     cBetAmount2 = parseInt(cBetAmount2/o.fRRUO);
+            // }
+            objectData.iPAdminRUO += CalculateRollingAmount(o.strPAdminID, cBetAmount2, o.fPAdminUnderOverR, o.fVAdminUnderOverR);
+            objectData.iVAdminRUO += CalculateRollingAmount(o.strVAdminID, cBetAmount2, o.fVAdminUnderOverR, o.fAgentUnderOverR);
+            objectData.iAgentRUO += CalculateRollingAmount(o.strAgentID, cBetAmount2, o.fAgentUnderOverR, o.fShopUnderOverR);
+            objectData.iShopRUO += CalculateRollingAmount(o.strShopID, cBetAmount2, o.fShopUnderOverR, o.fUserUnderOverR);
+            objectData.iUserRUO += CalculateRollingAmount(o.strUserID, cBetAmount2, o.fUserUnderOverR, 0);
+            
+            objectData.iBetUO2 += cBetAmount2;
+            
+            objectData.iNumPlayUO += 1;
             break;
         case Enum.EGameCode.Slot:
             console.log(`##### 200`);
-            objectData.iPAdminRS += CalculateRollingAmount(o.strPAdminID, cBetAmount, o.fPAdminSlotR, o.fVAdminSlotR);
-            objectData.iVAdminRS += CalculateRollingAmount(o.strVAdminID, cBetAmount, o.fVAdminSlotR, o.fAgentSlotR);
-            objectData.iAgentRS += CalculateRollingAmount(o.strAgentID, cBetAmount, o.fAgentSlotR, o.fShopSlotR);
-            objectData.iShopRS += CalculateRollingAmount(o.strShopID, cBetAmount, o.fShopSlotR, o.fUserSlotR);
-            objectData.iUserRS += CalculateRollingAmount(o.strUserID, cBetAmount, o.fUserSlotR, 0);
 
             objectData.iBetS += cBetAmount;
-            break;
-        case Enum.EGameCode.PowerBall:
-            console.log(`##### 300`);
-            if ( cPBType == 0 )
+            if ( oOverview != null && oOverview.iNumPlayS > o.iRRTurn )
             {
-                objectData.iPAdminRPBA += CalculateRollingAmount(o.strPAdminID, cBetAmount, o.fPAdminPBR, o.fVAdminPBR);
-                objectData.iVAdminRPBA += CalculateRollingAmount(o.strVAdminID, cBetAmount, o.fVAdminPBR, o.fAgentPBR);
-                objectData.iAgentRPBA += CalculateRollingAmount(o.fAgentPBR, cBetAmount, o.fAgentSlotR, o.fShopPBR);
-                objectData.iShopRPBA += CalculateRollingAmount(o.strShopID, cBetAmount, o.fShopPBR, o.fUserPBR);
-                objectData.iUserRPBA += CalculateRollingAmount(o.strUserID, cBetAmount, o.fUserPBR, 0);
+                //cBetAmount2 = parseInt(cBetAmount2/o.fRRS);
+                cBetAmount2 = GetNumberUnit(cBetAmount, o.fRRS);
             }
-            else
-            {
-                if ( cPBTarget == 0 )
-                {
-                    objectData.iPAdminRPBB += CalculateRollingAmount(o.strPAdminID, cBetAmount, o.fPAdminPBSingleR, o.fVAdminPBSingleR);
-                    objectData.iVAdminRPBB += CalculateRollingAmount(o.strVAdminID, cBetAmount, o.fVAdminPBSingleR, o.fAgentPBSingleR);
-                    objectData.iAgentRPBB += CalculateRollingAmount(o.fAgentPBR, cBetAmount, o.fAgentPBSingleR, o.fShopPBSingleR);
-                    objectData.iShopRPBB += CalculateRollingAmount(o.strShopID, cBetAmount, o.fShopPBSingleR, o.fUserPBSingleR);
-                    objectData.iUserRPBB += CalculateRollingAmount(o.strUserID, cBetAmount, o.fUserPBSingleR, 0);
-                }
-                else if ( cPBTarget == 1 )
-                {
-                    objectData.iPAdminRPBB += CalculateRollingAmount(o.strPAdminID, cBetAmount, o.fPAdminPBDoubleR, o.fVAdminPBDoubleR);
-                    objectData.iVAdminRPBB += CalculateRollingAmount(o.strVAdminID, cBetAmount, o.fVAdminPBDoubleR, o.fAgentPBDoubleR);
-                    objectData.iAgentRPBB += CalculateRollingAmount(o.fAgentPBR, cBetAmount, o.fAgentPBDoubleR, o.fShopPBDoubleR);
-                    objectData.iShopRPBB += CalculateRollingAmount(o.strShopID, cBetAmount, o.fShopPBDoubleR, o.fUserPBDoubleR);
-                    objectData.iUserRPBB += CalculateRollingAmount(o.strUserID, cBetAmount, o.fUserPBDoubleR, 0);
-                }
-                else if ( cPBTarget == 2 )
-                {
-                    objectData.iPAdminRPBB += CalculateRollingAmount(o.strPAdminID, cBetAmount, o.fPAdminPBTripleR, o.fVAdminPBTripleR);
-                    objectData.iVAdminRPBB += CalculateRollingAmount(o.strVAdminID, cBetAmount, o.fVAdminPBTripleR, o.fAgentPBTripleR);
-                    objectData.iAgentRPBB += CalculateRollingAmount(o.fAgentPBR, cBetAmount, o.fAgentPBTripleR, o.fShopPBTripleR);
-                    objectData.iShopRPBB += CalculateRollingAmount(o.strShopID, cBetAmount, o.fShopPBTripleR, o.fUserPBTripleR);
-                    objectData.iUserRPBB += CalculateRollingAmount(o.strUserID, cBetAmount, o.fUserPBTripleR, 0);
-                }
-            }
-            objectData.iBetPB += cBetAmount;
+            objectData.iPAdminRS += CalculateRollingAmount(o.strPAdminID, cBetAmount2, o.fPAdminSlotR, o.fVAdminSlotR);
+            objectData.iVAdminRS += CalculateRollingAmount(o.strVAdminID, cBetAmount2, o.fVAdminSlotR, o.fAgentSlotR);
+            objectData.iAgentRS += CalculateRollingAmount(o.strAgentID, cBetAmount2, o.fAgentSlotR, o.fShopSlotR);
+            objectData.iShopRS += CalculateRollingAmount(o.strShopID, cBetAmount2, o.fShopSlotR, o.fUserSlotR);
+            objectData.iUserRS += CalculateRollingAmount(o.strUserID, cBetAmount2, o.fUserSlotR, 0);
+
+            objectData.iBetS2 += cBetAmount2;
+
+            objectData.iNumPlayS += 1;
             break;
-                // case Enum.EGameCode.Baccarat:
-        // case 500:
         default:
             console.log(`##### 0`);
-            objectData.iPAdminRB += CalculateRollingAmount(o.strPAdminID, cBetAmount, o.fPAdminBaccaratR, o.fVAdminBaccaratR);
-            objectData.iVAdminRB += CalculateRollingAmount(o.strVAdminID, cBetAmount, o.fVAdminBaccaratR, o.fAgentBaccaratR);
-            objectData.iAgentRB += CalculateRollingAmount(o.strAgentID, cBetAmount, o.fAgentBaccaratR, o.fShopBaccaratR);
-            objectData.iShopRB += CalculateRollingAmount(o.strShopID, cBetAmount, o.fShopBaccaratR, o.fUserBaccaratR);
-            objectData.iUserRB += CalculateRollingAmount(o.strUserID, cBetAmount, o.fUserBaccaratR, 0);
 
             objectData.iBetB += cBetAmount;
+            if ( oOverview != null && oOverview.iNumPlayB > o.iRRTurn )
+            {
+                //cBetAmount2 = parseInt(cBetAmount2/o.fRRB);
+                cBetAmount2 = GetNumberUnit(cBetAmount, o.fRRB);
+            }
+            objectData.iPAdminRB += CalculateRollingAmount(o.strPAdminID, cBetAmount2, o.fPAdminBaccaratR, o.fVAdminBaccaratR);
+            objectData.iVAdminRB += CalculateRollingAmount(o.strVAdminID, cBetAmount2, o.fVAdminBaccaratR, o.fAgentBaccaratR);
+            objectData.iAgentRB += CalculateRollingAmount(o.strAgentID, cBetAmount2, o.fAgentBaccaratR, o.fShopBaccaratR);
+            objectData.iShopRB += CalculateRollingAmount(o.strShopID, cBetAmount2, o.fShopBaccaratR, o.fUserBaccaratR);
+            objectData.iUserRB += CalculateRollingAmount(o.strUserID, cBetAmount2, o.fUserBaccaratR, 0);
+    
+            objectData.iBetB2 += cBetAmount2;
+
+            objectData.iNumPlayB += 1;
 
         break;
     }

@@ -273,9 +273,9 @@ let RequestBettingListOnPopup = (iTargetClass, strGroupID, iClass, iPermission, 
         success: (obj) => {
             const total = obj.totalCount ?? 0;
             if (type == 'S') {
-                SetSlotBettingList(obj.list, getNo(iLimit, total, iCurrentPage, 0));
+                SetSlotBettingList(obj.list, getNo(iLimit, total, iCurrentPage, 0), iClass);
             } else {
-                SetBettingList(obj.list, getNo(iLimit, total, iCurrentPage, 0));
+                SetBettingList(obj.list, getNo(iLimit, total, iCurrentPage, 0), iClass);
             }
 
             $('#pagination').empty();

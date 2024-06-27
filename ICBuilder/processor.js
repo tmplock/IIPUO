@@ -330,10 +330,9 @@ exports.ProcessBetRD = (listDB, listUpdateDB) => {
     }
 
 }
-
 /*
 */
-exports.ProcessOverview = async (listDB, listOverview, listOdds, listUpdateDB) => {
+exports.ProcessOverview = async (listDB, listOverviewDB, listOverview, listOdds, listUpdateDB) => {
 
     if ( listDB.length <= 0 )
         return;
@@ -351,7 +350,7 @@ exports.ProcessOverview = async (listDB, listOverview, listOdds, listUpdateDB) =
         if ( strDetail.length > 0 && cData.strVender == 'EZUGI' && cData.iGameCode == 0 && cData.eType == 'BETWIN' && (cData.strTableID == '101' || cData.strTableID == '100' || cData.strTableID == '102') )
         {
             try {
-                let objectReturn = ODDS.ProcessRolling(cOdd, strDetail, 0, 0, strDate);
+                let objectReturn = ODDS.ProcessRolling(cOdd, strDetail, 0, 0, strDate, listOverviewDB);
                 let listCurrentOverview = objectReturn.listFinal;
                 let objectBetRolling = objectReturn.objectBet;
                 ODDS.JoinGroupDailyOverview(listOverview, listCurrentOverview);
@@ -360,7 +359,7 @@ exports.ProcessOverview = async (listDB, listOverview, listOdds, listUpdateDB) =
             }
             catch {
 
-                let objectReturn = ODDS.ProcessRollingBetWin(cOdd, cData.iGameCode, cData.iBet, cData.iWin, strDate);
+                let objectReturn = ODDS.ProcessRollingBetWin(cOdd, cData.iGameCode, cData.iBet, cData.iWin, strDate, listOverviewDB);
                 let listCurrentOverview = objectReturn.listFinal;
                 let objectBetRolling = objectReturn.objectBet;
                 ODDS.JoinGroupDailyOverview(listOverview, listCurrentOverview);
@@ -372,7 +371,7 @@ exports.ProcessOverview = async (listDB, listOverview, listOdds, listUpdateDB) =
         {
             try
             {
-                let objectReturn = ODDS.ProcessRolling(cOdd, strDetail, 0, 0, strDate);
+                let objectReturn = ODDS.ProcessRolling(cOdd, strDetail, 0, 0, strDate, listOverviewDB);
                 let listCurrentOverview = objectReturn.listFinal;
                 let objectBetRolling = objectReturn.objectBet;
                 ODDS.JoinGroupDailyOverview(listOverview, listCurrentOverview);
@@ -381,7 +380,7 @@ exports.ProcessOverview = async (listDB, listOverview, listOdds, listUpdateDB) =
             }
             catch
             {
-                let objectReturn = ODDS.ProcessRollingBetWin(cOdd, cData.iGameCode, cData.iBet, cData.iWin, strDate);
+                let objectReturn = ODDS.ProcessRollingBetWin(cOdd, cData.iGameCode, cData.iBet, cData.iWin, strDate, listOverviewDB);
                 let listCurrentOverview = objectReturn.listFinal;
                 let objectBetRolling = objectReturn.objectBet;
                 ODDS.JoinGroupDailyOverview(listOverview, listCurrentOverview);
@@ -391,7 +390,7 @@ exports.ProcessOverview = async (listDB, listOverview, listOdds, listUpdateDB) =
         }
         else if ( cData.eType == 'BET' )
         {
-            let objectReturn = ODDS.ProcessRollingBet(cOdd, cData.iGameCode, cData.iBet, strDate);
+            let objectReturn = ODDS.ProcessRollingBet(cOdd, cData.iGameCode, cData.iBet, strDate, listOverviewDB, listOverviewDB);
             let listCurrentOverview = objectReturn.listFinal;
             let objectBetRolling = objectReturn.objectBet;
 
@@ -410,7 +409,7 @@ exports.ProcessOverview = async (listDB, listOverview, listOdds, listUpdateDB) =
         }
         else if ( cData.eType == 'BETWIN' )
         {
-            let objectReturn = ODDS.ProcessRollingBetWin(cOdd, cData.iGameCode, cData.iBet, cData.iWin, strDate);
+            let objectReturn = ODDS.ProcessRollingBetWin(cOdd, cData.iGameCode, cData.iBet, cData.iWin, strDate, listOverviewDB);
             let listCurrentOverview = objectReturn.listFinal;
             let objectBetRolling = objectReturn.objectBet;
             ODDS.JoinGroupDailyOverview(listOverview, listCurrentOverview);

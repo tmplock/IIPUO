@@ -1,0 +1,193 @@
+<div style="height:5px;">
+</div>
+
+<div class="search_wrap" id="div_realtimebet_overview">
+</div>
+
+<div class="list">
+
+	<div id="search_date">
+	</div>
+
+	<div class="search_wrap" id="div_realtimebet_overview_record">
+		<div id="table_record_list" class="day_tot_list_area" style="margin-top:20px;">
+			<table class="search_list" style="margin-bottom:20px;">
+				<thead>
+					<tr>
+						<th width="7.5%" rowspan="2"><%=__('Date')%></th>
+						<th width="5%" rowspan="2"><%=__('Input')%></th>
+						<th width="5%" rowspan="2"><%=__('Output')%></th>
+						<th width="6%" rowspan="2"><%=__('MyCoin')%></th>
+						<th width="4%" rowspan="2"></th>
+						<th width="45%" colspan="9"><%=__('Baccarat')%></th>
+						<th width="6%" rowspan="2"><%=__('Evolution')%></th>
+						<th width="5%" rowspan="2"><%=__('Blackjack')%></th>
+						<th width="5%" rowspan="2"><%=__('Roulette')%></th>
+						<th width="5%" rowspan="2"><%=__('Slot')%></th>
+						<th width="5%" rowspan="2"><%=__('PowerBall')%></th>
+						<th width="6.5%" rowspan="2"><%=__('Total')%></th>
+					</tr>
+					<tr>
+						<th width="5%"><%=__('Tie')%></th>
+						<th width="5%"><%=__('Player')%></th>
+						<th width="5%"><%=__('PlayerUnder')%></th>
+						<th width="5%"><%=__('PlayerOver')%></th>
+						<th width="5%"><%=__('Banker')%></th>
+						<th width="5%"><%=__('BankerUnder')%></th>
+						<th width="5%"><%=__('BankerOver')%></th>
+						<th width="5%"><%=__('PlayerPair')%></th>
+						<th width="5%"><%=__('BankerPair')%></th>
+						<th width="5%"><%=__('EitherPair')%></th>
+						<th width="5%"><%=__('PerfectPair')%></th>
+					</tr>
+				</thead>
+				<tbody id="tbody_record_list">
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript" src="js/enum.js"></script>
+<script type="text/javascript" src="js/util.js"></script>
+<script type="text/javascript" src="js/time.js"></script>
+<script type="text/javascript" src="js/manage_partner_ref.js"></script>
+<script type="text/javascript" src="js/manage_partner_popup_menu.js"></script>
+<script type="text/javascript" src="js/manage_partner_popup_ref.js"></script>
+<script type="text/javascript" src="js/manage_search_date.js"></script>
+<script type="text/javascript">
+
+	let agent = JSON.parse('<%-JSON.stringify(agent)%>');
+	let objectOverview = JSON.parse('<%-JSON.stringify(overview)%>');
+
+	var i18nTexts = {
+        Search: "<%=__('Search')%>",
+        Today : "<%=__('Today')%>",
+        Half1: "<%=__('Half1')%>",
+        Half2: "<%=__('Half2')%>",
+        Open: "<%=__('Open')%>",
+		Nickname: "<%=__('Nickname')%>",
+    };
+
+    let startDate = GetCurrentDate();
+	let endDate = GetCurrentDate();
+
+	$(document).on('click', '.menu1', (e) => {
+
+		$('.menu5').attr('class', 'menu1');
+
+		$(e.currentTarget).attr('class', 'menu5');
+	});
+
+	let bToggleRecord = false;
+	let bClickDateSelection	= false;
+
+	$(document).ready(() => {
+		SetSeachButtons("#search_date",2,i18nTexts,agent,agent.iClass);
+		
+		DatePicker();
+		$('#datepicker1').val(startDate);
+		$('#datepicker2').val(endDate);
+
+		$("#table_record_list").hide();
+
+		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
+	});
+	
+	let OnClickTodayRecord = () => {
+
+		bClickDateSelection	= true;
+
+		startDate = GetCurrentDate();
+		endDate = GetCurrentDate();
+
+		$('#datepicker1').val(startDate);
+		$('#datepicker2').val(endDate);
+
+		bToggleRecord = true;
+		$("#button_toggle_record").text("닫기");
+
+		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
+		RequestBettingRecord(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
+	}
+
+	function OnClickRecord()
+	{
+		bToggleRecord = !bToggleRecord;
+
+		if ( bToggleRecord ) {
+			$("#table_record_list").show();
+			$("#button_toggle_record").text(strClose);
+
+			if ( false == bClickDateSelection )
+			{
+				startDate = GetMonthlyStartDate();
+                endDate = GetMonthlyEndDate();
+                $('#datepicker1').val(startDate);
+                $('#datepicker2').val(endDate);
+			}
+
+			RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
+			RequestBettingRecord(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
+		}
+		else {
+			$("#table_record_list").hide();
+			$("#button_toggle_record").text(strOpen);
+		}
+	}
+
+	let OnClickMonthly1stRecord = () => {
+
+		bToggleRecord = true;
+		$("#button_toggle_record").text(strClose);
+
+		startDate = GetMonthly1stStartDate();
+		endDate = GetMonthly1stEndDate();
+		$('#datepicker1').val(startDate);
+		$('#datepicker2').val(endDate);
+
+		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
+		RequestBettingRecord(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
+	}
+
+	let OnClickMonthly2ndRecord = () => {
+
+		bToggleRecord = true;
+		$("#button_toggle_record").text(strClose);
+
+		startDate = GetMonthly2ndStartDate();
+		endDate = GetMonthly2ndEndDate();
+		$('#datepicker1').val(startDate);
+		$('#datepicker2').val(endDate);
+
+		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
+		RequestBettingRecord(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
+	}
+
+	let OnClickDayPeriod = (startDay) => {
+		startDate = GetDateStart(startDate, startDay);
+		endDate = GetDateEnd(endDate, startDay+4);
+
+		$('#datepicker1').val(startDate);
+		$('#datepicker2').val(endDate);
+
+		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
+		RequestBettingRecord(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
+	}
+
+	let OnClickSearch = (iTargetClass, strGroupID, iClass) => {
+
+		bToggleRecord = true;
+		$("#button_toggle_record").text(strClose);
+
+		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
+		RequestBettingRecord(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
+	}
+
+	let OnClickSearchNickname = () => {
+
+		//RequestBettingListOnPopup(EAgent.eUser, agent.strGroupID, agent.iClass);
+	}
+
+</script>
+

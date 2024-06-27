@@ -114,8 +114,8 @@ const { default: axios2 } = require('axios');
 
 let RequestAxios = async (strAddress, objectData) =>
 {
-    console.log(`RequestAxios ${strAddress}`);
-    console.log(objectData);
+    // console.log(`RequestAxios ${strAddress}`);
+    // console.log(objectData);
 
     try {
 

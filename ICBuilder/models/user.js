@@ -182,6 +182,19 @@ module.exports = (sequelize, DataTypes) => {
         strURL: {
             type: DataTypes.STRING,
         },
+        fRRB: {
+            type: DataTypes.FLOAT,
+        },
+        fRRUO: {
+            type: DataTypes.FLOAT,
+        },
+        fRRS: {
+            type: DataTypes.FLOAT,
+        },
+        iRRTurn:{
+            type: DataTypes.INTEGER,
+        },
+
     }, {
         indexes: [
             { name: 'idx_users_id', fields: ['id'] },

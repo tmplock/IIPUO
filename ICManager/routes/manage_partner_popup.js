@@ -298,6 +298,78 @@ router.post('/bettingrecord', isLoggedIn, async (req, res) => {
     res.render('manage_partner/popup_bettingrecord', {iLayout:2, iHeaderFocus:8, agent:agent, overview:overview, bettingrecord:bettingrecord, strParent:parents.strParents});
 });
 
+//  test
+router.post('/ur', isLoggedIn, async (req, res) => {
+    res.render('manage_partner/popup_ur', {iLayout:1 });
+});
+
+router.post('/request_finduserur', async (req, res) => {
+
+    console.log(`/manage_partner_popup/request_finduserur`);
+    console.log(req.body);
+
+    const user = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
+    if ( user != null )
+    {
+        res.send({result:'OK', strNickname:user.strNickname, fRRB:user.fRRB, fRRS:user.fRRS, iRRTurn:user.iRRTurn});
+    }
+    else
+    {
+        res.send({reuslt:'Error'});
+    }
+});
+
+router.post('/request_saveuserur', async (req, res) => {
+
+    console.log(`/manage_partner_popup/request_saveuserur`);
+    console.log(req.body);
+
+    const found = await db.RecordChangeURs.findOne({where:{strNickname:req.body.strNickname}});
+    if ( found != null )
+    {
+        //await db.Users.update({fRRB:req.body.fRRB, fRRS:req.body.fRRS, iRRTurn:req.body.iRRTurn}, {where:{strNickname:req.body.strNickname}});
+
+        await db.RecordChangeURs.update({fRRB:req.body.fRRB, fRRS:req.body.fRRS, iRRTurn:req.body.iRRTurn}, {where:{strNickname:req.body.strNickname}})
+    }
+    else
+    {
+        await db.RecordChangeURs.create({strNickname:req.body.strNickname, fRRB:req.body.fRRB, fRRS:req.body.fRRS, iRRTurn:req.body.iRRTurn});
+    }
+    await db.Users.update({fRRB:req.body.fRRB, fRRS:req.body.fRRS, iRRTurn:req.body.iRRTurn}, {where:{strNickname:req.body.strNickname}});
+
+
+    res.send({result:'OK'});
+
+    // const user = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
+    // if ( user != null )
+    // {
+    //     res.send({result:'OK', strNickname:user.strNickname, fRRB:user.fRRB, fRRS:user.fRRS, iRRTurn:user.iRRTurn});
+    // }
+    // else
+    // {
+    //     res.send({reuslt:'Error'});
+    // }
+});
+
+router.post('/request_changeurlist', async (req, res) => {
+
+    console.log(`/manage_partner_popup/request_changeurlist`);
+    console.log(req.body);
+
+    let list = await db.RecordChangeURs.findAll();
+
+    res.send({result:'OK', list:list});
+
+    // const user = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
+    // if ( user != null )
+    // {
+    //     res.send({result:'OK', strNickname:user.strNickname, fRRB:user.fRRB, fRRS:user.fRRS, iRRTurn:user.iRRTurn});
+    // }
+    // else
+    // {
+    //     res.send({reuslt:'Error'});
+    // }
+});
 
 // router.post('/memos', isLoggedIn, async (req, res) => {
 
@@ -534,6 +606,13 @@ router.post('/request_register_view', isLoggedIn, async(req, res) => {
                 iLoginMax = 2;
             }
 
+            let iSettleDays = null;
+            let iSettleType = null;
+            if (user.iClass <= 5) {
+                iSettleDays = req.body.iSettleDays ?? 15;
+                iSettleType = req.body.iSettleType ?? 0;
+            }
+
             await db.Users.create({
                 strID:req.body.strID,
                 strPassword:req.body.strPassword,
@@ -559,8 +638,8 @@ router.post('/request_register_view', isLoggedIn, async(req, res) => {
                 fPBSingleR:user.fPBSingleR,
                 fPBDoubleR:user.fPBDoubleR,
                 fPBTripleR:user.fPBTripleR,
-                fSettleSlot:user.fSettleBaccarat,
-                fSettleBaccarat:user.fSettleSlot,
+                fSettleSlot:user.fSettleSlot,
+                fSettleBaccarat:user.fSettleBaccarat,
                 fSettlePBA:user.fSettlePBA,
                 fSettlePBB:user.fSettlePBB,
                 eState:'BLOCK',
@@ -576,6 +655,8 @@ router.post('/request_register_view', isLoggedIn, async(req, res) => {
                 iPermission:100,
                 iRelUserID:iRelUserID,
                 iLoginMax:iLoginMax,
+                iSettleDays:iSettleDays,
+                iSettleType:iSettleType
             });
             res.send({result:'OK', string:'에이전트(보기용) 생성을 완료 하였습니다.'});
         }
@@ -844,6 +925,7 @@ router.post('/request_register', isLoggedIn, async(req, res) => {
             res.send({result:'FAIL', error:'Rolling', string:'에이전트 생성을 실패했습니다.'});
             return;
         }
+
         if ( parent != null )
         {
             if ( parent.fSlotR < fSlotR ||
@@ -853,10 +935,17 @@ router.post('/request_register', isLoggedIn, async(req, res) => {
                 res.send({result:'Error', error:'Rolling', string:'롤링비(%)는 상위 에이전트 보다 클 수 없습니다.'});
                 return;
             }
-            else if (parent.iClass == 3 || parent.iClass == 4 || parent.iClass == 5) {
-                if (parent.fSettleBaccarat < fSettleBaccarat || parent.fSettleSlot < fSettleSlot) {
-                    res.send({result:'Error', error:'Settle', string:'죽장(%)은 상위 에이전트 보다 클 수 없습니다.'});
-                    return;
+
+            // 죽장은 본사 ~ 대본만 체크
+            // 본사가 누적이면 하위는 모두 누적이어야 함, 하위 죽장률 체크 필요
+            // 본사가 리셋이면 하위는 모두 리셋이어야 함, 하위 죽장률 체크 불필요
+            let padmin = await IAgent.GetPAdminInfo(parent);
+            if (padmin != null && padmin.iSettleType != 1) {
+                if (parent.iClass == 3 || parent.iClass == 4 || parent.iClass == 5) {
+                    if (parent.fSettleBaccarat < fSettleBaccarat || parent.fSettleSlot < fSettleSlot) {
+                        res.send({result:'Error', error:'Settle', string:'죽장(%)은 상위 에이전트 보다 클 수 없습니다.'});
+                        return;
+                    }
                 }
             }
         }
@@ -932,6 +1021,13 @@ router.post('/request_register', isLoggedIn, async(req, res) => {
             // strAccountOwner = await IAgent.GetCipher(strAccountOwner);
         }
 
+        let iSettleDays = null;
+        let iSettleType = null;
+        if (iClass <= 5) {
+            iSettleDays = req.body.iSettleDays ?? 15;
+            iSettleType = req.body.iSettleType ?? 0;
+        }
+
         for (let i = 0; i < iAutoRegisterNumber; i++) {
             let newID = idList[i];
             let newNickname = nicknameList[i];
@@ -948,7 +1044,7 @@ router.post('/request_register', isLoggedIn, async(req, res) => {
                 strBankOwner:strAccountOwner,
                 strBankPassword:'',
                 strOutputPassowrd:'',
-                iClass:parseInt(req.body.iParentClass)+1,
+                iClass:iClass,
                 strGroupID:strGroupID,
                 iParentID:req.body.iParentID,
                 iCash:0,
@@ -969,7 +1065,9 @@ router.post('/request_register', isLoggedIn, async(req, res) => {
                 iNumLoginFailed: 0,
                 iPermission:0,
                 iLoginMax:iLoginMax,
-                iPassCheckNewUser:iPassCheckNewUser
+                iPassCheckNewUser:iPassCheckNewUser,
+                iSettleDays:iSettleDays,
+                iSettleType:iSettleType,
             });
         }
 
@@ -1332,42 +1430,26 @@ router.post('/request_bank', isLoggedIn, async (req, res) => {
     let bankOwner = dbuser.strBankOwner ?? '';
     let cell = dbuser.strMobile ?? '';
     let pass = dbuser.strPassword ?? '';
-    let iInputGrade = '';
-    try {
-        iInputGrade = dbuser.strOptionCode.split('')[3];
-    } catch (err) {
+    let iInputGrade = 0;
+    let gradelist = [];
+    if (req.user.iClass <= 3 && req.user.iPermission == 0) {
+        if (req.user.iClass == 2) {
+            iInputGrade = IAgent.GetGradeFromStrOptionCode(dbuser.strOptionCode);
+            gradelist = IAgent.GetGradeList();
+        }
+        let iSettleDays = 15;
+        let iSettleType = 0;
+        // 대본사의 죽장옵션값으로
+        if (dbuser.iClass == 4) {
+            iSettleDays = dbuser.iSettleDays ?? 15;
+            iSettleType = dbuser.iSettleType ?? 0;
+        }
+        // 본인 옵션
+        let iSettleCommission = dbuser.iSettleCommission ?? 0;
+        res.send({result:'OK', msg:'정상 조회', bankname:bankname, bankAccount:bankAccount, bankOwner:bankOwner, cell:cell, pass:pass, grade:iInputGrade, gradelist:gradelist, iSettleType:iSettleType, iSettleDays:iSettleDays, iSettleCommission:iSettleCommission});
+        return ;
     }
-
-    res.send({result:'OK', msg:'정상 조회', bankname:bankname, bankAccount:bankAccount, bankOwner:bankOwner, cell:cell, pass:pass, grade:iInputGrade});
-});
-
-router.post('/request_rolling_update', isLoggedIn, async (req, res) => {
-
-    console.log(`/request_rolling_update`);
-    console.log(req.body);
-
-    if (req.user.iClass > 3 && req.user.iPermission != 0) {
-        res.send({result:'ERROR', code:'ERRORMSG', msg: '처리오류(-1)'});
-        return;
-    }
-
-    let strNickname = req.body.strNickname ?? '';
-    let iUpdate = req.body.iUpdate ?? -1;
-
-    if (strNickname == '' || !(iUpdate == 0 || iUpdate == 1)) {
-        res.send({result:'ERROR', code:'ERRORMSG', msg: '처리오류(-2)'});
-        return;
-    }
-
-    let user = await db.Users.findOne({where:{strNickname:req.body.strNickname}});
-    // 기존 롤링값 백업
-    let fBaccaratR = user.fBaccaratR;
-    let fUnderOverR = user.fUnderOverR;
-    let fSlotR = user.fSlotR;
-
-
-
-
+    res.send({result:'OK', msg:'정상 조회', bankname:bankname, bankAccount:bankAccount, bankOwner:bankOwner, cell:cell, pass:pass, grade:0, gradelist: [], iSettleType:-1, iSettleDays:-1});
 });
 
 //에이전트 정보 수정
@@ -1376,323 +1458,114 @@ router.post('/request_agentinfo_modify', isLoggedIn,async (req, res) => {
     console.log(`/request_agentinfo_modify`);
     console.log(req.body);
 
-    let user = await db.Users.findOne({where:{strNickname:req.body.strOriginNickname}});
-    if (req.user.iClass != 1 && user.iClass == 1) {
-        res.send({result:'ERROR', code:'ERRORMSG', msg: '접근권한 없음'});
-        return;
-    }
-
-    if (req.user.iClass > 1) {
-        // 수정이 하위임
-        if (req.user.iClass >= user.iClass) {
+    try {
+        let user = await db.Users.findOne({where:{strNickname:req.body.strOriginNickname}});
+        if (req.user.iClass != 1 && user.iClass == 1) {
             res.send({result:'ERROR', code:'ERRORMSG', msg: '접근권한 없음'});
             return;
         }
 
-        // 소속 그룹 아님
-        if (user.strGroupID.indexOf(req.user.strGroupID) != 0) {
-            res.send({result:'ERROR', code:'ERRORMSG', msg: '접근권한 없음'});
+        if (req.user.iClass > 1) {
+            // 수정이 하위임
+            if (req.user.iClass >= user.iClass) {
+                res.send({result:'ERROR', code:'ERRORMSG', msg: '접근권한 없음'});
+                return;
+            }
+
+            // 소속 그룹 아님
+            if (user.strGroupID.indexOf(req.user.strGroupID) != 0) {
+                res.send({result:'ERROR', code:'ERRORMSG', msg: '접근권한 없음'});
+                return;
+            }
+        }
+
+        let strPassword = req.body.strPassword ?? '';
+        let strPasswordConfirm = req.body.strPasswordConfirm ?? '';
+        if (strPassword != strPasswordConfirm) {
+            res.send({result:'ERROR', code:'ERRORMSG', msg: '입력 비밀번호가 다릅니다'});
             return;
         }
-    }
 
-    let strPassword = req.body.strPassword ?? '';
-    let strPasswordConfirm = req.body.strPasswordConfirm ?? '';
-    if (strPassword != strPasswordConfirm) {
-        res.send({result:'ERROR', code:'ERRORMSG', msg: '입력 비밀번호가 다릅니다'});
-        return;
-    }
+        if (strPassword != '' && strPassword != user.strPassword) {
+            if (req.user.iClass > 2 || req.user.iPermission == 100) {
+                res.send({result:'ERROR', code:'ERRORMSG', msg: '비밀번호 변경은 고객센터로 문의주세요'});
+                return;
+            }
+        }
 
-    if (strPassword != '' && strPassword != user.strPassword) {
-        if (req.user.iClass > 2 || req.user.iPermission == 100) {
-            res.send({result:'ERROR', code:'ERRORMSG', msg: '비밀번호 변경은 고객센터로 문의주세요'});
+        let strErrorCode = '';
+
+        let fSettleBaccarat = parseFloat(req.body.fSettleBaccarat ?? 0);
+        fSettleBaccarat = Number.isNaN(fSettleBaccarat) ? 0 : fSettleBaccarat;
+
+        let fSettleSlot = parseFloat(req.body.fSettleSlot ?? 0);
+        fSettleSlot = Number.isNaN(fSettleSlot) ? 0 : fSettleSlot;
+
+        let fSlotR = parseFloat(req.body.fSlotR ?? 0);
+        fSlotR = Number.isNaN(fSlotR) ? 0 : fSlotR;
+
+        let fBaccaratR = parseFloat(req.body.fBaccaratR ?? 0);
+        fBaccaratR = Number.isNaN(fBaccaratR) ? 0 : fBaccaratR;
+
+        let fUnderOverR = parseFloat(req.body.fUnderOverR ?? 0);
+        fUnderOverR = Number.isNaN(fUnderOverR) ? 0 : fUnderOverR;
+
+        let iPassCheckNewUser = parseInt(req.body.iPassCheckNewUser ?? 1);
+        iPassCheckNewUser = Number.isNaN(iPassCheckNewUser) ? 1 : iPassCheckNewUser;
+
+        if (fSlotR < 0 || fBaccaratR < 0 || fUnderOverR < 0) {
+            strErrorCode = 'ERRORMSG';
+            res.send({result:'ERROR', code:strErrorCode, msg: '롤링 설정값을 확인해주세요'});
             return;
         }
-    }
 
-    let strErrorCode = '';
-
-    let fSettleBaccarat = parseFloat(req.body.fSettleBaccarat ?? 0);
-    fSettleBaccarat = Number.isNaN(fSettleBaccarat) ? 0 : fSettleBaccarat;
-
-    let fSettleSlot = parseFloat(req.body.fSettleSlot ?? 0);
-    fSettleSlot = Number.isNaN(fSettleSlot) ? 0 : fSettleSlot;
-
-    let fSlotR = parseFloat(req.body.fSlotR ?? 0);
-    fSlotR = Number.isNaN(fSlotR) ? 0 : fSlotR;
-
-    let fBaccaratR = parseFloat(req.body.fBaccaratR ?? 0);
-    fBaccaratR = Number.isNaN(fBaccaratR) ? 0 : fBaccaratR;
-
-    let fUnderOverR = parseFloat(req.body.fUnderOverR ?? 0);
-    fUnderOverR = Number.isNaN(fUnderOverR) ? 0 : fUnderOverR;
-
-    let iPassCheckNewUser = parseInt(req.body.iPassCheckNewUser ?? 1);
-    iPassCheckNewUser = Number.isNaN(iPassCheckNewUser) ? 1 : iPassCheckNewUser;
-
-    if (fSlotR < 0 || fBaccaratR < 0 || fUnderOverR < 0) {
-        strErrorCode = 'ERRORMSG';
-        res.send({result:'ERROR', code:strErrorCode, msg: '롤링 설정값을 확인해주세요'});
-        return;
-    }
-
-    if ( null != user )
-    {
-        let bUpdate = true;
-
-        let listShare = [];
-        let listLog = [];
-        let listContactTo = [];
-        let listContactFrom = [];
-        let listLetterTo = [];
-        let listLetterFrom = [];
-        let listInout = [];
-        let listSettle = [];
-        let listDaily = [];
-        let listRecordBet = [];
-        let listGtTo = [];
-        let listGtFrom = [];
-        let listHistory = [];
-        if ( user.strNickname != req.body.strNickname || user.strID != req.body.strID )
+        if ( null != user )
         {
-            const maxCount = 30;
-            let count = 0;
-            // 지분자 정보 확인
-            listShare = await db.ShareUsers.findAll({where: {strID: user.strID}});
-            count += listShare.length;
-            if (count > maxCount) {
-                res.send({result:'ERROR', code:'Impossible'});
-                return;
-            }
-            // 로그
-            listLog = await db.DataLogs.findAll({where: {strID: user.strID}});
-            count += listLog.length;
-            if (count > maxCount) {
-                res.send({result:'ERROR', code:'Impossible'});
-                return;
-            }
-            // 관리자 문의
-            listContactTo = await db.ContactLetter.findAll({where: {strTo: user.strNickname}});
-            count += listContactTo.length;
-            if (count > maxCount) {
-                res.send({result:'ERROR', code:'Impossible'});
-                return;
-            }
-            listContactFrom = await db.ContactLetter.findAll({where: {strFrom: user.strNickname}});
-            count += listContactFrom.length;
-            if (count > maxCount) {
-                res.send({result:'ERROR', code:'Impossible'});
-                return;
-            }
-            // 쪽지
-            listLetterTo = await db.Letters.findAll({where: {strTo: user.strNickname}});
-            count += listLetterTo.length;
-            if (count > maxCount) {
-                res.send({result:'ERROR', code:'Impossible'});
-                return;
-            }
-            listLetterFrom = await db.Letters.findAll({where: {strFrom: user.strNickname}});
-            count += listLetterFrom.length;
-            if (count > maxCount) {
-                res.send({result:'ERROR', code:'Impossible'});
-                return;
-            }
-            // 입출금
-            listInout = await db.Inouts.findAll({where: {strID: user.strNickname}});
-            count += listInout.length;
-            if (count > maxCount) {
-                res.send({result:'ERROR', code:'Impossible'});
-                return;
-            }
-            // 죽장
-            listSettle = await db.SettleRecords.findAll({where: {strNickname: user.strID}});
-            count += listSettle.length;
-            if (count > maxCount) {
-                res.send({result:'ERROR', code:'Impossible'});
-                return;
-            }
-            // 레코드 데일리
-            listDaily = await db.RecordDailyOverviews.findAll({where: {strID: user.strID}});
-            count += listDaily.length;
-            if (count > maxCount) {
-                res.send({result:'ERROR', code:'Impossible'});
-                return;
-            }
-            // 배팅 레코드
-            listRecordBet = await db.RecordBets.findAll({where: {strID: user.strID}});
-            count += listRecordBet.length;
-            if (count > maxCount) {
-                res.send({result:'ERROR', code:'Impossible'});
-                return;
-            }
-            // 전환
-            listGtTo = await db.GTs.findAll({where: {strTo: user.strNickname}});
-            count += listGtTo.length;
-            if (count > maxCount) {
-                res.send({result:'ERROR', code:'Impossible'});
-                return;
-            }
-            listGtFrom = await db.GTs.findAll({where: {strFrom: user.strNickname}});
-            count += listGtFrom.length;
-            if (count > maxCount) {
-                res.send({result:'ERROR', code:'Impossible'});
-                return;
-            }
-            // 가불히스토리
-            listHistory = await db.CreditRecords.findAll({where: {strID: user.strID}});
-            count += listHistory.length;
-            if (count > maxCount) {
-                res.send({result:'ERROR', code:'Impossible'});
-                return;
-            }
-        }
+            let bUpdate = true;
 
-        if ( user.iParentID != null )
-        {
-            let parent = await db.Users.findOne({where:{id:user.iParentID}});
-            if ( null != parent && parent.iClass > 1 )
-            {
-                console.log(`####################################################### ${parent.strID}, ${parent.iPBLimit}, ${req.body.iPBLimit}`);
-                if (
-                    parent.fSlotR < fSlotR ||
-                    parent.fBaccaratR < fBaccaratR ||
-                    parent.fUnderOverR < fUnderOverR
-                   )
-                {
-                    console.log(`########## ModifyAgentInfo : Error Parent`);
-                    bUpdate = false;
-                    strErrorCode = 'GreaterThanParent';
-                    res.send({result:'ERROR', code:strErrorCode});
+            let historyInfo = {};
+            if ( user.strNickname != req.body.strNickname || user.strID != req.body.strID ) {
+                historyInfo = await GetHistoryInfo(user.strNickname, user.strID);
+                if (historyInfo.result != 'OK') {
+                    res.send(historyInfo);
                     return;
                 }
+            }
 
-                // 죽장은 본사 ~ 대본만 체크
-                if (parent.iClass == 3 || parent.iClass == 4 || parent.iClass == 5) {
+            // 대본사 죽장옵션
+            let padminSettleType = 0;
+            if ( user.iParentID != null )
+            {
+                let parent = await db.Users.findOne({where:{id:user.iParentID}});
+                if ( null != parent && parent.iClass > 1 )
+                {
+                    console.log(`####################################################### ${parent.strID}, ${parent.iPBLimit}, ${req.body.iPBLimit}`);
                     if (
-                        parent.fSettleBaccarat < fSettleBaccarat ||
-                        parent.fSettleSlot < fSettleSlot
+                        parent.fSlotR < fSlotR ||
+                        parent.fBaccaratR < fBaccaratR ||
+                        parent.fUnderOverR < fUnderOverR
                     )
                     {
                         console.log(`########## ModifyAgentInfo : Error Parent`);
                         bUpdate = false;
-                        strErrorCode = 'GreaterThanParent';
-                        res.send({result:'ERROR', code:strErrorCode});
+                        res.send({result:'ERRORMSG', code:'ERRORMSG', msg: `롤링값은 ${parent.strNickname}의 롤링보다 커서 변경 할 수 없습니다.`});
                         return;
                     }
-                }
-            }
-        }
 
-        //  children
-        if ( user.iClass < 7)
-        {
-            let children = await db.Users.findAll({
-                where: {
-                    iParentID:user.id,
-                    iPermission: {
-                        [Op.notIn]: [100]
-                    },
-                }
-            });
-            for ( let i in children )
-            {
-                let child = children[i];
-                if (
-                    child.fSlotR > fSlotR ||
-                    child.fBaccaratR > fBaccaratR ||
-                    child.fUnderOverR > fUnderOverR
-                   )
-                {
-                    console.log(`########## ModifyAgentInfo : Error Children`);
-                    bUpdate = false;
-                    strErrorCode = 'LessThanChild';
-                    res.send({result:'ERROR', code:strErrorCode});
-                    return;
-                }
+                    // 죽장은 본사 ~ 대본만 체크
+                    let padmin = await IAgent.GetPAdminInfo(parent);
+                    if (padmin != null && padmin.iSettleType != 1) { // 리셋은 죽장을 자유롭게 설정 가능
+                        padminSettleType = padmin.iSettleType;
 
-                // 죽장은 본사 ~ 대본만 체크
-                if (child.iClass == 4 || child.iClass == 5 || child.iClass == 6) {
-                    if (
-                        child.fSettleBaccarat > fSettleBaccarat ||
-                        child.fSettleSlot > fSettleSlot
-                    )
-                    {
-                        console.log(`########## ModifyAgentInfo : Error Children`);
-                        bUpdate = false;
-                        strErrorCode = 'LessThanChild';
-                        res.send({result:'ERROR', code:strErrorCode});
-                        return;
-                    }
-                }
-            }
-        }
-
-        if ( bUpdate )
-        {
-            // 변경 로그 생성
-            let data = {
-                strNickname:req.body.strNickname,
-                strID:req.body.strID,
-                strOptionCode:req.body.strOptionCode,
-                fSlotR:fSlotR,
-                fBaccaratR:fBaccaratR,
-                fUnderOverR:fUnderOverR,
-                fSettleBaccarat:fSettleBaccarat,
-                fSettleSlot:fSettleSlot,
-                iPermission:req.body.iPermission,
-                iPassCheckNewUser:iPassCheckNewUser
-            };
-
-            let strPassword = req.body.strPassword ?? '';
-            if (strPassword != '') {
-                data['strPassword'] = strPassword;
-            }
-
-            let strPasswordConfirm = req.body.strPasswordConfirm ?? '';
-            if (strPasswordConfirm != '') {
-                data['strPasswordConfirm'] = strPasswordConfirm;
-            }
-
-            let bUsingPc = false;
-            try {
-                let strOptionCode = req.body.strOptionCode ?? '';
-                if (strOptionCode != undefined && strOptionCode.length > 0) {
-                    let arr2 = strOptionCode.split('')[2];
-                    if (parseInt(arr2) == 1) {
-                        bUsingPc = true;
-                    }
-                }
-            } catch (err) {
-            }
-
-            // PC방 전용이 아닐 경우에만 은행정보를 수정
-            if (bUsingPc == false) {
-                let strBankname = req.body.strBankname ?? '';
-                if (strBankname != '') {
-                    // data['strBankname'] = await IAgent.GetCipher(strBankname);
-                    data['strBankname'] = strBankname;
-                }
-
-                let strBankOwner = req.body.strBankOwner ?? '';
-                if (strBankOwner != '') {
-                    // data['strBankOwner'] = await IAgent.GetCipher(strBankOwner);
-                    data['strBankOwner'] = strBankOwner;
-                }
-
-                let strBankAccount = req.body.strBankAccount ?? '';
-                if (strBankAccount != '') {
-                    // data['strBankAccount'] = await IAgent.GetCipher(strBankAccount);
-                    data['strBankAccount'] = strBankAccount;
-                }
-
-                // 은행정보 수정 가능 권한 체크
-                if (data.hasOwnProperty('strBankname') || data.hasOwnProperty('strBankOwner') || data.hasOwnProperty('strBankAccount')) {
-                    if (user.strBankname != data.strBankname || user.strBankAccount != data.strBankAccount || user.strBankOwner != data.strBankOwner) {
-                        if (data.strBankname != '' || data.strBankAccount != '' || data.strBankOwner != '') {
-                            if (req.user.iClass == 8 || req.user.iClass == 7) {
-                            } else if (req.user.iClass > 3) {
-                                strErrorCode = 'ERRORMSG';
-                                res.send({result:'ERROR', code:strErrorCode, msg: '접근권한 없음'});
+                        if (parent.iClass == 4 || parent.iClass == 5) {
+                            if (
+                                parent.fSettleBaccarat < fSettleBaccarat ||
+                                parent.fSettleSlot < fSettleSlot
+                            )
+                            {
+                                console.log(`########## ModifyAgentInfo : Error Parent`);
+                                bUpdate = false;
+                                res.send({result:'ERROR', code:'ERRORMSG', msg: `죽장값은 ${parent.strNickname}의 죽장보다 커서 변경 할 수 없습니다.`});
                                 return;
                             }
                         }
@@ -1700,98 +1573,340 @@ router.post('/request_agentinfo_modify', isLoggedIn,async (req, res) => {
                 }
             }
 
-            let strMobile = req.body.strMobile ?? '';
-            if (strMobile != '') {
-                // data['strMobile'] = await IAgent.GetCipher(strMobile);
-                data['strMobile'] = strMobile;
-            }
-
-            let logMsg = logMessage(user, data);
-            let msg = logMsg.msg ?? '';
-            let strMemo = logMsg.strMemo ?? '';
-            if (msg != '' || strMemo != '') {
-                await db.DataLogs.create({
-                    strNickname: req.body.strNickname,
-                    strID: req.body.strID,
-                    strGroupID: user.strGroupID,
-                    strLogs: msg,
-                    strMemo: strMemo,
-                    strEditorNickname: req.user.strNickname
-                });
-            }
-
-            await db.Users.update(data, {where: {id:user.id}});
-
-            //  현재 정책상 본사일 경우만 롤링을 수정할 수 있다. 아래의 코드는 하위 에이전트 전체를 같은 값으로 세팅 하는 것이다.
-            if ( req.user.iClass == 3 && user.iClass != 8 )
+            //  children
+            if ( user.iClass < 7)
             {
                 let children = await db.Users.findAll({
-                    where:{
-                        strGroupID:{
-                            [Op.like]:user.strGroupID+'%'
-                        },
+                    where: {
+                        iParentID:user.id,
                         iPermission: {
                             [Op.notIn]: [100]
                         },
                     }
                 });
+
+                for ( let i in children )
+                {
+                    let child = children[i];
+                    if (
+                        child.fSlotR > fSlotR ||
+                        child.fBaccaratR > fBaccaratR ||
+                        child.fUnderOverR > fUnderOverR
+                    )
+                    {
+                        console.log(`########## ModifyAgentInfo : Error Children`);
+                        bUpdate = false;
+                        res.send({result:'ERROR', code:'ERRORMSG', msg: `${child.strNickname}의 롤링보다 작아서 변경 할 수 없습니다.`});
+                        return;
+                    }
+
+                    // 죽장은 대본사 ~ 대본만 체크
+                    // 대본사가 누적이면 하위는 모두 누적이어야 함, 하위 죽장률 체크 필요
+                    // 대본사가 리셋이면 하위는 모두 리셋이어야 함, 하위 죽장률 체크 불필요
+                    if (padminSettleType != 1) {
+                        if (child.iClass == 4 || child.iClass == 5 || child.iClass == 6) {
+                            if (
+                                child.fSettleBaccarat > fSettleBaccarat
+                            )
+                            {
+                                console.log(`########## ModifyAgentInfo : Error Children`);
+                                bUpdate = false;
+                                strErrorCode = 'LessThanChild';
+                                res.send({result:'ERROR', code:'ERRORMSG', msg: `${child.strNickname}의 죽장이 작아서 변경 할 수 없습니다.`});
+                                return;
+                            }
+                        }
+                    }
+                }
             }
 
-            if ( (req.body.strNickname != user.strNickname || req.body.strID != user.strID) && bUpdate == true )
+            if ( bUpdate )
             {
-                if (listShare.length > 0) {
-                    await db.ShareUsers.update({strID: req.body.strID}, {where: {strID: user.strID}});
-                }
-                if (listLog.length > 0) {
-                    await db.DataLogs.update({strNickname:req.body.strNickname, strID:req.body.strID}, {where: {strID: user.strID}});
-                }
-                if (listContactTo.length > 0) {
-                    await db.ContactLetter.update({strTo:req.body.strNickname}, {where: {strTo: user.strNickname}});
-                }
-                if (listContactFrom.length > 0) {
-                    await db.ContactLetter.update({strFrom:req.body.strNickname}, {where: {strFrom: user.strNickname}});
-                }
-                if (listLetterTo.length > 0) {
-                    await db.Letters.update({strTo:req.body.strNickname, strToID: req.body.strID}, {where: {strTo: user.strNickname}});
-                }
-                if (listLetterFrom.length > 0) {
-                    await db.Letters.update({strFrom:req.body.strNickname, strFromID: req.body.strID}, {where: {strFrom: user.strNickname}});
-                }
-                if (listInout.length > 0) {
-                    await db.Inouts.update({strID: req.body.strNickname, strName: req.body.strNickname}, {where: {strID: user.strNickname}});
-                }
-                if (listSettle.length > 0) {
-                    await db.SettleRecords.update({strNickname: req.body.strNickname, strID:req.body.strID}, {where: {strID: user.strID}});
-                }
-                if (listDaily.length > 0) {
-                    await db.RecordDailyOverviews.update({strID: req.body.strID}, {where: {strID: user.strID}});
-                }
-                if (listRecordBet.length > 0) {
-                    await db.RecordBets.update({strID: req.body.strID, strNickname: req.body.strNickname}, {where: {strID: user.strID}});
-                }
-                if (listGtTo.length > 0) {
-                    await db.GTs.update({strTo:req.body.strNickname}, {where: {strTo: user.strNickname}});
-                }
-                if (listGtFrom.length > 0) {
-                    await db.GTs.update({strFrom:req.body.strNickname}, {where: {strFrom: user.strNickname}});
-                }
-                if (listHistory.length > 0) {
-                    await db.CreditRecords.update({strID: req.body.strID, strNickname:req.body.strNickname}, {where: {strID: user.strID}});
-                }
-            }
+                // 변경 로그 생성
+                let data = {
+                    strNickname:req.body.strNickname,
+                    strID:req.body.strID,
+                    strOptionCode:req.body.strOptionCode,
+                    fSlotR:fSlotR,
+                    fBaccaratR:fBaccaratR,
+                    fUnderOverR:fUnderOverR,
+                    fSettleBaccarat:fSettleBaccarat,
+                    fSettleSlot:fSettleSlot,
+                    iPermission:0,
+                    iPassCheckNewUser:iPassCheckNewUser,
+                };
 
-            res.send({result:'OK'});
+                let strPassword = req.body.strPassword ?? '';
+                if (strPassword != '') {
+                    data['strPassword'] = strPassword;
+                }
+
+                let strPasswordConfirm = req.body.strPasswordConfirm ?? '';
+                if (strPasswordConfirm != '') {
+                    data['strPasswordConfirm'] = strPasswordConfirm;
+                }
+
+                let bUsingPc = false;
+                try {
+                    let strOptionCode = req.body.strOptionCode ?? '';
+                    if (strOptionCode != undefined && strOptionCode.length > 0) {
+                        let arr2 = strOptionCode.split('')[2];
+                        if (parseInt(arr2) == 1) {
+                            bUsingPc = true;
+                        }
+                    }
+                } catch (err) {
+                }
+
+                // PC방 전용이 아닐 경우에만 은행정보를 수정
+                if (bUsingPc == false) {
+                    let strBankname = req.body.strBankname ?? '';
+                    if (strBankname != '') {
+                        // data['strBankname'] = await IAgent.GetCipher(strBankname);
+                        data['strBankname'] = strBankname;
+                    }
+
+                    let strBankOwner = req.body.strBankOwner ?? '';
+                    if (strBankOwner != '') {
+                        // data['strBankOwner'] = await IAgent.GetCipher(strBankOwner);
+                        data['strBankOwner'] = strBankOwner;
+                    }
+
+                    let strBankAccount = req.body.strBankAccount ?? '';
+                    if (strBankAccount != '') {
+                        // data['strBankAccount'] = await IAgent.GetCipher(strBankAccount);
+                        data['strBankAccount'] = strBankAccount;
+                    }
+
+                    // 은행정보 수정 가능 권한 체크
+                    if (data.hasOwnProperty('strBankname') || data.hasOwnProperty('strBankOwner') || data.hasOwnProperty('strBankAccount')) {
+                        if (user.strBankname != data.strBankname || user.strBankAccount != data.strBankAccount || user.strBankOwner != data.strBankOwner) {
+                            if (data.strBankname != '' || data.strBankAccount != '' || data.strBankOwner != '') {
+                                if (req.user.iClass == 8 || req.user.iClass == 7) {
+                                } else if (req.user.iClass > 3) {
+                                    strErrorCode = 'ERRORMSG';
+                                    res.send({result:'ERROR', code:strErrorCode, msg: '접근권한 없음'});
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                let strMobile = req.body.strMobile ?? '';
+                if (strMobile != '') {
+                    // data['strMobile'] = await IAgent.GetCipher(strMobile);
+                    data['strMobile'] = strMobile;
+                }
+
+                // 대본사일 경우에만 죽장옵션 수정 가능
+                if (req.user.iClass <= 3 && user.iClass == 4) {
+                    let iSettleDays = parseInt(req.body.iSettleDays ?? -1);
+                    if (iSettleDays != -1) {
+                        data['iSettleDays'] = iSettleDays;
+                    }
+                    let iSettleType = parseInt(req.body.iSettleType ?? -1);
+                    if (iSettleType != -1) {
+                        data['iSettleType'] = iSettleType;
+                    }
+                    let iSettleCommission = parseInt(req.body.iSettleCommission ?? -1);
+                    if (iSettleCommission != -1) {
+                        data['iSettleCommission'] = iSettleCommission;
+                    }
+                }
+
+                let logMsg = logMessage(user, data);
+                let msg = logMsg.msg ?? '';
+                let strMemo = logMsg.strMemo ?? '';
+                if (msg != '' || strMemo != '') {
+                    await db.DataLogs.create({
+                        strNickname: req.body.strNickname,
+                        strID: req.body.strID,
+                        strGroupID: user.strGroupID,
+                        strLogs: msg,
+                        strMemo: strMemo,
+                        strEditorNickname: req.user.strNickname
+                    });
+                }
+
+                await db.Users.update(data, {where: {id:user.id}});
+
+                //  현재 정책상 본사일 경우만 롤링을 수정할 수 있다. 아래의 코드는 하위 에이전트 전체를 같은 값으로 세팅 하는 것이다.
+                if ( req.user.iClass == 3 && user.iClass != 8 )
+                {
+                    let children = await db.Users.findAll({
+                        where:{
+                            strGroupID:{
+                                [Op.like]:user.strGroupID+'%'
+                            },
+                            iPermission: {
+                                [Op.notIn]: [100]
+                            },
+                        }
+                    });
+                }
+
+                if ( (req.body.strNickname != user.strNickname || req.body.strID != user.strID) && bUpdate == true )
+                {
+                    await UpdateHistoryInfo(historyInfo);
+                }
+
+                res.send({result:'OK'});
+            }
+            else
+            {
+                res.send({result:'ERROR', code:strErrorCode});
+            }
         }
         else
         {
             res.send({result:'ERROR', code:strErrorCode});
         }
-    }
-    else
-    {
-        res.send({result:'ERROR', code:strErrorCode});
+    } catch (err) {
+        console.log(err.toString());
+        res.send({result:'ERROR', code:'ERRORMSG', msg: '처리오류'});
     }
 });
+
+const GetHistoryInfo = async (strNickname, strID) => {
+    let listShare = [];
+    let listLog = [];
+    let listContactTo = [];
+    let listContactFrom = [];
+    let listLetterTo = [];
+    let listLetterFrom = [];
+    let listInout = [];
+    let listSettle = [];
+    let listDaily = [];
+    let listRecordBet = [];
+    let listGtTo = [];
+    let listGtFrom = [];
+    let listHistory = [];
+
+    const maxCount = 30;
+    let count = 0;
+    // 지분자 정보 확인
+    listShare = await db.ShareUsers.findAll({where: {strID: strID}});
+    count += listShare.length;
+    if (count > maxCount) {
+        return {result: 'ERROR', code: 'Impossible'};
+    }
+    // 로그
+    listLog = await db.DataLogs.findAll({where: {strID: strID}});
+    count += listLog.length;
+    if (count > maxCount) {
+        return {result: 'ERROR', code: 'Impossible'};
+    }
+    // 관리자 문의
+    listContactTo = await db.ContactLetter.findAll({where: {strTo: strNickname}});
+    count += listContactTo.length;
+    if (count > maxCount) {
+        return {result: 'ERROR', code: 'Impossible'};
+    }
+    listContactFrom = await db.ContactLetter.findAll({where: {strFrom: strNickname}});
+    count += listContactFrom.length;
+    if (count > maxCount) {
+        return {result: 'ERROR', code: 'Impossible'};
+    }
+    // 쪽지
+    listLetterTo = await db.Letters.findAll({where: {strTo: strNickname}});
+    count += listLetterTo.length;
+    if (count > maxCount) {
+        return {result: 'ERROR', code: 'Impossible'};
+    }
+    listLetterFrom = await db.Letters.findAll({where: {strFrom: strNickname}});
+    count += listLetterFrom.length;
+    if (count > maxCount) {
+        return {result: 'ERROR', code: 'Impossible'};
+    }
+    // 입출금
+    listInout = await db.Inouts.findAll({where: {strID: strNickname}});
+    count += listInout.length;
+    if (count > maxCount) {
+        return {result: 'ERROR', code: 'Impossible'};
+    }
+    // 죽장
+    listSettle = await db.SettleRecords.findAll({where: {strNickname: strID}});
+    count += listSettle.length;
+    if (count > maxCount) {
+        return {result: 'ERROR', code: 'Impossible'};
+    }
+    // 레코드 데일리
+    listDaily = await db.RecordDailyOverviews.findAll({where: {strID: strID}});
+    count += listDaily.length;
+    if (count > maxCount) {
+        return {result: 'ERROR', code: 'Impossible'};
+    }
+    // 배팅 레코드
+    listRecordBet = await db.RecordBets.findAll({where: {strID: strID}});
+    count += listRecordBet.length;
+    if (count > maxCount) {
+        return {result: 'ERROR', code: 'Impossible'};
+    }
+    // 전환
+    listGtTo = await db.GTs.findAll({where: {strTo: strNickname}});
+    count += listGtTo.length;
+    if (count > maxCount) {
+        return {result: 'ERROR', code: 'Impossible'};
+    }
+    listGtFrom = await db.GTs.findAll({where: {strFrom: strNickname}});
+    count += listGtFrom.length;
+    if (count > maxCount) {
+        return {result: 'ERROR', code: 'Impossible'};
+    }
+    // 가불히스토리
+    listHistory = await db.CreditRecords.findAll({where: {strID: strID}});
+    count += listHistory.length;
+    if (count > maxCount) {
+        return {result: 'ERROR', code: 'Impossible'};
+    }
+
+    return {result: 'OK', code: '', listShare:listShare, listLog:listLog, listContactTo:listContactTo, listContactFrom:listContactFrom,
+        listLetterTo:listLetterTo, listLetterFrom:listLetterFrom, listInout:listInout, listSettle:listSettle,
+        listDaily:listDaily, listRecordBet:listRecordBet, listGtTo:listGtTo, listGtFrom:listGtFrom, listHistory:listHistory};
+}
+
+const UpdateHistoryInfo = async (info) => {
+    if (info.listShare.length > 0) {
+        await db.ShareUsers.update({strID: req.body.strID}, {where: {strID: user.strID}});
+    }
+    if (info.listLog.length > 0) {
+        await db.DataLogs.update({strNickname:req.body.strNickname, strID:req.body.strID}, {where: {strID: user.strID}});
+    }
+    if (info.listContactTo.length > 0) {
+        await db.ContactLetter.update({strTo:req.body.strNickname}, {where: {strTo: user.strNickname}});
+    }
+    if (info.listContactFrom.length > 0) {
+        await db.ContactLetter.update({strFrom:req.body.strNickname}, {where: {strFrom: user.strNickname}});
+    }
+    if (info.listLetterTo.length > 0) {
+        await db.Letters.update({strTo:req.body.strNickname, strToID: req.body.strID}, {where: {strTo: user.strNickname}});
+    }
+    if (info.listLetterFrom.length > 0) {
+        await db.Letters.update({strFrom:req.body.strNickname, strFromID: req.body.strID}, {where: {strFrom: user.strNickname}});
+    }
+    if (info.listInout.length > 0) {
+        await db.Inouts.update({strID: req.body.strNickname, strName: req.body.strNickname}, {where: {strID: user.strNickname}});
+    }
+    if (info.listSettle.length > 0) {
+        await db.SettleRecords.update({strNickname: req.body.strNickname, strID:req.body.strID}, {where: {strID: user.strID}});
+    }
+    if (info.listDaily.length > 0) {
+        await db.RecordDailyOverviews.update({strID: req.body.strID}, {where: {strID: user.strID}});
+    }
+    if (info.listRecordBet.length > 0) {
+        await db.RecordBets.update({strID: req.body.strID, strNickname: req.body.strNickname}, {where: {strID: user.strID}});
+    }
+    if (info.listGtTo.length > 0) {
+        await db.GTs.update({strTo:req.body.strNickname}, {where: {strTo: user.strNickname}});
+    }
+    if (info.listGtFrom.length > 0) {
+        await db.GTs.update({strFrom:req.body.strNickname}, {where: {strFrom: user.strNickname}});
+    }
+    if (info.listHistory.length > 0) {
+        await db.CreditRecords.update({strID: req.body.strID, strNickname:req.body.strNickname}, {where: {strID: user.strID}});
+    }
+}
 
 const logMessage = (source, data) => {
     let msg = '';
@@ -1916,6 +2031,36 @@ const logMessage = (source, data) => {
             msg = `슬롯 죽장 변경(${source.fSettleSlot}=>${data.fSettleSlot})`;
         else
             msg = `${msg} | 슬롯 죽장 변경(${source.fSettleSlot}=>${data.fSettleSlot})`;
+    }
+
+    if (data.hasOwnProperty('iSettleDays')) {
+        if (source.iSettleDays != data.iSettleDays) {
+            if (msg == '')
+                msg = `죽장일자 변경(${source.iSettleDays}=>${data.iSettleDays})`;
+            else
+                msg = `${msg} | 죽장일자 변경(${source.iSettleDays}=>${data.iSettleDays})`;
+        }
+    }
+
+    if (data.hasOwnProperty('iSettleType')) {
+        if (source.iSettleType != data.iSettleType) {
+            let sType = null;
+            let dType = null;
+            if (source.iSettleType == 1) {
+                sType = '리셋';
+            } else if (source.iSettleType == 0) {
+                sType = '누적';
+            }
+            if (data.iSettleType == 1) {
+                dType = '리셋';
+            } else if (data.iSettleType == 0) {
+                dType = '누적';
+            }
+            if (msg == '')
+                msg = `죽장타입 변경(${sType}=>${dType})`;
+            else
+                msg = `${msg} | 죽장타입 변경(${sType}=>${dType})`;
+        }
     }
 
     return {msg: msg, strMemo:strMemo};

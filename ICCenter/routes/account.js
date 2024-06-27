@@ -148,4 +148,12 @@ router.post('/removeonline', (req, res) => {
     }
 });
 
+//
+router.post('/request_register', async (req, res) => {
+
+    console.log(`/account/request_register`);
+    console.log(req.body);
+
+});
+
 module.exports = router;

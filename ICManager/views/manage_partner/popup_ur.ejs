@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ko">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="format-detection" content="telephone=no">
+		<meta name="Keywords" content="">
+		<meta name="Description" content="">
+		<title>Inout</title>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+		<script type="text/javascript" src="../../js/jquery.bxslider.min.js"></script>
+		<script type="text/javascript" src="../../js/placeholders.js"></script>
+		<script type="text/javascript" src="../../js/layout.js"></script>
+		<script type="text/javascript" src="../../js/common_js.js"></script>
+		<link rel="stylesheet" type="text/css" href="../../css/general.css"/>
+		<link rel="stylesheet" type="text/css" href="../../css/button.css"/>
+		<link rel="stylesheet" href="https://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css" type="text/css" /> 
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>  
+		<script src="https://code.jquery.com/ui/1.8.18/jquery-ui.min.js"></script>
+		<link href='//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css' rel='stylesheet' type='text/css'>
+	</head>
+
+	<body style="font-family:'Spoqa Han Sans Neo';">
+	
+		<div class="sub_wrap">
+			<div class="container clearfix">
+				<div class="content" style="position:relative; padding:0 10px 0 10px;">
+					<ul class="list_tab" style="margin-bottom:10px;width:100%;z-index:10000;" id="bettingrecord_header">
+					</ul>
+				</div>
+				
+				<div style="background-color:#ffffff;text-align:right;padding-right:5px;padding-top:0px;padding-bottom:0px;">
+		
+					<strong>닉네임</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;검색&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					<!-- <select id="select_roomno" style="width:80px;">
+						<option><%=__('Nickname')%></option>
+					</select> -->
+					<input style="margin-left:0px;width:100px;" id="strSearchNickname" type="text"/>
+					<button class="btn_blue" id="button_toggle_record" style="width:100px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="RequestFindUser();"><%=__('Search')%></button>
+				</div>
+				
+				<div class="list">
+					<div class="list_tit">
+						<h3>검색 내역
+						</h3>
+					</div>
+		
+					<div class="list">
+						<div class="search_wrap">	
+							<table class="search_list">
+									<caption><%=__('SearchResult')%></caption>
+								<colgroup>
+									<col style="width:5%;">
+									<col style="width:5%;">
+									<col style="width:5%;">
+									<col style="width:5%;">
+									<col style="width:5%;">
+								</colgroup>
+								<thead>
+								<tr>
+									<th scope="col">닉네임</th>
+									<th scope="col">바카라 %</th>
+									<th scope="col">슬롯 %</th>
+									<th scope="col">턴</th>
+									<th scope="col">-</th>
+								</tr>
+								</thead>
+								<tbody id="listSearch">
+								</tbody>
+							</table>
+	
+						</div>
+					</div>
+				</div>
+
+				<div class="list">
+					<div class="list_tit">
+						<h3>변경 내역
+						</h3>
+					</div>
+		
+					<div class="list">
+						<div class="search_wrap">	
+							<table class="search_list">
+									<caption><%=__('SearchResult')%></caption>
+								<colgroup>
+									<col style="width:5%;">
+									<col style="width:5%;">
+									<col style="width:5%;">
+									<col style="width:5%;">
+									<col style="width:5%;">
+								</colgroup>
+								<thead>
+								<tr>
+									<th scope="col">닉네임</th>
+									<th scope="col">바카라 %</th>
+									<th scope="col">슬롯 %</th>
+									<th scope="col">턴</th>
+									<th scope="col">-</th>
+								</tr>
+								</thead>
+								<tbody id="listRecord">
+								</tbody>
+							</table>
+	
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+
+		
+
+    </body>
+
+	<script>
+
+
+		let RequestSaveUR = () => {
+
+			$.ajax({
+				type: 'post',
+				url: "/manage_partner_popup/request_saveuserur",
+				context: document.body,
+				data: { strNickname:$('#strNickname').text(), fRRB:$('#fRRB').val(), fRRS:$('#fRRS').val(), iRRTurn:$('#iRRTurn').val() },
+
+				success: function (data) {
+
+					if ( data.result == 'OK' )
+					{
+						alert('수정완료');
+						location.reload();
+					}
+
+				}
+			});
+
+		}
+
+		let RequestFindUser = () => {
+
+			if ( $('#strSearchNickname').val().length <= 0 )
+				return;
+
+			$.ajax({
+				type: 'post',
+				url: "/manage_partner_popup/request_finduserur",
+				context: document.body,
+				data: { strNickname:$('#strSearchNickname').val() },
+
+				success: function (data) {
+
+					if ( data.result == 'OK' )
+					{
+						$('#listSearch').empty();
+
+						tag = `
+							<tr>
+								<td id="strNickname">${data.strNickname}</td>
+								<td><input style="text-align:center;" id="fRRB" value='${data.fRRB}'></td>
+								<td><input style="text-align:center;" id="fRRS" value='${data.fRRS}'></td>
+								<td><input style="text-align:center;" id="iRRTurn" value='${data.iRRTurn}'></td>
+								<td><button class="btn_blue" style="width:80%;text-align:center;background-color: orange;color:white" onclick ='RequestSaveUR();'>수정</button></td>
+							</tr>
+						`;
+
+						$('#listSearch').append(tag);
+					}
+
+				}
+			});
+		}
+
+		let RequestRecord = () => {
+
+			$.ajax({
+				type: 'post',
+				url: "/manage_partner_popup/request_changeurlist",
+				context: document.body,
+				//data: { strNickname:$('#strSearchNickname').val() },
+
+				success: function (data) {
+
+					if ( data.result == 'OK' )
+					{
+						$('#listRecord').empty();
+
+						for ( let i in data.list )
+						{
+							tag = `
+								<tr>
+									<td id="strNickname">${data.list[i].strNickname}</td>
+									<td style='color:red;'>${data.list[i].fRRB}</td>
+									<td style='color:red;'>${data.list[i].fRRS}</td>
+									<td style='color:red;'>${data.list[i].iRRTurn}</td>
+									<td></td>
+								</tr>
+							`;
+
+							$('#listRecord').append(tag);
+
+						}
+					}
+
+				}
+			});
+		}
+
+		RequestRecord();
+
+
+	</script>
+</html>

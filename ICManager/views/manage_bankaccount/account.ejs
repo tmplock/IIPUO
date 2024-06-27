@@ -6,17 +6,19 @@
         </div>
 
         <div style="background-color:#ffffff;text-align:right;padding-right:5px;padding-top:0px;padding-bottom:0px;">
+            <button class="btn_blue" id="button_toggle_record_before" style="width:100px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnRequestPartnerBefore();">어제</button>
+
             <input style="margin-left:180px;width:100px;height:18px;" type="text" id="datepicker1" class="datepicker"/>~
             <input style="width:100px;height:18px;" type="text" id="datepicker2" class="datepicker" />
 
-            <button class="btn_blue" id="button_toggle_record" style="width:100px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="RequestPartnerSelection();"><%=__('Search')%></button>
+            <button class="btn_blue" id="button_toggle_record" style="width:100px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnRequestPartner();"><%=__('Search')%></button>
 
             <%=__('Search')%>
             <select id="select_roomno" style="width:80px;">
                 <option><%=__('Nickname')%></option>
             </select>
             <input style="margin-left:0px;width:100px;" id="strSearchNickname" type="text"/>
-            <button class="btn_blue" id="button_toggle_record" style="width:100px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnClickRecord(true);"><%=__('Search')%></button>
+            <button class="btn_blue" id="button_toggle_record" style="width:100px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnRequestPartner();"><%=__('Search')%></button>
             <select id="select_limit" style="width:80px; display: none;" >
                 <option value="30">30개씩</option>
                 <option value="50">50개씩</option>
@@ -25,14 +27,8 @@
         </div>
 
         <div class="list">
-
             <div class="list_tit">
-                <h3>파트너 목록&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <button class="btn_blue" id="bap_partner" style="width:100px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnRequestPartner(4);">대본사</button>
-                    <button class="btn_blue" id="bap_partner" style="width:100px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnRequestPartner(5);">부본사</button>
-                    <button class="btn_blue" id="bap_partner" style="width:100px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnRequestPartner(6);">총판</button>
-                    <button class="btn_blue" id="bap_partner" style="width:100px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnRequestPartner(7);">매장</button>
-                    <button class="btn_blue" id="bap_partner" style="width:100px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnRequestPartner(8);">회원</button>
+                <h3>계좌문의 로그&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
                     <button class="btn_blue" style="margin-top:15px;float:right;width:150px;text-align:center;background-color: rgb(214, 180, 29);color:white" onclick="SaveAccountGrade();">계좌등급 저장</button>
                 </h3>
@@ -46,10 +42,6 @@
                             <col style="width:3%;">
                             <col style="width:5%;">
                             <col style="width:7%;">
-                            <col style="width:7%;">
-                            <col style="width:7%;">
-                            <col style="width:7%;">
-                            <col style="width:5%;">
                             <col style="width:5%;">
                             <col style="width:5%;">
                             <col style="width:7%;">
@@ -60,11 +52,7 @@
                         <tr>
                             <th scope="col">번호</th>
                             <th scope="col">계좌 등급</th>
-                            <th scope="col">대본사</th>
-                            <th scope="col">부본사</th>
-                            <th scope="col">총판</th>
-                            <th scope="col">매장</th>
-                            <th scope="col">대상</th>
+                            <th scope="col">닉네임</th>
                             <th scope="col">계좌문의 횟수</th>
                             <th scope="col">유효 입금 횟수</th>
                             <th scope="col">무효 입금 횟수</th>
@@ -83,7 +71,6 @@
 
     </div>
 </div>
-</div>
 <script type="text/javascript" src="js/enum.js"></script>
 <script type="text/javascript" src="js/time.js"></script>
 <script type="text/javascript" src="js/manage_partner_ref.js"></script>
@@ -91,14 +78,11 @@
 <script type="text/javascript" src="js/manage_setting_ref.js"></script>
 <script type="text/javascript" src="js/manage_user_menu.js"></script>
 <script type="text/javascript" src="js/manage_search_date.js"></script>
-<script type="text/javascript" src="js/socket.js"></script>
+<script type="text/javascript" src="js/util.js"></script>
 <script>
 
     let user = JSON.parse('<%-JSON.stringify(user)%>');
-    let iocount = JSON.parse('<%-JSON.stringify(iocount)%>');
-     
-    let iCurrentClass = 4;
-
+    let yesterday = JSON.parse('<%-JSON.stringify(yesterday)%>');
     var i18nTexts = {
         Search: "<%=__('Search')%>",
         Today : "<%=__('Today')%>",
@@ -110,10 +94,14 @@
 
     let startDate = GetCurrentDate();
 	let endDate = GetCurrentDate();
+    if (yesterday > 0) {
+        startDate = GetCurrentDateBefore(yesterday);
+        endDate = GetCurrentDateBefore(yesterday);
+    }
 
     let bToggleRecord = false;
     let bClickDateSelection	= false;
-    const cTClass	= parseInt(user.iClass);
+    let bSending = false;
 
     $(document).on('click', '.menu1', (e) => {
         $('.menu5').attr('class', 'menu1');
@@ -121,6 +109,14 @@
     });
 
     $(document).ready(() => {
+
+        $('#main_title').empty();
+        $('#main_title').append(`
+            <h3>
+                <a class="btn_gray" style="font-weight:bold; font-size:18px; position:absolute; left:50px; top:25px;">계좌문의로그</a>
+            </h3>
+        `);
+
         SetSeachButtons("#search_date",2,i18nTexts,user,4);
 
         DatePicker();
@@ -129,24 +125,34 @@
         $('#datepicker2').val(endDate);
         $("#table_record_list").hide();
 
-        SetCalculationHeader(0, user.iClass);
-        //SetOverview(objectOverview, "#div_realtimebet_overview", true, user.iRootClass);
-        Alert(iocount, "<%=__('RequestInput')%>", "<%=__('RequestOutput')%>","<%=__('LetterSend')%>");
+        OnRequestPartner();
     });
 
-    let OnClickSearchNickname = () => {
-        // RequestUserList(user.iClass, user.strGroupID, user.iClass);
+    let OnRequestPartnerBefore = () => {
+        window.open('', 'popupAccountChk2', 'width=750, height=720, top=90, left=90, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
+        var $form = $('<form></form>');
+        $form.attr('action', '/manage_bankaccount/yesterday');
+        $form.attr('method', 'post');
+        $form.attr('target', 'popupAccountChk2');
+        $form.appendTo('body');
+
+        var strNickname = $(`<input type="hidden" value="${user.strNickname}" name="strNickname">`);
+        var strGroupID = $(`<input type="hidden" value="${user.strGroupID}" name="strGroupID">`);
+        var iClass = $(`<input type="hidden" value=${user.iClass} name="iClass">`);
+        var iPermission = $(`<input type="hidden" value=${user.iPermission} name="iPermission">`);
+        var iYesterday = $(`<input type="hidden" value=${yesterday} name="iYesterday">`);
+
+        $form.append(strNickname).append(strGroupID).append(iClass).append(iPermission).append(iYesterday);
+        $form.submit();
     }
 
-    let RequestPartnerSelection = () => {
+    let OnRequestPartner = () => {
+        if (bSending == true) {
+            return;
+        }
+        bSending = true;
 
-        OnRequestPartner(iCurrentClass);
-    }
-
-    let OnRequestPartner = (iClass) => {
-
-        iCurrentClass = iClass;
-
+        let strSearchNickname = $('#strSearchNickname').val();
         const dateStart = $('#datepicker1').val();
         const dateEnd = $('#datepicker2').val();
 
@@ -155,12 +161,12 @@
 			url: "/manage_bankaccount/request_partner",
 			context: document.body,
 			data:{
-                strGroupID:user.strGroupID,
-				iClass:iClass,
                 dateStart:dateStart,
                 dateEnd:dateEnd,
+                strSearchNickname:strSearchNickname
 			},
 			success: (data) => {
+                bSending = false;
 
                 if ( data.result == 'OK' )
                 {
@@ -174,15 +180,9 @@
                         <tr>
                             <td>${parseInt(i)+1}</td>
                             <td><input id="bankaccount_grade" strID='${aObject.strID}' strOptionCode='${aObject.strOptionCode}' style='width:70%;' value="${strAccountGrade}"></td>
-                            <td>${data.list[i].strPAdminNickname}</td>
-                            <td>${data.list[i].strVAdminNickname}</td>
-                            <td>${data.list[i].strAgentNickname}</td>
-                            <td>${data.list[i].strShopNickname}</td>
-
                             <td>
-                                <a href="javascript:RequestPartnerInfo('${aObject.strNickname}', '${aObject.strGroupID}', '${aObject.iClass}', '${aObject.iPermission}', '${aObject.strNickname}');"  style="color:blue;">${aObject.strNickname}</a>
+                                <a href="javascript:OnClickNickname('${aObject.strNickname}');"  style="color:blue;">${GetClassNickName(aObject.iClass, aObject.strNickname)}</a>
                             </td>
-
                             <td>${data.list[i].iNumRequest}</td>
                             <td>${data.list[i].iNumValidInput}</td>
                             <td>${data.list[i].iNumInvalidInput}</td>
@@ -190,12 +190,14 @@
                             <td><button class="btn_blue" style="width:50px;text-align:center;background-color: rgb(74, 141, 68);color:white" onclick="OnPopupDetail('${data.list[i].strID}');">상세</button></td>
                         </tr>`;
 
-                        //<td>${data.list[i].strNickname}</td>
-
                         $('#list_bapartner').append(tag);
                     }
                 }
 			},
+            error: (request,status,error) => {
+                bSending = false;
+                alert('조회에러');
+            }
 		});
     }
 
@@ -214,12 +216,12 @@
 
     let OnPopupDetail = (strID) => {
 
-        window.open('', 'popupDetail', 'width=1280, height=720, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
+        window.open('', `popupDetail_${yesterday}`, 'width=750, height=720, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
 
         var $form = $('<form></form>');
         $form.attr('action', '/manage_bankaccount/detail');
         $form.attr('method', 'post');
-        $form.attr('target', 'popupDetail');
+        $form.attr('target', `popupDetail_${yesterday}`);
         $form.appendTo('body');
 
         const dateStart = $('#datepicker1').val();

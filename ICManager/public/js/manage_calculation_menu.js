@@ -15,10 +15,10 @@ $(document).on('click', '#calculation_calculation', ()=> {
 
 });
 
-$(document).on('click', '#calculation_settle_all2', ()=> {
+$(document).on('click', '#calculation_settle_all4', ()=> {
 
     var $form = $('<form></form>');
-    $form.attr('action', '/manage_calculation/settle_all2');
+    $form.attr('action', '/manage_calculation/settle_all4');
     $form.attr('method', 'post');
     $form.appendTo('body');
 
@@ -130,8 +130,8 @@ let SetCalculationHeader = (iSection, iClass) => {
         {
             subtag1 =
                 `
-                <li class=${GetCalculationSectionClass(iSection, 110)}>
-                    <a href="#" style="color:${GetCalculationSectionColor(iSection, 110)};" id="calculation_settle_all2">죽장 정산</a>
+                <li class=${GetCalculationSectionClass(iSection, 111)}>
+                    <a href="#" style="color:${GetCalculationSectionColor(iSection, 111)};" id="calculation_settle_all4">죽장 정산</a>
                 </li>
             `;
             tag += subtag1;
@@ -140,8 +140,8 @@ let SetCalculationHeader = (iSection, iClass) => {
         {
             subtag1 =
                 `
-                <li class=${GetCalculationSectionClass(iSection, 110)}>
-                    <a href="#" style="color:${GetCalculationSectionColor(iSection, 110)};" id="calculation_settle_all2">죽장 정산</a>
+                <li class=${GetCalculationSectionClass(iSection, 111)}>
+                    <a href="#" style="color:${GetCalculationSectionColor(iSection, 111)};" id="calculation_settle_all4">죽장 정산</a>
                 </li>
             `;
             tag += subtag1;

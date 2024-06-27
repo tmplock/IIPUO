@@ -211,7 +211,31 @@ module.exports = (sequelize, DataTypes) => {
         //차감권한 설정.
         strDeduct: {
             type: DataTypes.STRING,
-        }
+        },
+        // 죽장정산주기 : 15일, 10일, 5일
+        iSettleDays: {
+            type: DataTypes.INTEGER,
+        },
+        // 0: 누적, 1: 리셋
+        iSettleType: {
+            type: DataTypes.INTEGER,
+        },
+        // 죽장 리셋 계산시 알값 제외 여부(1:제외, 0:포함)',
+        iSettleCommission: {
+            type: DataTypes.INTEGER,
+        },
+        fRRB: {
+            type: DataTypes.FLOAT,
+        },
+        fRRUO: {
+            type: DataTypes.FLOAT,
+        },
+        fRRS: {
+            type: DataTypes.FLOAT,
+        },
+        iRRTurn:{
+            type: DataTypes.INTEGER,
+        },
     }, {
         indexes: [
             { name: 'idx_users_id', fields: ['id'] },

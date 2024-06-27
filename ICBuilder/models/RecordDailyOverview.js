@@ -116,6 +116,44 @@ module.exports = (sequelize, DataTypes) => {
         iAgentRollingPBB: {
             type: DataTypes.DOUBLE(17,4),
         },
+        // 배팅 수정 금액
+        iAgentBetB2: {
+            type:DataTypes.DOUBLE(17,4),
+        },
+        iAgentBetUO2: {
+            type:DataTypes.DOUBLE(17,4),
+        },
+        iAgentBetS2: {
+            type:DataTypes.DOUBLE(17,4),
+        },
+        iAgentBetPB2: {
+            type:DataTypes.DOUBLE(17,4),
+        },
+        // iAgentRollingB2: {
+        //     type: DataTypes.DOUBLE(17,4),
+        // },
+        // iAgentRollingUO2: {
+        //     type: DataTypes.DOUBLE(17,4),
+        // },
+        // iAgentRollingS2: {
+        //     type: DataTypes.DOUBLE(17,4),
+        // },
+        // iAgentRollingPBA2: {
+        //     type: DataTypes.DOUBLE(17,4),
+        // },
+        // iAgentRollingPBB2: {
+        //     type: DataTypes.DOUBLE(17,4),
+        // },
+        //  플레이 횟수
+        iNumPlayB: {
+            type:DataTypes.INTEGER,
+        },
+        iNumPlayUO: {
+            type:DataTypes.INTEGER,
+        },
+        iNumPlayS: {
+            type:DataTypes.INTEGER,
+        },
         createdAt: {
             type: DataTypes.DATE,
             get() {

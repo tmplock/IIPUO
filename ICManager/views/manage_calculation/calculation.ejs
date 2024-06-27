@@ -52,6 +52,9 @@
     let iocount = JSON.parse('<%-JSON.stringify(iocount)%>');
     let objectOverview = JSON.parse('<%-JSON.stringify(data.overview)%>');
 
+    console.log(user);
+    console.log(objectOverview);
+
     var i18nTexts = {
         Search: "<%=__('Search')%>",
         Today : "<%=__('Today')%>",

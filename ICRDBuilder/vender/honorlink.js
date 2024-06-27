@@ -120,7 +120,8 @@ exports.GetRangeRD = async (strStart, strEnd) => {
 
             //const desc = `Player : ${current.external.detail.data.result.player.cards.join(',')}, Banker : ${current.external.detail.data.result.banker.cards.join(',')}`;
 
-            let objectData = {strUniqueID:current.referer_id, list:[], strCards: '', strBets:''};
+            //let objectData = {strUniqueID:current.referer_id, list:[], strCards: '', strBets:''};
+            let objectData = {strUniqueID:current.id, list:[], strCards: '', strBets:''};
 
             if (current.external != null && current.external.detail != null && current.external.detail.data != null)
             {

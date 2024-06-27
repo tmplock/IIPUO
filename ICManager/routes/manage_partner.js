@@ -517,7 +517,7 @@ router.post('/request_agentlist', isLoggedIn, async(req, res) => {
 
 router.post('/request_bettingrecord', isLoggedIn, async(req, res) => {
 
-    console.log(`/request_agentbettingrecord : `);
+    console.log(`/request_bettingrecord : `);
     console.log(req.body);
 
     const record = await IAgent.CalculateTermBettingRecord(req.body.strGroupID, parseInt(req.body.iTargetClass), req.body.dateStart, req.body.dateEnd, req.body.strNickname, req.body.strID);
@@ -586,7 +586,9 @@ router.post('/request_overview_user', isLoggedIn, async(req, res) => {
     console.log(req.body);
     const agent = await IAgent.GetPopupAgentInfo(req.body.strNickname, req.body.iTargetClass, req.body.strNickname);
 
-    const overview = await IAgent.CalculateSelfBettingRecord(req.body.strGroupID, parseInt(req.body.iTargetClass), req.body.dateStart, req.body.dateEnd, req.body.strNickname, agent.strID);
+    //  원본 2024.06.26
+    //const overview = await IAgent.CalculateSelfBettingRecord(req.body.strGroupID, parseInt(req.body.iTargetClass), req.body.dateStart, req.body.dateEnd, req.body.strNickname, agent.strID);
+    const overview = await IAgent.CalculateBettingRecord(req.body.strGroupID, parseInt(req.body.iTargetClass), req.body.dateStart, req.body.dateEnd, req.body.strNickname, agent.strID);
 
     let data = {overview:overview, iRootClass:req.user.iClass}
 

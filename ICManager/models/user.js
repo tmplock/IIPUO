@@ -223,7 +223,19 @@ module.exports = (sequelize, DataTypes) => {
         // 죽장 리셋 계산시 알값 제외 여부(1:제외, 0:포함)',
         iSettleCommission: {
             type: DataTypes.INTEGER,
-        }
+        },
+        fRRB: {
+            type: DataTypes.FLOAT,
+        },
+        fRRUO: {
+            type: DataTypes.FLOAT,
+        },
+        fRRS: {
+            type: DataTypes.FLOAT,
+        },
+        iRRTurn:{
+            type: DataTypes.INTEGER,
+        },
     }, {
         indexes: [
             { name: 'idx_users_id', fields: ['id'] },

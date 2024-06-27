@@ -698,24 +698,24 @@ let FindIndexFromBettingRecord = (date, list) => {
 let GetSelfBetting = (daiyBetting, iClass, iGameCode, fB, fUO, fS, fPB) => {
     if (iGameCode == 0) {
         if (parseFloat(daiyBetting.iBetB) > 0) {
-            return {iBetting:daiyBetting.iBetB, iWin:daiyBetting.iWinB, iRolling:(daiyBetting.iBetB)*fB*0.01, iTarget:0, iGameCode:iGameCode};
+            return {iBetting:daiyBetting.iAgentBetB2, iWin:daiyBetting.iWinB, iRolling:(daiyBetting.iBetB)*fB*0.01, iTarget:0, iGameCode:iGameCode, iBetting2:daiyBetting.iBetB};
         }
         return {iBetting:0, iWin:0, iRolling:0, iTarget:0, iGameCode:iGameCode};
     } else if (iGameCode == 100) {
         if (parseFloat(daiyBetting.iBetUO) > 0) {
-            return {iBetting:daiyBetting.iBetUO, iWin:daiyBetting.iWinUO, iRolling:(daiyBetting.iBetUO)*fUO*0.01, iTarget:0, iGameCode:iGameCode};
+            return {iBetting:daiyBetting.iAgentBetUO2, iWin:daiyBetting.iWinUO, iRolling:(daiyBetting.iBetUO)*fUO*0.01, iTarget:0, iGameCode:iGameCode, iBetting2:daiyBetting.iBetUO};
         }
         return {iBetting:0, iWin:0, iRolling:0, iTarget:0, iGameCode:iGameCode};
     } else if (iGameCode == 200) {
         if (parseFloat(daiyBetting.iBetS) > 0) {
-            return {iBetting:daiyBetting.iBetS, iWin:daiyBetting.iWinS, iRolling:(daiyBetting.iBetS)*fS*0.01, iTarget:0, iGameCode:iGameCode};
+            return {iBetting:daiyBetting.iAgentBetS2, iWin:daiyBetting.iWinS, iRolling:(daiyBetting.iBetS)*fS*0.01, iTarget:0, iGameCode:iGameCode, iBetting2:daiyBetting.iBetS};
         }
         return {iBetting:0, iWin:0, iRolling:0, iTarget:0, iGameCode:iGameCode};
     } else if (iGameCode == 300) {
         if (parseFloat(daiyBetting.iBetPB) > 0) {
-            return {iBetting:daiyBetting.iBetPB, iWin:daiyBetting.iWinPB, iRolling:(daiyBetting.iBetPB)*fPB*0.01, iTarget:0, iGameCode:iGameCode};
+            return {iBetting:daiyBetting.iAgentBetPB2, iWin:daiyBetting.iWinPB, iRolling:(daiyBetting.iBetPB)*fPB*0.01, iTarget:0, iGameCode:iGameCode, iBetting2:daiyBetting.iBetPB};
         }
-        return {iBetting:0, iWin:0, iRolling:0, iTarget:0, iGameCode:iGameCode};
+        return {iBetting:0, iWin:0, iRolling:0, iTarget:0, iGameCode:iGameCode, iBetting2:0};
     }
     return null;
 }
@@ -725,16 +725,29 @@ let GetSelfBetting = (daiyBetting, iClass, iGameCode, fB, fUO, fS, fPB) => {
  */
 let GetBetting = (daiyBetting, iClass, iGameCode) => {
     if (iGameCode == 0) {
-        return {iBetting:daiyBetting.iAgentBetB, iWin:daiyBetting.iAgentWinB, iRolling:daiyBetting.iAgentRollingB, iTarget:0, iGameCode:iGameCode};
+        return {iBetting:daiyBetting.iAgentBetB2, iWin:daiyBetting.iAgentWinB, iRolling:daiyBetting.iAgentRollingB, iTarget:0, iGameCode:iGameCode, iBetting2:daiyBetting.iAgentBetB};
     } else if (iGameCode == 100) {
-        return {iBetting:daiyBetting.iAgentBetUO, iWin:daiyBetting.iAgentWinUO, iRolling:daiyBetting.iAgentRollingUO, iTarget:0, iGameCode:iGameCode};
+        return {iBetting:daiyBetting.iAgentBetUO2, iWin:daiyBetting.iAgentWinUO, iRolling:daiyBetting.iAgentRollingUO, iTarget:0, iGameCode:iGameCode, iBetting2:daiyBetting.iAgentBetUO};
     } else if (iGameCode == 200) {
-        return {iBetting:daiyBetting.iAgentBetS, iWin:daiyBetting.iAgentWinS, iRolling:daiyBetting.iAgentRollingS, iTarget:0, iGameCode:iGameCode};
+        return {iBetting:daiyBetting.iAgentBetS2, iWin:daiyBetting.iAgentWinS, iRolling:daiyBetting.iAgentRollingS, iTarget:0, iGameCode:iGameCode, iBetting2:daiyBetting.iAgentBetS};
     } else if (iGameCode == 300) {
-        return {iBetting:daiyBetting.iAgentBetPB, iWin:daiyBetting.iAgentWinPB, iRolling:(daiyBetting.iAgentRollingPBA) + (daiyBetting.iAgentRollingPBB), iTarget:0, iGameCode:iGameCode};
+        return {iBetting:daiyBetting.iAgentBetPB2, iWin:daiyBetting.iAgentWinPB, iRolling:(daiyBetting.iAgentRollingPBA) + (daiyBetting.iAgentRollingPBB), iTarget:0, iGameCode:iGameCode, iBetting2:daiyBetting.iAgentBetPB};
     }
     return null;
 }
+
+// let GetBetting = (daiyBetting, iClass, iGameCode) => {
+//     if (iGameCode == 0) {
+//         return {iBetting:daiyBetting.iAgentBetB, iWin:daiyBetting.iAgentWinB, iRolling:daiyBetting.iAgentRollingB, iTarget:0, iGameCode:iGameCode, iBetting2:daiyBetting.iAgentBetB2};
+//     } else if (iGameCode == 100) {
+//         return {iBetting:daiyBetting.iAgentBetUO, iWin:daiyBetting.iAgentWinUO, iRolling:daiyBetting.iAgentRollingUO, iTarget:0, iGameCode:iGameCode, iBetting2:daiyBetting.iAgentBetUO2};
+//     } else if (iGameCode == 200) {
+//         return {iBetting:daiyBetting.iAgentBetS, iWin:daiyBetting.iAgentWinS, iRolling:daiyBetting.iAgentRollingS, iTarget:0, iGameCode:iGameCode, iBetting2:daiyBetting.iAgentBetS2};
+//     } else if (iGameCode == 300) {
+//         return {iBetting:daiyBetting.iAgentBetPB, iWin:daiyBetting.iAgentWinPB, iRolling:(daiyBetting.iAgentRollingPBA) + (daiyBetting.iAgentRollingPBB), iTarget:0, iGameCode:iGameCode, iBetting2:daiyBetting.iAgentBetPB2};
+//     }
+//     return null;
+// }
 
 /**
  * 회원목록 조회

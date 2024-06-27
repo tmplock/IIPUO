@@ -518,8 +518,6 @@ function SetOverviewRecordList(aObject, strParentTag, bClear, iRootClass)
 	console.log(`SetOverviewRecordList Length : ${aObject.length}`);
 
 	let object = aObject[aObject.length-1];
-	console.log(`asdfasdfasdfasdfasdfasdfasdf`);
-	console.log(object);
 
 	//	For Total
 	let listTotal = [];
@@ -531,7 +529,6 @@ function SetOverviewRecordList(aObject, strParentTag, bClear, iRootClass)
 	for ( var root = 0; root < aObject.length-1; ++root)
 	{
 		var tObject = aObject[root];
-		console.log(tObject);
 		let row = AddTable(aObject[root].strDate, 0, 0, 0, tObject, iRootClass, false);
 		if (row != '') {
 			tag += row;
@@ -828,8 +825,7 @@ function AddPartner(iRootClass, aObject, bDisableRolling, iPermission)
 	}
 
 	let iRolling = parseFloat(aObject.iRollingMoney);
-	//let iTotal = parseFloat(aObject.iBaccaratTotal) + parseFloat(aObject.iUnderOverTotal) + parseFloat(aObject.iSlotTotal) + parseFloat(aObject.iPBTotal);
-	let iTotal = aObject.iTotal;
+	let iTotal = parseFloat(aObject.iBaccaratTotal) + parseFloat(aObject.iUnderOverTotal) + parseFloat(aObject.iSlotTotal) + parseFloat(aObject.iPBTotal);
 	subtag += `<td style="background-color:${color}; class="parent_row_31"><font color="${GetClassSettleColor(iRolling, iRootClass)}">${GetNumber(iRolling)}</font></td>`;
 
 	subtag += `<td style="background-color:${color};"  class="parent_row_31"><a><font color="${GetClassColor(iTotal, iRootClass)}">${GetNumber(iTotal)}</font></a></td>`;

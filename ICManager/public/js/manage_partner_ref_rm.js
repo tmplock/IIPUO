@@ -1,6 +1,6 @@
-function AddTable_RollingMinus(iHeader, iInput, iOutput, iCash, aObject, iRootClass, hidden, fBaccaratR, fUnderOverR, fSlotR)
+function AddTable_RollingMinus(iHeader, iInput, iOutput, iCash, aObject, iRootClass, hidden)
 {
-	console.log(`AddTable : BR : ${fBaccaratR}, UOR : ${fUnderOverR}, fSlotR : ${fSlotR}`);
+	//console.log(`AddTable : BR : ${fBaccaratR}, UOR : ${fUnderOverR}, fSlotR : ${fSlotR}`);
 	console.log(aObject);
 
 	let objectValue = GetTotalBWR(aObject.kBettingInfo);
@@ -15,11 +15,11 @@ function AddTable_RollingMinus(iHeader, iInput, iOutput, iCash, aObject, iRootCl
 	let iTotalRolling = 0;
 	let iTotal = 0;
 
-	let listGroup = GetBettingGroup(aObject.kBettingInfo);
+	let listGroup = GetBettingGroup2(aObject.kBettingInfo);
 	//
 	for ( let i in listGroup )
 	{
-		AdjustBettingGroup(listGroup[i], i, fBaccaratR, fUnderOverR, fSlotR);
+		//AdjustBettingGroup(listGroup[i], i, fBaccaratR, fUnderOverR, fSlotR);
 
 		iTotalBetting += listGroup[i].iBetting;
 		iTotalWin += listGroup[i].iWin;
@@ -113,37 +113,37 @@ function AddTable_RollingMinus(iHeader, iInput, iOutput, iCash, aObject, iRootCl
 	return tag;
 }
 
-let AdjustBettingGroup = (objectGroup, iGameCode, fBaccaratR, fUnderOverR, fSlotR) => {
+// let AdjustBettingGroup = (objectGroup, iGameCode, fBaccaratR, fUnderOverR, fSlotR) => {
 
-	const fBaccaratRR = 1.2;
-	const fSlotRR = 1.2;
+// 	const fBaccaratRR = 1.2;
+// 	const fSlotRR = 1.2;
 
-	//let iAdjustedRolling = parseInt(objectGroup.iRolling/1.2);
-	let iAdjustedRolling = 0;
+// 	//let iAdjustedRolling = parseInt(objectGroup.iRolling/1.2);
+// 	let iAdjustedRolling = 0;
 
-	//let cTargetRolling = 1.2;
-	let cTargetRolling = fBaccaratR;
-	iAdjustedRolling = objectGroup.iRolling/fBaccaratRR;
-	if (iGameCode == 1 )	// UNOVER
-	{
-		//cTargetRolling = 2.0;
-		cTargetRolling = fUnderOverR;
-		iAdjustedRolling = objectGroup.iRolling;
-	}		
-	else if ( iGameCode == 2 )	// SLOT
-	{
-		//cTargetRolling = 3.8;
-		cTargetRolling = fSlotR;
-		iAdjustedRolling = objectGroup.iRolling/fSlotRR;
-	}
+// 	//let cTargetRolling = 1.2;
+// 	let cTargetRolling = fBaccaratR;
+// 	iAdjustedRolling = objectGroup.iRolling/fBaccaratRR;
+// 	if (iGameCode == 1 )	// UNOVER
+// 	{
+// 		//cTargetRolling = 2.0;
+// 		cTargetRolling = fUnderOverR;
+// 		iAdjustedRolling = objectGroup.iRolling;
+// 	}		
+// 	else if ( iGameCode == 2 )	// SLOT
+// 	{
+// 		//cTargetRolling = 3.8;
+// 		cTargetRolling = fSlotR;
+// 		iAdjustedRolling = objectGroup.iRolling/fSlotRR;
+// 	}
 		
-	const iAdjustedBet = parseInt(iAdjustedRolling * (100/cTargetRolling));
-	const iAdjustedWin = parseInt(objectGroup.iTotal) - parseInt(iAdjustedBet) + iAdjustedRolling;
+// 	const iAdjustedBet = parseInt(iAdjustedRolling * (100/cTargetRolling));
+// 	const iAdjustedWin = parseInt(objectGroup.iTotal) - parseInt(iAdjustedBet) + iAdjustedRolling;
 
-	objectGroup.iBetting = iAdjustedBet;
-	objectGroup.iWin = iAdjustedWin;
-	objectGroup.iRolling = iAdjustedRolling;
-}
+// 	objectGroup.iBetting = iAdjustedBet;
+// 	objectGroup.iWin = iAdjustedWin;
+// 	objectGroup.iRolling = iAdjustedRolling;
+// }
 
 
 let AddOverviewTableHeader_RollingMinus = () => {
@@ -169,9 +169,9 @@ let AddOverviewTableHeader_RollingMinus = () => {
 
 }
 
-function SetOverview_RollingMinus(aObject, strParentTag, bClear, iRootClass, fBaccaratR, fUnderOverR, fSlotR)
+function SetOverview_RollingMinus(aObject, strParentTag, bClear, iRootClass)
 {
-	console.log(`SetOverview_RollingMinus : fBaccaratR (${fBaccaratR}), fUnderOverR (${fUnderOverR}), fSlotR (${fSlotR})`);
+	//console.log(`SetOverview_RollingMinus : fBaccaratR (${fBaccaratR}), fUnderOverR (${fUnderOverR}), fSlotR (${fSlotR})`);
 
 	if ( bClear == true )
 		$(strParentTag).empty();
@@ -180,12 +180,12 @@ function SetOverview_RollingMinus(aObject, strParentTag, bClear, iRootClass, fBa
 
 	console.log(aObject);
 
-	tag += AddTable_RollingMinus(aObject.strDate, 0, 0, 0, aObject, iRootClass, false, fBaccaratR, fUnderOverR, fSlotR);
+	tag += AddTable_RollingMinus(aObject.strDate, 0, 0, 0, aObject, iRootClass, false);
 
-	let listGroup = GetBettingGroup(aObject.kBettingInfo);
+	let listGroup = GetBettingGroup2(aObject.kBettingInfo);
 
-	for ( let i in listGroup )
-		AdjustBettingGroup(listGroup[i], i, fBaccaratR, fUnderOverR, fSlotR);
+	// for ( let i in listGroup )
+	// 	AdjustBettingGroup(listGroup[i], i, fBaccaratR, fUnderOverR, fSlotR);
 
 	let iBetting = listGroup[0].iBetting + listGroup[1].iBetting;
 	let iSlotBetting = listGroup[2].iBetting;
@@ -295,7 +295,7 @@ function SetOverview_RollingMinus(aObject, strParentTag, bClear, iRootClass, fBa
 	$(strParentTag).append(tag);
 }
 
-let RequestOverview_RollingMinus = (iTargetClass, strGroupID, iClass, iPermission, strNickname, strID, fBaccaratR, fUnderOverR, fSlotR) => {
+let RequestOverview_RollingMinus = (iTargetClass, strGroupID, iClass, iPermission, strNickname, strID) => {
 
 	const dateStart = $('#datepicker1').val();
 	const dateEnd = $('#datepicker2').val();
@@ -308,7 +308,7 @@ let RequestOverview_RollingMinus = (iTargetClass, strGroupID, iClass, iPermissio
 
 		success: (obj) => {
 
-			SetOverview_RollingMinus(obj.overview, "#div_realtimebet_overview2", true, obj.iRootClass, fBaccaratR, fUnderOverR, fSlotR);
+			SetOverview_RollingMinus(obj.overview, "#div_realtimebet_overview2", true, obj.iRootClass);
 		},
 		error:function(request,status,error){
 			alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
@@ -320,7 +320,7 @@ let RequestOverview_RollingMinus = (iTargetClass, strGroupID, iClass, iPermissio
 
 //	RECORD
 
-let RequestBettingRecord_RollingMinus = (iTargetClass, strGroupID, iClass, strID, fBaccaratR, fUnderOverR, fSlotR) => {
+let RequestBettingRecord_RollingMinus = (iTargetClass, strGroupID, iClass, strID) => {
 
 	const dateStart = $('#datepicker1').val();
 	const dateEnd = $('#datepicker2').val();
@@ -332,7 +332,7 @@ let RequestBettingRecord_RollingMinus = (iTargetClass, strGroupID, iClass, strID
 		data:{iTargetClass:iClass, strGroupID:strGroupID, iClass:iClass, dateStart:dateStart, dateEnd:dateEnd, strID:strID},
 
 		success: (obj) => {
-			SetOverviewRecordList_RollingMinus(obj.record, "#div_realtimebet_overview_record", true, obj.iRootClass, fBaccaratR, fUnderOverR, fSlotR);
+			SetOverviewRecordList_RollingMinus(obj.record, "#div_realtimebet_overview_record", true, obj.iRootClass);
 		},
 		error:function(request,status,error){
 			alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
@@ -341,7 +341,7 @@ let RequestBettingRecord_RollingMinus = (iTargetClass, strGroupID, iClass, strID
 }
 
 
-function SetOverviewRecordList_RollingMinus(aObject, strParentTag, bClear, iRootClass, fBaccaratR, fUnderOverR, fSlotR)
+function SetOverviewRecordList_RollingMinus(aObject, strParentTag, bClear, iRootClass)
 {
 	if ( bClear == true )
 		$(strParentTag).empty();
@@ -364,7 +364,7 @@ function SetOverviewRecordList_RollingMinus(aObject, strParentTag, bClear, iRoot
 	for ( var root = 0; root < aObject.length-1; ++root)
 	{
 		var tObject = aObject[root];
-		let row = AddTable_RollingMinus(aObject[root].strDate, 0, 0, 0, tObject, iRootClass, false, fBaccaratR, fUnderOverR, fSlotR);
+		let row = AddTable_RollingMinus(aObject[root].strDate, 0, 0, 0, tObject, iRootClass, false);
 		if (row != '') {
 			tag += row;
 		}
@@ -381,7 +381,7 @@ function SetOverviewRecordList_RollingMinus(aObject, strParentTag, bClear, iRoot
 		object.iOutput += parseFloat(tObject.iOutput);
 	}
 	//	For Total
-	tag += AddTable_RollingMinus('', 0, 0, 0, object, iRootClass, false, fBaccaratR, fUnderOverR, fSlotR);
+	tag += AddTable_RollingMinus('', 0, 0, 0, object, iRootClass, false);
 
 	tag += `
 			</tbody>

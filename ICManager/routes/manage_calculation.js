@@ -22,6 +22,9 @@ router.get('/calculation', isLoggedIn, async(req, res) => {
 
     const dbuser = await IAgent.GetUserInfo(req.user.strNickname);
 
+    console.log(`#############################################################################################################calculation`);
+    console.log(dbuser);
+
     const user = {strNickname:dbuser.strNickname, strGroupID:req.user.strGroupID, iClass:parseInt(req.user.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle,
         iRootClass: req.user.iClass, iPermission: req.user.iPermission, strID: dbuser.strID};
     if (req.user.iPermission == 100) {
@@ -46,6 +49,9 @@ router.post('/calculation', isLoggedIn, async(req, res) => {
     console.log(req.body);
 
     const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
+
+    console.log(`#############################################################################################################calculation`);
+    console.log(dbuser);
 
     const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle,
         iRootClass: req.user.iClass, iPermission: req.user.iPermission, strID: dbuser.strID};

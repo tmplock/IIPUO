@@ -8,12 +8,20 @@
 <br>
 <br>
 
-<!-- <div class="search_wrap" id="div_realtimebet_overview2">
+<button onclick="OnClickOpen();">Test</button>
+
+<br>
+<br>
+<br>
+
+<div class="search_wrap" id="div_realtimebet_overview2">
 </div>
 
 <br>
 <br>
-<br> -->
+<br>
+
+
 
 <div class="list">
 
@@ -72,6 +80,7 @@
 	let agent = JSON.parse('<%-JSON.stringify(agent)%>');
 	console.log(agent);
 	let objectOverview = JSON.parse('<%-JSON.stringify(overview)%>');
+	console.log(objectOverview);
 
 	var i18nTexts = {
         Search: "<%=__('Search')%>",
@@ -106,7 +115,7 @@
 
 		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
 
-		//RequestOverview_RollingMinus(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID, agent.fBaccaratR, agent.fUnderOverR, agent.fSlotR);
+		RequestOverview_RollingMinus(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
 	});
 	
 	let OnClickTodayRecord = () => {
@@ -123,10 +132,10 @@
 		$("#button_toggle_record").text("닫기");
 
 		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
-		//RequestOverview_RollingMinus(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID, agent.fBaccaratR, agent.fUnderOverR, agent.fSlotR);
+		//RequestOverview_RollingMinus(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
 
 		RequestBettingRecord(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
-		//RequestBettingRecord_RollingMinus(agent.iClass, agent.strGroupID, agent.iClass, agent.strID, agent.fBaccaratR, agent.fUnderOverR, agent.fSlotR);
+		//RequestBettingRecord_RollingMinus(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
 	}
 
 	function OnClickRecord()
@@ -146,9 +155,9 @@
 			}
 
 			RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
-			//RequestOverview_RollingMinus(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID, agent.fBaccaratR, agent.fUnderOverR, agent.fSlotR);
+			//RequestOverview_RollingMinus(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
 			RequestBettingRecord(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
-			//RequestBettingRecord_RollingMinus(agent.iClass, agent.strGroupID, agent.iClass, agent.strID, agent.fBaccaratR, agent.fUnderOverR, agent.fSlotR);
+			//RequestBettingRecord_RollingMinus(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
 		}
 		else {
 			$("#table_record_list").hide();
@@ -167,9 +176,9 @@
 		$('#datepicker2').val(endDate);
 
 		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
-		//RequestOverview_RollingMinus(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID, agent.fBaccaratR, agent.fUnderOverR, agent.fSlotR);
+		//RequestOverview_RollingMinus(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
 		RequestBettingRecord(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
-		//RequestBettingRecord_RollingMinus(agent.iClass, agent.strGroupID, agent.iClass, agent.strID, agent.fBaccaratR, agent.fUnderOverR, agent.fSlotR);
+		//RequestBettingRecord_RollingMinus(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
 	}
 
 	let OnClickMonthly2ndRecord = () => {
@@ -183,9 +192,9 @@
 		$('#datepicker2').val(endDate);
 
 		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
-		//RequestOverview_RollingMinus(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID, agent.fBaccaratR, agent.fUnderOverR, agent.fSlotR);
+		//RequestOverview_RollingMinus(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
 		RequestBettingRecord(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
-		//RequestBettingRecord_RollingMinus(agent.iClass, agent.strGroupID, agent.iClass, agent.strID, agent.fBaccaratR, agent.fUnderOverR, agent.fSlotR);
+		//RequestBettingRecord_RollingMinus(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
 	}
 
 	let OnClickDayPeriod = (startDay) => {
@@ -196,9 +205,9 @@
 		$('#datepicker2').val(endDate);
 
 		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
-		//RequestOverview_RollingMinus(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID, agent.fBaccaratR, agent.fUnderOverR, agent.fSlotR);
+		//RequestOverview_RollingMinus(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
 		RequestBettingRecord(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
-		//RequestBettingRecord_RollingMinus(agent.iClass, agent.strGroupID, agent.iClass, agent.strID, agent.fBaccaratR, agent.fUnderOverR, agent.fSlotR);
+		//RequestBettingRecord_RollingMinus(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
 	}
 
 	let OnClickSearch = (iTargetClass, strGroupID, iClass) => {
@@ -207,14 +216,32 @@
 		$("#button_toggle_record").text(strClose);
 
 		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
-		//RequestOverview_RollingMinus(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID, agent.fBaccaratR, agent.fUnderOverR, agent.fSlotR);
+		//RequestOverview_RollingMinus(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
 		RequestBettingRecord(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
-		//RequestBettingRecord_RollingMinus(agent.iClass, agent.strGroupID, agent.iClass, agent.strID, agent.fBaccaratR, agent.fUnderOverR, agent.fSlotR);		
+		//RequestBettingRecord_RollingMinus(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);		
 	}
 
 	let OnClickSearchNickname = () => {
 
 		//RequestBettingListOnPopup(EAgent.eUser, agent.strGroupID, agent.iClass);
+	}
+
+	let OnClickOpen = () => {
+
+		window.open('', 'popupUR', 'width=1280, height=720, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
+
+		var $form = $('<form></form>');
+		$form.attr('action', '/manage_partner_popup/ur');
+		$form.attr('method', 'post');
+		$form.attr('target', 'popupUR');
+		$form.appendTo('body');
+
+		// var idx = $(`<input type="hidden" value="${strNickname}" name="strNickname">`);
+		// var page = $(`<input type="hidden" value="${strGroupID}" name="strGroupID">`);
+		// var category = $(`<input type="hidden" value=${parseInt(iClass)} name="iClass">`);
+
+		// $form.append(idx).append(page).append(category);
+		$form.submit();
 	}
 
 </script>

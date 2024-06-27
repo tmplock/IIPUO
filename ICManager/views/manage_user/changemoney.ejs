@@ -529,6 +529,8 @@
 						isSending = false;
 						closeAlertModal();
 						if (obj.result == 'OK') {
+							$('#myModal').hide();
+							alert(strAlertComplete); 
 							location.reload();
 						} else {
 							if (obj.reason == 'NOTENOUGH') {
@@ -537,7 +539,9 @@
 								alert('비밀번호가 일치하지 않습니다.');
 							}
 							else {
-								alert(strAlertComplete); 
+								$('#myModal').hide();
+								// alert(strAlertComplete); 
+								alert('조회 오류 다시 로그인 해주세요.');
 								location.reload();
 							}
 						}

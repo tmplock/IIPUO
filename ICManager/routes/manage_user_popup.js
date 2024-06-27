@@ -403,7 +403,7 @@ router.post('/request_gt', isLoggedIn, async(req, res) => {
                     iClassTo: to.iClass,
                     iClassFrom: from.iClass,
                 });
-                res.send({result:'ok', cash:from.iCash, rolling:from.iRolling, settle:from.iSettle});
+                res.send({result:'OK', cash:from.iCash, rolling:from.iRolling, settle:from.iSettle});
 
                 ISocket.AlertCashByNickname(req.body.strFrom, iAfterCashFrom);
                 ISocket.AlertCashByNickname(req.body.strTo, iAfterCashTo);
@@ -473,7 +473,7 @@ router.post('/request_gt', isLoggedIn, async(req, res) => {
                     iClassTo: to.iClass,
                     iClassFrom: from.iClass,
                 });
-                res.send({result:'ok', cash:from.iCash, rolling:from.iRolling, settle:from.iSettle});
+                res.send({result:'OK', cash:from.iCash, rolling:from.iRolling, settle:from.iSettle});
 
                 ISocket.AlertCashByNickname(req.body.strFrom, iAfterCashFrom);
                 ISocket.AlertCashByNickname(req.body.strTo, iAfterCashTo);

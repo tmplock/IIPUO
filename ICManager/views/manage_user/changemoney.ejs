@@ -21,7 +21,7 @@
 </head> -->
 
 <!-- <body style="font-family:'Spoqa Han Sans Neo'; font-size: 13px;"> -->
-<body style="font-size: 14px;">
+<body style="font-size: 12px;">
 	<div class="sub_wrap">
 		<div class="container clearfix">
 			
@@ -120,7 +120,7 @@
 			<h2><%=__('Rolling')%><%=__('Exchange')%></h2>
 			<div class="input-group">
 				<label for="translate_rolling">전환 금액</label>
-				<input type="number" min="0" id="translate_rolling" value="" style="height: 25px;font-size: 16px;">
+				<input type="number" min="0" id="translate_rolling" value="" style="height: 25px;font-size: 15px;">
 			</div>
 			<div class="submit-button-container">
 				<button class="submit-button" onclick="OnClickTranslate('ROLLING')"><%=__('Exchange')%></button>
@@ -146,7 +146,7 @@
 	<div class="modal-process" id="modal_alert" style="z-index: 9999;">
 		<div class="modal_body" id="modal_body">
 			<h2>처리중입니다</h2>
-			<p style="font-size: 16px;">잠시만 기다려 주세요</p>
+			<p style="font-size: 15px;">잠시만 기다려 주세요</p>
 		</div>
 	</div>
 
@@ -266,8 +266,8 @@
             //                 </td>`;
             // }
 			let inoutTag = `<td style="background-color:${bgcolor}; vertical-align: middle; text-align: center;">
-                    <a id="pay_${userlist[i].strNickname}" class="pay-btn" style="font-size:15px; border: 1px solid red; display:inline-block; border-radius:4px; background-color:transparent; width:70px; color:black; margin-right: 5px;" href="#" id="partner_adjustinput" strID="${userlist[i].strID}" iCash="${user.iCash}" strnickname="${userlist[i].strNickname}" strgroupid="${userlist[i].strGroupID}" iclass="${userlist[i].iClass}">알지급</a>
-                    <a id="deduct_${userlist[i].strNickname}" class="deduct-btn" style="font-size:15px; border: 1px solid blue; display:inline-block; border-radius:4px; background-color:transparent; width:70px; color:black;" href="#" id="partner_adjustoutput" strID="${userlist[i].strID}" iCash="${userlist[i].iCash}" strnickname="${userlist[i].strNickname}" strgroupid="${userlist[i].strGroupID}" iclass="${userlist[i].iClass}">알차감</a>
+                    <a id="pay_${userlist[i].strNickname}" class="pay-btn" style="font-size:13px; border: 1px solid red; display:inline-block; border-radius:4px; background-color:transparent; width:70px; color:black; margin-right: 5px;" href="#" id="partner_adjustinput" strID="${userlist[i].strID}" iCash="${user.iCash}" strnickname="${userlist[i].strNickname}" strgroupid="${userlist[i].strGroupID}" iclass="${userlist[i].iClass}">알지급</a>
+                    <a id="deduct_${userlist[i].strNickname}" class="deduct-btn" style="font-size:13px; border: 1px solid blue; display:inline-block; border-radius:4px; background-color:transparent; width:70px; color:black;" href="#" id="partner_adjustoutput" strID="${userlist[i].strID}" iCash="${userlist[i].iCash}" strnickname="${userlist[i].strNickname}" strgroupid="${userlist[i].strGroupID}" iclass="${userlist[i].iClass}">알차감</a>
                 </td>`;
             // let class4 = userlist[i].iClass >= 4 ? `${userlist[i].lev2}` : '';
             // let class5 = userlist[i].iClass >= 5 ? `${userlist[i].lev3}` : '';

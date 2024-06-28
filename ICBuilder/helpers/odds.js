@@ -1416,9 +1416,7 @@ exports.ProcessRolling = (oRO, listBet, cPBType, cPBTarget, strDate, listOvervie
 
                 if ( oOverview != null && oOverview.iNumPlayS > o.iRRTurn )
                 {
-                    cBetAmount2 = GetNumberUnit(cBetAmount, o.fRRS);
-
-                    //cBetAmount2 = parseInt(cBetAmount2/o.fRRS);
+                    //cBetAmount2 = GetNumberUnit(cBetAmount, o.fRRS);
                 }
                 objectData.iPAdminRS += CalculateRollingAmount(o.strPAdminID, cBetAmount2, o.fPAdminSlotR, o.fVAdminSlotR);
                 objectData.iVAdminRS += CalculateRollingAmount(o.strVAdminID, cBetAmount2, o.fVAdminSlotR, o.fAgentSlotR);
@@ -1438,8 +1436,7 @@ exports.ProcessRolling = (oRO, listBet, cPBType, cPBTarget, strDate, listOvervie
 
                 if ( oOverview != null && oOverview.iNumPlayB > o.iRRTurn )
                 {
-                    //cBetAmount2 = parseInt(cBetAmount2/o.fRRB);
-                    cBetAmount2 = GetNumberUnit(cBetAmount, o.fRRB);
+                    //cBetAmount2 = GetNumberUnit(cBetAmount, o.fRRB);
                 }
                 objectData.iPAdminRB += CalculateRollingAmount(o.strPAdminID, cBetAmount2, o.fPAdminBaccaratR, o.fVAdminBaccaratR);
                 objectData.iVAdminRB += CalculateRollingAmount(o.strVAdminID, cBetAmount2, o.fVAdminBaccaratR, o.fAgentBaccaratR);
@@ -1500,8 +1497,7 @@ exports.ProcessRollingBet = (oRO, iGameCode, iBet, strDate, listOverviewDB) => {
             objectData.iBetS += cBetAmount;
             if ( oOverview != null && oOverview.iNumPlayS > o.iRRTurn )
             {
-                //cBetAmount2 = parseInt(cBetAmount2/o.fRRS);
-                cBetAmount2 = GetNumberUnit(cBetAmount, o.fRRS);
+                //cBetAmount2 = GetNumberUnit(cBetAmount, o.fRRS);
             }
             objectData.iPAdminRS += CalculateRollingAmount(o.strPAdminID, cBetAmount2, o.fPAdminSlotR, o.fVAdminSlotR);
             objectData.iVAdminRS += CalculateRollingAmount(o.strVAdminID, cBetAmount2, o.fVAdminSlotR, o.fAgentSlotR);
@@ -1519,8 +1515,7 @@ exports.ProcessRollingBet = (oRO, iGameCode, iBet, strDate, listOverviewDB) => {
             objectData.iBetB += cBetAmount;
             if ( oOverview != null && oOverview.iNumPlayB > o.iRRTurn )
             {
-                //cBetAmount2 = parseInt(cBetAmount2/o.fRRB);
-                cBetAmount2 = GetNumberUnit(cBetAmount, o.fRRB);
+                //cBetAmount2 = GetNumberUnit(cBetAmount, o.fRRB);
             }
             objectData.iPAdminRB += CalculateRollingAmount(o.strPAdminID, cBetAmount2, o.fPAdminBaccaratR, o.fVAdminBaccaratR);
             objectData.iVAdminRB += CalculateRollingAmount(o.strVAdminID, cBetAmount2, o.fVAdminBaccaratR, o.fAgentBaccaratR);
@@ -1621,8 +1616,7 @@ exports.ProcessRollingBetWin = (oRO, iGameCode, iBet, iWin, strDate, listOvervie
             objectData.iBetS += cBetAmount;
             if ( oOverview != null && oOverview.iNumPlayS > o.iRRTurn )
             {
-                //cBetAmount2 = parseInt(cBetAmount2/o.fRRS);
-                cBetAmount2 = GetNumberUnit(cBetAmount, o.fRRS);
+                //cBetAmount2 = GetNumberUnit(cBetAmount, o.fRRS);
             }
             objectData.iPAdminRS += CalculateRollingAmount(o.strPAdminID, cBetAmount2, o.fPAdminSlotR, o.fVAdminSlotR);
             objectData.iVAdminRS += CalculateRollingAmount(o.strVAdminID, cBetAmount2, o.fVAdminSlotR, o.fAgentSlotR);
@@ -1640,8 +1634,7 @@ exports.ProcessRollingBetWin = (oRO, iGameCode, iBet, iWin, strDate, listOvervie
             objectData.iBetB += cBetAmount;
             if ( oOverview != null && oOverview.iNumPlayB > o.iRRTurn )
             {
-                //cBetAmount2 = parseInt(cBetAmount2/o.fRRB);
-                cBetAmount2 = GetNumberUnit(cBetAmount, o.fRRB);
+                //cBetAmount2 = GetNumberUnit(cBetAmount, o.fRRB);
             }
             objectData.iPAdminRB += CalculateRollingAmount(o.strPAdminID, cBetAmount2, o.fPAdminBaccaratR, o.fVAdminBaccaratR);
             objectData.iVAdminRB += CalculateRollingAmount(o.strVAdminID, cBetAmount2, o.fVAdminBaccaratR, o.fAgentBaccaratR);

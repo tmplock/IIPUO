@@ -51,6 +51,10 @@ let GetNumberUnit = (iOriginBet, fRate) => {
     {
         iReturn = Math.round(parseInt(cRealBet)/100000)*100000;
     }
+    else
+    {
+        iReturn = Math.round(parseInt(cRealBet)/10)*10;
+    }
 
     console.log(`##### ${iOriginBet} => ${cRealBet} : Return ${iReturn}`);
 

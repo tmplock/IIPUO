@@ -17,7 +17,7 @@
     padding: 20px;
     border: 1px solid #888;
     width: 80%; 
-    max-width: 480px;
+    max-width: 400px;
 }
 .modal-moneychange .modal-content .close {
     color: #aaa;
@@ -38,7 +38,7 @@
 .button-group button {
     margin: 3px;
     padding: 8px 12px;
-    font-size: 16px;
+    font-size: 14px;
     cursor: pointer;
     justify-content: center;
 }
@@ -57,7 +57,7 @@
     width: 80%;
     padding: 8px;
     box-sizing: border-box;
-    font-size: 16px;
+    font-size: 14px;
     text-align:left;
 }
 .submit-button-container {
@@ -67,7 +67,7 @@
 }
 .submit-button {
     width: 30%;
-    font-size: 20px;
+    font-size: 15px;
     padding: 8px 15px;
     background-color: #9370DB;
     color: white;
@@ -128,7 +128,7 @@
 }
 
 .modal-translate .modal-content h2 {
-   font-size: 25px;
+   font-size: 20px;
    margin-top: 0;
 }
 
@@ -153,7 +153,7 @@
 }
 
 .modal-translate .modal-content .input-group label {
-    font-size: 20px;
+    font-size: 15px;
 }
 
 /* Input field */
@@ -162,7 +162,7 @@
     height: 30px;
     padding: 10px; /* Increase padding for a larger input field */
     margin-top: 10px; /* Increase margin-top for spacing */
-    font-size: 20px; /* Increase font size */
+    font-size: 15px; /* Increase font size */
     text-align: right; /* Right-align the text */
 }
 
@@ -179,7 +179,7 @@
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 20px;
+    font-size: 15px;
     display: inline-block; /* Ensure the button sizes correctly */
 }
 

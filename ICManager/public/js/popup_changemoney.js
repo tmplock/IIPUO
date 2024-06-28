@@ -13,7 +13,7 @@ let SetModal = (strModalTag, iRender) => {
         <div class="modal-content">
             <span class="close">&times;</span>
             <h2>지급하기</h2>
-            <div class="input-group" style="text-align: center; font-size:20px">
+            <div style="text-align: center; font-size:20px">
                 <label for="balance">보유머니 : <span id="withdrawable">0</span> </label>
                 
             </div>
@@ -30,10 +30,10 @@ let SetModal = (strModalTag, iRender) => {
                 <input type="text" id="exchangeAmount" placeholder="지급금액을 입력하세요" readonly>
             </div>
             <div class="button-group">
-                    <button type="button" onclick="setAmount(500000)">50만원</button>
-                    <button type="button" onclick="setAmount(100000)">10만원</button>
-                    <button type="button" onclick="setAmount(50000)">5만원</button>
-                    <button type="button" onclick="setAmount(10000)">1만원</button>
+                    <button type="button" onclick="setAmount(500000)">50만</button>
+                    <button type="button" onclick="setAmount(100000)">10만</button>
+                    <button type="button" onclick="setAmount(50000)">5만</button>
+                    <button type="button" onclick="setAmount(10000)">1만</button>
                     <button type="button" onclick="setAmount('RESET')" style="background-color: #20B2AA; color: white;">정정</button>
             <div class="submit-button-container">
                 <button class="submit-button" onclick="OnClickProcess('GIVE')">지급하기</button>
@@ -62,11 +62,10 @@ let SetModal = (strModalTag, iRender) => {
                 <input type="text" id="exchangeAmount" placeholder="회수금액을 입력하세요">
             </div>
             <div class="button-group">
-                    <button type="button" onclick="setAmount(500000)">50만원</button>
-                    <button type="button" onclick="setAmount(100000)">10만원</button>
-                    <button type="button" onclick="setAmount(50000)">5만원</button>
-                    <button type="button" onclick="setAmount(10000)">1만원</button>
-                    <button type="button" onclick="setAmount(1000)">1천원</button>
+                    <button type="button" onclick="setAmount(500000)">50만</button>
+                    <button type="button" onclick="setAmount(100000)">10만</button>
+                    <button type="button" onclick="setAmount(50000)">5만</button>
+                    <button type="button" onclick="setAmount(10000)">1만</button>
                     <button type="button" onclick="setAmount('RESET')" style="background-color: #20B2AA; color: white;">정정</button>
             </div>
             <div class="submit-button-container">

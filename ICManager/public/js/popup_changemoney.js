@@ -15,9 +15,12 @@ let SetModal = (strModalTag, iRender) => {
             <h2>지급하기</h2>
             <div style="text-align: center; font-size:16px">
                 <label for="balance">보유머니 : <span id="withdrawable">0</span> </label>
-                
             </div>
             <div class="input-group">
+                <label for="iClass">등급</label>
+                <input type="text" id="iClass" value="등급" readonly>
+            </div>
+            <div class="input-group"> 
                 <label for="nickname">아이디</label>
                 <input type="text" id="strID" value="사용자아이디" readonly>
             </div>
@@ -48,6 +51,10 @@ let SetModal = (strModalTag, iRender) => {
             <h2>회수하기</h2>
             <div style="text-align: center; font-size:16px">
                 <label for="balance">보유머니 : <span id="withdrawable">0</span> </label>
+            </div>
+            <div class="input-group">
+                <label for="iClass">등급</label>
+                <input type="text" id="iClass" value="등급" readonly>
             </div>
             <div class="input-group">
                 <label for="nickname">아이디</label>
@@ -82,6 +89,7 @@ $(document).on('click', '.pay-btn, .deduct-btn', function(event) {
     event.preventDefault();
     let strID = $(this).attr('strID');
     let strNickname = $(this).attr('strnickname');
+    let iClass = $(this).attr('iClass');
     const iCash = $(this).attr('iCash');
     let iRender = $(this).hasClass('pay-btn') ? 0 : 1;
     
@@ -91,6 +99,30 @@ $(document).on('click', '.pay-btn, .deduct-btn', function(event) {
     // Set the modal fields
     $('#strID').val(strID);
     $('#strNickname').val(strNickname);
+    if(iClass == 4)
+    {
+        $('#iClass').val('대본사');
+    }
+    else if(iClass == 5)
+    {
+        $('#iClass').val('부본사');
+    }
+    else if(iClass == 6)
+    {
+        $('#iClass').val('총판');
+    }
+    else if(iClass == 7)
+    {
+        $('#iClass').val('매장');
+    }
+    else if(iClass == 8)
+    {
+        $('#iClass').val('회원');
+    }
+    else
+    {
+        $('#iClass').val('본사');
+    }
     $('#withdrawable').text(parseInt(iCash).toLocaleString()); // Adjust this value based on your data
 
     // Display the modal

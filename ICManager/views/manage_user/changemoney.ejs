@@ -20,7 +20,8 @@
 	<link href='//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css' rel='stylesheet' type='text/css'>
 </head> -->
 
-<body style="font-family:'Spoqa Han Sans Neo'; font-size: 15px;">
+<!-- <body style="font-family:'Spoqa Han Sans Neo'; font-size: 13px;"> -->
+<body style="font-size: 14px;">
 	<div class="sub_wrap">
 		<div class="container clearfix">
 			
@@ -256,7 +257,7 @@
             let strCreatedAt = '';
                 strCreatedAt = userlist[i].createdAt.replace(/T/, ' ').replace(/\..+/, '');
 			let strIDTag = `<td style='background-color:${bgcolor};'><a href="javascript:OnClickNickname('${userlist[i].strNickname}');" style="color:blue;">${userlist[i].strID}</a></td>`;
-            let strClassTag = `<td style='background-color:${bgcolor};'><a href="javascript:OnClickNickname('${userlist[i].strNickname}');" style="color:blue;">${userlist[i].strNickname}</a></td>`;
+            let strClassTag = `<td style='background-color:${bgcolor};'><a href="javascript:OnClickNickname('${userlist[i].strNickname}');">${userlist[i].strNickname}</a></td>`;
             // let inoutTag = ``;
             // if (user.iRootClass <= 3 && user.iPermission != 100) {
             //     inoutTag = `<td style="background-color:${bgcolor};">
@@ -265,8 +266,8 @@
             //                 </td>`;
             // }
 			let inoutTag = `<td style="background-color:${bgcolor}; vertical-align: middle; text-align: center;">
-                    <a id="pay_${userlist[i].strNickname}" class="pay-btn" style="font-size:18px; border: 1px solid red; display:inline-block; border-radius:4px; background-color:transparent; width:70px; height:35px; color:black; line-height:35px; margin-right: 5px;" href="#" id="partner_adjustinput" strID="${userlist[i].strID}" iCash="${user.iCash}" strnickname="${userlist[i].strNickname}" strgroupid="${userlist[i].strGroupID}" iclass="${userlist[i].iClass}">알지급</a>
-                    <a id="deduct_${userlist[i].strNickname}" class="deduct-btn" style="font-size:18px; border: 1px solid blue; display:inline-block; border-radius:4px; background-color:transparent; width:70px; height:35px; color:black; line-height:35px;" href="#" id="partner_adjustoutput" strID="${userlist[i].strID}" iCash="${userlist[i].iCash}" strnickname="${userlist[i].strNickname}" strgroupid="${userlist[i].strGroupID}" iclass="${userlist[i].iClass}">알차감</a>
+                    <a id="pay_${userlist[i].strNickname}" class="pay-btn" style="font-size:15px; border: 1px solid red; display:inline-block; border-radius:4px; background-color:transparent; width:70px; color:black; margin-right: 5px;" href="#" id="partner_adjustinput" strID="${userlist[i].strID}" iCash="${user.iCash}" strnickname="${userlist[i].strNickname}" strgroupid="${userlist[i].strGroupID}" iclass="${userlist[i].iClass}">알지급</a>
+                    <a id="deduct_${userlist[i].strNickname}" class="deduct-btn" style="font-size:15px; border: 1px solid blue; display:inline-block; border-radius:4px; background-color:transparent; width:70px; color:black;" href="#" id="partner_adjustoutput" strID="${userlist[i].strID}" iCash="${userlist[i].iCash}" strnickname="${userlist[i].strNickname}" strgroupid="${userlist[i].strGroupID}" iclass="${userlist[i].iClass}">알차감</a>
                 </td>`;
             // let class4 = userlist[i].iClass >= 4 ? `${userlist[i].lev2}` : '';
             // let class5 = userlist[i].iClass >= 5 ? `${userlist[i].lev3}` : '';
@@ -292,7 +293,7 @@
             //     </tr>`;
 			let tag = `
                 <tr>
-                    <td style='background-color:${bgcolor}; padding: 10px 0;'>${class7}</td>
+                    <td style='background-color:${bgcolor}; padding: 3px 0;'>${class7}</td>
                     ${strIDTag}
 					${strClassTag}
 					${inoutTag}}

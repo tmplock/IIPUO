@@ -154,9 +154,9 @@ router.post('/request_userlistchangemoney', isLoggedIn, async ( req, res ) => {
 
 router.post('/changemoney', isLoggedIn, async(req, res) => {
     console.log(req.user);
-    const dbuser = await IAgent.GetUserInfo(req.user.strNickname);
+    const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
 
-    const user = {strNickname:req.user.strNickname, strGroupID:req.user.strGroupID, iClass:parseInt(req.user.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle,
+    const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle,
         iRootClass: req.user.iClass, iPermission: req.user.iPermission, strID: dbuser.strID};
 
     const strTimeStart = ITime.getTodayStart();
@@ -184,10 +184,10 @@ router.post('/changemoney', isLoggedIn, async(req, res) => {
     //  Shops
     var bobj = {overview:null};
 
-    const agentinfo = await IAgent.GetPopupAgentInfo(req.user.strGroupID, parseInt(req.user.iClass), req.user.strNickname);
+    const agentinfo = await IAgent.GetPopupAgentInfo(req.body.strGroupID, parseInt(req.body.iClass), req.body.strNickname);
     let iocount = await IInout.GetProcessing(user.strGroupID, user.strNickname, dbuser.iClass);
 
-    console.log(`###################################################### ${req.user.iClass}, ${req.user.strNickname}`);
+    console.log(`###################################################### ${req.body.iClass}, ${req.body.strNickname}`);
     console.log(agentinfo);
     
     res.render('manage_user/changemoney', {iLayout:0, iHeaderFocus:10, user:user, userlist:result, shoplist:listShops, agentlist:listAgents, vadminlist:listViceAdmins, proadminlist: listProAdmins, total:total, data:bobj, agentinfo:agentinfo, iocount:iocount});

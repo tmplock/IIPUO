@@ -170,6 +170,9 @@ let SetBettingList = (records, startIndex, iClass) => {
         console.log(records[i]);
         let eType = records[i].eType ?? '';
 
+        if ( iClass != 2 && (eType == 'CANCEL_BET' || eType == 'CANCEL' || eType == 'CANCEL_WIN'))
+             continue;
+
         let color = '#FFFFFF';
         if ( records[i].iWin > 0 ) {
             // color = '#d6f3c9';
@@ -322,6 +325,10 @@ let SetSlotBettingList = (records, startIndex, iClass) => {
 
     for ( let i in records )
     {
+        let eType = records[i].eType ?? '';
+        if ( iClass != 2 && (eType == 'CANCEL_BET' || eType == 'CANCEL' || eType == 'CANCEL_WIN'))
+            continue;
+
         console.log('records[i]');
         console.log(records[i]);
         let color = '#FFFFFF';
@@ -353,7 +360,7 @@ let SetSlotBettingList = (records, startIndex, iClass) => {
         let tagCancel = '';
         let iGameCode = parseInt(records[i].iGameCode);
         let eState = records[i].eState;
-        let eType = records[i].eType;
+        //let eType = records[i].eType;
         let updatedAt = '';
 
         if (eState == 'COMPLETE') {

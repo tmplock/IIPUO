@@ -243,7 +243,7 @@ let RequestUserListOnPopup = (iTargetClass, strGroupID, iClass, iPermission, str
     });
 }
 
-let RequestBettingListOnPopup = (iTargetClass, strGroupID, iClass, iPermission, iLimit, iCurrentPage, strID, bettingType) => {
+let RequestBettingListOnPopup = (iTargetClass, strGroupID, iClass, iPermission, iLimit, iCurrentPage, strID, bettingType, iRootClass) => {
 
     const dateStart = $('#datepicker1').val();
     const dateEnd = $('#datepicker2').val();
@@ -273,9 +273,9 @@ let RequestBettingListOnPopup = (iTargetClass, strGroupID, iClass, iPermission, 
         success: (obj) => {
             const total = obj.totalCount ?? 0;
             if (type == 'S') {
-                SetSlotBettingList(obj.list, getNo(iLimit, total, iCurrentPage, 0), iClass);
+                SetSlotBettingList(obj.list, getNo(iLimit, total, iCurrentPage, 0), iRootClass);
             } else {
-                SetBettingList(obj.list, getNo(iLimit, total, iCurrentPage, 0), iClass);
+                SetBettingList(obj.list, getNo(iLimit, total, iCurrentPage, 0), iRootClass);
             }
 
             $('#pagination').empty();

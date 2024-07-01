@@ -30,7 +30,7 @@ let SetModal = (strModalTag, iRender) => {
             </div>
             <div class="input-group">
                 <label for="exchangeAmount">지급금액</label>
-                <input type="text" id="exchangeAmount" placeholder="지급금액을 입력하세요" readonly>
+                <input type="text" id="exchangeAmount" placeholder="지급금액을 입력하세요">
             </div>
             <div class="button-group">
                     <button type="button" onclick="setAmount(500000)">50만</button>

@@ -196,7 +196,7 @@
 			bettingType = 'S';
 		}
 		SetBettingButton();
-		RequestBettingListOnPopup(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, iLimit, iCurrentPage, agent.strID, bettingType);
+		RequestBettingListOnPopup(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, iLimit, iCurrentPage, agent.strID, bettingType, agent.iRootClass);
 	}
 	
 	let OnClickTodayRecord = () => {
@@ -218,7 +218,7 @@
 			return;
 		}
 		iCurrentPage = iPage;
-		RequestBettingListOnPopup(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, iLimit, iCurrentPage, agent.strID, bettingType);
+		RequestBettingListOnPopup(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, iLimit, iCurrentPage, agent.strID, bettingType, agent.iRootClass);
 	}
 
 	function OnClickRecord()
@@ -275,7 +275,7 @@
 		RequestOverviewUser(agent.iClass, agent.strGroupID, agent.iClass, agent.strNickname);
 		RequestBettingRecordMe(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
 		SetBettingButton();
-		RequestBettingListOnPopup(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, iLimit, iCurrentPage, agent.strID, bettingType);
+		RequestBettingListOnPopup(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, iLimit, iCurrentPage, agent.strID, bettingType, agent.iRootClass);
 	}
 </script>
 

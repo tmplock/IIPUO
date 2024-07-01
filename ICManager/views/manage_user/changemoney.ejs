@@ -28,9 +28,15 @@
 			<div class="content" style="position:relative; padding:0 10px 0 10px;">
 				<ul class="list_tab" style="margin-bottom:10px;width:75%;z-index:10000;">
 					<% if ( user.iClass != 3 ) { %>
-					<li class="on">
-						<a href="#" id="user_changemoney"><%=__('UserList')%></a>
-					</li>
+						<% if ( user.iClass == 2 ) { %>
+							<li class="on">
+								<a href="#" id="user_changemoney">본사 목록</a>
+							</li>
+						<% } else { %>
+							<li class="on">
+								<a href="#" id="user_changemoney"><%=__('UserList')%></a>
+							</li>
+						<% } %>
 					<% } %>
 					<li class="off">
 						<a href="#" id="user_changemoneylist">전환 내역</a>
@@ -178,8 +184,8 @@
     let agentlist = JSON.parse('<%-JSON.stringify(agentlist)%>');
     let vadminlist = JSON.parse('<%-JSON.stringify(vadminlist)%>');
     let proadminlist = JSON.parse('<%-JSON.stringify(proadminlist)%>');
+	let adminlist = JSON.parse('<%-JSON.stringify(adminlist)%>');
 	let iocount = JSON.parse('<%-JSON.stringify(iocount)%>');
-
 	// const strNoRecord = '<%=__("NoRecord")%>';
 	// const strConfirmGive = '<%=__("ConfirmGive")%>';
 	// const strConfirmTake = '<%=__("ConfirmTake")%>';
@@ -421,11 +427,24 @@
             success: (obj) => {
 
                 $('#userlist').empty();
-				console.log(obj.proadminlist);
-                let total1 = SetUserList(obj.vadminlist, 5, obj.iRootClass);
-                let total2 = SetUserList(obj.agentlist, 6, obj.iRootClass);
-                let total3 = SetUserList(obj.shoplist, 7, obj.iRootClass);
-                let total4 = SetUserList(obj.userlist, 8, obj.iRootClass);
+				// console.log(obj.proadminlist);
+				
+                // let total1 = SetUserList(obj.vadminlist, 5, obj.iRootClass);
+                // let total2 = SetUserList(obj.agentlist, 6, obj.iRootClass);
+                // let total3 = SetUserList(obj.shoplist, 7, obj.iRootClass);
+                // let total4 = SetUserList(obj.userlist, 8, obj.iRootClass);
+
+				if(iClass == 2)
+				{
+					SetUserList(obj.adminlist, 3, user.iRootClass);
+				}
+				else
+				{ 
+					SetUserList(obj.vadminlist, 5, user.iRootClass);
+					SetUserList(obj.agentlist, 6, user.iRootClass);
+					SetUserList(obj.shoplist, 7, user.iRootClass);
+					SetUserList(obj.userlist, 8, user.iRootClass);
+				}
 
                 // AddEndTag(total1, total2, total3, total4, obj.iRootClass);
             },
@@ -709,7 +728,7 @@
 
 		if(user.iClass == 2)
 		{
-			SetUserList(proadminlist, 4, user.iRootClass);
+			SetUserList(adminlist, 3, user.iRootClass);
 		}
 		else
 		{ 

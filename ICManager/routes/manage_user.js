@@ -148,9 +148,11 @@ router.post('/request_userlistchangemoney', isLoggedIn, async ( req, res ) => {
     let listAgents = [];
     let listViceAdmins = [];
     let listProAdmins = [];
+    let listAdmins = [];
     if(req.body.iClass == 2)
     {
-        listProAdmins = await IAgent.GetProAdminListChangeMoney(req.body.dateStart, req.body.dateEnd, req.body.strGroupID, req.body.strSearchNickname);
+        // listProAdmins = await IAgent.GetAdminListChangeMoney(req.body.dateStart, req.body.dateEnd, req.body.strGroupID, req.body.strSearchNickname);
+        listAdmins = await IAgent.GetAdminListChangeMoney(req.body.dateStart, req.body.dateEnd, req.body.strGroupID, req.body.strSearchNickname);
     }
     else
     {
@@ -160,11 +162,10 @@ router.post('/request_userlistchangemoney', isLoggedIn, async ( req, res ) => {
         listAgents = await IAgent.GetAgentListChangeMoney(req.body.dateStart, req.body.dateEnd, req.body.strGroupID, req.body.strSearchNickname);
     }
 
-    res.send({userlist:result, shoplist:listShops, agentlist:listAgents, vadminlist:[], proadminlist:listProAdmins, iRootClass: req.user.iClass, iPermission: req.user.iPermission});
+    res.send({userlist:result, shoplist:listShops, agentlist:listAgents, vadminlist:listViceAdmins, proadminlist:listProAdmins, adminlist:listAdmins, iRootClass: req.user.iClass, iPermission: req.user.iPermission});
 });
 
 router.post('/changemoney', isLoggedIn, async(req, res) => {
-    console.log(req.user);
     const dbuser = await IAgent.GetUserInfo(req.body.strNickname);
 
     const user = {strNickname:req.body.strNickname, strGroupID:req.body.strGroupID, iClass:parseInt(req.body.iClass), iCash:dbuser.iCash, iRolling:dbuser.iRolling, iSettle:dbuser.iSettle,
@@ -178,9 +179,11 @@ router.post('/changemoney', isLoggedIn, async(req, res) => {
     let listAgents = [];
     let listViceAdmins = [];
     let listProAdmins = [];
+    let listAdmins = [];
     if(req.body.iClass == 2)
     {
-        listProAdmins = await IAgent.GetProAdminListChangeMoney(strTimeStart, strTimeEnd, req.body.strGroupID, req.body.strSearchNickname);
+        // listProAdmins = await IAgent.GetAdminListChangeMoney(strTimeStart, strTimeEnd, req.body.strGroupID, req.body.strSearchNickname);
+        listAdmins = await IAgent.GetAdminListChangeMoney(strTimeStart, strTimeEnd, req.body.strGroupID, req.body.strSearchNickname);
     }
     else
     {
@@ -210,7 +213,7 @@ router.post('/changemoney', isLoggedIn, async(req, res) => {
     console.log(`###################################################### ${req.body.iClass}, ${req.body.strNickname}`);
     console.log(agentinfo);
     
-    res.render('manage_user/changemoney', {iLayout:0, iHeaderFocus:10, user:user, userlist:result, shoplist:listShops, agentlist:listAgents, vadminlist:listViceAdmins, proadminlist: listProAdmins, total:total, data:bobj, agentinfo:agentinfo, iocount:iocount});
+    res.render('manage_user/changemoney', {iLayout:0, iHeaderFocus:10, user:user, userlist:result, shoplist:listShops, agentlist:listAgents, vadminlist:listViceAdmins, proadminlist: listProAdmins, adminlist:listAdmins, total:total, data:bobj, agentinfo:agentinfo, iocount:iocount});
 
 });
 

@@ -186,11 +186,23 @@ router.post('/changemoney', isLoggedIn, async(req, res) => {
     const strTimeStart = ITime.getTodayStart();
     const strTimeEnd = ITime.getTodayEnd();
 
-    let result = await IAgent.GetUserList(strTimeStart, strTimeEnd, user.strGroupID);
-    let listShops = await IAgent.GetShopListChangeMoney(strTimeStart, strTimeEnd, user.strGroupID);
-    let listAgents = await IAgent.GetAgentListChangeMoney(strTimeStart, strTimeEnd, user.strGroupID);
+    let result = [];
+    let listShops = [];
+    let listAgents = [];
     let listViceAdmins = [];
     let listProAdmins = [];
+
+    if(dbuser.iClass == 2 )
+    {
+        listProAdmins = await IAgent.GetProAdminList(strTimeStart, strTimeEnd, user.strGroupID);
+    }
+    else
+    {
+        result = await IAgent.GetUserList(strTimeStart, strTimeEnd, user.strGroupID);
+        listShops = await IAgent.GetShopListChangeMoney(strTimeStart, strTimeEnd, user.strGroupID);
+        listAgents = await IAgent.GetAgentListChangeMoney(strTimeStart, strTimeEnd, user.strGroupID);
+    }
+    
     // let listViceAdmins = await GetViceAdminList(strTimeStart, strTimeEnd, user.strGroupID);
     // let listProAdmins = await  GetProAdminList(strTimeStart, strTimeEnd, user.strGroupID);
 

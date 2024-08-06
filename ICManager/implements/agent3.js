@@ -1310,6 +1310,50 @@ exports.GetViceAdminList = async (strTimeStart, strTimeEnd, strGroupID, strSearc
     return result;
 }
 
+exports.GetViceAdminListChangeMoney = async (strTimeStart, strTimeEnd, strGroupID, strSearchNickname, bOnToday) => {
+
+    let tagSearch = '';
+    if ( strSearchNickname != undefined && strSearchNickname != '' )
+        tagSearch = `AND t3.strNickname='${strSearchNickname}'`;
+
+    let isOnToday = bOnToday ?? false;
+    if (isOnToday == true) {
+        tagSearch = `${tagSearch} AND DATE(t3.createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'`;
+    }
+
+    const [result] = await db.sequelize.query(
+        `
+        SELECT t1.strNickname AS lev1, t2.strNickname as lev2, t3.strNickname as lev3, t3.strNickname as lev4, t3.strNickname as lev5, t3.strNickname as lev6, t3.iClass, t3.strID, t3.strNickname,
+        t3.iCash, t3.iClass, t3.strGroupID, t3.eState, DATE_FORMAT(t3.createdAt,'%Y-%m-%d %H:%i:%S') AS createdAt, DATE_FORMAT(t3.loginedAt,'%Y-%m-%d %H:%i:%S') AS loginedAt, t3.strIP,
+        IFNULL(charges.iInput,0) AS iInput, 
+        IFNULL(exchanges.iOutput,0) AS iOutput, 
+        IFNULL((SELECT sum(iRollingB + iRollingUO + iRollingS + iRollingPBA + iRollingPBB) FROM RecordDailyOverviews WHERE strID = t3.strID AND date(strDate) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'),0) as iMyRollingMoney,
+        IFNULL((SELECT sum(iBetB + iBetUO + iBetS + iBetPB)-sum(iWinB + iWinUO + iWinS + iWinPB) FROM RecordDailyOverviews WHERE strID = t3.strID AND date(strDate) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'),0) as iTotal,
+        t3.iRolling AS iCurrentRolling, 
+        t3.iLoan
+        FROM Users AS t1
+        LEFT JOIN Users AS t2 ON t2.iParentID = t1.id
+        LEFT JOIN Users AS t3 ON t3.iParentID = t2.id
+        LEFT JOIN ( SELECT strID, sum(iAmount) as iInput
+                    FROM Inouts
+                    where DATE(completedAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'
+                    AND eState = 'COMPLETE'
+                    AND eType = 'INPUT'
+                    GROUP BY strID) charges
+                ON t3.strNickname = charges.strID
+        LEFT JOIN ( SELECT strID, sum(iAmount) as iOutput
+                    FROM Inouts
+                    where DATE(completedAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'
+                    AND eState = 'COMPLETE'
+                    AND eType = 'OUTPUT'
+                    GROUP BY strID) exchanges
+                ON t3.strNickname = exchanges.strID
+        WHERE t3.iClass=${EAgent.eViceAdmin} AND t3.strGroupID LIKE CONCAT('${strGroupID}', '%') AND t3.strGroupID != '${strGroupID}' ${tagSearch};
+        `
+    );
+    return result;
+}
+
 exports.GetProAdminList = async (strTimeStart, strTimeEnd, strGroupID, strSearchNickname, bOnToday) => {
 
     let tagSearch = '';
@@ -1349,6 +1393,95 @@ exports.GetProAdminList = async (strTimeStart, strTimeEnd, strGroupID, strSearch
                     GROUP BY strID) exchanges
                 ON t3.strNickname = exchanges.strID
         WHERE t3.iClass=${EAgent.eProAdmin} AND t3.strGroupID LIKE CONCAT('${strGroupID}', '%') ${tagSearch};
+        `
+    );
+    return result;
+}
+
+exports.GetProAdminListChangeMoney = async (strTimeStart, strTimeEnd, strGroupID, strSearchNickname, bOnToday) => {
+
+    let tagSearch = '';
+    if ( strSearchNickname != undefined && strSearchNickname != '' )
+        tagSearch = `AND t3.strNickname='${strSearchNickname}'`;
+
+    let isOnToday = bOnToday ?? false;
+    if (isOnToday == true) {
+        tagSearch = `${tagSearch} AND DATE(t3.createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'`;
+    }
+
+    const [result] = await db.sequelize.query(
+        `
+        SELECT t1.strNickname AS lev1, t2.strNickname as lev2, t3.strNickname as lev3, t3.strNickname as lev4, t3.strNickname as lev5, t3.strNickname as lev6, t3.iClass, t3.strID, t3.strNickname,
+        t3.iCash, t3.iClass, t3.strGroupID, t3.eState, DATE_FORMAT(t3.createdAt,'%Y-%m-%d %H:%i:%S') AS createdAt, DATE_FORMAT(t3.loginedAt,'%Y-%m-%d %H:%i:%S') AS loginedAt, t3.strIP,
+        0 AS iInput,
+        0 AS iOutput,
+        IFNULL((SELECT sum(iRollingB + iRollingUO + iRollingS + iRollingPBA + iRollingPBB) FROM RecordDailyOverviews WHERE strID = t3.strID AND date(strDate) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'),0) as iMyRollingMoney,
+        IFNULL((SELECT sum(iBetB + iBetUO + iBetS + iBetPB)-sum(iWinB + iWinUO + iWinS + iWinPB) FROM RecordDailyOverviews WHERE strID = t3.strID AND date(strDate) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'),0) as iTotal,
+        t3.iRolling AS iCurrentRolling,
+        t3.iLoan
+        FROM Users AS t1
+        LEFT JOIN Users AS t2 ON t2.iParentID = t1.id
+        LEFT JOIN Users AS t3 ON t3.iParentID = t2.id
+        LEFT JOIN ( SELECT strID, sum(iAmount) as iInput
+                    FROM Inouts
+                    where DATE(completedAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'
+                    AND eState = 'COMPLETE'
+                    AND eType = 'INPUT'
+                    GROUP BY strID) charges
+                ON t3.strNickname = charges.strID
+        LEFT JOIN ( SELECT strID, sum(iAmount) as iOutput
+                    FROM Inouts
+                    where DATE(completedAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'
+                    AND eState = 'COMPLETE'
+                    AND eType = 'OUTPUT'
+                    GROUP BY strID) exchanges
+                ON t3.strNickname = exchanges.strID
+        WHERE t3.iClass=${EAgent.eProAdmin} AND t3.strGroupID LIKE CONCAT('${strGroupID}', '%') AND t3.strGroupID != '${strGroupID}' ${tagSearch};
+        `
+    );
+    return result;
+}
+
+exports.GetAdminListChangeMoney = async (strTimeStart, strTimeEnd, strGroupID, strSearchNickname, bOnToday) => {
+
+    let tagSearch = '';
+    if ( strSearchNickname != undefined && strSearchNickname != '' )
+        tagSearch = `AND t3.strNickname='${strSearchNickname}'`;
+
+    let isOnToday = bOnToday ?? false;
+    if (isOnToday == true) {
+        tagSearch = `${tagSearch} AND DATE(t3.createdAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'`;
+    }
+
+    const [result] = await db.sequelize.query(
+        `
+        SELECT t1.strNickname AS lev1, t2.strNickname as lev2, t3.strNickname as lev3, t3.strNickname as lev4, t3.strNickname as lev5, t3.strNickname as lev6, t3.iClass, t3.strID, t3.strNickname,
+        t3.iCash, t3.iClass, t3.strGroupID, t3.eState, DATE_FORMAT(t3.createdAt,'%Y-%m-%d %H:%i:%S') AS createdAt, DATE_FORMAT(t3.loginedAt,'%Y-%m-%d %H:%i:%S') AS loginedAt, t3.strIP,
+        0 AS iInput,
+        0 AS iOutput,
+        IFNULL((SELECT sum(iRollingB + iRollingUO + iRollingS + iRollingPBA + iRollingPBB) FROM RecordDailyOverviews WHERE strID = t3.strID AND date(strDate) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'),0) as iMyRollingMoney,
+        IFNULL((SELECT sum(iBetB + iBetUO + iBetS + iBetPB)-sum(iWinB + iWinUO + iWinS + iWinPB) FROM RecordDailyOverviews WHERE strID = t3.strID AND date(strDate) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'),0) as iTotal,
+        t3.iRolling AS iCurrentRolling,
+        t3.iLoan
+        FROM Users AS t1
+        LEFT JOIN Users AS t2 ON t2.iParentID = t1.id
+        LEFT JOIN Users AS t3 ON t3.iParentID = t2.id
+        LEFT JOIN ( SELECT strID, sum(iAmount) as iInput
+                    FROM Inouts
+                    where DATE(completedAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'
+                    AND eState = 'COMPLETE'
+                    AND eType = 'INPUT'
+                    GROUP BY strID) charges
+                ON t3.strNickname = charges.strID
+        LEFT JOIN ( SELECT strID, sum(iAmount) as iOutput
+                    FROM Inouts
+                    where DATE(completedAt) BETWEEN '${strTimeStart}' AND '${strTimeEnd}'
+                    AND eState = 'COMPLETE'
+                    AND eType = 'OUTPUT'
+                    GROUP BY strID) exchanges
+                ON t3.strNickname = exchanges.strID
+        WHERE t3.iClass=${EAgent.eAdmin} AND t3.strGroupID LIKE CONCAT('${strGroupID}', '%') AND t3.strGroupID != '${strGroupID}' ${tagSearch}
+        GROUP BY t1.strNickname, t2.strNickname, t3.strNickname, t3.iClass, t3.strID, t3.iCash, t3.strGroupID, t3.eState, t3.createdAt, t3.loginedAt, t3.strIP, t3.iRolling, t3.iLoan;
         `
     );
     return result;

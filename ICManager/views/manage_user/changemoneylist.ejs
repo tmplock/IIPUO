@@ -29,9 +29,17 @@
 			
 			<div class="content" style="position:relative; padding:0 10px 0 10px;">
 				<ul class="list_tab" style="margin-bottom:10px;width:75%;z-index:10000;">
-					<li class="off">
-						<a href="#" id="user_changemoney"><%=__('UserList')%></a>
-					</li>
+					<% if ( user.iClass != 3 ) { %>
+						<% if ( user.iClass == 2 ) { %>
+							<li class="on">
+								<a href="#" id="user_changemoney">본사 목록</a>
+							</li>
+						<% } else { %>
+							<li class="on">
+								<a href="#" id="user_changemoney"><%=__('UserList')%></a>
+							</li>
+						<% } %>
+					<% } %>
 					<li class="on">
 						<a href="#" id="user_changemoneylist">전환 내역</a>
 					</li>

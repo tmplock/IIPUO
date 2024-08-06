@@ -302,7 +302,8 @@ let GetOutputList = async (req, res, visibleGrade) => {
             obj.iNewUser = 1;
         }
         if (visibleGrade == true) {
-            let iGrade = IAgent.GetGradeFromStrOptionCode(obj.strOptionCode);
+            //let iGrade = IAgent.GetGradeFromStrOptionCode(obj.strOptionCode);
+            let iGrade = obj.strOptionCode[3];
             let grade = IAgent.GetGrade(iGrade);
             let strGrade =  `[${grade.id}:${grade.str}]`
             obj.strGrade = strGrade;

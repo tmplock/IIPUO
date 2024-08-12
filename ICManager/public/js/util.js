@@ -317,7 +317,7 @@ let GetBettingGroup = (array) => {
         {
         case 0: // barcara
             list[0].iBetting += array[i].iBetting;
-            list[1].iWin += array[i].iWin;
+            list[0].iWin += array[i].iWin;
             list[0].iRolling += array[i].iRolling;
             list[0].iTotal += array[i].iBetting2 - array[i].iWin - array[i].iRolling;
 

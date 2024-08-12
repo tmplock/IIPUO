@@ -317,19 +317,19 @@ let GetBettingGroup = (array) => {
         {
         case 0: // barcara
             list[0].iBetting += BigInt(array[i].iBetting);
-            
+            list[1].iWin += array[i].iWin;
             list[0].iRolling += BigInt(array[i].iRolling);
             list[0].iTotal += BigInt(array[i].iBetting2) - BigInt(array[i].iWin) - BigInt(array[i].iRolling);
 
-            list[0].iWin = list[0].iTotal - BigInt(array[i].iBetting) + BigInt(array[i].iRolling);
+            // list[0].iWin = list[0].iTotal - BigInt(array[i].iBetting) + BigInt(array[i].iRolling);
             break;
         case 100: // unover
             list[1].iBetting += BigInt(array[i].iBetting);
-            //list[1].iWin += array[i].iWin;
+            list[1].iWin += array[i].iWin;
             list[1].iRolling += BigInt(array[i].iRolling);
             list[1].iTotal += BigInt(array[i].iBetting2) - BigInt(array[i].iWin) - BigInt(array[i].iRolling);
 
-            list[1].iWin = list[1].iTotal - BigInt(array[i].iBetting) + BigInt(array[i].iRolling);
+            // list[1].iWin = list[1].iTotal - BigInt(array[i].iBetting) + BigInt(array[i].iRolling);
             break;
         case 200: // slot
             list[2].iBetting += BigInt(array[i].iBetting);
@@ -337,7 +337,7 @@ let GetBettingGroup = (array) => {
             list[2].iRolling += BigInt(array[i].iRolling);
             list[2].iTotal += BigInt(array[i].iBetting2) - BigInt(array[i].iWin) - BigInt(array[i].iRolling);
 
-            list[2].iWin = list[2].iTotal - BigInt(array[i].iBetting) + BigInt(array[i].iRolling);
+            // list[2].iWin = list[2].iTotal - BigInt(array[i].iBetting) + BigInt(array[i].iRolling);
             break;
         case 300: // powerball
             list[3].iBetting += BigInt(array[i].iBetting);
@@ -345,7 +345,7 @@ let GetBettingGroup = (array) => {
             list[3].iRolling += BigInt(array[i].iRolling);
             list[3].iTotal += BigInt(array[i].iBetting2) - BigInt(array[i].iWin) - BigInt(array[i].iRolling);
 
-            list[3].iWin = list[3].iTotal - BigInt(array[i].iBetting) + BigInt(array[i].iRolling);
+            // list[3].iWin = list[3].iTotal - BigInt(array[i].iBetting) + BigInt(array[i].iRolling);
             break;
         }
     }

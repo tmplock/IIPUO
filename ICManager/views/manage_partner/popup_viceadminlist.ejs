@@ -153,17 +153,17 @@
 	let bClickDateSelection	= false;
 
 	let OnClickTodayRecord = () => {
-
-		bClickDateSelection	= true;
-
 		startDate = GetCurrentDate();
 		endDate = GetCurrentDate();
 
 		$('#datepicker1').val(startDate);
 		$('#datepicker2').val(endDate);
 
-		// bToggleRecord = true;
-		// $("#button_toggle_record").text("닫기");
+		bClickDateSelection	= true;
+		bToggleRecord = false;
+		$("#table_record_list").hide();
+		$("#button_toggle_record").text(strOpen);
+
 		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
 		RequestAgentListOnPopup(EAgent.eViceAdmin, agent.strGroupID, agent.iClass, agent.iPermission);
 		// RequestBettingRecord(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
@@ -194,16 +194,15 @@
 	}
 
 	let OnClickMonthly1stRecord = () => {
-
-		bClickDateSelection	= true;
-
 		startDate = GetMonthly1stStartDate();
 		endDate = GetMonthly1stEndDate();
 		$('#datepicker1').val(startDate);
 		$('#datepicker2').val(endDate);
 
-		// bToggleRecord = true;
-		// $("#button_toggle_record").text("닫기");
+		bClickDateSelection	= true;
+		bToggleRecord = false;
+		$("#table_record_list").hide();
+		$("#button_toggle_record").text(strOpen);
 
 		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
 		RequestAgentListOnPopup(EAgent.eViceAdmin, agent.strGroupID, agent.iClass, agent.iPermission, agent.strID);
@@ -213,16 +212,15 @@
 	}
 
 	let OnClickMonthly2ndRecord = () => {
-
-		bClickDateSelection	= true;
-
 		startDate = GetMonthly2ndStartDate();
 		endDate = GetMonthly2ndEndDate();
 		$('#datepicker1').val(startDate);
 		$('#datepicker2').val(endDate);
 
-		// bToggleRecord = true;
-		// $("#button_toggle_record").text("닫기");
+		bClickDateSelection	= true;
+		bToggleRecord = false;
+		$("#table_record_list").hide();
+		$("#button_toggle_record").text(strOpen);
 
 		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
 		RequestAgentListOnPopup(EAgent.eViceAdmin, agent.strGroupID, agent.iClass, agent.iPermission, agent.strID);
@@ -238,6 +236,11 @@
 		$('#datepicker1').val(startDate);
 		$('#datepicker2').val(endDate);
 
+		bClickDateSelection	= true;
+		bToggleRecord = false;
+		$("#table_record_list").hide();
+		$("#button_toggle_record").text(strOpen);
+
 		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
 		RequestAgentListOnPopup(EAgent.eViceAdmin, agent.strGroupID, agent.iClass, agent.iPermission, agent.strID);
 		// RequestBettingRecord(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
@@ -246,8 +249,9 @@
 	let OnClickSearch = (iTargetClass, strGroupID, iClass) => {
 
 		bClickDateSelection	= true;
-		// bToggleRecord = true;
-		// $("#button_toggle_record").text("닫기");
+		bToggleRecord = false;
+		$("#table_record_list").hide();
+		$("#button_toggle_record").text(strOpen);
 
 		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
 		RequestAgentListOnPopup(EAgent.eViceAdmin, agent.strGroupID, agent.iClass, agent.iPermission, agent.strID);

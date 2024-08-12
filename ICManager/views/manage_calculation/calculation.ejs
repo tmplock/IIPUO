@@ -102,7 +102,10 @@
 		$('#datepicker1').val(startDate);
 		$('#datepicker2').val(endDate);
 
-        // RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
+        bToggleRecord = true;
+		$("#button_toggle_record").text("닫기");
+
+        RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
         RequestOverview(cTClass, user.strGroupID, user.iClass, user.iPermission, user.strNickname, user.strID);
     }
 
@@ -139,7 +142,10 @@
 		$('#datepicker1').val(startDate);
 		$('#datepicker2').val(endDate);
 
-        // RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
+        bToggleRecord = true;
+		$("#button_toggle_record").text("닫기");
+
+        RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
         RequestOverview(user.iClass, user.strGroupID, user.iClass, user.iPermission, user.strNickname, user.strID);
     }
 
@@ -151,24 +157,31 @@
 		$('#datepicker1').val(startDate);
 		$('#datepicker2').val(endDate);
 
+        bToggleRecord = true;
+		$("#button_toggle_record").text("닫기");
 
-        // RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
+        RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
         RequestOverview(user.iClass, user.strGroupID, user.iClass, user.iPermission, user.strNickname, user.strID);
     }
 
     let OnClickDayPeriod = (startDay) => {
+        bClickDateSelection	= true;
+
 		startDate = GetDateStart(startDate, startDay);
 		endDate = GetDateEnd(endDate, startDay+4);
 
 		$('#datepicker1').val(startDate);
 		$('#datepicker2').val(endDate);
 
-        // RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
+        bToggleRecord = true;
+		$("#button_toggle_record").text("닫기");
+
+        RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
         RequestOverview(user.iClass, user.strGroupID, user.iClass, user.iPermission, user.strNickname, user.strID);
 	}
 
     let OnClickSearch = (iTargetClass, strGroupID, iClass) => {
-        // RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
+        RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
         RequestOverview(user.iClass, user.strGroupID, user.iClass, user.iPermission, user.strNickname, user.strID);
     }
 

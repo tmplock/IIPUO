@@ -156,8 +156,9 @@
 		$('#datepicker1').val(startDate);
 		$('#datepicker2').val(endDate);
 
-		// bToggleRecord = true;
-		// $("#button_toggle_record").text("닫기");
+		bToggleRecord = false;
+		$("#table_record_list").hide();
+		$("#button_toggle_record").text(strOpen);
 
 		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
 		RequestAgentListOnPopup(EAgent.eAgent, agent.strGroupID, agent.iClass, agent.iPermission, agent.strID);
@@ -196,8 +197,9 @@
 		$('#datepicker1').val(startDate);
 		$('#datepicker2').val(endDate);
 
-		// bToggleRecord = true;
-		// $("#button_toggle_record").text("닫기");
+		bToggleRecord = false;
+		$("#table_record_list").hide();
+		$("#button_toggle_record").text(strOpen);
 
 		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
 		RequestAgentListOnPopup(EAgent.eAgent, agent.strGroupID, agent.iClass, agent.iPermission, agent.strID);
@@ -213,8 +215,9 @@
 		$('#datepicker1').val(startDate);
 		$('#datepicker2').val(endDate);
 
-		// bToggleRecord = true;
-		// $("#button_toggle_record").text("닫기");
+		bToggleRecord = false;
+		$("#table_record_list").hide();
+		$("#button_toggle_record").text(strOpen);
 
 		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
 		RequestAgentListOnPopup(EAgent.eAgent, agent.strGroupID, agent.iClass, agent.iPermission, agent.strID);
@@ -222,11 +225,17 @@
 	}
 
 	let OnClickDayPeriod = (startDay) => {
+		bClickDateSelection	= true;
+
 		startDate = GetDateStart(startDate, startDay);
 		endDate = GetDateEnd(endDate, startDay+4);
 
 		$('#datepicker1').val(startDate);
 		$('#datepicker2').val(endDate);
+
+		bToggleRecord = false;
+		$("#table_record_list").hide();
+		$("#button_toggle_record").text(strOpen);
 
 		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
 		RequestAgentListOnPopup(EAgent.eAgent, agent.strGroupID, agent.iClass, agent.iPermission, agent.strID);
@@ -238,6 +247,10 @@
 		bClickDateSelection	= true;
 		// bToggleRecord = true;
 		// $("#button_toggle_record").text("닫기");
+
+		bToggleRecord = false;
+		$("#table_record_list").hide();
+		$("#button_toggle_record").text(strOpen);
 
 		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
 		RequestAgentListOnPopup(EAgent.eAgent, agent.strGroupID, agent.iClass, agent.iPermission, agent.strID);

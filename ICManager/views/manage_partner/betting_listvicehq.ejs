@@ -278,8 +278,10 @@
 		$('#datepicker1').val(startDate);
 		$('#datepicker2').val(endDate);
 
-		// bToggleRecord = true;
-		// $("#button_toggle_record").text("닫기");
+		bToggleRecord = false;
+		$("#table_record_list").hide();
+		$("#button_toggle_record").text(strOpen);
+
 		// RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
 		RequestViceAdminList(EAgent.eViceHQ, user.strGroupID, user.iClass, user.strID);
 	}
@@ -292,31 +294,41 @@
 		$('#datepicker1').val(startDate);
 		$('#datepicker2').val(endDate);
 
-		// bToggleRecord = true;
-		// $("#button_toggle_record").text("닫기");
+		bToggleRecord = false;
+		$("#table_record_list").hide();
+		$("#button_toggle_record").text(strOpen);
+
 		// RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
 		RequestViceAdminList(EAgent.eViceHQ, user.strGroupID, user.iClass, user.strID);
 	}
 
 	let OnClickMonthly2ndRecord = () => {
+		bClickDateSelection	= true;
 
 		startDate = GetMonthly2ndStartDate();
 		endDate = GetMonthly2ndEndDate();
 		$('#datepicker1').val(startDate);
 		$('#datepicker2').val(endDate);
 
-		// bToggleRecord = true;
-		// $("#button_toggle_record").text("닫기");
+		bToggleRecord = false;
+		$("#table_record_list").hide();
+		$("#button_toggle_record").text(strOpen);
 		// RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
 		RequestViceAdminList(EAgent.eViceHQ, user.strGroupID, user.iClass, user.strID);
 	}
 
 	let OnClickDayPeriod = (startDay) => {
+		bClickDateSelection	= true;
+
 		startDate = GetDateStart(startDate, startDay);
 		endDate = GetDateEnd(endDate, startDay+4);
 
 		$('#datepicker1').val(startDate);
 		$('#datepicker2').val(endDate);
+
+		bToggleRecord = false;
+		$("#table_record_list").hide();
+		$("#button_toggle_record").text(strOpen);
 
 		// RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
 		RequestViceAdminList(EAgent.eViceHQ, user.strGroupID, user.iClass, user.strID);
@@ -326,6 +338,10 @@
 
 		// bToggleRecord = true;
 		// $("#button_toggle_record").text("닫기");
+
+		bToggleRecord = false;
+		$("#table_record_list").hide();
+		$("#button_toggle_record").text(strOpen);
 
 		// RequestBettingRecord(cTClass, strGroupID, iClass, user.strID);
 		RequestViceAdminList(iTargetClass, strGroupID, iClass, user.strID);

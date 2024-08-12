@@ -208,6 +208,9 @@
 		
 		// bToggleRecord = true;
 		// $("#button_toggle_record").text("닫기");
+		bToggleRecord = false;
+		$("#table_record_list").hide();
+		$("#button_toggle_record").text(strOpen);
 
 		bClickDateSelection	= true;
 		RequestAgentList(EAgent.eProAdmin, user.strGroupID, user.iClass);
@@ -221,16 +224,25 @@
 
 		// bToggleRecord = true;
 		// $("#button_toggle_record").text("닫기");
+		bToggleRecord = false;
+		$("#table_record_list").hide();
+		$("#button_toggle_record").text(strOpen);
 
 		bClickDateSelection	= true;
 		RequestAgentList(EAgent.eProAdmin, user.strGroupID, user.iClass);
 	}
 
 	let OnClickMonthly2ndRecord = () => {
+		bClickDateSelection	= true;
+
 		startDate = GetMonthly2ndStartDate();
 		endDate = GetMonthly2ndEndDate();
 		$('#datepicker1').val(startDate);
 		$('#datepicker2').val(endDate);
+
+		bToggleRecord = false;
+		$("#table_record_list").hide();
+		$("#button_toggle_record").text(strOpen);
 
 		// bToggleRecord = true;
 		// $("#button_toggle_record").text("닫기");
@@ -244,17 +256,31 @@
 		$('#datepicker1').val(startDate);
 		$('#datepicker2').val(endDate);
 
+		bToggleRecord = false;
+		$("#table_record_list").hide();
+		$("#button_toggle_record").text(strOpen);
+
+		bClickDateSelection	= true;
+
 		RequestAgentList(EAgent.eProAdmin, user.strGroupID, user.iClass);
 	}
 
 	let OnClickSearch = (iTargetClass, strGroupID, iClass) => {
 		// bToggleRecord = true;
 		// $("#button_toggle_record").text("닫기");
+		// bClickDateSelection	= true;
+		bToggleRecord = false;
+		$("#table_record_list").hide();
+		$("#button_toggle_record").text(strOpen);
 
 		RequestAgentList(iTargetClass, strGroupID, iClass);
 	}
 
 	let OnClickSearchNickname = () => {
+		bToggleRecord = false;
+		$("#table_record_list").hide();
+		$("#button_toggle_record").text(strOpen);
+
 		RequestAgentList(EAgent.eProAdmin, user.strGroupID, user.iClass);
 	}
 

@@ -128,8 +128,9 @@
 		$('#datepicker1').val(startDate);
 		$('#datepicker2').val(endDate);
 
-		// bToggleRecord = true;
-		// $("#button_toggle_record").text("닫기");
+		bToggleRecord = false;
+		$("#table_record_list").hide();
+		$("#button_toggle_record").text(strOpen);
 
 		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
 		//RequestOverview_RollingMinus(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
@@ -175,6 +176,11 @@
 		$('#datepicker1').val(startDate);
 		$('#datepicker2').val(endDate);
 
+		bClickDateSelection	= true;
+		bToggleRecord = false;
+		$("#table_record_list").hide();
+		$("#button_toggle_record").text(strOpen);
+
 		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
 		//RequestOverview_RollingMinus(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
 		// RequestBettingRecord(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
@@ -191,6 +197,11 @@
 		$('#datepicker1').val(startDate);
 		$('#datepicker2').val(endDate);
 
+		bClickDateSelection	= true;
+		bToggleRecord = false;
+		$("#table_record_list").hide();
+		$("#button_toggle_record").text(strOpen);
+
 		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
 		//RequestOverview_RollingMinus(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
 		// RequestBettingRecord(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
@@ -204,6 +215,11 @@
 		$('#datepicker1').val(startDate);
 		$('#datepicker2').val(endDate);
 
+		bClickDateSelection	= true;
+		bToggleRecord = false;
+		$("#table_record_list").hide();
+		$("#button_toggle_record").text(strOpen);
+
 		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
 		//RequestOverview_RollingMinus(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
 		// RequestBettingRecord(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
@@ -214,6 +230,9 @@
 
 		// bToggleRecord = true;
 		// $("#button_toggle_record").text(strClose);
+		bToggleRecord = false;
+		$("#table_record_list").hide();
+		$("#button_toggle_record").text(strOpen);
 
 		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
 		//RequestOverview_RollingMinus(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
@@ -222,7 +241,9 @@
 	}
 
 	let OnClickSearchNickname = () => {
-
+		bToggleRecord = false;
+		$("#table_record_list").hide();
+		$("#button_toggle_record").text(strOpen);
 		//RequestBettingListOnPopup(EAgent.eUser, agent.strGroupID, agent.iClass);
 	}
 

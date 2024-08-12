@@ -148,8 +148,9 @@
 		$('#datepicker2').val(endDate);
 
 		bClickDateSelection	= true;
-		// bToggleRecord = true;
-		// $("#button_toggle_record").text("닫기");
+		bToggleRecord = false;
+		$("#table_record_list").hide();
+		$("#button_toggle_record").text(strOpen);
 
 		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
 		RequestAgentListOnPopup(EAgent.eShop, agent.strGroupID, agent.iClass, agent.iPermission, agent.strID);
@@ -188,8 +189,9 @@
 		$('#datepicker2').val(endDate);
 
 		bClickDateSelection	= true;
-		// bToggleRecord = true;
-		// $("#button_toggle_record").text("닫기");
+		bToggleRecord = false;
+		$("#table_record_list").hide();
+		$("#button_toggle_record").text(strOpen);
 
 		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
 		RequestAgentListOnPopup(EAgent.eShop, agent.strGroupID, agent.iClass, agent.iPermission, agent.strID);
@@ -204,8 +206,9 @@
 		$('#datepicker2').val(endDate);
 
 		bClickDateSelection	= true;
-		// bToggleRecord = true;
-		// $("#button_toggle_record").text("닫기");
+		bToggleRecord = false;
+		$("#table_record_list").hide();
+		$("#button_toggle_record").text(strOpen);
 
 		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
 		RequestAgentListOnPopup(EAgent.eShop, agent.strGroupID, agent.iClass, agent.iPermission, agent.strID);
@@ -219,6 +222,11 @@
 		$('#datepicker1').val(startDate);
 		$('#datepicker2').val(endDate);
 
+		bClickDateSelection	= true;
+		bToggleRecord = false;
+		$("#table_record_list").hide();
+		$("#button_toggle_record").text(strOpen);
+
 		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
 		RequestAgentListOnPopup(EAgent.eShop, agent.strGroupID, agent.iClass, agent.iPermission, agent.strID);
 		// RequestBettingRecord(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
@@ -227,8 +235,9 @@
 	let OnClickSearch = (iTargetClass, strGroupID, iClass) => {
 
 		bClickDateSelection	= true;
-		// bToggleRecord = true;
-		// $("#button_toggle_record").text("닫기");
+		bToggleRecord = false;
+		$("#table_record_list").hide();
+		$("#button_toggle_record").text(strOpen);
 
 		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
 		RequestAgentListOnPopup(EAgent.eShop, agent.strGroupID, agent.iClass, agent.iPermission, agent.strID);

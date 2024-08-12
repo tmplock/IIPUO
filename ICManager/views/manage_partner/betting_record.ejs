@@ -101,6 +101,9 @@
 	}
 
 	let OnClickSearch = (iTargetClass, strGroupID, iClass, iPermission) => {
+		bToggleRecord = false;
+		$("#table_record_list").hide();
+		$("#button_toggle_record").text(strOpen);
 		// RequestBettingRecord(iTargetClass, strGroupID, iClass, user.strID);
 		RequestSelfOverview(iTargetClass, strGroupID, iClass, iPermission, user.strID);
 	}

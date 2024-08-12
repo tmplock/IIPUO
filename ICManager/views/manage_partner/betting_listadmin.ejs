@@ -205,6 +205,10 @@
 		$('#datepicker1').val(startDate);
 		$('#datepicker2').val(endDate);
 
+		bToggleRecord = false;
+		$("#table_record_list").hide();
+		$("#button_toggle_record").text(strOpen);
+
 		RequestOverview(cTClass, user.strGroupID, user.iClass, user.iPermission, user.strNickname, user.strID);
 		RequestAdminList(EAgent.eAdmin, user.strGroupID, user.iClass, user.iPermission);
 		// RequestBettingDayList();
@@ -216,6 +220,10 @@
 
 		$('#datepicker1').val(startDate);
 		$('#datepicker2').val(endDate);
+
+		bToggleRecord = false;
+		$("#table_record_list").hide();
+		$("#button_toggle_record").text(strOpen);
 
 		RequestOverview(cTClass, user.strGroupID, user.iClass, user.iPermission, user.strNickname, user.strID);
 		RequestAdminList(EAgent.eAdmin, user.strGroupID, user.iClass, user.iPermission);
@@ -229,6 +237,10 @@
 		$('#datepicker1').val(startDate);
 		$('#datepicker2').val(endDate);
 
+		bToggleRecord = false;
+		$("#table_record_list").hide();
+		$("#button_toggle_record").text(strOpen);
+
 		RequestOverview(cTClass, user.strGroupID, user.iClass, user.iPermission, user.strNickname, user.strID);
 		RequestAdminList(EAgent.eAdmin, user.strGroupID, user.iClass, user.iPermission);
 		// RequestBettingDayList();
@@ -240,6 +252,10 @@
 
 		$('#datepicker1').val(startDate);
 		$('#datepicker2').val(endDate);
+
+		bToggleRecord = false;
+		$("#table_record_list").hide();
+		$("#button_toggle_record").text(strOpen);
 
 		RequestOverview(cTClass, user.strGroupID, user.iClass, user.iPermission, user.strNickname, user.strID);
 		RequestAdminList(EAgent.eAdmin, user.strGroupID, user.iClass, user.iPermission);
@@ -253,12 +269,20 @@
 		$('#datepicker1').val(startDate);
 		$('#datepicker2').val(endDate);
 
+		bToggleRecord = false;
+		$("#table_record_list").hide();
+		$("#button_toggle_record").text(strOpen);
+
 		RequestOverview(cTClass, user.strGroupID, user.iClass, user.iPermission, user.strNickname, user.strID);
 		RequestAdminList(EAgent.eAdmin, user.strGroupID, user.iClass, user.iPermission);
 		// RequestBettingDayList();
 	}
 
 	let OnClickSearch = (iTargetClass, strGroupID, iClass, iPermission) => {
+		bToggleRecord = false;
+		$("#table_record_list").hide();
+		$("#button_toggle_record").text(strOpen);
+
 		RequestOverview(cTClass, strGroupID, iClass, iPermission, user.strNickname, user.strID);
 		RequestAdminList(iTargetClass, strGroupID, iClass, user.iPermission);
 		// RequestBettingDayList();
@@ -271,7 +295,11 @@
 	}
 
 	let OnClickSearchNickname = () => {
+		bToggleRecord = false;
+		$("#table_record_list").hide();
+		$("#button_toggle_record").text(strOpen);
+
 		RequestAdminList(EAgent.eAdmin, user.strGroupID, user.iClass, user.iPermission);
-		RequestBettingDayList();
+		// RequestBettingDayList();
 	}
 </script>

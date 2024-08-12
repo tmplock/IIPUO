@@ -349,8 +349,7 @@ let GetBettingGroup = (array) => {
             break;
         }
     }
-    console.log(`GetBettingGroup!!!`);
-    console.log(list);
+    
     return list;
 }
 

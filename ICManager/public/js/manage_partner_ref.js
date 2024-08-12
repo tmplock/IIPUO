@@ -558,6 +558,9 @@ function SetOverviewRecordList(aObject, strParentTag, bClear, iRootClass)
 	`;
 
 	$(strParentTag).append(tag);
+	if(!bToggleRecord){
+		$("#table_record_list").hide();
+	}
 }
 
 function ConvertRoomData(aObject)
@@ -1388,14 +1391,45 @@ function RequestPartnerAgent(strNickname, strGroupID, iClass, bDisableRolling, i
 
 function RequestPartnerInfo(strNickname, strGroupID, iClass, iPermission)
 {
+	let strWindowName = 'popupAgent';
+	let strAddress = '/manage_partner_popup/shoplist';
+
+	if ( iClass == 3 )
+	{
+		strWindowName = 'popupAdmin';
+		strAddress = '/manage_partner_popup/proadminlist';
+	}
+	else if ( iClass == 4 )
+	{
+		strWindowName = 'popupPAdmin';
+		strAddress = '/manage_partner_popup/viceadminlist';
+	}
+	else if ( iClass == 5 )
+	{
+		strWindowName = 'popupVAdmin';
+		strAddress = '/manage_partner_popup/agentlist';
+
+	}
+	else if ( iClass == 6 )
+	{
+		strWindowName = 'popupAgent';
+		strAddress = '/manage_partner_popup/shoplist';
+
+	}
+	// else if ( iClass == 7 )
+	// {
+	// 	strWindowName = 'popupShop';
+	// 	strAddress = '/manage_user_popup/userinfo';
+	// }
+
 	var scLeft = window.screenLeft + 50;
 	var scTop = window.screenTop + 50;
-	window.open('', 'popupChkSub', `width=1280, height=720, top=${scTop}, left=${scLeft}, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no`);
+	window.open('', strWindowName, `width=1280, height=720, top=${scTop}, left=${scLeft}, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no`);
 
 	var $form = $('<form></form>');
-	$form.attr('action', '/manage_partner_popup/games');
+	$form.attr('action', strAddress);
 	$form.attr('method', 'post');
-	$form.attr('target', 'popupChkSub');
+	$form.attr('target', strWindowName);
 	$form.appendTo('body');
 
 	var idx = $(`<input type="hidden" value="${strNickname}" name="strNickname">`);

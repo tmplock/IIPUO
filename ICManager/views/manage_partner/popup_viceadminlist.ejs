@@ -162,11 +162,11 @@
 		$('#datepicker1').val(startDate);
 		$('#datepicker2').val(endDate);
 
-		bToggleRecord = true;
-		$("#button_toggle_record").text("닫기");
+		// bToggleRecord = true;
+		// $("#button_toggle_record").text("닫기");
 		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
 		RequestAgentListOnPopup(EAgent.eViceAdmin, agent.strGroupID, agent.iClass, agent.iPermission);
-		RequestBettingRecord(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
+		// RequestBettingRecord(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
 	}
 
 	function OnClickRecord()
@@ -202,12 +202,12 @@
 		$('#datepicker1').val(startDate);
 		$('#datepicker2').val(endDate);
 
-		bToggleRecord = true;
-		$("#button_toggle_record").text("닫기");
+		// bToggleRecord = true;
+		// $("#button_toggle_record").text("닫기");
 
 		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
 		RequestAgentListOnPopup(EAgent.eViceAdmin, agent.strGroupID, agent.iClass, agent.iPermission, agent.strID);
-		RequestBettingRecord(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
+		// RequestBettingRecord(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
 		// RequestOverview(EAgent.eViceAdmin, agent.strGroupID, agent.iClass);
 		// RequestAgentListOnPopup(EAgent.eViceAdmin, agent.strGroupID, agent.iClass, agent.iPermission);
 	}
@@ -221,12 +221,12 @@
 		$('#datepicker1').val(startDate);
 		$('#datepicker2').val(endDate);
 
-		bToggleRecord = true;
-		$("#button_toggle_record").text("닫기");
+		// bToggleRecord = true;
+		// $("#button_toggle_record").text("닫기");
 
 		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
 		RequestAgentListOnPopup(EAgent.eViceAdmin, agent.strGroupID, agent.iClass, agent.iPermission, agent.strID);
-		RequestBettingRecord(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
+		// RequestBettingRecord(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
 		// RequestOverview(EAgent.eViceAdmin, agent.strGroupID, agent.iClass);
 		// RequestAgentListOnPopup(EAgent.eViceAdmin, agent.strGroupID, agent.iClass, agent.iPermission);
 	}
@@ -240,18 +240,18 @@
 
 		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
 		RequestAgentListOnPopup(EAgent.eViceAdmin, agent.strGroupID, agent.iClass, agent.iPermission, agent.strID);
-		RequestBettingRecord(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
+		// RequestBettingRecord(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
 	}
 
 	let OnClickSearch = (iTargetClass, strGroupID, iClass) => {
 
 		bClickDateSelection	= true;
-		bToggleRecord = true;
-		$("#button_toggle_record").text("닫기");
+		// bToggleRecord = true;
+		// $("#button_toggle_record").text("닫기");
 
 		RequestOverview(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, agent.strNickname, agent.strID);
 		RequestAgentListOnPopup(EAgent.eViceAdmin, agent.strGroupID, agent.iClass, agent.iPermission, agent.strID);
-		RequestBettingRecord(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
+		// RequestBettingRecord(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
 		// RequestOverview(iTargetClass, strGroupID, iClass);
 		// RequestAgentListOnPopup(iTargetClass, strGroupID, iClass, agent.iPermission);
 	}

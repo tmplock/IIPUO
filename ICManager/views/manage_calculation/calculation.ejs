@@ -85,6 +85,8 @@
         $('#datepicker2').val(endDate);
         $("#table_record_list").hide();
 
+        $("#button_toggle_record").text("<%=__('Open')%>");
+
         SetCalculationHeader(0, user.iClass);
         SetOverview(objectOverview, "#div_realtimebet_overview", true, user.iRootClass);
         Alert(iocount, "<%=__('RequestInput')%>", "<%=__('RequestOutput')%>","<%=__('LetterSend')%>");
@@ -100,9 +102,7 @@
 		$('#datepicker1').val(startDate);
 		$('#datepicker2').val(endDate);
 
-        bToggleRecord = true;
-        $("#button_toggle_record").text("<%=__('Close')%>");
-        RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
+        // RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
         RequestOverview(cTClass, user.strGroupID, user.iClass, user.iPermission, user.strNickname, user.strID);
     }
 
@@ -139,10 +139,7 @@
 		$('#datepicker1').val(startDate);
 		$('#datepicker2').val(endDate);
 
-        bToggleRecord = true;
-        $("#button_toggle_record").text("<%=__('Close')%>");
-
-        RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
+        // RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
         RequestOverview(user.iClass, user.strGroupID, user.iClass, user.iPermission, user.strNickname, user.strID);
     }
 
@@ -154,9 +151,8 @@
 		$('#datepicker1').val(startDate);
 		$('#datepicker2').val(endDate);
 
-        bToggleRecord = true;
-        $("#button_toggle_record").text("<%=__('Close')%>");
-        RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
+
+        // RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
         RequestOverview(user.iClass, user.strGroupID, user.iClass, user.iPermission, user.strNickname, user.strID);
     }
 
@@ -167,16 +163,12 @@
 		$('#datepicker1').val(startDate);
 		$('#datepicker2').val(endDate);
 
-        RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
+        // RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
         RequestOverview(user.iClass, user.strGroupID, user.iClass, user.iPermission, user.strNickname, user.strID);
 	}
 
     let OnClickSearch = (iTargetClass, strGroupID, iClass) => {
-
-        bToggleRecord = true;
-        $("#button_toggle_record").text("<%=__('Close')%>");
-
-        RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
+        // RequestBettingRecord(cTClass, user.strGroupID, user.iClass, user.strID);
         RequestOverview(user.iClass, user.strGroupID, user.iClass, user.iPermission, user.strNickname, user.strID);
     }
 

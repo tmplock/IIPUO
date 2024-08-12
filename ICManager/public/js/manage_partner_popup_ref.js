@@ -87,12 +87,35 @@ let RequestAgentListOnPopup = (iTargetClass, strGroupID, iClass, iPermission, st
 
 function RequestPartnerInfo(strNickname, strGroupID, iClass, iPermission, targetName)
 {
+	let strAddress = '/manage_partner_popup/shoplist';
+
+	if ( iClass == 3 )
+	{
+		strAddress = '/manage_partner_popup/proadminlist';
+	}
+	else if ( iClass == 4 )
+	{
+		strAddress = '/manage_partner_popup/viceadminlist';
+	}
+	else if ( iClass == 5 )
+	{
+		strAddress = '/manage_partner_popup/agentlist';
+	}
+	else if ( iClass == 6 )
+	{
+		strAddress = '/manage_partner_popup/shoplist';
+	}
+    else if ( iClass == 7 )
+    {
+        strAddress = '/manage_partner_popup/userlist';
+    }
+
     var scLeft = window.screenLeft + 50;
     var scTop = window.screenTop + 50;
     window.open('', `${targetName}`, `width=1280, height=720, top=${scTop}, left=${scLeft}, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no`);
 
     var $form = $('<form></form>');
-    $form.attr('action', '/manage_partner_popup/games');
+    $form.attr('action', `${strAddress}`);
     $form.attr('method', 'post');
     $form.attr('target', `${targetName}`);
     $form.appendTo('body');

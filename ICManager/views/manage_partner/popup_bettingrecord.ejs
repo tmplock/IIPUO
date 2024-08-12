@@ -202,7 +202,7 @@
 	let OnClickTodayRecord = () => {
 
 		bToggleRecord = false;
-		$("#button_toggle_record").text(strClose);
+		$("#button_toggle_record").text(strOpen);
 
 		startDate = GetCurrentDate();
 		endDate = GetCurrentDate();
@@ -228,6 +228,7 @@
 		if ( bToggleRecord ) {
 			$("#table_record_list").show();
 			$("#button_toggle_record").text(strClose);
+			RequestBettingRecordMe(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
 		}
 		else {
 			$("#table_record_list").hide();
@@ -238,7 +239,7 @@
 	let OnClickMonthly1stRecord = () => {
 
 		bToggleRecord = false;
-		$("#button_toggle_record").text(strClose);
+		$("#button_toggle_record").text(strOpen);
 
 		startDate = GetMonthly1stStartDate();
 		endDate = GetMonthly1stEndDate();
@@ -251,7 +252,7 @@
 	let OnClickMonthly2ndRecord = () => {
 
 		bToggleRecord = false;
-		$("#button_toggle_record").text(strClose);
+		$("#button_toggle_record").text(strOpen);
 
 		startDate = GetMonthly2ndStartDate();
 		endDate = GetMonthly2ndEndDate();
@@ -262,6 +263,9 @@
 	}
 
 	let OnClickDayPeriod = (startDay) => {
+		bToggleRecord = false;
+		$("#button_toggle_record").text(strOpen);
+
 		startDate = GetDateStart(startDate, startDay);
 		endDate = GetDateEnd(endDate, startDay+4);
 
@@ -273,9 +277,9 @@
 
 	let OnClickSearch = () => {
 		RequestOverviewUser(agent.iClass, agent.strGroupID, agent.iClass, agent.strNickname);
-		RequestBettingRecordMe(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
 		SetBettingButton();
 		RequestBettingListOnPopup(agent.iClass, agent.strGroupID, agent.iClass, agent.iPermission, iLimit, iCurrentPage, agent.strID, bettingType, agent.iRootClass);
+		// RequestBettingRecordMe(agent.iClass, agent.strGroupID, agent.iClass, agent.strID);
 	}
 </script>
 

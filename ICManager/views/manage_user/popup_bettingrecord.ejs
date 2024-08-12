@@ -198,7 +198,7 @@
 	let OnClickTodayRecord = () => {
 
 		bToggleRecord = false;
-		$("#button_toggle_record").text(strClose);
+		$("#button_toggle_record").text(strOpen);
 
 		startDate = GetCurrentDate();
 		endDate = GetCurrentDate();
@@ -224,6 +224,7 @@
 		if ( bToggleRecord ) {
 			$("#table_record_list").show();
 			$("#button_toggle_record").text(strClose);
+			RequestBettingRecordUser(EAgent.eUser, agent.strGroupID, agent.iClass, agent.strNickname);
 		}
 		else {
 			$("#table_record_list").hide();
@@ -238,8 +239,8 @@
 		$('#datepicker1').val(startDate);
 		$('#datepicker2').val(endDate);
 
-		bToggleRecord = true;
-		$("#button_toggle_record").text("<%=__('Close')%>");
+		bToggleRecord = false;
+		$("#button_toggle_record").text(strOpen);
 
 		OnClickSearch();
 	}
@@ -251,8 +252,8 @@
 		$('#datepicker1').val(startDate);
 		$('#datepicker2').val(endDate);
 
-		bToggleRecord = true;
-		$("#button_toggle_record").text("<%=__('Close')%>");
+		bToggleRecord = false;
+		$("#button_toggle_record").text(strOpen);
 
 		OnClickSearch();
 	}
@@ -269,7 +270,7 @@
 
 	let OnClickSearch = () => {
 		RequestOverviewUser(EAgent.eUser, agent.strGroupID, agent.iClass, agent.strNickname);
-		RequestBettingRecordUser(EAgent.eUser, agent.strGroupID, agent.iClass, agent.strNickname);
+		// RequestBettingRecordUser(EAgent.eUser, agent.strGroupID, agent.iClass, agent.strNickname);
 		SetBettingButton();
 		RequestBettingListOnPopup(EAgent.eUser, agent.strGroupID, agent.iClass, agent.iPermission, iLimit, iCurrentPage, agent.strID, bettingType, agent.iRootClass);
 	}

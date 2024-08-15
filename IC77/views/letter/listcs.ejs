@@ -1,0 +1,144 @@
+<br><br><br>
+<div class="container">
+    <!--서브페이지들-->
+    <div class="sub-wrap">
+        <div class="subscr">
+            <div class="subtitle">
+                <table>
+                    <tr>
+                        <td style="text-align: left;"><h1>고객센터</h1></td>
+                        <td style="text-align: right;">
+                            <button type="button" style="width: 150px;height: 40px;color: #fff;font-size: 16px;font-weight: 600;background: #00bff3;cursor: pointer;border: none;border-radius: 5px;" id="used" onclick="location.href='/letter/write'">쪽지보내기</button>
+                            <button type="button" style="width: 150px;height: 40px;color: #fff;font-size: 16px;font-weight: 600;background: red;cursor: pointer;border: none;border-radius: 5px;" id="readed" onclick="OnClickAllRead()">전체읽음</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <table>
+                <colgroup>
+                    <col style="width:14%;">
+                    <col style="width:10%;">
+                    <col style="width:10%;">
+                    <col style="width:13%;">
+                    <col style="width:13%;">
+                    <col style="width:13%;">
+                </colgroup>
+                <thead>
+                <tr>
+                    <th>순번</th>
+                    <th>상태</th>
+                    <th>제목</th>
+                    <th>내용</th>
+                    <th>날짜</th>
+                    <th>삭제</th>
+                </tr>
+                </thead>
+                <tbody style="text-align: center;" id="listTable">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    let RemoveLetter = (id) => {
+
+        //console.log(`RemoveLetter : ${id}`);
+
+        if ( confirm(`쪽지를 삭제 하시겠습니까?`) )
+        {
+            $.ajax({
+                url:"/letter/request_removeletter",
+                type:"POST",
+                context: document.body,
+                data: {
+                    id:id
+                },
+                success: function (obj) {
+
+                    if( obj.result == 'OK' )
+                    {
+                        location.reload();					
+                    }
+                }
+            });
+        }
+    }
+
+    let RequestLetterWrite = () => {
+
+        $.ajax({
+            type:'post',
+            url: "/letter/request_listallletter",
+            context: document.body,
+            data:{strID:user.strNickname},
+
+            success:function(data) {
+
+                //console.log(data);
+
+                let tag = '';
+                if ( data.length > 0 )
+                {
+                    for ( let i in data )
+                    {
+                        let eState = '읽지않음';
+                        let color = 'red';
+                        if ( data[i].eRead == 'READED' ){
+                            eState = '읽음';
+                            color = 'white';
+                        } else if ( data[i].eRead == 'REPLY' ){
+                            eState = '답변완료';
+                            color = 'white';
+                        }
+                        tag += 
+                        `
+                            <tr>
+                                <td>${i}</td>
+                                <td id="${data[i].id}_state" style="color:${color}"><a href="/letter/view?id=${data[i].id}">${eState}</a></td>
+                                <td><a href="/letter/view?id=${data[i].id}">${data[i].strSubject}</a></td>
+                                <td><a href="/letter/view?id=${data[i].id}">${data[i].strContents}</a></td>
+                                <td><a href="/letter/view?id=${data[i].id}">${data[i].createdAt}</a></td>
+                                <td><button onclick="RemoveLetter(${data[i].id});">삭제</button></td>
+                            </tr>
+                            <tr id="${data[i].id}" style="display:none;">
+                                <td class="list1">내용:</td>
+                                <td class="list2" colspan="3">${data[i].strContents}</td>
+                            </tr>
+                        `;
+                    }
+                }
+                else
+                {
+                    tag = 
+                    `
+                        <tr>
+                            <td height="34" align="center" class="color_white" colspan="6">메세지가 없습니다.</td>
+                        </tr>
+                    `;
+                }
+                $('#listTable').append(tag);
+            }
+        });
+    }
+
+    let OnClickAllRead = () => {
+        $.ajax({
+            type:'post',
+            url: "/letter/request_allread",
+            context: document.body,
+            data:{strNickname:user.strNickname},
+            success:function(obj) {
+                //console.log(obj);
+                if (obj.result == 'OK') {
+                    location.reload();
+                } else {
+                    alert(obj.msg);
+                }
+            }
+        });
+    }
+
+    RequestLetterWrite();
+</script>

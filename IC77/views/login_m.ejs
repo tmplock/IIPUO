@@ -1,0 +1,49 @@
+
+<!doctype html>
+<html>
+
+<head>
+    <title>77 Casino</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link href='https://fonts.googleapis.com/css?family=Noto+Sans' rel='stylesheet' type='text/css'>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+    <script src="/js/jquery.placeholder.js"></script>
+    <script type="text/javascript" src="/js/plugin/fingerprint2.js"></script>
+
+    <script src="https://www.google.com/jsapi" type="text/javascript"></script>
+    <script type="text/javascript" src="/js/common/menu.js?ver=8967564565"></script>
+    <script type='text/javascript' src="/js/common/common.js?ver=8967564565"></script>
+    <script type='text/javascript' src="/js/common/game.js?ver=8967564565"></script>
+    <script type='text/javascript' src='/js/page/main.js?ver=8967564565'></script>
+
+    <link href="/css/index.css?ver=8967564565" rel="stylesheet" type="text/css" />
+    <link href="/css/common.css?ver=8967564565" rel="stylesheet" type="text/css" />
+    <link href="/css/media-q.css?ver=8967564565" rel="stylesheet" type="text/css" />
+    <link href="/css/slider.css" rel="stylesheet" type="text/css" />
+    <script src="/js/bxslider.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css">
+</head>
+
+<body>
+    <div class="back" onclick="location.href='/'"><img src="/img/back_arrow.svg"></div>
+    <div class="login-wrap">
+        <div><img src="/img/logo.png"></div>
+        <form method="post" action="/account/login">
+            <div>
+                <input type="text" name="strID" placeholder="아이디" onfocus="this.placeholder = ''">
+                <input type="password" name="strPassword" placeholder="비밀번호" onfocus="this.placeholder = ''">
+
+                <% if ( messages ) { %>
+                    <p style="color:red;"><%=messages%></p>
+                <% } %>
+
+                <button type="submit">로그인</button>
+            </div>
+        </form>
+        <div class="copy">Copyright ⓒ 77 Casino</div>
+    </div>
+</body>
+</html>

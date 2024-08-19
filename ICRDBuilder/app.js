@@ -52,7 +52,7 @@ cron.schedule('*/1 * * * * ', async ()=> {
 //cron.schedule('0,5,10,15,20,25,30,35,40,45,50,55 * * * * ', async ()=> {
 
     console.log(`##### CRON`);
-    
+    console.log(lProcessID);
     if (lProcessID != -1)
     {
         console.log(`##### CRON IS PROCESSING`);

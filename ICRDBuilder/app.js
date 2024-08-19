@@ -73,7 +73,8 @@ cron.schedule('*/1 * * * * ', async ()=> {
                 [Op.lte]:moment().subtract(cMinuteBefore, "minutes").toDate(),
             }
         },
-        order: [['createdAt', 'ASC']]
+        order: [['createdAt', 'ASC']],
+        limit:100,
     });
     let listHLDB = [];
     let listCQ9DB = [];

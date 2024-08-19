@@ -67,17 +67,31 @@ cron.schedule('*/1 * * * * ', async ()=> {
     //const cMinuteBefore = 15;
     const cMinuteBefore = 1;
 
+    // let listDB = await db.RecordBets.findAll({
+    //     where: {
+    //         eState: 'STANDBY',
+    //         eType:{[Op.or]:['BET', 'WIN', 'BETWIN']},
+    //         createdAt:{
+    //             [Op.lte]:moment().subtract(cMinuteBefore, "minutes").toDate(),
+    //         }
+    //     },
+    //     order: [['createdAt', 'ASC']],
+    //     limit:100,
+    // });
+
     let listDB = await db.RecordBets.findAll({
         where: {
             eState: 'STANDBY',
-            eType:{[Op.or]:['BET', 'WIN', 'BETWIN']},
-            createdAt:{
-                [Op.lte]:moment().subtract(cMinuteBefore, "minutes").toDate(),
-            }
+            //eType:{[Op.or]:['BET', 'WIN', 'BETWIN']},
+            // createdAt:{
+            //     [Op.lte]:moment().subtract(cMinuteBefore, "minutes").toDate(),
+            // }
         },
         order: [['createdAt', 'ASC']],
         limit:100,
     });
+
+
     let listHLDB = [];
     let listCQ9DB = [];
     let listEzugiDB = [];

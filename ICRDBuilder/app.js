@@ -60,6 +60,8 @@ cron.schedule('*/1 * * * * ', async ()=> {
     }
     lProcessID = 1;
 
+    console.log(`#1`);
+
     let listUpdateDB = [];
     
     //const cMinuteBefore = 15;
@@ -81,12 +83,18 @@ cron.schedule('*/1 * * * * ', async ()=> {
     let listEzugiDB = [];
     let listEtc = [];
 
+    console.log(`#2`);
+
     GetEachDB(listDB, listHLDB, listCQ9DB, listEzugiDB, listEtc);
+
+    console.log(`#3`);
 
     await Processor.ProcessHLink(listHLDB, listUpdateDB);
     await Processor.ProcessCQ9(listCQ9DB, listUpdateDB);
     //await Processor.ProcessEzugi(listEzugiDB, listUpdateDB);
     await Processor.ProcessEtc(listEtc, listUpdateDB);
+
+    console.log(`#4`);
 
 
     //  ##### UPDATE RECORD-BETS

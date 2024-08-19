@@ -317,41 +317,148 @@ let GetBettingGroup = (array) => {
         {
         case 0: // barcara
             list[0].iBetting += array[i].iBetting;
-            list[0].iWin += array[i].iWin;
+            
             list[0].iRolling += array[i].iRolling;
-            list[0].iTotal += array[i].iBetting2 - array[i].iWin - array[i].iRolling;
+            list[0].iTotal += (array[i].iBetting2-array[i].iWin-array[i].iRolling);
 
-            // list[0].iWin = list[0].iTotal - array[i].iBetting + array[i].iRolling;
+            list[0].iWin = list[0].iTotal - array[i].iBetting + array[i].iRolling;
             break;
         case 100: // unover
-            list[1].iBetting += array[i].iBetting;
-            list[1].iWin += array[i].iWin;
+            list[1].iBetting += array[i].iBetting2;
+            //list[1].iWin += array[i].iWin;
             list[1].iRolling += array[i].iRolling;
-            list[1].iTotal += array[i].iBetting2 - array[i].iWin - array[i].iRolling;
+            list[1].iTotal += (array[i].iBetting-array[i].iWin-array[i].iRolling);
 
-            // list[1].iWin = list[1].iTotal - array[i].iBetting + array[i].iRolling;
+            list[1].iWin = list[1].iTotal - array[i].iBetting2 + array[i].iRolling;
             break;
         case 200: // slot
             list[2].iBetting += array[i].iBetting;
             list[2].iWin += array[i].iWin;
             list[2].iRolling += array[i].iRolling;
-            list[2].iTotal += array[i].iBetting2 - array[i].iWin - array[i].iRolling;
+            list[2].iTotal += (array[i].iBetting2-array[i].iWin-array[i].iRolling);
 
-            // list[2].iWin = list[2].iTotal - array[i].iBetting + array[i].iRolling;
+            list[2].iWin = list[2].iTotal - array[i].iBetting + array[i].iRolling;
             break;
         case 300: // powerball
-            list[3].iBetting += array[i].iBetting;
+            list[3].iBetting += array[i].iBetting2;
             list[3].iWin += array[i].iWin;
             list[3].iRolling += array[i].iRolling;
-            list[3].iTotal += array[i].iBetting2 - array[i].iWin - array[i].iRolling;
+            list[3].iTotal += (array[i].iBetting-array[i].iWin-array[i].iRolling);
 
-            // list[3].iWin = list[3].iTotal - array[i].iBetting + array[i].iRolling;
+            list[3].iWin = list[3].iTotal - array[i].iBetting2 + array[i].iRolling;
             break;
         }
     }
-    
+
     return list;
 }
+
+// let GetBettingGroup = (array) => {
+
+//     console.log(array);
+
+//     let list = [];
+
+//     for ( let i = 0; i < 4; ++ i )
+//     {
+//         list.push({iBetting:0, iWin:0, iRolling:0, iTotal:0});
+//     }
+
+//     for ( let i in array )
+//     {
+//         switch ( parseInt(array[i].iGameCode) )
+//         {
+//         case 0: // barcara
+//             list[0].iBetting += array[i].iBetting2;
+            
+//             list[0].iRolling += array[i].iRolling;
+//             list[0].iTotal += (array[i].iBetting-array[i].iWin-array[i].iRolling);
+
+//             list[0].iWin = list[0].iTotal - array[i].iBetting2 + array[i].iRolling;
+//             break;
+//         case 100: // unover
+//             list[1].iBetting += array[i].iBetting2;
+//             //list[1].iWin += array[i].iWin;
+//             list[1].iRolling += array[i].iRolling;
+//             list[1].iTotal += (array[i].iBetting-array[i].iWin-array[i].iRolling);
+
+//             list[1].iWin = list[1].iTotal - array[i].iBetting2 + array[i].iRolling;
+//             break;
+//         case 200: // slot
+//             list[2].iBetting += array[i].iBetting2;
+//             list[2].iWin += array[i].iWin;
+//             list[2].iRolling += array[i].iRolling;
+//             list[2].iTotal += (array[i].iBetting-array[i].iWin-array[i].iRolling);
+
+//             list[2].iWin = list[2].iTotal - array[i].iBetting2 + array[i].iRolling;
+//             break;
+//         case 300: // powerball
+//             list[3].iBetting += array[i].iBetting2;
+//             list[3].iWin += array[i].iWin;
+//             list[3].iRolling += array[i].iRolling;
+//             list[3].iTotal += (array[i].iBetting-array[i].iWin-array[i].iRolling);
+
+//             list[3].iWin = list[3].iTotal - array[i].iBetting2 + array[i].iRolling;
+//             break;
+//         }
+//     }
+
+//     return list;
+// }
+
+
+// let GetBettingGroup = (array) => {
+
+//     console.log(array);
+
+//     let list = [];
+
+//     for ( let i = 0; i < 4; ++ i )
+//     {
+//         list.push({iBetting:0, iWin:0, iRolling:0, iTotal:0});
+//     }
+
+//     for ( let i in array )
+//     {
+//         switch ( parseInt(array[i].iGameCode) )
+//         {
+//         case 0: // barcara
+//             list[0].iBetting += array[i].iBetting;
+//             list[0].iWin += array[i].iWin;
+//             list[0].iRolling += array[i].iRolling;
+//             list[0].iTotal += array[i].iBetting2 - array[i].iWin - array[i].iRolling;
+
+//             // list[0].iWin = list[0].iTotal - array[i].iBetting + array[i].iRolling;
+//             break;
+//         case 100: // unover
+//             list[1].iBetting += array[i].iBetting;
+//             list[1].iWin += array[i].iWin;
+//             list[1].iRolling += array[i].iRolling;
+//             list[1].iTotal += array[i].iBetting2 - array[i].iWin - array[i].iRolling;
+
+//             // list[1].iWin = list[1].iTotal - array[i].iBetting + array[i].iRolling;
+//             break;
+//         case 200: // slot
+//             list[2].iBetting += array[i].iBetting;
+//             list[2].iWin += array[i].iWin;
+//             list[2].iRolling += array[i].iRolling;
+//             list[2].iTotal += array[i].iBetting2 - array[i].iWin - array[i].iRolling;
+
+//             // list[2].iWin = list[2].iTotal - array[i].iBetting + array[i].iRolling;
+//             break;
+//         case 300: // powerball
+//             list[3].iBetting += array[i].iBetting;
+//             list[3].iWin += array[i].iWin;
+//             list[3].iRolling += array[i].iRolling;
+//             list[3].iTotal += array[i].iBetting2 - array[i].iWin - array[i].iRolling;
+
+//             // list[3].iWin = list[3].iTotal - array[i].iBetting + array[i].iRolling;
+//             break;
+//         }
+//     }
+    
+//     return list;
+// }
 
 let GetClassNickName = (iClass, strNickname) => {
     if ( iClass == 1 ) {

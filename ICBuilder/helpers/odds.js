@@ -1110,7 +1110,7 @@ exports.UpdateOverview = async (list, listOverviewDB) => {
     for ( let i in listOverviewDB )
     {
         if(listOverviewDB[i].strID == 'unover0405')
-            console.log(listOverviewDB);
+            console.log(listOverviewDB[i]);
     }
     
     if ( list.length > 0 )

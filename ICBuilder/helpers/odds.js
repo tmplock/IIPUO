@@ -66,7 +66,12 @@ exports.GetOverviewDB = (strID, listOverviewDB) => {
 
     for ( let i in listOverviewDB )
     {
-        if ( listOverviewDB[i].strID == strID )        
+        if(listOverviewDB[i].strID == 'unover0405' && strID == 'unover0405')
+        {
+            console.log(listOverviewDB[i]);
+        }  
+        if ( listOverviewDB[i].strID == strID )  
+               
             return listOverviewDB[i];
     }
 
@@ -1102,7 +1107,12 @@ let ProcessGroupDailyOverview = (objectRolling, objectArg, strDate) => {
 exports.UpdateOverview = async (list, listOverviewDB) => {
 
     console.log(`UpdateOverview~!~~~~!!!!!!!!!!!!!`);
-    console.log(listOverviewDB);
+    for ( let i in listOverviewDB )
+    {
+        if(listOverviewDB[i].strID == 'unover0405')
+            console.log(listOverviewDB);
+    }
+    
     if ( list.length > 0 )
     {
         // console.log(`################################################################################## listOverview : Length ${list.length}`);

@@ -73,7 +73,10 @@ cron.schedule('*/1 * * * * ', async ()=> {
     let listBetDB = await db.RecordBets.findAll({
         where: {
             eState: 'ROLLING',
-        },
+            eType: {
+                [Op.notIn]: ['CANCEL', 'CANCEL_BET', 'CANCEL_WIN']
+            }
+        }
     });
     console.log(`##### listBetDB.length = ${listBetDB.length}`);
 

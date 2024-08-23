@@ -894,8 +894,8 @@ let GetPlayingCount = (objectArg) => {
 let ProcessGroupDailyOverview = (objectRolling, objectArg, strDate) => {
 
     console.log(`##### ProcessGroupDailyOverview`);
-    console.log(objectRolling);
-    console.log(objectArg);
+    // console.log(objectRolling);
+    // console.log(objectArg);
 
     const o = objectRolling;
     const oa = objectArg;
@@ -1106,17 +1106,17 @@ let ProcessGroupDailyOverview = (objectRolling, objectArg, strDate) => {
 
 exports.UpdateOverview = async (list, listOverviewDB) => {
 
-    console.log(`UpdateOverview~!~~~~!!!!!!!!!!!!!`);
-    for ( let i in listOverviewDB )
-    {
-        if(listOverviewDB[i].strID == 'unover0405')
-            console.log(listOverviewDB[i]);
-    }
+    // console.log(`UpdateOverview~!~~~~!!!!!!!!!!!!!`);
+    // for ( let i in listOverviewDB )
+    // {
+    //     if(listOverviewDB[i].strID == 'unover0405')
+    //         console.log(listOverviewDB[i]);
+    // }
     
     if ( list.length > 0 )
     {
-        // console.log(`################################################################################## listOverview : Length ${list.length}`);
-        // console.log(list);
+        console.log(`################################################################################## listOverview : Length ${list.length}`);
+        console.log(list);
         for ( let index in list )
         {
             const t = list[index];

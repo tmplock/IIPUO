@@ -44,10 +44,10 @@ module.exports = (sequelize, DataTypes) => {
             type:DataTypes.STRING(64),
         },
         strDetail: {
-            type:DataTypes.STRING,
+            type:DataTypes.TEXT,
         },
         strResult: {
-            type:DataTypes.STRING,
+            type:DataTypes.TEXT,
         },
         strOverview: {
             type:DataTypes.STRING,
@@ -65,7 +65,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         eState: {
             //type:DataTypes.ENUM('STANDBY', 'COMPLETE', 'PENDING', 'ERROR', 'CANCEL_STANDBY', 'CANCELED', 'BET_STANDBY', 'WIN_STANDBY'),
-            type:DataTypes.ENUM('STANDBY', 'PENDING', 'COMPLETE', 'ERROR'),
+            type:DataTypes.ENUM('STANDBY', 'PENDING', 'COMPLETE', 'ERROR', 'ROLLING'),
         },
         eType: {
             type:DataTypes.ENUM('BET', 'BETRD', 'WIN', 'RD', 'CANCEL', 'CANCEL_BET', 'CANCEL_WIN', 'BETWIN'),

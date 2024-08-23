@@ -65,67 +65,33 @@ cron.schedule('*/5 * * * * * ', async ()=> {
         Adjust(listID, listOverviewDB[i]);
     }
 
-    console.log(listID);
+    return;
+    // console.log(listID);
 
-    //return;
+    // const bets = await db.RecordBets.findAll({where:{
+    //     strGroupID: {
+    //         [Op.like] : '0000003%'
+    //     },
+    //     createdAt:{
+    //         [Op.between]:[ '2024-08-23', require('moment')('2024-08-23').add(1, 'days').format('YYYY-MM-DD')],
+    //     },
+    // }});
 
+    // let list = [];
+    // for ( let i in bets )
+    // {
+    //     if ( false == FindAdjust(bets[i].strID, list) )
+    //         list.push({strID:bets[i].strID});
+    // }
+    // console.log(list);
 
-    //  2024-04-05
-    // let listID = [
-    //     {strID:'qa123', iClass:7},
-    //     {strID:'jojo05', iClass:8},
-    //     {strID:'cjsgh1', iClass:7},
-    //     {strID:'kkk123', iClass:8},
-    //     {strID:'qwe01', iClass:8},
-    //     {strID:'zxc01', iClass:8},
-    //     {strID:'t1000', iClass:7},
-    //     {strID:'gkfn1', iClass:8},
-    //     {strID:'gkfn2', iClass:8},
-    //     {strID:'zlekfl5', iClass:8},
-    //     {strID:'gkfn3', iClass:8},
-    //     {strID:'sss1000', iClass:6},
-    //     {strID:'tpdud123', iClass:8},
-    //     {strID:'gkfn6', iClass:8},
-    // ];
-
-    //  2024-04-06
-    // let listID = [
-    //     {strID:'gkfn6', iClass:8},
-    //     {strID:'gkfn2', iClass:8},
-    //     {strID:'sss1000', iClass:6},
-    //     {strID:'jojo01', iClass:8},
-    //     {strID:'gkfn3', iClass:8},
-    //     {strID:'rudwn01', iClass:6},
-    //     {strID:'gkfn1', iClass:8},
-    //     {strID:'gkfn5', iClass:8},
-    //     {strID:'tpdud123', iClass:8},
-    //     {strID:'ehqhd22', iClass:8},
-    //     {strID:'ehqhd55', iClass:8},
-    //     {strID:'gkfn01', iClass:8},
-    //     {strID:'kkk123', iClass:8},
-    // ];
-
-    //  2024-04-07
-    // let listID = [
-    //     {strID:'zlekfl5', iClass:8},
-    //     {strID:'cjsgh1', iClass:7},
-    //     {strID:'kkk123', iClass:8},
-    //     {strID:'jojo05', iClass:8},
-    //     {strID:'rudwn01', iClass:6},
-    //     {strID:'jnh720', iClass:8},
-    //     {strID:'MARBRORED', iClass:8},
-    //     {strID:'gkfn02', iClass:8},
-    //     {strID:'gkfn04', iClass:8},
-    //     {strID:'rkskek', iClass:7},
-    //     {strID:'sss1000', iClass:6},
-    //     {strID:'gkfn08', iClass:8},
-    //     {strID:'zlekfl6', iClass:8},
-    //     {strID:'rhtks9', iClass:8},
-    // ];
+    // return;
 
     // let listID = [
-    //     {strID:'qwe01', iClass:8},
+    //     {strID:'cnscjs1', iClass:8},
+    //     {strID:'cnscjs5', iClass:8},
     // ];
+
 
     let strDate = '2024-08-23';
 
@@ -133,16 +99,6 @@ cron.schedule('*/5 * * * * * ', async ()=> {
     {
         await Overview.CalculateOverview(listID[i].strID, listID[i].iClass, strDate, listOverview);
     }
-
-    for ( let i in listOverview )
-    {
-        if ( listOverview[i].strID == 'cnscjs1' )
-        {
-            console.log(listOverview[i]);
-        }
-    }
-
-    //console.log(listOverview);
 
     for ( let i in listOverview )
     {
@@ -185,11 +141,74 @@ cron.schedule('*/5 * * * * * ', async ()=> {
         });
     }
 
+    //  CREATION
+    // for ( let i in listOverview )
+    // {
+    //     if ( listOverview[i].strID == 'cnscjs1' )
+    //     {
+    //         console.log(listOverview[i]);
+    //     }
+    // }
+
+    // console.log(listOverview);
+
+    // //return;
+
+    // //console.log(listOverview);
+    // for ( let i in listOverview )
+    //     {
+    //         console.log(`${i}`);
+    //         const user = await db.Users.findOne({where:{strID:listOverview[i].strID}});
+    
+    //         await db.RecordDailyOverviews.create({
+    //             strDate:strDate,
+    //             strID:user.strID,
+    //             strGroupID:user.strGroupID,
+    //             iClass:user.iClass,
+    //             iInput:0,
+    //             iOutput:0,
+    //             iExchange:0,
+    //             iBetB:listOverview[i].iBetB,
+    //             iBetUO:listOverview[i].iBetUO,
+    //             iBetS:listOverview[i].iBetS,
+    //             iBetPB:listOverview[i].iBetPB,
+    //             iWinB:listOverview[i].iWinB,
+    //             iWinUO:listOverview[i].iWinUO,
+    //             iWinS:listOverview[i].iWinS,
+    //             iWinPB:listOverview[i].iWinPB,
+    //             iRollingB:listOverview[i].iRollingB,
+    //             iRollingUO:listOverview[i].iRollingUO,
+    //             iRollingS:listOverview[i].iRollingS,
+    //             iRollingPBA:listOverview[i].iRollingPBA,
+    //             iRollingPBB:listOverview[i].iRollingPBB,
+    //             iAgentBetB:listOverview[i].iAgentBetB,
+    //             iAgentBetUO:listOverview[i].iAgentBetUO,
+    //             iAgentBetS:listOverview[i].iAgentBetS,
+    //             iAgentBetPB:listOverview[i].iAgentBetPB,
+    //             iAgentWinB:listOverview[i].iAgentWinB,
+    //             iAgentWinUO:listOverview[i].iAgentWinUO,
+    //             iAgentWinS:listOverview[i].iAgentWinS,
+    //             iAgentWinPB:listOverview[i].iAgentWinPB,
+    //             iAgentRollingB:listOverview[i].iAgentRollingB,
+    //             iAgentRollingUO:listOverview[i].iAgentRollingUO,
+    //             iAgentRollingS:listOverview[i].iAgentRollingS,
+    //             iAgentRollingPBA:listOverview[i].iAgentRollingPBA,
+    //             iAgentRollingPBB:listOverview[i].iAgentRollingPBB,
+    //             iAgentBetB2:listOverview[i].iAgentBetB,
+    //             iAgentBetUO2:listOverview[i].iAgentBetUO,
+    //             iAgentBetS2:listOverview[i].iAgentBetS,
+    //             iAgentBetPB2:listOverview[i].iAgentBetPB,
+    //             iNumPlayB:0,
+    //             iNumPlayUO:0,
+    //             iNumPlayS:0
+    //     });
+    // }
+
     // console.log(``);
     // console.log(`##### Result `);
     // console.log(listOverview);
 
-    lProcessID = -1;
+    //lProcessID = -1;
 
     console.log(`##### END OF CRON`);
 });

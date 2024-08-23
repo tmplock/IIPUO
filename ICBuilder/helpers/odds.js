@@ -1105,8 +1105,8 @@ exports.UpdateOverview = async (list, listOverviewDB) => {
     console.log(listOverviewDB);
     if ( list.length > 0 )
     {
-        console.log(`################################################################################## listOverview : Length ${list.length}`);
-        console.log(list);
+        // console.log(`################################################################################## listOverview : Length ${list.length}`);
+        // console.log(list);
         for ( let index in list )
         {
             const t = list[index];
@@ -1118,8 +1118,8 @@ exports.UpdateOverview = async (list, listOverviewDB) => {
             
             //const dbdata = await db.RecordDailyOverviews.findOne({where:{strID:t.strID, strDate:t.strDate}});
             const dbdata = this.GetOverviewDB(t.strID, listOverviewDB);
-            console.log('db');
-            console.log(dbdata);
+            // console.log('db');
+            // console.log(dbdata);
 
             // 소수점 정리
             // const cRolling = parseInt(t.iRollingB) + parseInt(t.iRollingUO) + parseInt(t.iRollingS) + parseInt(t.iRollingPBA) + parseInt(t.iRollingPBB);

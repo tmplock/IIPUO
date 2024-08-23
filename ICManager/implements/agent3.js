@@ -899,6 +899,7 @@ exports.GetComputedAgentList = inline_GetComputedAgentList;
  * RecordDailyOverviews에서 파트너,유저 데이터 조회 컬럼
  */
 let GetSelfDailyBettingQuery = (iClass, dateStart, dateEnd) => {
+    //IFNULL((SELECT -SUM((iWinB + iWinUO + iWinS + iWinPB) - (iBetB + iBetUO + iBetS + iBetPB) + (iRollingB + iRollingUO + iRollingS + iRollingPBA + iRollingPBB)) FROM RecordDailyOverviews WHERE strID = t2.strID AND strDate BETWEEN '${dateStart}' AND '${dateEnd}'), 0) AS iTotal,
     let subQuery = '';
     subQuery = `
             IFNULL((SELECT SUM(iRollingB + iRollingUO + iRollingS + iRollingPBA + iRollingPBB) FROM RecordDailyOverviews WHERE strID = t2.strID AND strDate BETWEEN '${dateStart}' AND '${dateEnd}'), 0) AS iRollingMoney,
@@ -907,7 +908,9 @@ let GetSelfDailyBettingQuery = (iClass, dateStart, dateEnd) => {
             IFNULL((SELECT SUM(iRollingS) FROM RecordDailyOverviews WHERE strID = t2.strID AND strDate BETWEEN '${dateStart}' AND '${dateEnd}'), 0) AS iSlotRollingMoney,
             IFNULL((SELECT SUM(iRollingPBA + iRollingPBB) FROM RecordDailyOverviews WHERE strID = t2.strID AND strDate BETWEEN '${dateStart}' AND '${dateEnd}'), 0) AS iPBRollingMoney,
             IFNULL((SELECT SUM(iRollingB + iRollingUO + iRollingS + iRollingPBA + iRollingPBB) FROM RecordDailyOverviews WHERE strID = t2.strID AND strDate BETWEEN '${dateStart}' AND '${dateEnd}'), 0) AS iMyRollingMoney,
-            IFNULL((SELECT -SUM((iWinB + iWinUO + iWinS + iWinPB) - (iBetB + iBetUO + iBetS + iBetPB) + (iRollingB + iRollingUO + iRollingS + iRollingPBA + iRollingPBB)) FROM RecordDailyOverviews WHERE strID = t2.strID AND strDate BETWEEN '${dateStart}' AND '${dateEnd}'), 0) AS iTotal,
+
+            IFNULL((SELECT SUM((iBetB + iBetUO + iBetS + iBetPB) - (iWinB + iWinUO + iWinS + iWinPB) - (iRollingB + iRollingUO + iRollingS + iRollingPBA + iRollingPBB)) FROM RecordDailyOverviews WHERE strID = t2.strID AND strDate BETWEEN '${dateStart}' AND '${dateEnd}'), 0) AS iTotal,
+
             IFNULL((SELECT -SUM(iWinB - iBetB - iRollingB) FROM RecordDailyOverviews WHERE strID = t2.strID AND strDate BETWEEN '${dateStart}' AND '${dateEnd}'), 0) AS iBaccaratTotal,
             IFNULL((SELECT -SUM(iWinUO - iBetUO - iRollingUO) FROM RecordDailyOverviews WHERE strID = t2.strID AND strDate BETWEEN '${dateStart}' AND '${dateEnd}'), 0) AS iUnderOverTotal,
             IFNULL((SELECT -SUM(iWinS - iBetS - iRollingS) FROM RecordDailyOverviews WHERE strID = t2.strID AND strDate BETWEEN '${dateStart}' AND '${dateEnd}'), 0) AS iSlotTotal,

@@ -162,6 +162,7 @@ let RequestUserListOnPopup = (iTargetClass, strGroupID, iClass, iPermission, str
             for ( let i in list )
             {
                 let obj = list[i];
+
                 iInput += parseFloat(obj.iInput);
                 iOutput += parseFloat(obj.iOutput);
                 iTotalMoney += parseFloat(obj.iMyMoney);

@@ -58,19 +58,19 @@ cron.schedule('*/5 * * * * * ', async ()=> {
     let listOverview = [];
 
 
-    const listOverviewDB = await db.RecordDailyOverviews.findAll({where:{strDate:'2024-08-23'}});
-    let listID = [];
-    for ( let i in listOverviewDB )
-    {
-        Adjust(listID, listOverviewDB[i]);
-    }
+    // const listOverviewDB = await db.RecordDailyOverviews.findAll({where:{strDate:'2024-08-23'}});
+    // let listID = [];
+    // for ( let i in listOverviewDB )
+    // {
+    //     Adjust(listID, listOverviewDB[i]);
+    // }
 
-    return;
+    //return;
     // console.log(listID);
 
     // const bets = await db.RecordBets.findAll({where:{
     //     strGroupID: {
-    //         [Op.like] : '0000003%'
+    //         [Op.like] : '000%'
     //     },
     //     createdAt:{
     //         [Op.between]:[ '2024-08-23', require('moment')('2024-08-23').add(1, 'days').format('YYYY-MM-DD')],
@@ -81,16 +81,38 @@ cron.schedule('*/5 * * * * * ', async ()=> {
     // for ( let i in bets )
     // {
     //     if ( false == FindAdjust(bets[i].strID, list) )
-    //         list.push({strID:bets[i].strID});
+    //         list.push({strID:bets[i].strID, iClass:bets[i].iClass});
     // }
     // console.log(list);
 
-    // return;
-
-    // let listID = [
-    //     {strID:'cnscjs1', iClass:8},
-    //     {strID:'cnscjs5', iClass:8},
-    // ];
+    let listID = [
+            { strID: 'clxk', iClass: 8 },
+            { strID: 'as05', iClass: 8 },
+            { strID: 'tn4', iClass: 8 },
+            { strID: 'tn10', iClass: 8 },
+            { strID: 'tn7', iClass: 8 },
+            { strID: 'as07', iClass: 8 },
+            { strID: 'as03', iClass: 8 },
+            { strID: 'cnscjs1', iClass: 8 },
+            { strID: 'as02', iClass: 8 },
+            { strID: 'cnscjs5', iClass: 8 },
+            { strID: 'wkdfh3', iClass: 8 },
+            { strID: 'abc5', iClass: 8 },
+            { strID: 'wkdfh15', iClass: 8 },
+            { strID: 'wkdfh1', iClass: 8 },
+            { strID: 'wkdfh5', iClass: 8 },
+            { strID: 'abc3', iClass: 8 },
+            { strID: 'tn1', iClass: 8 },
+            { strID: 'tn9', iClass: 8 },
+            { strID: 'zxc741', iClass: 8 },
+            { strID: 'wkdfh12', iClass: 8 },
+            { strID: 'wkdfh9', iClass: 8 },
+            { strID: 'wkdfh8', iClass: 8 },
+            { strID: 'wkdfh11', iClass: 8 },
+            { strID: 'wkdfh13', iClass: 8 },
+            { strID: 'wkdfh20', iClass: 8 },
+            { strID: 'wkdfh7', iClass: 8 }
+    ];
 
 
     let strDate = '2024-08-23';
@@ -100,46 +122,47 @@ cron.schedule('*/5 * * * * * ', async ()=> {
         await Overview.CalculateOverview(listID[i].strID, listID[i].iClass, strDate, listOverview);
     }
 
-    for ( let i in listOverview )
-    {
-        console.log(`${i}`);
+    //  Update Overview
+    // for ( let i in listOverview )
+    // {
+    //     console.log(`${i}`);
 
-        await db.RecordDailyOverviews.update({
-            iBetB:listOverview[i].iBetB,
-            iBetUO:listOverview[i].iBetUO,
-            iBetS:listOverview[i].iBetS,
-            iBetPB:listOverview[i].iBetPB,
-            iWinB:listOverview[i].iWinB,
-            iWinUO:listOverview[i].iWinUO,
-            iWinS:listOverview[i].iWinS,
-            iWinPB:listOverview[i].iWinPB,
-            iRollingB:listOverview[i].iRollingB,
-            iRollingUO:listOverview[i].iRollingUO,
-            iRollingS:listOverview[i].iRollingS,
-            iRollingPBA:listOverview[i].iRollingPBA,
-            iRollingPBB:listOverview[i].iRollingPBB,
-            iAgentBetB:listOverview[i].iAgentBetB,
-            iAgentBetUO:listOverview[i].iAgentBetUO,
-            iAgentBetS:listOverview[i].iAgentBetS,
-            iAgentBetPB:listOverview[i].iAgentBetPB,
-            iAgentWinB:listOverview[i].iAgentWinB,
-            iAgentWinUO:listOverview[i].iAgentWinUO,
-            iAgentWinS:listOverview[i].iAgentWinS,
-            iAgentWinPB:listOverview[i].iAgentWinPB,
-            iAgentRollingB:listOverview[i].iAgentRollingB,
-            iAgentRollingUO:listOverview[i].iAgentRollingUO,
-            iAgentRollingS:listOverview[i].iAgentRollingS,
-            iAgentRollingPBA:listOverview[i].iAgentRollingPBA,
-            iAgentRollingPBB:listOverview[i].iAgentRollingPBB,
-            iAgentBetB2:listOverview[i].iAgentBetB,
-            iAgentBetUO2:listOverview[i].iAgentBetUO,
-            iAgentBetS2:listOverview[i].iAgentBetS,
-            iAgentBetPB2:listOverview[i].iAgentBetPB,
-        },
-        {
-            where:{strID:listOverview[i].strID, strDate:listOverview[i].strDate}
-        });
-    }
+    //     await db.RecordDailyOverviews.update({
+    //         iBetB:listOverview[i].iBetB,
+    //         iBetUO:listOverview[i].iBetUO,
+    //         iBetS:listOverview[i].iBetS,
+    //         iBetPB:listOverview[i].iBetPB,
+    //         iWinB:listOverview[i].iWinB,
+    //         iWinUO:listOverview[i].iWinUO,
+    //         iWinS:listOverview[i].iWinS,
+    //         iWinPB:listOverview[i].iWinPB,
+    //         iRollingB:listOverview[i].iRollingB,
+    //         iRollingUO:listOverview[i].iRollingUO,
+    //         iRollingS:listOverview[i].iRollingS,
+    //         iRollingPBA:listOverview[i].iRollingPBA,
+    //         iRollingPBB:listOverview[i].iRollingPBB,
+    //         iAgentBetB:listOverview[i].iAgentBetB,
+    //         iAgentBetUO:listOverview[i].iAgentBetUO,
+    //         iAgentBetS:listOverview[i].iAgentBetS,
+    //         iAgentBetPB:listOverview[i].iAgentBetPB,
+    //         iAgentWinB:listOverview[i].iAgentWinB,
+    //         iAgentWinUO:listOverview[i].iAgentWinUO,
+    //         iAgentWinS:listOverview[i].iAgentWinS,
+    //         iAgentWinPB:listOverview[i].iAgentWinPB,
+    //         iAgentRollingB:listOverview[i].iAgentRollingB,
+    //         iAgentRollingUO:listOverview[i].iAgentRollingUO,
+    //         iAgentRollingS:listOverview[i].iAgentRollingS,
+    //         iAgentRollingPBA:listOverview[i].iAgentRollingPBA,
+    //         iAgentRollingPBB:listOverview[i].iAgentRollingPBB,
+    //         iAgentBetB2:listOverview[i].iAgentBetB,
+    //         iAgentBetUO2:listOverview[i].iAgentBetUO,
+    //         iAgentBetS2:listOverview[i].iAgentBetS,
+    //         iAgentBetPB2:listOverview[i].iAgentBetPB,
+    //     },
+    //     {
+    //         where:{strID:listOverview[i].strID, strDate:listOverview[i].strDate}
+    //     });
+    // }
 
     //  CREATION
     // for ( let i in listOverview )
@@ -155,54 +178,54 @@ cron.schedule('*/5 * * * * * ', async ()=> {
     // //return;
 
     // //console.log(listOverview);
-    // for ( let i in listOverview )
-    //     {
-    //         console.log(`${i}`);
-    //         const user = await db.Users.findOne({where:{strID:listOverview[i].strID}});
+    for ( let i in listOverview )
+        {
+            console.log(`${i}`);
+            const user = await db.Users.findOne({where:{strID:listOverview[i].strID}});
     
-    //         await db.RecordDailyOverviews.create({
-    //             strDate:strDate,
-    //             strID:user.strID,
-    //             strGroupID:user.strGroupID,
-    //             iClass:user.iClass,
-    //             iInput:0,
-    //             iOutput:0,
-    //             iExchange:0,
-    //             iBetB:listOverview[i].iBetB,
-    //             iBetUO:listOverview[i].iBetUO,
-    //             iBetS:listOverview[i].iBetS,
-    //             iBetPB:listOverview[i].iBetPB,
-    //             iWinB:listOverview[i].iWinB,
-    //             iWinUO:listOverview[i].iWinUO,
-    //             iWinS:listOverview[i].iWinS,
-    //             iWinPB:listOverview[i].iWinPB,
-    //             iRollingB:listOverview[i].iRollingB,
-    //             iRollingUO:listOverview[i].iRollingUO,
-    //             iRollingS:listOverview[i].iRollingS,
-    //             iRollingPBA:listOverview[i].iRollingPBA,
-    //             iRollingPBB:listOverview[i].iRollingPBB,
-    //             iAgentBetB:listOverview[i].iAgentBetB,
-    //             iAgentBetUO:listOverview[i].iAgentBetUO,
-    //             iAgentBetS:listOverview[i].iAgentBetS,
-    //             iAgentBetPB:listOverview[i].iAgentBetPB,
-    //             iAgentWinB:listOverview[i].iAgentWinB,
-    //             iAgentWinUO:listOverview[i].iAgentWinUO,
-    //             iAgentWinS:listOverview[i].iAgentWinS,
-    //             iAgentWinPB:listOverview[i].iAgentWinPB,
-    //             iAgentRollingB:listOverview[i].iAgentRollingB,
-    //             iAgentRollingUO:listOverview[i].iAgentRollingUO,
-    //             iAgentRollingS:listOverview[i].iAgentRollingS,
-    //             iAgentRollingPBA:listOverview[i].iAgentRollingPBA,
-    //             iAgentRollingPBB:listOverview[i].iAgentRollingPBB,
-    //             iAgentBetB2:listOverview[i].iAgentBetB,
-    //             iAgentBetUO2:listOverview[i].iAgentBetUO,
-    //             iAgentBetS2:listOverview[i].iAgentBetS,
-    //             iAgentBetPB2:listOverview[i].iAgentBetPB,
-    //             iNumPlayB:0,
-    //             iNumPlayUO:0,
-    //             iNumPlayS:0
-    //     });
-    // }
+            await db.RecordDailyOverviews.create({
+                strDate:strDate,
+                strID:user.strID,
+                strGroupID:user.strGroupID,
+                iClass:user.iClass,
+                iInput:0,
+                iOutput:0,
+                iExchange:0,
+                iBetB:listOverview[i].iBetB,
+                iBetUO:listOverview[i].iBetUO,
+                iBetS:listOverview[i].iBetS,
+                iBetPB:listOverview[i].iBetPB,
+                iWinB:listOverview[i].iWinB,
+                iWinUO:listOverview[i].iWinUO,
+                iWinS:listOverview[i].iWinS,
+                iWinPB:listOverview[i].iWinPB,
+                iRollingB:listOverview[i].iRollingB,
+                iRollingUO:listOverview[i].iRollingUO,
+                iRollingS:listOverview[i].iRollingS,
+                iRollingPBA:listOverview[i].iRollingPBA,
+                iRollingPBB:listOverview[i].iRollingPBB,
+                iAgentBetB:listOverview[i].iAgentBetB,
+                iAgentBetUO:listOverview[i].iAgentBetUO,
+                iAgentBetS:listOverview[i].iAgentBetS,
+                iAgentBetPB:listOverview[i].iAgentBetPB,
+                iAgentWinB:listOverview[i].iAgentWinB,
+                iAgentWinUO:listOverview[i].iAgentWinUO,
+                iAgentWinS:listOverview[i].iAgentWinS,
+                iAgentWinPB:listOverview[i].iAgentWinPB,
+                iAgentRollingB:listOverview[i].iAgentRollingB,
+                iAgentRollingUO:listOverview[i].iAgentRollingUO,
+                iAgentRollingS:listOverview[i].iAgentRollingS,
+                iAgentRollingPBA:listOverview[i].iAgentRollingPBA,
+                iAgentRollingPBB:listOverview[i].iAgentRollingPBB,
+                iAgentBetB2:listOverview[i].iAgentBetB,
+                iAgentBetUO2:listOverview[i].iAgentBetUO,
+                iAgentBetS2:listOverview[i].iAgentBetS,
+                iAgentBetPB2:listOverview[i].iAgentBetPB,
+                iNumPlayB:0,
+                iNumPlayUO:0,
+                iNumPlayS:0
+        });
+    }
 
     // console.log(``);
     // console.log(`##### Result `);

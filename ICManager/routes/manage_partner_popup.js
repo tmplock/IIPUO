@@ -1487,7 +1487,7 @@ router.post('/request_agentinfo_modify', isLoggedIn,async (req, res) => {
         }
 
         if (strPassword != '' && strPassword != user.strPassword) {
-            if (req.user.iClass > 2 || req.user.iPermission == 100) {
+            if ((req.user.iClass > 3 && req.user.iClass != 7) || req.user.iPermission == 100) {
                 res.send({result:'ERROR', code:'ERRORMSG', msg: '비밀번호 변경은 고객센터로 문의주세요'});
                 return;
             }

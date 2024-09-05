@@ -14,7 +14,7 @@ socket.on('response_login', (data) => {
 
 socket.on('UserLogout', () => {
     alert('중복로그인으로 인한 로그아웃이 되었습니다');
-    window.location.href='/account/logout';
+    //window.location.href='/account/logout';
 })
 
 socket.on('UpdateCash', (iCash) => {
